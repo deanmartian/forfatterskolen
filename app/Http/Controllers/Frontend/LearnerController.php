@@ -2335,6 +2335,21 @@ class LearnerController extends Controller
         return view('frontend.learner.self-publishing.marketing', compact('marketingPlans'));
     }
 
+    public function marketingDownload()
+    {
+        $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
+        $marketingPlans = MarketingPlan::with(['questions.answers' => function($query) use ($standardProject) {
+            $query->where('marketing_plan_question_answers.project_id', $standardProject->id);
+        }])->get();
+
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->setPaper('letter', 'landscape');
+        $pdf->loadHTML(view('frontend.pdf.marketing-plan', compact('marketingPlans')));
+        return $pdf->download('Marketing Plan.pdf');
+        //return $pdf->stream('marketing-plan.pdf');
+    }
+
     public function projectMarketing( $project_id )
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);

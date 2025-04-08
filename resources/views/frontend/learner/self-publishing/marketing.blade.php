@@ -7,6 +7,11 @@
 @section('content')
     <div class="learner-container">
         <div class="container">
+            @if($standardProject)
+                <a href="{{ route('learner.marketing-download') }}" class="btn btn-primary mb-3">
+                    <i class="fa fa-download"></i> Download
+                </a>
+            @endif
             <div class="card card-global">
                 <div class="table-users table-responsive">
                     <table class="table">
