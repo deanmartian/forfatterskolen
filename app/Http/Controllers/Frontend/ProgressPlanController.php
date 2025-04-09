@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Frontend;
 
 use AdminHelpers;
 use App\CopyEditingManuscript;
+use App\CorrectionManuscript;
 use App\Http\Controllers\Controller;
 use App\ProjectManuscript;
 use App\ProjectRoadmapStep;
@@ -63,6 +64,13 @@ class ProgressPlanController extends Controller {
                     ->where('copy_editing_manuscripts.user_id', Auth::id())
                     ->where('projects.id', $standardProject->id)->latest('copy_editing_manuscripts.created_at')->get() : [];
                 return view('frontend.learner.self-publishing.progress-plan-steps.copy-editing', compact('copyEditings'));
+            case 3:
+                $corrections = CorrectionManuscript::leftJoin('projects', 'correction_manuscripts.project_id', '=', 'projects.id')
+                ->select('correction_manuscripts.*')
+                ->where('correction_manuscripts.user_id', Auth::id())
+                ->where('projects.id', $standardProject->id)
+                ->latest('correction_manuscripts.created_at')->get();
+                return view('frontend.learner.self-publishing.progress-plan-steps.correction', compact('corrections'));
             default:
                 $view = 'frontend.learner.self-publishing.progress-plan-step';
                 break;
@@ -119,8 +127,8 @@ class ProgressPlanController extends Controller {
             $request->merge(['type' => $type]);
 
             $folderName = $type == 1 ? 'copy-editing-manuscripts' : 'correction-manuscripts';
-            $destinationPath = 'Forfatterskolen_app/' . ($data->project_id ? 'project/project-' . $data->project_id . '/' : '') 
-                . $folderName . '/';
+            $projectId = $data->project_id ?? $request->project_id;
+            $destinationPath = "Forfatterskolen_app/project/project-{$projectId}/{$folderName}/";
 
             $requestFilename = 'manuscript';
             $file = \request()->file($requestFilename);
