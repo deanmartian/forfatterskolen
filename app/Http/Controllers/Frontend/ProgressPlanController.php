@@ -32,7 +32,7 @@ class ProgressPlanController extends Controller {
                 return [
                     'step_number' => $number,
                     'title' => $title,
-                    'status' => $step->status ?? 'Ikke påbegynt',
+                    'status_text' => $step->status_text ?? 'Ikke påbegynt',
                     'expected_date' => $step->expected_date ?? null,
                 ];
             });

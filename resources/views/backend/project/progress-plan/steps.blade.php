@@ -26,6 +26,7 @@
                             <th>Title</th>
                             <th>Status</th>
                             <th>Expected Date</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,10 +41,17 @@
                                     </a>
                                 </td>
                                 <td>
-                                    {{ $step['status'] }}
+                                    {{ $step['status_text'] }}
                                 </td>
                                 <td>
                                     {{ $step['expected_date'] }}
+                                </td>
+                                <td>
+                                    <button class="btn btn-xs btn-primary progressPlanBtn" data-toggle="modal" 
+                                    data-target="#progressPlanModal" data-title="Update {{ $step['title'] }}"
+                                    data-record="{{ json_encode($step) }}">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -52,4 +60,61 @@
             </div>
         </div>
     </div>
+
+    <div id="progressPlanModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('admin.project.progress-plan.save') }}"
+                          enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                          @csrf
+                          <input type="hidden" name="step_number">
+                          <input type="hidden" name="project_id" value="{{ $project->id }}">
+
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select name="status" class="form-control">
+                                <option value="not_started">Not Started</option>
+                                <option value="started">Started</option>
+                                <option value="finished">Finished</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Expected Finish</label>
+                            <input type="date" class="form-control" name="expected_date">
+                        </div>
+
+                        <button type="submit" class="btn btn-success pull-right margin-top">
+                            {{ trans('site.save') }}
+                        </button>
+    
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('scripts')
+    <script>
+        $(".progressPlanBtn").click(function() {
+            const modal = $("#progressPlanModal");
+            const title = $(this).data('title');
+            const action = $(this).data('action');
+            const record = $(this).data('record');
+
+            modal.find('.modal-title').text(title);
+            modal.find('form').attr('action', action);
+            modal.find('[name=step_number]').val(record.step_number);
+            modal.find('[name=status]').val(record.status);
+            modal.find('[name=expected_date]').val(record.expected_date);
+        });
+    </script>
 @endsection

@@ -1248,6 +1248,7 @@ Route::group([
         Route::delete('/project/{id}/marketing/{marketing_id}/delete', 'ProjectController@deleteMarketing')->name('admin.project.delete-marketing');
         Route::get('/project/{id}/marketing-plan', 'ProjectController@marketingPlan')->name('admin.project.marketing-plan');
         Route::get('/project/{id}/progress-plan', 'ProjectController@progressPlan')->name('admin.project.progress-plan');
+        Route::post('/project/progress-plan/save', 'ProjectController@progressPlanSave')->name('admin.project.progress-plan.save');
         Route::get('/project/{id}/progress-plan/{step}', 'ProjectController@progressPlanStep')->name('admin.project.progress-plan-step');
         Route::get('/project/{id}/contract', 'ProjectController@contract')->name('admin.project.contract');
         Route::post('/project/{id}/contract', 'ProjectController@storeContract')->name('admin.project.contract-store');

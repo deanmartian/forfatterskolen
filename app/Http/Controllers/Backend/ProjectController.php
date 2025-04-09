@@ -1062,12 +1062,28 @@ class ProjectController extends Controller
             return [
                 'step_number' => $number,
                 'title' => $title,
-                'status' => $step->status ?? 'Ikke påbegynt',
+                'status' => $step->status ?? 'not_started',
+                'status_text' => $step->status_text ?? 'Ikke påbegynt',
                 'expected_date' => $step->expected_date ?? null,
             ];
         });
 
         return view('backend.project.progress-plan.steps', compact('layout', 'backRoute', 'project', 'steps'));
+    }
+
+    public function progressPlanSave(Request $request)
+    {
+        $step = ProjectRoadmapStep::updateOrCreate([
+            'project_id' => $request->project_id,
+            'step_number' => $request->step_number
+        ], [
+            'status' => $request->status,
+            'expected_date' => $request->expected_date
+        ]);
+        
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Record updated successfully.'),
+                'alert_type' => 'success']);
     }
 
     public function progressPlanStep($project_id, $stepNumber)

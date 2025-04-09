@@ -259,7 +259,7 @@
                                     : '—' }} --}}
                                     {{ \Carbon\Carbon::now()->addDays($step['step_number'])->format('d.m.Y')  }}
                                 </p>
-                                <p><strong>Status:</strong> {{ $step['status'] }}</p>
+                                <p><strong>Status:</strong> {{ $step['status_text'] }}</p>
 
                                 {{-- @if ($step['step_number'] == 1)
                                     <ul class="sub-steps">

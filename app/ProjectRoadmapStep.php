@@ -8,6 +8,8 @@ class ProjectRoadmapStep extends Model
 {
     protected $fillable = ['project_id', 'step_number', 'expected_date', 'status'];
 
+    protected $appends = ['status_text'];
+
     public const STEPS = [
         1 => 'Ferdig manuskript',
         2 => 'Språkvask', //'Redaktør & korrektur',
@@ -24,5 +26,10 @@ class ProjectRoadmapStep extends Model
     public function getStepTitleAttribute()
     {
         return self::STEPS[$this->step_number] ?? 'Unknown Step';
+    }
+
+    public function getStatusTextAttribute()
+    {
+        return ucwords(str_replace('_', ' ', $this->status));
     }
 }
