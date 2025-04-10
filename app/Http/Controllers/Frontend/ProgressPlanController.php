@@ -5,7 +5,9 @@ use AdminHelpers;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\Http\Controllers\Controller;
+use App\ProjectGraphicWork;
 use App\ProjectManuscript;
+use App\ProjectRegistration;
 use App\ProjectRoadmapStep;
 use App\Services\ProjectService;
 use Auth;
@@ -71,6 +73,10 @@ class ProgressPlanController extends Controller {
                 ->where('projects.id', $standardProject->id)
                 ->latest('correction_manuscripts.created_at')->get();
                 return view('frontend.learner.self-publishing.progress-plan-steps.correction', compact('corrections'));
+            case 4:
+                $covers = ProjectGraphicWork::cover()->where('project_id', $standardProject->id)->get();
+                $isbns = ProjectRegistration::isbns()->where('project_id', $standardProject->id)->get();
+                return view('frontend.learner.self-publishing.progress-plan-steps.cover', compact('covers', 'isbns'));
             default:
                 $view = 'frontend.learner.self-publishing.progress-plan-step';
                 break;

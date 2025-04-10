@@ -21,7 +21,7 @@
 
                             @if ($standardProject)
                                 <button type="button" class="btn btn-success pull-right coverBtn" data-toggle="modal" 
-                                data-target="#coverModal">
+                                data-target="#coverModal" data-type="cover">
                                     + Add Cover
                                 </button>
                             @endif
