@@ -1093,11 +1093,26 @@ class ProjectController extends Controller
         $backRoute = 'admin.project.progress-plan';
         $stepTitle = ProjectRoadmapStep::STEPS[$stepNumber] ?? 'Ukjent steg'; // Default if step doesn't exist
 
+        $copyEditingFeedbackTemplate = AdminHelpers::emailTemplate('Copy Editing Feedback');
+        $assignEditorRoute = 'admin.other-service.assign-editor';
+        $updateExpectedFinishRoute = 'admin.other-service.update-expected-finish';
+        $otherServiceFeedbackRoute = 'admin.other-service.add-feedback';
+        $otherServiceDownloadFeedbackRoute = 'admin.other-service.download-feedback';
+        $updateStatusRoute = 'admin.other-service.update-status';
+        $otherServiceDeleteRoute = 'admin.other-service.delete';
+        $downloadOtherService = 'admin.other-service.download-doc';
+
         switch($stepNumber) {
             case 1:
                 $manuscripts = ProjectManuscript::where('project_id', $project_id)->get();
                 $view = 'backend.project.progress-plan.manuscripts';
                 return view($view, compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'manuscripts',));
+                break;
+            case 2:
+                return view('backend.project.progress-plan.copy-editing', 
+                    compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'assignEditorRoute',
+                    'updateExpectedFinishRoute', 'otherServiceFeedbackRoute', 'copyEditingFeedbackTemplate', 'updateStatusRoute',
+                    'otherServiceDeleteRoute', 'downloadOtherService', 'otherServiceDownloadFeedbackRoute'));
                 break;
             default:
                 $view = 'frontend.learner.self-publishing.progress-plan-step';

@@ -210,10 +210,11 @@
                                         <td>
                                             @if ($copy_editing->file)
                                                 @if (strpos($copy_editing->file, 'project-'))
-                                                    <a href="{{ route('dropbox.download_file', trim($copy_editing->file)) }}">
+                                                    <a href="{{ url('/dropbox/download/' . trim($copy_editing->file)) }}">
                                                         <i class="fa fa-download" aria-hidden="true"></i>
                                                     </a>&nbsp;
-                                                    <a href="{{ route('dropbox.shared_link', trim($copy_editing->file)) }}" target="_blank">
+                                                    <a href="{{ url('/dropbox/shared-link/' . trim($copy_editing->file)) }}" 
+                                                        target="_blank">
                                                         {{ basename($copy_editing->file) }}
                                                     </a>
                                                 @else
