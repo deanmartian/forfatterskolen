@@ -1094,6 +1094,8 @@ class ProjectController extends Controller
         $stepTitle = ProjectRoadmapStep::STEPS[$stepNumber] ?? 'Ukjent steg'; // Default if step doesn't exist
 
         $copyEditingFeedbackTemplate = AdminHelpers::emailTemplate('Copy Editing Feedback');
+        $correctionFeedbackTemplate = AdminHelpers::emailTemplate('Correction Feedback');
+
         $assignEditorRoute = 'admin.other-service.assign-editor';
         $updateExpectedFinishRoute = 'admin.other-service.update-expected-finish';
         $otherServiceFeedbackRoute = 'admin.other-service.add-feedback';
@@ -1114,6 +1116,12 @@ class ProjectController extends Controller
                     'updateExpectedFinishRoute', 'otherServiceFeedbackRoute', 'copyEditingFeedbackTemplate', 'updateStatusRoute',
                     'otherServiceDeleteRoute', 'downloadOtherService', 'otherServiceDownloadFeedbackRoute'));
                 break;
+            case 3:
+                return view('backend.project.progress-plan.correction',
+                    compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'assignEditorRoute',
+                    'updateExpectedFinishRoute', 'otherServiceFeedbackRoute', 'copyEditingFeedbackTemplate', 'updateStatusRoute',
+                    'otherServiceDeleteRoute', 'downloadOtherService', 'otherServiceDownloadFeedbackRoute',
+                    'correctionFeedbackTemplate'));
             default:
                 $view = 'frontend.learner.self-publishing.progress-plan-step';
                 break;

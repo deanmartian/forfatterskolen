@@ -364,12 +364,12 @@
                                     <tr>
                                         <td>
                                             @if (strpos($correction->file, 'project-'))
-                                                    <a href="{{ route('dropbox.download_file', trim($correction->file)) }}">
-                                                        <i class="fa fa-download" aria-hidden="true"></i>
-                                                    </a>&nbsp;
-                                                    <a href="{{ route('dropbox.shared_link', trim($correction->file)) }}" target="_blank">
-                                                        {{ basename($correction->file) }}
-                                                    </a>
+                                                <a href="{{ url('/dropbox/download/' . trim($correction->file)) }}">
+                                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                                </a>&nbsp;
+                                                <a href="{{ url('/dropbox/shared-link/' . trim($correction->file)) }}" target="_blank">
+                                                    {{ basename($correction->file) }}
+                                                </a>
                                             @else
                                                 @if ($correction->file)
                                                     <a href="{{ route($downloadOtherService, ['id' => $correction->id, 'type' => 2]) }}" download>
