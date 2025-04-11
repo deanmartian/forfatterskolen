@@ -1106,6 +1106,8 @@ class ProjectController extends Controller
         $showGraphicWorkRoute = 'admin.project.cover.show';
         $saveGraphicRoute = 'admin.project.save-graphic-work';
         $deleteGraphicRoute = 'admin.project.delete-graphic-work';
+        $saveEbookRoute = 'admin.project.save-ebook';
+        $deleteEbookRoute = 'admin.project.delete-ebook';
 
         switch($stepNumber) {
             case 1:
@@ -1131,6 +1133,15 @@ class ProjectController extends Controller
                 return view('backend.project.progress-plan.cover',
                     compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'covers', 'showGraphicWorkRoute',
                     'deleteGraphicRoute', 'saveGraphicRoute', 'isbns'));
+            case 5:
+                return "Ombrekk";
+            case 6:
+                $epubs = ProjectEbook::epub()->where('project_id', $project_id)->get();
+                $mobis = ProjectEbook::mobi()->where('project_id', $project_id)->get();
+                $covers = ProjectEbook::cover()->where('project_id', $project_id)->get();
+                return view('backend.project.progress-plan.e-book',
+                    compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'epubs', 'mobis', 'covers',
+                    'saveEbookRoute', 'deleteEbookRoute'));
             default:
                 $view = 'frontend.learner.self-publishing.progress-plan-step';
                 break;

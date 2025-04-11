@@ -6,10 +6,10 @@
 
 @section('content')
 <div class="page-toolbar">
-    <h3><i class="fa fa-file-text-o"></i> Ebook</h3>
-    <a href="{{ $backRoute }}" class="btn btn-default">
+    <a href="{{ route($backRoute, $project->id) }}" class="btn btn-default">
         <i class="fa fa-arrow-left"></i> Back
     </a>
+    <h3><i class="fa fa-file-text-o"></i> Ebook</h3>
 </div>
 
 <div class="col-sm-12 margin-top">

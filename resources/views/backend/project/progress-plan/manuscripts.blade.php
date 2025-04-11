@@ -10,10 +10,10 @@
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-file-text-o"></i> {{ $stepTitle }}</h3>
         <a href="{{ route($backRoute, $project->id) }}" class="btn btn-default">
             <i class="fa fa-arrow-left"></i> Back
         </a>
+        <h3><i class="fa fa-file-text-o"></i> {{ $stepTitle }}</h3>
     </div>
 
     <div class="col-sm-12 margin-top">
