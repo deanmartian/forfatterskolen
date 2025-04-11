@@ -36,10 +36,11 @@
                             @endphp
                             @foreach ($coverFiles as $coverFile)
                                 @if (strpos($coverFile, 'project-'))
-                                    <a href="{{ route('dropbox.download_file', trim($coverFile)) }}">
+                                    <a href="{{ url('/dropbox/download/' . trim($coverFile)) }}">
                                         <i class="fa fa-download" aria-hidden="true"></i>
                                     </a>&nbsp;
-                                    <a href="{{ route('dropbox.shared_link', $coverFile) }}" target="_blank" 
+                                    <a href="{{ url('/dropbox/shared-link/' . trim($coverFile)) }}" 
+                                        target="_blank" 
                                     style="margin-right: 5px">
                                         {{ basename($coverFile) }}
                                     </a>
@@ -57,7 +58,7 @@
                         </td>
                         <td>
                             @if ($cover->print_ready)
-                                <a href="{{ route('dropbox.download_file', trim($cover->print_ready)) }}">
+                                <a href="{{ url('/dropbox/download/' . trim($cover->print_ready)) }}">
                                     <i class="fa fa-download" aria-hidden="true"></i>
                                 </a>&nbsp;
                                 {!! basename($cover->print_ready) !!}

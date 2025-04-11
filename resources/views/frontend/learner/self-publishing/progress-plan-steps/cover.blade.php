@@ -202,7 +202,7 @@
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <div class="modal-body" id="coverModalContent">
+                <div class="modal-body" id="coverModalContent" style="overflow: auto">
                     {{-- Table content will be loaded here dynamically --}}
                 </div>
             </div>

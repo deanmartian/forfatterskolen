@@ -1103,6 +1103,9 @@ class ProjectController extends Controller
         $updateStatusRoute = 'admin.other-service.update-status';
         $otherServiceDeleteRoute = 'admin.other-service.delete';
         $downloadOtherService = 'admin.other-service.download-doc';
+        $showGraphicWorkRoute = 'admin.project.cover.show';
+        $saveGraphicRoute = 'admin.project.save-graphic-work';
+        $deleteGraphicRoute = 'admin.project.delete-graphic-work';
 
         switch($stepNumber) {
             case 1:
@@ -1122,6 +1125,12 @@ class ProjectController extends Controller
                     'updateExpectedFinishRoute', 'otherServiceFeedbackRoute', 'copyEditingFeedbackTemplate', 'updateStatusRoute',
                     'otherServiceDeleteRoute', 'downloadOtherService', 'otherServiceDownloadFeedbackRoute',
                     'correctionFeedbackTemplate'));
+            case 4:
+                $covers = ProjectGraphicWork::cover()->where('project_id', $project_id)->get();
+                $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
+                return view('backend.project.progress-plan.cover',
+                    compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'covers', 'showGraphicWorkRoute',
+                    'deleteGraphicRoute', 'saveGraphicRoute', 'isbns'));
             default:
                 $view = 'frontend.learner.self-publishing.progress-plan-step';
                 break;
