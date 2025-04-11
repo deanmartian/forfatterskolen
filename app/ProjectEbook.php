@@ -29,7 +29,7 @@ class ProjectEbook extends Model
         $filename = $this->attributes['value'];
         $fileLink = NULL;
         if ($filename) {
-            $fileLink = '<a href="'.route('dropbox.shared_link', $filename).'" target="_blank">' .basename($filename).'</a>';
+            $fileLink = '<a href="'.'/dropbox/shared-link/' .  $filename.'" target="_blank">' .basename($filename).'</a>';
         }
         return $fileLink;
     }

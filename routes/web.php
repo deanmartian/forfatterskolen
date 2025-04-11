@@ -376,6 +376,8 @@ Route::group([
             ->name('learner.progress-plan.manuscript.upload');
         Route::post('/progress-plan/other-service/{type}/upload', 'ProgressPlanController@uploadOtherServiceManuscript')
             ->name('learner.project.progress-plan.other-service.upload-manuscript');
+        Route::post('/progress-plan/{project_id}/e-book/save', 'ProgressPlanController@saveEbook')
+            ->name('learner.progress-plan.save-ebook');
         Route::get('/self-publishing/order', 'SelfPublishingController@selfPublishingOrder')->name('learner.self-publishing.order');
         Route::post('/self-publishing/add-to-cart', 'SelfPublishingController@addToCart')->name('learner.self-publishing.add-to-cart');
         Route::get('/self-publishing/order/checkout', 'SelfPublishingController@checkoutOrder')->name('learner.self-publishing.checkout');

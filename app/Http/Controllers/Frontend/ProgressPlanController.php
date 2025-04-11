@@ -5,6 +5,7 @@ use AdminHelpers;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\Http\Controllers\Controller;
+use App\ProjectEbook;
 use App\ProjectGraphicWork;
 use App\ProjectManuscript;
 use App\ProjectRegistration;
@@ -51,11 +52,13 @@ class ProgressPlanController extends Controller {
             abort(404);
         }
 
+        $projectId = $standardProject->id;
         $stepTitle = ProjectRoadmapStep::STEPS[$stepNumber] ?? 'Ukjent steg'; // Default if step doesn't exist
 
         switch($stepNumber) {
             case 1:
-                $manuscripts = ProjectManuscript::where('project_id', $standardProject->id)->get();
+                $manuscripts = ProjectManuscript::where('project_id', $projectId)->get();
+                
                 return view('frontend.learner.self-publishing.progress-plan-steps.manuscripts', 
                     compact('stepNumber', 'stepTitle', 'manuscripts'));
                 break;
@@ -64,19 +67,33 @@ class ProgressPlanController extends Controller {
                 'copy_editing_manuscripts.project_id', '=', 'projects.id')
                     ->select('copy_editing_manuscripts.*')
                     ->where('copy_editing_manuscripts.user_id', Auth::id())
-                    ->where('projects.id', $standardProject->id)->latest('copy_editing_manuscripts.created_at')->get() : [];
+                    ->where('projects.id', $projectId)->latest('copy_editing_manuscripts.created_at')->get() : [];
+
                 return view('frontend.learner.self-publishing.progress-plan-steps.copy-editing', compact('copyEditings'));
             case 3:
                 $corrections = CorrectionManuscript::leftJoin('projects', 'correction_manuscripts.project_id', '=', 'projects.id')
                 ->select('correction_manuscripts.*')
                 ->where('correction_manuscripts.user_id', Auth::id())
-                ->where('projects.id', $standardProject->id)
+                ->where('projects.id', $projectId)
                 ->latest('correction_manuscripts.created_at')->get();
+
                 return view('frontend.learner.self-publishing.progress-plan-steps.correction', compact('corrections'));
             case 4:
-                $covers = ProjectGraphicWork::cover()->where('project_id', $standardProject->id)->get();
-                $isbns = ProjectRegistration::isbns()->where('project_id', $standardProject->id)->get();
+                $covers = ProjectGraphicWork::cover()->where('project_id', $projectId)->get();
+                $isbns = ProjectRegistration::isbns()->where('project_id', $projectId)->get();
+
                 return view('frontend.learner.self-publishing.progress-plan-steps.cover', compact('covers', 'isbns'));
+            case 5:
+                return "Ombrekk";
+                break;
+            case 6:
+                $epubs = ProjectEbook::epub()->where('project_id', $projectId)->get();
+                $mobis = ProjectEbook::mobi()->where('project_id', $projectId)->get();
+                $covers = ProjectEbook::cover()->where('project_id', $projectId)->get();
+                $saveEbookRoute = 'learner.progress-plan.save-ebook';
+
+                return view('frontend.learner.self-publishing.progress-plan-steps.e-book', compact('epubs', 'saveEbookRoute',
+                    'mobis', 'covers'));
             default:
                 $view = 'frontend.learner.self-publishing.progress-plan-step';
                 break;
@@ -165,6 +182,17 @@ class ProgressPlanController extends Controller {
             'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
             'alert_type' => 'success'
         ]);
+    }
+
+    public function saveEbook($projectId, Request $request, ProjectService $projectService )
+    {
+        $request->merge(['project_id' => $projectId]);
+
+        $projectService->saveEbook($request);
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $request->type)) . ' saved successfully.'),
+                'alert_type' => 'success']);
     }
 
 }
