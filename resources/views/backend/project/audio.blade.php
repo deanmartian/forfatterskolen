@@ -27,7 +27,7 @@
                 @foreach ($files as $file)
                     <tr>
                         <td>
-                            <a href="{{ route('dropbox.download_file', trim($file->value)) }}">
+                            <a href="{{ url('/dropbox/download/' . trim($file->value)) }}">
                                 <i class="fa fa-download" aria-hidden="true"></i>
                             </a>&nbsp;
 
@@ -66,7 +66,7 @@
                 @foreach ($covers as $cover)
                     <tr>
                         <td>
-                            <a href="{{ route('dropbox.download_file', trim($cover->value)) }}">
+                            <a href="{{ url('/dropbox/download/' . trim($cover->value)) }}">
                                 <i class="fa fa-download" aria-hidden="true"></i>
                             </a>&nbsp;
 

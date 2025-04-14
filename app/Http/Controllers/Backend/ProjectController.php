@@ -1108,6 +1108,8 @@ class ProjectController extends Controller
         $deleteGraphicRoute = 'admin.project.delete-graphic-work';
         $saveEbookRoute = 'admin.project.save-ebook';
         $deleteEbookRoute = 'admin.project.delete-ebook';
+        $saveAudioRoute = 'admin.project.save-audio';
+        $deleteAudioRoute = 'admin.project.delete-audio';
 
         switch($stepNumber) {
             case 1:
@@ -1142,6 +1144,14 @@ class ProjectController extends Controller
                 return view('backend.project.progress-plan.e-book',
                     compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'epubs', 'mobis', 'covers',
                     'saveEbookRoute', 'deleteEbookRoute'));
+
+            case 7:
+                $files = ProjectAudio::files()->where('project_id', $project_id)->get();
+                $covers = ProjectAudio::cover()->where('project_id', $project_id)->get();
+
+                return view('backend.project.progress-plan.audio', 
+                    compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'files', 'covers', 'saveAudioRoute',
+                    'deleteAudioRoute'));
             default:
                 $view = 'frontend.learner.self-publishing.progress-plan-step';
                 break;
