@@ -17,7 +17,7 @@ class ProjectRoadmapStep extends Model
         4 => 'Omslag',//'ISBN & metadata',
         5 => 'Ombrekk',//'Publisering',
         6 => 'Ebok',//'Markedsføring',
-        7 => 'Lybok',//'Oppfølging & salg',
+        7 => 'Lydbok',//'Oppfølging & salg',
         /* 8 => 'Publisering (sende til trykk)',
         9 => 'Utsending av bøker når de har kommet inn på lager',
         10 => 'Markedføring', */

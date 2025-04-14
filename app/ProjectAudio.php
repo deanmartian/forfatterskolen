@@ -25,7 +25,7 @@ class ProjectAudio extends Model
         $filename = $this->attributes['value'];
         $fileLink = NULL;
         if ($filename) {
-            $fileLink = '<a href="'.route('dropbox.shared_link', $filename).'" target="_blank">' .basename($filename).'</a>';
+            $fileLink = '<a href="'.url('/dropbox/shared-link/' . trim($filename)).'" target="_blank">' .basename($filename).'</a>';
         }
         return $fileLink;
     }

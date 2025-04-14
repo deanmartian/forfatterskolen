@@ -5,6 +5,7 @@ use AdminHelpers;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\Http\Controllers\Controller;
+use App\ProjectAudio;
 use App\ProjectEbook;
 use App\ProjectGraphicWork;
 use App\ProjectManuscript;
@@ -58,7 +59,7 @@ class ProgressPlanController extends Controller {
         switch($stepNumber) {
             case 1:
                 $manuscripts = ProjectManuscript::where('project_id', $projectId)->get();
-                
+
                 return view('frontend.learner.self-publishing.progress-plan-steps.manuscripts', 
                     compact('stepNumber', 'stepTitle', 'manuscripts'));
                 break;
@@ -94,6 +95,13 @@ class ProgressPlanController extends Controller {
 
                 return view('frontend.learner.self-publishing.progress-plan-steps.e-book', compact('epubs', 'saveEbookRoute',
                     'mobis', 'covers'));
+            case 7:
+                $files = ProjectAudio::files()->where('project_id', $projectId)->get();
+                $covers = ProjectAudio::cover()->where('project_id', $projectId)->get();
+                $saveAudioRoute = 'learner.progress-plan.save-audio';
+
+                return view('frontend.learner.self-publishing.progress-plan-steps.audio', compact('stepTitle', 'files', 'covers',
+                'saveAudioRoute'));
             default:
                 $view = 'frontend.learner.self-publishing.progress-plan-step';
                 break;
@@ -189,6 +197,18 @@ class ProgressPlanController extends Controller {
         $request->merge(['project_id' => $projectId]);
 
         $projectService->saveEbook($request);
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $request->type)) . ' saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function saveAudio( $project_id, Request $request, ProjectService $projectService )
+    {
+        $request->merge(['project_id' => $project_id]);
+        
+
+        $projectService->saveAudio($request);
 
         return redirect()->back()
             ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $request->type)) . ' saved successfully.'),

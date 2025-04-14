@@ -378,6 +378,7 @@ Route::group([
             ->name('learner.project.progress-plan.other-service.upload-manuscript');
         Route::post('/progress-plan/{project_id}/e-book/save', 'ProgressPlanController@saveEbook')
             ->name('learner.progress-plan.save-ebook');
+        Route::post('/progress-plan/{id}/audio/save', 'ProgressPlanController@saveAudio')->name('learner.progress-plan.save-audio');
         Route::get('/self-publishing/order', 'SelfPublishingController@selfPublishingOrder')->name('learner.self-publishing.order');
         Route::post('/self-publishing/add-to-cart', 'SelfPublishingController@addToCart')->name('learner.self-publishing.add-to-cart');
         Route::get('/self-publishing/order/checkout', 'SelfPublishingController@checkoutOrder')->name('learner.self-publishing.checkout');
