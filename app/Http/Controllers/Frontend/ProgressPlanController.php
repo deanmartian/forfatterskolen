@@ -11,6 +11,7 @@ use App\ProjectGraphicWork;
 use App\ProjectManuscript;
 use App\ProjectRegistration;
 use App\ProjectRoadmapStep;
+use App\ProjectTypeSetting;
 use App\Services\ProjectService;
 use Auth;
 use FrontendHelpers;
@@ -85,8 +86,8 @@ class ProgressPlanController extends Controller {
 
                 return view('frontend.learner.self-publishing.progress-plan-steps.cover', compact('covers', 'isbns'));
             case 5:
-                return "Ombrekk";
-                break;
+                $settings = ProjectTypeSetting::where('project_id', $projectId)->get();
+                return view('frontend.learner.self-publishing.progress-plan-steps.type_setting', compact('stepTitle', 'settings'));
             case 6:
                 $epubs = ProjectEbook::epub()->where('project_id', $projectId)->get();
                 $mobis = ProjectEbook::mobi()->where('project_id', $projectId)->get();
@@ -215,4 +216,40 @@ class ProgressPlanController extends Controller {
                 'alert_type' => 'success']);
     }
 
+    public function uploadTypeSetting(Request $request)
+    {
+        $extensions = ['pdf', 'doc', 'docx', 'odt'];
+        
+        if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
+            $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION);
+            $actual_name = pathinfo($_FILES['manuscript']['name'],PATHINFO_FILENAME);
+
+            if( !in_array($extension, $extensions) ) :
+                return redirect()->back()->with(
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                );
+            endif;
+
+            $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
+            $destinationPath = 'Forfatterskolen_app/project/project-'. $standardProject->id . '/type-setting/';
+            $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension);
+            $expFileName = explode('/', $fileName);
+            $dropboxFileName = end($expFileName);
+
+            $request->file('manuscript')->storeAs($destinationPath, $dropboxFileName, 'dropbox');
+            $wholeFilePath = $destinationPath . $dropboxFileName;
+            $filePath = "/".$wholeFilePath;
+
+            ProjectTypeSetting::create([
+                'project_id' => $standardProject->id,
+                'file' => $filePath
+            ]);
+
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
+                'alert_type' => 'success'
+            ]);
+        }
+        
+    }
 }
