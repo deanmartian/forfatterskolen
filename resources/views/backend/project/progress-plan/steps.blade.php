@@ -79,6 +79,7 @@
                         <div class="form-group">
                             <label>Status</label>
                             <select name="status" class="form-control">
+                                <option value="not_planned">Not Planned</option>
                                 <option value="not_started">Not Started</option>
                                 <option value="started">Started</option>
                                 <option value="finished">Finished</option>

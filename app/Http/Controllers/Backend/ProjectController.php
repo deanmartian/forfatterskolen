@@ -1064,7 +1064,7 @@ class ProjectController extends Controller
                 'step_number' => $number,
                 'title' => $title,
                 'status' => $step->status ?? 'not_started',
-                'status_text' => $step->status_text ?? 'Ikke påbegynt',
+                'status_text' => $step->status_text ?? 'Not Planned',
                 'expected_date' => $step->expected_date ?? null,
             ];
         });
