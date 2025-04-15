@@ -40,6 +40,7 @@ use App\ProjectRegistration;
 use App\ProjectRegistrationDistribution;
 use App\ProjectRoadmapStep;
 use App\ProjectTask;
+use App\ProjectTypeSetting;
 use App\ProjectWholeBook;
 use App\SelfPublishing;
 use App\Services\LearnerService;
@@ -1136,7 +1137,10 @@ class ProjectController extends Controller
                     compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'covers', 'showGraphicWorkRoute',
                     'deleteGraphicRoute', 'saveGraphicRoute', 'isbns'));
             case 5:
-                return "Ombrekk";
+                $settings = ProjectTypeSetting::where('project_id', $project_id)->get();
+                
+                return view('backend.project.progress-plan.type_setting', 
+                    compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'settings'));
             case 6:
                 $epubs = ProjectEbook::epub()->where('project_id', $project_id)->get();
                 $mobis = ProjectEbook::mobi()->where('project_id', $project_id)->get();
