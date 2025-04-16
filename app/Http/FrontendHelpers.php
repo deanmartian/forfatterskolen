@@ -1324,4 +1324,25 @@ class FrontendHelpers
         
         return count($words);
     }
+
+    public static function parseShortcodes($content)
+    {
+        return preg_replace_callback('/\[video\s+([^\]]+)\]/i', function ($matches) {
+            $attributes = [];
+            preg_match_all('/(\w+)="([^"]+)"/', $matches[1], $attr_matches, PREG_SET_ORDER);
+    
+            foreach ($attr_matches as $attr) {
+                $attributes[$attr[1]] = $attr[2];
+            }
+    
+            $src = isset($attributes['src']) ? htmlspecialchars($attributes['src'], ENT_QUOTES) : '';
+            $width = isset($attributes['width']) ? intval($attributes['width']) : 600;
+            $height = isset($attributes['height']) ? intval($attributes['height']) : 300;
+    
+            if (!$src) return ''; // invalid shortcode with no src
+    
+            return '<iframe width="' . $width . '" height="' . $height . '" src="' . $src . '" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>';
+        }, $content);
+    }
+    
 }

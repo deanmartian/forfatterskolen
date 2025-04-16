@@ -130,7 +130,10 @@
 							@endif
 						@else
 						<!-- if course is not webinar pakke then use old structure -->
-							{!! html_entity_decode($lesson->content) !!}
+							{{-- {!! html_entity_decode($lesson->content) !!} --}} {{-- old --}}
+							{{-- {!! FrontendHelpers::parseShortcodes($lesson->content) !!} --}}
+							{{-- need to be on decode to make old iframe work --}}
+							{!! html_entity_decode(FrontendHelpers::parseShortcodes($lesson->content)) !!}
 						@endif
 					</div>
 				</div>
