@@ -1164,6 +1164,15 @@
                                    application/pdf, application/vnd.oasis.opendocument.text">
 						{{ trans('site.docx-pdf-odt-text') }} <br>
 					</div>
+
+					<div class="form-group">
+						<label>
+							Send Email
+						</label>
+						<br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"name="send_email" data-width="84">
+					</div>
+
 					<div class="clearfix"></div>
 					<button type="submit" class="btn btn-primary pull-right margin-top" id="sendFeedbackEmail">{{ trans('site.approve-feedback') }}</button>
 					<div class="clearfix"></div>
