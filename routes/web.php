@@ -379,6 +379,7 @@ Route::group([
         Route::post('/progress-plan/{project_id}/e-book/save', 'ProgressPlanController@saveEbook')
             ->name('learner.progress-plan.save-ebook');
         Route::post('/progress-plan/{id}/audio/save', 'ProgressPlanController@saveAudio')->name('learner.progress-plan.save-audio');
+        Route::post('/progress-plan/{id}/print/save', 'ProgressPlanController@savePrint')->name('learner.progress-plan.save-print');
         Route::post('/progress-plan/type-setting/upload', 'ProgressPlanController@uploadTypeSetting')
             ->name('learner.progress-plan.type-setting.upload');
         Route::get('/self-publishing/order', 'SelfPublishingController@selfPublishingOrder')->name('learner.self-publishing.order');

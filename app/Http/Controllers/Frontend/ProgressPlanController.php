@@ -38,7 +38,7 @@ class ProgressPlanController extends Controller {
                 return [
                     'step_number' => $number,
                     'title' => $title,
-                    'status_text' => $step->status_text ?? 'Ikke påbegynt',
+                    'status_text' => $step->status_text ?? 'Not Planned',
                     'expected_date' => $step->expected_date ?? null,
                 ];
             });
@@ -103,6 +103,11 @@ class ProgressPlanController extends Controller {
 
                 return view('frontend.learner.self-publishing.progress-plan-steps.audio', compact('stepTitle', 'files', 'covers',
                 'saveAudioRoute'));
+            case 8:
+                $print = $standardProject->print;
+                $savePrintRoute = 'learner.progress-plan.save-print';
+                return view('frontend.learner.self-publishing.progress-plan-steps.print', compact('stepTitle', 'print',
+                    'savePrintRoute'));
             default:
                 $view = 'frontend.learner.self-publishing.progress-plan-step';
                 break;
@@ -214,6 +219,56 @@ class ProgressPlanController extends Controller {
         return redirect()->back()
             ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $request->type)) . ' saved successfully.'),
                 'alert_type' => 'success']);
+    }
+
+    public function savePrint($project_id, Request $request, ProjectService $projectService)
+    {
+        try {
+            $this->validate($request, [
+                'isbn' => 'required',
+                'number' => 'required',
+                'pages' => 'required',
+                'width' => 'required',
+                'height' => 'required',
+                'number_of_color_pages' => 'required',
+            ]);
+    
+            $format = $request->input('format');
+            $customFormat = $request->width  . "x" . $request->height;
+    
+            // If "Other" is selected, use the custom format
+            if ((empty($format) || is_null($format)) && !empty($request->width) && !empty($request->height)) {
+                $finalFormat = $customFormat;
+            } else {
+                // Use the selected predefined format
+                $finalFormat = $format;
+            }
+    
+            // Merge project_id and final format into the request
+            $request->merge([
+                'project_id' => $project_id,
+                'format' => $finalFormat
+            ]);
+    
+            // Save the print details via the service
+            $projectService->savePrint($request);
+    
+            // Return a JSON success response for AJAX
+            return response()->json(['success' => true, 'message' => 'Print details saved successfully.']);
+    
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return validation errors as a JSON response
+            return response()->json([
+                'success' => false,
+                'errors' => $e->validator->errors()
+            ], 422); // Use 422 Unprocessable Entity status code for validation errors
+        } catch (\Exception $e) {
+            // Handle any other error and return a JSON error response
+            return response()->json([
+                'success' => false, 
+                'message' => 'Failed to save print details. Error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function uploadTypeSetting(Request $request)

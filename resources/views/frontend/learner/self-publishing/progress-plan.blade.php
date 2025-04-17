@@ -254,10 +254,10 @@
                                     </a>
                                 </div>
                                 <p class="timeline-date"><strong>Forventet dato:</strong> 
-                                    {{-- {{ $step['expected_date'] 
+                                    {{ $step['expected_date'] 
                                     ? \Carbon\Carbon::parse($step['expected_date'])->format('d.m.Y') 
-                                    : '—' }} --}}
-                                    {{ \Carbon\Carbon::now()->addDays($step['step_number'])->format('d.m.Y')  }}
+                                    : '—' }}
+                                    {{-- {{ \Carbon\Carbon::now()->addDays($step['step_number'])->format('d.m.Y')  }} --}}
                                 </p>
                                 <p><strong>Status:</strong> {{ $step['status_text'] }}</p>
 
