@@ -1156,6 +1156,13 @@ class ProjectController extends Controller
                 return view('backend.project.progress-plan.audio', 
                     compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'files', 'covers', 'saveAudioRoute',
                     'deleteAudioRoute'));
+
+            case 8:
+                $print = $project->print;
+                $savePrintRoute = 'admin.project.save-print';
+
+                return view('backend.project.progress-plan.print',
+                    compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'print', 'savePrintRoute'));
             default:
                 $view = 'frontend.learner.self-publishing.progress-plan-step';
                 break;
