@@ -1170,11 +1170,33 @@
 							Send Email
 						</label>
 						<br>
-						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"name="send_email" data-width="84">
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"name="send_email" data-width="84"
+							class="send-email-toggle">
+					</div>
+
+					<div class="send-email-container hide">
+						<?php
+							$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Self Publishing Feedback');
+						?>
+						<div class="form-group">
+							<label>{{ trans('site.subject') }}</label>
+							<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
+								   required>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.from') }}</label>
+							<input type="text" class="form-control" name="from_email"
+								   value="{{ $emailTemplate->from_email }}" required>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.message') }}</label>
+							<textarea class="form-control tinymce" name="email_content" rows="6"
+									  required>{!! $emailTemplate->email_content !!}</textarea>
+						</div>
 					</div>
 
 					<div class="clearfix"></div>
-					<button type="submit" class="btn btn-primary pull-right margin-top" id="sendFeedbackEmail">{{ trans('site.approve-feedback') }}</button>
+					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.approve-feedback') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -1265,6 +1287,15 @@
         let is_checked = $(this).prop('checked');
         let container = $(".follow-up-container");
         container.addClass('hide');
+        if (is_checked) {
+            container.removeClass('hide');
+		}
+	});
+
+	$("#selfPublishingApproveFeedbackModal .send-email-toggle").change(function() {
+		let is_checked = $(this).prop('checked');
+		let container = $("#selfPublishingApproveFeedbackModal .send-email-container");
+		container.addClass('hide');
         if (is_checked) {
             container.removeClass('hide');
 		}
