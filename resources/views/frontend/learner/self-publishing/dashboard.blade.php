@@ -99,6 +99,25 @@
                         </div>
                     </div>
                 </div>
+
+                @if (count($inventorySummaries))
+                    <div class="col-md-4">
+                        <div class="card global-card">
+                            <h3>
+                                Available book in store
+                            </h3>
+                            <ul>
+                                @foreach ( $inventorySummaries as $inventorySummary )
+                                    <li>
+                                        <span style="color: #862736">
+                                            {{ $inventorySummary['isbn'] }}
+                                        </span> : {{ $inventorySummary['total_balance'] }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div> <!-- end container -->
     </div>

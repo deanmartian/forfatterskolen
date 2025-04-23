@@ -167,10 +167,110 @@ class LearnerController extends Controller
             ->pluck('self_publishing_id')->toArray();
         $selfPublishingList = SelfPublishing::whereIn('id', $selfPublishingLearners)->get(); */
         $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
+        $inventorySummaries = [];
         $selfPublishingList = $standardProject 
             ? SelfPublishing::where('project_id', $standardProject->id)->latest()->get() 
             : [];        
         $projects = Project::where('user_id', Auth::user()->id)->get();
+
+        if ($standardProject) {
+            $projectCentralDistributions = $standardProject->registrations()
+                ->where('field', 'central-distribution')
+                ->where('in_storage', 1)
+                ->get()
+                ->filter(function ($distribution) use ($standardProject) {
+                    return $standardProject->registrations()
+                        ->where('field', 'ISBN')
+                        ->where('value', $distribution->value)
+                        ->whereIn('type', [1, 2])
+                        ->exists();
+                });
+
+            $types = [
+                'quantity-sold' => 'Quantity Sold',
+                'turned-over' => 'Turned Over',
+                'free' => 'Free',
+                'commission' => 'Commission',
+                'shredded' => 'Shredded',
+                'defective' => 'Defective',
+                'corrections' => 'Corrections',
+                'counts' => 'Counts',
+                //'returns' => 'Returns'
+            ];
+
+            foreach ($projectCentralDistributions as $distribution) {
+                $inventorySalesGroup = StorageSale::where('project_book_id', $distribution->id)
+                    ->where('type', 'like', 'inventory_%')
+                    ->select('type', \DB::raw('SUM(value) as total_sales'))
+                    ->groupBy('type')
+                    ->get();
+
+                $inventoryPhysicalItems = 0;
+                $inventoryDelivered = 0;
+                $inventoryReturns = 0;
+
+                foreach ($inventorySalesGroup as $sale) {
+                    switch ($sale->type) {
+                        case 'inventory_physical_items':
+                            $inventoryPhysicalItems = $sale->total_sales;
+                            break;
+                        case 'inventory_delivered':
+                            $inventoryDelivered = $sale->total_sales;
+                            break;
+                        case 'inventory_returns':
+                            $inventoryReturns = $sale->total_sales;
+                            break;
+                    }
+                }
+
+                $inventoryTotal = $inventoryPhysicalItems + $inventoryDelivered + $inventoryReturns;
+
+                $baseQuery = ProjectBookSale::leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
+                    ->where('project_registration_id', $distribution->id)
+                    ->where('project_id', $standardProject->id);
+
+                $quantitySold = (clone $baseQuery)
+                    ->when(request()->filled('year') && request('year') != 'all', function ($query) {
+                        $query->whereYear('date', request('year'));
+                    })
+                    ->when(request()->filled('month') && request('month') != 'all', function ($query) {
+                        $query->whereMonth('date', request('month'));
+                    })
+                    ->sum('quantity');
+
+                $totalQuantitySold = (clone $baseQuery)->sum('quantity');
+
+                $dataMapper = function ($typeKey, $typeName, $field) use ($distribution, $quantitySold) {
+                    return [
+                        'name' => $typeName,
+                        'value' => $typeKey == 'quantity-sold' 
+                            ? $quantitySold 
+                            : ($distribution ? $this->storageSalesByTypeArray($distribution->id, $typeKey)[$field] : 0),
+                    ];
+                };
+                
+                $overallData = array_map(function ($key, $name) use ($dataMapper) {
+                    return $dataMapper($key, $name, 'overall');
+                }, array_keys($types), $types);
+                
+                $calculatedBalance = array_reduce($overallData, function($sum, $data) {
+                    return !in_array($data['name'], ['Quantity Sold']) ? $sum + $data['value'] : $sum;
+                }, 0);
+
+                $totalBalance = $inventoryTotal - ($calculatedBalance + $totalQuantitySold);
+
+                $inventorySummaries[] = [
+                    'registration_id' => $distribution->id,
+                    'isbn' => $distribution->value,
+                    'inventory_physical_items' => $inventoryPhysicalItems,
+                    'inventory_delivered'      => $inventoryDelivered,
+                    'inventory_returns'        => $inventoryReturns,
+                    'inventory_total'          => $inventoryTotal,
+                    'quantity_sold'            => $totalQuantitySold,
+                    'total_balance'            => $totalBalance
+                ];  
+            }
+        }
 
         $dashboardCalendar = $this->dashboardCalendar();
         $freeCourses = FrontendHelpers::getFreeCourses();
@@ -180,7 +280,7 @@ class LearnerController extends Controller
             : 'frontend.learner.dashboard';
 
         return view($view, compact('surveys', 'assignments', 'selfPublishingList', 'coursesTaken', 'invoices',
-            'dashboardCalendar', 'freeCourses', 'projects'));
+            'dashboardCalendar', 'freeCourses', 'projects', 'inventorySummaries'));
     }
 
 
@@ -5542,5 +5642,26 @@ class LearnerController extends Controller
         ->when(request()->filled('month') && request('month') != 'all', function ($query) {
             $query->whereMonth('date', request('month'));
         })->sum('value');
+    }
+
+    private function storageSalesByTypeArray($user_book_for_sale_id, $type) {
+        $baseQuery = StorageSale::where('project_book_id', $user_book_for_sale_id)
+            ->where('type', $type);
+    
+        $sales = (clone $baseQuery)
+            ->when(request()->filled('year') && request('year') != 'all', function ($query) {
+                $query->whereYear('date', request('year'));
+            })
+            ->when(request()->filled('month') && request('month') != 'all', function ($query) {
+                $query->whereMonth('date', request('month'));
+            })
+            ->sum('value');
+    
+        $overallSales = (clone $baseQuery)->sum('value');
+    
+        return [
+            'yearly' => $sales,
+            'overall' => $overallSales,
+        ];
     }
 }
