@@ -42,7 +42,7 @@
                                 <button class="btn btn-danger btn-xs deleteBtn" data-toggle="modal"
                                         data-target="#deleteModal"
                                         data-title="Delete Inventory Sale"
-                                        data-action="{{ route($deleteStorageSaleRoute, $sale->id) }}">
+                                        onclick="showDeleteSalesModal({{ $sale->id }})">
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </td>
