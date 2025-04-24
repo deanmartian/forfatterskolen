@@ -10,6 +10,7 @@
                 'defective' => $defectiveCount,
                 'corrections' => $correctionsCount,
                 'counts' => $countsCount,
+                'balance' => $balanceCount
                 //'returns' => $returnsCount
             ] as $label => $count)
                 <div class="row">

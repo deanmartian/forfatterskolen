@@ -257,7 +257,10 @@ class LearnerController extends Controller
                     return !in_array($data['name'], ['Quantity Sold']) ? $sum + $data['value'] : $sum;
                 }, 0);
 
-                $totalBalance = $inventoryTotal - ($calculatedBalance + $totalQuantitySold);
+                $balanceCount = $this->salesReportCounter($distribution->id, 'balance');
+
+                $totalBalance = $balanceCount ? $balanceCount 
+                    : $inventoryTotal - ($calculatedBalance + $totalQuantitySold);
 
                 $inventorySummaries[] = [
                     'registration_id' => $distribution->id,

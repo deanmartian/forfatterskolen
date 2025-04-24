@@ -1565,7 +1565,7 @@ class ProjectController extends Controller
         }
         $inventoryTotal = $inventoryPhysicalItems + $inventoryDelivered + $inventoryReturns;
             
-        $categories = ['quantity-sold', 'turned-over', 'free', 'commission', 'shredded'];
+        //$categories = ['quantity-sold', 'turned-over', 'free', 'commission', 'shredded'];
 
         $categories = ['quantitySoldCount' => 'quantity-sold', 'turnedOverCount' => 'turned-over', 
         'freeCount' => 'free', 'commissionCount' => 'commission', 'shreddedCount' => 'shredded',
@@ -1633,8 +1633,10 @@ class ProjectController extends Controller
         
         // Deduct the "Free" value from the total balance
         $calculatedBalance -= $freeValue; */
+        $balanceCount = $this->salesReportCounter($project_book_id, 'balance');
 
-        $totalBalance = $inventoryTotal - ($calculatedBalance + $totalQuantitySold);
+        $totalBalance = $balanceCount ? $balanceCount 
+            : $inventoryTotal - ($calculatedBalance + $totalQuantitySold);
 
         /* $yearlyData = [
             [
@@ -1760,7 +1762,7 @@ class ProjectController extends Controller
         'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'importBookSaleRoute', 'deleteBookSaleRoute', 
         'centralISBNs', 'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories),
         'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns', 'totalBalance', 'inventoryTotal', 'quantitySold',
-        'totalQuantitySold', 'storageCosts', 'registration_id', 'projectBookSales', 'paidDistributionYears'));
+        'totalQuantitySold', 'storageCosts', 'registration_id', 'projectBookSales', 'paidDistributionYears', 'balanceCount'));
     }
 
     public function saveStorageBook($projectId, Request $request)
