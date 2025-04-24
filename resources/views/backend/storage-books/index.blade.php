@@ -10,6 +10,7 @@
             <thead>
                 <tr>
                     <th>ISBN</th>
+                    <th>Type</th>
                     <th>Book Name</th>
                 </tr>
             </thead>
@@ -21,6 +22,9 @@
                                 [$projectCentralDistribution->project_id, $projectCentralDistribution->id]) }}">
                                 {{ $projectCentralDistribution->value }}
                             </a>
+                        </td>
+                        <td>
+                            {{ $projectCentralDistribution->isbn_type }}
                         </td>
                         <td>
                             {{ $projectCentralDistribution->book_name }}
