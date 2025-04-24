@@ -1258,7 +1258,12 @@ class ProjectController extends Controller
 
     public function storeContract( $project_id, Request $request, ProjectService $projectService )
     {
-        $contract = $projectService->saveContract( $request->merge(['project_id' => $project_id]) );
+        $data = $request->merge([
+            'project_id' => $project_id,
+            'admin_name' => 'Sven Inge Henningsen',
+            'admin_signature' => 'storage/contract-signatures/sign.jpg'
+        ]);
+        $contract = $projectService->saveContract( $data );
 
         $route = 'admin.project.contract-edit';
         if (AdminHelpers::isGiutbokPage()) {
@@ -1288,13 +1293,14 @@ class ProjectController extends Controller
         $backRoute = route('admin.project.contract', $project_id);
         $route = route('admin.project.contract-update', [$project_id, $contract['id']]);
         $layout = 'backend.layout';
+        $project = Project::find($project_id);
         if (AdminHelpers::isGiutbokPage()) {
             $backRoute = route('g-admin.project.contract', $project_id);
             $layout = 'giutbok.layout';
             $route = route('g-admin.project.contract-update', [$project_id, $contract['id']]);
         }
         return view('backend.contract.form', compact('route', 'action', 'contract', 'title', 'backRoute',
-            'layout'));
+            'layout', 'project'));
     }
 
     /**
@@ -1720,7 +1726,7 @@ class ProjectController extends Controller
             // Initialize distribution values for all quarters
             foreach ($quarters as $quarter) {
                 $distributions[$quarter] = isset($distributionsData[$year]) 
-                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0)
+                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
                     : 0;
             }
         
@@ -2032,7 +2038,7 @@ class ProjectController extends Controller
 
             foreach ($quarters as $quarter) {
                 $distributions[$quarter] = isset($distributionsData[$year]) 
-                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0)
+                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
                     : 0;
             }
 
@@ -2117,7 +2123,7 @@ class ProjectController extends Controller
 
             foreach ($quarters as $quarter) {
                 $distributions[$quarter] = isset($distributionsData[$year]) 
-                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0)
+                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
                     : 0;
             }
 

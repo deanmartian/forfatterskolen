@@ -2142,7 +2142,7 @@ class LearnerController extends Controller
                 // Initialize distribution values for all quarters
                 foreach ($quarters as $quarter) {
                     $distributions[$quarter] = isset($distributionsData[$year]) 
-                        ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0)
+                        ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
                         : 0;
                 }
             
@@ -2206,7 +2206,7 @@ class LearnerController extends Controller
 
             foreach ($quarters as $quarter) {
                 $distributions[$quarter] = isset($distributionsData[$year]) 
-                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0)
+                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
                     : 0;
             }
 
