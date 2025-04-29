@@ -7,6 +7,7 @@ use App\ContractTemplate;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Mail\SubjectBodyEmail;
+use App\Project;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -229,7 +230,7 @@ class ContractController extends Controller
         $email_message = $request->message . "<br/> <a href='" . route('front.contract-view', $contract->code)
             ."' class='view-contract'>View Contract</a>";
 
-        $to = $request->email;
+        $to = 'elybutabara@gmail.com';//$request->email;
         $emailData['email_subject'] = $request->subject;
         $emailData['email_message'] = $email_message;
         $emailData['from_name'] = NULL;
@@ -241,6 +242,7 @@ class ContractController extends Controller
 
         $contract->receiver_name = $request->name;
         $contract->receiver_email = $request->email;
+        $contract->send_date = now();
         $contract->save();
 
         return redirect()->back()

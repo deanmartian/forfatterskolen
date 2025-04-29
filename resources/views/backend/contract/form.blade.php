@@ -322,17 +322,24 @@
                         <h4 class="modal-title">Send Contract</h4>
                     </div>
                     <div class="modal-body">
-                        <form method="POST" action="{{route('admin.contract.send-contract', $contract['id'])}}">
+                        <form method="POST" action="{{route('admin.contract.send-contract', $contract['id'])}}"
+                            onsubmit="disableSubmit(this)">
                             {{csrf_field()}}
+                            @php
+                                $name = isset($project) && $project->user ? $project->user->full_name : '';
+                                $email = isset($project) && $project->user ? $project->user->email : '';
+                                $project_id = isset($project) ? $project->id : '';
+                            @endphp
+                            <input type="hidden" name="project_id" value="{{ $project_id }}">
 
                             <div class="form-group">
                                 <label>Name</label>
-                                <input type="text" name="name" class="form-control" required>
+                                <input type="text" name="name" class="form-control" value="{{ $name }}" required>
                             </div>
 
                             <div class="form-group">
                                 <label>Email</label>
-                                <input type="email" name="email" class="form-control" required>
+                                <input type="email" name="email" class="form-control" value="{{ $email }}" required>
                             </div>
 
                             <div class="form-group">

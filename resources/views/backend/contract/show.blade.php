@@ -42,7 +42,39 @@
                 <img src="{{ asset($contract->image) }}" alt="" class="top-image">
             @endif
 
-            {!! $contract->details !!}
+            @php
+            $contractDetails = $contract->details;
+
+            if($contract->project_id) {
+                $project = $contract->project;
+                $name = $contract->receiver_name;
+                $address = $project->user->full_address;
+                $sendDate = FrontendHelpers::formatDate($contract->send_date);
+                $adminName = $contract->admin_name;
+                $adminSignature = "<img src='".asset($contract->admin_signature)."' class='admin-signature'>";
+                $userSignature = $contract->signature ? "<img src='" . asset($contract->signature) . "' class='user-signature'>" 
+                    : '[user_signature]';
+
+                $contractDetails = str_replace([
+                    '[name]',
+                    '[address]',
+                    '[send_date]',
+                    '[user_name]',
+                    '[admin_name]',
+                    '[admin_signature]',
+                    '[user_signature]'
+                ], [
+                    $name,
+                    $address,
+                    $sendDate,
+                    $name,
+                    $adminName,
+                    $adminSignature,
+                    $userSignature
+                ], $contractDetails);
+            }
+        @endphp
+        {!! $contractDetails !!}
 
             @if($contract->is_file)
                 <iframe src="{{ $contract->signed_file }}" frameborder="0" width="100%" height="800" allowfullscreen></iframe>

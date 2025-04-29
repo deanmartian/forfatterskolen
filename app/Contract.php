@@ -27,6 +27,7 @@ class Contract extends Model
         'signed_file',
         'end_date',
         'signed_date',
+        'send_date',
         'is_file',
         'status'
     ];
@@ -46,6 +47,11 @@ class Contract extends Model
     public function scopeAdminOnly($query)
     {
         return $query->where('status', 1);
+    }
+
+    public function project()
+    {
+        return $this->belongsTo('App\Project');
     }
 
     /**

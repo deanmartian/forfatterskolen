@@ -232,6 +232,14 @@
             opacity: 0.35;
         }
 
+        .admin-signature {
+            height: 200px;
+            width: 272px;
+            object-fit: contain;
+            margin-left: -18px;
+            margin-top: -45px;
+        }
+
         @media print {
             .actions-bar, .signature-note-container {
                 display: none;
@@ -267,7 +275,39 @@
             <img src="{{ asset($contract->image) }}" alt="" class="top-image">
         @endif
 
-        {!! $contract->details !!}
+        @php
+            $contractDetails = $contract->details;
+
+            if($contract->project_id) {
+                $project = $contract->project;
+                $name = $contract->receiver_name; //$project->user->full_name;
+                $address = $project->user->full_address;
+                $sendDate = FrontendHelpers::formatDate($contract->send_date);
+                $adminName = $contract->admin_name;
+                $adminSignature = "<img src='".asset($contract->admin_signature)."' class='admin-signature'>";
+                $userSignature = $contract->signature ? "<img src='" . asset($contract->signature) . "' class='user-signature'>" 
+                    : '[user_signature]';
+
+                $contractDetails = str_replace([
+                    '[name]',
+                    '[address]',
+                    '[send_date]',
+                    '[user_name]',
+                    '[admin_name]',
+                    '[admin_signature]',
+                    '[user_signature]'
+                ], [
+                    $name,
+                    $address,
+                    $sendDate,
+                    $name,
+                    $adminName,
+                    $adminSignature,
+                    $userSignature
+                ], $contractDetails);
+            }
+        @endphp
+        {!! $contractDetails !!}
 
 
             <div style="padding: 30px 0; width: auto">
@@ -276,7 +316,7 @@
                         {{ $contract->signature_label }}
                     </h2>
                     <div class="signature-note-container">
-                        <div style="margin-top: 2px">Signatures will appear here once this document is signed.</div>
+                        <div style="margin-top: 2px">{!! trans('site.contract.signature-note') !!}</div>
 
                         <div class="signature-wrapper">
                             <div class="signature">
