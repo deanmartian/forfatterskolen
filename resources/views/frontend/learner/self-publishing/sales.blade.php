@@ -59,7 +59,7 @@
                                                     <th>Service</th>
                                                     <th>Number</th>
                                                     <th>Amount</th>
-                                                    <th>Learner Price</th>
+                                                    {{-- <th>Learner Price</th> --}}
                                                     <th>Date</th>
                                                 </tr>
                                             </thead>
@@ -76,9 +76,9 @@
                                                             <td>
                                                                 {{ $distributionCost->number }}
                                                             </td>
-                                                            <td>
+                                                            {{-- <td>
                                                                 {{ AdminHelpers::currencyFormat($distributionCost->amount) }}
-                                                            </td>
+                                                            </td> --}}
                                                             <td>
                                                                 {{ AdminHelpers::currencyFormat($distributionCost->learner_amount) }}
                                                             </td>
