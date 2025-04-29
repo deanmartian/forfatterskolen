@@ -39,7 +39,7 @@
 		endif;
 
     else :
-        $learners = $course->learners->paginate(25);
+        $learners = $course->learnersWithExpired->paginate(25);
     endif;
 
     $packageIdsOfCourse = $course->packages()->pluck('id')->toArray();
@@ -165,9 +165,12 @@
 												   name="in_facebook_group" data-size="mini" @if($learner->in_facebook_group) {{ 'checked' }} @endif>
 										</td>
 										<td>
-											<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" class="btn btn-danger btn-xs pull-right btn-remove-learner"
-													data-learner="{{$learner->user->full_name}}" data-package="{{$learner->package->id}}"
-													data-learner-id="{{$learner->user->id}}">{{ trans('site.remove-learner') }}</button>
+											@if (!$learner->deleted_at)
+												<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" class="btn btn-danger btn-xs pull-right btn-remove-learner"
+												data-learner="{{$learner->user->full_name}}" data-package="{{$learner->package->id}}"
+												data-learner-id="{{$learner->user->id}}">{{ trans('site.remove-learner') }}</button>
+											@endif
+											
 										</td>
 									</tr>
 								@endforeach

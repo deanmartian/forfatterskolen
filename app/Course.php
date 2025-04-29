@@ -244,6 +244,15 @@ class Course extends Model
             ->orderBy('updated_at', 'desc');
     }
 
+    public function getLearnersWithExpiredAttribute()
+    {
+        $packageIds = $this->packages()->pluck('id')->toArray();
+        return CoursesTaken::whereHas('user')->whereIn('package_id', $packageIds)
+            ->where('is_active', true)
+            ->withTrashed()
+            ->orderBy('updated_at', 'desc');
+    }
+
     public function getwebinarLearnersAttribute()
     {
         $packageIds = $this->packages()->pluck('id')->toArray();
