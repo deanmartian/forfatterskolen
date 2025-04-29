@@ -230,7 +230,7 @@ class ContractController extends Controller
         $email_message = $request->message . "<br/> <a href='" . route('front.contract-view', $contract->code)
             ."' class='view-contract'>View Contract</a>";
 
-        $to = 'elybutabara@gmail.com';//$request->email;
+        $to = $request->email;
         $emailData['email_subject'] = $request->subject;
         $emailData['email_message'] = $email_message;
         $emailData['from_name'] = NULL;
