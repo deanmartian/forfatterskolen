@@ -1692,15 +1692,17 @@ class ProjectController extends Controller
         $salesData = DB::table('project_books as books')
         ->select(
             DB::raw('YEAR(sales.date) as year'),
+            DB::raw('QUARTER(sales.date) as quarter'),
             DB::raw('SUM(amount) as total_sales')
         )
         ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
         ->whereBetween(DB::raw('YEAR(sales.date)'), [$startYear, $currentYear])
         ->where('books.project_id', $project->id)
-        ->groupBy('year')
+        ->groupBy('year', 'quarter')
         ->orderBy('year', 'ASC')
+        ->orderBy('quarter', 'ASC')
         ->get()
-        ->keyBy('year'); // Store results by year for easy lookup
+        ->groupBy('year'); //keyBy('year') // Store results by year for easy lookup
 
         // Get Total Distributions by Year and Quarter
         $distributionsData = DB::table('project_registrations as distribution')
@@ -1720,27 +1722,36 @@ class ProjectController extends Controller
 
         // Merge Data for Year and Quarter
         $storageCosts = collect($years)->map(function ($year) use ($salesData, $distributionsData, $quarters) {
-            $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
+            //$sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
             $distributions = [];
+            $quarterSales = [];
         
             // Initialize distribution values for all quarters
             foreach ($quarters as $quarter) {
                 $distributions[$quarter] = isset($distributionsData[$year]) 
                     ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
                     : 0;
+                $quarterSales[$quarter] = isset($salesData[$year])
+                    ? (collect($salesData[$year])->firstWhere('quarter', $quarter)->total_sales ?? 0)
+                    : 0;
             }
         
             // Calculate totals
             $totalDistributions = array_sum($distributions);
-            $payout = $sales - $totalDistributions;
+            $totalSales = array_sum($quarterSales);
+            $payout = $totalSales - $totalDistributions;
         
             return [
                 'year' => $year,
                 'q1_distributions' => $distributions[1],
+                'q1_sales' => $quarterSales[1],
                 'q2_distributions' => $distributions[2],
+                'q2_sales' => $quarterSales[2],
                 'q3_distributions' => $distributions[3],
+                'q3_sales' => $quarterSales[3],
                 'q4_distributions' => $distributions[4],
-                'total_sales' => $sales,
+                'q4_sales' => $quarterSales[4],
+                'total_sales' => $totalSales,
                 'total_distributions' => $totalDistributions,
                 'payout' => $payout,
             ];
@@ -2007,15 +2018,21 @@ class ProjectController extends Controller
     {
         $quarters = [1, 2, 3, 4];
 
+        $projectBook = ProjectBook::where('project_id', $project_id)->first();
+        $bookName = optional($projectBook)->book_name;
+
         // Fetch sales data
         $salesData = DB::table('project_books as books')
-            ->select(DB::raw('YEAR(sales.date) as year'), DB::raw('SUM(amount) as total_sales'))
+            ->select(DB::raw('YEAR(sales.date) as year'), DB::raw('QUARTER(sales.date) as quarter'), 
+                DB::raw('SUM(amount) as total_sales'))
             ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
             ->whereRaw('YEAR(sales.date) = ?', [$selectedYear])
             ->where('books.project_id', $project_id)
-            ->groupBy('year')
+            ->groupBy('year', 'quarter')//->groupBy('year')
+            ->orderBy('year')
+            ->orderBy('quarter')
             ->get()
-            ->keyBy('year');
+            ->groupBy('year');//->keyBy('year');
 
         // Fetch distributions data
         $distributionsData = DB::table('project_registrations as distribution')
@@ -2033,24 +2050,37 @@ class ProjectController extends Controller
 
         // Process data
         $data = collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters) {
-            $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
+            //$sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
             $distributions = [];
+            $quarterSales = [];
 
             foreach ($quarters as $quarter) {
                 $distributions[$quarter] = isset($distributionsData[$year]) 
                     ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
                     : 0;
+                $quarterSales[$quarter] = isset($salesData[$year])
+                    ? (collect($salesData[$year])->firstWhere('quarter', $quarter)->total_sales ?? 0)
+                    : 0;
             }
+
+            // Calculate totals
+            $totalDistributions = array_sum($distributions);
+            $totalSales = array_sum($quarterSales);
+            $payout = $totalSales - $totalDistributions;
 
             return [
                 'year' => $year,
                 'q1_distributions' => $distributions[1],
+                'q1_sales' => $quarterSales[1],
                 'q2_distributions' => $distributions[2],
+                'q2_sales' => $quarterSales[2],
                 'q3_distributions' => $distributions[3],
+                'q3_sales' => $quarterSales[3],
                 'q4_distributions' => $distributions[4],
-                'total_sales' => $sales,
-                'total_distributions' => array_sum($distributions),
-                'payout' => $sales - array_sum($distributions),
+                'q4_sales' => $quarterSales[4],
+                'total_sales' => $totalSales,
+                'total_distributions' => $totalDistributions,
+                'payout' => $payout,
             ];
         });
 
@@ -2058,7 +2088,7 @@ class ProjectController extends Controller
         $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML(view('frontend.pdf.distribution-cost', compact('data')));
-        return $pdf->download('Distribution Cost Report.pdf');
+        return $pdf->download("Royalty_" . $selectedYear . "_" . $bookName . ".pdf");
         //return $pdf->stream('distribution-cost.pdf');
     }
 

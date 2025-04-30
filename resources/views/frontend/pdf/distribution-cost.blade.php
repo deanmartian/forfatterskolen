@@ -64,16 +64,32 @@
             <tr>
                 <td>{{ $storageCost['year'] }}</td>
                 <td>
-                    {{ FrontendHelpers::currencyFormat($storageCost['q1_distributions']) }}
+                    <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q1_sales']) }} <br>
+                    <b>Storage Cost:</b><br> {{ FrontendHelpers::currencyFormat($storageCost['q1_distributions']) }} <br>
+                    <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                        ($storageCost['q1_sales'] - $storageCost['q1_distributions'])
+                        ) }}
                 </td>
                 <td>
-                    {{ FrontendHelpers::currencyFormat($storageCost['q2_distributions']) }}
+                    <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q2_sales']) }} <br>
+                    <b>Storage Cost:</b><br> {{ FrontendHelpers::currencyFormat($storageCost['q2_distributions']) }} <br>
+                    <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                        ($storageCost['q2_sales'] - $storageCost['q2_distributions'])
+                        ) }}
                 </td>
                 <td>
-                    {{ FrontendHelpers::currencyFormat($storageCost['q3_distributions']) }}
+                    <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q3_sales']) }} <br>
+                    <b>Storage Cost:</b><br> {{ FrontendHelpers::currencyFormat($storageCost['q3_distributions']) }} <br>
+                    <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                        ($storageCost['q3_sales'] - $storageCost['q3_distributions'])
+                        ) }}
                 </td>
                 <td>
-                    {{ FrontendHelpers::currencyFormat($storageCost['q4_distributions']) }}
+                    <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q4_sales']) }} <br>
+                    <b>Storage Cost:</b><br> {{ FrontendHelpers::currencyFormat($storageCost['q4_distributions']) }} <br>
+                    <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                        ($storageCost['q4_sales'] - $storageCost['q4_distributions'])
+                        ) }}
                 </td>
                 <td>
                     {{ FrontendHelpers::currencyFormat($storageCost['total_sales']) }}
