@@ -946,7 +946,7 @@
 					<h4>{{ trans_choice('site.assignments', 2) }}</h4>
 				</div>
 				<div class="table-responsive">
-					<table class="table">
+					<table class="table" id="course-assignment-table">
 						<thead>
 							<tr>
 								<th>{{ trans_choice('site.assignments', 1) }}</th>
@@ -964,7 +964,7 @@
 							<?php
 					        $assignments = [];
 					        $addOns = $learner->assignmentAddOns->pluck('assignment_id')->toArray();
-					        foreach( $learner->coursesTaken as $courseTaken ) :
+					        foreach( $learner->coursesTaken()->withTrashed()->get() as $courseTaken ) :
 					            foreach( $courseTaken->package->course->assignments as $assignment ) :
                             		$allowed_package = json_decode($assignment->allowed_package);
                             		$package_id = $courseTaken->package->id;
@@ -980,6 +980,9 @@
 											// added the condition because of the update for submission date
 											// the original is the else
 											if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
+												$assignments[] = $assignment;
+												/*
+												disable this to always display assignment even if it's already finished
 												if ($course->type == 'Single' && $assignment->submission_date == '365') {
 													if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(\Carbon\Carbon::now())) {
 														$assignments[] = $assignment;
@@ -988,11 +991,14 @@
 													if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)->gt(\Carbon\Carbon::now())) {
 														$assignments[] = $assignment;
 													}
-												}
+												} */
 											} else {
+												$assignments[] = $assignment;
+												/*
+												disable this to always display assignment even if it's already finished
 												if (\Carbon\Carbon::parse($assignment->submission_date)->gt(\Carbon\Carbon::now())) {
 													$assignments[] = $assignment;
-												}
+												} */
 											}
 										}
 									}
@@ -5676,7 +5682,7 @@ console.log(record);
         });
 	});
 
-    $('#orders-table, #course-order-attachments-table').dataTable( {
+    $('#orders-table, #course-order-attachments-table, #course-assignment-table').dataTable( {
         "ordering": false
     } );
 
