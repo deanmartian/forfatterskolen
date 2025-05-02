@@ -49,6 +49,7 @@ use App\Settings;
 use App\StorageBook;
 use App\StorageDetail;
 use App\StorageDistributionCost;
+use App\StoragePayout;
 use App\StorageSale;
 use App\StorageVarious;
 use App\TimeRegister;
@@ -64,7 +65,7 @@ use Maatwebsite\Excel\HeadingRowImport;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Time;
 use PhpOffice\PhpWord\PhpWord;
 use Spatie\Dropbox\Client;
-
+use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProjectController extends Controller
@@ -1773,13 +1774,16 @@ class ProjectController extends Controller
         $registrationDistributionCosts = ProjectRegistrationDistribution::where('project_registration_id', $registration_id)->first();
         $paidDistributionYears = $registrationDistributionCosts->years ?? [];
 
+        $payouts = StoragePayout::where('project_registration_id', $registration_id)->get()->groupBy(['year', 'quarter']);
+
         return view('backend.project.storage-details', compact('backRoute', 'layout', 'projectId', 'project', 
         'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData', 'saveBookRoute',
         'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
         'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'importBookSaleRoute', 'deleteBookSaleRoute', 
         'centralISBNs', 'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories),
         'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns', 'totalBalance', 'inventoryTotal', 'quantitySold',
-        'totalQuantitySold', 'storageCosts', 'registration_id', 'projectBookSales', 'paidDistributionYears', 'balanceCount'));
+        'totalQuantitySold', 'storageCosts', 'registration_id', 'projectBookSales', 'paidDistributionYears', 'balanceCount',
+        'payouts'));
     }
 
     public function saveStorageBook($projectId, Request $request)
@@ -2014,6 +2018,34 @@ class ProjectController extends Controller
         return response()->json(['message' => 'Updated successfully', 'years' => $model->years]);
     }
 
+    public function storePayout(Request $request)
+    {
+        $this->validate($request, [
+            'project_registration_id' => 'required|exists:project_registrations,id',
+            'year' => 'required|integer|min:2000|max:' . (date('Y') + 1),
+            'quarter' => 'required|integer|min:1|max:4'
+        ]);
+        
+        $data = $request->except('_token');
+        $data['is_paid'] = $request->has('is_paid');
+        $data['paid_at'] = $request->has('is_paid') ? now() : null;
+
+        if ($request->filled('id')) {
+            // Update existing record
+            $payout = StoragePayout::findOrFail($request->input('id'));
+            $payout->update($data);
+            return back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Quarterly payout updated successfully.'),
+                'alert_type' => 'success']);
+        } else {
+            // Create new record
+            StoragePayout::create($data);
+            return back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Quarterly payout created successfully.'),
+                'alert_type' => 'success']);
+        }
+    }
+
     public function exportStorageCost($project_id, $registration_id, $selectedYear)
     {
         $quarters = [1, 2, 3, 4];
@@ -2021,68 +2053,8 @@ class ProjectController extends Controller
         $projectBook = ProjectBook::where('project_id', $project_id)->first();
         $bookName = optional($projectBook)->book_name;
 
-        // Fetch sales data
-        $salesData = DB::table('project_books as books')
-            ->select(DB::raw('YEAR(sales.date) as year'), DB::raw('QUARTER(sales.date) as quarter'), 
-                DB::raw('SUM(amount) as total_sales'))
-            ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
-            ->whereRaw('YEAR(sales.date) = ?', [$selectedYear])
-            ->where('books.project_id', $project_id)
-            ->groupBy('year', 'quarter')//->groupBy('year')
-            ->orderBy('year')
-            ->orderBy('quarter')
-            ->get()
-            ->groupBy('year');//->keyBy('year');
-
-        // Fetch distributions data
-        $distributionsData = DB::table('project_registrations as distribution')
-            ->select(DB::raw('YEAR(distribution_costs.date) as year'), DB::raw('QUARTER(distribution_costs.date) as quarter'), 
-                DB::raw('SUM(amount) as total_distributions'))
-            ->leftJoin('storage_distribution_costs as distribution_costs', 
-                'distribution_costs.project_book_id', '=', 'distribution.id')
-            ->where('distribution.id', $registration_id)
-            ->whereRaw('YEAR(distribution_costs.date) = ?', [$selectedYear])
-            ->groupBy('year', 'quarter')
-            ->orderBy('year')
-            ->orderBy('quarter')
-            ->get()
-            ->groupBy('year');
-
         // Process data
-        $data = collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters) {
-            //$sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
-            $distributions = [];
-            $quarterSales = [];
-
-            foreach ($quarters as $quarter) {
-                $distributions[$quarter] = isset($distributionsData[$year]) 
-                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
-                    : 0;
-                $quarterSales[$quarter] = isset($salesData[$year])
-                    ? (collect($salesData[$year])->firstWhere('quarter', $quarter)->total_sales ?? 0)
-                    : 0;
-            }
-
-            // Calculate totals
-            $totalDistributions = array_sum($distributions);
-            $totalSales = array_sum($quarterSales);
-            $payout = $totalSales - $totalDistributions;
-
-            return [
-                'year' => $year,
-                'q1_distributions' => $distributions[1],
-                'q1_sales' => $quarterSales[1],
-                'q2_distributions' => $distributions[2],
-                'q2_sales' => $quarterSales[2],
-                'q3_distributions' => $distributions[3],
-                'q3_sales' => $quarterSales[3],
-                'q4_distributions' => $distributions[4],
-                'q4_sales' => $quarterSales[4],
-                'total_sales' => $totalSales,
-                'total_distributions' => $totalDistributions,
-                'payout' => $payout,
-            ];
-        });
+        $data = $this->exportStorageCostWithSales($project_id, $registration_id, $selectedYear);
 
         $pdf = \App::make('dompdf.wrapper');
         $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
@@ -2116,6 +2088,60 @@ class ProjectController extends Controller
         }
         
         return $excel->download(new GenericExport($storageCosts, $headers), 'Distribution Cost Report.xlsx');
+    }
+
+    public function storageCostSendEmail($project_id, $registration_id, $selectedYear, Request $request)
+    {
+        $selectedQuarters = array_map('intval', array_keys($request->quarters));
+
+        $project = Project::find($project_id);
+        $user = $project->user;
+
+        if (!$user) {
+            return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag("Error on sending email. No user on the project"),
+                'alert_type' => 'danger']);
+        }
+
+        $projectBook = ProjectBook::where('project_id', $project_id)->first();
+        $bookName = optional($projectBook)->book_name;
+
+        $data = $this->exportStorageCostWithSales($project_id, $registration_id, $selectedYear, $selectedQuarters);
+
+        //Generate the PDF
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->setPaper('letter', 'landscape');
+        $pdf->loadHTML(view('frontend.pdf.distribution-cost', compact('data', 'selectedQuarters'))->render());//->render());
+        
+        //Save PDF to Storage
+        $destinationPath = "/exports";
+        $actual_name = "Royalty_{$selectedYear}_" . str_slug($bookName);
+        $fileName = AdminHelpers::getUniqueFilename('public', $destinationPath, $actual_name . "." . "pdf");
+        $filePath = "exports/{$fileName}";
+        Storage::put("public/{$filePath}", $pdf->output());
+
+        $user_email = $user->email;
+        $subject = $request->subject;
+        $from = $request->from_email;
+        $message = str_replace([
+            '[name]',
+            '[year]',
+            '[total_payout]',
+            '[book_name]'
+        ], [
+            $user->full_name,
+            $selectedYear,
+            FrontendHelpers::currencyFormat($data[0]['payout_by_quarter']),
+            $bookName
+        ], $request->message);
+
+        dispatch(new AddMailToQueueJob($user_email, $subject, $message, $from, null, storage_path("app/public/{$filePath}"),
+                     'project-registration', $registration_id));
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag("Email sent successfully."),
+                'alert_type' => 'success']);
     }
 
     private function exportStorageCostData($project_id, $registration_id, $selectedYear) 
@@ -2166,6 +2192,84 @@ class ProjectController extends Controller
                 'total_sales' => $sales,
                 'total_distributions' => array_sum($distributions),
                 'payout' => $sales - array_sum($distributions),
+            ];
+        });
+    }
+
+    private function exportStorageCostWithSales($project_id, $registration_id, $selectedYear, $selectedQuarters = [1, 2, 3, 4])
+    {
+        $quarters = [1, 2, 3, 4];
+
+        // Fetch sales data
+        $salesData = DB::table('project_books as books')
+            ->select(DB::raw('YEAR(sales.date) as year'), DB::raw('QUARTER(sales.date) as quarter'), 
+                DB::raw('SUM(amount) as total_sales'))
+            ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
+            ->whereRaw('YEAR(sales.date) = ?', [$selectedYear])
+            ->where('books.project_id', $project_id)
+            ->groupBy('year', 'quarter')//->groupBy('year')
+            ->orderBy('year')
+            ->orderBy('quarter')
+            ->get()
+            ->groupBy('year');//->keyBy('year');
+
+        // Fetch distributions data
+        $distributionsData = DB::table('project_registrations as distribution')
+            ->select(DB::raw('YEAR(distribution_costs.date) as year'), DB::raw('QUARTER(distribution_costs.date) as quarter'), 
+                DB::raw('SUM(amount) as total_distributions'))
+            ->leftJoin('storage_distribution_costs as distribution_costs', 
+                'distribution_costs.project_book_id', '=', 'distribution.id')
+            ->where('distribution.id', $registration_id)
+            ->whereRaw('YEAR(distribution_costs.date) = ?', [$selectedYear])
+            ->groupBy('year', 'quarter')
+            ->orderBy('year')
+            ->orderBy('quarter')
+            ->get()
+            ->groupBy('year');
+
+        // Process data
+        return collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters, $selectedQuarters) {
+            //$sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
+            $allSales = [];
+            $allDistributions = [];
+
+            foreach ($quarters as $quarter) {
+                $sales = isset($salesData[$year])
+                    ? ($salesData[$year]->firstWhere('quarter', $quarter)->total_sales ?? 0)
+                    : 0;
+
+                $distribution = isset($distributionsData[$year])
+                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
+                    : 0;
+
+                $allSales[$quarter] = $sales;
+                $allDistributions[$quarter] = $distribution;
+            }
+
+            // Only include selected quarters in aggregated totals
+            $filteredSales = collect($allSales)->only($selectedQuarters);
+            $filteredDistributions = collect($allDistributions)->only($selectedQuarters);
+
+            $salesByQuarter = $filteredSales->sum();
+            $distributionsByQuarter = $filteredDistributions->sum();
+            $payoutByQuarter = $salesByQuarter - $distributionsByQuarter;
+
+            return [
+                'year' => $year,
+                'q1_distributions' => $allDistributions[1],
+                'q1_sales' => $allSales[1],
+                'q2_distributions' => $allDistributions[2],
+                'q2_sales' => $allSales[2],
+                'q3_distributions' => $allDistributions[3],
+                'q3_sales' => $allSales[3],
+                'q4_distributions' => $allDistributions[4],
+                'q4_sales' => $allSales[4],
+                'total_sales' => $salesByQuarter,
+                'total_distributions' => $distributionsByQuarter,
+                'payout' => $payoutByQuarter,
+                'sales_by_quarter' => $salesByQuarter,
+                'distributions_by_quarter' => $distributionsByQuarter,
+                'payout_by_quarter' => $payoutByQuarter,
             ];
         });
     }

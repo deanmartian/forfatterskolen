@@ -1287,6 +1287,9 @@ Route::group([
         Route::get('project/{project_id}/registration/{registration_id}/storage-cost/{year}/export-excel', 
             'ProjectController@excelExportStorageCost')
             ->name('admin.project.storage-cost.export-excel');
+        Route::post('project/{project_id}/registration/{registration_id}/storage-cost/{year}/send-email', 
+            'ProjectController@storageCostSendEmail')
+            ->name('admin.project.storage-cost.send');
         Route::post('/project/book/{id}/storage/save-various', 'ProjectController@saveStorageVarious')->name('admin.project.storage.save-various');
         Route::post('/project/book/{id}/storage/save-distribution-cost', 'ProjectController@saveDistributionCost')
             ->name('admin.project.storage.save-distribution-cost');
@@ -1309,6 +1312,7 @@ Route::group([
         Route::get('/project/{id}', 'ProjectController@show')->name('admin.project.show');
         Route::delete('/project/{id}/delete', 'ProjectController@deleteProject');
         Route::get('/project/book/generate', 'ProjectController@generateProjectBook');
+        Route::post('/project/quarterly-payout/store', 'ProjectController@storePayout')->name('admin.quarterly-payouts.store');
 
         Route::get('/storage-books', 'StorageBookController@index')->name('admin.storage-books.index');
 

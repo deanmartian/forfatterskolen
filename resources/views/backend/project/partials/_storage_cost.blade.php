@@ -16,6 +16,9 @@
             </thead>
             <tbody>
                 @foreach ($storageCosts as $storageCost)
+                    @php
+                        $year = $storageCost['year'];
+                    @endphp
                     <tr>
                         <td>
                             {{ $storageCost['year'] }}
@@ -58,14 +61,35 @@
                             {{ FrontendHelpers::currencyFormat($storageCost['payout']) }}
                         </td>
                         <td>
-                            <label for="">Is Payout paid?</label>
-                            <input type="checkbox" data-toggle="toggle" data-on="Yes"
+                            <label for="">Is Payout paid?</label> <br>
+                            @foreach([1, 2, 3, 4] as $q)
+                                @php
+                                    $payoutEntry = isset($payouts[$year][$q]) ? $payouts[$year][$q]->first() : null;
+                                    $paid = $payoutEntry ? $payoutEntry->is_paid : false;
+                                    $payoutId = $payoutEntry ? $payoutEntry->id : null;
+                                @endphp
+
+                                <input type="hidden" name="quarter_{{ $q }}" value="{{ $paid }}" class="hidden-quarter">
+
+                                <form method="POST" action="{{ route('admin.quarterly-payouts.store') }}" style="display:inline-block;">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{ $payoutId }}">
+                                    <input type="hidden" name="project_registration_id" value="{{ $registration_id }}">
+                                    <input type="hidden" name="year" value="{{ $year }}">
+                                    <input type="hidden" name="quarter" value="{{ $q }}">
+                                    <label>Q{{ $q }}:
+                                        <input type="checkbox" name="is_paid" onchange="this.form.submit()" {{ $paid ? 'checked' : '' }}>
+                                    </label><br>
+                                </form>
+                            @endforeach
+                            <br>
+                            {{-- <input type="checkbox" data-toggle="toggle" data-on="Yes"
                                 data-off="No" data-type="copy-editing" data-size="mini" data-value="{{ $storageCost['year'] }}"
                                 data-id="{{ $registration_id }}"
                                 onchange="payoutToggle(this)" 
                                 @if (in_array($storageCost['year'], $paidDistributionYears))
                                     {{ 'checked' }}
-                                @endif> <br>
+                                @endif> <br> --}}
                             <a href="{{ route('admin.project.storage-cost.export', 
                                 [$project->id, $registration_id, $storageCost['year']]) }}" 
                                 class="btn btn-primary btn-xs">
@@ -77,6 +101,14 @@
                                 class="btn btn-success btn-xs">
                                 Download Excel
                             </a>
+
+                            <button data-action="{{ route('admin.project.storage-cost.send', 
+                                [$project->id, $registration_id, $storageCost['year']]) }}" 
+                                data-toggle="modal"
+                                data-target="#sendStorageCostModal"
+                                class="btn btn-info btn-xs sendStorageCostBtn">
+                                Send Email
+                            </button>
                         </td>
                     </tr>
                 @endforeach

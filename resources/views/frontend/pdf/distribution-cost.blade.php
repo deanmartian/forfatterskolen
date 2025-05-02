@@ -50,10 +50,22 @@
         <thead>
             <tr>
                 <th>{{ trans('site.year') }}</th>
-                <th>{{ trans('site.q1-cost') }}</th>
-                <th>{{ trans('site.q2-cost') }}</th>
-                <th>{{ trans('site.q3-cost') }}</th>
-                <th>{{ trans('site.q4-cost') }}</th>
+                @if (!isset($selectedQuarters) || isset($selectedQuarters) && in_array(1, $selectedQuarters))
+                    <th>{{ trans('site.q1-cost') }}</th>
+                @endif
+
+                @if (!isset($selectedQuarters) || isset($selectedQuarters) && in_array(2, $selectedQuarters))
+                    <th>{{ trans('site.q2-cost') }}</th>
+                @endif
+
+                @if (!isset($selectedQuarters) || isset($selectedQuarters) && in_array(3, $selectedQuarters))
+                    <th>{{ trans('site.q3-cost') }}</th>
+                @endif
+
+                @if (!isset($selectedQuarters) || isset($selectedQuarters) && in_array(4, $selectedQuarters))
+                    <th>{{ trans('site.q4-cost') }}</th>
+                @endif
+                
                 <th>{{ trans('site.author-portal-menu.sales') }}</th>
                 <th>{{ trans('site.total-storage-cost') }}</th>
                 <th>{{ trans('site.payout') }}</th>
@@ -63,34 +75,45 @@
             @foreach($data as $storageCost)
             <tr>
                 <td>{{ $storageCost['year'] }}</td>
-                <td>
-                    <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q1_sales']) }} <br>
-                    <b>Storage Cost:</b><br> {{ FrontendHelpers::currencyFormat($storageCost['q1_distributions']) }} <br>
-                    <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
-                        ($storageCost['q1_sales'] - $storageCost['q1_distributions'])
-                        ) }}
-                </td>
-                <td>
-                    <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q2_sales']) }} <br>
-                    <b>Storage Cost:</b><br> {{ FrontendHelpers::currencyFormat($storageCost['q2_distributions']) }} <br>
-                    <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
-                        ($storageCost['q2_sales'] - $storageCost['q2_distributions'])
-                        ) }}
-                </td>
-                <td>
-                    <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q3_sales']) }} <br>
-                    <b>Storage Cost:</b><br> {{ FrontendHelpers::currencyFormat($storageCost['q3_distributions']) }} <br>
-                    <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
-                        ($storageCost['q3_sales'] - $storageCost['q3_distributions'])
-                        ) }}
-                </td>
-                <td>
-                    <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q4_sales']) }} <br>
-                    <b>Storage Cost:</b><br> {{ FrontendHelpers::currencyFormat($storageCost['q4_distributions']) }} <br>
-                    <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
-                        ($storageCost['q4_sales'] - $storageCost['q4_distributions'])
-                        ) }}
-                </td>
+                @if (!isset($selectedQuarters) || isset($selectedQuarters) && in_array(1, $selectedQuarters))
+                    <td>
+                        <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q1_sales']) }} <br>
+                        <b>Storage Cost:</b><br> {{ FrontendHelpers::currencyFormat($storageCost['q1_distributions']) }} <br>
+                        <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                            ($storageCost['q1_sales'] - $storageCost['q1_distributions'])
+                            ) }}
+                    </td>
+                @endif
+
+                @if (!isset($selectedQuarters) || isset($selectedQuarters) && in_array(2, $selectedQuarters))
+                    <td>
+                        <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q2_sales']) }} <br>
+                        <b>Storage Cost:</b><br> {{ FrontendHelpers::currencyFormat($storageCost['q2_distributions']) }} <br>
+                        <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                            ($storageCost['q2_sales'] - $storageCost['q2_distributions'])
+                            ) }}
+                    </td>
+                @endif
+
+                @if (!isset($selectedQuarters) || isset($selectedQuarters) && in_array(3, $selectedQuarters))
+                    <td>
+                        <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q3_sales']) }} <br>
+                        <b>Storage Cost:</b><br> {{ FrontendHelpers::currencyFormat($storageCost['q3_distributions']) }} <br>
+                        <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                            ($storageCost['q3_sales'] - $storageCost['q3_distributions'])
+                            ) }}
+                    </td>
+                @endif
+
+                @if (!isset($selectedQuarters) || isset($selectedQuarters) && in_array(4, $selectedQuarters))
+                    <td>
+                        <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q4_sales']) }} <br>
+                        <b>Storage Cost:</b><br> {{ FrontendHelpers::currencyFormat($storageCost['q4_distributions']) }} <br>
+                        <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                            ($storageCost['q4_sales'] - $storageCost['q4_distributions'])
+                            ) }}
+                    </td>
+                @endif
                 <td>
                     {{ FrontendHelpers::currencyFormat($storageCost['total_sales']) }}
                 </td>
