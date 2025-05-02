@@ -102,6 +102,7 @@ use Hash;
 use File;
 use App\Http\FrontendHelpers;
 use App\Jobs\UpdateFikenContactDetailsJob;
+use App\ProjectBook;
 use App\ProjectBookFormatting;
 use App\ProjectBookSale;
 use App\ProjectRegistrationDistribution;
@@ -2174,16 +2175,23 @@ class LearnerController extends Controller
     public function exportStorageCost($project_id, $registration_id, $selectedYear)
     {
         $quarters = [1, 2, 3, 4];
+        $selectedQuarters = [1, 2, 3, 4];
+
+        $projectBook = ProjectBook::where('project_id', $project_id)->first();
+        $bookName = optional($projectBook)->book_name;
 
         // Fetch sales data
         $salesData = DB::table('project_books as books')
-            ->select(DB::raw('YEAR(sales.date) as year'), DB::raw('SUM(amount) as total_sales'))
+            ->select(DB::raw('YEAR(sales.date) as year'), DB::raw('QUARTER(sales.date) as quarter'), 
+                DB::raw('SUM(amount) as total_sales'))
             ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
             ->whereRaw('YEAR(sales.date) = ?', [$selectedYear])
             ->where('books.project_id', $project_id)
-            ->groupBy('year')
+            ->groupBy('year', 'quarter')//->groupBy('year')
+            ->orderBy('year')
+            ->orderBy('quarter')
             ->get()
-            ->keyBy('year');
+            ->groupBy('year');//->keyBy('year');
 
         // Fetch distributions data
         $distributionsData = DB::table('project_registrations as distribution')
@@ -2200,25 +2208,48 @@ class LearnerController extends Controller
             ->groupBy('year');
 
         // Process data
-        $data = collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters) {
-            $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
-            $distributions = [];
+        $data = collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters, $selectedQuarters) {
+            //$sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
+            $allSales = [];
+            $allDistributions = [];
 
             foreach ($quarters as $quarter) {
-                $distributions[$quarter] = isset($distributionsData[$year]) 
+                $sales = isset($salesData[$year])
+                    ? ($salesData[$year]->firstWhere('quarter', $quarter)->total_sales ?? 0)
+                    : 0;
+
+                $distribution = isset($distributionsData[$year])
                     ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
                     : 0;
+
+                $allSales[$quarter] = $sales;
+                $allDistributions[$quarter] = $distribution;
             }
+
+            // Only include selected quarters in aggregated totals
+            $filteredSales = collect($allSales)->only($selectedQuarters);
+            $filteredDistributions = collect($allDistributions)->only($selectedQuarters);
+
+            $salesByQuarter = $filteredSales->sum();
+            $distributionsByQuarter = $filteredDistributions->sum();
+            $payoutByQuarter = $salesByQuarter - $distributionsByQuarter;
 
             return [
                 'year' => $year,
-                'q1_distributions' => $distributions[1],
-                'q2_distributions' => $distributions[2],
-                'q3_distributions' => $distributions[3],
-                'q4_distributions' => $distributions[4],
-                'total_sales' => $sales,
-                'total_distributions' => array_sum($distributions),
-                'payout' => $sales - array_sum($distributions),
+                'q1_distributions' => $allDistributions[1],
+                'q1_sales' => $allSales[1],
+                'q2_distributions' => $allDistributions[2],
+                'q2_sales' => $allSales[2],
+                'q3_distributions' => $allDistributions[3],
+                'q3_sales' => $allSales[3],
+                'q4_distributions' => $allDistributions[4],
+                'q4_sales' => $allSales[4],
+                'total_sales' => $salesByQuarter,
+                'total_distributions' => $distributionsByQuarter,
+                'payout' => $payoutByQuarter,
+                'sales_by_quarter' => $salesByQuarter,
+                'distributions_by_quarter' => $distributionsByQuarter,
+                'payout_by_quarter' => $payoutByQuarter,
             ];
         });
 
@@ -2226,7 +2257,7 @@ class LearnerController extends Controller
         $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML(view('frontend.pdf.distribution-cost', compact('data')));
-        return $pdf->download('Distribution Cost Report.pdf');
+        return $pdf->download("Royalty_" . $selectedYear . "_" . $bookName . ".pdf");
         //return $pdf->stream('distribution-cost.pdf');
     }
 
