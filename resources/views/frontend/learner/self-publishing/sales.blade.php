@@ -21,6 +21,13 @@
         div.dataTables_wrapper div.dataTables_length select {
             width: 100%;
         }
+
+        .readonly-checkbox {
+            pointer-events: none;       /* Prevent clicking */
+            appearance: auto;           /* Ensure normal checkbox appearance */
+            accent-color: #007bff;      /* Optional: Force visible color (e.g. Bootstrap blue) */
+            opacity: 1;                 /* Prevent greying out */
+        }
     </style>
 @stop
 
@@ -124,21 +131,40 @@
                                             <tbody>
                                                 @if ($registration)
                                                     @foreach ($storageCosts as $storageCost)
+                                                    @php
+                                                        $year = $storageCost['year'];
+                                                    @endphp
                                                         <tr>
                                                             <td>
                                                                 {{ $storageCost['year'] }}
                                                             </td>
                                                             <td>
-                                                                {{ FrontendHelpers::currencyFormat($storageCost['q1_distributions']) }}
+                                                                <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q1_sales']) }} <br>
+                                                                <b>Storage Cost:</b> <br> {{ FrontendHelpers::currencyFormat($storageCost['q1_distributions']) }} <br>
+                                                                <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                                                                    ($storageCost['q1_sales'] - $storageCost['q1_distributions'])
+                                                                    ) }}
                                                             </td>
                                                             <td>
-                                                                {{ FrontendHelpers::currencyFormat($storageCost['q2_distributions']) }}
+                                                                <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q2_sales']) }} <br>
+                                                                <b>Storage Cost:</b> <br> {{ FrontendHelpers::currencyFormat($storageCost['q2_distributions']) }} <br>
+                                                                <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                                                                    ($storageCost['q2_sales'] - $storageCost['q2_distributions'])
+                                                                    ) }}
                                                             </td>
                                                             <td>
-                                                                {{ FrontendHelpers::currencyFormat($storageCost['q3_distributions']) }}
+                                                                <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q3_sales']) }} <br>
+                                                                <b>Storage Cost:</b> <br> {{ FrontendHelpers::currencyFormat($storageCost['q3_distributions']) }} <br>
+                                                                <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                                                                    ($storageCost['q3_sales'] - $storageCost['q3_distributions'])
+                                                                    ) }}
                                                             </td>
                                                             <td>
-                                                                {{ FrontendHelpers::currencyFormat($storageCost['q4_distributions']) }}
+                                                                <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q4_sales']) }} <br>
+                                                                <b>Storage Cost:</b> <br> {{ FrontendHelpers::currencyFormat($storageCost['q4_distributions']) }} <br>
+                                                                <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                                                                    ($storageCost['q4_sales'] - $storageCost['q4_distributions'])
+                                                                    ) }}
                                                             </td>
                                                             <td>
                                                                 {{ FrontendHelpers::currencyFormat($storageCost['total_sales']) }}
@@ -150,9 +176,24 @@
                                                                 {{ FrontendHelpers::currencyFormat($storageCost['payout']) }}
                                                             </td>
                                                             <td>
-                                                                <label for="">Is Payout paid?</label>
-                                                                {{ in_array($storageCost['year'], $paidDistributionYears) 
-                                                                ? 'Yes' : 'No' }} <br>
+                                                                <label for="">Is Payout paid?</label> <br>
+                                                                @foreach([1, 2, 3, 4] as $q)
+                                                                @php
+                                                                    $payoutEntry = isset($payouts[$year][$q]) ? $payouts[$year][$q]->first() : null;
+                                                                    $paid = $payoutEntry ? $payoutEntry->is_paid : false;
+                                                                    $payoutId = $payoutEntry ? $payoutEntry->id : null;
+                                                                @endphp
+
+                                                                <div class="checkbox-wrapper" style="display:inline-block;">
+                                                                    @csrf
+                                                                    <label>Q{{ $q }}:
+                                                                        <input type="checkbox" name="quarters[]" {{ $paid ? 'checked' : 'disabled' }}
+                                                                        class="locked-checkbox" tabindex="-1">
+                                                                    </label><br>
+                                                                </div>
+                                                            @endforeach <br>
+                                                                {{-- {{ in_array($storageCost['year'], $paidDistributionYears) 
+                                                                ? 'Yes' : 'No' }} <br> --}}
                                                                 <a href="{{ route('learner.project.storage-cost.export', 
                                                                     [$registration->project_id, $registration->id, $storageCost['year']]) }}" 
                                                                     class="btn btn-primary btn-xs">
@@ -337,8 +378,12 @@
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.bundle.min.js'></script>
     <script>
-        console.log(i18n);
-        console.log(i18n.site['author-portal-menu'].sales);
+        document.querySelectorAll('.locked-checkbox').forEach(function(checkbox) {
+            checkbox.addEventListener('click', function(e) {
+                e.preventDefault();
+            });
+    });
+
         $(".dt-table").DataTable({
             "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
             pageLength: 10,

@@ -110,6 +110,7 @@ use App\ProjectRoadmapStep;
 use App\PublishingService as AppPublishingService;
 use App\SelfPublishingPortalRequest;
 use App\ShopManuscript;
+use App\StoragePayout;
 use App\StorageSale;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
@@ -2104,20 +2105,22 @@ class LearnerController extends Controller
             $currentYear = Carbon::now()->year;
             $years = range($startYear, $currentYear);
             $quarters = [1, 2, 3, 4]; // Define quarters
+            $selectedQuarters = [1, 2, 3, 4]; // Define selected quarters
 
             // Get Total Sales by Year and Quarter
             $salesData = DB::table('project_books as books')
             ->select(
                 DB::raw('YEAR(sales.date) as year'),
+                DB::raw('QUARTER(sales.date) as quarter'), 
                 DB::raw('SUM(amount) as total_sales')
             )
             ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
             ->whereBetween(DB::raw('YEAR(sales.date)'), [$startYear, $currentYear])
             ->where('books.project_id', $standardProject->id)
-            ->groupBy('year')
+            ->groupBy('year', 'quarter')
             ->orderBy('year', 'DESC')
             ->get()
-            ->keyBy('year'); // Store results by year for easy lookup
+            ->groupBy('year');//->keyBy('year'); // Store results by year for easy lookup
 
             // Get Total Distributions by Year and Quarter
             $distributionsData = DB::table('project_registrations as distribution')
@@ -2136,30 +2139,48 @@ class LearnerController extends Controller
             ->groupBy('year'); // Store results by year for easy lookup
 
             // Merge Data for Year and Quarter
-            $storageCosts = collect($years)->map(function ($year) use ($salesData, $distributionsData, $quarters) {
-                $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
-                $distributions = [];
-            
-                // Initialize distribution values for all quarters
+            $storageCosts = collect($years)->map(function ($year) use ($salesData, $distributionsData, $quarters, $selectedQuarters) {
+                //$sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
+                $allSales = [];
+                $allDistributions = [];
+
                 foreach ($quarters as $quarter) {
-                    $distributions[$quarter] = isset($distributionsData[$year]) 
+                    $sales = isset($salesData[$year])
+                        ? ($salesData[$year]->firstWhere('quarter', $quarter)->total_sales ?? 0)
+                        : 0;
+
+                    $distribution = isset($distributionsData[$year])
                         ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
                         : 0;
+
+                    $allSales[$quarter] = $sales;
+                    $allDistributions[$quarter] = $distribution;
                 }
-            
-                // Calculate totals
-                $totalDistributions = array_sum($distributions);
-                $payout = $sales - $totalDistributions;
-            
+
+                // Only include selected quarters in aggregated totals
+                $filteredSales = collect($allSales)->only($selectedQuarters);
+                $filteredDistributions = collect($allDistributions)->only($selectedQuarters);
+
+                $salesByQuarter = $filteredSales->sum();
+                $distributionsByQuarter = $filteredDistributions->sum();
+                $payoutByQuarter = $salesByQuarter - $distributionsByQuarter;
+
                 return [
                     'year' => $year,
-                    'q1_distributions' => $distributions[1],
-                    'q2_distributions' => $distributions[2],
-                    'q3_distributions' => $distributions[3],
-                    'q4_distributions' => $distributions[4],
-                    'total_sales' => $sales,
-                    'total_distributions' => $totalDistributions,
-                    'payout' => $payout,
+                    'q1_distributions' => $allDistributions[1],
+                    'q1_sales' => $allSales[1],
+                    'q2_distributions' => $allDistributions[2],
+                    'q2_sales' => $allSales[2],
+                    'q3_distributions' => $allDistributions[3],
+                    'q3_sales' => $allSales[3],
+                    'q4_distributions' => $allDistributions[4],
+                    'q4_sales' => $allSales[4],
+                    'total_sales' => $salesByQuarter,
+                    'total_distributions' => $distributionsByQuarter,
+                    'payout' => $payoutByQuarter,
+                    'sales_by_quarter' => $salesByQuarter,
+                    'distributions_by_quarter' => $distributionsByQuarter,
+                    'payout_by_quarter' => $payoutByQuarter,
                 ];
             })->sortByDesc('year');
 
@@ -2167,9 +2188,11 @@ class LearnerController extends Controller
                 ->first();
             $paidDistributionYears = $registrationDistributionCosts->years ?? [];
         }
+
+        $payouts = StoragePayout::where('project_registration_id', $registration->id)->get()->groupBy(['year', 'quarter']);
         
         return view('frontend.learner.self-publishing.sales', compact('learner', 'uniqueYears', 'projectUserBook', 
-            'storageCosts', 'paidDistributionYears', 'registration'));
+            'storageCosts', 'paidDistributionYears', 'registration', 'payouts'));
     }
 
     public function exportStorageCost($project_id, $registration_id, $selectedYear)
