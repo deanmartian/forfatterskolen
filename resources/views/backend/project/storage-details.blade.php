@@ -486,6 +486,32 @@
                 </div>
             </div>
         </div>
+
+        <div id="payoutHistoryModal" class="modal fade" role="dialog" data-backdrop="static">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            Payout History
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead>
+                              <tr>
+                                <th>Year</th>
+                                <th>Quarter</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                              </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     @endif
     
 @stop
@@ -775,6 +801,24 @@
             success: function(data){
                 console.log(data);
             }
+        });
+    }
+
+    function payoutHistoryView(self) {
+        let logs = $(self).data('record');
+        console.log(logs);
+        const tbody = $("#payoutHistoryModal").find("tbody");
+        tbody.empty(); // clear existing rows
+        logs.forEach(log => {
+            const row = `
+                <tr>
+                    <td>${log.year}</td>
+                    <td>${log.quarter}</td>
+                    <td>${log.amount}</td>
+                    <td>${log.date ?? ''}</td>
+                </tr>
+            `;
+            tbody.append(row);
         });
     }
 

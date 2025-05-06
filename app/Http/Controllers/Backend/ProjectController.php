@@ -50,6 +50,7 @@ use App\StorageBook;
 use App\StorageDetail;
 use App\StorageDistributionCost;
 use App\StoragePayout;
+use App\StoragePayoutLog;
 use App\StorageSale;
 use App\StorageVarious;
 use App\TimeRegister;
@@ -1479,9 +1480,16 @@ class ProjectController extends Controller
             ])
             ->get(); */
         $projectCentralDistributions = ProjectRegistration::from('project_registrations as cd')
-            ->join('project_registrations as isbn', function ($join) {
+            ->join(DB::raw("
+                (
+                    SELECT MIN(id) as id, value, type, project_id
+                    FROM project_registrations
+                    WHERE field = 'ISBN'
+                    GROUP BY value, project_id
+                ) as isbn
+            "), function ($join) {
                 $join->on('cd.value', '=', 'isbn.value')
-                    ->where('isbn.field', 'ISBN');
+                     ->on('cd.project_id', '=', 'isbn.project_id');
             })
             ->join('project_books', 'cd.project_id', '=', 'project_books.project_id')
             ->where('cd.field', 'central-distribution')
@@ -1489,6 +1497,7 @@ class ProjectController extends Controller
             ->where('cd.project_id', $projectId)
             ->select('cd.*', 'project_books.book_name', 'isbn.type as type_of_isbn')
             ->get();
+            return $projectCentralDistributions;
         $isbnTypes = (new ProjectRegistration)->isbnTypes();
         
 
@@ -2104,6 +2113,12 @@ class ProjectController extends Controller
 
     public function storageCostSendEmail($project_id, $registration_id, $selectedYear, Request $request)
     {
+        if (!$request->has('quarters')) {
+            return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag("Please select a quarter."),
+                'alert_type' => 'danger']);
+        }
+        
         $selectedQuarters = array_map('intval', array_keys($request->quarters));
 
         $project = Project::find($project_id);
@@ -2150,6 +2165,17 @@ class ProjectController extends Controller
 
         dispatch(new AddMailToQueueJob($user_email, $subject, $message, $from, null, storage_path("app/public/{$filePath}"),
                      'project-registration', $registration_id));
+
+        // create log for payout
+        $record = $data[0];
+        foreach($selectedQuarters as $q) {
+            StoragePayoutLog::create([
+                'project_registration_id' => $registration_id,
+                'year' => $selectedYear,
+                'quarter' => $q,
+                'amount' => $record["q{$q}_sales"] - $record["q{$q}_distributions"],
+            ]);
+        }
 
         return redirect()->back()
             ->with(['errors' => AdminHelpers::createMessageBag("Email sent successfully."),

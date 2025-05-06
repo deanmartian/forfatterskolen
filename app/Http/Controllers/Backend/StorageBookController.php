@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\ProjectRegistration;
+use DB;
 
 class StorageBookController extends Controller {
 
@@ -19,15 +20,22 @@ class StorageBookController extends Controller {
         ->get(); */
 
         $projectCentralDistributions = ProjectRegistration::from('project_registrations as cd')
-        ->join('project_registrations as isbn', function ($join) {
-            $join->on('cd.value', '=', 'isbn.value')
-                ->where('isbn.field', 'ISBN');
-        })
-        ->join('project_books', 'cd.project_id', '=', 'project_books.project_id')
-        ->where('cd.field', 'central-distribution')
-        ->where('cd.in_storage', 1)
-        ->select('cd.*', 'project_books.book_name', 'isbn.type as type_of_isbn')
-        ->get();
+            ->join(DB::raw("
+                (
+                    SELECT MIN(id) as id, value, type, project_id
+                    FROM project_registrations
+                    WHERE field = 'ISBN'
+                    GROUP BY value, project_id
+                ) as isbn
+            "), function ($join) {
+                $join->on('cd.value', '=', 'isbn.value')
+                    ->on('cd.project_id', '=', 'isbn.project_id');
+            })
+            ->join('project_books', 'cd.project_id', '=', 'project_books.project_id')
+            ->where('cd.field', 'central-distribution')
+            ->where('cd.in_storage', 1)
+            ->select('cd.*', 'project_books.book_name', 'isbn.type as type_of_isbn')
+            ->get();
         
         $isbnTypes = (new ProjectRegistration)->isbnTypes();
 

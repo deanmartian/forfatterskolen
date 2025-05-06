@@ -61,7 +61,18 @@
                             {{ FrontendHelpers::currencyFormat($storageCost['payout']) }}
                         </td>
                         <td>
-                            <label for="">Is Payout paid?</label> <br>
+                            @php
+                                $payoutLogs = AdminHelpers::storagePayoutLogs($registration_id, $year);
+                                print_r($payoutLogs->count());
+                            @endphp
+
+                            <label for="">Is Payout paid?</label>
+                            @if ($payoutLogs->count())
+                                <a href="#" data-toggle="modal" data-target="#payoutHistoryModal"
+                                data-record="{{ json_encode($payoutLogs) }}"
+                                onclick="payoutHistoryView(this)">View History</a>
+                            @endif
+                            <br>
                             @foreach([1, 2, 3, 4] as $q)
                                 @php
                                     $payoutEntry = isset($payouts[$year][$q]) ? $payouts[$year][$q]->first() : null;
