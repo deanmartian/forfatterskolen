@@ -65,7 +65,7 @@
                                             </a>
                                         </td>
                                         <td>
-                                            {{ $projectCentralDistribution->isbn_type }}
+                                            {{ $isbnTypes[$projectCentralDistribution->type_of_isbn] ?? NULL }}
                                         </td>
                                         <td>
                                             {{ $projectBook->book_name ?? '' }}

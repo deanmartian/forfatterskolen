@@ -361,22 +361,24 @@
             const url = "{{ route($saveRegistrationRoute, $project->id) }}";
             const field = $(this).data('field');
             
-            $.ajax({
-                url: url, 
-                method: 'POST',
-                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                data: {
-                    id: record.id,
-                    field: record.field,
-                    [field]: newStatus,
-                },
-                success: function (response) {
-                    
-                },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                }
-            });
+            if (record) {
+                $.ajax({
+                    url: url, 
+                    method: 'POST',
+                    headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    data: {
+                        id: record.id,
+                        field: record.field,
+                        [field]: newStatus,
+                    },
+                    success: function (response) {
+                        
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            }
         });
     </script>
 @stop

@@ -832,7 +832,7 @@ class ProjectController extends Controller
         }
 
         return redirect()->back()
-            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $request->type)) . ' saved successfully.'),
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $request->field)) . ' saved successfully.'),
                 'alert_type' => 'success']);
     }
 
@@ -1472,12 +1472,24 @@ class ProjectController extends Controller
             $isbn['custom_type'] = optional($record)->isbn_type;
             return $isbn;
         });
-        $projectCentralDistributions = $project->registrations()
+        /* $projectCentralDistributions = $project->registrations()
             ->where([
                 'field' => 'central-distribution',
                 'in_storage' => 1
             ])
+            ->get(); */
+        $projectCentralDistributions = ProjectRegistration::from('project_registrations as cd')
+            ->join('project_registrations as isbn', function ($join) {
+                $join->on('cd.value', '=', 'isbn.value')
+                    ->where('isbn.field', 'ISBN');
+            })
+            ->join('project_books', 'cd.project_id', '=', 'project_books.project_id')
+            ->where('cd.field', 'central-distribution')
+            ->where('cd.in_storage', 1)
+            ->where('cd.project_id', $projectId)
+            ->select('cd.*', 'project_books.book_name', 'isbn.type as type_of_isbn')
             ->get();
+        $isbnTypes = (new ProjectRegistration)->isbnTypes();
         
 
         if (AdminHelpers::isGiutbokPage()) {
@@ -1488,7 +1500,7 @@ class ProjectController extends Controller
         }
 
         return view('backend.project.storage', compact('layout', 'backRoute', 'centralISBNs', 'saveBookRoute', 'projectId',
-        'projectCentralDistributions', 'projectBook', 'deleteBookRoute'));
+        'projectCentralDistributions', 'projectBook', 'deleteBookRoute', 'isbnTypes'));
     }
 
     public function storageDetails($projectId, $registration_id)
