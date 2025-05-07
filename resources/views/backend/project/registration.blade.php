@@ -24,6 +24,7 @@
                 <tr>
                     <th>ISBN</th>
                     <th width="700">Type</th>
+                    <th>Book Price</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
@@ -32,6 +33,7 @@
                     <tr>
                         <td>{!! $isbn->value !!}</td>
                         <td>{{ $isbn->isbn_type }}</td>
+                        <td>{{ $isbn->book_price ? FrontendHelpers::currencyFormat($isbn->book_price) : '' }}</td>
                         <td>
                             <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
                                     data-target="#registrationModal" data-record="{{ json_encode($isbn) }}"
@@ -190,6 +192,11 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="form-group">
+                                <label>Book Price</label>
+                                <input type="number" class="form-control" name="book_price" step=".01">
+                            </div>
                         </div>
 
                         <div class="form-group central-distribution-container">
@@ -316,6 +323,7 @@
             if (record) {
                 form.find('[name=isbn]').val(record.value);
                 form.find('[name=central_distribution]').val(record.value);
+                form.find('[name=book_price]').val(record.book_price);
                 form.find('[name=mentor_book_base]').prop("checked", false).change();
                 form.find('[name=upload_files_to_mentor_book_base]').prop("checked", false).change();
                 //form.find('[name=upload_files_to_mentor_book_base]').val(record.value);

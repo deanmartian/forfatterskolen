@@ -11,6 +11,7 @@
                 <tr>
                     <th>ISBN</th>
                     <th>Type</th>
+                    <th>Book Price</th>
                     <th>Book Name</th>
                 </tr>
             </thead>
@@ -25,6 +26,11 @@
                         </td>
                         <td>
                             {{ $isbnTypes[$projectCentralDistribution->type_of_isbn] ?? NULL }}
+                        </td>
+                        <td>
+                            {{ $projectCentralDistribution->isbn_book_price 
+                                ? FrontendHelpers::currencyFormat($projectCentralDistribution->isbn_book_price) 
+                                : NULL }}
                         </td>
                         <td>
                             {{ $projectCentralDistribution->book_name }}

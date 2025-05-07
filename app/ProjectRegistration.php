@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectRegistration extends Model
 {
 
-    protected $fillable = ['project_id', 'field', 'value', 'type', 'in_storage'];
+    protected $fillable = ['project_id', 'field', 'value', 'type', 'book_price', 'in_storage'];
 
     protected $appends = ['isbn_type'];
 

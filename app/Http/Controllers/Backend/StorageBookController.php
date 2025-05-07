@@ -22,7 +22,7 @@ class StorageBookController extends Controller {
         $projectCentralDistributions = ProjectRegistration::from('project_registrations as cd')
             ->join(DB::raw("
                 (
-                    SELECT MIN(id) as id, value, type, project_id
+                    SELECT MIN(id) as id, value, type, project_id, book_price
                     FROM project_registrations
                     WHERE field = 'ISBN'
                     GROUP BY value, project_id
@@ -34,7 +34,7 @@ class StorageBookController extends Controller {
             ->join('project_books', 'cd.project_id', '=', 'project_books.project_id')
             ->where('cd.field', 'central-distribution')
             ->where('cd.in_storage', 1)
-            ->select('cd.*', 'project_books.book_name', 'isbn.type as type_of_isbn')
+            ->select('cd.*', 'project_books.book_name', 'isbn.type as type_of_isbn', 'isbn.book_price as isbn_book_price')
             ->get();
         
         $isbnTypes = (new ProjectRegistration)->isbnTypes();
