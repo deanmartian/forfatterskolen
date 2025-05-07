@@ -1497,7 +1497,6 @@ class ProjectController extends Controller
             ->where('cd.project_id', $projectId)
             ->select('cd.*', 'project_books.book_name', 'isbn.type as type_of_isbn')
             ->get();
-            return $projectCentralDistributions;
         $isbnTypes = (new ProjectRegistration)->isbnTypes();
         
 
