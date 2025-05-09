@@ -74,7 +74,7 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $learners =  User::where('role', 2)->get(); //->where('is_self_publishing_learner', 1)
+        $learners =  [];//User::where('role', 2)->get(); //->where('is_self_publishing_learner', 1)
         $activities = ProjectActivity::all();
         $projects = Project::with('user')
         ->orderByRaw("CASE WHEN status='active' 

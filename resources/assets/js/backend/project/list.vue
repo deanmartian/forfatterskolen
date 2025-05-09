@@ -113,8 +113,16 @@
 
             <div class="form-group">
                 <label>Learner</label>
-                <v-select :options="learnerList" label="full_name" v-model="selected_learner" @input="setSelectedLearner($event)"
-                          name="learner_id"></v-select>
+                <!-- <v-select :options="learnerList" label="full_name" v-model="selected_learner" @input="setSelectedLearner($event)"
+                          name="learner_id"></v-select> -->
+                <div class="dropdown-container">
+                    <input type="text" v-model="searchQuery" @input="fetchLearners" class="form-control" placeholder="Search for users">
+                    <div class="dropdown-results" v-if="searchLearnerList.length">
+                        <div v-for="learner in searchLearnerList" :key="learner.id" @click="selectLearner(learner)">
+                            {{ learner.first_name + " " + learner.last_name }}
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- <div class="form-group">
@@ -338,6 +346,8 @@
                 notesForm: {
                     notes: this.projectNotes
                 },
+                searchQuery: '',
+                searchLearnerList: [],
                 isAdd: true,
                 currentActivity: '',
                 isLoading: false,
@@ -397,6 +407,10 @@
                         status: data.status
                     };
 
+                    if (data.user) {
+                        this.searchQuery = data.user.full_name;
+                    }
+
                     const actIndex = _.findIndex(this.activityList, {id: data.activity_id});
                     const learnerIndex = _.findIndex(this.learnerList, {id: data.user_id});
                     const editorIndex = _.findIndex(this.editorList, {id: data.editor_id});
@@ -447,8 +461,10 @@
                     this.$refs.projectFormModal.hide();
 
                     this.$toasted.global.showSuccessMsg({
-                        message : 'Project added'
+                        message : 'Project saved.'
                     });
+
+                    location.reload();
                 }).catch(error => {
                     this.isLoading = false;
                     this.processError(error);
@@ -578,7 +594,27 @@
                         message : 'Notes saved successfully'
                     });
                 })
-            }
+            },
+
+            fetchLearners() {
+                if (this.searchQuery.length > 1) {
+                    fetch(`/learners/search?search=${this.searchQuery}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.searchLearnerList = data;
+                        })
+                        .catch(error => console.error('Error fetching data:', error));
+                } else {
+                    this.searchLearnerList = [];
+                }
+            },
+
+            selectLearner(learner) {
+                this.projectForm.user_id = learner.id;
+                this.selected_learner = learner.first_name + " " + learner.last_name;
+                this.searchQuery = learner.first_name + " " + learner.last_name;
+                this.searchLearnerList = [];
+            },
         },
 
         mounted() {

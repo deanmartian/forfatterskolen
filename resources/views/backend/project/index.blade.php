@@ -2,6 +2,28 @@
 
 @section('styles')
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <style>
+        .dropdown-container {
+            position: relative;
+            width: 100%;
+        }
+        .dropdown-results {
+            position: absolute;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            z-index: 1000;
+        }
+        .dropdown-results div {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .dropdown-results div:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
 @stop
 
 @section('title')

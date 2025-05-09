@@ -17,6 +17,7 @@ use App\Order;
 use App\Package;
 use App\PaymentPlan;
 use App\ShopManuscript;
+use App\StoragePayoutLog;
 use App\User;
 use App\WebinarEmailOut;
 use App\Workshop;
@@ -2036,6 +2037,13 @@ class AdminHelpers
 
         return $colors;
 	}
+
+    public static function storagePayoutLogs($registration_id, $year) {
+        return StoragePayoutLog::where([
+            'project_registration_id' => $registration_id,
+            'year' => $year
+        ])->get();
+    }
 }
 
 
