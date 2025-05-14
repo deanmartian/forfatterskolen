@@ -129,12 +129,12 @@
                         </td>
                         <td>
                             @if (strpos($bookFormatting->file, "project-"))
-                                <a href="{{ route('dropbox.download_file', trim($bookFormatting->file)) }}" 
+                                <a href="{{ url('/dropbox/download/' . trim($bookFormatting->file)) }}" 
                                     class="btn btn-success btn-xs">
                                     <i class="fa fa-download" aria-hidden="true"></i>
                                 </a>
                             @else
-                                <a href="{{ $bookFormatting->file }}" class="btn btn-success btn-xs" download>
+                                <a href="{{ url('/dropbox/shared-link/' . trim($bookFormatting->file)) }}" class="btn btn-success btn-xs">
                                     <i class="fa fa-download"></i>
                                 </a>
                             @endif
@@ -181,10 +181,10 @@
                                 @endphp
                                 @foreach ($coverFiles as $coverFile)
                                     @if (strpos($coverFile, 'project-'))
-                                        <a href="{{ route('dropbox.download_file', trim($coverFile)) }}">
+                                        <a href="{{ url('/dropbox/download/' . trim($coverFile)) }}">
                                             <i class="fa fa-download" aria-hidden="true"></i>
                                         </a>&nbsp;
-                                        <a href="{{ route('dropbox.shared_link', $coverFile) }}" target="_blank" 
+                                        <a href="{{ url('/dropbox/shared-link/' . trim($coverFile)) }}" target="_blank" 
                                         style="margin-right: 5px">
                                             {{ basename($coverFile) }}
                                         </a>
@@ -202,7 +202,7 @@
                             </td>
                             <td>
                                 @if ($indesign->interior)
-                                    <a href="{{ route('dropbox.download_file', trim($indesign->description)) }}">
+                                    <a href="{{ url('/dropbox/download/' . trim($indesign->description)) }}">
                                         <i class="fa fa-download" aria-hidden="true"></i>
                                     </a>&nbsp;
                                     {!! $indesign->interior !!}
@@ -253,12 +253,12 @@
                             </td>
                             <td>
                                 @if (strpos($barCode->value, "project-"))
-                                    <a href="{{ route('dropbox.download_file', trim($barCode->value)) }}" 
+                                    <a href="{{ url('/dropbox/download/' . trim($barCode->value)) }}" 
                                         class="btn btn-success btn-xs">
                                         <i class="fa fa-download" aria-hidden="true"></i>
                                     </a>
                                 @else
-                                    <a href="{{ $barCode->value }}" class="btn btn-success btn-xs" download>
+                                    <a href="{{ url('/dropbox/shared-link/' . trim($barCode->value)) }}" class="btn btn-success btn-xs">
                                         <i class="fa fa-download"></i>
                                     </a>
                                 @endif
@@ -298,11 +298,11 @@
                             <td>
                                 @if ($printReady->value)
                                     @if (strpos($printReady->value, 'project-'))
-                                        <a href="{{ route('dropbox.download_file', trim($printReady->value)) }}">
+                                        <a href="{{ url('/dropbox/download/' . trim($printReady->value)) }}">
                                             <i class="fa fa-download" aria-hidden="true"></i>
                                         </a>&nbsp;
                                     @else
-                                        <a href="{{ $printReady->value }}" class="btn btn-success btn-xs" download>
+                                        <a href="{{ url('/dropbox/shared-link/' . trim($printReady->value)) }}" class="btn btn-success btn-xs">
                                             <i class="fa fa-download"></i>
                                         </a>
                                     @endif
@@ -437,12 +437,12 @@
                         <td>{!! $sampleBookPDF->file_link !!}</td>
                         <td>
                             @if (strpos($sampleBookPDF->value, "project-"))
-                                <a href="{{ route('dropbox.download_file', trim($sampleBookPDF->value)) }}" 
+                                <a href="{{ url('/dropbox/download/' . trim($sampleBookPDF->value)) }}" 
                                     class="btn btn-success btn-xs">
                                     <i class="fa fa-download" aria-hidden="true"></i>
                                 </a>
                             @else
-                                <a href="{{ $sampleBookPDF->value }}" class="btn btn-success btn-xs" download>
+                                <a href="{{ url('/dropbox/shared-link/' . trim($sampleBookPDF->value)) }}" class="btn btn-success btn-xs">
                                     <i class="fa fa-download"></i>
                                 </a>
                             @endif
@@ -494,7 +494,7 @@
                                                     <img src="{{ asset( $bookPicture->image ) }}" width="100" height="100">
                                                 </a>
                                             @else
-                                                <a href="{{ route('dropbox.shared_link', $bookPicture->image ) }}" target="_blank">
+                                                <a href="{{ url('/dropbox/shared-link/' . trim($bookPicture->image)) }}" target="_blank">
                                                     {{ basename($bookPicture->image) }}
                                                 </a>
                                             @endif
