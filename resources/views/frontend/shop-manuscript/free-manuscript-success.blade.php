@@ -8,7 +8,7 @@
 <div class="container text-center">
 	<div class="row">
 		<div class="col-sm-12">
-			<h1 style="margin-top: 120px;" class="font-weight-bold">
+			<h1 style="margin-top: 120px;" class="font-weight-bold"> 
 				{{ trans('site.front.free-manuscript-success.title') }}
 			</h1>
 			{!! str_replace(['_start_redirect_', '_end_redirect_', '_start_span_', '_end_span_'],
