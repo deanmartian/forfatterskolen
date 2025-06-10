@@ -120,6 +120,10 @@ class ShopController extends Controller
             endif;
         endif;
 
+        if (!Auth::guest() && !auth()->user()->could_buy_course) {
+            return redirect()->route('front.course.show', $course_id);
+        }
+
         if ($course->pay_later_with_application) {
             return redirect()->route('front.course.application', $course_id);
         }
@@ -1933,14 +1937,14 @@ class ShopController extends Controller
                     $courseTaken->is_active = $order->is_pay_later ? 0 : 1;
                     $courseTaken->save();
 
-                    $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken, true, true);
+                    return $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken, true, true);
                 }
 
-                $courseService->notifyAdmin($order->user_id, $order->package_id);
+                //$courseService->notifyAdmin($order->user_id, $order->package_id);
             }
-
+return "outside condition";
             $order->is_processed = 1;
-            $order->save();
+            //$order->save();
 
             CheckoutLog::updateOrCreate([
                 'user_id' => \auth()->id(),

@@ -540,6 +540,10 @@
                         window.location.href = response.data.user.course_link;
                     }
 
+                    if(!response.data.user.could_buy_course) {
+                        window.location.href = '/course/' + this.course.id;
+                    }
+
                     this.$toasted.global.showSuccessMsg({
                         message : response.data.success
                     });

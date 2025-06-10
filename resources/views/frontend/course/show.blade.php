@@ -96,9 +96,11 @@
 											Søk kurset
 										</a>
 									@else
-										<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
-											{{ trans('site.front.our-course.show.buy-course') }}
-										</a>
+										@if (Auth::user()->could_buy_course)
+											<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
+												{{ trans('site.front.our-course.show.buy-course') }}
+											</a>
+										@endif
 									@endif
 								@endif
 							@endif
@@ -292,10 +294,18 @@
 												? $course->packagesIsShow[0]->full_payment_sale_price
 												: $course->packagesIsShow[0]->calculated_price);
 											?>
-											<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn course-price w-100">
-												{{ $course->pay_later_with_application ? 'Søk kurset' 
-												: str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
-											</a>
+
+											@auth
+												@php $canBuy = Auth::user()->could_buy_course; @endphp
+											@else
+												@php $canBuy = true; @endphp
+											@endauth
+
+											@if ($canBuy)
+												<a href="{{ route($checkoutRoute, ['id' => $course->id]) }}" class="btn course-price w-100">
+													{{ $course->pay_later_with_application ? 'Søk kurset' : str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
+												</a>
+											@endif
 										@endif
 									</div>
 								</div>
