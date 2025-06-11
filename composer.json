@@ -1,7 +1,10 @@
 {
     "name": "laravel/laravel",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "type": "project",
     "require": {
@@ -28,7 +31,8 @@
         "symfony/polyfill-iconv": "^1.8",
         "teodortalov/citrix": "^1.2",
         "unisharp/laravel-filemanager": "^2.3",
-        "van-ons/laraberg": "^1.1"
+        "van-ons/laraberg": "^1.1",
+        "laravel/ui": "^2.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
