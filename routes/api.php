@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +19,7 @@ use Illuminate\Http\Request;
     return $request->user();
 });*/
 
-Route::group(['prefix' => 'cross-domain'], function () {
-    Route::post('/get-token', 'Auth\LoginController@crossDomainToken');
-    Route::post('/login', 'Auth\LoginController@crossDomainLogin');
+Route::prefix('cross-domain')->group(function () {
+    Route::post('/get-token', [Auth\LoginController::class, 'crossDomainToken']);
+    Route::post('/login', [Auth\LoginController::class, 'crossDomainLogin']);
 });

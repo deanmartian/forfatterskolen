@@ -67,7 +67,7 @@
                         @endif
                         <p>
                         @if(!isset($group))
-                            <form class="form-inline form-import" method="POST" action="{{ action('\Barryvdh\TranslationManager\Controller@postImport') }}" data-remote="true" role="form">
+                            <form class="form-inline form-import" method="POST" action="{{ action([\Barryvdh\TranslationManager\Controller::class, 'postImport']) }}" data-remote="true" role="form">
                                 {{ csrf_field() }}
                                 <select name="replace" class="form-control">
                                     <option value="0">Append new translations</option>
@@ -75,7 +75,7 @@
                                 </select>
                                 <button type="submit" class="btn btn-success"  data-disable-with="Loading..">Import groups</button>
                             </form>
-                            <form class="form-inline form-find" method="POST" action="{{ action('\Barryvdh\TranslationManager\Controller@postFind') }}" data-remote="true" role="form" data-confirm="Are you sure you want to scan you app folder? All found translation keys will be added to the database.">
+                            <form class="form-inline form-find" method="POST" action="{{ action([\Barryvdh\TranslationManager\Controller::class, 'postFind']) }}" data-remote="true" role="form" data-confirm="Are you sure you want to scan you app folder? All found translation keys will be added to the database.">
                                 {{ csrf_field() }}
                                 <p></p>
                                 <button type="submit" class="btn btn-info" data-disable-with="Searching.." >Find translations in files</button>
@@ -83,7 +83,7 @@
                         @endif
 
                         @if(isset($group))
-                            {{--<form class="form-inline form-publish" method="POST" action="{{ action('\Barryvdh\TranslationManager\Controller@postPublish', $group) }}" data-remote="true" role="form" data-confirm="Are you sure you want to publish the translations? This will overwrite existing language files.">
+                            {{--<form class="form-inline form-publish" method="POST" action="{{ action([\Barryvdh\TranslationManager\Controller::class, 'postPublish'], $group) }}" data-remote="true" role="form" data-confirm="Are you sure you want to publish the translations? This will overwrite existing language files.">
                                 {{ csrf_field() }}--}}
                             @if(Session::has('success'))
                                 <div class="alert alert-success">
@@ -110,7 +110,7 @@
                                 </div>
                             </form>
                             @if($group)
-                                <form action="{{ action('\Barryvdh\TranslationManager\Controller@postAdd', array($group)) }}" method="POST"  role="form">
+                                <form action="{{ action([\Barryvdh\TranslationManager\Controller::class, 'postAdd'], array($group)) }}" method="POST"  role="form">
                                     {{ csrf_field() }}
                                     <textarea class="form-control" rows="3" name="keys" placeholder="Add 1 key per line"></textarea>
                                     <p></p>
@@ -146,7 +146,7 @@
 
                                             @if($deleteEnabled)
                                                 <td>
-                                                    <a href="{{ action('\Barryvdh\TranslationManager\Controller@postDelete', [$group, $key]) }}" class="delete-key" rel="nofollow" data-confirm="Are you sure you want to delete the translations for '{{ $key }}'?"><span class="glyphicon glyphicon-trash"></span></a>
+                                                    <a href="{{ action([\Barryvdh\TranslationManager\Controller::class, 'postDelete'], [$group, $key]) }}" class="delete-key" rel="nofollow" data-confirm="Are you sure you want to delete the translations for '{{ $key }}'?"><span class="glyphicon glyphicon-trash"></span></a>
                                                 </td>
                                             @endif
                                         </tr>
@@ -199,9 +199,9 @@
             $('.group-select').on('change', function(){
                 var group = $(this).val();
                 if (group) {
-                    window.location.href = '<?= action('\Barryvdh\TranslationManager\Controller@getView') ?>/'+$(this).val();
+                    window.location.href = '<?= action([\Barryvdh\TranslationManager\Controller::class, 'getView']) ?>/'+$(this).val();
                 } else {
-                    window.location.href = '<?= action('\Barryvdh\TranslationManager\Controller@getIndex') ?>';
+                    window.location.href = '<?= action([\Barryvdh\TranslationManager\Controller::class, 'getIndex']) ?>';
                 }
             });
 
@@ -257,7 +257,7 @@
 
         function publishTranslations(t) {
 
-            let publish_translation_link = '{{ action('\Barryvdh\TranslationManager\Controller@postPublish', $group) }}';
+            let publish_translation_link = '{{ action([\Barryvdh\TranslationManager\Controller::class, 'postPublish'], $group) }}';
             console.log(publish_translation_link);
             let self = $(t);
 

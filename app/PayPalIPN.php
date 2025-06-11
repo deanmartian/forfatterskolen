@@ -28,8 +28,6 @@ class PayPalIPN extends Model
     /**
      * @var array
      */
-    protected $dates = ['deleted_at'];
-
     /**
      * @var array
      */

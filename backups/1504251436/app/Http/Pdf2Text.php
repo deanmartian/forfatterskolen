@@ -105,7 +105,7 @@ if (! function_exists('hex2bin')) {
             $index += 2;
         }
 
-        return  $binstring;
+        return $binstring;
     }
 
 }
@@ -181,14 +181,14 @@ abstract class PdfObjectBase           // extends  Object
                 $code >>= 16;
             }
 
-            return  $result;
+            return $result;
         }
         // No translation is apparently possible : use a placeholder to signal this situation
         else {
             if (strpos(PdfToText::$Utf8Placeholder, '%') === false) {
-                return  PdfToText::$Utf8Placeholder;
+                return PdfToText::$Utf8Placeholder;
             } else {
-                return  sprintf(PdfToText::$Utf8Placeholder, $code);
+                return sprintf(PdfToText::$Utf8Placeholder, $code);
             }
         }
     }
@@ -267,15 +267,15 @@ abstract class PdfObjectBase           // extends  Object
                                                            '(LZWDecode) | (RunLengthDecode) | (CCITTFaxDecode) | (JBIG2Decode) | (JPXDecode) ) #imsx', $object_data, $match);
 
         if (! $status) {
-            return  self::PDF_TEXT_ENCODING;
+            return self::PDF_TEXT_ENCODING;
         }
 
         switch (strtolower($match['encoding'])) {
-            case 'asciihexdecode':  return  self::PDF_ASCIIHEX_ENCODING;
-            case 'ascii85decode':  return  self::PDF_ASCII85_ENCODING;
-            case 'flatedecode':  return  self::PDF_FLATE_ENCODING;
-            case 'dctdecode':  return  self::PDF_DCT_ENCODING;
-            case 'lzwdecode':  return  self::PDF_LZW_ENCODING;
+            case 'asciihexdecode':  return self::PDF_ASCIIHEX_ENCODING;
+            case 'ascii85decode':  return self::PDF_ASCII85_ENCODING;
+            case 'flatedecode':  return self::PDF_FLATE_ENCODING;
+            case 'dctdecode':  return self::PDF_DCT_ENCODING;
+            case 'lzwdecode':  return self::PDF_LZW_ENCODING;
 
             case 'ccittfaxdecode':  // return ( self::PDF_CCITT_FAX_ENCODING ) ;
 
@@ -286,7 +286,7 @@ abstract class PdfObjectBase           // extends  Object
                     warning("Encoding type \"{$match['encoding']}\" not yet implemented for pdf object #$object_id.");
                 }
 
-            default:  return  self::PDF_UNKNOWN_ENCODING;
+            default:  return self::PDF_UNKNOWN_ENCODING;
         }
     }
 
@@ -348,7 +348,7 @@ abstract class PdfObjectBase           // extends  Object
             $status = false;
         }
 
-        return  $status;
+        return $status;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -375,7 +375,7 @@ abstract class PdfObjectBase           // extends  Object
             }
         }
 
-        return  $date;
+        return $date;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -387,7 +387,7 @@ abstract class PdfObjectBase           // extends  Object
     protected function IsCharacterMap($decoded_data)
     {
         // preg_match is faster than calling strpos several times
-        return  preg_match('#(begincmap)|(beginbfrange)|(beginbfchar)|(/Differences)#ix', $decoded_data);
+        return preg_match('#(begincmap)|(beginbfrange)|(beginbfchar)|(/Differences)#ix', $decoded_data);
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -398,7 +398,7 @@ abstract class PdfObjectBase           // extends  Object
      *-------------------------------------------------------------------------------------------------------------*/
     protected function IsFont($object_data)
     {
-        return  stripos($object_data, '/BaseFont') !== false;
+        return stripos($object_data, '/BaseFont') !== false;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -413,9 +413,9 @@ abstract class PdfObjectBase           // extends  Object
     protected function IsFontMap($object_data)
     {
         if (preg_match('#<< \s* ( '.self::$FontSpecifiers.' ) \s+ .* >>#imsx', $object_data)) {
-            return  true;
+            return true;
         } else {
-            return  false;
+            return false;
         }
     }
 
@@ -429,9 +429,9 @@ abstract class PdfObjectBase           // extends  Object
     protected function IsImage($object_data)
     {
         if (preg_match('#/Subtype \s* /Image#msx', $object_data)) {
-            return  true;
+            return true;
         } else {
-            return  false;
+            return false;
         }
     }
 
@@ -445,9 +445,9 @@ abstract class PdfObjectBase           // extends  Object
     protected function IsObjectStream($object_data)
     {
         if (preg_match('#/Type \s* /ObjStm#isx', $object_data)) {
-            return  true;
+            return true;
         } else {
-            return  false;
+            return false;
         }
     }
 
@@ -470,11 +470,11 @@ abstract class PdfObjectBase           // extends  Object
     protected function IsPageHeaderOrFooter($stream_data)
     {
         if (preg_match('#/Type \s* /Pagination \s* /Subtype \s*/((Header)|(Footer))#ix', $stream_data)) {
-            return  true;
+            return true;
         } elseif (preg_match('#/Attached \s* \[ .*? /((Top)|(Bottom)) [^]]#ix', $stream_data)) {
-            return  true;
+            return true;
         } else {
-            return  false;
+            return false;
         }
     }
 
@@ -510,13 +510,13 @@ abstract class PdfObjectBase           // extends  Object
         if (preg_match('# / (Filter) | (Length) #ix', $object_data) &&
               ! preg_match('# / (Type) | (Subtype) | (Length1) #ix', $object_data)) {
             if (preg_match('/\\b(BT|Tf|Td|TJ|Tj|Tm|Do)\\b/', $decoded_stream_data)) {
-                return  true;
+                return true;
             }
         } elseif (preg_match('/\\b(BT|Tf|Td|TJ|Tj|Tm|Do)\\b/', $decoded_stream_data)) {
-            return  true;
+            return true;
         }
 
-        return  false;
+        return false;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -574,7 +574,7 @@ abstract class PdfObjectBase           // extends  Object
                 break;
         }
 
-        return  $newchar;
+        return $newchar;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -638,7 +638,7 @@ abstract class PdfObjectBase           // extends  Object
 
         $result .= substr($str, $offset);
 
-        return  $result;
+        return $result;
     }
 }
 
@@ -1098,7 +1098,7 @@ class PdfToText extends PdfObjectBase
 
     public function __toString()
     {
-        return  $this->Text;
+        return $this->Text;
     }
 
     /**************************************************************************************************************
@@ -1163,7 +1163,7 @@ class PdfToText extends PdfObjectBase
             error(new PdfToTextDecodingException("Unable to open \"$filename\"."));
         }
 
-        return  $this->__load($filename, $contents, $user_password, $owner_password);
+        return $this->__load($filename, $contents, $user_password, $owner_password);
     }
 
     public function LoadFromString($contents, $user_password = false, $owner_password = false)
@@ -1171,7 +1171,7 @@ class PdfToText extends PdfObjectBase
         $this->__memory_usage_start = (self::$HasMemoryGetUsage) ? memory_get_usage(true) : 0;
         $this->__memory_peak_usage_start = (self::$HasMemoryGetPeakUsage) ? memory_get_peak_usage(true) : 0;
 
-        return  $this->__load('', $contents, $user_password, $owner_password);
+        return $this->__load('', $contents, $user_password, $owner_password);
     }
 
     private function __load($filename, $contents, $user_password = false, $owner_password = false)
@@ -1514,7 +1514,7 @@ class PdfToText extends PdfObjectBase
         $this->MemoryPeakUsage = $memory_peak_usage_end - $this->__memory_peak_usage_start;
 
         // All done, return
-        return  $this->Text;
+        return $this->Text;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -1539,16 +1539,16 @@ class PdfToText extends PdfObjectBase
     public function GetPageFromOffset($offset)
     {
         if ($offset === false) {
-            return  false;
+            return false;
         }
 
         foreach ($this->PageLocations as $page => $location) {
             if ($offset >= $location['start'] && $offset <= $location['end']) {
-                return  $page;
+                return $page;
             }
         }
 
-        return  false;
+        return false;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -1583,10 +1583,10 @@ class PdfToText extends PdfObjectBase
         $offset = strpos($this->Text, $search, $start);
 
         if ($offset !== false) {
-            return   [$this->GetPageFromOffset($offset), $offset];
+            return [$this->GetPageFromOffset($offset), $offset];
         }
 
-        return  false;
+        return false;
     }
 
     public function text_stripos($search, $start = 0)
@@ -1594,10 +1594,10 @@ class PdfToText extends PdfObjectBase
         $offset = stripos($this->Text, $search, $start);
 
         if ($offset !== false) {
-            return   [$this->GetPageFromOffset($offset), $offset];
+            return [$this->GetPageFromOffset($offset), $offset];
         }
 
-        return  false;
+        return false;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -1641,7 +1641,7 @@ class PdfToText extends PdfObjectBase
         $length = strlen($text);
 
         if (! $length) {
-            return  false;
+            return false;
         }
 
         $result = [];
@@ -1659,7 +1659,7 @@ class PdfToText extends PdfObjectBase
             $index += $length;
         }
 
-        return  $result;
+        return $result;
     }
 
     public function document_stripos($text, $group_by_page = false)
@@ -1667,7 +1667,7 @@ class PdfToText extends PdfObjectBase
         $length = strlen($text);
 
         if (! $length) {
-            return  false;
+            return false;
         }
 
         $result = [];
@@ -1685,7 +1685,7 @@ class PdfToText extends PdfObjectBase
             $index += $length;
         }
 
-        return  $result;
+        return $result;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -1739,7 +1739,7 @@ class PdfToText extends PdfObjectBase
             $match = $local_match;
         }
 
-        return  $status;
+        return $status;
     }
 
     public function document_match($pattern, &$matches = null, $flags = 0, $offset = 0)
@@ -1757,7 +1757,7 @@ class PdfToText extends PdfObjectBase
             $matches = $local_matches;
         }
 
-        return  $status;
+        return $status;
     }
 
     /**************************************************************************************************************
@@ -1910,7 +1910,7 @@ class PdfToText extends PdfObjectBase
                 break;
         }
 
-        return  $decoded_stream_data;
+        return $decoded_stream_data;
     }
 
     // __decode_lzw -
@@ -2004,7 +2004,7 @@ class PdfToText extends PdfObjectBase
             }
         }
 
-        return  $result;
+        return $result;
     }
 
     // __decode_ascii_hex -
@@ -2043,7 +2043,7 @@ class PdfToText extends PdfObjectBase
                     $code = hexdec($c);
 
                     if ($code === 0 && $c != '0') {
-                        return  '';
+                        return '';
                     }
 
                     if ($is_odd) {
@@ -2058,14 +2058,14 @@ class PdfToText extends PdfObjectBase
         }
 
         if ($input[$i] != '>') {
-            return  '';
+            return '';
         }
 
         if ($is_odd) {
             $output .= chr($codeHigh << 4);
         }
 
-        return  $output;
+        return $output;
     }
 
     // __decode_ascii_85 -
@@ -2081,7 +2081,7 @@ class PdfToText extends PdfObjectBase
 
         // Ignore empty data
         if ($data === '') {
-            return  false;
+            return false;
         }
 
         $data_length = strlen($data);
@@ -2114,7 +2114,7 @@ class PdfToText extends PdfObjectBase
             }
             // Other characters : corrupted data...
             else {
-                return  false;
+                return false;
             }
 
             // We have collected 5 characters in base 85 : convert their 32-bits value to base 2 (3 characters)
@@ -2144,7 +2144,7 @@ class PdfToText extends PdfObjectBase
         }
 
         // All done, return
-        return  $result;
+        return $result;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -2181,11 +2181,11 @@ class PdfToText extends PdfObjectBase
         switch ($type) {
             // Normal JPEG image
             case self::PDF_DCT_ENCODING:
-                return  new PdfJpegImage($stream_data, $autosave);
+                return new PdfJpegImage($stream_data, $autosave);
 
                 // CCITT fax image
             case self::PDF_CCITT_FAX_ENCODING:
-                return  new PdfFaxImage($stream_data);
+                return new PdfFaxImage($stream_data);
 
                 // For now, I have not found enough information to be able to decode image data in an inflated stream...
                 // In some cases, however, this is JPEG data
@@ -2193,16 +2193,16 @@ class PdfToText extends PdfObjectBase
                 $image = PdfInlinedImage::CreateInstance($stream_data, $object_data, $autosave);
 
                 if ($image) {
-                    return  $image;
+                    return $image;
                 }
 
                 break;
 
             default:
-                return  false;
+                return false;
         }
 
-        return  false;
+        return false;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -2265,7 +2265,7 @@ class PdfToText extends PdfObjectBase
                 error(new PdfToTextDecodingException('Found object stream without gzipped data', $object_id));
             }
 
-            return  false;
+            return false;
         }
 
         // Object streams data start with a series of object id/offset pairs. The offset is absolute to the first character
@@ -2279,7 +2279,7 @@ class PdfToText extends PdfObjectBase
                 error(new PdfToTextDecodingException('Object stream does not start with integer object id/offset pairs.', $object_id));
             }
 
-            return  false;
+            return false;
         }
 
         // Extract the series of object id/offset pairs and the stream object data
@@ -2292,7 +2292,7 @@ class PdfToText extends PdfObjectBase
                 error(new PdfToTextDecodingException('Object stream should start with an even number of integer values.', $object_id));
             }
 
-            return  false;
+            return false;
         }
 
         // Extract every individual object
@@ -2315,7 +2315,7 @@ class PdfToText extends PdfObjectBase
             $objects['object'][] = $object_contents;
         }
 
-        return  $objects;
+        return $objects;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -2923,7 +2923,7 @@ class PdfToText extends PdfObjectBase
             $discard_last_instruction = false;
         }
 
-        return  $this->__rtl_process($result);
+        return $this->__rtl_process($result);
     }
 
     // __next_instruction -
@@ -2939,7 +2939,7 @@ class PdfToText extends PdfObjectBase
             $result = $last_instruction;
             $last_instruction = false;
 
-            return  $result;
+            return $result;
         }
 
         // Holds the floating-point values encountered so far
@@ -2959,40 +2959,40 @@ class PdfToText extends PdfObjectBase
                 $x = $number_stack[4];
                 $y = $number_stack[5];
 
-                return   ['instruction' => 'goto', 'next' => $next_index, 'x' => $x, 'y' => $y, 'relative' => false, 'token' => $token];
+                return ['instruction' => 'goto', 'next' => $next_index, 'x' => $x, 'y' => $y, 'relative' => false, 'token' => $token];
             }
             // 'Td' or 'TD' instructions : return a goto instruction with the x and y coordinates (1st and 2nd args)
             elseif ($token == 'Td' || $token == 'TD') {
                 $x = $number_stack[0];
                 $y = $number_stack[1];
 
-                return   ['instruction' => 'goto', 'next' => $next_index, 'x' => $x, 'y' => $y, 'relative' => true, 'token' => $token];
+                return ['instruction' => 'goto', 'next' => $next_index, 'x' => $x, 'y' => $y, 'relative' => true, 'token' => $token];
             }
             // Output text "'" instruction, with conditional newline
             elseif ($token[0] == "'") {
-                return   ['instruction' => 'nl', 'next' => $next_index, 'conditional' => true, 'leading' => false, 'token' => $token];
+                return ['instruction' => 'nl', 'next' => $next_index, 'conditional' => true, 'leading' => false, 'token' => $token];
             }
             // Same as above
             elseif ($token == 'TJ' || $token == 'Tj') {
-                return   ['instruction' => 'nl', 'next' => $next_index, 'conditional' => true, 'leading' => false, 'token' => $token];
+                return ['instruction' => 'nl', 'next' => $next_index, 'conditional' => true, 'leading' => false, 'token' => $token];
             }
             // Set font size
             elseif ($token == 'Tf') {
-                return   ['instruction' => 'fontsize', 'next' => $next_index, 'size' => $number_stack[0], 'token' => $token];
+                return ['instruction' => 'fontsize', 'next' => $next_index, 'size' => $number_stack[0], 'token' => $token];
             }
             // Text leading (spacing used by T*)
             elseif ($token == 'TL') {
-                return   ['instruction' => 'leading', 'next' => $next_index, 'size' => $number_stack[0], 'token' => $token];
+                return ['instruction' => 'leading', 'next' => $next_index, 'size' => $number_stack[0], 'token' => $token];
             }
             // Position to next line
             elseif ($token == 'T*') {
-                return   ['instruction' => 'nl', 'next' => $next_index, 'conditional' => false, 'leading' => true];
+                return ['instruction' => 'nl', 'next' => $next_index, 'conditional' => false, 'leading' => true];
             }
             // Draw object ("Do"). To prevent different text shapes to appear on the same line, we return a "newline" instruction
             // here. Note that the shape position is not taken into account here, and shapes will be processed in the order they
             // appear in the pdf file (which is likely to be different from their position on a graphic screen).
             elseif ($token == 'Do') {
-                return   ['instruction' => 'nl', 'next' => $next_index, 'conditional' => false, 'leading' => false, 'token' => $token];
+                return ['instruction' => 'nl', 'next' => $next_index, 'conditional' => false, 'leading' => false, 'token' => $token];
             }
             // Raw text output
             elseif ($token[0] == '(') {
@@ -3002,9 +3002,9 @@ class PdfToText extends PdfObjectBase
                 if ($next_part[0] == "'") {
                     $last_instruction = $instruction;
 
-                    return   ['instruction' => 'nl', 'next' => $next_index, 'conditional' => false, 'leading' => true, 'token' => $token];
+                    return ['instruction' => 'nl', 'next' => $next_index, 'conditional' => false, 'leading' => true, 'token' => $token];
                 } else {
-                    return  $instruction;
+                    return $instruction;
                 }
             } elseif ($token[0] == '<') {
                 $ch = $token[1];
@@ -3016,9 +3016,9 @@ class PdfToText extends PdfObjectBase
                     if ($next_part[0] == "'") {
                         $last_instruction = $instruction;
 
-                        return   ['instruction' => 'nl', 'next' => $next_index, 'conditional' => false, 'leading' => true, 'token' => $token];
+                        return ['instruction' => 'nl', 'next' => $next_index, 'conditional' => false, 'leading' => true, 'token' => $token];
                     } else {
-                        return  $instruction;
+                        return $instruction;
                     }
                 }
             }
@@ -3027,7 +3027,7 @@ class PdfToText extends PdfObjectBase
                 $values = $this->__extract_chars_from_array($token);
                 $instruction = ['instruction' => 'text', 'next' => $next_index, 'values' => $values[0], 'offsets' => $values[1], 'token' => $token];
 
-                return  $instruction;
+                return $instruction;
             }
             // Token starts with a slash : maybe a font specification
             elseif (preg_match('#^ ( '.self::$FontSpecifiers.' ) #ix', $token)) {
@@ -3041,7 +3041,7 @@ class PdfToText extends PdfObjectBase
                     $this->MapIdBuffer[$key] = $id;
                 }
 
-                return   ['instruction' => 'resource', 'next' => $next_index, 'resource' => $id, 'token' => $token];
+                return ['instruction' => 'resource', 'next' => $next_index, 'resource' => $id, 'token' => $token];
             }
             // Template reference, such as /TPL1. Each reference has initially been replaced by /PDFTOTEXT_TEMPLATE_TPLx during substitution
             // by ProcessTemplateReferences(), because templates not only specify text to be replaced, but also font aliases
@@ -3049,7 +3049,7 @@ class PdfToText extends PdfObjectBase
             elseif (preg_match('/PDFTOTEXT_TEMPLATE_ (?P<template> \w+) /ix', $token, $match)) {
                 $current_template = '/'.$match['template'];
 
-                return   ['instruction' => 'template', 'next' => $next_index, 'token' => $current_template];
+                return ['instruction' => 'template', 'next' => $next_index, 'token' => $current_template];
             }
             // Other instructions : we're not that much interested in them, so clear the number stack and consider
             // that the current parameters, floating-point values, have been processed
@@ -3061,7 +3061,7 @@ class PdfToText extends PdfObjectBase
         }
 
         // End of input
-        return  false;
+        return false;
     }
 
     // __next_token :
@@ -3075,7 +3075,7 @@ class PdfToText extends PdfObjectBase
 
         // End of input
         if ($index >= $data_length) {
-            return  false;
+            return false;
         }
 
         // The current character will tell us what to do
@@ -3146,7 +3146,7 @@ class PdfToText extends PdfObjectBase
                     }
                 }
 
-                return   [$result, $pos];
+                return [$result, $pos];
 
                 // Parenthesis : Again, we have to find the closing parenthesis, taking care of escape sequences
                 // such as "\)"
@@ -3180,35 +3180,35 @@ class PdfToText extends PdfObjectBase
                     }
                 }
 
-                return   [$result, $pos];
+                return [$result, $pos];
 
                 // A construction of the form : "<< something >>", or a unicode character
             case '<':
                 if (! isset($data[$index + 1])) {
-                    return  false;
+                    return false;
                 }
 
                 if ($data[$index + 1] == '<') {
                     $pos = strpos($data, '>>', $index + 2);
 
                     if ($pos === false) {
-                        return  false;
+                        return false;
                     }
 
-                    return   [substr($data, $index, $pos - $index + 2), $pos + 2];
+                    return [substr($data, $index, $pos - $index + 2), $pos + 2];
                 } else {
                     $pos = strpos($data, '>', $index + 2);
 
                     if ($pos === false) {
-                        return  false;
+                        return false;
                     }
 
-                    return   [substr($data, $index, $pos - $index + 1), $pos + 1];
+                    return [substr($data, $index, $pos - $index + 1), $pos + 1];
                 }
 
                 // Tick character : consider it as a keyword, in the same way as the "TJ" or "Tj" keywords
             case "'":
-                return   ["'", $index + 1];
+                return ["'", $index + 1];
 
                 // Other cases : this may be either a floating-point number or a keyword
             default:
@@ -3240,7 +3240,7 @@ class PdfToText extends PdfObjectBase
                     }
                 }
 
-                return   [$value, $index];
+                return [$value, $index];
         }
     }
 
@@ -3335,7 +3335,7 @@ class PdfToText extends PdfObjectBase
             }
         }
 
-        return  $text;
+        return $text;
     }
 
     // __extract_chars_from_array -
@@ -3398,7 +3398,7 @@ class PdfToText extends PdfObjectBase
             $result[] = $char.$endch;
         }
 
-        return   [$result, $offsets];
+        return [$result, $offsets];
     }
 
     // __extract_chars_from_block -
@@ -3468,7 +3468,7 @@ class PdfToText extends PdfObjectBase
             }
         }
 
-        return  $result;
+        return $result;
     }
 
     // __get_character_padding :
@@ -3493,9 +3493,9 @@ class PdfToText extends PdfObjectBase
                 $padding = $this->Separator;
             }
 
-            return  utf8_encode($this->Unescape($padding));
+            return utf8_encode($this->Unescape($padding));
         } else {
-            return  '';
+            return '';
         }
     }
 
@@ -3601,7 +3601,7 @@ class PdfToText extends PdfObjectBase
         }
 
         // All done, return
-        return  $result;
+        return $result;
     }
 
     // __rtl_process -
@@ -3614,7 +3614,7 @@ class PdfToText extends PdfObjectBase
         // The text does not contain any of the UTF-8 prefixes that may introduce RTL contents :
         // simply return it as is
         if ($pos == $length || $text[$pos] === "\x00") {
-            return  $text;
+            return $text;
         }
 
         // Extract each individual line, and get rid of carriage returns if any
@@ -3733,7 +3733,7 @@ class PdfToText extends PdfObjectBase
         // All done, return a catenation of all the lines processed so far
         $result = implode("\n", $new_lines);
 
-        return  $result;
+        return $result;
     }
 
     // __is_rtl_character -
@@ -3760,13 +3760,13 @@ class PdfToText extends PdfObjectBase
                     $rtl_char = $ch.$codes_after;
                     $rtl_char_length = $length_after + 1;
 
-                    return  true;
+                    return true;
                 }
             }
 
-            return  false;
+            return false;
         } else {
-            return  false;
+            return false;
         }
     }
 
@@ -3782,18 +3782,18 @@ class PdfToText extends PdfObjectBase
         static $separators = " \t,.;:/!-_=+";
 
         if (isset($known_separators[$text])) {
-            return  true;
+            return true;
         }
 
         for ($i = 0, $length = strlen($text); $i < $length; $i++) {
             if (strpos($separators, $text[$i]) === false) {
-                return  false;
+                return false;
             }
         }
 
         $known_separators[$text] = true;
 
-        return  true;
+        return true;
     }
 
     // __strip_useless_instructions :
@@ -3809,7 +3809,7 @@ class PdfToText extends PdfObjectBase
         $this->Statistics['TextSize'] += strlen($data);
         $this->Statistics['OptimizedTextSize'] += strlen($result);
 
-        return  $result;
+        return $result;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -3834,15 +3834,15 @@ class PdfToText extends PdfObjectBase
     protected function IsPageSelected($page)
     {
         if (! $this->MaxSelectedPages) {
-            return  true;
+            return true;
         }
 
         if ($this->MaxSelectedPages > 0) {
-            return  $page <= $this->MaxSelectedPages;
+            return $page <= $this->MaxSelectedPages;
         }
 
         // MaxSelectedPages  <  0
-        return  $page > count($this->PageMap->Pages) + $this->MaxSelectedPages;
+        return $page > count($this->PageMap->Pages) + $this->MaxSelectedPages;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -3870,9 +3870,9 @@ class PdfToText extends PdfObjectBase
         if ((strpos($object_data, '/Author') !== false || strpos($object_data, '/CreationDate') !== false)) {
             $this->GotAuthorInformation = true;
 
-            return  $object_id;
+            return $object_id;
         } else {
-            return  false;
+            return false;
         }
     }
 
@@ -3997,12 +3997,12 @@ class PdfToText extends PdfObjectBase
 
             if (self::$DEBUG) {
                 echo "\n----------------------------------- AUTHOR INFORMATION\n";
-                echo  'Author               : '.$this->Author."\n";
-                echo  'Creator application  : '.$this->CreatorApplication."\n";
-                echo  'Producer application : '.$this->ProducerApplication."\n";
-                echo  'Title                : '.$this->Title."\n";
-                echo  'Creation date        : '.$this->CreationDate."\n";
-                echo  'Modification date    : '.$this->ModificationDate."\n";
+                echo 'Author               : '.$this->Author."\n";
+                echo 'Creator application  : '.$this->CreatorApplication."\n";
+                echo 'Producer application : '.$this->ProducerApplication."\n";
+                echo 'Title                : '.$this->Title."\n";
+                echo 'Creation date        : '.$this->CreationDate."\n";
+                echo 'Modification date    : '.$this->ModificationDate."\n";
             }
         }
     }
@@ -4074,7 +4074,7 @@ class PdfToText extends PdfObjectBase
             }
         }
 
-        return  $result;
+        return $result;
     }
 }
 
@@ -4239,7 +4239,7 @@ class PdfTexterFontTable extends PdfObjectBase
             }
         }
 
-        return  $status;
+        return $status;
     }
 
     // GetFontAttributes -
@@ -4261,14 +4261,14 @@ class PdfTexterFontTable extends PdfObjectBase
             $font_map_width = $this->Fonts[$key]->CharacterMap->HexCharWidth;
             $font_mapped = true;
 
-            return  true;
+            return true;
         }
         // No character map : characters are specified as two hex digits
         else {
             $font_map_width = 2;
             $font_mapped = false;
 
-            return  false;
+            return false;
         }
     }
 
@@ -4284,7 +4284,7 @@ class PdfTexterFontTable extends PdfObjectBase
             $font_object = -1;
         }
 
-        return  $font_object;
+        return $font_object;
     }
 
     // MapCharacter -
@@ -4292,7 +4292,7 @@ class PdfTexterFontTable extends PdfObjectBase
     public function MapCharacter($font, $ch, $return_false_on_failure = false)
     {
         if (isset($this->CharacterMapBuffer[$font][$ch])) {
-            return  $this->CharacterMapBuffer[$font][$ch];
+            return $this->CharacterMapBuffer[$font][$ch];
         }
 
         // Use the first declared font as the default font, if none defined
@@ -4318,7 +4318,7 @@ class PdfTexterFontTable extends PdfObjectBase
             $this->CharacterMapBuffer[$font][$ch] = $code;
         }
 
-        return  $code;
+        return $code;
     }
 }
 
@@ -4435,15 +4435,15 @@ class PdfTexterFont extends PdfObjectBase
                     }
                 }
 
-                return  $code;
+                return $code;
             }
         }
 
         if ($return_false_on_failure) {
-            return  false;
+            return false;
         }
 
-        return  $this->CodePointToUtf8($ch);
+        return $this->CodePointToUtf8($ch);
     }
 }
 
@@ -4482,11 +4482,11 @@ abstract class PdfTexterCharacterMap extends PdfObjectBase implements ArrayAcces
     public static function CreateInstance($object_id, $definitions)
     {
         if (preg_match('# (begincmap) | (beginbfchar) | (beginbfrange) #ix', $definitions)) {
-            return  new PdfTexterUnicodeMap($object_id, $definitions);
+            return new PdfTexterUnicodeMap($object_id, $definitions);
         } elseif (stripos($definitions, '/Differences') !== false) {
-            return  new PdfTexterEncodingMap($object_id, $definitions);
+            return new PdfTexterEncodingMap($object_id, $definitions);
         } else {
-            return  false;
+            return false;
         }
     }
 
@@ -4719,7 +4719,7 @@ class PdfTexterUnicodeMap extends PdfTexterCharacterMap
 
     public function __rangemap_cmpfunc($a, $b)
     {
-        return  $a[0] - $b[0];
+        return $a[0] - $b[0];
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -4729,12 +4729,12 @@ class PdfTexterUnicodeMap extends PdfTexterCharacterMap
      *-------------------------------------------------------------------------------------------------------------*/
     public function count()
     {
-        return  count($this->DirectMap);
+        return count($this->DirectMap);
     }
 
     public function offsetExists($offset)
     {
-        return  $this->offsetGetSafe($offset) !== false;
+        return $this->offsetGetSafe($offset) !== false;
     }
 
     public function offsetGetSafe($offset, $translate = true)
@@ -4775,7 +4775,7 @@ class PdfTexterUnicodeMap extends PdfTexterCharacterMap
         }
 
         // All done, return
-        return  $code;
+        return $code;
     }
 
     public function offsetGet($offset)
@@ -4786,7 +4786,7 @@ class PdfTexterUnicodeMap extends PdfTexterCharacterMap
             $code = $this->CodePointToUtf8($offset);
         }
 
-        return  $code;
+        return $code;
     }
 }
 
@@ -5179,12 +5179,12 @@ class PdfTexterEncodingMap extends PdfTexterCharacterMap
      *-------------------------------------------------------------------------------------------------------------*/
     public function count()
     {
-        return  count($this->Map);
+        return count($this->Map);
     }
 
     public function offsetExists($offset)
     {
-        return  (! $this->Secondary) ?
+        return (! $this->Secondary) ?
                         isset($this->Map[$offset]) :
                         isset($this->SecondaryMap[$offset]);
     }
@@ -5219,7 +5219,7 @@ class PdfTexterEncodingMap extends PdfTexterCharacterMap
             $result = false;
         }
 
-        return  $result;
+        return $result;
     }
 }
 
@@ -5257,12 +5257,12 @@ abstract class PdfTexterAdobeMap extends PdfTexterCharacterMap
      *-------------------------------------------------------------------------------------------------------------*/
     public function count()
     {
-        return  count($this->$Map[$this->Variant]);
+        return count($this->$Map[$this->Variant]);
     }
 
     public function offsetExists($offset)
     {
-        return  isset($this->Map[$this->Variant][$offset]);
+        return isset($this->Map[$this->Variant][$offset]);
     }
 
     public function offsetGet($offset)
@@ -5273,7 +5273,7 @@ abstract class PdfTexterAdobeMap extends PdfTexterCharacterMap
             $ord = $offset;
         }
 
-        return  $this->CodePointToUtf8($ord);
+        return $this->CodePointToUtf8($ord);
     }
 }
 
@@ -5699,12 +5699,12 @@ abstract class PdfTexterCIDMap extends PdfTexterCharacterMap
      *-------------------------------------------------------------------------------------------------------------*/
     public function count()
     {
-        return  count($this->Map);
+        return count($this->Map);
     }
 
     public function offsetExists($offset)
     {
-        return  isset($this->Map['plain'][$offset]);
+        return isset($this->Map['plain'][$offset]);
     }
 
     public function offsetGet($offset)
@@ -5715,25 +5715,25 @@ abstract class PdfTexterCIDMap extends PdfTexterCharacterMap
             switch ($ch) {
                 case self::UNKNOWN_CID:
                     if (PdfToText::$DEBUG) {
-                        echo  '[UID:'.sprintf('%04x', $offset).']';
+                        echo '[UID:'.sprintf('%04x', $offset).']';
                     }
 
                     $this->LastAltOffset = false;
 
                     if (! PdfToText::$DEBUG) {
-                        return  '';
+                        return '';
                     } else {
-                        return  '[UID:'.sprintf('%04x', $offset).']';
+                        return '[UID:'.sprintf('%04x', $offset).']';
                     }
 
                 case self::ALT_CID:
                     $this->LastAltOffset = (int) $offset;
 
-                    return  '';
+                    return '';
 
                 default:
                     if ($this->LastAltOffset === false) {
-                        return  $ch;
+                        return $ch;
                     }
 
                     if (isset($this->Map['alt'][$this->LastAltOffset][$offset])) {
@@ -5741,7 +5741,7 @@ abstract class PdfTexterCIDMap extends PdfTexterCharacterMap
 
                         if ($ch2 == self::UNKNOWN_CID) {
                             if (PdfToText::$DEBUG) {
-                                echo  "[CID{$this->LastAltOffset}:".sprintf('%04x', $offset).']';
+                                echo "[CID{$this->LastAltOffset}:".sprintf('%04x', $offset).']';
 
                                 $ch2 = "[CID{$this->LastAltOffset}: $offset]";
                             }
@@ -5752,12 +5752,12 @@ abstract class PdfTexterCIDMap extends PdfTexterCharacterMap
 
                     $this->LastAltOffset = false;
 
-                    return  $ch2;
+                    return $ch2;
             }
         } else {
             $this->LastAltOffset = false;
 
-            return  '';
+            return '';
         }
     }
 }
@@ -5950,14 +5950,14 @@ class PdfTexterPageMap extends PdfObjectBase
         if (preg_match('#/Resources \s* (?P<object_id> \d+) \s+ \d+ \s+ R#ix', $object_data, $match)) {
             // Return the cached result if the same object has previously been referenced by a /Resources parameter
             if (isset($this->ResourceMappingCache[$object_id][$parameter])) {
-                return  $this->ResourceMappingCache[$object_id][$parameter];
+                return $this->ResourceMappingCache[$object_id][$parameter];
             }
 
             // Check that the object that is referred to exists
             if (isset($pdf_object_list[$match['object_id']])) {
                 $data = $pdf_object_list[$match['object_id']];
             } else {
-                return   [];
+                return [];
             }
 
             $is_object = true;       // to tell that we need to put the results in cache for later use
@@ -5967,7 +5967,7 @@ class PdfTexterPageMap extends PdfObjectBase
             $data = substr($object_data, $match[0][1] + strlen($match[0][0]) - 1);
             $is_object = false;
         } else {
-            return   [];
+            return [];
         }
 
         // Whatever we will be analyzing (an object contents or inline contents following the /Resources parameter),
@@ -5987,9 +5987,9 @@ class PdfTexterPageMap extends PdfObjectBase
                 $this->ResourceMappingCache[$object_id][$parameter] = $mappings;
             }
 
-            return  $mappings;
+            return $mappings;
         } else {
-            return   [];
+            return [];
         }
     }
 
@@ -6141,7 +6141,7 @@ class PdfTexterPageMap extends PdfObjectBase
             }
         }
 
-        return  $text_data;
+        return $text_data;
     }
 
     // __get_replacements -
@@ -6363,7 +6363,7 @@ class PdfTexterPageMap extends PdfObjectBase
             }
         }
 
-        return  $mapped_fonts;
+        return $mapped_fonts;
     }
 
     // __map_recursive -
@@ -6413,7 +6413,7 @@ class PdfTexterPageMap extends PdfObjectBase
      *-------------------------------------------------------------------------------------------------------------*/
     public function IsValidXObjectName($name)
     {
-        return  isset($this->XObjectNames[$name]);
+        return isset($this->XObjectNames[$name]);
     }
 }
 
@@ -6601,7 +6601,7 @@ class PdfJpegImage extends PdfImage
 
     protected function CreateImageResource($image_data)
     {
-        return  imagecreatefromstring($image_data);
+        return imagecreatefromstring($image_data);
     }
 }
 
@@ -6759,7 +6759,7 @@ class PdfInlinedImage extends PdfImage
 
         // The /DCTDecode flag indicates JPEG contents - returns a PdfJpegImage object
         if (stripos($object_data, '/DCTDecode')) {
-            return  new PdfJpegImage($image_data, $autosave);
+            return new PdfJpegImage($image_data, $autosave);
         }
 
         // Get the image width & height
@@ -6783,7 +6783,7 @@ class PdfInlinedImage extends PdfImage
         preg_match('#/ColorSpace \s* / (?P<value> \w+)#ix', $object_data, $match);
 
         if (! isset($match['value'])) {
-            return  false;
+            return false;
         }
 
         $color_space_name = $match['value'];
@@ -6805,7 +6805,7 @@ class PdfInlinedImage extends PdfImage
             default:
                 warning(new PdfToTextDecodingException("Unsupported color space \"$color_space_name\"."));
 
-                return  false;
+                return false;
         }
 
         // Also check that we can handle the specified number of bits per component
@@ -6816,11 +6816,11 @@ class PdfInlinedImage extends PdfImage
             default:
                 warning(new PdfToTextDecodingException("Unsupported bits per component : $bits_per_component."));
 
-                return  false;
+                return false;
         }
 
         // All done, return a PdfInlinedImage object
-        return  new PdfInlinedImage($image_data, $width, $height, $bits_per_component, $color_space);
+        return new PdfInlinedImage($image_data, $width, $height, $bits_per_component, $color_space);
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -6849,9 +6849,9 @@ class PdfInlinedImage extends PdfImage
         $decoder = $this->DecodingFunction;
 
         if ($decoder) {
-            return  $this->$decoder($image_data);
+            return $this->$decoder($image_data);
         } else {
-            return  false;
+            return false;
         }
     }
 
@@ -6893,7 +6893,7 @@ class PdfInlinedImage extends PdfImage
             imagesetpixel($image, $pixel_x, $pixel_y, $pixel_color);
         }
 
-        return  $image;
+        return $image;
     }
 
     // __decode_cmyk8 -
@@ -6930,7 +6930,7 @@ class PdfInlinedImage extends PdfImage
             imagesetpixel($image, $pixel_x, $pixel_y, $pixel_color);
         }
 
-        return  $image;
+        return $image;
     }
 
     // __decode_gray8 -
@@ -6961,7 +6961,7 @@ class PdfInlinedImage extends PdfImage
             imagesetpixel($image, $pixel_x, $pixel_y, $pixel_color);
         }
 
-        return  $image;
+        return $image;
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -6987,7 +6987,7 @@ class PdfInlinedImage extends PdfImage
 
         $result = [round($R), round($G), round($B)];
 
-        return  $result;
+        return $result;
     }
 }
 
@@ -7284,12 +7284,12 @@ class PdfEncryptionData extends PdfObjectBase
                     error(new PdfToTextDecodingException("Unhandled encryption mode '{$object_data['mode']}'", $object_id));
                 }
 
-                return  false;
+                return false;
 
         }
 
         // Basic checks have been performed, return an instance of encryption data
-        return  new PdfEncryptionData($file_id, $mode, $object_id, $object_data);
+        return new PdfEncryptionData($file_id, $mode, $object_id, $object_data);
     }
 
     /*--------------------------------------------------------------------------------------------------------------
@@ -7317,10 +7317,10 @@ class PdfEncryptionData extends PdfObjectBase
     public function Decrypt($object_id, $object_data)
     {
         if ($this->UnsupportedEncryptionAlgorithm) {
-            return  false;
+            return false;
         }
 
-        return  false;
+        return false;
         // return ( $this -> Decrypter -> Decrypt ( $object_data ) ) ;
         // return ( "BT (coucou)Tj ET" ) ;
     }
@@ -7373,10 +7373,10 @@ abstract class PdfDecryptionAlgorithm          // extends  Object
     {
         switch ($encryption_data->EncryptionAlgorithm) {
             case PdfEncryptionData::PDFCRYPT_ALGORITHM_RC4:
-                return  new PdfRC4DecryptionAlgorithm($encryption_data);
+                return new PdfRC4DecryptionAlgorithm($encryption_data);
 
             default:
-                return  false;
+                return false;
         }
     }
 
@@ -7447,7 +7447,7 @@ class PdfRC4DecryptionAlgorithm extends PdfDecryptionAlgorithm
             $result .= chr($new_ord);
         }
 
-        return  $result;
+        return $result;
     }
 }
 
