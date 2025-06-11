@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\Loggable;
 use Carbon\Carbon;
 use File;
@@ -14,6 +15,8 @@ use Illuminate\Notifications\Notifiable;
  */
 class User extends Authenticatable
 {
+    use HasFactory;
+
     use Loggable;
     use Notifiable;
     use SoftDeletes;
