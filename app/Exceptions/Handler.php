@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Throwable;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
@@ -30,7 +31,7 @@ class Handler extends ExceptionHandler
      *
      * @return void
      */
-    public function report(Exception $exception)
+    public function report(Throwable $exception)
     {
         parent::report($exception);
     }
@@ -41,7 +42,7 @@ class Handler extends ExceptionHandler
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $exception)
+    public function render($request, Throwable $exception)
     {
         // return response()->view('errors.500');
         /* if ($exception instanceof QueryException) {
