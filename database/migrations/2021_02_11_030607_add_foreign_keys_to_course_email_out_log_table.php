@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToCourseEmailOutLogTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AddForeignKeysToCourseEmailOutLogTable extends Migration
             $table->dropForeign('course_email_out_log_course_id');
         });
     }
-}
+};

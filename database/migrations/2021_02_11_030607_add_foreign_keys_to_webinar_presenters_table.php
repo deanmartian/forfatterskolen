@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToWebinarPresentersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AddForeignKeysToWebinarPresentersTable extends Migration
             $table->dropForeign('webinar_presenters_ibfk_1');
         });
     }
-}
+};

@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToShopManuscriptTakenFeedbacksTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AddForeignKeysToShopManuscriptTakenFeedbacksTable extends Migration
             $table->dropForeign('shop_manuscript_taken_feedbacks_ibfk_1');
         });
     }
-}
+};

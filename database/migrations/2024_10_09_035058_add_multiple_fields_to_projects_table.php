@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddMultipleFieldsToProjectsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -31,4 +31,4 @@ class AddMultipleFieldsToProjectsTable extends Migration
             $table->dropColumn('editor_total_hours');
         });
     }
-}
+};

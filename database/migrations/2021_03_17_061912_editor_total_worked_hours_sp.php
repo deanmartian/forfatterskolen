@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class EditorTotalWorkedHoursSp extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -271,4 +271,4 @@ class EditorTotalWorkedHoursSp extends Migration
         DB::unprepared('DROP PROCEDURE IF EXISTS editor_total_worked_correction;');
         DB::unprepared('DROP PROCEDURE IF EXISTS editor_total_worked_copy_editing;');
     }
-}
+};

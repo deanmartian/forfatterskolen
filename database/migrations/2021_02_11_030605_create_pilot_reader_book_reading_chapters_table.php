@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreatePilotReaderBookReadingChaptersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class CreatePilotReaderBookReadingChaptersTable extends Migration
     {
         Schema::drop('pilot_reader_book_reading_chapters');
     }
-}
+};

@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreatePrivateGroupMemberInvitationsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -32,4 +32,4 @@ class CreatePrivateGroupMemberInvitationsTable extends Migration
     {
         Schema::drop('private_group_member_invitations');
     }
-}
+};

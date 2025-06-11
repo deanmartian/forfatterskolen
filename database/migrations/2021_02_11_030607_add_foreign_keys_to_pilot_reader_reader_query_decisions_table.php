@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToPilotReaderReaderQueryDecisionsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AddForeignKeysToPilotReaderReaderQueryDecisionsTable extends Migration
             $table->dropForeign('reader_query_decisions_query_id_foreign');
         });
     }
-}
+};

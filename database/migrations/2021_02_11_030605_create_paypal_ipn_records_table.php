@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreatePaypalIpnRecordsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -36,4 +36,4 @@ class CreatePaypalIpnRecordsTable extends Migration
     {
         Schema::drop('paypal_ipn_records');
     }
-}
+};

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddProjectRegistrationPaidDistributionCostTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class AddProjectRegistrationPaidDistributionCostTable extends Migration
     {
         Schema::dropIfExists('project_registration_paid_distribution_cost');
     }
-}
+};

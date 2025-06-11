@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class AddNotPlannedToStatusEnumOnProjectRoadmapStepsTable extends Migration
+return new class extends Migration
 {
     public function up()
     {
@@ -21,4 +21,4 @@ class AddNotPlannedToStatusEnumOnProjectRoadmapStepsTable extends Migration
             DEFAULT 'not_started'
         ");
     }
-}
+};

@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateStatusColumnOnProjectRoadmapStepsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -23,4 +23,4 @@ class UpdateStatusColumnOnProjectRoadmapStepsTable extends Migration
     {
         DB::statement("ALTER TABLE project_roadmap_steps MODIFY COLUMN status VARCHAR(255) DEFAULT 'not_started'");
     }
-}
+};

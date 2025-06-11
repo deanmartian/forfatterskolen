@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToUserPreferredEditorTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class AddForeignKeysToUserPreferredEditorTable extends Migration
             $table->dropForeign('user_preferred_editor_user_id');
         });
     }
-}
+};

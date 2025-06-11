@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToCompetitionApplicantsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AddForeignKeysToCompetitionApplicantsTable extends Migration
             $table->dropForeign('competition_applicant_user_id');
         });
     }
-}
+};

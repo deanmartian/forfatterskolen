@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateFreeCourseDelayedEmailTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class CreateFreeCourseDelayedEmailTable extends Migration
     {
         Schema::drop('free_course_delayed_email');
     }
-}
+};

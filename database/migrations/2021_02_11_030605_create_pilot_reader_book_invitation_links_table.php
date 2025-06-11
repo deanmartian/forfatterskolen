@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreatePilotReaderBookInvitationLinksTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class CreatePilotReaderBookInvitationLinksTable extends Migration
     {
         Schema::drop('pilot_reader_book_invitation_links');
     }
-}
+};

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateFieldsInPackagesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -51,4 +51,4 @@ class UpdateFieldsInPackagesTable extends Migration
             $table->smallInteger('months_12_enable')->default(1)->change();
         });
     }
-}
+};

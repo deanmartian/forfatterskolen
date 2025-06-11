@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreatePilotReaderReaderQueryDecisionsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class CreatePilotReaderReaderQueryDecisionsTable extends Migration
     {
         Schema::drop('pilot_reader_reader_query_decisions');
     }
-}
+};

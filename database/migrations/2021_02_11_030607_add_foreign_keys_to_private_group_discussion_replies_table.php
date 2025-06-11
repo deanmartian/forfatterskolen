@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToPrivateGroupDiscussionRepliesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class AddForeignKeysToPrivateGroupDiscussionRepliesTable extends Migration
             $table->dropForeign('private_group_discussion_replies_disc_id_foreign');
         });
     }
-}
+};

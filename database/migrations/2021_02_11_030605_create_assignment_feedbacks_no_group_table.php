@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateAssignmentFeedbacksNoGroupTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -35,4 +35,4 @@ class CreateAssignmentFeedbacksNoGroupTable extends Migration
     {
         Schema::drop('assignment_feedbacks_no_group');
     }
-}
+};

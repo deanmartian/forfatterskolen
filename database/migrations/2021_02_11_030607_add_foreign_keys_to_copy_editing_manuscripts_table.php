@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToCopyEditingManuscriptsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AddForeignKeysToCopyEditingManuscriptsTable extends Migration
             $table->dropForeign('copy_editing_manuscripts_editor');
         });
     }
-}
+};

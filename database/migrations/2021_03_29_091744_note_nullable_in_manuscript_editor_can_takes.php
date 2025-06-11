@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class NoteNullableInManuscriptEditorCanTakes extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -23,4 +23,4 @@ class NoteNullableInManuscriptEditorCanTakes extends Migration
     {
         DB::statement('ALTER TABLE `manuscript_editor_can_takes` MODIFY `note` VARCHAR(1000) NOT NULL');
     }
-}
+};
