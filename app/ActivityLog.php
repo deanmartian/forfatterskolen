@@ -15,7 +15,9 @@ class ActivityLog extends Model
         'data',
     ];
 
-    public $dates = ['log_date'];
+    protected $casts = [
+        'log_date' => 'datetime',
+    ];
 
     protected $appends = ['dateHumanize', 'json_data', 'formatted_date'];
 
