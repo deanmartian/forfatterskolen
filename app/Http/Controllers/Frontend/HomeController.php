@@ -1599,7 +1599,7 @@ class HomeController extends Controller
             'attach_file' => null,
         ];
         \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-        echo env('MAIL_DRIVER');
+        echo env('MAIL_MAILER');
     }
 
     public function testEmail2()
