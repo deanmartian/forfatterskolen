@@ -1,7 +1,7 @@
 <?php
+
 namespace App;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class EmailAttachment extends Model
@@ -11,7 +11,7 @@ class EmailAttachment extends Model
      *
      * @var string
      */
-    //protected $table = 'email_attachments';
+    // protected $table = 'email_attachments';
 
     /**
      * The attributes that are mass assignable.

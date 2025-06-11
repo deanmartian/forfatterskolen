@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http;
+
 use App\Advisory;
 use App\Course;
 use App\Genre;
@@ -13,7 +14,6 @@ use App\PilotReaderBookReading;
 use App\PrivateGroupMember;
 use App\Project;
 use App\ProjectBookSale;
-use App\SelfPublishingOrder;
 use App\SelfPublishingPortalRequest;
 use App\Settings;
 use App\Staff;
@@ -29,80 +29,74 @@ use ZipArchive;
 
 class FrontendHelpers
 {
-	public static function InCart($key, $value)
-	{
+    public static function InCart($key, $value)
+    {
         $in_cart = array_search($value, array_column(self::cart(), $key)); // Check if already in cart
-        
-        if( $in_cart === FALSE ) :
-        	return false;
-       	endif;
 
-       	return true;
-	}
+        if ($in_cart === false) {
+            return false;
+        }
 
+        return true;
+    }
 
+    public static function cartIndex($arr_key, $arr_value)
+    {
+        $index = null;
 
+        foreach (self::cart() as $key => $value) {
+            if (is_array($value) && $value[$arr_key] == $arr_value) {
+                $index = $key;
+            }
+        }
 
-	public static function cartIndex($arr_key, $arr_value)
-	{
-		$index = NULL;
+        return $index;
+    }
 
-		foreach(self::cart() as $key => $value){
-	        if(is_array($value) && $value[$arr_key] == $arr_value) :
-	        	$index = $key;
-	        endif;
-	    }
+    public static function cart()
+    {
+        $cart = session()->has('cart') ? session('cart') : [];
 
-		return $index;
-	}
+        return $cart;
+    }
 
-
-
-	public static function cart()
-	{
-		$cart = session()->has('cart') ? session('cart') : [];
-		
-		return $cart;
-	}
-
-
-
-	public static function currencyFormat($value)
-	{
-		return 'Kr ' . number_format($value, 2, ",", ".");
-	}
+    public static function currencyFormat($value)
+    {
+        return 'Kr '.number_format($value, 2, ',', '.');
+    }
 
     public static function formatCurrency($value)
     {
-        return number_format($value, 2, ",", "");
+        return number_format($value, 2, ',', '');
     }
 
-	public static function lessonAvailability($startedAt, $delay, $period)
-	{
-		if( empty($startedAt) ) return 'Course not started';
-		$availableOn = Carbon::parse($startedAt);
+    public static function lessonAvailability($startedAt, $delay, $period)
+    {
+        if (empty($startedAt)) {
+            return 'Course not started';
+        }
+        $availableOn = Carbon::parse($startedAt);
 
-		if(self::isDate($delay)) :
-			$availableOn = date_create($delay);
-		else :
-			$availableOn->addDays($delay);
-		endif;
+        if (self::isDate($delay)) {
+            $availableOn = date_create($delay);
+        } else {
+            $availableOn->addDays($delay);
+        }
 
-		return date_format($availableOn, 'M d, Y');
-	}
+        return date_format($availableOn, 'M d, Y');
+    }
 
+    public static function isDate($string)
+    {
+        $d = \DateTime::createFromFormat('Y-m-d', $string);
 
-	public static function isDate($string)
-	{
-		$d = \DateTime::createFromFormat('Y-m-d', $string);
-    	return $d && $d->format('Y-m-d') === $string;
-	}
-
+        return $d && $d->format('Y-m-d') === $string;
+    }
 
     public static function formatDate($date)
     {
         return Carbon::parse($date)->format('d.m.Y');
-	}
+    }
 
     public static function getTimeFromDT($date)
     {
@@ -129,106 +123,118 @@ class FrontendHelpers
         return Carbon::parse($date)->format('M d, Y h:i A');
     }
 
+    public static function isLessonAvailable($startedAt, $delay, $period)
+    {
+        if (empty($startedAt)) {
+            return 'Course not started';
+        }
+        $availableOn = strtotime(self::lessonAvailability($startedAt, $delay, $period));
+        $now = time();
 
-	public static function isLessonAvailable($startedAt, $delay, $period)
-	{
-		if( empty($startedAt) ) return 'Course not started';
-		$availableOn = strtotime(self::lessonAvailability($startedAt, $delay, $period));
-		$now = time();
-		return $availableOn <= $now;
-	}
+        return $availableOn <= $now;
+    }
 
+    public static function hasLessonAccess($course_taken, $lesson)
+    {
+        $access_lessons = $course_taken ? $course_taken->access_lessons : []; // $course_taken->access_lessons
 
-	public static function hasLessonAccess($course_taken, $lesson)
-	{
-		$access_lessons = $course_taken ? $course_taken->access_lessons : []; //$course_taken->access_lessons
-		return ( in_array($lesson->id, $access_lessons) );
-	}
+        return  in_array($lesson->id, $access_lessons);
+    }
 
+    public static function isCourseAvailable($course)
+    {
+        if ($course->start_date || $course->end_date) {
+            $now = time();
+            if ($course->start_date) {
+                if ($now < strtotime($course->start_date)) {
+                    return false;
+                }
+            }
+            if ($course->end_date) {
+                if ($now > strtotime($course->end_date)) {
+                    return false;
+                }
+            }
+        }
 
-	public static function isCourseAvailable($course)
-	{
-		if( $course->start_date || $course->end_date ) :
-			$now = time();
-			if( $course->start_date ) :
-				if( $now < strtotime($course->start_date)) return false;
-			endif;
-			if( $course->end_date ) :
-				if( $now > strtotime($course->end_date)) return false;
-			endif;
-		endif;
-		return true;
-	}
+        return true;
+    }
 
     /**
      * Check if course is active
-     * @param $course
+     *
      * @return bool
      */
     public static function isCourseActive($course)
     {
 
-        if (!$course->status) {
+        if (! $course->status) {
             return false;
         }
+
         return true;
-	}
+    }
 
+    public static function isWebinarAvailable($webinar)
+    {
+        $now = time();
+        if ($now < strtotime($webinar->start_date)) {
+            return false;
+        }
 
-
-	public static function isWebinarAvailable($webinar)
-	{
-		$now = time();
-		if( $now < strtotime($webinar->start_date) ) :
-			return false;
-		endif;
-		return true;
-	}
+        return true;
+    }
 
     public static function isWebinarAvailablePlusHour($webinar)
     {
         $now = time();
-        if( $now < (strtotime($webinar->start_date) + 60*60) ) :
+        if ($now < (strtotime($webinar->start_date) + 60 * 60)) {
             return false;
-        endif;
+        }
+
         return true;
     }
 
-	public static function isCourseTakenAvailable($courseTaken)
-	{
-		if( $courseTaken->start_date || $courseTaken->end_date ) :
-			$now = time();
-			if( $courseTaken->start_date ) :
-				if( $now < strtotime($courseTaken->start_date)) return false;
-			endif;
-			if( $courseTaken->end_date ) :
-				if( $now > strtotime($courseTaken->end_date)) return false;
-			endif;
-		endif;
-		return true;
-	}
+    public static function isCourseTakenAvailable($courseTaken)
+    {
+        if ($courseTaken->start_date || $courseTaken->end_date) {
+            $now = time();
+            if ($courseTaken->start_date) {
+                if ($now < strtotime($courseTaken->start_date)) {
+                    return false;
+                }
+            }
+            if ($courseTaken->end_date) {
+                if ($now > strtotime($courseTaken->end_date)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 
     public static function roundUpToNearestMultiple($n, $increment = 1000)
     {
         return (int) ($increment * ceil($n / $increment));
     }
 
-    public static function convertMonthLanguage($month_number = NULL)
+    public static function convertMonthLanguage($month_number = null)
     {
-        $monthNames = array(
-            array( 'id' => 1, 'option' => 'januar'),
-            array( 'id' => 2, 'option' => 'februar'),
-            array( 'id' => 3, 'option' => 'mars'),
-            array( 'id' => 4, 'option' => 'april'),
-            array( 'id' => 5, 'option' => 'mai'),
-            array( 'id' => 6, 'option' => 'juni'),
-            array( 'id' => 7, 'option' => 'juli'),
-            array( 'id' => 8, 'option' => 'august'),
-            array( 'id' => 9, 'option' => 'september'),
-            array( 'id' => 10, 'option' => 'oktober'),
-            array( 'id' => 11, 'option' => 'november'),
-            array( 'id' => 12, 'option' => 'desember'),
-        );
+        $monthNames = [
+            ['id' => 1, 'option' => 'januar'],
+            ['id' => 2, 'option' => 'februar'],
+            ['id' => 3, 'option' => 'mars'],
+            ['id' => 4, 'option' => 'april'],
+            ['id' => 5, 'option' => 'mai'],
+            ['id' => 6, 'option' => 'juni'],
+            ['id' => 7, 'option' => 'juli'],
+            ['id' => 8, 'option' => 'august'],
+            ['id' => 9, 'option' => 'september'],
+            ['id' => 10, 'option' => 'oktober'],
+            ['id' => 11, 'option' => 'november'],
+            ['id' => 12, 'option' => 'desember'],
+        ];
 
         if ($month_number) {
             foreach ($monthNames as $monthName) {
@@ -238,20 +244,20 @@ class FrontendHelpers
             }
         }
 
-        return NULL;
-	}
+        return null;
+    }
 
-    public static function convertDayLanguage($day_number = NULL)
+    public static function convertDayLanguage($day_number = null)
     {
-        $dayNumbers = array(
-            array( 'id' => 1, 'option' => 'mandag'),
-            array( 'id' => 2, 'option' => 'tirsdag'),
-            array( 'id' => 3, 'option' => 'onsdag'),
-            array( 'id' => 4, 'option' => 'torsdag'),
-            array( 'id' => 5, 'option' => 'fredag'),
-            array( 'id' => 6, 'option' => 'lørdag'),
-            array( 'id' => 7, 'option' => 'søndag')
-        );
+        $dayNumbers = [
+            ['id' => 1, 'option' => 'mandag'],
+            ['id' => 2, 'option' => 'tirsdag'],
+            ['id' => 3, 'option' => 'onsdag'],
+            ['id' => 4, 'option' => 'torsdag'],
+            ['id' => 5, 'option' => 'fredag'],
+            ['id' => 6, 'option' => 'lørdag'],
+            ['id' => 7, 'option' => 'søndag'],
+        ];
 
         if ($day_number) {
             foreach ($dayNumbers as $dayNumber) {
@@ -261,16 +267,17 @@ class FrontendHelpers
             }
         }
 
-        return NULL;
+        return null;
     }
 
     /**
      * List of front pages and the route name
+     *
      * @return array
      */
     public static function frontPageList()
     {
-        return array(
+        return [
             ['page_name' => 'Front Page', 'page_route' => 'front.home'],
             ['page_name' => 'Course Page', 'page_route' => 'front.course.index'],
             ['page_name' => 'Course Single Page', 'page_route' => 'front.course.show'],
@@ -285,7 +292,7 @@ class FrontendHelpers
             ['page_name' => 'Workshop Checkout Page', 'page_route' => 'front.workshop.checkout'],
             ['page_name' => 'Faq Page', 'page_route' => 'front.faq'],
             ['page_name' => 'Contact Us Page', 'page_route' => 'front.contact-us'],
-        );
+        ];
     }
 
     public static function getShopManuscriptAdvisory()
@@ -300,74 +307,74 @@ class FrontendHelpers
                 'route_name' => 'learner.dashboard',
                 'fa-icon' => 'fa fa-home',
                 'label' => 'Kontrollpanel',
-                'is_active' => Route::currentRouteName() === 'learner.dashboard'
+                'is_active' => Route::currentRouteName() === 'learner.dashboard',
             ],
             [
                 'route_name' => 'learner.course',
                 'fa-icon' => 'fa fa-graduation-cap',
                 'label' => trans('site.learner.nav.course'),
-                'is_active' => !GlobalRequest::is('account/course-webinar') && GlobalRequest::is('account/course*')
+                'is_active' => ! GlobalRequest::is('account/course-webinar') && GlobalRequest::is('account/course*'),
             ],
             [
                 'route_name' => 'learner.shop-manuscript',
                 'fa-icon' => 'fa fa-file-alt',
                 'label' => trans('site.learner.nav.manuscript'),
-                'is_active' => GlobalRequest::is('account/shop-manuscript*')
+                'is_active' => GlobalRequest::is('account/shop-manuscript*'),
             ],
             [
                 'route_name' => 'learner.workshop',
                 'fa-icon' => 'fa fa-briefcase',
                 'label' => trans('site.learner.nav.workshop'),
-                'is_active' => GlobalRequest::is('account/workshop*')
+                'is_active' => GlobalRequest::is('account/workshop*'),
             ],
             [
                 'route_name' => 'learner.webinar',
                 'fa-icon' => 'fab fa-youtube',
                 'label' => trans('site.learner.nav.webinars'),
-                'is_active' => GlobalRequest::is('account/webinar*')
+                'is_active' => GlobalRequest::is('account/webinar*'),
             ],
             [
                 'route_name' => 'learner.course-webinar',
                 'fa-icon' => 'fab fa-youtube',
                 'label' => trans('site.learner.nav.course-webinars'),
-                'is_active' => GlobalRequest::is('account/course-webinar*')
+                'is_active' => GlobalRequest::is('account/course-webinar*'),
             ],
             [
                 'route_name' => 'learner.assignment',
                 'fa-icon' => 'fa fa-clipboard-list',
                 'label' => trans('site.learner.nav.assignment'),
-                'is_active' => GlobalRequest::is('account/assignment*')
+                'is_active' => GlobalRequest::is('account/assignment*'),
             ],
             [
                 'route_name' => 'learner.calendar',
                 'fa-icon' => 'fa fa-calendar-alt',
                 'label' => trans('site.learner.nav.calendar'),
-                'is_active' => GlobalRequest::is('account/calendar*')
+                'is_active' => GlobalRequest::is('account/calendar*'),
             ],
             [
                 'route_name' => 'learner.invoice',
                 'fa-icon' => 'fa fa-file-invoice',
                 'label' => trans('site.learner.nav.invoice'),
-                'is_active' => GlobalRequest::is('account/invoice*')
+                'is_active' => GlobalRequest::is('account/invoice*'),
             ],
             [
                 'route_name' => 'learner.upgrade',
                 'fa-icon' => 'fa fa-cloud-upload-alt',
                 'label' => trans('site.learner.nav.upgrade'),
-                'is_active' => GlobalRequest::is('account/upgrade*')
+                'is_active' => GlobalRequest::is('account/upgrade*'),
             ],
             [
                 'route_name' => 'learner.private-message',
                 'fa-icon' => 'fa fa-comment',
                 'label' => trans('site.learner.nav.message'),
-                'is_active' => GlobalRequest::is('account/private-message*')
+                'is_active' => GlobalRequest::is('account/private-message*'),
             ],
             [
                 'route_name' => 'learner.profile',
                 'fa-icon' => 'fa fa-users',
                 'label' => trans('site.learner.nav.profile'),
-                'is_active' => GlobalRequest::is('account/profile*')
-            ]
+                'is_active' => GlobalRequest::is('account/profile*'),
+            ],
         ];
 
         return $navs;
@@ -375,18 +382,19 @@ class FrontendHelpers
 
     /**
      * Pilot reader navigation
-     * @param null $route
+     *
+     * @param  null  $route
      * @return array
      */
-    public static function pilotReaderNav($route = NULL)
+    public static function pilotReaderNav($route = null)
     {
-        $navs = array(
-            array( 'route_name' => 'learner.book-author-book-show', 'label' => 'Contents'),
-            array( 'route_name' => 'learner.book-author-book-settings', 'label' => 'Settings'),
-            array( 'route_name' => 'learner.book-author-book-invitation', 'label' => 'Invitations'),
-            array( 'route_name' => 'learner.book-author-book-track-readers', 'label' => 'Track Readers'),
-            array( 'route_name' => 'learner.book-author-book-feedback-list', 'label' => 'Feedbacks'),
-        );
+        $navs = [
+            ['route_name' => 'learner.book-author-book-show', 'label' => 'Contents'],
+            ['route_name' => 'learner.book-author-book-settings', 'label' => 'Settings'],
+            ['route_name' => 'learner.book-author-book-invitation', 'label' => 'Invitations'],
+            ['route_name' => 'learner.book-author-book-track-readers', 'label' => 'Track Readers'],
+            ['route_name' => 'learner.book-author-book-feedback-list', 'label' => 'Feedbacks'],
+        ];
 
         if ($navs) {
             foreach ($navs as $nav) {
@@ -400,13 +408,13 @@ class FrontendHelpers
 
     }
 
-    public static function pilotReaderReaderNav($route = NULL)
+    public static function pilotReaderReaderNav($route = null)
     {
-        $navs = array(
-            array( 'route_name' => 'learner.book-author-book-show', 'label' => 'Contents'),
-            array( 'route_name' => 'learner.book-author-book-settings', 'label' => 'Settings'),
-            array( 'route_name' => 'learner.book-author-book-reader-feedback-list', 'label' => 'My Feedback')
-        );
+        $navs = [
+            ['route_name' => 'learner.book-author-book-show', 'label' => 'Contents'],
+            ['route_name' => 'learner.book-author-book-settings', 'label' => 'Settings'],
+            ['route_name' => 'learner.book-author-book-reader-feedback-list', 'label' => 'My Feedback'],
+        ];
 
         if ($navs) {
             foreach ($navs as $nav) {
@@ -419,33 +427,14 @@ class FrontendHelpers
         return $navs;
     }
 
-    public static function pilotReaderDirectoryNav($route = NULL)
+    public static function pilotReaderDirectoryNav($route = null)
     {
-        $navs = array(
-            array( 'route_name' => 'learner.reader-directory.index', 'label' => 'Search'),
-            array( 'route_name' => 'learner.reader-directory.about', 'label' => 'About'),
-            array( 'route_name' => 'learner.reader-directory.query-sent-list', 'label' => 'Sent Queries'),
-            array( 'route_name' => 'learner.reader-directory.query-received-list', 'label' => 'Received Queries'),
-        );
-
-        if ($navs) {
-            foreach ($navs as $nav) {
-                if ($nav['route_name'] == $route) {
-                    return $nav['label'];
-                }
-            }
-        }
-
-        return $navs;
-
-    }
-
-    public static function pilotReaderProfileNav($route = NULL)
-    {
-        $navs = array(
-            array( 'route_name' => 'learner.pilot-reader.account.index', 'label' => 'Preferences' ),
-            array( 'route_name' => 'learner.pilot-reader.account.reader-profile', 'label' => 'Reader Profile' )
-        );
+        $navs = [
+            ['route_name' => 'learner.reader-directory.index', 'label' => 'Search'],
+            ['route_name' => 'learner.reader-directory.about', 'label' => 'About'],
+            ['route_name' => 'learner.reader-directory.query-sent-list', 'label' => 'Sent Queries'],
+            ['route_name' => 'learner.reader-directory.query-received-list', 'label' => 'Received Queries'],
+        ];
 
         if ($navs) {
             foreach ($navs as $nav) {
@@ -459,16 +448,35 @@ class FrontendHelpers
 
     }
 
-    public static function privateGroupsNav($route = NULL)
+    public static function pilotReaderProfileNav($route = null)
     {
-        $navs = array(
-            array( 'route_name' => 'learner.private-groups.show', 'label' => 'Home' ),
-            array( 'route_name' => 'learner.private-groups.discussion', 'label' => 'Discussion' ),
-            array( 'route_name' => 'learner.private-groups.books', 'label' => 'Books' ),
-            array( 'route_name' => 'learner.private-groups.preferences', 'label' => 'Preferences' ),
-            array( 'route_name' => 'learner.private-groups.members', 'label' => 'Members' ),
-            array( 'route_name' => 'learner.private-groups.edit-group', 'label' => 'Edit Group' )
-        );
+        $navs = [
+            ['route_name' => 'learner.pilot-reader.account.index', 'label' => 'Preferences'],
+            ['route_name' => 'learner.pilot-reader.account.reader-profile', 'label' => 'Reader Profile'],
+        ];
+
+        if ($navs) {
+            foreach ($navs as $nav) {
+                if ($nav['route_name'] == $route) {
+                    return $nav['label'];
+                }
+            }
+        }
+
+        return $navs;
+
+    }
+
+    public static function privateGroupsNav($route = null)
+    {
+        $navs = [
+            ['route_name' => 'learner.private-groups.show', 'label' => 'Home'],
+            ['route_name' => 'learner.private-groups.discussion', 'label' => 'Discussion'],
+            ['route_name' => 'learner.private-groups.books', 'label' => 'Books'],
+            ['route_name' => 'learner.private-groups.preferences', 'label' => 'Preferences'],
+            ['route_name' => 'learner.private-groups.members', 'label' => 'Members'],
+            ['route_name' => 'learner.private-groups.edit-group', 'label' => 'Edit Group'],
+        ];
 
         if ($navs) {
             foreach ($navs as $nav) {
@@ -484,14 +492,13 @@ class FrontendHelpers
 
     /**
      * Check if user is member of the group
-     * @param $group_id
-     * @param $user_id
+     *
      * @return int
      */
     public static function isPrivateGroupMember($group_id, $user_id)
     {
         $isMember = 0;
-        $groupMember = PrivateGroupMember::where(['private_group_id' => $group_id,'user_id' => $user_id])->first();
+        $groupMember = PrivateGroupMember::where(['private_group_id' => $group_id, 'user_id' => $user_id])->first();
         if ($groupMember) {
             $isMember++;
         }
@@ -501,25 +508,25 @@ class FrontendHelpers
 
     /**
      * Check if logged in user is reading the book
-     * @param $book_id
+     *
      * @return \Illuminate\Database\Eloquent\Model|null|static
      */
     public static function isReadingBook($book_id)
     {
         $readingBook = PilotReaderBookReading::where(['book_id' => $book_id, 'user_id' => \Auth::user()->id])
-            ->whereIn('status',[0,1])->first();
+            ->whereIn('status', [0, 1])->first();
+
         return $readingBook;
     }
 
     /**
      * Count the total reader for certain status
-     * @param $book_id
-     * @param $status
+     *
      * @return int
      */
     public static function countReaderWithStatus($book_id, $status)
     {
-        return PilotReaderBookReading::withTrashed()->where(['book_id' => $book_id, 'status' => $status ])->get()->count();
+        return PilotReaderBookReading::withTrashed()->where(['book_id' => $book_id, 'status' => $status])->get()->count();
     }
 
     public static function getCoachingTimerPlanType($plan_type)
@@ -533,41 +540,40 @@ class FrontendHelpers
     }
 
     /**
-     * @param $book PilotReaderBook
-     * @param $chapter_id
+     * @param  $book  PilotReaderBook
      * @return int|string
      */
     public static function getChapterTitle($book, $chapter_id)
     {
         $chapterCount = 0;
-        foreach ($book->chaptersOnly as $k=>$ch) {
+        foreach ($book->chaptersOnly as $k => $ch) {
             if ($chapter_id == $ch->id) {
-                $chapterCount = $k+1;
+                $chapterCount = $k + 1;
             }
         }
 
         $settings = $book->settings;
-        $chapter_title = $settings ? $settings->book_units:'Chapter';
+        $chapter_title = $settings ? $settings->book_units : 'Chapter';
 
         // check if the chapter name exists
-        $front = new FrontendHelpers();
+        $front = new FrontendHelpers;
         $chapterCount = $front->checkChapterNameByNumber($chapterCount);
-
 
         return $chapter_title.' '.$chapterCount;
     }
 
     /**
      * Check if the chapter with number already exists then iterate
-     * @param $number
+     *
      * @return int
      */
     public function checkChapterNameByNumber($number)
     {
 
-        $checkChapterName = PilotReaderBookChapter::where('title','=', 'Chapter '.$number)->first();
+        $checkChapterName = PilotReaderBookChapter::where('title', '=', 'Chapter '.$number)->first();
         if ($checkChapterName) {
             $number += 1;
+
             return $this->checkChapterNameByNumber($number);
         } else {
             return $number;
@@ -582,9 +588,9 @@ class FrontendHelpers
     public static function getQuestionnaireTitle($book, $chapter_id)
     {
         $chapterCount = 0;
-        foreach ($book->chapterQuestionnaire as $k=>$ch) {
+        foreach ($book->chapterQuestionnaire as $k => $ch) {
             if ($chapter_id == $ch->id) {
-                $chapterCount = $k+1;
+                $chapterCount = $k + 1;
             }
         }
 
@@ -593,14 +599,14 @@ class FrontendHelpers
 
     /**
      * Change the chapter name if it's empty
-     * @param null $chapter_title
-     * @param $chapter_key
+     *
+     * @param  null  $chapter_title
      * @return null|string
      */
-    public static function changeChapterName($chapter_title = NULL, $chapter_key)
+    public static function changeChapterName($chapter_title, $chapter_key)
     {
         $chapter_name = $chapter_title;
-        if (!$chapter_title) {
+        if (! $chapter_title) {
             $chapter_name = 'Chapter '.$chapter_key;
         }
 
@@ -609,7 +615,8 @@ class FrontendHelpers
 
     /**
      * Get the chapter version
-     * @param $chapter PilotReaderBookChapter
+     *
+     * @param  $chapter  PilotReaderBookChapter
      * @return mixed
      */
     public static function getChapterVersionNumber($chapter)
@@ -619,7 +626,8 @@ class FrontendHelpers
 
     /**
      * Get the current chapter version
-     * @param $chapter PilotReaderBookChapter
+     *
+     * @param  $chapter  PilotReaderBookChapter
      * @return mixed
      */
     public static function getCurrentChapterVersion($chapter)
@@ -627,57 +635,58 @@ class FrontendHelpers
         return $chapter->versions()->orderBy('id', 'desc')->first();
     }
 
+    public static function FikenConnect($url)
+    {
+        $username = 'cleidoscope@gmail.com';
+        $password = 'moonfang';
+        $headers = [];
+        $headers[] = 'Accept: application/hal+json, application/vnd.error+json';
+        $headers[] = 'Content-Type: application/hal+json';
 
-	public static function FikenConnect($url)
-	{
-		$username = "cleidoscope@gmail.com";
-	    $password = "moonfang";
-	    $headers = [];
-	    $headers[] = 'Accept: application/hal+json, application/vnd.error+json';
-	    $headers[] = 'Content-Type: application/hal+json';
-
-		$ch = curl_init($url); 
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $data = curl_exec($ch);
-		$data = json_decode($data);
+        $data = json_decode($data);
 
-		return $data;
-	}
+        return $data;
+    }
 
+    public static function get_num_of_words($string)
+    {
+        $string = preg_replace('/\s+/', ' ', trim($string));
+        $words = explode(' ', strip_tags($string));
 
-	
-	public static function get_num_of_words($string) {
-	    $string = preg_replace('/\s+/', ' ', trim($string));
-	    $words = explode(" ", strip_tags($string));
-	    return count($words);
-	}
+        return count($words);
+    }
 
     /**
      * get the word count with margin
-     * @param $word_count
-     * @param float $margin
+     *
+     * @param  float  $margin
      * @return int
      */
-    public static function wordCountByMargin( $word_count, $margin = 0.03 )
+    public static function wordCountByMargin($word_count, $margin = 0.03)
     {
         $calculatedWords = ceil($word_count * $margin);
         $newWordCount = $word_count - $calculatedWords;
+
         return $newWordCount;
-	}
+    }
 
     /**
      * Type of assignment uploaded
-     * @param null $id
+     *
+     * @param  null  $id
      * @return array|string
      */
-    public static function assignmentType($id = NULL)
+    public static function assignmentType($id = null)
     {
         $genre = Genre::all();
 
-        if ($id >= 0 && !is_null($id)) {
+        if ($id >= 0 && ! is_null($id)) {
             $genre = 'None';
             $findGenre = Genre::find($id);
             if ($id > 0 && $findGenre) {
@@ -714,32 +723,34 @@ class FrontendHelpers
         }
 
         return $types;*/
-	}
+    }
 
     public static function formatAssignmentType($id)
     {
-        $assignmentTypes = explode(', ',$id);
+        $assignmentTypes = explode(', ', $id);
         $displayTypes = '';
         foreach ($assignmentTypes as $assignmentType) {
             $displayTypes .= self::assignmentType($assignmentType).', ';
         }
+
         return rtrim($displayTypes, ', ');
-	}
+    }
 
     /**
      * Where could it be found in manuscript
      * Manuscript type for assignment either whole, start, middle or last part of the manuscript
-     * @param null $id
+     *
+     * @param  null  $id
      * @return array
      */
-    public static function manuscriptType($id = NULL)
+    public static function manuscriptType($id = null)
     {
-        $types = array(
-            array( 'id' => 1, 'option' => 'Hele manuset'),
-            array( 'id' => 2, 'option' => 'Starten av manuset'),
-            array( 'id' => 3, 'option' => 'Midten av manuset'),
-            array( 'id' => 4, 'option' => 'Slutten av manuset'),
-        );
+        $types = [
+            ['id' => 1, 'option' => 'Hele manuset'],
+            ['id' => 2, 'option' => 'Starten av manuset'],
+            ['id' => 3, 'option' => 'Midten av manuset'],
+            ['id' => 4, 'option' => 'Slutten av manuset'],
+        ];
 
         if ($id) {
             foreach ($types as $type) {
@@ -750,23 +761,24 @@ class FrontendHelpers
         }
 
         return $types;
-	}
+    }
 
     /**
      * Feedback marks
-     * @param null $setMark
+     *
+     * @param  null  $setMark
      * @return array
      */
-    public static function feedbackMarks($setMark = NULL)
+    public static function feedbackMarks($setMark = null)
     {
-        $marks = array(
-            array( 'option' => 'unmarked', 'label' => 'Unmarked'),
-            array( 'option' => 'ignore', 'label' => 'Ignore'),
-            array( 'option' => 'consider', 'label' => 'Consider'),
-            array( 'option' => 'todo', 'label' => 'Todo'),
-            array( 'option' => 'done', 'label' => 'Done'),
-            array( 'option' => 'keep', 'label' => 'Keep'),
-        );
+        $marks = [
+            ['option' => 'unmarked', 'label' => 'Unmarked'],
+            ['option' => 'ignore', 'label' => 'Ignore'],
+            ['option' => 'consider', 'label' => 'Consider'],
+            ['option' => 'todo', 'label' => 'Todo'],
+            ['option' => 'done', 'label' => 'Done'],
+            ['option' => 'keep', 'label' => 'Keep'],
+        ];
 
         if ($setMark) {
             foreach ($marks as $mark) {
@@ -777,16 +789,16 @@ class FrontendHelpers
         }
 
         return $marks;
-	}
+    }
 
-    public static function howReadyOptions($ready = NULL)
+    public static function howReadyOptions($ready = null)
     {
-        $options = array(
-            array( 'id' => 1, 'text' => 'Ikke så veldig. Men jeg skal gi det et forsøk (og så har jeg jo alltids angrefristen ...)'),
-            array( 'id' => 2, 'text' => 'Ganske motivert. Jeg vil gi dette et realt forsøk, men er usikker på om jeg vil klare å fullføre.'),
-            array( 'id' => 3, 'text' => 'Jeg vil veldig gjerne være med på dette. Det er nå jeg skal klare det.'),
-            array( 'id' => 4, 'text' => 'Gira? Jeg kan knapt vente til vi er i gang. Det er nå eller aldri. Jeg skal bli forfatter!'),
-        );
+        $options = [
+            ['id' => 1, 'text' => 'Ikke så veldig. Men jeg skal gi det et forsøk (og så har jeg jo alltids angrefristen ...)'],
+            ['id' => 2, 'text' => 'Ganske motivert. Jeg vil gi dette et realt forsøk, men er usikker på om jeg vil klare å fullføre.'],
+            ['id' => 3, 'text' => 'Jeg vil veldig gjerne være med på dette. Det er nå jeg skal klare det.'],
+            ['id' => 4, 'text' => 'Gira? Jeg kan knapt vente til vi er i gang. Det er nå eller aldri. Jeg skal bli forfatter!'],
+        ];
 
         if ($ready) {
             foreach ($options as $option) {
@@ -801,22 +813,24 @@ class FrontendHelpers
 
     /**
      * Get the webinar key from the link
-     * @param $link
+     *
      * @return mixed
      */
     public static function extractWebinarKeyFromLink($link)
     {
         $expURL = explode('/', $link);
         $extractKey = explode('?', end($expURL));
+
         return $extractKey[0];
     }
 
     public static function checkIfWebinarRegistrant($webinar_id, $user_id)
     {
         $registrant = WebinarRegistrant::where(['webinar_id' => $webinar_id, 'user_id' => $user_id])->first();
-        if (!$registrant) {
+        if (! $registrant) {
             return false;
         }
+
         return true;
     }
 
@@ -826,6 +840,7 @@ class FrontendHelpers
         if ($registrant) {
             return $registrant->join_url;
         }
+
         return false;
     }
 
@@ -836,27 +851,29 @@ class FrontendHelpers
         // check if jpeg file
         if ($extension == 'jpeg') {
             // if the jpeg can't be found replace it with jpg
-            if (!\File::exists(public_path($image))) {
+            if (! \File::exists(public_path($image))) {
                 $image = $getExtension[0].'.jpg';
             }
         }
 
         return $image;
-	}
+    }
 
     /**
      * Payment modes check if vipps option should be included
-     * @param bool $showVipps
+     *
+     * @param  bool  $showVipps
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public static function paymentModes($showVipps = false)
     {
         $mode = PaymentMode::query();
-        if (!$showVipps) {
+        if (! $showVipps) {
             $mode->where('id', '!=', 5);
         }
+
         return $mode->get();
-	}
+    }
 
     public static function getFreeCourses()
     {
@@ -865,7 +882,8 @@ class FrontendHelpers
 
     /**
      * Generate unique code
-     * @param int $codeLength
+     *
+     * @param  int  $codeLength
      * @return string
      */
     public static function generateUniqueCode($codeLength = 20)
@@ -892,26 +910,26 @@ class FrontendHelpers
             [
                 'label' => trans('site.gift-card.christmas-present'),
                 'name' => 'christmas',
-                'image' => '/images-new/gift-cards/christmas.png'
+                'image' => '/images-new/gift-cards/christmas.png',
             ],
 
             [
                 'label' => trans('site.gift-card.birthday-present'),
                 'name' => 'birthday',
-                'image' => '/images-new/gift-cards/birthday.png'
+                'image' => '/images-new/gift-cards/birthday.png',
             ],
 
             [
                 'label' => trans('site.gift-card.giftcard-present'),
                 'name' => 'gift-card',
-                'image' => '/images-new/gift-cards/gift-card.png'
+                'image' => '/images-new/gift-cards/gift-card.png',
             ],
 
             [
                 'label' => trans('site.gift-card.love-present'),
                 'name' => 'love-present',
-                'image' => '/images-new/gift-cards/love-present.png'
-            ]
+                'image' => '/images-new/gift-cards/love-present.png',
+            ],
         ];
 
         if ($giftCard) {
@@ -927,40 +945,39 @@ class FrontendHelpers
 
     /**
      * Get content from .doc file
-     * @param $filename
+     *
      * @return bool|string
      */
     public static function readWord($filename)
     {
-        if(file_exists($filename))
-        {
-            if(($fh = fopen($filename, 'r')) !== false )
-            {
+        if (file_exists($filename)) {
+            if (($fh = fopen($filename, 'r')) !== false) {
                 $headers = fread($fh, 0xA00);
 
                 // 1 = (ord(n)*1) ; Document has from 0 to 255 characters
-                $n1 = ( ord($headers[0x21C]) - 1 );
+                $n1 = (ord($headers[0x21C]) - 1);
 
                 // 1 = ((ord(n)-8)*256) ; Document has from 256 to 63743 characters
-                $n2 = ( ( ord($headers[0x21D]) - 8 ) * 256 );
+                $n2 = ((ord($headers[0x21D]) - 8) * 256);
 
                 // 1 = ((ord(n)*256)*256) ; Document has from 63744 to 16775423 characters
-                $n3 = ( ( ord($headers[0x21E]) * 256 ) * 256 );
+                $n3 = ((ord($headers[0x21E]) * 256) * 256);
 
                 // 1 = (((ord(n)*256)*256)*256) ; Document has from 16775424 to 4294965504 characters
-                $n4 = ( ( ( ord($headers[0x21F]) * 256 ) * 256 ) * 256 );
+                $n4 = (((ord($headers[0x21F]) * 256) * 256) * 256);
 
                 // Total length of text in the document
                 $textLength = ($n1 + $n2 + $n3 + $n4);
 
                 if ($textLength > 0) {
-                    //$extracted_plaintext = fread($fh, $textLength);
+                    // $extracted_plaintext = fread($fh, $textLength);
                     $extracted_plaintext = fread($fh, filesize($filename));
 
                     // if you want to see your paragraphs in a new line, do this
                     // return nl2br($extracted_plaintext);
                     return $extracted_plaintext;
                 }
+
                 return false;
             } else {
                 return false;
@@ -968,32 +985,30 @@ class FrontendHelpers
         } else {
             return false;
         }
-	}
+    }
 
     /**
      * Separate get content from doc file, the other is used for word count
-     * @param $filename
+     *
      * @return string
      */
     public static function getContentFromDocFile($filename)
     {
-        if(file_exists($filename))
-        {
-            if(($fh = fopen($filename, 'r')) !== false )
-            {
+        if (file_exists($filename)) {
+            if (($fh = fopen($filename, 'r')) !== false) {
                 $headers = fread($fh, 0xA00);
 
                 // 1 = (ord(n)*1) ; Document has from 0 to 255 characters
-                $n1 = ( ord($headers[0x21C]) - 1 );
+                $n1 = (ord($headers[0x21C]) - 1);
 
                 // 1 = ((ord(n)-8)*256) ; Document has from 256 to 63743 characters
-                $n2 = ( ( ord($headers[0x21D]) - 8 ) * 256 );
+                $n2 = ((ord($headers[0x21D]) - 8) * 256);
 
                 // 1 = ((ord(n)*256)*256) ; Document has from 63744 to 16775423 characters
-                $n3 = ( ( ord($headers[0x21E]) * 256 ) * 256 );
+                $n3 = ((ord($headers[0x21E]) * 256) * 256);
 
                 // 1 = (((ord(n)*256)*256)*256) ; Document has from 16775424 to 4294965504 characters
-                $n4 = ( ( ( ord($headers[0x21F]) * 256 ) * 256 ) * 256 );
+                $n4 = (((ord($headers[0x21F]) * 256) * 256) * 256);
 
                 // Total length of text in the document
                 $textLength = ($n1 + $n2 + $n3 + $n4);
@@ -1002,12 +1017,13 @@ class FrontendHelpers
                     $extracted_plaintext = fread($fh, $textLength);
 
                     // simple print character stream without new lines
-                    //echo $extracted_plaintext;
+                    // echo $extracted_plaintext;
 
                     // if you want to see your paragraphs in a new line, do this
                     $extracted_plaintext = nl2br($extracted_plaintext);
-                    $breaks = array("<br />","<br>","<br/>"); // get break tags
-                    $extracted_plaintext = str_ireplace($breaks, "\r\n", $extracted_plaintext); //replace break tags
+                    $breaks = ['<br />', '<br>', '<br/>']; // get break tags
+                    $extracted_plaintext = str_ireplace($breaks, "\r\n", $extracted_plaintext); // replace break tags
+
                     return $extracted_plaintext;
                     // need more spacing after each paragraph use another nl2br
                 }
@@ -1019,36 +1035,40 @@ class FrontendHelpers
 
     /**
      * Get the text between specified text
-     * @param $content
-     * @param $start
-     * @param $end
+     *
      * @return string
      */
-    public static function getTextBetween($content,$start,$end){
+    public static function getTextBetween($content, $start, $end)
+    {
         $r = explode($start, $content);
-        if (isset($r[1])){
+        if (isset($r[1])) {
             $r = explode($end, $r[1]);
+
             return $r[0];
         }
+
         return '';
     }
 
     /**
      * Get the staffs order by sequence 0 last
+     *
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public static function getStaffs($role = 'staff')
     {
         // order by field zero comes last
         $staffs = Staff::where('role', $role)->orderByRaw('sequence = 0, sequence')->get();
+
         return $staffs;
     }
 
-    public static function getNews() {
+    public static function getNews()
+    {
         return \App\Settings::where('setting_name', 'news')->first();
     }
 
-    public static function userProject( $user_id, $project_id )
+    public static function userProject($user_id, $project_id)
     {
         return Project::where('user_id', $user_id)->where('id', $project_id)->firstOrFail();
     }
@@ -1056,31 +1076,31 @@ class FrontendHelpers
     public static function userHasPaidCourse()
     {
         $hasPaidCourse = false;
-        if( !\Auth::guest() ) :
-            foreach( \Auth::user()->coursesTakenNotOld as $courseTaken ) {
-                if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) {
+        if (! \Auth::guest()) {
+            foreach (\Auth::user()->coursesTakenNotOld as $courseTaken) {
+                if ($courseTaken->package->course->type != 'Free' && $courseTaken->is_active) {
                     if ($courseTaken->package->course->is_free != 1) {
                         $hasPaidCourse = true;
                         break;
                     }
                 }
             }
-        endif;
+        }
 
         return $hasPaidCourse;
     }
 
-    public static function checkIfLearnerHasAccessToLesson( $user_id, $course_id, $lesson_id )
+    public static function checkIfLearnerHasAccessToLesson($user_id, $course_id, $lesson_id)
     {
         $user = User::find($user_id);
         $course = Course::find($course_id);
         $lesson = Lesson::findOrFail($lesson_id);
 
         $courseTaken = $user->coursesTaken()->whereIn('package_id', $course->packages()->pluck('id'))->first();
-        if (!$courseTaken) {
+        if (! $courseTaken) {
             return false;
         }
-        
+
         return \App\Http\FrontendHelpers::isLessonAvailable($courseTaken->started_at, $lesson->delay, $lesson->period) ||
             \App\Http\FrontendHelpers::hasLessonAccess($courseTaken, $lesson);
     }
@@ -1093,6 +1113,7 @@ class FrontendHelpers
     public static function getLearnerStandardProject($user_id)
     {
         $user = User::find($user_id);
+
         return $user->standardProject();
     }
 
@@ -1101,7 +1122,7 @@ class FrontendHelpers
         $learner = Auth::user();
         $project_id = $project_id ?? optional(FrontendHelpers::getLearnerStandardProject($learner->id))->id;
 
-        if (!$project_id) {
+        if (! $project_id) {
             return collect();
         }
 
@@ -1117,26 +1138,25 @@ class FrontendHelpers
             ->get();
     }
 
-
     public static function countFileWords($type, $request)
     {
         $extensions = ['docx'];
 
-        $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION);
+        $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
         $original_filename = $request->manuscript->getClientOriginalName();
 
-        if( !in_array($extension, $extensions) ) :
+        if (! in_array($extension, $extensions)) {
             return redirect()->back();
-        endif;
+        }
 
         $time = time();
 
         $destinationPath = 'uploads/manuscript-compute/'; // upload path
-        if (!\File::exists($destinationPath)) {
+        if (! \File::exists($destinationPath)) {
             \File::makeDirectory($destinationPath, 0777, true, true);
         }
 
-        $fileName = $original_filename;//$time.'.'.$extension; // rename document
+        $fileName = $original_filename; // $time.'.'.$extension; // rename document
         $request->manuscript->move($destinationPath, $fileName);
 
         $file = $destinationPath.$fileName;
@@ -1145,20 +1165,21 @@ class FrontendHelpers
         // count characters with space
         $char_count = strlen($docObj->convertToText()) - 2;
         $word_count = str_word_count($docObj->convertToText());
+
         return [
             'char_count' => $char_count,
             'word_count' => $word_count,
             'file' => $file,
-            'original_filename' => $original_filename
+            'original_filename' => $original_filename,
         ];
     }
 
     public static function saveFile(Request $request, $folder, $fieldName)
     {
-        $filePath = NULL;
+        $filePath = null;
 
-        if ($request->hasFile($fieldName)) :
-            $destinationPath = 'storage/' . $folder; // upload path
+        if ($request->hasFile($fieldName)) {
+            $destinationPath = 'storage/'.$folder; // upload path
 
             self::createDirectory($destinationPath);
 
@@ -1167,18 +1188,19 @@ class FrontendHelpers
             $original_filename = $requestFile->getClientOriginalName();
             $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
 
-            $fileName = self::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $fileName = self::checkFileName($destinationPath, $actual_name, $extension); // rename document
             $requestFile->move($destinationPath, $fileName);
+
             return '/'.$fileName;
 
-        endif;
+        }
 
         return $filePath;
     }
 
     public static function createDirectory($name)
     {
-        if (!\Illuminate\Support\Facades\File::exists($name)) {
+        if (! \Illuminate\Support\Facades\File::exists($name)) {
             \Illuminate\Support\Facades\File::makeDirectory($name);
         }
     }
@@ -1189,45 +1211,50 @@ class FrontendHelpers
 
         // check first if the filename without the increment exists
         if (file_exists("$path/$filename.$extension")) {
-            while(file_exists("$path/$filename ($i).$extension")) $i++;
+            while (file_exists("$path/$filename ($i).$extension")) {
+                $i++;
+            }
             $newName = "$path/$filename ($i).$extension";
         } else {
             $newName = "$path/$filename.$extension";
         }
+
         return $newName;
     }
 
     public static function manuscriptExcessPerWordPrice()
     {
         $excessPerWordAmount = Settings::getDetailsByName('manuscript-excess-per-word-amount');
+
         return $excessPerWordAmount->setting_value;
     }
 
     public static function getLearnerSaleYear()
     {
-        $learner = Auth::user(); 
+        $learner = Auth::user();
 
         $uniqueYears = ProjectBookSale::selectRaw('YEAR(date) as year')
-        ->leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
-        ->where('user_id', $learner->id)
-        ->distinct()
-        ->pluck('year');
+            ->leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
+            ->where('user_id', $learner->id)
+            ->distinct()
+            ->pluck('year');
 
         $firstYear = $uniqueYears->first() ?? Carbon::now()->year;
+
         return $firstYear;
     }
 
     /**
      * get the order details from svea
-     * @param $svea_order_id
+     *
      * @return \Illuminate\Http\JsonResponse|mixed
      */
-    public static function sveaOrderDetails( $svea_order_id )
+    public static function sveaOrderDetails($svea_order_id)
     {
         $checkoutMerchantId = config('services.svea.checkoutid');
         $checkoutSecret = config('services.svea.checkout_secret');
 
-        //set endpoint url. Eg. test or prod
+        // set endpoint url. Eg. test or prod
         $baseUrl = \Svea\Checkout\Transport\Connector::PROD_ADMIN_BASE_URL;
 
         $connector = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
@@ -1249,13 +1276,14 @@ class FrontendHelpers
              */
             $conn = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
             $checkoutClient = new \Svea\Checkout\CheckoutAdminClient($conn);
-            $data = array(
-                "orderId" => (int)$svea_order_id,
-            );
+            $data = [
+                'orderId' => (int) $svea_order_id,
+            ];
 
             $response = $checkoutClient->getOrder($data);
+
             return $response;
-        }  catch (\Svea\Checkout\Exception\SveaApiException $ex) {
+        } catch (\Svea\Checkout\Exception\SveaApiException $ex) {
             return response()->json($ex->getMessage(), 400);
         } catch (\Svea\Checkout\Exception\SveaConnectorException $ex) {
             return response()->json($ex->getMessage(), 400);
@@ -1271,7 +1299,7 @@ class FrontendHelpers
         $text = '';
 
         // Open the DOCX file as a ZIP archive
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         if ($zip->open($filePath) === true) {
             // Locate document.xml inside the DOCX archive
             $xmlIndex = $zip->locateName('word/document.xml');
@@ -1289,13 +1317,13 @@ class FrontendHelpers
             } else {
                 return [
                     'error' => 'Error: document.xml not found in DOCX file',
-                    'word_count' => 0
+                    'word_count' => 0,
                 ];
             }
         } else {
             return [
                 'error' => 'Error: Unable to open DOCX file',
-                'word_count' => 0
+                'word_count' => 0,
             ];
         }
 
@@ -1304,24 +1332,25 @@ class FrontendHelpers
 
         return [
             'text' => nl2br(e($text)), // Convert new lines to <br> for display
-            'word_count' => $wordCount
+            'word_count' => $wordCount,
         ];
     }
 
-    public static function countWordsLikeOpenOffice($text) {
+    public static function countWordsLikeOpenOffice($text)
+    {
         // Remove HTML tags
         $text = strip_tags($text);
-    
+
         // Normalize whitespace and remove special characters
-        //$text = preg_replace('/[\r\n\t]+/', ' ', $text);
-        //$text = preg_replace('/[^\p{L}\p{N}\s-]/u', '', $text); // Remove non-word characters except hyphens
-    
+        // $text = preg_replace('/[\r\n\t]+/', ' ', $text);
+        // $text = preg_replace('/[^\p{L}\p{N}\s-]/u', '', $text); // Remove non-word characters except hyphens
+
         // Trim extra spaces
         $text = trim($text);
-    
+
         // Count words using whitespace as delimiter
         $words = preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY);
-        
+
         return count($words);
     }
 
@@ -1330,19 +1359,20 @@ class FrontendHelpers
         return preg_replace_callback('/\[video\s+([^\]]+)\]/i', function ($matches) {
             $attributes = [];
             preg_match_all('/(\w+)="([^"]+)"/', $matches[1], $attr_matches, PREG_SET_ORDER);
-    
+
             foreach ($attr_matches as $attr) {
                 $attributes[$attr[1]] = $attr[2];
             }
-    
+
             $src = isset($attributes['src']) ? htmlspecialchars($attributes['src'], ENT_QUOTES) : '';
             $width = isset($attributes['width']) ? intval($attributes['width']) : 600;
             $height = isset($attributes['height']) ? intval($attributes['height']) : 300;
-    
-            if (!$src) return ''; // invalid shortcode with no src
-    
-            return '<iframe width="' . $width . '" height="' . $height . '" src="' . $src . '" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>';
+
+            if (! $src) {
+                return '';
+            } // invalid shortcode with no src
+
+            return '<iframe width="'.$width.'" height="'.$height.'" src="'.$src.'" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>';
         }, $content);
     }
-    
 }

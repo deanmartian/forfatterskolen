@@ -4,26 +4,26 @@ namespace App;
 
 use App\Traits\Loggable;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use File;
-use Illuminate\Support\Facades\DB;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * @mixin \Eloquent
  */
-
 class User extends Authenticatable
 {
+    use Loggable;
     use Notifiable;
     use SoftDeletes;
-    use Loggable;
 
     const AdminRole = 1;
+
     const LearnerRole = 2;
+
     const EditorRole = 3;
+
     const GiutbokRole = 4;
 
     /**
@@ -35,7 +35,7 @@ class User extends Authenticatable
         'first_name', 'last_name', 'password', 'email', 'role', 'gender', 'birthday', 'profile_image',
         'default_password', 'need_pass_update', 'is_active', 'admin_with_giutbok_access', 'is_self_publishing_learner',
         'is_ghost_writer_admin', 'is_copy_editing_admin', 'is_correction_admin', 'is_coaching_admin', 'fiken_contact_id',
-        'email_verified_at', 'email_verification_token'
+        'email_verified_at', 'email_verification_token',
     ];
 
     /**
@@ -48,41 +48,43 @@ class User extends Authenticatable
     ];
 
     protected $with = ['preferredEditor'];
-    protected $appends = ['address', 'full_name']; //'is_webinar_pakke_active', 'assigned_with_no_feedback',
+
+    protected $appends = ['address', 'full_name']; // 'is_webinar_pakke_active', 'assigned_with_no_feedback',
 
     // filter admins and exclude the user of Sven
     public function scopeAdmins($query)
     {
-        return $query->whereIn('role', array(1,3,4))
-            ->where('id', '!=', 1376);// 1376 is the id of sven.inge@forfatterskolen.no
+        return $query->whereIn('role', [1, 3, 4])
+            ->where('id', '!=', 1376); // 1376 is the id of sven.inge@forfatterskolen.no
     }
 
     public function getAddressAttribute()
     {
         $address = \App\Address::where('user_id', $this->attributes['id'])->first();
 
-        if( !$address ) :
-            $empty_address = new \App\Address();
+        if (! $address) {
+            $empty_address = new \App\Address;
+
             return $empty_address;
-        endif;
+        }
 
         return $address;
     }
 
     public function getFullAddressAttribute()
     {
-        if (!$this->address) {
+        if (! $this->address) {
             return null;
         }
 
         $fullAddress = '';
 
         if ($this->address->street) {
-            $fullAddress .= $this->address->street. ', ';
+            $fullAddress .= $this->address->street.', ';
         }
 
         if ($this->address->city) {
-            $fullAddress .= $this->address->city. ', ';
+            $fullAddress .= $this->address->city.', ';
         }
 
         if ($this->address->zip) {
@@ -96,10 +98,11 @@ class User extends Authenticatable
     {
         $social = \App\UserSocial::where('user_id', $this->attributes['id'])->first();
 
-        if( !$social ) :
-            $empty_social = new \App\UserSocial();
+        if (! $social) {
+            $empty_social = new \App\UserSocial;
+
             return $empty_social;
-        endif;
+        }
 
         return $social;
     }
@@ -108,11 +111,13 @@ class User extends Authenticatable
     {
         $coursesTaken = $this->coursesTaken->pluck('id')->toArray();
         $manuscripts = \App\Manuscript::whereIn('coursetaken_id', $coursesTaken)->orderBy('created_at', 'desc')->get();
+
         return $manuscripts;
     }
 
     /**
      * function is moved to AdminHelpers::isWebinarPakkeActive()
+     *
      * @return bool
      */
     public function getIsWebinarPakkeActiveAttribute()
@@ -141,16 +146,16 @@ class User extends Authenticatable
 
     public function coursesTakenNoFree()
     {
-        return $this->hasMany('App\CoursesTaken')->where('is_free','=',0)
+        return $this->hasMany('App\CoursesTaken')->where('is_free', '=', 0)
             ->orderBy('created_at', 'desc');
     }
 
     public function coursesTakenNotOld()
     {
         return $this->hasMany('App\CoursesTaken')
-            ->where(function($query) {
+            ->where(function ($query) {
                 // check if expired 2 months ago or the end date is not yet set
-                $query->where('end_date','>=', Carbon::now()->subDays(60))
+                $query->where('end_date', '>=', Carbon::now()->subDays(60))
                     ->orWhereNull('end_date');
             })
             ->orderBy('created_at', 'desc');
@@ -159,8 +164,9 @@ class User extends Authenticatable
     public function coursesTakenNotOld2()
     {
         $webinarPakkePackages = Course::find(17)->packages()->pluck('id')->toArray();
+
         return $this->hasMany('App\CoursesTaken')
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('started_at', '>=', Carbon::now()->subYear(1))
                     ->orWhere('end_date', '>=', Carbon::now())
                     ->orWhereNull('end_date');
@@ -172,7 +178,7 @@ class User extends Authenticatable
     public function coursesTakenOld()
     {
         return $this->hasMany('App\CoursesTaken')
-            ->where('end_date','<=', Carbon::now()->subDays(60))
+            ->where('end_date', '<=', Carbon::now()->subDays(60))
             ->orderBy('created_at', 'desc');
     }
 
@@ -184,7 +190,7 @@ class User extends Authenticatable
     public function coursesTakenNotExpired()
     {
         return $this->hasMany('App\CoursesTaken')
-            ->where('end_date','>=', Carbon::now()->subDays(1))
+            ->where('end_date', '>=', Carbon::now()->subDays(1))
             ->orderBy('created_at', 'desc');
     }
 
@@ -233,13 +239,13 @@ class User extends Authenticatable
     public function readingBooks()
     {
         return $this->hasMany('App\PilotReaderBookReading')
-            ->where('status',0);
+            ->where('status', 0);
     }
 
     public function finishedBooks()
     {
         return $this->hasMany('App\PilotReaderBookReading')
-            ->where('status',1);
+            ->where('status', 1);
     }
 
     public function notifications()
@@ -254,7 +260,7 @@ class User extends Authenticatable
 
     public function wordWritten()
     {
-        return $this->hasMany('App\WordWritten')->orderBy('date','ASC');
+        return $this->hasMany('App\WordWritten')->orderBy('date', 'ASC');
     }
 
     public function wordWrittenGoal()
@@ -279,27 +285,28 @@ class User extends Authenticatable
     public function getProfileImageAttribute($value)
     {
         $image = substr($this->attributes['profile_image'], 1);
-        if(File::exists($image)) return $value;
+        if (File::exists($image)) {
+            return $value;
+        }
 
         return 'https://www.forfatterskolen.no/images/user.png';
-        
-    }
 
+    }
 
     public function getFullNameAttribute()
     {
-        return $this->attributes['first_name'] . ' ' . $this->attributes['last_name'];
+        return $this->attributes['first_name'].' '.$this->attributes['last_name'];
     }
 
     public function HowManyManuscriptYouCanTake()
     {
-        return $this->hasMany('App\ManuscriptEditorCanTake','editor_id', 'id')
-        ->orderBy('date_from', 'DESC');
+        return $this->hasMany('App\ManuscriptEditorCanTake', 'editor_id', 'id')
+            ->orderBy('date_from', 'DESC');
     }
 
     public function HowManyManuscriptYouCanTakeActive()
     {
-        return $this->hasMany('App\ManuscriptEditorCanTake','editor_id', 'id')
+        return $this->hasMany('App\ManuscriptEditorCanTake', 'editor_id', 'id')
             ->whereDate('date_to', '>=', \Carbon\Carbon::today()->format('Y-m-d'))
             ->orderBy('date_from', 'DESC');
     }
@@ -307,6 +314,7 @@ class User extends Authenticatable
     public function getHasProfileImageAttribute()
     {
         $image = substr($this->attributes['profile_image'], 1);
+
         return File::exists($image);
     }
 
@@ -324,7 +332,7 @@ class User extends Authenticatable
     {
         return $this->attributes['role'] == 1 ? 1 : 0;
     }
-    
+
     public function coachingTimers()
     {
         return $this->hasMany('App\CoachingTimerManuscript')->orderBy('created_at', 'desc');
@@ -352,21 +360,21 @@ class User extends Authenticatable
 
     public function assignedCoachingTimers()
     {
-        return $this->hasMany('App\CoachingTimerManuscript','editor_id', 'id')
+        return $this->hasMany('App\CoachingTimerManuscript', 'editor_id', 'id')
             ->where('is_approved', '=', 1)
             ->orderBy('created_at', 'desc');
     }
 
     public function assignedCorrections()
     {
-        return $this->hasMany('App\CorrectionManuscript','editor_id', 'id')
+        return $this->hasMany('App\CorrectionManuscript', 'editor_id', 'id')
             ->where('status', '!=', 2)
             ->orderBy('created_at', 'desc');
     }
 
     public function assignedCopyEditing()
     {
-        return $this->hasMany('App\CopyEditingManuscript','editor_id', 'id')
+        return $this->hasMany('App\CopyEditingManuscript', 'editor_id', 'id')
             ->where('status', '!=', 2)
             ->orderBy('created_at', 'desc');
     }
@@ -374,17 +382,18 @@ class User extends Authenticatable
     public function isSuperUser()
     {
         $ids = [1376, 1070, 4464];
+
         return in_array($this->attributes['id'], $ids) ? true : false;
     }
 
     public function surveyTaken()
     {
-        return $this->hasMany(SurveyAnswer::class)->groupBy("survey_id");
+        return $this->hasMany(SurveyAnswer::class)->groupBy('survey_id');
     }
 
     public function tasks()
     {
-        return $this->hasMany(UserTask::class)->where('status',0);
+        return $this->hasMany(UserTask::class)->where('status', 0);
     }
 
     public function assignments()
@@ -397,11 +406,11 @@ class User extends Authenticatable
     // active assignment assigned
     public function activeAssignments()
     {
-        return $this->hasMany('App\Assignment','parent_id', 'id')
+        return $this->hasMany('App\Assignment', 'parent_id', 'id')
             ->where('parent', 'users')
-            ->where(function($query) {
+            ->where(function ($query) {
                 // check if available date is less than or equal to date or if it's null
-                $query->where('available_date','<=', Carbon::now());
+                $query->where('available_date', '<=', Carbon::now());
                 $query->orWhereNull('available_date');
             });
     }
@@ -409,7 +418,7 @@ class User extends Authenticatable
     // expired assignment assigned
     public function expiredAssignments()
     {
-        return $this->hasMany('App\Assignment','parent_id', 'id')
+        return $this->hasMany('App\Assignment', 'parent_id', 'id')
             ->where('parent', 'users')
             ->orderBy('created_at', 'desc');
     }
@@ -435,8 +444,9 @@ class User extends Authenticatable
         return $this->hasMany('App\CompetitionApplicant');
     }
 
-    public function messages() {
-        return $this->hasMany('App\PrivateMessage','user_id','id');
+    public function messages()
+    {
+        return $this->hasMany('App\PrivateMessage', 'user_id', 'id');
     }
 
     public function courseOrderAttachments()
@@ -454,16 +464,19 @@ class User extends Authenticatable
         return $this->hasMany('App\WebinarRegistrant', 'user_id', 'id');
     }
 
-    public function editorGenrePreferences(){
+    public function editorGenrePreferences()
+    {
         return $this->hasMany('App\EditorGenrePreferences', 'editor_id', 'id');
     }
 
-    public function assignmentManuscriptEditorCanTake(){
+    public function assignmentManuscriptEditorCanTake()
+    {
         return $this->hasMany('App\AssignmentManuscriptEditorCanTake', 'editor_id', 'id');
     }
 
-    public function getAssignedWithNoFeedbackAttribute(){ //not availble if currently assigned on manuscript assignment
-        $query = \App\AssignmentManuscript::where('editor_id', $this->attributes['id'])->where('has_feedback', 0)->get();
+    public function getAssignedWithNoFeedbackAttribute() // not availble if currently assigned on manuscript assignment
+    {$query = \App\AssignmentManuscript::where('editor_id', $this->attributes['id'])->where('has_feedback', 0)->get();
+
         return count($query);
     }
 

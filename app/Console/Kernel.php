@@ -2,7 +2,6 @@
 
 namespace App\Console;
 
-use App\Console\Commands\CourseExpiresInAMonth;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Psy\Command\Command;
@@ -43,13 +42,12 @@ class Kernel extends ConsoleKernel
         Commands\InvoiceVippsEfakturaCommand::class,
         Commands\SveaDeliveryCommand::class,
         Commands\CheckFikenContactCommand::class,
-        Commands\RefreshDropboxToken::class
+        Commands\RefreshDropboxToken::class,
     ];
 
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -57,10 +55,10 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
 
-         $schedule->command('dontavailanything:command')
-                  ->dailyAt('11:00');
+        $schedule->command('dontavailanything:command')
+            ->dailyAt('11:00');
         $schedule->command('courseexpiresinamonth:command')
-                ->dailyAt('19:00');
+            ->dailyAt('19:00');
         $schedule->command('bookreminder:send')
             ->dailyAt('06:00');
         $schedule->command('sveadelivery:command')
@@ -108,7 +106,7 @@ class Kernel extends ConsoleKernel
             ->everyMinute()->withoutOverlapping();
         /*$schedule->command('webinarregistranttolearner:command')
             ->yearly();*/
-        /*$schedule->command('queue:work --tries=5')->everyMinute()->withoutOverlapping();*/
+        /* $schedule->command('queue:work --tries=5')->everyMinute()->withoutOverlapping(); */
     }
 
     /**

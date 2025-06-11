@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\User;
 use App\Invoice;
+use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class InvoicePolicy
@@ -15,5 +15,3 @@ class InvoicePolicy
         return $user->id == $invoice->user_id;
     }
 }
-
-

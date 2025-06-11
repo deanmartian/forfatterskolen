@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MarketingPlanQuestionAnswer extends Model
 {
-
     protected $fillable = ['question_id', 'project_id', 'main_answer', 'sub_answer'];
+
     protected $appends = ['sub_answer_decoded'];
 
     public function getSubAnswerDecodedAttribute()
@@ -24,5 +24,4 @@ class MarketingPlanQuestionAnswer extends Model
     {
         return $this->belongsTo('App\Project', 'project_id', 'id');
     }
-
 }

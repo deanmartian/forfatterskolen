@@ -11,7 +11,7 @@ class PowerOfficeInvoice extends Model
         'order_id',
         'sales_order_no',
         'parent',
-        'parent_id'
+        'parent_id',
     ];
 
     public function user()

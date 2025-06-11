@@ -1,40 +1,44 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
+use App\Assignment;
+use App\AssignmentManuscript;
+use App\AssignmentManuscriptEditorCanTake;
 use App\Editor;
+use App\EditorAssignmentPrices;
+use App\EditorGenrePreferences;
+use App\Genre;
+use App\HiddenEditor;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EditorCreateRequest;
 use App\Http\Requests\EditorUpdateRequest;
-use Illuminate\Http\Request;
-use File;
-use Illuminate\Support\Facades\DB;
-use App\User;
-use App\EditorAssignmentPrices;
 use App\ManuscriptEditorCanTake;
-use Illuminate\Support\Facades\Auth;
-use App\EditorGenrePreferences;
-use App\Genre;
-use App\Assignment;
+use App\User;
 use Carbon\Carbon;
-use App\AssignmentManuscriptEditorCanTake;
-use App\HiddenEditor;
-use App\AssignmentManuscript;
+use File;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EditorController extends Controller
 {
     /**
      * Display all editors
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
         $editors = Editor::paginate(15);
+
         return view('backend.editor.index', compact('editors'));
     }
 
     /**
      * Display the create page
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
@@ -42,112 +46,117 @@ class EditorController extends Controller
         $editor = [
             'name' => old('name'),
             'description' => old('description'),
-            'editor_image' => ''
+            'editor_image' => '',
         ];
+
         return view('backend.editor.create', compact('editor'));
     }
 
     /**
      * Create new editor
-     * @param EditorCreateRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(EditorCreateRequest $request)
     {
-        $editor                 = new Editor();
-        $editor->name           = $request->name;
-        $editor->description    = $request->description;
+        $editor = new Editor;
+        $editor->name = $request->name;
+        $editor->description = $request->description;
 
-        if ($request->hasFile('editor_image')) :
+        if ($request->hasFile('editor_image')) {
             $destinationPath = 'images/editors'; // upload path
             $extension = $request->editor_image->extension(); // getting image extension
             $uploadedFile = $request->editor_image->getClientOriginalName();
             $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
             $request->editor_image->move($destinationPath, $fileName);
 
             // optimize image
-            if ( strtolower( $extension ) == "png" ) :
+            if (strtolower($extension) == 'png') {
                 $image = imagecreatefrompng($fileName);
                 imagepng($image, $fileName, 9);
-            else :
+            } else {
                 $image = imagecreatefromjpeg($fileName);
                 imagejpeg($image, $fileName, 70);
-            endif;
+            }
             $editor->editor_image = '/'.$fileName;
-        endif;
+        }
 
         $editor->save();
 
-       return redirect('/editor');
+        return redirect('/editor');
     }
 
     /**
      * Display edit page
-     * @param $id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function edit($id)
     {
         $editor = Editor::findOrFail($id)->toArray();
+
         return view('backend.editor.edit', compact('editor'));
     }
 
     /**
      * Update the editor
-     * @param $id
-     * @param EditorUpdateRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function update($id, EditorUpdateRequest $request)
     {
         $editor = Editor::find($id);
         if ($editor) {
-            $editor->name           = $request->name;
-            $editor->description    = $request->description;
+            $editor->name = $request->name;
+            $editor->description = $request->description;
 
-            if ($request->hasFile('editor_image')) :
+            if ($request->hasFile('editor_image')) {
                 $destinationPath = 'images/editors'; // upload path
                 $extension = $request->editor_image->extension(); // getting image extension
                 $uploadedFile = $request->editor_image->getClientOriginalName();
                 $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
                 $request->editor_image->move($destinationPath, $fileName);
 
                 // optimize image
-                if ( strtolower( $extension ) == "png" ) :
+                if (strtolower($extension) == 'png') {
                     $image = imagecreatefrompng($fileName);
                     imagepng($image, $fileName, 9);
-                else :
+                } else {
                     $image = imagecreatefromjpeg($fileName);
                     imagejpeg($image, $fileName, 70);
-                endif;
+                }
                 $editor->editor_image = '/'.$fileName;
-            endif;
+            }
 
             $editor->save();
         }
+
         return redirect('/editor');
     }
 
     /**
      * Delete the editor
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function destroy($id){
+    public function destroy($id)
+    {
         $editor = Editor::find($id);
         if ($editor) {
             $image = substr($editor->editor_image, 1);
-            if( File::exists($image) ) :
+            if (File::exists($image)) {
                 File::delete($image);
-            endif;
+            }
             $editor->forceDelete();
         }
+
         return redirect('/editor');
     }
 
-    public function total($editor_id){
+    public function total($editor_id)
+    {
         $pAssgn = DB::select("call editor_total_worked_personal_assignment($editor_id, null, null)");
         $shpMan = DB::select("call editor_total_worked_shop_manuscript($editor_id, null, null)");
         $gAssgn = DB::select("call editor_total_worked_group_assignment($editor_id, null, null)");
@@ -156,35 +165,35 @@ class EditorController extends Controller
         $cpyEdtng = DB::select("call editor_total_worked_copy_editing($editor_id, null, null)");
         $all = array_merge($pAssgn, $shpMan, $gAssgn, $chngTmr, $crrctn, $cpyEdtng);
 
-        if(!$all){
+        if (! $all) {
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('No data found.'),
-                'alert_type' => 'warning'
+                'alert_type' => 'warning',
             ]);
         }
 
         $year_month = 'year_month';
 
-        $maxYearMonth = max(array_map(function($o) use($year_month) {
+        $maxYearMonth = max(array_map(function ($o) use ($year_month) {
             return $o->$year_month;
-            },
+        },
             $all));
 
-        $minYearMonth = min(array_map(function($o) use($year_month) {
-        return $o->$year_month;
+        $minYearMonth = min(array_map(function ($o) use ($year_month) {
+            return $o->$year_month;
         },
-        $all));
+            $all));
 
-        $minYear = substr($minYearMonth,0,4);
-        $minMonth = substr($minYearMonth,-2);
-        $maxYear = substr($maxYearMonth,0,4);
-        $maxMonth = substr($maxYearMonth,-2);
+        $minYear = substr($minYearMonth, 0, 4);
+        $minMonth = substr($minYearMonth, -2);
+        $maxYear = substr($maxYearMonth, 0, 4);
+        $maxMonth = substr($maxYearMonth, -2);
 
         $var = [
-            'minYear' =>  $minYear,
-            'minMonth' =>  $minMonth,
-            'maxYear' =>  $maxYear,
-            'maxMonth' =>  $maxMonth
+            'minYear' => $minYear,
+            'minMonth' => $minMonth,
+            'maxYear' => $maxYear,
+            'maxMonth' => $maxMonth,
         ];
 
         $data = [
@@ -193,7 +202,7 @@ class EditorController extends Controller
             'gAssgn' => $gAssgn,
             'chngTmr' => $chngTmr,
             'crrctn' => $crrctn,
-            'cpyEdtng' => $cpyEdtng
+            'cpyEdtng' => $cpyEdtng,
         ];
 
         $editor = User::find($editor_id)->FullName;
@@ -205,15 +214,15 @@ class EditorController extends Controller
         $crrctnPrice = 0;
         $cpyEdtngPrice = 0;
         foreach ($prices as $key) {
-            if ($key->assignment == 'Assignment'){
+            if ($key->assignment == 'Assignment') {
                 $assgnPrice = $key->price;
-            }elseif($key->assignment == 'Shop Manuscript'){
+            } elseif ($key->assignment == 'Shop Manuscript') {
                 $shpManPrice = $key->price;
-            }elseif($key->assignment == 'Coaching Timer'){
+            } elseif ($key->assignment == 'Coaching Timer') {
                 $chngTmrPrice = $key->price;
-            }elseif($key->assignment == 'Correction'){
+            } elseif ($key->assignment == 'Correction') {
                 $crrctnPrice = $key->price;
-            }elseif($key->assignment == 'Copy Editing'){
+            } elseif ($key->assignment == 'Copy Editing') {
                 $cpyEdtngPrice = $key->price;
             }
         }
@@ -223,42 +232,44 @@ class EditorController extends Controller
             'shpManPrice' => $shpManPrice,
             'chngTmrPrice' => $chngTmrPrice,
             'crrctnPrice' => $crrctnPrice,
-            'cpyEdtngPrice' => $cpyEdtngPrice
+            'cpyEdtngPrice' => $cpyEdtngPrice,
         ];
 
-        return view('backend.admin.total_editor_worked', compact('editor', 'var', 'data', 'editor','price'));
+        return view('backend.admin.total_editor_worked', compact('editor', 'var', 'data', 'editor', 'price'));
     }
 
-    public function settings(){
+    public function settings()
+    {
 
         $manuscriptEditorCanTake = ManuscriptEditorCanTake::where('editor_id', Auth::user()->id)
-        ->orderBy('date_from', 'asc')
-        ->get();
+            ->orderBy('date_from', 'asc')
+            ->get();
 
         $genrePrefrences = EditorGenrePreferences::where('editor_id', Auth::user()->id)->get();
-        $genreIHaveNotSelected = Genre::whereNotIn('id', function($query){
+        $genreIHaveNotSelected = Genre::whereNotIn('id', function ($query) {
             $query->select('genre_id')->from('editor_genre_preferences')->where('editor_id', Auth::user()->id);
         })
-        ->get();
+            ->get();
 
-        // get the newly added assignments 
-        $assignmentsBeforeEditorDeadline = Assignment::where('editor_expected_finish','>=',Carbon::now())
+        // get the newly added assignments
+        $assignmentsBeforeEditorDeadline = Assignment::where('editor_expected_finish', '>=', Carbon::now())
             ->where('for_editor', 0)
             ->whereNull('parent')
             ->get();
 
-        return view('editor.editor-settings', compact('manuscriptEditorCanTake','genrePrefrences','genreIHaveNotSelected', 'assignmentsBeforeEditorDeadline'));
+        return view('editor.editor-settings', compact('manuscriptEditorCanTake', 'genrePrefrences', 'genreIHaveNotSelected', 'assignmentsBeforeEditorDeadline'));
     }
 
-    public function saveGenrePrefences($fromAdmin, Request $request){
+    public function saveGenrePrefences($fromAdmin, Request $request)
+    {
 
-        if ($request->genre_id){
-            if($fromAdmin){
+        if ($request->genre_id) {
+            if ($fromAdmin) {
                 $data['editor_id'] = $request->editor_id;
-            }else{
+            } else {
                 $data['editor_id'] = Auth::user()->id;
             }
-            
+
             $data['genre_id'] = $request->genre_id;
             EditorGenrePreferences::create($data);
 
@@ -266,33 +277,36 @@ class EditorController extends Controller
                 'alert_type' => 'success']);
 
         }
-        
+
         return redirect()->back();
-        
+
     }
 
-    public function deleteGenrePreferences($id){
+    public function deleteGenrePreferences($id)
+    {
         EditorGenrePreferences::find($id)->delete();
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record deleted successfully.'),
             'alert_type' => 'success']);
     }
 
     public function saveAssignmentManuscriptEditorCanTake($id, $assignment_manu_id, Request $request)
     {
-        if(!$request->has('how_many_you_can_take')){
+        if (! $request->has('how_many_you_can_take')) {
             return redirect()->back();
         }
-        if($id){ //edit
+        if ($id) { // edit
             $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::find($id);
             $assignmentManuscriptEditorCanTake->how_many_you_can_take = $request->how_many_you_can_take;
             $assignmentManuscriptEditorCanTake->editor_id = Auth::user()->id;
             $assignmentManuscriptEditorCanTake->save();
-        }else{
+        } else {
             $data['how_many_you_can_take'] = $request->how_many_you_can_take;
             $data['editor_id'] = Auth::user()->id;
             $data['assignment_manuscript_id'] = $assignment_manu_id;
             AssignmentManuscriptEditorCanTake::create($data);
         }
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
             'alert_type' => 'success']);
     }
@@ -300,7 +314,7 @@ class EditorController extends Controller
     public function hideShowEditor($editor_id, $hide, Request $request)
     {
         $dateEnd = null;
-        if(!$request->hideUntilTurnedBackUnhidden){
+        if (! $request->hideUntilTurnedBackUnhidden) {
             $dateEnd = $request->end_date;
         }
 
@@ -315,27 +329,33 @@ class EditorController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function showEditorHidden($editor_id){
+    public function showEditorHidden($editor_id)
+    {
 
         $editor = User::find($editor_id);
         $hiddenEditor = HiddenEditor::where('editor_id', $editor_id)->get();
         $assignmentManuscript = AssignmentManuscript::where('editor_id', $editor_id)->get();
         $assignment = Assignment::whereIn('id', $assignmentManuscript)->orderBy('created_at', 'desc')->get();
-        return view('editor.editor-hidden', compact('hiddenEditor','editor', 'assignmentManuscript', 'assignment'));
+
+        return view('editor.editor-hidden', compact('hiddenEditor', 'editor', 'assignmentManuscript', 'assignment'));
 
     }
 
-    public function deleteEditorHidden($id){
+    public function deleteEditorHidden($id)
+    {
         HiddenEditor::find($id)->delete();
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Deleted successfully.'),
             'alert_type' => 'success']);
     }
 
-    public function setHowManyManuscriptYouCanTake($id, Request $request) {
+    public function setHowManyManuscriptYouCanTake($id, Request $request)
+    {
         $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::find($id);
         $assignmentManuscriptEditorCanTake->how_many_you_can_take = $request->howManyManuscriptYouCanTake;
         $assignmentManuscriptEditorCanTake->save();
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record successfully saved.'),
             'alert_type' => 'success']);
     }
-};
+}

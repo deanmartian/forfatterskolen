@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
@@ -6,17 +7,17 @@ use App\Http\Requests\CreatePublishingRequest;
 use App\Repositories\Services\PublishingService;
 use Illuminate\Http\Request;
 
-class PublishingController extends Controller {
-
+class PublishingController extends Controller
+{
     /**
      * Variable to store the publishing service
+     *
      * @var PublishingService
      */
     protected $publishingService;
 
     /**
      * PublishingController constructor.
-     * @param PublishingService $publishingService
      */
     public function __construct(PublishingService $publishingService)
     {
@@ -26,33 +27,39 @@ class PublishingController extends Controller {
 
     /**
      * Index page
+     *
      * @var PublishingService
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index(Request $request)
     {
-        if( $request->search && !empty($request->search) ) :
+        if ($request->search && ! empty($request->search)) {
             $publishingHouses = $this->publishingService->search($request->search);
-        else :
+        } else {
             $publishingHouses = $this->publishingService->paginate();
-        endif;
+        }
+
         return view('backend.publishing.index', compact('publishingHouses'));
     }
 
     /**
      * Create page
+     *
      * @var PublishingService create
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
     {
         $publishingHouse = $this->publishingService->fields();
+
         return view('backend.publishing.create', compact('publishingHouse'));
     }
 
     /**
      * Create new publishing house
-     * @param CreatePublishingRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CreatePublishingRequest $request)
@@ -66,7 +73,7 @@ class PublishingController extends Controller {
 
     /**
      * Display edit page
-     * @param $id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function edit($id)
@@ -74,6 +81,7 @@ class PublishingController extends Controller {
         $publishingHouse = $this->publishingService->find($id);
         if ($publishingHouse) {
             $publishingHouse = $publishingHouse->toArray();
+
             return view('backend.publishing.edit', compact('publishingHouse'));
         }
 
@@ -82,8 +90,7 @@ class PublishingController extends Controller {
 
     /**
      * Update publishing house
-     * @param $id
-     * @param CreatePublishingRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, CreatePublishingRequest $request)
@@ -91,18 +98,19 @@ class PublishingController extends Controller {
         if ($this->publishingService->update($id, $request->except('_token'))) {
             return redirect()->route('admin.publishing.edit', $id);
         }
+
         return redirect()->route('admin.publishing.index');
     }
 
     /**
      * Delete a publishing house
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
         $this->publishingService->destroy($id);
+
         return redirect()->route('admin.publishing.index');
     }
-    
 }

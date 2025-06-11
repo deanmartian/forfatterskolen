@@ -8,14 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Assignment extends Model
 {
     use Loggable;
-    
-    protected $table = 'assignments';
-    protected $fillable = ['course_id', 'title', 'description', 'submission_date', 'available_date','allowed_package', 'add_on_price',
-        'max_words', 'allow_up_to', 'for_editor', 'editor_id', 'editor_manu_generate_count', 'generated_filepath', 
-        'show_join_group_question', 'send_letter_to_editor', 'check_max_words', 'assigned_editor', 'parent_id', 'parent', 
-        'editor_expected_finish', 'expected_finish'];
-    protected $appends = ['submission_date_time_text'];
 
+    protected $table = 'assignments';
+
+    protected $fillable = ['course_id', 'title', 'description', 'submission_date', 'available_date', 'allowed_package', 'add_on_price',
+        'max_words', 'allow_up_to', 'for_editor', 'editor_id', 'editor_manu_generate_count', 'generated_filepath',
+        'show_join_group_question', 'send_letter_to_editor', 'check_max_words', 'assigned_editor', 'parent_id', 'parent',
+        'editor_expected_finish', 'expected_finish'];
+
+    protected $appends = ['submission_date_time_text'];
 
     // filter for course assignments
     public function scopeForCourseOnly($query)
@@ -34,7 +35,6 @@ class Assignment extends Model
         return $this->belongsTo('App\Course');
     }
 
-
     public function manuscripts()
     {
         return $this->hasMany('App\AssignmentManuscript')->orderBy('grade', 'desc');
@@ -47,7 +47,6 @@ class Assignment extends Model
             ->orderBy('grade', 'desc');
     }
 
-
     public function groups()
     {
         return $this->hasMany('App\AssignmentGroup')->orderBy('created_at', 'desc');
@@ -55,20 +54,21 @@ class Assignment extends Model
 
     public function getSubmissionDateAttribute($value)
     {
-        $submission_date = NULL;
+        $submission_date = null;
         if ($value) {
-            if (!is_numeric($value)) {
+            if (! is_numeric($value)) {
                 $submission_date = date_format(date_create($value), 'M d, Y h:i A');
             } else {
                 $submission_date = $value;
             }
         }
+
         return $submission_date;
     }
 
     public function getAvailableDateAttribute($value)
     {
-        return $value ? date_format(date_create($value), 'M d, Y') : NULL;
+        return $value ? date_format(date_create($value), 'M d, Y') : null;
     }
 
     public function learner()
@@ -80,26 +80,29 @@ class Assignment extends Model
     {
         return json_decode($this->attributes['allowed_package']);
     }
-    
-    public function getEditorExpectedFinishAttribute($value) {
-        return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
+
+    public function getEditorExpectedFinishAttribute($value)
+    {
+        return $value ? date_format(date_create($value), 'd.m.Y') : null;
     }
 
     public function getSubmissionDateTimeTextAttribute()
     {
         $value = $this->attributes['submission_date'];
-        $submission_date = NULL;
+        $submission_date = null;
         if ($value) {
-            if (!is_numeric($value)) {
+            if (! is_numeric($value)) {
                 $submission_date = ucwords(strtr(trans('site.learner.submission-date-value'), [
                     '_date_' => \Carbon\Carbon::parse($this->attributes['submission_date'])->format('d M Y'),
                     '_time_' => \Carbon\Carbon::parse($this->attributes['submission_date'])->format('H:i')]));
             }
         }
+
         return $submission_date;
     }
 
-    public function assignmentManuscriptEditorCanTake(){
+    public function assignmentManuscriptEditorCanTake()
+    {
         return $this->hasMany('App\AssignmentManuscriptEditorCanTake', 'assignment_manuscript_id', 'id');
     }
 
@@ -121,6 +124,7 @@ class Assignment extends Model
     public function getLinkedPersonalAssignment($user_id)
     {
         $disabledLearner = $this->disabledLearners()->where('user_id', $user_id)->first();
+
         return $disabledLearner ? $this->find($disabledLearner->personal_assignment_id) : null;
     }
 }

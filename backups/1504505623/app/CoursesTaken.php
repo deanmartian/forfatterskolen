@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CoursesTaken extends Model
 {
     protected $table = 'courses_taken';
+
     protected $fillable = ['user_id', 'package_id', 'is_active', 'started_at', 'start_date', 'end_date'];
 
     public function user()
@@ -29,56 +30,47 @@ class CoursesTaken extends Model
         return date_format(date_create($this->attributes['started_at']), 'M d, Y h:i a');
     }
 
-
     public function getCreatedAtAttribute($value)
     {
         return date_format(date_create($value), 'M d, Y h:i a');
     }
 
-
-    
     public function getStartDateAttribute($value)
     {
-        if( $value ) :
+        if ($value) {
             return date_format(date_create($value), 'M d, Y');
-        endif;
+        }
+
         return false;
     }
-
-
 
     public function getEndDateAttribute($value)
     {
-        if( $value ) :
+        if ($value) {
             return date_format(date_create($value), 'M d, Y');
-        endif;
+        }
+
         return false;
     }
-
-
 
     public function getHasStartedAttribute()
     {
-        return !empty($this->attributes['started_at']);
+        return ! empty($this->attributes['started_at']);
     }
-
-
 
     public function getHasEndedAttribute()
     {
-        if( $this->attributes['started_at'] ) :
+        if ($this->attributes['started_at']) {
             $date = \Carbon\Carbon::parse($this->attributes['started_at']);
-            return $date->diffInYears() >= 1; 
-        endif;
+
+            return $date->diffInYears() >= 1;
+        }
 
         return false;
     }
-
-
 
     public function getAccessLessonsAttribute($value)
     {
         return json_decode($value);
     }
-
 }

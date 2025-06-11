@@ -9,21 +9,21 @@ use App\Services\ReplayService;
 
 class ReplayController extends Controller
 {
-
     public function index()
     {
         $replays = Replay::latest()->get();
-        return view('backend.replay.index',compact('replays'));
+
+        return view('backend.replay.index', compact('replays'));
     }
 
-    public function store( SaveReplayRequest $request, ReplayService $service )
+    public function store(SaveReplayRequest $request, ReplayService $service)
     {
         $service->saveReplay($request);
 
         return redirect()->back();
     }
 
-    public function update( $id, SaveReplayRequest $request, ReplayService $service )
+    public function update($id, SaveReplayRequest $request, ReplayService $service)
     {
         $service->saveReplay($request, $id);
 
@@ -33,6 +33,7 @@ class ReplayController extends Controller
     public function destroy($id)
     {
         Replay::find($id)->delete();
+
         return redirect()->back();
     }
 }

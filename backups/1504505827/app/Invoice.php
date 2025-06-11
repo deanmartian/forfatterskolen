@@ -35,7 +35,6 @@ class Invoice extends Model
         return $this->belongsTo('App\PaymentPlan');
     }
 
-
     public function transactions()
     {
         return $this->hasMany('App\Transaction')->orderBy('created_at', 'desc');

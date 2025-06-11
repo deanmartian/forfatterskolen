@@ -26,7 +26,7 @@ class EditorCreateRequest extends FormRequest
         return [
             'name' => 'required',
             'description' => 'required',
-            'editor_image' => 'required'
+            'editor_image' => 'required',
         ];
     }
 }

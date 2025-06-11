@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PrivateGroup extends Model
 {
-    protected $fillable = [ 'name', 'policy', 'welcome_msg', 'contact_email' ];
+    protected $fillable = ['name', 'policy', 'welcome_msg', 'contact_email'];
 
     public function books_shared()
     {
@@ -32,6 +32,7 @@ class PrivateGroup extends Model
 
     /**
      * Get the manager of the group
+     *
      * @return Relation
      */
     public function manager()

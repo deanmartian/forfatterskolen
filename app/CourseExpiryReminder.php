@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CourseExpiryReminder extends Model {
-
+class CourseExpiryReminder extends Model
+{
     /**
      * The database table used by the model.
      *

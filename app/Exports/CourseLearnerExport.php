@@ -10,10 +10,10 @@ use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class CourseLearnerExport implements FromArray, WithHeadings, ShouldAutoSize, WithColumnFormatting, WithColumnWidths
+class CourseLearnerExport implements FromArray, ShouldAutoSize, WithColumnFormatting, WithColumnWidths, WithHeadings
 {
-
     protected $course_id;
+
     protected $type;
 
     public function __construct($course_id, $type = 'email')
@@ -41,7 +41,7 @@ class CourseLearnerExport implements FromArray, WithHeadings, ShouldAutoSize, Wi
         $learners = $course->learners->get();
         $type = $this->type;
 
-        $learnerList    = [];
+        $learnerList = [];
 
         // loop all the learners
         foreach ($learners as $learner) {

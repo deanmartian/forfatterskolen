@@ -3,14 +3,16 @@
 namespace App;
 
 use App\Http\FrontendHelpers;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class CorrectionManuscript extends Model {
-
+class CorrectionManuscript extends Model
+{
     const NotStarted = 0;
+
     const Started = 1;
+
     const Finished = 2;
+
     /**
      * The database table used by the model.
      *
@@ -38,7 +40,7 @@ class CorrectionManuscript extends Model {
     public function feedback()
     {
         return $this->hasOne('App\OtherServiceFeedback', 'service_id', 'id')
-            ->where('service_type','=',2);
+            ->where('service_type', '=', 2);
     }
 
     public function project()

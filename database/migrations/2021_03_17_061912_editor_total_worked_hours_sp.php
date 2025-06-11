@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class EditorTotalWorkedHoursSp extends Migration
@@ -266,11 +264,11 @@ class EditorTotalWorkedHoursSp extends Migration
      */
     public function down()
     {
-        DB::unprepared("DROP PROCEDURE IF EXISTS editor_total_worked_personal_assignment;");
-        DB::unprepared("DROP PROCEDURE IF EXISTS editor_total_worked_shop_manuscript;");
-        DB::unprepared("DROP PROCEDURE IF EXISTS editor_total_worked_group_assignment;");
-        DB::unprepared("DROP PROCEDURE IF EXISTS editor_total_worked_coaching;");
-        DB::unprepared("DROP PROCEDURE IF EXISTS editor_total_worked_correction;");
-        DB::unprepared("DROP PROCEDURE IF EXISTS editor_total_worked_copy_editing;");
+        DB::unprepared('DROP PROCEDURE IF EXISTS editor_total_worked_personal_assignment;');
+        DB::unprepared('DROP PROCEDURE IF EXISTS editor_total_worked_shop_manuscript;');
+        DB::unprepared('DROP PROCEDURE IF EXISTS editor_total_worked_group_assignment;');
+        DB::unprepared('DROP PROCEDURE IF EXISTS editor_total_worked_coaching;');
+        DB::unprepared('DROP PROCEDURE IF EXISTS editor_total_worked_correction;');
+        DB::unprepared('DROP PROCEDURE IF EXISTS editor_total_worked_copy_editing;');
     }
 }

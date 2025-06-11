@@ -7,19 +7,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class PayPalIPN
- * @package App
  */
 class PayPalIPN extends Model
 {
     use SoftDeletes;
 
-    const COMPLETED = "Completed";
-    const IPN_FAILURE = "FALIURE";
-    const IPN_INVALID = "INVALID";
-    const IPN_VERIFIED = "VERIFIED";
+    const COMPLETED = 'Completed';
+
+    const IPN_FAILURE = 'FALIURE';
+
+    const IPN_INVALID = 'INVALID';
+
+    const IPN_VERIFIED = 'VERIFIED';
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $timestamps = true;
 
@@ -40,7 +42,7 @@ class PayPalIPN extends Model
     protected $table = 'paypal_ipn_records';
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isCompleted()
     {
@@ -48,7 +50,7 @@ class PayPalIPN extends Model
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isVerified()
     {

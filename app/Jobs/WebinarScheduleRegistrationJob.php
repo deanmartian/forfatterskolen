@@ -5,10 +5,10 @@ namespace App\Jobs;
 use App\UserAutoRegisterToCourseWebinar;
 use App\WebinarRegistrant;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
 class WebinarScheduleRegistrationJob implements ShouldQueue
@@ -33,7 +33,8 @@ class WebinarScheduleRegistrationJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle() {
+    public function handle()
+    {
         $schedule = $this->schedule;
         $webinar = $schedule->webinar;
         $isWebinarPakke = false;
@@ -48,23 +49,23 @@ class WebinarScheduleRegistrationJob implements ShouldQueue
 
         $header[] = 'API-KEY: '.config('services.big_marker.api_key');
 
-        Log::info("----------- inside webinar schedule registration job ----------------");
-        foreach ( $learners as $learner ) {
+        Log::info('----------- inside webinar schedule registration job ----------------');
+        foreach ($learners as $learner) {
             $user = $learner->user;
 
-            if ($user && !$isWebinarPakke || ($user && $isWebinarPakke && $user->coursesTakenNotOld2->count() > 0)) {
+            if ($user && ! $isWebinarPakke || ($user && $isWebinarPakke && $user->coursesTakenNotOld2->count() > 0)) {
                 $data = [
-                    'id'            => $webinar->link,
-                    'email'         => $user->email,
-                    'first_name'    => $user->first_name,
-                    'last_name'     => $user->last_name,
+                    'id' => $webinar->link,
+                    'email' => $user->email,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
                 ];
                 $ch = curl_init();
                 $url = config('services.big_marker.register_link');
 
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
                 curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
                 curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
                 $response = curl_exec($ch);
@@ -81,6 +82,6 @@ class WebinarScheduleRegistrationJob implements ShouldQueue
             }
         }
 
-        Log::info("----------- after foreach webinar schedule registration job ----------------");
+        Log::info('----------- after foreach webinar schedule registration job ----------------');
     }
 }

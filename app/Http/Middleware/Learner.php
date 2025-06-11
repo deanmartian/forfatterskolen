@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware;
 
 use AdminHelpers;
@@ -18,7 +19,6 @@ class Learner
     /**
      * Create a new filter instance.
      *
-     * @param  Guard  $auth
      * @return void
      */
     public function __construct(Guard $auth)
@@ -30,7 +30,6 @@ class Learner
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -43,14 +42,15 @@ class Learner
             }
         } else {
             $user = $this->auth->user();
-    
+
             // Check if the user has the correct role
             if ($user->role != 2) {
                 Auth::logout();
-                echo "Forbidden <br />";
+                echo 'Forbidden <br />';
+
                 return redirect('/');
             }
-    
+
             // Check if the user's email is verified
             /* if (is_null($user->email_verified_at)) {
                 Auth::logout();
@@ -64,4 +64,3 @@ class Learner
         return $next($request);
     }
 }
-

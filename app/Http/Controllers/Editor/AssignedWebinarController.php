@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers\Editor;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Webinar;
-use App\WebinarEditor;
-use App\Webinars;
 use DB;
 use Illuminate\Support\Facades\Auth;
 
 class AssignedWebinarController extends Controller
 {
-    public function show(){
-        //$assignedWebinar = Auth::user()->assignedWebinars;
+    public function show()
+    {
+        // $assignedWebinar = Auth::user()->assignedWebinars;
         $webinars = DB::table('webinars')
             ->select('webinars.*', 'webinar_editors.presenter_url', 'courses.title as course_title')
             ->leftJoin('webinar_editors', 'webinars.id', '=', 'webinar_editors.webinar_id')

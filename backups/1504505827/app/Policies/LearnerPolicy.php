@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\User;
 use App\CoursesTaken;
+use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class LearnerPolicy
@@ -15,5 +15,3 @@ class LearnerPolicy
         return CoursesTaken::where('id', $courseTaken->id)->where('is_active', true)->where('user_id', $user->id)->first();
     }
 }
-
-

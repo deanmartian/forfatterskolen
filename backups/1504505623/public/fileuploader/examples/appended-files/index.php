@@ -35,41 +35,42 @@
 	<body>
 		<form action="php/form_upload.php" method="post" enctype="multipart/form-data">
 			<?php
-				// we are inclunding it only for using FileUploader::mime_content_type method
-				include('../../src/class.fileuploader.php');
-				
-				// create an empty array
-                // we will add to this array the files from directory below
-                // here you can also add files from MySQL database
-				$appendedFiles = array();
-			
-				// scan uploads directory
-				$uploadsFiles = array_diff(scandir('uploads/'), array('.', '..'));
-			
-				// add files to our array with
-				// made to use the correct structure of a file
-				foreach($uploadsFiles as $file) {
-					// skip if directory
-					if(is_dir($file))
-						continue;
-					
-					// add file to our array
-					// !important please follow the structure below
-					$appendedFiles[] = array(
-						"name" => $file,
-						"type" => FileUploader::mime_content_type('uploads/' . $file),
-						"size" => filesize('uploads/' . $file),
-						"file" => 'uploads/' . $file,
-						"data" => array(
-							"url" => 'http://localhost/fileuploader/examples/appended-files/uploads/' . $file
-						)
-					);
-				}
-				
-				// convert our array into json string
-				$appendedFiles = json_encode($appendedFiles);
+                // we are inclunding it only for using FileUploader::mime_content_type method
+                include '../../src/class.fileuploader.php';
+
+			// create an empty array
+			// we will add to this array the files from directory below
+			// here you can also add files from MySQL database
+			$appendedFiles = [];
+
+			// scan uploads directory
+			$uploadsFiles = array_diff(scandir('uploads/'), ['.', '..']);
+
+			// add files to our array with
+			// made to use the correct structure of a file
+			foreach ($uploadsFiles as $file) {
+			    // skip if directory
+			    if (is_dir($file)) {
+			        continue;
+			    }
+
+			    // add file to our array
+			    // !important please follow the structure below
+			    $appendedFiles[] = [
+			        'name' => $file,
+			        'type' => FileUploader::mime_content_type('uploads/'.$file),
+			        'size' => filesize('uploads/'.$file),
+			        'file' => 'uploads/'.$file,
+			        'data' => [
+			            'url' => 'http://localhost/fileuploader/examples/appended-files/uploads/'.$file,
+			        ],
+			    ];
+			}
+
+			// convert our array into json string
+			$appendedFiles = json_encode($appendedFiles);
 			?>
-			<input type="file" name="files" data-fileuploader-files='<?php echo $appendedFiles;?>'>
+			<input type="file" name="files" data-fileuploader-files='<?php echo $appendedFiles; ?>'>
 			<input type="submit">
 		</form>
     </body>

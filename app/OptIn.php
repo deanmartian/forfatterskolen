@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ class OptIn extends Model
      * @var string
      */
     protected $table = 'opt_in';
+
     /**
      * The attributes that are mass assignable.
      *

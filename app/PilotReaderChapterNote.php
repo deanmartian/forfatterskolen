@@ -4,7 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PilotReaderChapterNote extends Model {
+class PilotReaderChapterNote extends Model
+{
     /**
      * The database table used by the model.
      *

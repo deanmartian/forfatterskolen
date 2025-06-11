@@ -1,40 +1,37 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
-use App\Http\FrontendHelpers;
-use App\Log;
+use App\Http\Controllers\Controller;
+use App\Http\FikenInvoice;
+use App\Http\Requests\InvoiceCreateRequest;
+use App\Http\Requests\TransactionCreateRequest;
+use App\Invoice;
+use App\PaymentMode;
+use App\PaymentPlan;
+use App\Transaction;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Invoice;
-use App\Transaction;
-use App\Http\Requests\TransactionCreateRequest;
-use App\Http\Requests\InvoiceCreateRequest;
-use Illuminate\Validation\Rules\In;
-use Validator;
-use App\Http\FikenInvoice;
-use App\Package;
-use App\PaymentPlan;
-use App\PaymentMode;
-use App\User;
 
 class InvoiceController extends Controller
-{   
-    // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk 
+{
+    // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk
     // Forfatterskolen: forfatterskolen-as
-    public $fikenInvoices = "https://fiken.no/api/v1/companies/forfatterskolen-as/invoices";
-    public $username = "cleidoscope@gmail.com";
-    public $password = "moonfang";
+    public $fikenInvoices = 'https://fiken.no/api/v1/companies/forfatterskolen-as/invoices';
+
+    public $username = 'cleidoscope@gmail.com';
+
+    public $password = 'moonfang';
+
     public $headers = [
         'Accept: application/hal+json, application/vnd.error+json',
-        'Content-Type: application/hal+json'
-   ];
+        'Content-Type: application/hal+json',
+    ];
 
     public $headersV2 = [];
-
 
     /**
      * CourseController constructor.
@@ -48,22 +45,21 @@ class InvoiceController extends Controller
         $this->headersV2[] = 'Content-Type: Application/json';
     }
 
-
-    public function index( Request $request )
+    public function index(Request $request)
     {
 
-        if (!Auth::user()->isSuperUser()) {
+        if (! Auth::user()->isSuperUser()) {
             return redirect()->route('backend.dashboard');
         }
 
-        $invoiceQuery = new Invoice();
+        $invoiceQuery = new Invoice;
         $invoiceFilter = $invoiceQuery->orderBy('created_at', 'desc');
 
         $startDate = Carbon::parse(new Carbon('first day of this month'))->format('Y-m-d');
         $endDate = Carbon::parse(new Carbon('last day of this month'))->format('Y-m-d');
 
         if ($request->has('dates')) {
-            $dates = explode('-',$request->dates);
+            $dates = explode('-', $request->dates);
             $startDate = Carbon::parse($dates[0])->format('Y-m-d');
             $endDate = Carbon::parse($dates[1])->format('Y-m-d');
         }
@@ -72,7 +68,7 @@ class InvoiceController extends Controller
             $invoiceFilter->where('fiken_invoice_id', $request->fiken_invoice_id);
         } else {
             $invoiceFilter = $invoiceFilter->where('fiken_is_paid', 0)
-            ->whereBetween('fiken_dueDate', [$startDate, $endDate]);
+                ->whereBetween('fiken_dueDate', [$startDate, $endDate]);
         }
 
         $totalBalance = $invoiceQuery->whereIn('id', $invoiceFilter->pluck('id'))
@@ -91,29 +87,22 @@ class InvoiceController extends Controller
         $data = json_decode($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};*/
 
-    	return view('backend.invoice.index', compact('invoices', 'totalBalance', 'totalPaid',
+        return view('backend.invoice.index', compact('invoices', 'totalBalance', 'totalPaid',
             'startDate', 'endDate'));
     }
-
-
-
-
 
     public function show($id)
     {
         $invoice = Invoice::findOrFail($id);
-    	return view('backend.invoice.show', compact('invoice'));
+
+        return view('backend.invoice.show', compact('invoice'));
     }
-
-
-
-
 
     public function store(InvoiceCreateRequest $request)
     {
         $fikenValid = false;
-        $fikenURL = NULL;
-        $fikenInvoiceNumber = NULL;
+        $fikenURL = null;
+        $fikenInvoiceNumber = null;
         $expUrl = explode('/', $request->fiken_url);
         $searchBy = $expUrl[count($expUrl) - 2];
         $searchId = end($expUrl);
@@ -128,7 +117,7 @@ class InvoiceController extends Controller
         $data = curl_exec($ch);
         $data = json_decode($data);
         $invoicesData = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};
-        
+
         foreach( $invoicesData as $invoiceData ) :
             if( $request->fiken_url == $invoiceData->_links->alternate->href ) :
                 $fikenValid = true;
@@ -138,7 +127,7 @@ class InvoiceController extends Controller
         endforeach;*/
 
         // check if sale which is used by version 1
-        if ($searchBy === "salg") {
+        if ($searchBy === 'salg') {
             $url = 'https://api.fiken.no/api/v2/companies/forfatterskolen-as/sales/'.$searchId;
             $fieldName = 'saleNumber';
         } else {
@@ -149,24 +138,25 @@ class InvoiceController extends Controller
         $headers = [
             'Accept: application/json',
             'Authorization: Bearer '.config('services.fiken.personal_api_key'),
-            'Content-Type: Application/json'
+            'Content-Type: Application/json',
         ];
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        //curl_setopt($ch, CURLOPT_HEADER, 1);
+        // curl_setopt($ch, CURLOPT_HEADER, 1);
         $response = curl_exec($ch);
         $response = json_decode($response);
 
         // get the http code response
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
+        if (! in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
             \Illuminate\Support\Facades\Log::info('inside not success in invoice controller');
             \Illuminate\Support\Facades\Log::info(json_encode($response));
+
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag($response->error_description),
-                'not-former-courses'    => true
+                'not-former-courses' => true,
             ]);
         }
 
@@ -181,10 +171,6 @@ class InvoiceController extends Controller
 
         return redirect()->back();
     }
-
-
-
-
 
     public function update($id, InvoiceCreateRequest $request)
     {
@@ -209,7 +195,7 @@ class InvoiceController extends Controller
             endif;
         endforeach;*/
 
-        if ($searchBy === "salg") {
+        if ($searchBy === 'salg') {
             $url = 'https://api.fiken.no/api/v2/companies/forfatterskolen-as/sales/'.$searchId;
             $fieldName = 'saleNumber';
         } else {
@@ -220,22 +206,22 @@ class InvoiceController extends Controller
         $headers = [
             'Accept: application/json',
             'Authorization: Bearer '.config('services.fiken.personal_api_key'),
-            'Content-Type: Application/json'
+            'Content-Type: Application/json',
         ];
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        //curl_setopt($ch, CURLOPT_HEADER, 1);
+        // curl_setopt($ch, CURLOPT_HEADER, 1);
         $response = curl_exec($ch);
         $response = json_decode($response);
 
         // get the http code response
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
+        if (! in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag($response->error_description),
-                'not-former-courses'    => true
+                'not-former-courses' => true,
             ]);
         }
 
@@ -253,20 +239,18 @@ class InvoiceController extends Controller
         return redirect()->back();
     }
 
-
     public function destroy($id)
     {
         $invoice = Invoice::findOrFail($id);
         $invoice->forceDelete();
+
         return redirect(route('admin.invoice.index'));
     }
-
-
 
     public function addTransaction($invoice_id, TransactionCreateRequest $request)
     {
         $invoice = Invoice::findOrFail($invoice_id);
-        $transaction = new Transaction();
+        $transaction = new Transaction;
         $transaction->invoice_id = $invoice->id;
         $transaction->mode = $request->mode;
         $transaction->mode_transaction = $request->mode_transaction;
@@ -275,7 +259,6 @@ class InvoiceController extends Controller
 
         return redirect()->back();
     }
-
 
     public function updateTransaction($invoice_id, $id, TransactionCreateRequest $request)
     {
@@ -300,13 +283,13 @@ class InvoiceController extends Controller
 
     /**
      * Create invoice
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function addInvoice(Request $request)
     {
-        $this->validate($request,[
-            'price' => 'required'
+        $this->validate($request, [
+            'price' => 'required',
         ]);
 
         $learner = User::find($request->learner_id);
@@ -315,98 +298,98 @@ class InvoiceController extends Controller
 
         if ($request->has('payment_plan_id')) {
             $paymentPlan = PaymentPlan::find($request->payment_plan_id);
-            $payment_plan = (int)$request->payment_plan_id === 10 ? '24 måneder' : $paymentPlan->plan;
-            $divisor = (int)$request->payment_plan_id === 10 ? 24 : $paymentPlan->division;
+            $payment_plan = (int) $request->payment_plan_id === 10 ? '24 måneder' : $paymentPlan->plan;
+            $divisor = (int) $request->payment_plan_id === 10 ? 24 : $paymentPlan->division;
         } else {
-            $payment_plan = $request->payment_plan_in_months . ' måneder';
+            $payment_plan = $request->payment_plan_in_months.' måneder';
             $divisor = $request->payment_plan_in_months;
         }
 
         $inputtedComment = $request->comment;
         $comment = '('.$inputtedComment.' ';
-        $comment .= 'Betalingsmodus: ' . $payment_mode . ', ';
-        $comment .= 'Betalingsplan: ' . $payment_plan . ')';
+        $comment .= 'Betalingsmodus: '.$payment_mode.', ';
+        $comment .= 'Betalingsplan: '.$payment_plan.')';
 
         $product_ID = $request->product_id;
 
         $price = $request->price * 100;
-        $dueDate = $request->issue_date ?: date("Y-m-d");
+        $dueDate = $request->issue_date ?: date('Y-m-d');
 
         if (isset($request->split_invoice) && $request->split_invoice) {
-            $division   = $divisor * 100; // multiply the split count to get the correct value
-            $price      = round($price/$division, 2); // round the value to the nearest tenths
-            $price      = (int)$price*100;
-            $has_vat    = false;
+            $division = $divisor * 100; // multiply the split count to get the correct value
+            $price = round($price / $division, 2); // round the value to the nearest tenths
+            $price = (int) $price * 100;
+            $has_vat = false;
 
-            for ($i=1; $i <= $divisor; $i++ ) { // loop based on the split count
-                $dueDate =  $request->issue_date ?: date("Y-m-d");
-                $dueDate =  Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
+            for ($i = 1; $i <= $divisor; $i++) { // loop based on the split count
+                $dueDate = $request->issue_date ?: date('Y-m-d');
+                $dueDate = Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
                 $invoice_fields = [
-                    'user_id'       => $learner->id,
-                    'first_name'    => $learner->first_name,
-                    'last_name'     => $learner->last_name,
-                    'netAmount'     => $price,
-                    'dueDate'       => $dueDate,
-                    'description'   => 'Kursordrefaktura',
-                    'productID'     => $product_ID,
-                    'email'         => $learner->email,
-                    'telephone'     => $learner->address->telephone,
-                    'address'       => $learner->address->street,
-                    'postalPlace'   => $learner->address->city,
-                    'postalCode'    => $learner->address->zip,
-                    'comment'       => $comment,
-                    'payment_mode'  => $paymentMode->mode,
-                    'index'         => $i
+                    'user_id' => $learner->id,
+                    'first_name' => $learner->first_name,
+                    'last_name' => $learner->last_name,
+                    'netAmount' => $price,
+                    'dueDate' => $dueDate,
+                    'description' => 'Kursordrefaktura',
+                    'productID' => $product_ID,
+                    'email' => $learner->email,
+                    'telephone' => $learner->address->telephone,
+                    'address' => $learner->address->street,
+                    'postalPlace' => $learner->address->city,
+                    'postalCode' => $learner->address->zip,
+                    'comment' => $comment,
+                    'payment_mode' => $paymentMode->mode,
+                    'index' => $i,
                 ];
 
                 if ($request->product_type === 'manuscript_vat') {
-                    $invoice_fields['vat'] = ($price/100) * 25;
+                    $invoice_fields['vat'] = ($price / 100) * 25;
                     $has_vat = true;
                 }
 
-                $invoice = new FikenInvoice();
+                $invoice = new FikenInvoice;
                 $invoice->create_invoice($invoice_fields, $has_vat);
             }
         } else {
             $has_vat = false;
             $dueDate = date_format(date_create(Carbon::parse($dueDate)->addDays(14)), 'Y-m-d');
             $invoice_fields = [
-                'user_id'       => $learner->id,
-                'first_name'    => $learner->first_name,
-                'last_name'     => $learner->last_name,
-                'netAmount'     => $price,
-                'dueDate'       => $dueDate,
-                'description'   => 'Kursordrefaktura',
-                'productID'     => $product_ID,
-                'email'         => $learner->email,
-                'telephone'     => $learner->address->telephone,
-                'address'       => $learner->address->street,
-                'postalPlace'   => $learner->address->city,
-                'postalCode'    => $learner->address->zip,
-                'comment'       => $comment,
-                'payment_mode'  => $paymentMode->mode,
+                'user_id' => $learner->id,
+                'first_name' => $learner->first_name,
+                'last_name' => $learner->last_name,
+                'netAmount' => $price,
+                'dueDate' => $dueDate,
+                'description' => 'Kursordrefaktura',
+                'productID' => $product_ID,
+                'email' => $learner->email,
+                'telephone' => $learner->address->telephone,
+                'address' => $learner->address->street,
+                'postalPlace' => $learner->address->city,
+                'postalCode' => $learner->address->zip,
+                'comment' => $comment,
+                'payment_mode' => $paymentMode->mode,
             ];
 
             if ($request->product_type === 'manuscript_vat') {
-                $invoice_fields['vat'] = ($price/100) * 25;
+                $invoice_fields['vat'] = ($price / 100) * 25;
                 $has_vat = true;
             }
 
-            $invoice = new FikenInvoice();
+            $invoice = new FikenInvoice;
             $invoice->create_invoice($invoice_fields, $has_vat);
         }
 
         return redirect()->back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Invoice created successfully.'),
-            'alert_type'            => 'success',
-            'not-former-courses'    => true
+            'errors' => AdminHelpers::createMessageBag('Invoice created successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
         ]);
     }
 
     public function downloadFikenPdf($invoice_id)
     {
         $invoice = Invoice::find($invoice_id);
-        $exp_pdf = count(explode('.pdf',$invoice->pdf_url));
+        $exp_pdf = count(explode('.pdf', $invoice->pdf_url));
 
         // check if version 2
         if (strpos($invoice->pdf_url, 'v2')) {
@@ -415,7 +398,7 @@ class InvoiceController extends Controller
             if ($exp_pdf == 1) {
                 $pdf_url = $pdf_url.'.pdf';
             }
-            $expFile = explode("/", $pdf_url);
+            $expFile = explode('/', $pdf_url);
 
             $filename = 'fiken-invoice/'.end($expFile);
 
@@ -430,14 +413,15 @@ class InvoiceController extends Controller
             curl_exec($ch);
             curl_close($ch);
             fclose($out);
+
             return response()->download($filename);
         }
 
-        $pdf_url = str_replace("https://fiken.no/filer/", "https://fiken.no/api/v1/files/", $invoice->pdf_url);
+        $pdf_url = str_replace('https://fiken.no/filer/', 'https://fiken.no/api/v1/files/', $invoice->pdf_url);
         if ($exp_pdf == 1) {
             $pdf_url = $pdf_url.'.pdf';
         }
-        $expFile = explode("/", $pdf_url);
+        $expFile = explode('/', $pdf_url);
 
         $filename = 'fiken-invoice/'.end($expFile);
 
@@ -454,6 +438,7 @@ class InvoiceController extends Controller
         curl_exec($ch);
         curl_close($ch);
         fclose($out);
+
         return response()->download($filename);
 
     }

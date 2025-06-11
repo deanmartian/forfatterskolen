@@ -3,33 +3,30 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreatePilotReaderBookReadingChaptersTable extends Migration {
+class CreatePilotReaderBookReadingChaptersTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('pilot_reader_book_reading_chapters', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('user_id')->unsigned()->index('user_id');
+            $table->integer('chapter_id')->index('chapter_id');
+            $table->timestamps();
+        });
+    }
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::create('pilot_reader_book_reading_chapters', function(Blueprint $table)
-		{
-			$table->integer('id', true);
-			$table->integer('user_id')->unsigned()->index('user_id');
-			$table->integer('chapter_id')->index('chapter_id');
-			$table->timestamps();
-		});
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::drop('pilot_reader_book_reading_chapters');
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('pilot_reader_book_reading_chapters');
+    }
 }

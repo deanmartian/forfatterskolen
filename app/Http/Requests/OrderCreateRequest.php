@@ -33,7 +33,7 @@ class OrderCreateRequest extends FormRequest
             'payment_mode_id' => 'required',
             'payment_plan_id' => 'required',
             'package_id' => 'required',
-            'agree_terms' => 'required|accepted'
+            'agree_terms' => 'required|accepted',
         ];
     }
 
@@ -46,8 +46,8 @@ class OrderCreateRequest extends FormRequest
     {
         return [
             'street.required' => 'Gate navn er nødvendig',
-            'city.required'  => 'Poststed er nødvendig',
-            'zip.required'  => 'Postnummer er nødvendig',
+            'city.required' => 'Poststed er nødvendig',
+            'zip.required' => 'Postnummer er nødvendig',
         ];
     }
 }

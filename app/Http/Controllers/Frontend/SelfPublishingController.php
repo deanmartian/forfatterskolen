@@ -21,7 +21,6 @@ use App\Services\ProjectService;
 use App\Services\ShopManuscriptService;
 use App\ShopManuscript;
 use Auth;
-use DB;
 use FrontendHelpers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -30,14 +29,14 @@ use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
-include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
-include_once($_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class SelfPublishingController extends Controller
 {
-    
-    public function selfPublishingOrder() {
+    public function selfPublishingOrder()
+    {
         $currentOrderQuery = SelfPublishingOrder::active()->where('user_id', Auth::id());
         $currentOrders = $currentOrderQuery->get();
         $currentOrderTotal = $currentOrderQuery->sum('price');
@@ -54,14 +53,14 @@ class SelfPublishingController extends Controller
 
     public function addToCart(Request $request)
     {
-        $file = NULL;
-        
+        $file = null;
+
         if ($request->has('file')) {
             $file = FrontendHelpers::saveFile($request, 'self_publishing_order', 'file');
         }
 
-        $title = $request->title === "null" ? NULL : $request->title;
-        $description = $request->description === "null" ? NULL : $request->description;
+        $title = $request->title === 'null' ? null : $request->title;
+        $description = $request->description === 'null' ? null : $request->description;
 
         SelfPublishingOrder::create([
             'user_id' => Auth::id(),
@@ -73,8 +72,9 @@ class SelfPublishingController extends Controller
             'file' => $file,
             'price' => floatval($request->totalPrice),
             'word_count' => $request->word_count,
-            'status' => 'active'
+            'status' => 'active',
         ]);
+
         return $request->all();
     }
 
@@ -86,7 +86,7 @@ class SelfPublishingController extends Controller
 
         return back()->with([
             'errors' => AdminHelpers::createMessageBag('Order moved to saved quotes.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
@@ -98,7 +98,7 @@ class SelfPublishingController extends Controller
 
         return back()->with([
             'errors' => AdminHelpers::createMessageBag('Saved quote moved to order.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
@@ -106,9 +106,10 @@ class SelfPublishingController extends Controller
     {
         $order = SelfPublishingOrder::findOrFail($id);
         $order->delete();
+
         return back()->with([
             'errors' => AdminHelpers::createMessageBag('Order deleted.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
@@ -130,18 +131,18 @@ class SelfPublishingController extends Controller
             'plan_id' => 8,
             'price' => $currentOrderTotal,
             'discount' => 0,
-            'is_processed' => 1
+            'is_processed' => 1,
         ]);
 
         SelfPublishingOrder::whereIn('id', $currentOrders->pluck('id'))
-        ->update([
-            'order_id' => $order->id,
-            'status' => 'paid'
-        ]);
+            ->update([
+                'order_id' => $order->id,
+                'status' => 'paid',
+            ]);
 
-        foreach( $currentOrders as $currentOrder ) {
+        foreach ($currentOrders as $currentOrder) {
             $publishingService = PublishingService::find($currentOrder->parent_id);
-            
+
             if ($publishingService->slug === 'sprakvask') {
                 CopyEditingManuscript::create([
                     'user_id' => Auth::id(),
@@ -149,7 +150,7 @@ class SelfPublishingController extends Controller
                     'file' => $currentOrder->file,
                     'payment_price' => $currentOrder->price,
                     'status' => 0,
-                    'is_locked' => 0
+                    'is_locked' => 0,
                 ]);
             }
 
@@ -160,7 +161,7 @@ class SelfPublishingController extends Controller
                     'file' => $currentOrder->file,
                     'payment_price' => $currentOrder->price,
                     'status' => 0,
-                    'is_locked' => 0
+                    'is_locked' => 0,
                 ]);
             }
 
@@ -180,20 +181,20 @@ class SelfPublishingController extends Controller
 
         return redirect()->route('learner.self-publishing.order')->with([
             'errors' => AdminHelpers::createMessageBag('Order processed.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
     public function listSelfPublishing()
     {
-        /* $selfPublishingList = SelfPublishing::join('self_publishing_learners', 
+        /* $selfPublishingList = SelfPublishing::join('self_publishing_learners',
         'self_publishing.id', '=', 'self_publishing_learners.self_publishing_id')
         ->select('self_publishing.*')
         ->where('user_id', Auth::id())
         ->whereNull('project_id')
         ->get(); */
         $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
-        $selfPublishingList = $standardProject ? SelfPublishing::leftJoin('self_publishing_learners', 
+        $selfPublishingList = $standardProject ? SelfPublishing::leftJoin('self_publishing_learners',
             'self_publishing.id', '=', 'self_publishing_learners.self_publishing_id')
             ->leftJoin('projects', 'self_publishing.project_id', '=', 'projects.id') // Join the projects table via project_id
             ->select('self_publishing.*')
@@ -210,7 +211,7 @@ class SelfPublishingController extends Controller
 
     public function copyEditing()
     {
-        //$copyEditings = Auth::user()->copyEditings()->whereNull('project_id')->get();
+        // $copyEditings = Auth::user()->copyEditings()->whereNull('project_id')->get();
         $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
         $copyEditings = $standardProject ? CopyEditingManuscript::leftJoin('projects', 'copy_editing_manuscripts.project_id', '=', 'projects.id')
             ->select('copy_editing_manuscripts.*')
@@ -219,13 +220,15 @@ class SelfPublishingController extends Controller
             /* ->where(function($query) {
                 $query->whereNull('project_id')
                     ->orWhere('projects.user_id', Auth::id());
-            }) */->latest('copy_editing_manuscripts.created_at')->get() : [];
+            }) */
+            ->latest('copy_editing_manuscripts.created_at')->get() : [];
+
         return view('frontend.learner.self-publishing.copy-editing', compact('copyEditings'));
     }
 
     public function correction()
     {
-        //$corrections = Auth::user()->corrections()->whereNull('project_id')->get();
+        // $corrections = Auth::user()->corrections()->whereNull('project_id')->get();
         $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
         $corrections = $standardProject ? CorrectionManuscript::leftJoin('projects', 'correction_manuscripts.project_id', '=', 'projects.id')
             ->select('correction_manuscripts.*')
@@ -234,7 +237,8 @@ class SelfPublishingController extends Controller
             /* ->where(function($query) {
                 $query->whereNull('project_id')
                     ->orWhere('projects.user_id', Auth::id());
-            }) */->latest('correction_manuscripts.created_at')->get() : [];
+            }) */
+            ->latest('correction_manuscripts.created_at')->get() : [];
 
         return view('frontend.learner.self-publishing.correction', compact('corrections'));
     }
@@ -270,7 +274,7 @@ class SelfPublishingController extends Controller
         $this->validate($request, [
             'cover.*' => 'required|mimes:jpeg,jpg,png,gif',
             'description' => 'required',
-            'isbn_id' => 'required'
+            'isbn_id' => 'required',
         ]);
 
         $request->merge(['project_id' => $project_id]);
@@ -279,9 +283,9 @@ class SelfPublishingController extends Controller
 
         return redirect()->back()
             ->with([
-                'errors' => AdminHelpers::createMessageBag(ucfirst(str_replace(['-', '_'],' ', $request->type)) 
-                    . ' saved successfully.'),
-                'alert_type' => 'success'
+                'errors' => AdminHelpers::createMessageBag(ucfirst(str_replace(['-', '_'], ' ', $request->type))
+                    .' saved successfully.'),
+                'alert_type' => 'success',
             ]);
     }
 
@@ -289,43 +293,46 @@ class SelfPublishingController extends Controller
     {
         $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
         $bookFormattingList = $standardProject ? ProjectBookFormatting::where('project_id', $standardProject->id)->get() : [];
+
         return view('frontend.learner.self-publishing.page-format', compact('bookFormattingList'));
     }
 
     public function savePageFormat($project_id, Request $request, ProjectService $projectService)
     {
-        if (!$request->id) {
+        if (! $request->id) {
             $this->validate($request, ['file.*' => 'required|mimes:doc,docx']);
-        } 
-        
+        }
+
         $request->merge(['project_id' => $project_id]);
         $projectService->saveBookFormatting($request);
 
         return redirect()->back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Book formatting saved successfully.'),
-            'alert_type'            => 'success',
+            'errors' => AdminHelpers::createMessageBag('Book formatting saved successfully.'),
+            'alert_type' => 'success',
         ]);
     }
 
     public function pageFormatDetails($format_id)
     {
         $bookFormatting = ProjectBookFormatting::find($format_id);
+
         return view('frontend.learner.self-publishing.page-format-details', compact('bookFormatting'));
     }
 
     public function publishingOrder()
     {
         $shopManuscript = ShopManuscript::find(3); // manusutvikling 1
+
         return view('frontend.learner.self-publishing.publishing-order', compact('shopManuscript'));
     }
 
     public function validatePublishingOrder(Request $request, ShopManuscriptService $shopManuscriptService)
     {
-        if (!$request->has('is_manuscript_only')) {
+        if (! $request->has('is_manuscript_only')) {
             $this->validate($request, [
                 'manuscript' => 'required',
                 'title' => 'required',
-                'description' => 'required'
+                'description' => 'required',
             ]);
         }
 
@@ -333,9 +340,9 @@ class SelfPublishingController extends Controller
             $file = $request->file('manuscript');
             $extension = $file->getClientOriginalExtension();
 
-            if (!in_array($extension, ['odt', 'pdf', 'doc', 'docx'])) {
+            if (! in_array($extension, ['odt', 'pdf', 'doc', 'docx'])) {
                 $customErrors = ['manuscript' => ['The manuscript must be a file of type: odt, pdf, doc, docx.']];
-                $validator = Validator::make([], []); 
+                $validator = Validator::make([], []);
                 $validator->validate(); // Perform validation without rules
                 $validator->errors()->merge($customErrors);
 
@@ -344,8 +351,8 @@ class SelfPublishingController extends Controller
         }
 
         $shopManuscript = ShopManuscript::find(3); // manusutvikling 1
-        $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest( $request );
-        $word_count =  $uploadedManuscript['word_count'];
+        $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
+        $word_count = $uploadedManuscript['word_count'];
         $word_to_deduct = $word_count * 0.02;
         $new_word_count = ceil($word_count - $word_to_deduct);
         $excess_words = $new_word_count - 17500; // deduct the manusutvikling 1 max words
@@ -355,22 +362,22 @@ class SelfPublishingController extends Controller
             'word_count' => $uploadedManuscript['word_count'],
             'excess_words' => $excess_words,
             'excess_words_amount' => $excess_words > 0 ? $excess_words * $excessPerWordAmount : 0,
-            'price' => $shopManuscript->full_payment_price
-         ]);
+            'price' => $shopManuscript->full_payment_price,
+        ]);
 
-         return $request->all();
+        return $request->all();
     }
 
     public function processPublishingOrder(Request $request, PowerOffice $powerOffice)
     {
         $validation = [
-            'email'         => 'required|email',
-            'first_name'    => 'required',
-            'last_name'     => 'required',
-            'street'        => 'required',
-            'zip'           => 'required',
-            'city'          => 'required',
-            'phone'         => 'required',
+            'email' => 'required|email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'street' => 'required',
+            'zip' => 'required',
+            'city' => 'required',
+            'phone' => 'required',
         ];
 
         $validator = \Validator::make($request->all(), $validation);
@@ -381,89 +388,89 @@ class SelfPublishingController extends Controller
 
         $destinationPath = 'storage/self-publishing-manuscript/'; // upload path
 
-        $publishing = new SelfPublishing();
+        $publishing = new SelfPublishing;
         $publishing->title = $request->title;
         $publishing->description = $request->description;
         $publishing->price = $request->price;
         $publishing->project_id = $request->project_id;
 
         $filesWithPath = '';
-        if ( $request->hasFile('manuscript') ) :
+        if ($request->hasFile('manuscript')) {
 
             $file = $request->file('manuscript');
             $word_count = $request->word_count;
 
-            $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION); // getting document extension
-            $actual_name = pathinfo($_FILES['manuscript']['name'],PATHINFO_FILENAME);
+            $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION); // getting document extension
+            $actual_name = pathinfo($_FILES['manuscript']['name'], PATHINFO_FILENAME);
 
-            $destinationPath = 'Forfatterskolen_app/project/project-'. $request->project_id . '/self-publishing-manuscript/';
-            $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension);
+            $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id.'/self-publishing-manuscript/';
+            $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name.'.'.$extension);
             $expFileName = explode('/', $fileName);
             $dropboxFileName = end($expFileName);
 
             $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
 
-            $wholeFilePath = $destinationPath . $dropboxFileName;
-            $filePath = "/".$wholeFilePath;
-            $filesWithPath .= $filePath .", ";
+            $wholeFilePath = $destinationPath.$dropboxFileName;
+            $filePath = '/'.$wholeFilePath;
+            $filesWithPath .= $filePath.', ';
 
-            $publishing->manuscript = trim($filesWithPath,", ");
+            $publishing->manuscript = trim($filesWithPath, ', ');
             $publishing->word_count = $word_count;
-            
-        endif;
+
+        }
 
         $publishing->save();
 
         // create self publishing order
         $publishingOrder = SelfPublishingOrder::create([
-            'user_id'       => Auth::id(),
-            'project_id'    => $request->project_id,
-            'parent'        => 'self-publishing',
-            'parent_id'     => $publishing->id,
-            'title'         => $request->title,
-            'description'   => $request->description,
-            'file'          => $filesWithPath,
-            'price'         => floatval($request->price),
-            'word_count'    => $request->word_count,
-            'status'        => 'active'
+            'user_id' => Auth::id(),
+            'project_id' => $request->project_id,
+            'parent' => 'self-publishing',
+            'parent_id' => $publishing->id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'file' => $filesWithPath,
+            'price' => floatval($request->price),
+            'word_count' => $request->word_count,
+            'status' => 'active',
         ]);
 
         // request to powerOffice
         $user = $publishing->project->user;
         $emailToSearch = $user->email;
 
-        $powerOfficeController = new PowerOfficeController();
+        $powerOfficeController = new PowerOfficeController;
         $customerId = $powerOfficeController->getCustomerId($user, $emailToSearch);
 
         $data = [
             'customer_id' => $customerId,
-            'reference' => $user->full_name, //'self_publishing_' . $selfPublishing->id,
+            'reference' => $user->full_name, // 'self_publishing_' . $selfPublishing->id,
             'product_description' => $publishing->title,
-            'product_id' => 44696040,//44696040, //22957001, // id from power office demo
-            "product_unit_cost" => $request->price,
-            "product_unit_price" => $request->price,
+            'product_id' => 44696040, // 44696040, //22957001, // id from power office demo
+            'product_unit_cost' => $request->price,
+            'product_unit_price' => $request->price,
         ];
 
         $sales = $powerOffice->salesOrder($data);
-        
+
         // create power office invoice record
         PowerOfficeInvoice::create([
             'user_id' => $user->id,
             'order_id' => $sales['Id'],
-            'sales_order_no' => $sales['SalesOrderNo'], 
+            'sales_order_no' => $sales['SalesOrderNo'],
             'parent' => 'self-publishing',
-            'parent_id' => $publishing->id
+            'parent_id' => $publishing->id,
         ]);
 
         // create order record
         Order::create([
-            'user_id'       => Auth::id(),
-            'item_id'       => $publishingOrder->id,
-            'type'          => Order::EDITING_SERVICES,
-            'plan_id'       => 8,
-            'price'         => $publishingOrder->price,
-            'discount'      => 0,
-            'is_processed'  => 1
+            'user_id' => Auth::id(),
+            'item_id' => $publishingOrder->id,
+            'type' => Order::EDITING_SERVICES,
+            'plan_id' => 8,
+            'price' => $publishingOrder->price,
+            'discount' => 0,
+            'is_processed' => 1,
         ]);
 
         $publishingOrder->status = 'paid';
@@ -479,14 +486,14 @@ class SelfPublishingController extends Controller
         $manuscripts = explode(', ', $feedback->manuscript);
         // Determine if there are multiple files to download
         if (count($manuscripts) > 1) {
-            $zipFileName = $feedback->selfPublishing->title . '.zip';
+            $zipFileName = $feedback->selfPublishing->title.'.zip';
 
             $public_dir = public_path('storage');
-            $zip = new \ZipArchive();
+            $zip = new \ZipArchive;
 
             // Open the ZIP file and create it
-            if ($zip->open($public_dir . '/' . $zipFileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== TRUE) {
-                die("An error occurred creating your ZIP file.");
+            if ($zip->open($public_dir.'/'.$zipFileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+                exit('An error occurred creating your ZIP file.');
             }
 
             foreach ($manuscripts as $feedFile) {
@@ -501,13 +508,13 @@ class SelfPublishingController extends Controller
 
                     // Add file to ZIP archive
                     $zip->addFromString(basename($filePath), $fileContent);
-                } elseif (file_exists(public_path() . '/' . $filePath)) {
+                } elseif (file_exists(public_path().'/'.$filePath)) {
                     // The file is local
                     $expFileName = explode('/', $filePath);
                     $file = str_replace('\\', '/', public_path());
 
                     // Add the local file to the ZIP archive
-                    $zip->addFile($file . $filePath, end($expFileName));
+                    $zip->addFile($file.$filePath, end($expFileName));
                 } else {
                     // Handle the case where the file does not exist
                     return redirect()->back()->withErrors('One or more files could not be found.');
@@ -516,11 +523,11 @@ class SelfPublishingController extends Controller
 
             $zip->close(); // Close ZIP connection
 
-            $headers = array(
+            $headers = [
                 'Content-Type' => 'application/octet-stream',
-            );
+            ];
 
-            $fileToPath = $public_dir . '/' . $zipFileName;
+            $fileToPath = $public_dir.'/'.$zipFileName;
 
             if (file_exists($fileToPath)) {
                 return response()->download($fileToPath, $zipFileName, $headers)->deleteFileAfterSend(true);
@@ -541,7 +548,7 @@ class SelfPublishingController extends Controller
                 echo stream_get_contents($response);
             }, 200, [
                 'Content-Type' => 'application/octet-stream',
-                'Content-Disposition' => 'attachment; filename="' . basename($singleFile) . '"',
+                'Content-Disposition' => 'attachment; filename="'.basename($singleFile).'"',
             ]);
         } elseif (file_exists(public_path($singleFile))) {
             // The file is local
@@ -550,5 +557,4 @@ class SelfPublishingController extends Controller
 
         return redirect()->back()->withErrors('File not found.');
     }
-
 }

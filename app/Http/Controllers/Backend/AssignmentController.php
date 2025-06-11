@@ -1,48 +1,42 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
+use App\Assignment;
 use App\AssignmentAddon;
+use App\AssignmentDisabledLearner;
 use App\AssignmentFeedbackNoGroup;
+use App\AssignmentGroup;
+use App\AssignmentGroupLearner;
+use App\AssignmentManuscript;
 use App\AssignmentTemplate;
-use App\CoursesTaken;
+use App\Course;
 use App\DelayedEmail;
 use App\Exports\AssignmentEmailListExport;
 use App\Exports\AssignmentLearnersExport;
 use App\Exports\GenericExport;
 use App\Helpers\DocumentParser;
 use App\Helpers\Html2Text;
-use App\Helpers\PdfParser;
+use App\Http\AdminHelpers;
+use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\AssignmentManuscriptEmailToList;
 use App\Mail\SubjectBodyEmail;
 use App\Package;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
-use App\Course;
-use App\Assignment;
-use App\AssignmentDisabledLearner;
-use App\AssignmentManuscript;
-use App\AssignmentLearner;
-use App\User;
-use App\Http\AdminHelpers;
-use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
-use PhpOffice\PhpWord\Reader\HTML;
 use PhpParser\Node\Expr\Assign;
-use App\AssignmentGroupLearner;
-use App\AssignmentGroup;
 
-
-include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
-include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
-include_once($_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class AssignmentController extends Controller
 {
-
     /**
      * AssignmentController constructor.
      */
@@ -55,43 +49,42 @@ class AssignmentController extends Controller
     public function index()
     {
         $assignments = Assignment::forCourseOnly()->orderBy('created_at', 'desc')->paginate(15);
-        $assignmentTemplate = new AssignmentTemplate();
+        $assignmentTemplate = new AssignmentTemplate;
         $templatePaginated = $assignmentTemplate->paginate(15);
         $assignmentTemplates = $assignmentTemplate->get();
         $learnerAssignments = Assignment::forLearnerOnly()->orderBy('created_at', 'desc')->paginate(15);
-    	return view('backend.assignment.index', compact('assignments', 'templatePaginated',
+
+        return view('backend.assignment.index', compact('assignments', 'templatePaginated',
             'assignmentTemplates', 'learnerAssignments'));
     }
 
-
-
-
-
     public function show($course_id, $id)
     {
-    	$course = Course::findOrFail($course_id);
-    	$assignment = Assignment::findOrFail($id);
-    	$assignments = Assignment::where('id', '!=', $id)->get();
-        $editors = \App\User::whereIn('role', array(1,3))->where('is_active', 1)->get();
+        $course = Course::findOrFail($course_id);
+        $assignment = Assignment::findOrFail($id);
+        $assignments = Assignment::where('id', '!=', $id)->get();
+        $editors = \App\User::whereIn('role', [1, 3])->where('is_active', 1)->get();
 
-    	$section = 'assignments';
-    	if( $assignment->course->id == $course->id ) :
+        $section = 'assignments';
+        if ($assignment->course->id == $course->id) {
             $assignmentManuscripts = $assignment->manuscripts()->whereHas('user')
-                ->orderByRaw("editor_id = 0 DESC")
-                ->orderByRaw("editor_expected_finish IS NULL, editor_expected_finish ASC")
+                ->orderByRaw('editor_id = 0 DESC')
+                ->orderByRaw('editor_expected_finish IS NULL, editor_expected_finish ASC')
                 ->get();
-    		return view('backend.assignment.show', compact('course','editors','assignment', 'section',
+
+            return view('backend.assignment.show', compact('course', 'editors', 'assignment', 'section',
                 'assignments', 'assignmentManuscripts'));
-    	endif;
-    	return abort('404');
+        }
+
+        return abort('404');
     }
 
     public function listManuscriptsWithoutEditor($course_id, $assignment_id)
     {
         $course = Course::findOrFail($course_id);
-    	$assignment = Assignment::findOrFail($assignment_id);
+        $assignment = Assignment::findOrFail($assignment_id);
 
-        if( $assignment->course->id == $course->id ) {
+        if ($assignment->course->id == $course->id) {
             $manuscripts = AssignmentManuscript::with('user')->where('assignment_id', $assignment_id)
                 ->where('editor_id', 0)->get();
 
@@ -103,9 +96,9 @@ class AssignmentController extends Controller
 
     public function assignEditorToManuscripts($course_id, $assignment_id, Request $request)
     {
-        foreach($request->learner_id as $learner_id) {
+        foreach ($request->learner_id as $learner_id) {
             $manuscript = AssignmentManuscript::where('user_id', $learner_id)
-            ->where('assignment_id', $assignment_id)->first();
+                ->where('assignment_id', $assignment_id)->first();
 
             if ($manuscript) {
                 $manuscript->editor_id = $request->editor_id;
@@ -113,19 +106,19 @@ class AssignmentController extends Controller
                 $manuscript->save();
             }
         }
-        
+
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Editor assigned to manuscripts successfully.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
-
 
     public function setGrade($id, Request $request)
     {
         $assignmentManuscript = AssignmentManuscript::findOrFail($id);
         $assignmentManuscript->grade = $request->grade;
         $assignmentManuscript->save();
+
         return redirect()->back();
     }
 
@@ -139,25 +132,25 @@ class AssignmentController extends Controller
         $existingGroups = Assignment::find($assignmentID)->groups->pluck('id');
         $learnersInGroup = AssignmentGroupLearner::whereIn('assignment_group_id', $existingGroups)->pluck('user_id');
         $learnersToGroup = AssignmentManuscript::where('assignment_id', $assignmentID)
-                ->whereNotIn('user_id', $learnersInGroup)
-                ->where('join_group', 1)->orderBy('type')->get();
+            ->whereNotIn('user_id', $learnersInGroup)
+            ->where('join_group', 1)->orderBy('type')->get();
 
         // group by 3 according to genre (prioritize grouping by genre)
         $assignmentType = FrontendHelpers::assignmentType();
-        $assignmentType[] = [ 'id' => '', 'name' => 'none'];
+        $assignmentType[] = ['id' => '', 'name' => 'none'];
 
         foreach ($assignmentType as $genre) {
 
-            $saved = array();
+            $saved = [];
             $min = 1;
 
             $learnedToGroupFiltered = $learnersToGroup->filter(function ($value, $key) use ($saved, $genre) {
-                return !(in_array($value->user_id,$saved)) && ($value->type == $genre['id']);
+                return ! (in_array($value->user_id, $saved)) && ($value->type == $genre['id']);
             });
 
             $groupCount = AssignmentGroup::where('assignment_id', $assignmentID)->count() + 1;
 
-            if($learnedToGroupFiltered->count() >= $min){
+            if ($learnedToGroupFiltered->count() >= $min) {
 
                 $count = 0;
                 $max = 3;
@@ -169,7 +162,7 @@ class AssignmentController extends Controller
 
                 foreach ($learnedToGroupFiltered as $key) {
 
-                    if($count == 0){
+                    if ($count == 0) {
                         // create assignment group
                         $assignmentGroup = new AssignmentGroup;
                         $assignmentGroup->assignment_id = $assignmentID;
@@ -188,7 +181,7 @@ class AssignmentController extends Controller
                     $assignment_group_learners->save();
 
                     $count++;
-                    if($count == $max){
+                    if ($count == $max) {
                         $count = 0;
                     }
 
@@ -203,15 +196,15 @@ class AssignmentController extends Controller
 
     public function store($course_id, Request $request)
     {
-    	$course = Course::findOrFail($course_id);
-    	if( $request->title ) :
-    		$assignment = Assignment::create([
-    			'title' => $request->title,
-    			'description' => $request->description,
-    			'course_id' => $course->id,
+        $course = Course::findOrFail($course_id);
+        if ($request->title) {
+            $assignment = Assignment::create([
+                'title' => $request->title,
+                'description' => $request->description,
+                'course_id' => $course->id,
                 'submission_date' => $request->submission_date,
                 'available_date' => $request->available_date,
-                'allowed_package' => isset($request->allowed_package) ? json_encode($request->allowed_package) : NULL,
+                'allowed_package' => isset($request->allowed_package) ? json_encode($request->allowed_package) : null,
                 'add_on_price' => $request->add_on_price,
                 'max_words' => (int) $request->max_words,
                 'allow_up_to' => (int) $request->allow_up_to,
@@ -220,66 +213,64 @@ class AssignmentController extends Controller
                 'show_join_group_question' => isset($request->show_join_group_question) ? 1 : 0,
                 'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0,
                 'check_max_words' => isset($request->check_max_words) ? 1 : 0,
-                'assigned_editor' => !isset($request->check_max_words) ? $request->assigned_editor : NULL,
+                'assigned_editor' => ! isset($request->check_max_words) ? $request->assigned_editor : null,
                 'editor_expected_finish' => $request->editor_expected_finish,
-                'parent' => $request->linked_assignment ? 'assignment' : NULL,
+                'parent' => $request->linked_assignment ? 'assignment' : null,
                 'parent_id' => $request->linked_assignment,
-    		]);
-
-    	if ($request->linked_assignment) {
-    	    $linkedAssignment = Assignment::find($request->linked_assignment);
-
-    	    if ($linkedAssignment->parent === 'assignment') {
-    	        $previouslyLinkedAssignment = Assignment::find($linkedAssignment->parent_id);
-    	        $previouslyLinkedAssignment->parent = NULL;
-    	        $previouslyLinkedAssignment->parent_id = NULL;
-    	        $previouslyLinkedAssignment->save();
-            }
-            $linkedAssignment->parent = 'assignment';
-            $linkedAssignment->parent_id = $assignment->id;
-            $linkedAssignment->save();
-        }
-
-    	endif;
-    	return redirect()->back();
-    }
-
-
-
-    public function update($course_id, $id, Request $request)
-    {
-    	$course = Course::findOrFail($course_id);
-    	$assignment = Assignment::findOrFail($id);
-    	$previouslyLinkedAssignmentID = $assignment->parent_id;
-
-    	if( $assignment->course->id == $course->id && $request->title ) :
-    		$assignment->title = $request->title;
-    		$assignment->description = $request->description;
-    		$assignment->submission_date = $request->submission_date;
-            $assignment->available_date = $request->available_date;
-    		$assignment->allowed_package = isset($request->allowed_package) ? json_encode($request->allowed_package) : NULL;
-            $assignment->add_on_price = $request->add_on_price;
-            $assignment->max_words = (int) $request->max_words;
-            $assignment->allow_up_to = (int) $request->allow_up_to;
-            $assignment->for_editor = isset($request->for_editor) ? 1 : 0;
-            $assignment->editor_manu_generate_count = isset($request->for_editor) ? $request->editor_manu_generate_count : NULL;
-            $assignment->show_join_group_question = isset($request->show_join_group_question) ? 1 : 0;
-            $assignment->send_letter_to_editor = isset($request->send_letter_to_editor) ? 1 : 0;
-            $assignment->check_max_words = isset($request->check_max_words) ? 1 : 0;
-            $assignment->assigned_editor = !isset($request->check_max_words) ? $request->assigned_editor : NULL;
-            $assignment->editor_expected_finish = $request->editor_expected_finish;
-            $assignment->expected_finish = $request->expected_finish;
-
+            ]);
 
             if ($request->linked_assignment) {
                 $linkedAssignment = Assignment::find($request->linked_assignment);
 
-                if (($linkedAssignment->parent === 'assignment' && !is_null($linkedAssignment->parent_id) && $linkedAssignment->parent_id != $assignment->id)
+                if ($linkedAssignment->parent === 'assignment') {
+                    $previouslyLinkedAssignment = Assignment::find($linkedAssignment->parent_id);
+                    $previouslyLinkedAssignment->parent = null;
+                    $previouslyLinkedAssignment->parent_id = null;
+                    $previouslyLinkedAssignment->save();
+                }
+                $linkedAssignment->parent = 'assignment';
+                $linkedAssignment->parent_id = $assignment->id;
+                $linkedAssignment->save();
+            }
+
+        }
+
+        return redirect()->back();
+    }
+
+    public function update($course_id, $id, Request $request)
+    {
+        $course = Course::findOrFail($course_id);
+        $assignment = Assignment::findOrFail($id);
+        $previouslyLinkedAssignmentID = $assignment->parent_id;
+
+        if ($assignment->course->id == $course->id && $request->title) {
+            $assignment->title = $request->title;
+            $assignment->description = $request->description;
+            $assignment->submission_date = $request->submission_date;
+            $assignment->available_date = $request->available_date;
+            $assignment->allowed_package = isset($request->allowed_package) ? json_encode($request->allowed_package) : null;
+            $assignment->add_on_price = $request->add_on_price;
+            $assignment->max_words = (int) $request->max_words;
+            $assignment->allow_up_to = (int) $request->allow_up_to;
+            $assignment->for_editor = isset($request->for_editor) ? 1 : 0;
+            $assignment->editor_manu_generate_count = isset($request->for_editor) ? $request->editor_manu_generate_count : null;
+            $assignment->show_join_group_question = isset($request->show_join_group_question) ? 1 : 0;
+            $assignment->send_letter_to_editor = isset($request->send_letter_to_editor) ? 1 : 0;
+            $assignment->check_max_words = isset($request->check_max_words) ? 1 : 0;
+            $assignment->assigned_editor = ! isset($request->check_max_words) ? $request->assigned_editor : null;
+            $assignment->editor_expected_finish = $request->editor_expected_finish;
+            $assignment->expected_finish = $request->expected_finish;
+
+            if ($request->linked_assignment) {
+                $linkedAssignment = Assignment::find($request->linked_assignment);
+
+                if (($linkedAssignment->parent === 'assignment' && ! is_null($linkedAssignment->parent_id) && $linkedAssignment->parent_id != $assignment->id)
                     || $previouslyLinkedAssignmentID && $previouslyLinkedAssignmentID != $request->linked_assignment) {
 
                     $previouslyLinkedAssignment = Assignment::find($linkedAssignment->parent_id ? $linkedAssignment->parent_id : $previouslyLinkedAssignmentID);
-                    $previouslyLinkedAssignment->parent = NULL;
-                    $previouslyLinkedAssignment->parent_id = NULL;
+                    $previouslyLinkedAssignment->parent = null;
+                    $previouslyLinkedAssignment->parent_id = null;
                     $previouslyLinkedAssignment->save();
                 }
 
@@ -288,49 +279,46 @@ class AssignmentController extends Controller
                 $linkedAssignment->save();
             }
 
-            $assignment->parent = $request->linked_assignment ? 'assignment' : NULL;
+            $assignment->parent = $request->linked_assignment ? 'assignment' : null;
             $assignment->parent_id = $request->linked_assignment;
             $assignment->save();
 
-            if (!isset($request->check_max_words) && $request->assigned_editor) {
+            if (! isset($request->check_max_words) && $request->assigned_editor) {
                 $assignment->manuscripts()->update(
                     ['editor_id' => $request->assigned_editor]
                 );
             }
 
-    	endif;
+        }
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Assignment updatd successfully.'),
             'alert_type' => 'success']);
     }
 
-
-
     public function destroy($course_id, $id, Request $request)
     {
-    	$course = Course::findOrFail($course_id);
-    	$assignment = Assignment::findOrFail($id);
+        $course = Course::findOrFail($course_id);
+        $assignment = Assignment::findOrFail($id);
 
-    	if( $assignment->course->id == $course->id ) :
-    		$assignment->forceDelete();
-    	endif;
-    	return redirect(route('admin.course.show', $course->id).'?section=assignments');
+        if ($assignment->course->id == $course->id) {
+            $assignment->forceDelete();
+        }
+
+        return redirect(route('admin.course.show', $course->id).'?section=assignments');
     }
-
-
 
     public function deleteManuscript($id)
     {
-        //this code will delete the manuscript and not just empty the manuscript
+        // this code will delete the manuscript and not just empty the manuscript
         $manuscript = AssignmentManuscript::findOrFail($id);
         $manuscript->forceDelete();
+
         return redirect()->back();
     }
 
-
     /**
      * Move an assignment to another assignment
-     * @param $manuscript_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function moveManuscript($manuscript_id, Request $request)
@@ -339,8 +327,10 @@ class AssignmentController extends Controller
         if ($manuscript) {
             $manuscript->assignment_id = $request->assignment_id;
             $manuscript->save();
+
             return redirect()->back();
         }
+
         return redirect()->route('admin.assignment.index');
     }
 
@@ -349,39 +339,39 @@ class AssignmentController extends Controller
         $assignment = Assignment::findOrFail($id);
         $learner = User::findOrFail($request->learner_id);
 
-        if ( $request->hasFile('filename') &&
-            $request->file('filename')->isValid() ) :
+        if ($request->hasFile('filename') &&
+            $request->file('filename')->isValid()) {
             $time = time();
             $destinationPath = 'storage/assignment-manuscripts/'; // upload path
             $extensions = ['pdf', 'docx', 'odt', 'doc'];
-            $extension = pathinfo($_FILES['filename']['name'],PATHINFO_EXTENSION); // getting document extension
+            $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
             $actual_name = $learner->id;
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
 
             $expFileName = explode('/', $fileName);
             $request->filename->move($destinationPath, end($expFileName));
 
-            if( !in_array($extension, $extensions) ) :
+            if (! in_array($extension, $extensions)) {
                 return redirect()->back();
-            endif;
+            }
 
             // count words
             $word_count = 0;
-            if($extension == "pdf") :
-                $pdf  =  new \PdfToText ( $destinationPath.end($expFileName) ) ;
+            if ($extension == 'pdf') {
+                $pdf = new \PdfToText($destinationPath.end($expFileName));
                 $pdf_content = $pdf->Text;
                 $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-            elseif($extension == "docx") :
+            } elseif ($extension == 'docx') {
                 $docObj = new \Docx2Text($destinationPath.end($expFileName));
-                $docText= $docObj->convertToText();
+                $docText = $docObj->convertToText();
                 $word_count = FrontendHelpers::get_num_of_words($docText);
-            elseif($extension == "doc") :
+            } elseif ($extension == 'doc') {
                 $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
                 $word_count = FrontendHelpers::get_num_of_words($docText);
-            elseif($extension == "odt") :
+            } elseif ($extension == 'odt') {
                 $doc = odt2text($destinationPath.end($expFileName));
                 $word_count = FrontendHelpers::get_num_of_words($doc);
-            endif;
+            }
 
             AssignmentManuscript::create([
                 'assignment_id' => $assignment->id,
@@ -389,33 +379,33 @@ class AssignmentController extends Controller
                 'words' => $word_count,
                 'filename' => '/'.$fileName,
                 'join_group' => $request->join_group,
-                'editor_expected_finish' => $assignment->editor_expected_finish 
+                'editor_expected_finish' => $assignment->editor_expected_finish
                     ? strftime('%Y-%m-%d', strtotime($assignment->editor_expected_finish))
-                    : NULL,
-                'uploaded_at' => now()
+                    : null,
+                'uploaded_at' => now(),
             ]);
+
             return redirect()->back();
-        endif;
+        }
     }
 
     /**
      * Add assignment add-on for learner
-     * @param $assignment_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addOnForLearner( $assignment_id, Request $request )
+    public function addOnForLearner($assignment_id, Request $request)
     {
         AssignmentAddon::firstOrCreate([
             'assignment_id' => $assignment_id,
-            'user_id' => $request->learner_id
+            'user_id' => $request->learner_id,
         ]);
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Assignment added to learner successfully.'),
             'alert_type' => 'success']);
     }
 
-    public function updateSubmissionDate( $assignment_id, Request $request )
+    public function updateSubmissionDate($assignment_id, Request $request)
     {
         $assignment = Assignment::find($assignment_id);
         $assignment->submission_date = $request->submission_date;
@@ -425,7 +415,7 @@ class AssignmentController extends Controller
             'alert_type' => 'success', 'not-former-courses' => true]);
     }
 
-    public function updateAvailableDate( $assignment_id, Request $request )
+    public function updateAvailableDate($assignment_id, Request $request)
     {
         $assignment = Assignment::find($assignment_id);
         $assignment->available_date = $request->available_date;
@@ -435,7 +425,7 @@ class AssignmentController extends Controller
             'alert_type' => 'success', 'not-former-courses' => true]);
     }
 
-    public function updateMaxWords(  $assignment_id, Request $request )
+    public function updateMaxWords($assignment_id, Request $request)
     {
         $assignment = Assignment::find($assignment_id);
         $assignment->max_words = $request->max_words;
@@ -450,40 +440,40 @@ class AssignmentController extends Controller
         $assignmentManuscript = AssignmentManuscript::find($id);
 
         if ($assignmentManuscript) {
-            if ( $request->hasFile('filename') && $request->file('filename')->isValid() ) {
+            if ($request->hasFile('filename') && $request->file('filename')->isValid()) {
                 $time = time();
                 $destinationPath = 'storage/assignment-manuscripts/'; // upload path
                 $extensions = ['pdf', 'docx', 'odt'];
-                $extension = pathinfo($_FILES['filename']['name'],PATHINFO_EXTENSION); // getting document extension
+                $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
                 $actual_name = $assignmentManuscript->user_id;
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
 
                 $expFileName = explode('/', $fileName);
                 $request->filename->move($destinationPath, end($expFileName));
 
-                if( !in_array($extension, $extensions) ) :
+                if (! in_array($extension, $extensions)) {
                     return redirect()->back();
-                endif;
+                }
 
                 // count words
                 $word_count = 0;
-                if($extension == "pdf") :
-                    $pdf  =  new \PdfToText ( $destinationPath.end($expFileName) ) ;
+                if ($extension == 'pdf') {
+                    $pdf = new \PdfToText($destinationPath.end($expFileName));
                     $pdf_content = $pdf->Text;
                     $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-                elseif($extension == "docx") :
+                } elseif ($extension == 'docx') {
                     $docObj = new \Docx2Text($destinationPath.end($expFileName));
-                    $docText= $docObj->convertToText();
+                    $docText = $docObj->convertToText();
                     $word_count = FrontendHelpers::get_num_of_words($docText);
-                elseif($extension == "odt") :
+                } elseif ($extension == 'odt') {
                     $doc = odt2text($destinationPath.end($expFileName));
                     $word_count = FrontendHelpers::get_num_of_words($doc);
-                endif;
+                }
 
-                $assignmentManuscript->words        = $word_count;
-                $assignmentManuscript->filename     = '/'.$destinationPath.end($expFileName);
-                $assignmentManuscript->type         = $request->type;
-                $assignmentManuscript->manu_type    = $request->manu_type;
+                $assignmentManuscript->words = $word_count;
+                $assignmentManuscript->filename = '/'.$destinationPath.end($expFileName);
+                $assignmentManuscript->type = $request->type;
+                $assignmentManuscript->manu_type = $request->manu_type;
                 $assignmentManuscript->save();
             }
         }
@@ -493,7 +483,7 @@ class AssignmentController extends Controller
 
     /**
      * Update the lock status of assignment manuscript
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateLockStatus(Request $request)
@@ -504,13 +494,13 @@ class AssignmentController extends Controller
         if ($assignmentManuscript) {
             $assignmentManuscript->locked = $request->locked;
             $assignmentManuscript->save();
-            $success = TRUE;
+            $success = true;
         }
 
         return response()->json([
             'data' => [
                 'success' => $success,
-            ]
+            ],
         ]);
     }
 
@@ -522,19 +512,20 @@ class AssignmentController extends Controller
         if ($assignmentManuscript) {
             $assignmentManuscript->show_in_dashboard = $request->locked;
             $assignmentManuscript->save();
-            $success = TRUE;
+            $success = true;
         }
 
         return response()->json([
             'data' => [
                 'success' => $success,
-            ]
+            ],
         ]);
     }
 
     /**
      * Download the assignment manuscript
-     * @param $id int assignment id
+     *
+     * @param  $id  int assignment id
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadManuscript($id)
@@ -543,8 +534,10 @@ class AssignmentController extends Controller
 
         if ($assignmentManuscript) {
             $filename = $assignmentManuscript->filename;
+
             return response()->download(public_path($filename));
         }
+
         return redirect()->back();
     }
 
@@ -554,30 +547,32 @@ class AssignmentController extends Controller
 
         if ($assignmentManuscript) {
             $filename = $assignmentManuscript->letter_to_editor;
+
             return response()->download(public_path($filename));
         }
+
         return redirect()->back();
     }
 
     public function downloadAllManuscript($id)
     {
-        $assignment             = Assignment::find($id);
-        $assignmentManuscripts  = AssignmentManuscript::where('assignment_id', $id)->get();
+        $assignment = Assignment::find($id);
+        $assignmentManuscripts = AssignmentManuscript::where('assignment_id', $id)->get();
 
-        $zipFileName    = str_replace('/','-',$assignment->title).' Manuscripts.zip';
-        $public_dir     = public_path('storage');
-        $zip            = new \ZipArchive();
+        $zipFileName = str_replace('/', '-', $assignment->title).' Manuscripts.zip';
+        $public_dir = public_path('storage');
+        $zip = new \ZipArchive;
 
         if ($assignmentManuscripts) {
 
-            if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
-                die ("An error occurred creating your ZIP file.");
+            if ($zip->open($public_dir.'/'.$zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== true) {
+                exit('An error occurred creating your ZIP file.');
             }
 
-            foreach($assignmentManuscripts as $manuscript) {
+            foreach ($assignmentManuscripts as $manuscript) {
                 if (file_exists(public_path().'/'.$manuscript->filename)) {
 
-                    //get the correct filename
+                    // get the correct filename
                     $expFileName = explode('/', $manuscript->filename);
                     $file = str_replace('\\', '/', public_path());
 
@@ -588,13 +583,13 @@ class AssignmentController extends Controller
 
             $zip->close();
 
-            $headers = array(
+            $headers = [
                 'Content-Type' => 'application/octet-stream',
-            );
+            ];
 
             $fileToPath = $public_dir.'/'.$zipFileName;
 
-            if(file_exists($fileToPath)){
+            if (file_exists($fileToPath)) {
                 return response()->download($fileToPath, $zipFileName, $headers)->deleteFileAfterSend(true);
             }
         }
@@ -605,25 +600,26 @@ class AssignmentController extends Controller
 
     /**
      * Export list of emails
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function exportEmailList($id)
     {
-        $assignment             = Assignment::find($id);
-        $assignmentManuscripts  = AssignmentManuscript::where('assignment_id', $id)->get();
+        $assignment = Assignment::find($id);
+        $assignmentManuscripts = AssignmentManuscript::where('assignment_id', $id)->get();
 
         if ($assignmentManuscripts) {
 
-            $excel              = \App::make('excel');
-            $manuscripts        = $assignment->manuscripts;
-            $emailList          = [];
+            $excel = \App::make('excel');
+            $manuscripts = $assignment->manuscripts;
+            $emailList = [];
 
             // loop all the learners
             foreach ($manuscripts as $manuscript) {
                 $emailList[] = [$manuscript->user->email];
             }
-            return $excel->download(new AssignmentEmailListExport($emailList),$assignment->title.' Emails.xlsx');
+
+            return $excel->download(new AssignmentEmailListExport($emailList), $assignment->title.' Emails.xlsx');
             /*$excel->create($assignment->title.' Emails', function($excel) use ($emailList) {
 
                 // Build the spreadsheet, passing in the payments array
@@ -640,10 +636,10 @@ class AssignmentController extends Controller
     /**
      * Download learners with the assignment even if they don't submit assignment manuscript yet
      * include the users that have the assignment as add-on
-     * @param $assignment_id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function exportLearnersIncludeAddOnLearners( $assignment_id )
+    public function exportLearnersIncludeAddOnLearners($assignment_id)
     {
         $assignment = Assignment::find($assignment_id);
 
@@ -668,16 +664,16 @@ class AssignmentController extends Controller
         $allLearners = collect($learners)->merge($addOnLearners);
 
         if ($allLearners->count()) {
-            $excel          = \App::make('excel');
-            $learnerList    = [];
-            //$learnerList[]  = ['Name', 'Email'];
+            $excel = \App::make('excel');
+            $learnerList = [];
+            // $learnerList[]  = ['Name', 'Email'];
 
             // loop all the learners
             foreach ($allLearners as $learner) {
-                $learnerList[] = [$learner->first_name . ' ' . $learner->last_name, $learner->email];
+                $learnerList[] = [$learner->first_name.' '.$learner->last_name, $learner->email];
             }
 
-            return $excel->download(new AssignmentLearnersExport($learnerList),$assignment->title.' Learners.xlsx');
+            return $excel->download(new AssignmentLearnersExport($learnerList), $assignment->title.' Learners.xlsx');
             /*$excel->create($assignment->title.' Learners', function($excel) use ($learnerList) {
 
                 // Build the spreadsheet, passing in the payments array
@@ -694,21 +690,20 @@ class AssignmentController extends Controller
 
     /**
      * Send email to the learners that sent assignment
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function sendEmailToList($id, Request $request)
     {
-        $assignment     = Assignment::find($id);
-        $manuscripts    = $assignment->manuscripts;
+        $assignment = Assignment::find($id);
+        $manuscripts = $assignment->manuscripts;
 
         if ($manuscripts) {
-            foreach($manuscripts as $manuscript) {
+            foreach ($manuscripts as $manuscript) {
                 $userEmail = $manuscript->user->email;
                 $emailData['data'] = $request->except('_token');
                 // queue sending of email for fast loading
-                //\Mail::to($userEmail)->queue(new AssignmentManuscriptEmailToList($emailData));
+                // \Mail::to($userEmail)->queue(new AssignmentManuscriptEmailToList($emailData));
                 dispatch(new AddMailToQueueJob($userEmail, $request->subject, $request->message,
                     'post@forfatterskolen.no', null, null,
                     'assignment-manuscripts', $manuscript->id));
@@ -722,8 +717,6 @@ class AssignmentController extends Controller
     }
 
     /**
-     * @param $id
-     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function emailManuscriptUser($id, Request $request)
@@ -732,13 +725,14 @@ class AssignmentController extends Controller
         dispatch(new AddMailToQueueJob($manuscript->user->email, $request->subject, $request->message,
             $request->from_email, null, null,
             'assignment-manuscripts', $manuscript->id));
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Email sent successfully.'),
             'alert_type' => 'success', 'not-former-courses' => true]);
     }
 
     /**
      * Auto-generate a document from 10 student and put it to one file before downloading
-     * @param $assignmentId
+     *
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function generateDoc($assignmentId)
@@ -748,36 +742,35 @@ class AssignmentController extends Controller
         if ($assignment) {
             // take manuscript based on assignment assigned value if not the default is 10
             $takeCount = $assignment->editor_manu_generate_count ?: 10;
-            $assignmentManuscripts  = AssignmentManuscript::where('assignment_id', $assignmentId)
-                //->where('filename', 'like', '%docx%')
+            $assignmentManuscripts = AssignmentManuscript::where('assignment_id', $assignmentId)
+                // ->where('filename', 'like', '%docx%')
                 ->orderByRaw('RAND()')->take($takeCount)->get();
 
-            $newDoc                 = new PhpWord();
+            $newDoc = new PhpWord;
             $newDoc->setDefaultFontSize(11); // set default size
             $newDoc->setDefaultFontName('Calibri (Body)'); // set default font
-            $count                  = 1;
-            $destinationPath        = 'storage/generated-manuscripts'; // upload path
-            $actual_name            = $assignment->title;
-            $extension              = 'docx';
-            $generatedDocFileName   = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $count = 1;
+            $destinationPath = 'storage/generated-manuscripts'; // upload path
+            $actual_name = $assignment->title;
+            $extension = 'docx';
+            $generatedDocFileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
 
             foreach ($assignmentManuscripts as $manuscript) {
 
-
-                $getExtension = explode('.',$manuscript->filename);
+                $getExtension = explode('.', $manuscript->filename);
                 $fileExtension = end($getExtension);
-                //$readDoc = $this->read_docx(public_path($manuscript->filename));/*$manuscript->filename*/
+                // $readDoc = $this->read_docx(public_path($manuscript->filename));/*$manuscript->filename*/
                 if ($fileExtension == 'pdf') {
-                    $pdf  =  new \PdfToText ( public_path($manuscript->filename) ) ;
+                    $pdf = new \PdfToText(public_path($manuscript->filename));
                     $readDoc = $pdf->Text;
 
                 } elseif ($fileExtension == 'docx') {
-                    $readDoc = $this->read_docx(public_path($manuscript->filename));/*$manuscript->filename*/
+                    $readDoc = $this->read_docx(public_path($manuscript->filename)); /* $manuscript->filename */
 
                 } elseif ($fileExtension == 'doc') {
                     $readDoc = FrontendHelpers::getContentFromDocFile(public_path($manuscript->filename));
                 } else {
-                    //$readDoc = odt2text(public_path($manuscript->filename));
+                    // $readDoc = odt2text(public_path($manuscript->filename));
                     $odtToHtml = DocumentParser::parseFromFile(public_path($manuscript->filename));
                     $text = new Html2Text($odtToHtml);
                     $readDoc = $text->getText();
@@ -788,16 +781,16 @@ class AssignmentController extends Controller
                 // Adding Text element to the Section having font styled by default...
                 $section->addText(
                     'Tekst '.$count,
-                    array('name' => 'Calibri Light (Heading)', 'size' => 16, 'color' => '4472C4')
+                    ['name' => 'Calibri Light (Heading)', 'size' => 16, 'color' => '4472C4']
                 );
 
-                //this is for adding spacing in the document
+                // this is for adding spacing in the document
                 $textlines = explode("\n", $readDoc);
                 $textrun = $section->addTextRun();
                 $textrun->addText(array_shift($textlines));
-                foreach($textlines as $line) {
+                foreach ($textlines as $line) {
                     $textrun->addTextBreak();
-                    $textrun->addText($line); //, array('name' => 'Calibri (Body)', 'size' => 11)
+                    $textrun->addText($line); // , array('name' => 'Calibri (Body)', 'size' => 11)
                 }
 
                 /*$section->addText(
@@ -805,37 +798,37 @@ class AssignmentController extends Controller
                     array('name' => 'Calibri (Body)', 'size' => 11)
                 );*/
 
-                $userEmail  = $manuscript->user->email;
-                $subject    = 'Din tekst på dagens redigeringswebinar';
-                $message    = 'Du har fått tekst nr. "'.$count.'"';
-                $from       = 'postmail@forfatterskolen.no';
+                $userEmail = $manuscript->user->email;
+                $subject = 'Din tekst på dagens redigeringswebinar';
+                $message = 'Du har fått tekst nr. "'.$count.'"';
+                $from = 'postmail@forfatterskolen.no';
 
                 $updateAssignment = AssignmentManuscript::find($manuscript->id);
                 $updateAssignment->text_number = $count;
                 $updateAssignment->save();
 
-                //AdminHelpers::send_mail( $userEmail, $subject, $message, $from);
+                // AdminHelpers::send_mail( $userEmail, $subject, $message, $from);
                 /*AdminHelpers::send_email($subject,
                     'postmail@forfatterskolen.no', $userEmail, $message);*/
                 $emailData['email_subject'] = $subject;
                 $emailData['email_message'] = $message;
-                $emailData['from_name'] = NULL;
+                $emailData['from_name'] = null;
                 $emailData['from_email'] = $from;
-                $emailData['attach_file'] = NULL;
+                $emailData['attach_file'] = null;
 
                 $emailTemplate = AdminHelpers::emailTemplate('Text Number');
-                $message =  AdminHelpers::formatEmailContent($emailTemplate->email_content, $userEmail,
+                $message = AdminHelpers::formatEmailContent($emailTemplate->email_content, $userEmail,
                     $manuscript->user->first_name, '');
                 $message = str_replace(':text_number', $count, $message);
 
-                //\Mail::to($userEmail)->queue(new SubjectBodyEmail($emailData));
+                // \Mail::to($userEmail)->queue(new SubjectBodyEmail($emailData));
                 dispatch(new AddMailToQueueJob($userEmail, $emailTemplate->subject, $message, $from, null, null,
                     'assignment-manuscripts', $manuscript->id));
                 $count++;
             }
 
             // check if directory does not exists
-            if (!\File::exists($destinationPath)) {
+            if (! \File::exists($destinationPath)) {
                 \File::makeDirectory($destinationPath);
             }
 
@@ -848,11 +841,11 @@ class AssignmentController extends Controller
 
             return response()->download(public_path($generatedDocFileName));
         }
+
         return redirect()->back();
     }
 
     /**
-     * @param $assignmentId
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadGenerateDoc($assignmentId)
@@ -861,13 +854,13 @@ class AssignmentController extends Controller
         if ($assignment) {
             return response()->download(public_path($assignment->generated_filepath));
         }
+
         return redirect()->back();
     }
 
     /**
      * Update assignment type
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateTypes($id, Request $request)
@@ -891,8 +884,7 @@ class AssignmentController extends Controller
 
     /**
      * Assign Editor for the manuscript
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function assignManuscriptEditor($id, Request $request)
@@ -911,7 +903,7 @@ class AssignmentController extends Controller
                 $from_email = $emailTemplate->from_email;
                 $to = $assignmentManuscript->user->email;
                 $email_content = AdminHelpers::formatEmailContent($emailTemplate->email_content, $to, $assignmentManuscript->user->first_name, '');
-                $email_content = str_replace('_date_',$replace_string, $email_content);
+                $email_content = str_replace('_date_', $replace_string, $email_content);
 
                 dispatch(new AddMailToQueueJob($to, $subject, $email_content, $from_email, null, null,
                     'assignment-manuscripts', $assignmentManuscript->id));
@@ -932,11 +924,11 @@ class AssignmentController extends Controller
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Editor assigned successfully.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
-    public function assignEditor( $assignment_id, Request $request )
+    public function assignEditor($assignment_id, Request $request)
     {
         $assignment = Assignment::find($assignment_id);
 
@@ -947,11 +939,11 @@ class AssignmentController extends Controller
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Editor assigned successfully.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
-    public function removeManuscriptEditor( $id )
+    public function removeManuscriptEditor($id)
     {
         $assignmentManuscript = AssignmentManuscript::find($id);
 
@@ -962,11 +954,11 @@ class AssignmentController extends Controller
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Editor removed successfully.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
-    public function assignManuscriptEditDates( $assignment_manuscript_id, Request $request )
+    public function assignManuscriptEditDates($assignment_manuscript_id, Request $request)
     {
         $assignmentManuscript = AssignmentManuscript::findOrFail($assignment_manuscript_id);
 
@@ -981,12 +973,12 @@ class AssignmentController extends Controller
         $assignmentManuscript->save();
 
         return redirect()->back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Expected finish date updated successfully.'),
-            'alert_type'            => 'success',
+            'errors' => AdminHelpers::createMessageBag('Expected finish date updated successfully.'),
+            'alert_type' => 'success',
         ]);
     }
 
-    public function removeEditor( $id )
+    public function removeEditor($id)
     {
         $assignment = Assignment::find($id);
 
@@ -997,14 +989,13 @@ class AssignmentController extends Controller
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Editor removed successfully.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
     /**
      * Download manuscript based on the assigned editor
-     * @param $id
-     * @param Request $request
+     *
      * @return $this|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadEditorManuscript($id, Request $request)
@@ -1016,17 +1007,17 @@ class AssignmentController extends Controller
         $assignmentManuscriptsCount = $assignmentManuscripts->count();
         if ($assignmentManuscriptsCount) {
             if ($assignmentManuscriptsCount > 1) {
-                $zipFileName    = str_replace('/','-',$assignment->title).' Manuscripts.zip';
-                $public_dir     = public_path('storage');
+                $zipFileName = str_replace('/', '-', $assignment->title).' Manuscripts.zip';
+                $public_dir = public_path('storage');
 
-                $zip            = new \ZipArchive();
-                if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
-                    die ("An error occurred creating your ZIP file.");
+                $zip = new \ZipArchive;
+                if ($zip->open($public_dir.'/'.$zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== true) {
+                    exit('An error occurred creating your ZIP file.');
                 }
 
                 foreach ($assignmentManuscripts as $manuscript) {
                     if (file_exists(public_path().'/'.$manuscript->filename)) {
-                        //get the correct filename
+                        // get the correct filename
                         $expFileName = explode('/', $manuscript->filename);
                         $file = str_replace('\\', '/', public_path());
 
@@ -1037,13 +1028,13 @@ class AssignmentController extends Controller
 
                 $zip->close();
 
-                $headers = array(
+                $headers = [
                     'Content-Type' => 'application/octet-stream',
-                );
+                ];
 
                 $fileToPath = $public_dir.'/'.$zipFileName;
 
-                if(file_exists($fileToPath)){
+                if (file_exists($fileToPath)) {
                     return response()->download($fileToPath, $zipFileName, $headers)->deleteFileAfterSend(true);
                 }
 
@@ -1058,22 +1049,22 @@ class AssignmentController extends Controller
 
     /**
      * Download assignment manuscript details
-     * @param $assignmentId
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function downloadExcelSheet($assignmentId)
     {
         $assignment = Assignment::find($assignmentId);
         if ($assignment) {
-            $excel              = \App::make('excel');
-            $manuscripts        = $assignment->manuscripts;
-            $manuscriptList    = [];
-            //$manuscriptList[]  = ['learner id', 'genre', 'where in manu']; // first row in excel
+            $excel = \App::make('excel');
+            $manuscripts = $assignment->manuscripts;
+            $manuscriptList = [];
+            // $manuscriptList[]  = ['learner id', 'genre', 'where in manu']; // first row in excel
             $headers = ['learner id', 'genre', 'where in manu'];
 
             // loop all the learners
             foreach ($manuscripts as $manuscript) {
-                $manuscriptList[] = [$manuscript->user->id,AdminHelpers::assignmentType($manuscript->type),
+                $manuscriptList[] = [$manuscript->user->id, AdminHelpers::assignmentType($manuscript->type),
                     AdminHelpers::manuscriptType($manuscript->manu_type)];
             }
 
@@ -1093,9 +1084,7 @@ class AssignmentController extends Controller
 
     /**
      * Add feedback to assignments that don't have a group
-     * @param $manuscript_id
-     * @param $learner_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function manuscriptFeedbackNoGroup($manuscript_id, $learner_id, Request $request)
@@ -1108,14 +1097,14 @@ class AssignmentController extends Controller
             $request->merge(['feedback_id' => $manuscriptFeedback->id]);
         }
 
-        if($request->feedback_id){ // update
+        if ($request->feedback_id) { // update
 
             $assignmentFeedbackNoGroup = AssignmentFeedbackNoGroup::find($request->feedback_id);
-            if($filesWithPath){
+            if ($filesWithPath) {
                 // check if replace or add manuscript
-                if($request->replaceFiles || $manuscriptFeedback){
+                if ($request->replaceFiles || $manuscriptFeedback) {
                     $assignmentFeedbackNoGroup->filename = $filesWithPath;
-                }else{
+                } else {
                     $assignmentFeedbackNoGroup->filename = $assignmentFeedbackNoGroup->filename.', '.$filesWithPath;
                 }
             }
@@ -1131,9 +1120,9 @@ class AssignmentController extends Controller
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback updated successfully.'),
                 'alert_type' => 'success']);
 
-        }else{ // new
+        } else { // new
 
-            if ($request->hasFile('filename')) :
+            if ($request->hasFile('filename')) {
 
                 $assignmentManuscript->has_feedback = 1;
                 $assignmentManuscript->status = 0;
@@ -1152,7 +1141,7 @@ class AssignmentController extends Controller
                     'is_active' => false,
                     'hours_worked' => $request->hours,
                     'notes_to_head_editor' => $request->notes_to_head_editor,
-                    'availability' => $request->has('availability') ? $request->availability : NULL
+                    'availability' => $request->has('availability') ? $request->availability : null,
                 ]);
 
                 // send email to head editor
@@ -1160,41 +1149,43 @@ class AssignmentController extends Controller
                 $to = User::where('role', 1)->where('head_editor', 1)->first();
 
                 dispatch(new AddMailToQueueJob($to->email, $emailTemplate->subject, $emailTemplate->email_content, $emailTemplate->from_email,
-                null, null, 'new-pending-assignment-feedback-no-group', $assignmentFeedbackNoGroup->id));
+                    null, null, 'new-pending-assignment-feedback-no-group', $assignmentFeedbackNoGroup->id));
 
                 return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback saved successfully.'),
-                'alert_type' => 'success']);
+                    'alert_type' => 'success']);
 
-            else:
+            } else {
 
                 return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Please provide a file.'),
-                'alert_type' => 'warning']);
+                    'alert_type' => 'warning']);
 
-            endif;
+            }
 
         }
 
     }
 
-    public function getFiles($request, $learner_id){
-        if ($request->hasFile('filename')) :
+    public function getFiles($request, $learner_id)
+    {
+        if ($request->hasFile('filename')) {
             $filesWithPath = '';
             $time = time();
             $destinationPath = 'storage/assignment-feedbacks'; // upload path
             $extensions = ['pdf', 'docx', 'odt', 'doc'];
             // loop through all the uploaded files
             foreach ($request->file('filename') as $k => $file) {
-                $extension = pathinfo($_FILES['filename']['name'][$k],PATHINFO_EXTENSION);
+                $extension = pathinfo($_FILES['filename']['name'][$k], PATHINFO_EXTENSION);
                 $actual_name = $learner_id;
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension);
-                $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension).", ";
-                if( !in_array($extension, $extensions) ) :
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension);
+                $filesWithPath .= '/'.AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension).', ';
+                if (! in_array($extension, $extensions)) {
                     return redirect()->back();
-                endif;
+                }
                 $file->move($destinationPath, $fileName);
             }
-            return $filesWithPath = trim($filesWithPath,", ");
-        endif;
+
+            return $filesWithPath = trim($filesWithPath, ', ');
+        }
     }
 
     public function approveFeedbackNoGroup($manuscript_id, $learner_id, Request $request)
@@ -1203,7 +1194,7 @@ class AssignmentController extends Controller
         $assignmentFeedbackNoGroup = AssignmentFeedbackNoGroup::find($request->feedback_id);
 
         $filesWithPath = $this->getFiles($request, $learner_id);
-        if($filesWithPath){
+        if ($filesWithPath) {
             $assignmentFeedbackNoGroup->filename = $filesWithPath;
         }
         $assignmentFeedbackNoGroup->availability = $request->availability;
@@ -1218,23 +1209,23 @@ class AssignmentController extends Controller
         $assignmentManuscript->save();
 
         // send an email
-        $email_content  = $request->message;
-        $to             = $assignmentManuscript->user->email;
-        $first_name     = $assignmentManuscript->user->first_name;
+        $email_content = $request->message;
+        $to = $assignmentManuscript->user->email;
+        $first_name = $assignmentManuscript->user->first_name;
 
         if ($request->has('send_email')) {
-            if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
-                $redirect_link          = route('learner.assignment', 'tab=feedback-from-editor');
-                $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
+            if ($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
+                $redirect_link = route('learner.assignment', 'tab=feedback-from-editor');
+                $formattedMailContent = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
 
                 DelayedEmail::create([
-                    'subject'       => $request->subject,
-                    'message'       => $formattedMailContent,
-                    'from_email'    => $request->from_email,
-                    'recipient'     => $to,
-                    'send_date'     => $request->availability,
-                    'parent'        => 'assignment-manuscripts',
-                    'parent_id'     => $assignmentManuscript->id
+                    'subject' => $request->subject,
+                    'message' => $formattedMailContent,
+                    'from_email' => $request->from_email,
+                    'recipient' => $to,
+                    'send_date' => $request->availability,
+                    'parent' => 'assignment-manuscripts',
+                    'parent_id' => $assignmentManuscript->id,
                 ]);
             } else {
                 $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
@@ -1262,30 +1253,30 @@ class AssignmentController extends Controller
             }
             $assignmentManuscript->save();
 
-            if ( $request->hasFile('filename')) :
+            if ($request->hasFile('filename')) {
                 $time = time();
                 $destinationPath = 'storage/assignment-feedbacks'; // upload path
                 $extensions = ['pdf', 'docx', 'odt', 'doc'];
                 $filesWithPath = '';
                 // loop through all the uploaded files
                 foreach ($request->file('filename') as $k => $file) {
-                    $extension = pathinfo($_FILES['filename']['name'][$k],PATHINFO_EXTENSION);
+                    $extension = pathinfo($_FILES['filename']['name'][$k], PATHINFO_EXTENSION);
                     $actual_name = $learner_id;
-                    $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension);
-                    $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension).", ";
+                    $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension);
+                    $filesWithPath .= '/'.AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension).', ';
 
-                    if( !in_array($extension, $extensions) ) :
+                    if (! in_array($extension, $extensions)) {
                         return redirect()->back();
-                    endif;
+                    }
 
                     $file->move($destinationPath, $fileName);
 
                 }
 
-                $filesWithPath = trim($filesWithPath,", ");
+                $filesWithPath = trim($filesWithPath, ', ');
 
                 $feedback->filename = $filesWithPath;
-            endif;
+            }
             $feedback->assignment_manuscript_id = $manuscript_id;
             $feedback->learner_id = $learner_id;
             $feedback->feedback_user_id = Auth::user()->id;
@@ -1293,22 +1284,22 @@ class AssignmentController extends Controller
             $feedback->save();
 
             // send email
-            $email_content  = $request->message;
-            $to             = $assignmentManuscript->user->email;
-            $first_name     = $assignmentManuscript->user->first_name;
+            $email_content = $request->message;
+            $to = $assignmentManuscript->user->email;
+            $first_name = $assignmentManuscript->user->first_name;
 
-            if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
-                $redirect_link          = route('learner.assignment', 'tab=feedback-from-editor');
-                $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
+            if ($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
+                $redirect_link = route('learner.assignment', 'tab=feedback-from-editor');
+                $formattedMailContent = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
 
                 DelayedEmail::create([
-                    'subject'       => $request->subject,
-                    'message'       => $formattedMailContent,
-                    'from_email'    => $request->from_email,
-                    'recipient'     => $to,
-                    'send_date'     => $request->availability,
-                    'parent'        => 'assignment-manuscripts',
-                    'parent_id'     => $assignmentManuscript->id
+                    'subject' => $request->subject,
+                    'message' => $formattedMailContent,
+                    'from_email' => $request->from_email,
+                    'recipient' => $to,
+                    'send_date' => $request->availability,
+                    'parent' => 'assignment-manuscripts',
+                    'parent_id' => $assignmentManuscript->id,
                 ]);
             } else {
                 $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
@@ -1324,8 +1315,7 @@ class AssignmentController extends Controller
 
     /**
      * Update availability of feedback with no group
-     * @param $feedback_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function manuscriptFeedbackNoGroupUpdateAvailability($feedback_id, Request $request)
@@ -1335,16 +1325,17 @@ class AssignmentController extends Controller
         if ($feedback) {
             $feedback->availability = $request->availability;
             $feedback->save();
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback sent successfully.'),
                 'alert_type' => 'success']);
         }
+
         return redirect()->route('admin.course.index');
     }
 
     /**
      * Update the join group field
-     * @param $manuscript_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateJoinGroup($manuscript_id, Request $request)
@@ -1353,6 +1344,7 @@ class AssignmentController extends Controller
         if ($assignment) {
 
             $assignment->update($request->except('_token'));
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Join Group updated successfully.'),
                 'alert_type' => 'success']);
         }
@@ -1361,18 +1353,17 @@ class AssignmentController extends Controller
     }
 
     /**
-     * @param null $id
-     * @param Request $request
+     * @param  null  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function saveAssignmentTemplate( $id = NULL, Request $request )
+    public function saveAssignmentTemplate($id, Request $request)
     {
         $data = [
-            'title'                     => $request->title,
-            'description'               => $request->description,
-            'submission_date'           => $request->submission_date,
-            'available_date'            => $request->available_date,
-            'max_words'                 => (int) $request->max_words,
+            'title' => $request->title,
+            'description' => $request->description,
+            'submission_date' => $request->submission_date,
+            'available_date' => $request->available_date,
+            'max_words' => (int) $request->max_words,
         ];
 
         if ($id) {
@@ -1386,22 +1377,21 @@ class AssignmentController extends Controller
     }
 
     /**
-     * @param $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteAssignmentTemplate( $id )
+    public function deleteAssignmentTemplate($id)
     {
         AssignmentTemplate::find($id)->delete();
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record deleted successfully.'),
             'alert_type' => 'success']);
     }
 
     /**
-     * @param null $id
-     * @param Request $request
+     * @param  null  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function learnerAssignment( $id = NULL, Request $request )
+    public function learnerAssignment($id, Request $request)
     {
         $data = [
             'title' => $request->title,
@@ -1416,7 +1406,7 @@ class AssignmentController extends Controller
             'parent' => 'users',
             'editor_id' => $request->editor_id,
             'editor_expected_finish' => $request->editor_expected_finish,
-            'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0
+            'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0,
         ];
 
         if ($id) {
@@ -1449,26 +1439,26 @@ class AssignmentController extends Controller
             'parent' => 'users',
             'editor_id' => $request->editor_id,
             'editor_expected_finish' => $request->editor_expected_finish,
-            'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0
+            'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0,
         ];
 
         $assignment = Assignment::create($data);
 
         AssignmentDisabledLearner::updateOrCreate([
             'assignment_id' => $assignment_id,
-            'user_id' => $request->learner_id
+            'user_id' => $request->learner_id,
         ], [
-            'personal_assignment_id' => $assignment->id
+            'personal_assignment_id' => $assignment->id,
         ]);
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
             'alert_type' => 'success']);
     }
 
-    public function multipleLearnerAssignment( Request $request )
+    public function multipleLearnerAssignment(Request $request)
     {
 
-        foreach($request->templates as $t) {
+        foreach ($request->templates as $t) {
             $template = AssignmentTemplate::find($t);
 
             Assignment::create([
@@ -1483,23 +1473,24 @@ class AssignmentController extends Controller
                 'parent' => 'users',
                 'editor_id' => $request->editor_id,
                 'editor_expected_finish' => $request->editor_expected_finish,
-                'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0
+                'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0,
             ]);
         }
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
             'alert_type' => 'success']);
     }
 
     /**
-     * @param $assignment_id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteLearnerAssignment( $assignment_id )
+    public function deleteLearnerAssignment($assignment_id)
     {
         Assignment::find($assignment_id)->delete();
+
         return redirect()->to('/assignment?tab=learner')
             ->with(['errors' => AdminHelpers::createMessageBag('Record deleted successfully.'),
-            'alert_type' => 'success']);
+                'alert_type' => 'success']);
     }
 
     public function assignmentWithCourseLearner($assignmentId, $courseId)
@@ -1509,6 +1500,7 @@ class AssignmentController extends Controller
 
         $course = Course::findOrFail($courseId);
         $courseLearners = $course->learners->get();
+
         return view('backend.assignment._disable_learners', compact('assignment', 'disabledLearners', 'courseLearners'));
     }
 
@@ -1518,7 +1510,7 @@ class AssignmentController extends Controller
             'assignment_id' => $assignmentId,
             'user_id' => $request->user_id,
         ])->first();
-        
+
         filter_var($request->isChecked, FILTER_VALIDATE_BOOLEAN)
             ? AssignmentDisabledLearner::create(['assignment_id' => $assignmentId, 'user_id' => $request->user_id])
             : optional($disabledLearner)->delete();
@@ -1526,41 +1518,41 @@ class AssignmentController extends Controller
         return $request->all();
     }
 
-    /**
-     * @param $email_content
-     * @param $to
-     * @param $first_name
-     * @param $subject
-     * @param $from_email
-     */
     public function sendAssignmentFeedbackMail($email_content, $to, $first_name, $subject, $from_email, $manuscript_id)
     {
-        $redirect_link          = route('learner.assignment', 'tab=feedback-from-editor');
-        $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
+        $redirect_link = route('learner.assignment', 'tab=feedback-from-editor');
+        $formattedMailContent = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
         dispatch(new AddMailToQueueJob($to, $subject, $formattedMailContent, $from_email, null, null,
             'assignment-manuscripts', $manuscript_id));
-        //AdminHelpers::queue_mail($to, $subject, $formattedMailContent, $from_email);
+        // AdminHelpers::queue_mail($to, $subject, $formattedMailContent, $from_email);
     }
 
     /**
      * Read document file and return the content
-     * @param $filename
+     *
      * @return bool|string
      */
-    private function read_docx($filename){
+    private function read_docx($filename)
+    {
 
         $striped_content = '';
         $content = '';
 
         $zip = zip_open($filename);
 
-        if (!$zip || is_numeric($zip)) return false;
+        if (! $zip || is_numeric($zip)) {
+            return false;
+        }
 
         while ($zip_entry = zip_read($zip)) {
 
-            if (zip_entry_open($zip, $zip_entry) == FALSE) continue;
+            if (zip_entry_open($zip, $zip_entry) == false) {
+                continue;
+            }
 
-            if (zip_entry_name($zip_entry) != "word/document.xml") continue;
+            if (zip_entry_name($zip_entry) != 'word/document.xml') {
+                continue;
+            }
 
             $content .= zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
 
@@ -1569,7 +1561,7 @@ class AssignmentController extends Controller
 
         zip_close($zip);
 
-        $content = str_replace('</w:r></w:p></w:tc><w:tc>', " ", $content);
+        $content = str_replace('</w:r></w:p></w:tc><w:tc>', ' ', $content);
         $content = str_replace('</w:r></w:p>', "\r\n", $content);
         $striped_content = strip_tags($content);
 
@@ -1586,7 +1578,7 @@ class AssignmentController extends Controller
             'alert_type' => 'success']);
     }
 
-    function specialCharacters($string)
+    public function specialCharacters($string)
     {
         $characters = [
             '&lt;' => '', '&gt;' => '', '&#039;' => '', '&amp;' => '',
@@ -1633,10 +1625,11 @@ class AssignmentController extends Controller
             'м' => 'm', 'н' => 'n', 'о' => 'o', 'п' => 'p', 'р' => 'r', 'с' => 's',
             'т' => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'h', 'ц' => 'c', 'ч' => 'ch',
             'ш' => 'sh', 'щ' => 'sch', 'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e',
-            'ю' => 'yu', 'я' => 'ya'
+            'ю' => 'yu', 'я' => 'ya',
         ];
-return $string;
+
+        return $string;
+
         return str_replace(array_keys($characters), $characters, $string);
     }
-
 }

@@ -1,21 +1,22 @@
 <?php
+
 namespace App\Repositories\Services;
 
 use App\Blog;
 use App\Http\Requests\BlogRequest;
 use Illuminate\Http\Request;
 
-class BlogService {
-
+class BlogService
+{
     /**
      * Store the solution model
+     *
      * @var Blog
      */
     protected $blog;
 
     /**
      * BlogService constructor.
-     * @param Blog $blog
      */
     public function __construct(Blog $blog)
     {
@@ -23,111 +24,117 @@ class BlogService {
     }
 
     /**
-     * @param null $id
-     * @param int $page
+     * @param  null  $id
+     * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getRecord($id = NULL, $page = 15)
+    public function getRecord($id = null, $page = 15)
     {
         if ($id) {
             return $this->blog->find($id);
         }
+
         return $this->blog->orderBy('id', 'DESC')->paginate($page);
     }
 
     /**
      * Create new blog
-     * @param $request BlogRequest
+     *
+     * @param  $request  BlogRequest
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
     public function store($request)
     {
         $requestData = $request->toArray();
-        if ($request->hasFile('image')) :
+        if ($request->hasFile('image')) {
             $destinationPath = 'storage/blog/'; // upload path
             $extension = $request->image->extension(); // getting image extension
             $fileName = time().'.'.$extension; // renaming image
             $request->image->move($destinationPath, $fileName);
             $requestData['image'] = '/'.$destinationPath.$fileName;
-        endif;
+        }
 
-        if ($request->hasFile('author_image')) :
+        if ($request->hasFile('author_image')) {
             $destinationPath = 'storage/blog/author/'; // upload path
             $extension = $request->author_image->extension(); // getting image extension
             $fileName = time().'.'.$extension; // renaming image
             $request->author_image->move($destinationPath, $fileName);
             $requestData['author_image'] = '/'.$destinationPath.$fileName;
-        endif;
+        }
 
         $requestData['user_id'] = \Auth::user()->id;
         $requestData['status'] = isset($request->status) ? 1 : 0;
+
         return $this->blog->create($requestData);
     }
 
     /**
      * Update a blog
-     * @param $id
-     * @param BlogRequest $request
+     *
+     * @param  BlogRequest  $request
      * @return bool
      */
     public function update($id, $request)
     {
         $blog = $this->getRecord($id);
         $requestData = $request->toArray();
-        if ($request->hasFile('image')) :
-            if( \File::exists(public_path($blog->image)) ) :
+        if ($request->hasFile('image')) {
+            if (\File::exists(public_path($blog->image))) {
                 \File::delete(public_path($blog->image));
-            endif;
+            }
             $destinationPath = 'storage/blog/'; // upload path
             $extension = $request->image->extension(); // getting image extension
             $fileName = time().'.'.$extension; // renaming image
             $request->image->move($destinationPath, $fileName);
             $requestData['image'] = '/'.$destinationPath.$fileName;
-        endif;
+        }
 
-        if ($request->hasFile('author_image')) :
+        if ($request->hasFile('author_image')) {
             $destinationPath = 'storage/blog/author/'; // upload path
             $extension = $request->author_image->extension(); // getting image extension
             $fileName = time().'.'.$extension; // renaming image
             $request->author_image->move($destinationPath, $fileName);
             $requestData['author_image'] = '/'.$destinationPath.$fileName;
-        endif;
+        }
 
         $requestData['status'] = isset($request->status) ? 1 : 0;
+
         return $blog->update($requestData);
     }
 
     /**
      * Delete a survey
-     * @param $id
+     *
      * @return bool
      */
     public function destroy($id)
     {
         $blog = $this->getRecord($id);
         if ($blog) {
-            if( \File::exists(public_path($blog->image)) ) :
+            if (\File::exists(public_path($blog->image))) {
                 \File::delete(public_path($blog->image));
-            endif;
+            }
 
-            if( \File::exists(public_path($blog->author_image)) ) :
+            if (\File::exists(public_path($blog->author_image))) {
                 \File::delete(public_path($blog->author_image));
-            endif;
+            }
             $blog->forceDelete();
         }
+
         return false;
     }
 
     /**
      * Update Blog status
-     * @param $id
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return bool
      */
     public function updateStatus($id, $request)
     {
         $blog = $this->getRecord($id);
         $requestData = $request->toArray();
+
         return $blog->update($requestData);
     }
 }

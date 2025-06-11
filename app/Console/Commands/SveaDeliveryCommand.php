@@ -41,8 +41,8 @@ class SveaDeliveryCommand extends Command
     public function handle()
     {
         $orders = Order::whereNotNull('svea_order_id')
-        ->whereNull('svea_delivery_id')
-        ->get();
+            ->whereNull('svea_delivery_id')
+            ->get();
 
         CronLog::create(['activity' => 'SveaDelivery CRON running.']);
         foreach ($orders as $order) {
@@ -51,10 +51,10 @@ class SveaDeliveryCommand extends Command
             if (is_array($sveaOrderDetails) && $sveaOrderDetails['Deliveries'] && count($sveaOrderDetails['Deliveries'][0]['Actions'])) {
                 $order->svea_delivery_id = $sveaOrderDetails['Deliveries'][0]['Id'];
                 $order->save();
-                CronLog::create(['activity' => 'SveaDelivery CRON updated order ' . $order->id .'.']);
+                CronLog::create(['activity' => 'SveaDelivery CRON updated order '.$order->id.'.']);
             }
         }
-        echo "Done";
+        echo 'Done';
         CronLog::create(['activity' => 'SveaDelivery CRON done running.']);
     }
 }

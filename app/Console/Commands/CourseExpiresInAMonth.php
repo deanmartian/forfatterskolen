@@ -8,7 +8,8 @@ use App\Http\AdminHelpers;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class CourseExpiresInAMonth extends Command {
+class CourseExpiresInAMonth extends Command
+{
     /**
      * The name and signature of the console command.
      *
@@ -44,17 +45,17 @@ class CourseExpiresInAMonth extends Command {
         $monthDate = Carbon::now()->addDays(30)->format('Y-m-d');
 
         // get courses taken by end date
-        $coursesTaken = CoursesTaken::whereHas('package', function($query){
+        $coursesTaken = CoursesTaken::whereHas('package', function ($query) {
             $query->where('course_id', 17);
-        })->whereNotNull('end_date')->where('end_date',$monthDate)->get();
+        })->whereNotNull('end_date')->where('end_date', $monthDate)->get();
 
         // get courses taken by started at field
-        $coursesTakenByStartDate = CoursesTaken::whereHas('package', function($query){
+        $coursesTakenByStartDate = CoursesTaken::whereHas('package', function ($query) {
             $query->where('course_id', 17);
         })
             ->whereNotNull('started_at')
             ->whereNull('end_date')
-            ->whereDate('started_at',$monthDate)
+            ->whereDate('started_at', $monthDate)
             ->get();
 
         // merge the collections
@@ -62,13 +63,13 @@ class CourseExpiresInAMonth extends Command {
 
         foreach ($coursesTaken->all() as $courseTaken) {
 
-            $user_email     = $courseTaken->user->email;
-            $automation_id  = 71;
-            $user_name      = $courseTaken->user->first_name;
-            //add to automation
+            $user_email = $courseTaken->user->email;
+            $automation_id = 71;
+            $user_name = $courseTaken->user->first_name;
+            // add to automation
             // check if auto renew courses is not set
-            if (!$courseTaken->user->auto_renew_courses) {
-                AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+            if (! $courseTaken->user->auto_renew_courses) {
+                AdminHelpers::addToAutomation($user_email, $automation_id, $user_name);
                 CronLog::create(['activity' => 'CourseExpiresInAMonth CRON added '.$user_name.' to automation '.$automation_id]);
             }
         }

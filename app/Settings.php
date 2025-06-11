@@ -7,12 +7,13 @@ use VanOns\Laraberg\Models\Gutenbergable;
 
 class Settings extends Model
 {
-
     use Gutenbergable;
 
     protected $table = 'settings';
+
     public $timestamps = false;
-    protected $fillable = ['setting_name', 'setting_value',];
+
+    protected $fillable = ['setting_name', 'setting_value'];
 
     public static function welcomeEmail()
     {
@@ -43,6 +44,7 @@ class Settings extends Model
     {
         $termsList = ['terms', 'course-terms', 'manuscript-terms', 'workshop-terms', 'coaching-terms',
             'privacy-policy-terms'];
+
         return self::whereIn('setting_name', $termsList)->get();
     }
 

@@ -16,12 +16,13 @@ class CoachingTimeService
     {
         $orderRecord = $this->createOrder($request);
         $redirectUrl = url('/thank-you?pl_ord='.$orderRecord->id);
+
         return [
-            'redirect_url' => $redirectUrl
+            'redirect_url' => $redirectUrl,
         ];
     }
 
-    public function generateSveaCheckout( Request $request )
+    public function generateSveaCheckout(Request $request)
     {
         $orderRecord = $this->createOrder($request);
 
@@ -33,7 +34,7 @@ class CoachingTimeService
         $checkoutMerchantId = env('SVEA_CHECKOUTID');
         $checkoutSecret = env('SVEA_CHECKOUT_SECRET');
 
-        //set endpoint url. Eg. test or prod
+        // set endpoint url. Eg. test or prod
         $baseUrl = \Svea\Checkout\Transport\Connector::PROD_BASE_URL;
 
         try {
@@ -58,47 +59,47 @@ class CoachingTimeService
             /**
              * create order
              */
-            $data = array(
-                "countryCode" => env('SVEA_COUNTRY_CODE'),
-                "currency" => env('SVEA_CURRENCY'),
-                "locale" => env('SVEA_LOCALE'),
-                "clientOrderNumber" => env('SVEA_IDENTIFIER').$orderRecord->id,//rand(10000,30000000),
-                "merchantData" => $title." order",
-                "cart" => array(
-                    "items" => array(
-                        array(
-                            "name" => \Illuminate\Support\Str::limit($title, 35),
-                            "quantity" => 100,
-                            "unitPrice" => $calculatedPrice*100,
-                            "unit" => "pc"
-                        )
-                    )
-                ),
-                "presetValues" => array(
-                    array(
-                        "typeName" => "emailAddress",
-                        "value" => $request->email,
-                        "isReadonly" => false
-                    ),
-                    array(
-                        "typeName" => "postalCode",
-                        "value" => $request->zip,
-                        "isReadonly" => false
-                    ),
-                    array(
-                        "typeName" => "PhoneNumber",
-                        "value" => $request->phone,
-                        "isReadonly" => false
-                    )
-                ),
-                "merchantSettings" => array(
-                    "termsUri" => url('/terms/coaching-terms'),
-                    "checkoutUri" => url('/coaching-timer/checkout/' . $request->item_id), // load checkout
-                    "confirmationUri" => $confirmationUrl,
-                    "pushUri" => url('/svea-callback?svea_order_id={checkout.order.uri}')
-                    //"https://localhost:51925/push.php?svea_order_id={checkout.order.uri}",
-                )
-            );
+            $data = [
+                'countryCode' => env('SVEA_COUNTRY_CODE'),
+                'currency' => env('SVEA_CURRENCY'),
+                'locale' => env('SVEA_LOCALE'),
+                'clientOrderNumber' => env('SVEA_IDENTIFIER').$orderRecord->id, // rand(10000,30000000),
+                'merchantData' => $title.' order',
+                'cart' => [
+                    'items' => [
+                        [
+                            'name' => \Illuminate\Support\Str::limit($title, 35),
+                            'quantity' => 100,
+                            'unitPrice' => $calculatedPrice * 100,
+                            'unit' => 'pc',
+                        ],
+                    ],
+                ],
+                'presetValues' => [
+                    [
+                        'typeName' => 'emailAddress',
+                        'value' => $request->email,
+                        'isReadonly' => false,
+                    ],
+                    [
+                        'typeName' => 'postalCode',
+                        'value' => $request->zip,
+                        'isReadonly' => false,
+                    ],
+                    [
+                        'typeName' => 'PhoneNumber',
+                        'value' => $request->phone,
+                        'isReadonly' => false,
+                    ],
+                ],
+                'merchantSettings' => [
+                    'termsUri' => url('/terms/coaching-terms'),
+                    'checkoutUri' => url('/coaching-timer/checkout/'.$request->item_id), // load checkout
+                    'confirmationUri' => $confirmationUrl,
+                    'pushUri' => url('/svea-callback?svea_order_id={checkout.order.uri}'),
+                    // "https://localhost:51925/push.php?svea_order_id={checkout.order.uri}",
+                ],
+            ];
 
             $response = $checkoutClient->create($data);
             $orderId = $response['OrderId'];
@@ -106,6 +107,7 @@ class CoachingTimeService
             $orderStatus = $response['Status'];
             $orderRecord->svea_order_id = $orderId;
             $orderRecord->save(); // update the checkout and save the order id from svea
+
             return $guiSnippet;
 
         } catch (\Svea\Checkout\Exception\SveaApiException $ex) {
@@ -119,17 +121,17 @@ class CoachingTimeService
         }
     }
 
-    public function createOrder( Request $request )
+    public function createOrder(Request $request)
     {
 
-        $newOrder['user_id']    = \Auth::user()->id;
-        $newOrder['item_id']    = $request->item_id;
-        $newOrder['type']       = Order::COACHING_TIME_TYPE;
+        $newOrder['user_id'] = \Auth::user()->id;
+        $newOrder['item_id'] = $request->item_id;
+        $newOrder['type'] = Order::COACHING_TIME_TYPE;
         $newOrder['package_id'] = 0;
-        $newOrder['plan_id']    = $request->payment_plan_id;
-        $newOrder['price']      = $request->price;
-        $newOrder['discount']   = 0;
-        $newOrder['payment_mode_id']   = $request->payment_mode_id;
+        $newOrder['plan_id'] = $request->payment_plan_id;
+        $newOrder['price'] = $request->price;
+        $newOrder['discount'] = 0;
+        $newOrder['payment_mode_id'] = $request->payment_mode_id;
         $newOrder['is_processed'] = 0;
         $newOrder['is_pay_later'] = filter_var($request->is_pay_later, FILTER_VALIDATE_BOOLEAN);
 
@@ -139,7 +141,7 @@ class CoachingTimeService
 
         $order = Order::create($newOrder);
 
-        $suggested_dates = explode(",", $request->suggested_date);
+        $suggested_dates = explode(',', $request->suggested_date);
 
         // format the sent suggested dates
         /* foreach ($suggested_dates as $k => $suggested_date) {
@@ -147,46 +149,46 @@ class CoachingTimeService
         } */
 
         $order->coachingTime()->create([
-            'additional_price'  => $request->additional_price,
-            'file'              => $request->fileLocation,
-            'suggested_date'    => NULL,//json_encode($suggested_dates),
-            'help_with'         => $request->help_with
+            'additional_price' => $request->additional_price,
+            'file' => $request->fileLocation,
+            'suggested_date' => null, // json_encode($suggested_dates),
+            'help_with' => $request->help_with,
         ]);
 
         return $order;
     }
 
-    public function addCoachingTime( $order )
+    public function addCoachingTime($order)
     {
 
         $coachingTime = $order->coachingTime;
-        $newFileLocation = NULL;
+        $newFileLocation = null;
 
         if ($coachingTime->file) {
             // move the file to another location
-            $file           = explode('/', $coachingTime->file);
-            $fileName       = $file[2];
-            $destination    = 'storage/coaching-timer-manuscripts/';
-            $time           = time();
-            $getExtension   = explode('.', $fileName);
-            $extension      = $getExtension[1];
+            $file = explode('/', $coachingTime->file);
+            $fileName = $file[2];
+            $destination = 'storage/coaching-timer-manuscripts/';
+            $time = time();
+            $getExtension = explode('.', $fileName);
+            $extension = $getExtension[1];
 
             $newFileLocation = $destination.$time.'.'.$extension;
             // move the file from manuscript-tests to shop-manuscripts
             \File::copy($coachingTime->file, $destination.$time.'.'.$extension);
         }
 
-       return CoachingTimerManuscript::create([
-            'user_id'        => $order->user_id,
-            'file'           => $newFileLocation,
+        return CoachingTimerManuscript::create([
+            'user_id' => $order->user_id,
+            'file' => $newFileLocation,
             'payment_price' => $order->price + $coachingTime->additional_price,
-            'plan_type'     => $order->item_id,
+            'plan_type' => $order->item_id,
             'suggested_date' => $coachingTime->suggested_date,
-            'help_with'     => $coachingTime->help_with
+            'help_with' => $coachingTime->help_with,
         ]);
     }
 
-    public function notifyUser( $order, $coaching )
+    public function notifyUser($order, $coaching)
     {
         // Send Email
         $user = $order->user;
@@ -196,11 +198,11 @@ class CoachingTimeService
             $user->first_name, '');
 
         dispatch(new AddMailToQueueJob($user->email, $emailTemplate->subject, $emailContent,
-            $emailTemplate->from_email, 'Forfatterskolen',null,
+            $emailTemplate->from_email, 'Forfatterskolen', null,
             'coaching-time-order', $coaching->id));
     }
 
-    public function notifyAdmin( $order )
+    public function notifyAdmin($order)
     {
         $user = $order->user;
 
@@ -219,9 +221,8 @@ class CoachingTimeService
             'email_message' => $message,
             'from_name' => '',
             'from_email' => 'post@forfatterskolen.no',
-            'attach_file' => NULL
+            'attach_file' => null,
         ];
         \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
     }
-
 }

@@ -1,21 +1,20 @@
 <?php
+
 namespace App\Http\Controllers\Frontend;
 
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Repositories\VippsRepository;
-use App\Settings;
-use Illuminate\Http\Request;
 
-class VippsController extends Controller {
-
+class VippsController extends Controller
+{
     protected $access_token = '';
+
     protected $repository;
 
     /**
      * VippsController constructor.
-     * @param VippsRepository $repository
      */
     public function __construct(VippsRepository $repository)
     {
@@ -31,7 +30,8 @@ class VippsController extends Controller {
 
     /**
      * Initiate the payment
-     * @param VippsRepository $repository
+     *
+     * @param  VippsRepository  $repository
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function index()
@@ -56,7 +56,7 @@ class VippsController extends Controller {
 
         // check for transactionSummary
         if (property_exists($result['data'], 'transactionSummary')) {
-            echo "has transaction";
+            echo 'has transaction';
         }
     }
 }

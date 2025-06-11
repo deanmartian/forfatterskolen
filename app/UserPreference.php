@@ -11,6 +11,5 @@ class UserPreference extends Model
      *
      * @var array
      */
-    protected $fillable = [ 'user_id', 'role', 'joined_reader_community'];
-
+    protected $fillable = ['user_id', 'role', 'joined_reader_community'];
 }

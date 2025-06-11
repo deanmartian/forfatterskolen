@@ -1,10 +1,11 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Survey extends Model {
-
+class Survey extends Model
+{
     /**
      * The database table used by the model.
      *
@@ -24,23 +25,24 @@ class Survey extends Model {
         return $this->belongsTo('App\Course');
     }
 
-    public function questions() {
+    public function questions()
+    {
         return $this->hasMany('App\SurveyQuestion');
     }
 
     public function getResponse()
     {
-        if (!empty($this->id)) {
-            if (!empty($this->questions)) {
-                $questionSubSelects = array();
-                foreach ($this->questions as $question)
-                {
+        if (! empty($this->id)) {
+            if (! empty($this->questions)) {
+                $questionSubSelects = [];
+                foreach ($this->questions as $question) {
                     $questionSubSelects[] = "(select group_concat(answer, ' ') from survey_answer sa
                                           where sa.survey_id = s.id and
                                           sa.survey_question_id = {$question->id}) as question_{$question->id}";
                 }
                 $questionSubSelectSql = implode(', ', $questionSubSelects);
                 $sql = "select s.*, $questionSubSelectSql from survey s where s.id = ".$this->id;
+
                 return \DB::select($sql);
             }
         }
@@ -53,11 +55,12 @@ class Survey extends Model {
         return $this->hasMany(SurveyAnswer::class);
     }
 
-    protected static function boot() {
+    protected static function boot()
+    {
         parent::boot();
 
-        //delete the data from the relation
-        static::deleting(function($survey) { // before delete() method call this
+        // delete the data from the relation
+        static::deleting(function ($survey) { // before delete() method call this
             $survey->questions()->delete(); // delete lesson document
         });
     }

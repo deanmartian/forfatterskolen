@@ -1,7 +1,7 @@
 <?php
 
+use App\MarketingPlan;
 use Illuminate\Database\Seeder;
-use \App\MarketingPlan;
 
 class MarketingPlanSeeder extends Seeder
 {
@@ -18,14 +18,14 @@ class MarketingPlanSeeder extends Seeder
                 'questions' => [
                     [
                         'main_question' => 'Dialog med forfatter (kan være deg selv!)',
-                        'sub_question' => ['Hva ønsker du å formidle med boken?', 'Hvem er leseren?', 'Hva skal leseren oppnå med boken?']
+                        'sub_question' => ['Hva ønsker du å formidle med boken?', 'Hvem er leseren?', 'Hva skal leseren oppnå med boken?'],
                     ],
                     [
-                        'main_question' => 'Er det en personlig historie som kan brukes når boken lanseres?'
+                        'main_question' => 'Er det en personlig historie som kan brukes når boken lanseres?',
                     ],
                     [
                         'main_question' => 'Avklare',
-                        'sub_question' => ['Hva det er forventet at forfatter skal gjøre?', 'Hva forfatter forventer at forlag skal gjøre?']
+                        'sub_question' => ['Hva det er forventet at forfatter skal gjøre?', 'Hva forfatter forventer at forlag skal gjøre?'],
                     ],
                 ],
             ],
@@ -34,21 +34,21 @@ class MarketingPlanSeeder extends Seeder
                 'name' => 'Seks måneder før lansering',
                 'questions' => [
                     [
-                        'main_question' => 'Begynne å bygge e-postliste'
+                        'main_question' => 'Begynne å bygge e-postliste',
                     ],
 
                     [
-                        'main_question' => 'Informere eksisterende kunder om at boken kommer'
+                        'main_question' => 'Informere eksisterende kunder om at boken kommer',
                     ],
 
                     [
-                        'main_question' => 'Finne aktuelle samarbeidspartnere'
+                        'main_question' => 'Finne aktuelle samarbeidspartnere',
                     ],
 
                     [
-                        'main_question' => 'Informere bokkjeder (innkjøpere) personlig i god tid'
-                    ]
-                ]
+                        'main_question' => 'Informere bokkjeder (innkjøpere) personlig i god tid',
+                    ],
+                ],
             ],
 
             [
@@ -56,8 +56,8 @@ class MarketingPlanSeeder extends Seeder
                 'questions' => [
                     [
                         'main_question' => 'Lage liste over folk som potensielt kan hjelpe til med å promotere Boken',
-                    ]
-                ]
+                    ],
+                ],
             ],
 
             [
@@ -65,7 +65,7 @@ class MarketingPlanSeeder extends Seeder
                 'questions' => [
                     [
                         'main_question' => 'Kontakte aktuelle journalister og magasine',
-                        'sub_question' => ['Lage pressemappe (med bilder, utdrag, cover)']
+                        'sub_question' => ['Lage pressemappe (med bilder, utdrag, cover)'],
                     ],
 
                     [
@@ -78,8 +78,8 @@ class MarketingPlanSeeder extends Seeder
 
                     [
                         'main_question' => 'Teaservideo/trailer for boken',
-                    ]
-                ]
+                    ],
+                ],
             ],
 
             [
@@ -87,13 +87,13 @@ class MarketingPlanSeeder extends Seeder
                 'questions' => [
                     [
                         'main_question' => 'Starte forhåndssalg',
-                        'sub_question' => ['Gjøre boken tilgjengelig I nettbutikk']
+                        'sub_question' => ['Gjøre boken tilgjengelig I nettbutikk'],
                     ],
 
                     [
                         'main_question' => 'Kontakte potensielle forhandlere utover bokhandlere',
-                    ]
-                ]
+                    ],
+                ],
             ],
 
             [
@@ -109,18 +109,18 @@ class MarketingPlanSeeder extends Seeder
 
                     [
                         'main_question' => 'Kontakte aktuelle aviser, fagblader med mer',
-                        'sub_question' => ['Kontakte God morgen Norge']
-                    ]
-                ]
+                        'sub_question' => ['Kontakte God morgen Norge'],
+                    ],
+                ],
             ],
 
             [
                 'name' => 'En uke før',
                 'questions' => [
                     [
-                        'main_question' => 'Gjesteinnelegg og intervjuer på andre blogger'
-                    ]
-                ]
+                        'main_question' => 'Gjesteinnelegg og intervjuer på andre blogger',
+                    ],
+                ],
             ],
 
             [
@@ -144,10 +144,10 @@ class MarketingPlanSeeder extends Seeder
                             'Takk for bestilling',
                             'Dele ekstramateriale',
                             'Tips en venn?',
-                            'Få tilbakemeldinger '
-                        ]
-                    ]
-                ]
+                            'Få tilbakemeldinger ',
+                        ],
+                    ],
+                ],
             ],
 
             [
@@ -158,69 +158,69 @@ class MarketingPlanSeeder extends Seeder
                         'sub_question' => [
                             'Webside',
                             'Facebook',
-                            'Instagram'
-                        ]
+                            'Instagram',
+                        ],
                     ],
 
                     [
                         'main_question' => 'Sende siste e-post til e-postliste',
                         'sub_question' => [
                             'Informere om antall forhåndssolgte',
-                            'Oppfordre til å kjope boken'
-                        ]
-                    ]
-                ]
+                            'Oppfordre til å kjope boken',
+                        ],
+                    ],
+                ],
             ],
 
             [
                 'name' => 'Uken etter lansering',
                 'questions' => [
                     [
-                        'main_question' => 'Følge opp media'
+                        'main_question' => 'Følge opp media',
                     ],
 
                     [
-                        'main_question' => 'Følge opp kunder'
+                        'main_question' => 'Følge opp kunder',
                     ],
 
                     [
-                        'main_question' => 'Sjekke effekten av annonser'
+                        'main_question' => 'Sjekke effekten av annonser',
                     ],
 
                     [
                         'main_question' => 'Lage relevant automatisering',
-                        'sub_question' => ['Merslag? Kunder som har kjøpt ander bøker, der denne kan være interessant?']
-                    ]
-                ]
+                        'sub_question' => ['Merslag? Kunder som har kjøpt ander bøker, der denne kan være interessant?'],
+                    ],
+                ],
             ],
 
             [
                 'name' => 'Måneden etter lansering',
                 'questions' => [
                     [
-                        'main_question' => 'Evaluere lanseringen'
+                        'main_question' => 'Evaluere lanseringen',
                     ],
 
                     [
-                        'main_question' => 'Oppdater markedsplan'
+                        'main_question' => 'Oppdater markedsplan',
                     ],
 
                     [
-                        'main_question' => 'Oppdatere/lage nye annonser'
-                    ]
-                ]
+                        'main_question' => 'Oppdatere/lage nye annonser',
+                    ],
+                ],
             ],
         ];
 
         foreach ($plans as $plan) {
             $marketingPlan = MarketingPlan::create([
-                'name' => $plan['name']
+                'name' => $plan['name'],
             ]);
 
             foreach ($plan['questions'] as $question) {
                 $marketingPlan->questions()->create([
                     'main_question' => $question['main_question'],
-                    'sub_question' => isset($question['sub_question']) ? json_encode($question['sub_question'], JSON_UNESCAPED_UNICODE) : NULL
+                    'sub_question' => isset($question['sub_question']) ? json_encode($question['sub_question'], JSON_UNESCAPED_UNICODE) : null,
                 ]);
             }
         }

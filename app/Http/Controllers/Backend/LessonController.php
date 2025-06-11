@@ -1,28 +1,23 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
+use App\Course;
 use App\Http\AdminHelpers;
+use App\Http\Controllers\Controller;
+use App\Lesson;
 use App\LessonContent;
 use App\LessonDocuments;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Course;
-use App\Lesson;
-use App\Http\Requests\LessonCreateRequest;
-use App\Http\Requests\LessonUpdateRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class LessonController extends Controller
 {
-   
-
     public function index($course_id)
     {
         $course = Course::findOrFail($course_id);
-        $section = NULL;
+        $section = null;
 
         return view('backend.lesson.index', compact('course', 'section'));
     }
@@ -33,26 +28,26 @@ class LessonController extends Controller
         $lesson = Lesson::findOrFail($id)->toArray();
         $videos = Lesson::findOrFail($id)->videos;
         $documents = Lesson::findOrFail($id)->documents;
-        $section = NULL;
+        $section = null;
 
-    	return view('backend.lesson.edit', compact('course', 'lesson', 'videos', 'section', 'documents'));
+        return view('backend.lesson.edit', compact('course', 'lesson', 'videos', 'section', 'documents'));
     }
 
     public function create($id)
     {
-    	$course = Course::findOrFail($id);
-    	$section = NULL;
+        $course = Course::findOrFail($id);
+        $section = null;
         $lesson = [
             'id' => '',
             'title' => old('title'),
             'content' => old('content'),
             'delay' => old('delay'),
             'whole_lesson_file' => '',
-            'allow_lesson_download' => true
+            'allow_lesson_download' => true,
         ];
         $documents = [];
 
-    	return view('backend.lesson.create', compact('course', 'lesson', 'section', 'documents'));
+        return view('backend.lesson.create', compact('course', 'lesson', 'section', 'documents'));
     }
 
     public function store($course_id, Request $request)
@@ -75,11 +70,11 @@ class LessonController extends Controller
             $reqFields = $webinarPakkeReqFields;
         }
 
-        $this->validate($request,$reqFields);
+        $this->validate($request, $reqFields);
         $wholeLessonFile = $this->uploadWholeFile($request);
 
         $course = Course::findOrFail($course_id);
-        $lesson = new Lesson();
+        $lesson = new Lesson;
         $lesson->course_id = $course->id;
         $lesson->title = $request->title;
         $lesson->content = $request->content;
@@ -93,23 +88,22 @@ class LessonController extends Controller
         // allowed extensions
         $extensions = ['pdf', 'docx', 'xlsx'];
 
-        if($request->hasFile('documents'))
-        {
+        if ($request->hasFile('documents')) {
             $documents = $request->file('documents');
             foreach ($documents as $key => $document) {
-                $document_name  = $document->getClientOriginalName();
-                $extension      = pathinfo($document_name,PATHINFO_EXTENSION);
+                $document_name = $document->getClientOriginalName();
+                $extension = pathinfo($document_name, PATHINFO_EXTENSION);
 
-                if( in_array($extension, $extensions) ) {
-                    $actual_name    = pathinfo($document_name, PATHINFO_FILENAME);
-                    $fileName       = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
-                    $expFileName    = explode('/', $fileName);
+                if (in_array($extension, $extensions)) {
+                    $actual_name = pathinfo($document_name, PATHINFO_FILENAME);
+                    $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
+                    $expFileName = explode('/', $fileName);
                     $document->move($destinationPath, end($expFileName));
 
-                    $lesson_document            = new LessonDocuments();
+                    $lesson_document = new LessonDocuments;
                     $lesson_document->lesson_id = $lesson->id;
-                    $lesson_document->name      = end($expFileName);
-                    $lesson_document->document  = $fileName;
+                    $lesson_document->name = end($expFileName);
+                    $lesson_document->document = $fileName;
                     $lesson_document->save();
                 }
             }
@@ -117,7 +111,6 @@ class LessonController extends Controller
 
         return redirect(route('admin.lesson.edit', ['course_id' => $course->id, 'lesson' => $lesson->id]));
     }
-
 
     public function update($course_id, $id, Request $request)
     {
@@ -139,9 +132,9 @@ class LessonController extends Controller
             $reqFields = $webinarPakkeReqFields;
         }
 
-        $this->validate($request,$reqFields);
+        $this->validate($request, $reqFields);
         $wholeLessonFile = $this->uploadWholeFile($request);
-        
+
         $course = Course::findOrFail($course_id);
         $lesson = Lesson::findOrFail($id);
         $lesson->course_id = $course->id;
@@ -157,23 +150,22 @@ class LessonController extends Controller
         // allowed extensions
         $extensions = ['pdf', 'docx', 'xlsx'];
 
-        if($request->hasFile('documents'))
-        {
+        if ($request->hasFile('documents')) {
             $documents = $request->file('documents');
             foreach ($documents as $key => $document) {
-                $document_name  = $document->getClientOriginalName();
-                $extension      = pathinfo($document_name,PATHINFO_EXTENSION);
+                $document_name = $document->getClientOriginalName();
+                $extension = pathinfo($document_name, PATHINFO_EXTENSION);
 
-                if( in_array($extension, $extensions) ) {
-                    $actual_name    = pathinfo($document_name, PATHINFO_FILENAME);
-                    $fileName       = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
-                    $expFileName    = explode('/', $fileName);
+                if (in_array($extension, $extensions)) {
+                    $actual_name = pathinfo($document_name, PATHINFO_FILENAME);
+                    $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
+                    $expFileName = explode('/', $fileName);
                     $document->move($destinationPath, end($expFileName));
 
-                    $lesson_document            = new LessonDocuments();
+                    $lesson_document = new LessonDocuments;
                     $lesson_document->lesson_id = $lesson->id;
-                    $lesson_document->name      = end($expFileName);
-                    $lesson_document->document  = $fileName;
+                    $lesson_document->name = end($expFileName);
+                    $lesson_document->document = $fileName;
                     $lesson_document->save();
                 }
             }
@@ -191,7 +183,6 @@ class LessonController extends Controller
         return redirect(route('admin.course.show', $course->id).'?section=lessons');
     }
 
-
     public function save_order(Request $request)
     {
         $counter = $request->page - 1;
@@ -199,22 +190,21 @@ class LessonController extends Controller
         $lessons = explode(',', $request->lesson_order);
         $i = $counter * $multiplier;
 
-
-        foreach( $lessons as $lesson ) :
+        foreach ($lessons as $lesson) {
             $lesson = Lesson::find($lesson);
-            if( $lesson ) :
+            if ($lesson) {
                 $lesson->order = $i;
                 $lesson->save();
                 $i++;
-            endif;
-        endforeach;
+            }
+        }
 
         return redirect()->back();
     }
 
     /**
      * Download the document from a lesson
-     * @param $lessonId
+     *
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadLessonDocument($lessonId)
@@ -222,14 +212,16 @@ class LessonController extends Controller
         $document = LessonDocuments::find($lessonId);
         if ($document) {
             $filename = $document->document;
+
             return response()->download(public_path($filename));
         }
+
         return redirect()->back();
     }
 
     /**
      * Delete the lesson document
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function deleteLessonDocument($id)
@@ -238,6 +230,7 @@ class LessonController extends Controller
         if ($document) {
             $document->forceDelete();
         }
+
         return redirect()->back();
     }
 
@@ -248,7 +241,7 @@ class LessonController extends Controller
         if ($lesson) {
 
             $file = public_path($lesson->whole_lesson_file);
-            if(\File::isFile($file)){
+            if (\File::isFile($file)) {
                 \File::delete($file);
             }
 
@@ -261,19 +254,19 @@ class LessonController extends Controller
 
     /**
      * Get the lesson content of a lesson
-     * @param $lesson_id
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getLessonContent($lesson_id)
     {
         $lessonContent = LessonContent::where('lesson_id', $lesson_id)->get();
+
         return response()->json(['data' => $lessonContent]);
     }
 
     /**
      * Add a lesson content for a lesson
-     * @param $lesson_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function addContent($lesson_id, Request $request)
@@ -287,16 +280,16 @@ class LessonController extends Controller
             $idList = $request->content_id;
 
             // check if title is not empty
-            //$lesson->lessonContent()->delete();
+            // $lesson->lessonContent()->delete();
 
-            foreach($titles as $k => $title) {
+            foreach ($titles as $k => $title) {
                 if ($title) {
                     $insertContent = [
                         'title' => $title,
                         'tags' => $tags[$k],
                         'date' => $date[$k],
                         'description' => $description[$k],
-                        'lesson_content' => $videos[$k]
+                        'lesson_content' => $videos[$k],
                     ];
 
                     // check if ID is not empty then update the record
@@ -310,21 +303,23 @@ class LessonController extends Controller
 
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Lesson content saved.'),
-                'alert_type' => 'success'
+                'alert_type' => 'success',
             ]);
         }
+
         return redirect()->back();
     }
 
     /**
      * Delete a lesson content
-     * @param $content_id
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function deleteLessonContent($content_id)
     {
         if ($lesson_content = LessonContent::find($content_id)) {
             $lesson_content->delete();
+
             return response()->json(['success' => 'Lesson Content deleted.'], 200);
         }
 
@@ -335,14 +330,13 @@ class LessonController extends Controller
     {
         $wholeLessonFile = null;
 
-        if($request->hasFile('whole_lesson_file'))
-        {
+        if ($request->hasFile('whole_lesson_file')) {
             $file = $request->file('whole_lesson_file');
             $extension = $file->getClientOriginalExtension();
 
-            if (!in_array($extension, ['pdf'])) {
+            if (! in_array($extension, ['pdf'])) {
                 $customErrors = ['manuscript' => 'The whole lesson file must be a file of type: pdf'];
-                $validator = Validator::make([], []); 
+                $validator = Validator::make([], []);
                 $validator->validate(); // Perform validation without rules
                 $validator->errors()->merge($customErrors);
 
@@ -350,10 +344,10 @@ class LessonController extends Controller
             }
 
             $destinationPath = 'storage/lesson-whole-file'; // upload path
-            $document_name  = $file->getClientOriginalName();
-            $actual_name    = pathinfo($document_name, PATHINFO_FILENAME);
-            $fileName       = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
-            $expFileName    = explode('/', $fileName);
+            $document_name = $file->getClientOriginalName();
+            $actual_name = pathinfo($document_name, PATHINFO_FILENAME);
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
+            $expFileName = explode('/', $fileName);
             $file->move($destinationPath, end($expFileName));
 
             $wholeLessonFile = $fileName;

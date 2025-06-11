@@ -7,7 +7,6 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class AssignmentEmailListExport implements FromArray, ShouldAutoSize
 {
-
     protected $list;
 
     public function __construct($list)
@@ -19,5 +18,4 @@ class AssignmentEmailListExport implements FromArray, ShouldAutoSize
     {
         return $this->list;
     }
-
 }

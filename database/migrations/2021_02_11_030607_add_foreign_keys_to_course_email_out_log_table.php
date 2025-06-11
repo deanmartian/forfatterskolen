@@ -3,33 +3,29 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToCourseEmailOutLogTable extends Migration {
+class AddForeignKeysToCourseEmailOutLogTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('course_email_out_log', function (Blueprint $table) {
+            $table->foreign('course_id', 'course_email_out_log_course_id')->references('id')->on('courses')->onUpdate('RESTRICT')->onDelete('CASCADE');
+        });
+    }
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::table('course_email_out_log', function(Blueprint $table)
-		{
-			$table->foreign('course_id', 'course_email_out_log_course_id')->references('id')->on('courses')->onUpdate('RESTRICT')->onDelete('CASCADE');
-		});
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::table('course_email_out_log', function(Blueprint $table)
-		{
-			$table->dropForeign('course_email_out_log_course_id');
-		});
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('course_email_out_log', function (Blueprint $table) {
+            $table->dropForeign('course_email_out_log_course_id');
+        });
+    }
 }

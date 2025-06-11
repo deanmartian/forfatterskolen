@@ -45,13 +45,13 @@ class WebinarRegistrantToLearner extends Command
     public function handle()
     {
         $access_token = AdminHelpers::generateWebinarGTAccessToken();
-        $base_url       = 'https://api.getgo.com/G2W/rest/v2';
-        $org_key        = '5169031040578858252';
-        $webinar_key    = '3548686272214906891';
+        $base_url = 'https://api.getgo.com/G2W/rest/v2';
+        $org_key = '5169031040578858252';
+        $webinar_key = '3548686272214906891';
         $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$webinar_key.'/registrants';
 
         // get the registrants of the webinar
-        $header = array();
+        $header = [];
         $header[] = 'Accept: application/json';
         $header[] = 'Content-type: application/json';
         $header[] = 'Accept: application/vnd.citrix.g2wapi-v1.1+json';
@@ -65,65 +65,65 @@ class WebinarRegistrantToLearner extends Command
         $decoded_response = json_decode(preg_replace('/("\w+"):(\d+)/', '\\1:"\\2"', $response));
         CronLog::create(['activity' => 'WebinarRegistrantToLearner CRON running.']);
         foreach ($decoded_response as $registrant) {
-            if ($registrant->status === "APPROVED") {
-                $firstName  = $registrant->firstName;
-                $lastName   = $registrant->lastName;
+            if ($registrant->status === 'APPROVED') {
+                $firstName = $registrant->firstName;
+                $lastName = $registrant->lastName;
                 $user_email = $registrant->email;
 
-                $course_id  = 40;
-                $course     = Course::find($course_id);
-                $package    = $course->packages()->first();
-                $user       = User::where('email', $user_email)->first();
+                $course_id = 40;
+                $course = Course::find($course_id);
+                $package = $course->packages()->first();
+                $user = User::where('email', $user_email)->first();
 
-                if (!$user) {
+                if (! $user) {
                     $user = User::create([
-                        'email'             => $user_email,
-                        'first_name'        => $firstName,
-                        'last_name'         => $lastName,
-                        'password'          => bcrypt('Z5C5E5M2jv'),
-                        'need_pass_update'  => 1
+                        'email' => $user_email,
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
+                        'password' => bcrypt('Z5C5E5M2jv'),
+                        'need_pass_update' => 1,
                     ]);
                 }
 
                 $alreadyAdded = CoursesTaken::where([
-                    'package_id'    => $package->id,
-                    'user_id'       => $user->id
+                    'package_id' => $package->id,
+                    'user_id' => $user->id,
                 ])->first();
 
                 CoursesTaken::firstOrCreate([
-                    'package_id'    => $package->id,
-                    'user_id'       => $user->id,
-                    'is_free'       => 1
+                    'package_id' => $package->id,
+                    'user_id' => $user->id,
+                    'is_free' => 1,
                 ]);
 
-                $emailOut   = $course->emailOut()->where('for_free_course', 1)->first();
-                $subject    = $emailOut->subject;
+                $emailOut = $course->emailOut()->where('for_free_course', 1)->first();
+                $subject = $emailOut->subject;
                 $emailAttachment = EmailAttachment::where('hash', $emailOut->attachment_hash)->first();
                 $attachmentText = '';
                 if ($emailAttachment) {
                     $attachmentText = "<p style='margin-top: 10px'><b>Vedlegg:</b> 
 <a href='".route('front.email-attachment', $emailAttachment->hash)."'>"
-                        .AdminHelpers::extractFileName($emailAttachment->filename)."</a></p>";
+                        .AdminHelpers::extractFileName($emailAttachment->filename).'</a></p>';
                 }
 
                 $search_string = [
-                    '[login_link]', '[username]', '[password]'
+                    '[login_link]', '[username]', '[password]',
                 ];
                 $encode_email = encrypt($user_email);
                 $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
                 $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
                 $replace_string = [
-                    $loginLink, $user_email, $password
+                    $loginLink, $user_email, $password,
                 ];
                 $message = str_replace($search_string, $replace_string, $emailOut->message).$attachmentText;
                 // check if already added
-                if (!$alreadyAdded) {
-                    //AdminHelpers::send_email($subject,'post@forfatterskolen.no', $user_email, $message);
+                if (! $alreadyAdded) {
+                    // AdminHelpers::send_email($subject,'post@forfatterskolen.no', $user_email, $message);
                     $emailData['email_subject'] = $subject;
                     $emailData['email_message'] = $message;
-                    $emailData['from_name'] = NULL;
+                    $emailData['from_name'] = null;
                     $emailData['from_email'] = 'postmail@forfatterskolen.no';
-                    $emailData['attach_file'] = NULL;
+                    $emailData['attach_file'] = null;
 
                     \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
                     CronLog::create(['activity' => 'WebinarRegistrantToLearner CRON send email to '.$user_email]);

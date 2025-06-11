@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\AdminHelpers;
 use App\Invoice;
-use App\Mail\SubjectBodyEmail;
 use App\Paypal;
 use App\PayPalIPN;
 use App\Repositories\IPNRepository;
@@ -17,23 +16,16 @@ use PayPal\IPN\Listener\Http\ArrayListener;
 
 /**
  * Class PayPalController
- * @package App\Http\Controllers
  */
 class PaypalController extends Controller
 {
-
     protected $repository;
-    /**
-     * @param IPNRepository $repository
-     */
+
     public function __construct(IPNRepository $repository)
     {
         $this->repository = $repository;
     }
 
-    /**
-     * @param Request $request
-     */
     public function form(Request $request, $invoice_id = null)
     {
         $invoice_id = $invoice_id ?: encrypt(1);
@@ -43,10 +35,6 @@ class PaypalController extends Controller
         return view('form', compact('order'));
     }
 
-    /**
-     * @param $invoice_id
-     * @param Request $request
-     */
     public function checkout($invoice_id, Request $request)
     {
         $invoice = Invoice::findOrFail(decrypt($invoice_id));
@@ -54,7 +42,7 @@ class PaypalController extends Controller
         $paypal = new Paypal;
 
         $response = $paypal->purchase([
-            'amount' => ($invoice->gross/100),
+            'amount' => ($invoice->gross / 100),
             'transactionId' => $invoice->invoice_number,
             'currency' => 'NOK',
             'cancelUrl' => $paypal->getCancelUrl($invoice->id),
@@ -71,19 +59,18 @@ class PaypalController extends Controller
     }
 
     /**
-     * @param $invoice_id
-     * $param $page
-     * @param Request $request
+     * @param  $invoice_id
+     *                     $param $page
      * @return mixed
      */
-    public function completed($invoice_id, $page='paypal', Request $request)
+    public function completed($invoice_id, $page, Request $request)
     {
         $invoice = Invoice::findOrFail($invoice_id);
 
         $paypal = new Paypal;
 
         $response = $paypal->complete([
-            'amount' => ($invoice->gross/100),
+            'amount' => ($invoice->gross / 100),
             'transactionId' => $invoice_id,
             'currency' => 'NOK',
             'cancelUrl' => $paypal->getCancelUrl($invoice_id),
@@ -100,9 +87,6 @@ class PaypalController extends Controller
         ]);
     }
 
-    /**
-     * @param $invoice_id
-     */
     public function cancelled($invoice_id)
     {
         $order = Invoice::findOrFail($invoice_id);
@@ -113,9 +97,7 @@ class PaypalController extends Controller
     }
 
     /**
-     * @param $invoice_id
-     * @param $env
-     * @param $request Request
+     * @param  $request  Request
      */
     public function webhook($invoice_id, $env, Request $request)
     {
@@ -125,23 +107,23 @@ class PaypalController extends Controller
             $listener->useSandbox();
         }
 
-        Log::info("inside webhook");
+        Log::info('inside webhook');
         $listener->setData($request->all());
 
         $listener = $listener->run();
 
         $listener->onInvalid(function (IPNInvalid $event) use ($invoice_id) {
-            Log::info("inside invalid");
+            Log::info('inside invalid');
             $this->repository->handle($event, PayPalIPN::IPN_INVALID, $invoice_id);
         });
 
         $listener->onVerified(function (IPNVerified $event) use ($invoice_id) {
-            Log::info("inside verified");
+            Log::info('inside verified');
             $this->repository->handle($event, PayPalIPN::IPN_VERIFIED, $invoice_id);
         });
 
         $listener->onVerificationFailure(function (IPNVerificationFailure $event) use ($invoice_id) {
-            Log::info("inside failure");
+            Log::info('inside failure');
             $this->repository->handle($event, PayPalIPN::IPN_FAILURE, $invoice_id);
         });
 

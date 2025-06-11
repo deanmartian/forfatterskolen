@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -10,15 +11,22 @@ class AddMailToQueueMail extends Mailable
     use Queueable, SerializesModels;
 
     public $recipient;
+
     public $email_message;
+
     public $email_subject;
+
     public $from_name;
+
     public $from_email;
+
     public $attach_file;
+
     public $track_code;
+
     public $emailView;
 
-    public function __construct($to, $subject, $message, $from_email, $from_name, $attachment = null, $track_code,
+    public function __construct($to, $subject, $message, $from_email, $from_name, $attachment, $track_code,
         $emailView = 'emails.mail_to_queue')
     {
         $this->recipient = $to;
@@ -33,7 +41,7 @@ class AddMailToQueueMail extends Mailable
 
     public function build()
     {
-        $email =  $this->to($this->recipient)
+        $email = $this->to($this->recipient)
             ->from($this->from_email, $this->from_name)
             ->subject($this->email_subject)
             ->view($this->emailView)
@@ -41,7 +49,7 @@ class AddMailToQueueMail extends Mailable
 
         // check if there's an attachment to prevent error
         if ($this->attach_file) {
-            if(is_array($this->attach_file)) {
+            if (is_array($this->attach_file)) {
                 foreach ($this->attach_file as $attachment) {
                     $email->attach($attachment);
                 }
@@ -52,5 +60,4 @@ class AddMailToQueueMail extends Mailable
 
         return $email;
     }
-
 }

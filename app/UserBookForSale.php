@@ -7,17 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserBookForSale extends Model
 {
-
     protected $table = 'user_books_for_sale';
+
     protected $fillable = [
-        'user_id', 
+        'user_id',
         'project_id',
-        'isbn', 
-        'ebook_isbn', 
-        'title', 
-        'description', 
-        'price'
+        'isbn',
+        'ebook_isbn',
+        'title',
+        'description',
+        'price',
     ];
+
     protected $appends = ['price_formatted'];
 
     public function user()
@@ -55,7 +56,8 @@ class UserBookForSale extends Model
         return $this->hasMany('\App\StorageDistributionCost', 'user_book_for_sale_id', 'id');
     }
 
-    public function totalDistributionCost() {
+    public function totalDistributionCost()
+    {
         return $this->distributionCosts()->sum('amount');
     }
 
@@ -63,5 +65,4 @@ class UserBookForSale extends Model
     {
         return FrontendHelpers::currencyFormat($this->attributes['price']);
     }
-
 }

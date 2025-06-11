@@ -18,5 +18,5 @@ class PilotReaderReaderQueryDecision extends Model
      *
      * @var array
      */
-    protected $fillable = [ 'query_id', 'decision'];
+    protected $fillable = ['query_id', 'decision'];
 }

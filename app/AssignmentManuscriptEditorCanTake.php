@@ -22,27 +22,30 @@ class AssignmentManuscriptEditorCanTake extends Model
     public function getAssignedCountAttribute()
     {
         $count = DB::select('SELECT COUNT(id) as cnt FROM assignment_manuscripts WHERE assignment_id = '.$this->attributes['assignment_manuscript_id'].' AND editor_id = '.$this->attributes['editor_id'].' GROUP BY editor_id');
-        if($count){
+        if ($count) {
             return $count[0]->cnt;
         }
+
         return 0;
     }
 
     public function getFinishedCountAttribute()
     {
         $count = DB::select('SELECT COUNT(id) as cnt FROM assignment_manuscripts WHERE assignment_id = '.$this->attributes['assignment_manuscript_id'].' AND editor_id = '.$this->attributes['editor_id'].' AND `has_feedback`= 1 GROUP BY editor_id');
-        if($count){
+        if ($count) {
             return $count[0]->cnt;
         }
+
         return 0;
     }
 
     public function getPendingCountAttribute()
     {
         $count = DB::select('SELECT COUNT(id) as cnt FROM assignment_manuscripts WHERE assignment_id = '.$this->attributes['assignment_manuscript_id'].' AND editor_id = '.$this->attributes['editor_id'].' AND `has_feedback`= 0 GROUP BY editor_id');
-        if($count){
+        if ($count) {
             return $count[0]->cnt;
         }
+
         return 0;
     }
 }

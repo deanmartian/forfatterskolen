@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Course;
@@ -7,12 +8,11 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class CourseRewardCouponController extends Controller {
-
+class CourseRewardCouponController extends Controller
+{
     /**
      * Create reward coupon
-     * @param $course_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store($course_id, Request $request)
@@ -22,9 +22,10 @@ class CourseRewardCouponController extends Controller {
             $data = $request->all();
             $this->validate($request, ['coupon' => 'required|max:10|unique:course_reward_coupons,coupon']);
             $course->rewardCoupons()->create($data);
+
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Reward Coupon created successfully.'),
-                'alert_type' => 'success'
+                'alert_type' => 'success',
             ]);
         }
 
@@ -33,9 +34,7 @@ class CourseRewardCouponController extends Controller {
 
     /**
      * update reward coupon
-     * @param $course_id
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($course_id, $id, Request $request)
@@ -46,9 +45,10 @@ class CourseRewardCouponController extends Controller {
             $data = $request->all();
             $this->validate($request, ['coupon' => 'required|max:10|unique:course_reward_coupons,coupon,'.$reward->id]);
             $reward->update($data);
+
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Reward Coupon updated successfully.'),
-                'alert_type' => 'success'
+                'alert_type' => 'success',
             ]);
         }
 
@@ -57,8 +57,7 @@ class CourseRewardCouponController extends Controller {
 
     /**
      * Delete reward coupon
-     * @param $course_id
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($course_id, $id)
@@ -67,18 +66,19 @@ class CourseRewardCouponController extends Controller {
         $reward = CourseRewardCoupon::find($id);
         if ($course && $reward) {
             $reward->delete();
+
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Reward Coupon deleted successfully.'),
-                'alert_type' => 'success'
+                'alert_type' => 'success',
             ]);
         }
+
         return redirect()->route('admin.course.show', ['id' => $course->id, 'section' => 'reward-coupons']);
     }
 
     /**
      * Create multiple reward coupon
-     * @param $course_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function multipleStore($course_id, Request $request)
@@ -88,9 +88,10 @@ class CourseRewardCouponController extends Controller {
         if ($course) {
             $numCodesToGenerate = $request->coupon_count;
             $this->couponIterator($numCodesToGenerate, $course_id);
+
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Reward Coupons created successfully.'),
-                'alert_type' => 'success'
+                'alert_type' => 'success',
             ]);
         }
 
@@ -99,7 +100,7 @@ class CourseRewardCouponController extends Controller {
 
     /**
      * Export the coupon codes to a text file
-     * @param $course_id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function exportToText($course_id)
@@ -107,8 +108,8 @@ class CourseRewardCouponController extends Controller {
         $course = Course::find($course_id);
         if ($course) {
             $filename = 'coupon-codes';
-            $handle = fopen($filename.".txt", "w");
-            foreach($course->rewardCoupons as $rewardCoupon) {
+            $handle = fopen($filename.'.txt', 'w');
+            foreach ($course->rewardCoupons as $rewardCoupon) {
                 fwrite($handle, $rewardCoupon['coupon']."\r\n");
             }
             fclose($handle);
@@ -117,7 +118,7 @@ class CourseRewardCouponController extends Controller {
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
             header('Pragma: public');
-            header('Content-Length: ' . filesize($filename.'.txt'));
+            header('Content-Length: '.filesize($filename.'.txt'));
             readfile($filename.'.txt');
             exit;
         }
@@ -127,42 +128,47 @@ class CourseRewardCouponController extends Controller {
 
     /**
      * Creating multiple coupon iterator
-     * @param $count
-     * @param $course_id
+     *
      * @return null
      */
-    function couponIterator($count, $course_id) {
+    public function couponIterator($count, $course_id)
+    {
         for ($i = 0; $i < $count; $i++) {
             $code = $this->generateCouponCode();
 
             $checkReward = CourseRewardCoupon::where('coupon', '=', $code)
-                ->where('course_id','=', $course_id)
+                ->where('course_id', '=', $course_id)
                 ->get();
 
             // check if the coupon code already exists for that course then re-run the iterator
             if ($checkReward->count() > 0) {
                 $newCount = $count - 1;
+
                 return $this->couponIterator($newCount, $course_id);
             }
 
             CourseRewardCoupon::create([
                 'course_id' => $course_id,
-                'coupon' => $code
+                'coupon' => $code,
             ]);
         }
+
         return null;
     }
 
     /**
      * Generate coupon code
+     *
      * @return string
      */
-    function generateCouponCode() {
-        $possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    public function generateCouponCode()
+    {
+        $possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         $res = '';
         for ($i = 0; $i < 6; $i++) {
-            $res .= $possible[mt_rand(0, strlen($possible)-1)];
+            $res .= $possible[mt_rand(0, strlen($possible) - 1)];
         }
+
         return $res;
     }
 }

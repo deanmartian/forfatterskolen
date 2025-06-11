@@ -6,25 +6,25 @@ use App\Http\AdminHelpers;
 use App\Testimonial;
 use Illuminate\Http\Request;
 
-class TestimonialRepository extends BaseRepository {
-
+class TestimonialRepository extends BaseRepository
+{
     public $validationRules = [
         'name' => 'required',
         'description' => 'required',
         'testimony' => 'required',
     ];
 
-    public function __construct(Testimonial $model = null)
+    public function __construct(?Testimonial $model = null)
     {
         parent::__construct($model);
     }
 
     /**
-     * @param null $id
-     * @param $request Request
+     * @param  null  $id
+     * @param  $request  Request
      * @return mixed
      */
-    public function createOrUpdate($id = null, $request)
+    public function createOrUpdate($id, $request)
     {
         $model = is_null($id) ? new $this->model : $this->findOrFail($id);
         $model->name = $request->name;
@@ -33,10 +33,10 @@ class TestimonialRepository extends BaseRepository {
 
         $destinationPath = 'storage/testimonials'; // upload path
         if ($request->hasFile('author_image') && $request->file('author_image')->isValid()) {
-            $extension = pathinfo($_FILES['author_image']['name'],PATHINFO_EXTENSION); // getting document extension
+            $extension = pathinfo($_FILES['author_image']['name'], PATHINFO_EXTENSION); // getting document extension
 
             $actual_name = pathinfo($request->author_image->getClientOriginalName(), PATHINFO_FILENAME);
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
 
             $expFileName = explode('/', $fileName);
 
@@ -45,10 +45,10 @@ class TestimonialRepository extends BaseRepository {
         }
 
         if ($request->hasFile('book_image') && $request->file('book_image')->isValid()) {
-            $extension = pathinfo($_FILES['book_image']['name'],PATHINFO_EXTENSION); // getting document extension
+            $extension = pathinfo($_FILES['book_image']['name'], PATHINFO_EXTENSION); // getting document extension
 
             $actual_name = pathinfo($request->book_image->getClientOriginalName(), PATHINFO_FILENAME);
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
 
             $expFileName = explode('/', $fileName);
 
@@ -62,7 +62,7 @@ class TestimonialRepository extends BaseRepository {
             $model->status = $model::INACTIVE;
         }
 
-        if (!$model->save()) {
+        if (! $model->save()) {
             return false;
         }
 
@@ -71,7 +71,7 @@ class TestimonialRepository extends BaseRepository {
 
     /**
      * Delete testimonial
-     * @param $id
+     *
      * @return bool
      */
     public function destroy($id)
@@ -85,11 +85,10 @@ class TestimonialRepository extends BaseRepository {
             \File::delete($testimonial->book_image);
         }
 
-        if (!$this->delete($id)) {
+        if (! $this->delete($id)) {
             return false;
         }
 
         return true;
     }
-
 }

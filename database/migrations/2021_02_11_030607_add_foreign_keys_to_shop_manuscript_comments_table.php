@@ -3,35 +3,31 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToShopManuscriptCommentsTable extends Migration {
+class AddForeignKeysToShopManuscriptCommentsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('shop_manuscript_comments', function (Blueprint $table) {
+            $table->foreign('shop_manuscript_taken_id', 'shop_manuscript_comments_ibfk_1')->references('id')->on('shop_manuscripts_taken')->onUpdate('RESTRICT')->onDelete('CASCADE');
+            $table->foreign('user_id', 'shop_manuscript_comments_ibfk_2')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('CASCADE');
+        });
+    }
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::table('shop_manuscript_comments', function(Blueprint $table)
-		{
-			$table->foreign('shop_manuscript_taken_id', 'shop_manuscript_comments_ibfk_1')->references('id')->on('shop_manuscripts_taken')->onUpdate('RESTRICT')->onDelete('CASCADE');
-			$table->foreign('user_id', 'shop_manuscript_comments_ibfk_2')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('CASCADE');
-		});
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::table('shop_manuscript_comments', function(Blueprint $table)
-		{
-			$table->dropForeign('shop_manuscript_comments_ibfk_1');
-			$table->dropForeign('shop_manuscript_comments_ibfk_2');
-		});
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('shop_manuscript_comments', function (Blueprint $table) {
+            $table->dropForeign('shop_manuscript_comments_ibfk_1');
+            $table->dropForeign('shop_manuscript_comments_ibfk_2');
+        });
+    }
 }

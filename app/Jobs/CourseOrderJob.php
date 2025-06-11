@@ -5,27 +5,37 @@ namespace App\Jobs;
 use App\Mail\CourseOrderMail;
 use App\Repositories\Services\SaleService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class CourseOrderJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $recipient;
+
     private $email_content;
+
     private $email_subject;
+
     private $from_name;
+
     private $from_email;
+
     private $attach_file;
+
     private $parent;
+
     private $parent_id;
+
     private $actionText;
+
     private $actionUrl;
+
     private $user;
+
     private $package_id;
 
     /**
@@ -33,8 +43,8 @@ class CourseOrderJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($recipient, $subject, $message, $from_email = null, $from_name = null,
-        $attachment = null, $parent, $parent_id, $actionText, $actionUrl, $user, $package_id)
+    public function __construct($recipient, $subject, $message, $from_email, $from_name,
+        $attachment, $parent, $parent_id, $actionText, $actionUrl, $user, $package_id)
     {
         $this->recipient = $recipient;
         $this->email_subject = $subject;
@@ -55,7 +65,8 @@ class CourseOrderJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(SaleService $saleService) {
+    public function handle(SaleService $saleService)
+    {
 
         $track_code = md5(rand());
         \Mail::send(new CourseOrderMail($this->recipient, $this->email_subject, $this->email_content, $this->from_email,

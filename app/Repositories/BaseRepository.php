@@ -2,14 +2,13 @@
 
 namespace App\Repositories;
 
-use Validator;
-use Illuminate\Database\Eloquent\Model;
 use DTApi\Exceptions\ValidationException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Validator;
 
 class BaseRepository
 {
-
     /**
      * @var Model
      */
@@ -20,10 +19,7 @@ class BaseRepository
      */
     protected $validationRules = [];
 
-    /**
-     * @param Model $model
-     */
-    public function __construct(Model $model = null)
+    public function __construct(?Model $model = null)
     {
         $this->model = $model;
     }
@@ -53,7 +49,7 @@ class BaseRepository
     }
 
     /**
-     * @param integer $id
+     * @param  int  $id
      * @return Model|null
      */
     public function find($id)
@@ -67,8 +63,9 @@ class BaseRepository
     }
 
     /**
-     * @param integer $id
+     * @param  int  $id
      * @return Model
+     *
      * @throws ModelNotFoundException
      */
     public function findOrFail($id)
@@ -77,8 +74,9 @@ class BaseRepository
     }
 
     /**
-     * @param string $slug
+     * @param  string  $slug
      * @return Model
+     *
      * @throws ModelNotFoundException
      */
     public function findBySlug($slug)
@@ -97,17 +95,17 @@ class BaseRepository
     }
 
     /**
-     * @param array $attributes
      * @return Model
      */
     public function instance(array $attributes = [])
     {
         $model = $this->model;
+
         return new $model($attributes);
     }
 
     /**
-     * @param int|null $perPage
+     * @param  int|null  $perPage
      * @return mixed
      */
     public function paginate($perPage = null)
@@ -121,10 +119,7 @@ class BaseRepository
     }
 
     /**
-     * @param array $data
-     * @param null $rules
-     * @param array $messages
-     * @param array $customAttributes
+     * @param  null  $rules
      * @return \Illuminate\Validation\Validator
      */
     public function validator(array $data = [], $rules = null, array $messages = [], array $customAttributes = [])
@@ -137,21 +132,19 @@ class BaseRepository
     }
 
     /**
-     * @param array $data
-     * @param null $rules
-     * @param array $messages
-     * @param array $customAttributes
+     * @param  null  $rules
      * @return bool
+     *
      * @throws ValidationException
      */
     public function validate(array $data = [], $rules = null, array $messages = [], array $customAttributes = [])
     {
         $validator = $this->validator($data, $rules, $messages, $customAttributes);
+
         return $this->_validate($validator);
     }
 
     /**
-     * @param array $data
      * @return Model
      */
     public function create(array $data = [])
@@ -160,37 +153,39 @@ class BaseRepository
     }
 
     /**
-     * @param integer $id
-     * @param array $data
+     * @param  int  $id
      * @return Model
      */
     public function update($id, array $data = [])
     {
         $instance = $this->findOrFail($id);
         $instance->update($data);
+
         return $instance;
     }
 
     /**
-     * @param integer $id
+     * @param  int  $id
      * @return Model
+     *
      * @throws \Exception
      */
     public function delete($id)
     {
         $model = $this->findOrFail($id);
         $model->delete();
+
         return $model;
     }
 
     /**
-     * @param \Illuminate\Validation\Validator $validator
      * @return bool
+     *
      * @throws ValidationException
      */
     protected function _validate(\Illuminate\Validation\Validator $validator)
     {
-        if (!empty($attributeNames = $this->validatorAttributeNames())) {
+        if (! empty($attributeNames = $this->validatorAttributeNames())) {
             $validator->setAttributeNames($attributeNames);
         }
 
@@ -201,5 +196,4 @@ class BaseRepository
 
         return true;
     }
-
 }

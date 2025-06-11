@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class PublishingPackageController extends Controller
 {
-    
     public function services()
     {
         return view('backend.publishing-package.services');
@@ -17,6 +16,7 @@ class PublishingPackageController extends Controller
     public function getAllServices()
     {
         $publishingService = PublishingService::all();
+
         return $publishingService;
     }
 
@@ -26,7 +26,7 @@ class PublishingPackageController extends Controller
             'product_service' => 'required',
             'price' => 'required',
             'per_word_hour' => 'required',
-            'per_unit' => 'required'
+            'per_unit' => 'required',
         ]);
 
         $publishingService = $request->id ? PublishingService::find($request->id) : new PublishingService;
@@ -40,10 +40,10 @@ class PublishingPackageController extends Controller
         return $publishingService;
     }
 
-    public function updateServiceField( $service_id, Request $request )
+    public function updateServiceField($service_id, Request $request)
     {
         $service = PublishingService::find($service_id);
-        if (!$service) {
+        if (! $service) {
             return redirect()->route('admin.service.index');
         }
 
@@ -53,5 +53,4 @@ class PublishingPackageController extends Controller
 
         return $service;
     }
-
 }

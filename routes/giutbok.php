@@ -1,32 +1,32 @@
 <?php
 
-if(config('app.app_site') == 'no'){
+if (config('app.app_site') == 'no') {
     $domain = 'giutbok.forfatterskolen.no';
-}elseif(config('app.app_site') == 'localhost'){
+} elseif (config('app.app_site') == 'localhost') {
     $domain = 'giutbok.forfatterskolen.local';
-} elseif(config('app.app_site') == 'dev.no'){
+} elseif (config('app.app_site') == 'dev.no') {
     $domain = 'giutbok.forfatterskolen.no';
 }
 
 Route::group([
     'domain' => $domain,
-], function(){
+], function () {
     Route::get('learner/generate-password', '\Backend\LearnerController@generatePassword');
 
     Route::group([
         'middleware' => ['giutbok', 'logActivity'],
-        'namespace' => 'Giutbok'
-    ], function(){
+        'namespace' => 'Giutbok',
+    ], function () {
         Route::get('/', 'PageController@dashboard')->name('g-admin.dashboard');
         Route::post('/change-password', 'PageController@changePassword')->name('editor.change-password');
 
         Route::post('/project/book-formatting/{id}/feedback', 'PageController@addBookFormatFeedback')
-        ->name('g-admin.book-format.add-feedback');
+            ->name('g-admin.book-format.add-feedback');
 
         Route::post('learner/register', 'LearnerController@registerLearner')->name('g-admin.learner.register');
         Route::group([
-            'prefix' => 'learner'
-        ], function() {
+            'prefix' => 'learner',
+        ], function () {
             Route::get('/', 'LearnerController@index')->name('g-admin.learner.index');
         });
 
@@ -45,8 +45,8 @@ Route::group([
 
     Route::group([
         'middleware' => 'giutbok',
-        'namespace' => 'Backend'
-    ], function() {
+        'namespace' => 'Backend',
+    ], function () {
 
         Route::post('backend/change-password', 'PageController@changePassword')->name('giutbok.change-password');
 

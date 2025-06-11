@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,7 @@ class SosChildren extends Model
 
     /**
      * Get the record that is marked as main description
+     *
      * @return Model|null|static
      */
     public function getMainDescription()
@@ -30,6 +32,7 @@ class SosChildren extends Model
 
     /**
      * Get the record that is marked as primary video
+     *
      * @return Model|null|static
      */
     public function getPrimaryVideo()

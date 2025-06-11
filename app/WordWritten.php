@@ -12,6 +12,7 @@ class WordWritten extends Model
      * @var string
      */
     protected $table = 'words_written';
+
     /**
      * The attributes that are mass assignable.
      *

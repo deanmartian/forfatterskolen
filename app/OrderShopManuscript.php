@@ -13,5 +13,4 @@ class OrderShopManuscript extends Model
     {
         return $this->belongsTo('App\Order');
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Helpers\ApiException;
@@ -24,9 +25,7 @@ class PulseController extends Controller
 
     /**
      * Update title of specific pulse
-     * @param $pulse_id
-     * @param Request $request
-     * @param DapulseRepository $repository
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updatePulseTitle($pulse_id, Request $request, DapulseRepository $repository)
@@ -36,13 +35,14 @@ class PulseController extends Controller
         if ($result instanceof ApiException) {
             return response()->json(ApiResponse::error($result->getMessage()), $result->getCode());
         }
+
         return response()->json('', 200);
     }
 
     public function removeSubscriber(Request $request, DapulseRepository $repository)
     {
         $result = $repository->removePulseSubscriber($request);
-print_r($result);
+        print_r($result);
         /*if ($result instanceof ApiException) {
             return response()->json(ApiResponse::error($result->getMessage()), $result->getCode());
         }

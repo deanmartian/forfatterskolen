@@ -8,18 +8,18 @@ class CourseApplication extends Model
 {
     protected $fillable = [
         'package_id',
-        'user_id', 
+        'user_id',
         'age',
         'file_path',
-        'approved_date'
+        'approved_date',
     ];
 
     protected $casts = [
-        'approved_date' => 'timestamp'
+        'approved_date' => 'timestamp',
     ];
 
     protected $appends = [
-        'file_link'
+        'file_link',
     ];
 
     public function user()

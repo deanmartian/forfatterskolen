@@ -26,7 +26,7 @@ class SaveReplayRequest extends FormRequest
         return [
             'title' => 'required',
             'video_link' => 'required',
-            'file' => 'mimes:pdf'
+            'file' => 'mimes:pdf',
         ];
     }
 }

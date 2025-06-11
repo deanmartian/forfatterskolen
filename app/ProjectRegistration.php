@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectRegistration extends Model
 {
-
     protected $fillable = ['project_id', 'field', 'value', 'type', 'book_price', 'in_storage'];
 
     protected $appends = ['isbn_type'];
@@ -20,22 +19,22 @@ class ProjectRegistration extends Model
         6 => 'Lydbok (CD)',
     ];
 
-    public function scopeIsbns( $query )
+    public function scopeIsbns($query)
     {
         $query->where('field', 'isbn');
     }
 
-    public function scopeCentralDistributions( $query )
+    public function scopeCentralDistributions($query)
     {
         $query->where('field', 'central-distribution');
     }
 
-    public function scopeMentorBookBase( $query )
+    public function scopeMentorBookBase($query)
     {
         $query->where('field', 'mentor-book-base');
     }
 
-    public function scopeUploadFilesToMentorBookBase( $query )
+    public function scopeUploadFilesToMentorBookBase($query)
     {
         $query->where('field', 'upload-files-to-mentor-book-base');
     }
@@ -62,10 +61,11 @@ class ProjectRegistration extends Model
 
     public function getIsbnTypeAttribute()
     {
-        return $this->isbnTypes()[$this->attributes['type']] ?? NULL;
+        return $this->isbnTypes()[$this->attributes['type']] ?? null;
     }
 
-    public function totalDistributionCost() {
+    public function totalDistributionCost()
+    {
         return $this->distributionCosts()->sum('amount');
     }
 }

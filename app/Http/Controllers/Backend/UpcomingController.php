@@ -10,14 +10,14 @@ use Illuminate\Http\Request;
 
 class UpcomingController extends Controller
 {
-
     public function index()
     {
         $upcomingSections = UpcomingSection::all();
+
         return view('backend.upcoming.index', compact('upcomingSections'));
     }
 
-    public function saveSection( $id, Request $request )
+    public function saveSection($id, Request $request)
     {
 
         $section = UpcomingSection::find($id);
@@ -25,7 +25,7 @@ class UpcomingController extends Controller
         $section->name = $request->name;
         $section->title = $request->title;
         $section->description = $request->description;
-        $section->date = $request->date ? Carbon::parse($request->date)->format('Y-m-d H:i:s') : NULL;
+        $section->date = $request->date ? Carbon::parse($request->date)->format('Y-m-d H:i:s') : null;
         $section->link = $request->link;
         $section->link_label = $request->link_label;
         $section->save();
@@ -33,5 +33,4 @@ class UpcomingController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
             'alert_type' => 'success']);
     }
-
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PrivateGroupDiscussion extends Model
 {
-    protected $fillable = [ 'private_group_id', 'user_id', 'subject', 'message', 'is_announcement'];
+    protected $fillable = ['private_group_id', 'user_id', 'subject', 'message', 'is_announcement'];
 
     public function user()
     {

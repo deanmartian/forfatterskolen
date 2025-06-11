@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class UpdateAssignmentTableEditorIdNotNull extends Migration
 {
@@ -13,8 +12,7 @@ class UpdateAssignmentTableEditorIdNotNull extends Migration
      */
     public function up()
     {
-        Schema::table('assignments', function($table)
-        {
+        Schema::table('assignments', function ($table) {
             $table->integer('editor_id')->nullable()->change();
         });
 

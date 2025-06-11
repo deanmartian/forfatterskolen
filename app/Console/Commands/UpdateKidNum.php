@@ -2,12 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\AdminHelpers;
-use App\Http\FrontendHelpers;
 use App\Invoice;
-use App\PilotReaderBookReading;
-use App\PilotReaderBookSettings;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class UpdateKidNum extends Command
@@ -43,18 +38,18 @@ class UpdateKidNum extends Command
      */
     public function handle()
     {
-        $fikenInvoices = "https://fiken.no/api/v1/companies/forfatterskolen-as/invoices";
-        $username = "cleidoscope@gmail.com";
-        $password = "moonfang";
+        $fikenInvoices = 'https://fiken.no/api/v1/companies/forfatterskolen-as/invoices';
+        $username = 'cleidoscope@gmail.com';
+        $password = 'moonfang';
         $headers = [
             'Accept: application/hal+json, application/vnd.error+json',
-            'Content-Type: application/hal+json'
+            'Content-Type: application/hal+json',
         ];
 
         $ch = curl_init($fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $data = curl_exec($ch);
         $data = json_decode($data);
@@ -62,17 +57,17 @@ class UpdateKidNum extends Command
 
         // get all unpaid invoices to reduce process time
         $invoices = Invoice::get();
-        foreach( $invoices as $invoice ) {
-            $kid = NULL;
-            foreach( $fikenInvoices as $fikenInvoice ) :
-                if( $invoice->fiken_url == $fikenInvoice->_links->alternate->href ) :
-                    $kid = isset($fikenInvoice->kid) ? $fikenInvoice->kid : NULL;
+        foreach ($invoices as $invoice) {
+            $kid = null;
+            foreach ($fikenInvoices as $fikenInvoice) {
+                if ($invoice->fiken_url == $fikenInvoice->_links->alternate->href) {
+                    $kid = isset($fikenInvoice->kid) ? $fikenInvoice->kid : null;
                     break;
-                endif;
-            endforeach;
+                }
+            }
             $invoice->update(['kid_number' => $kid]);
         }
 
-        return "done checking fiken";
+        return 'done checking fiken';
     }
 }

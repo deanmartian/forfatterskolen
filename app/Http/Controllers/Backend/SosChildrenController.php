@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
@@ -6,17 +7,17 @@ use App\Http\Controllers\Controller;
 use App\SosChildren;
 use Illuminate\Http\Request;
 
-class SosChildrenController extends Controller {
-
+class SosChildrenController extends Controller
+{
     /**
      * Storage of SosChildren
+     *
      * @var SosChildren|string
      */
     protected $sosChildren = '';
 
     /**
      * SosChildrenController constructor.
-     * @param SosChildren $sosChildren
      */
     public function __construct(SosChildren $sosChildren)
     {
@@ -25,6 +26,7 @@ class SosChildrenController extends Controller {
 
     /**
      * Display index page
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
@@ -32,13 +34,14 @@ class SosChildrenController extends Controller {
         $hasMainDescription = $this->sosChildren->getMainDescription();
         $primaryVideo = $this->sosChildren->getPrimaryVideo();
         $documents = $this->sosChildren->getVideoRecords();
+
         return view('backend.sos-children.index', compact('hasMainDescription', 'primaryVideo',
             'documents'));
     }
 
     /**
      * For adding/editing the main description
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function editMainDescription(Request $request)
@@ -46,7 +49,7 @@ class SosChildrenController extends Controller {
         $data = $request->except('_token');
 
         $validator = \Validator::make($request->all(), [
-            'description' => 'required'
+            'description' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -62,16 +65,16 @@ class SosChildrenController extends Controller {
                 $sosChildren->description = $data['description'];
                 $sosChildren->bottom_description = $data['bottom_description'];
                 $sosChildren->save();
-                return redirect()->route('admin.sos-children.index')->with(['errors' =>
-                    AdminHelpers::createMessageBag('Main description updated successfully.'),
+
+                return redirect()->route('admin.sos-children.index')->with(['errors' => AdminHelpers::createMessageBag('Main description updated successfully.'),
                     'alert_type' => 'success']);
             }
         } else {
             $data['title'] = 'Main Description';
             $data['is_main_description'] = 1;
             $this->sosChildren->create($data);
-            return redirect()->route('admin.sos-children.index')->with(['errors' =>
-                AdminHelpers::createMessageBag('Main description updated successfully.'),
+
+            return redirect()->route('admin.sos-children.index')->with(['errors' => AdminHelpers::createMessageBag('Main description updated successfully.'),
                 'alert_type' => 'success']);
         }
 
@@ -80,6 +83,7 @@ class SosChildrenController extends Controller {
 
     /**
      * Display the create page
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
@@ -92,12 +96,13 @@ class SosChildrenController extends Controller {
         ];
 
         $primaryVideo = $this->sosChildren->getPrimaryVideo();
+
         return view('backend.sos-children.create', compact('document', 'primaryVideo'));
     }
 
     /**
      * Create new document
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
@@ -109,12 +114,13 @@ class SosChildrenController extends Controller {
             return redirect()->route('admin.sos-children.index')->with(['errors' => AdminHelpers::createMessageBag('Document created successfully.'),
                 'alert_type' => 'success']);
         }
+
         return redirect()->back();
     }
 
     /**
      * Display the edit page
-     * @param $id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function edit($id)
@@ -123,6 +129,7 @@ class SosChildrenController extends Controller {
         if ($sosChildren) {
             $primaryVideo = $this->sosChildren->getPrimaryVideo();
             $document = $sosChildren->toArray();
+
             return view('backend.sos-children.edit', compact('document', 'primaryVideo'));
         }
 
@@ -131,8 +138,7 @@ class SosChildrenController extends Controller {
 
     /**
      * Update the document
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request)
@@ -142,6 +148,7 @@ class SosChildrenController extends Controller {
             $data = $request->except('_token');
             $data['is_primary'] = isset($data['is_primary']) ? 1 : 0;
             $sosChildren->update($data);
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Document updated successfully.'),
                 'alert_type' => 'success']);
         }
@@ -151,7 +158,7 @@ class SosChildrenController extends Controller {
 
     /**
      * Delete document
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
@@ -159,6 +166,7 @@ class SosChildrenController extends Controller {
         $sosChildren = $this->sosChildren->find($id);
         if ($sosChildren) {
             $sosChildren->delete();
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Document deleted successfully.'),
                 'alert_type' => 'success']);
         }
@@ -168,11 +176,13 @@ class SosChildrenController extends Controller {
 
     /**
      * Display the edit description page
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function getEditMainDescription()
     {
         $hasMainDescription = $this->sosChildren->getMainDescription();
+
         return view('backend.sos-children.main-description', compact('hasMainDescription'));
     }
 }

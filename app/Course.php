@@ -9,16 +9,16 @@ use Illuminate\Database\Eloquent\Model;
 class Course extends Model
 {
     use Loggable;
-    
+
     protected $table = 'courses';
 
     // completed_date and issue_date is used on downloading certificate
     protected $fillable = ['title', 'description', 'description_simplemde', 'course_image', 'type', 'email',
-        'course_plan', 'course_plan_data','start_date', 'end_date', 'completed_date', 'issue_date', 'extend_courses',
-        'instructor', 'auto_list_id', 'photographer', 'pay_later_with_application', 'is_free', 'hide_price', 
+        'course_plan', 'course_plan_data', 'start_date', 'end_date', 'completed_date', 'issue_date', 'extend_courses',
+        'instructor', 'auto_list_id', 'photographer', 'pay_later_with_application', 'is_free', 'hide_price',
         'meta_title', 'meta_description', 'meta_image'];
-    protected $appends = ['is_webinar_pakke'];
 
+    protected $appends = ['is_webinar_pakke'];
 
     public function packages()
     {
@@ -48,23 +48,21 @@ class Course extends Model
             ->orderBy('full_payment_price', 'asc');
     }
 
-
     public function workshops()
     {
         return $this->hasMany('App\Workshop')->orderBy('created_at', 'desc');
     }
 
-
     public function webinars()
     {
-        //display id of 24 first then other record is by start date
-        return $this->hasMany('App\Webinar')->orderByRaw("id=24 DESC")->orderBy('start_date', 'asc');
+        // display id of 24 first then other record is by start date
+        return $this->hasMany('App\Webinar')->orderByRaw('id=24 DESC')->orderBy('start_date', 'asc');
     }
 
     public function activeWebinars()
     {
-        //display id of 24 first then other record is by start date
-        return $this->hasMany('App\Webinar')->orderByRaw("id=24 DESC")
+        // display id of 24 first then other record is by start date
+        return $this->hasMany('App\Webinar')->orderByRaw('id=24 DESC')
             ->where('start_date', '>=', Carbon::today())
             ->orderBy('start_date', 'asc');
     }
@@ -72,7 +70,7 @@ class Course extends Model
     public function assignments()
     {
         return $this->hasMany('App\Assignment')
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->whereNull('parent');
                 $query->orWhere('parent', 'assignment');
             })
@@ -87,17 +85,17 @@ class Course extends Model
                 // check if expired 2 months ago or the end date is not yet set
                 $query->where('submission_date','>', Carbon::now());
             })*/
-            ->where(function($query) {
+            ->where(function ($query) {
                 // check if available date is less than or equal to date or if it's null
-                $query->where('available_date','<=', Carbon::now());
+                $query->where('available_date', '<=', Carbon::now());
                 $query->orWhereNull('available_date');
             })
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->whereNull('parent');
                 $query->orWhere('parent', 'assignment');
             })
             ->oldest('submission_date');
-            //->orderBy('created_at', 'desc');
+        // ->orderBy('created_at', 'desc');
     }
 
     public function expiredAssignments()
@@ -119,7 +117,7 @@ class Course extends Model
 
     public function lesson_kursplan()
     {
-        return $this->lessons()->where('title','Kursplan');
+        return $this->lessons()->where('title', 'Kursplan');
     }
 
     public function discounts()
@@ -149,31 +147,33 @@ class Course extends Model
 
     public function emailOutOrdered()
     {
-        return $this->hasMany('App\EmailOut')->orderByRaw("delay + 0 ASC")
-        ->orderBy('delay', 'asc');
+        return $this->hasMany('App\EmailOut')->orderByRaw('delay + 0 ASC')
+            ->orderBy('delay', 'asc');
     }
 
     public function emailOutActive()
     {
         $today = now()->toDateString();
+
         return $this->hasMany('App\EmailOut')
-        ->where(function ($query) use ($today) {
-            $query->where('delay', '>=', $today)
-                  ->orWhereRaw('delay REGEXP "^[0-9]+$"')
-                  ->orWhere('send_immediately', 1);
-        })
-        ->orderByRaw("delay + 0 ASC")
-        ->orderBy('delay', 'asc');
+            ->where(function ($query) use ($today) {
+                $query->where('delay', '>=', $today)
+                    ->orWhereRaw('delay REGEXP "^[0-9]+$"')
+                    ->orWhere('send_immediately', 1);
+            })
+            ->orderByRaw('delay + 0 ASC')
+            ->orderBy('delay', 'asc');
     }
 
     public function emailOutArchive()
     {
         $today = now()->toDateString();
+
         return $this->hasMany('App\EmailOut')
-        ->where('delay', '<', $today)
-        ->whereRaw('delay REGEXP "[0-9]{4}-[0-9]{2}-[0-9]{2}"')
-        ->orderByRaw("delay + 0 ASC")
-        ->orderBy('delay', 'asc');
+            ->where('delay', '<', $today)
+            ->whereRaw('delay REGEXP "[0-9]{4}-[0-9]{2}-[0-9]{2}"')
+            ->orderByRaw('delay + 0 ASC')
+            ->orderBy('delay', 'asc');
     }
 
     public function emailOutLog()
@@ -206,7 +206,7 @@ class Course extends Model
         return $this->hasOne('App\CourseCertificate');
     }
 
-    //for deleting the children
+    // for deleting the children
     /*public static function boot()
     {
         parent::boot();
@@ -223,6 +223,7 @@ class Course extends Model
         $packages_ids = $this->packages()->pluck('id')->toArray();
         $coursesTaken_ids = CoursesTaken::whereIn('package_id', $packages_ids)->pluck('id')->toArray();
         $manuscripts = Manuscript::whereIn('coursetaken_id', $coursesTaken_ids)->orderBy('created_at', 'desc');
+
         return $manuscripts;
     }
 
@@ -239,6 +240,7 @@ class Course extends Model
     public function getLearnersAttribute()
     {
         $packageIds = $this->packages()->pluck('id')->toArray();
+
         return CoursesTaken::whereHas('user')->whereIn('package_id', $packageIds)
             ->where('is_active', true)
             ->orderBy('updated_at', 'desc');
@@ -247,6 +249,7 @@ class Course extends Model
     public function getLearnersWithExpiredAttribute()
     {
         $packageIds = $this->packages()->pluck('id')->toArray();
+
         return CoursesTaken::whereHas('user')->whereIn('package_id', $packageIds)
             ->where('is_active', true)
             ->withTrashed()
@@ -256,6 +259,7 @@ class Course extends Model
     public function getwebinarLearnersAttribute()
     {
         $packageIds = $this->packages()->pluck('id')->toArray();
+
         return CoursesTaken::whereHas('user')->whereIn('package_id', $packageIds)
             ->where('is_active', true)
             ->where('exclude_in_scheduled_registration', 0)
@@ -267,23 +271,21 @@ class Course extends Model
         return date_format(date_create($value), 'M d, Y h:i a');
     }
 
-
-
     public function getStartDateAttribute($value)
     {
-        if( $value ) :
+        if ($value) {
             return date_format(date_create($value), 'M d, Y');
-        endif;
+        }
+
         return false;
     }
 
-
-
     public function getEndDateAttribute($value)
     {
-        if( $value ) :
+        if ($value) {
             return date_format(date_create($value), 'M d, Y');
-        endif;
+        }
+
         return false;
     }
 
@@ -291,15 +293,20 @@ class Course extends Model
     {
         $start_date = $this->attributes['start_date'];
         $end_date = $this->attributes['end_date'];
-        if( $start_date || $end_date ) :
+        if ($start_date || $end_date) {
             $now = time();
-            if( $start_date ) :
-                if( $now < strtotime($start_date)) return false;
-            endif;
-            if( $end_date ) :
-                if( $now > strtotime($end_date)) return false;
-            endif;
-        endif;
+            if ($start_date) {
+                if ($now < strtotime($start_date)) {
+                    return false;
+                }
+            }
+            if ($end_date) {
+                if ($now > strtotime($end_date)) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
@@ -309,6 +316,7 @@ class Course extends Model
         if ($status) {
             return true;
         }
+
         return false;
     }
 
@@ -316,5 +324,4 @@ class Course extends Model
     {
         return $this->attributes['id'] === 17 ? true : false;
     }
-
 }

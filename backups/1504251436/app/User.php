@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use File;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -32,10 +32,11 @@ class User extends Authenticatable
     {
         $address = \App\Address::where('user_id', $this->attributes['id'])->first();
 
-        if( !$address ) :
-            $empty_address = new \App\Address();
+        if (! $address) {
+            $empty_address = new \App\Address;
+
             return $empty_address;
-        endif;
+        }
 
         return $address;
     }
@@ -44,6 +45,7 @@ class User extends Authenticatable
     {
         $coursesTaken = $this->coursesTaken->pluck('id')->toArray();
         $manuscripts = \App\Manuscript::whereIn('coursetaken_id', $coursesTaken)->orderBy('created_at', 'desc')->get();
+
         return $manuscripts;
     }
 
@@ -56,7 +58,6 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\ShopManuscriptsTaken')->orderBy('created_at', 'desc');
     }
-
 
     public function workshopsTaken()
     {
@@ -71,22 +72,23 @@ class User extends Authenticatable
     public function getProfileImageAttribute($value)
     {
         $image = substr($this->attributes['profile_image'], 1);
-        if(File::exists($image)) return $value;
+        if (File::exists($image)) {
+            return $value;
+        }
 
         return asset('images/user.png');
-        
-    }
 
+    }
 
     public function getFullNameAttribute()
     {
-        return $this->attributes['first_name'] . ' ' . $this->attributes['last_name'];
+        return $this->attributes['first_name'].' '.$this->attributes['last_name'];
     }
-
 
     public function getHasProfileImageAttribute()
     {
         $image = substr($this->attributes['profile_image'], 1);
+
         return File::exists($image);
     }
 }

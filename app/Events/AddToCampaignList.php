@@ -7,18 +7,17 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AddToCampaignList {
-
+class AddToCampaignList
+{
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $list_id;
+
     public $listData;
 
     /**
      * Create a new event instance.
      * AddToCampaignList constructor.
-     * @param $list_id
-     * @param $listData
      */
     public function __construct($list_id, $listData)
     {
@@ -35,5 +34,4 @@ class AddToCampaignList {
     {
         return [];
     }
-
 }

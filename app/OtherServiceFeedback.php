@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ class OtherServiceFeedback extends Model
      * @var string
      */
     protected $table = 'other_service_feedbacks';
+
     /**
      * The attributes that are mass assignable.
      *

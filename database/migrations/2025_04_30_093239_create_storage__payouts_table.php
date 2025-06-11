@@ -23,8 +23,8 @@ class CreateStoragePayoutsTable extends Migration
             $table->timestamps();
 
             $table->foreign('project_registration_id')
-                  ->references('id')->on('project_registrations')
-                  ->onDelete('cascade');
+                ->references('id')->on('project_registrations')
+                ->onDelete('cascade');
 
             $table->unique(['project_registration_id', 'year', 'quarter'], 'unique_payout_per_quarter');
         });

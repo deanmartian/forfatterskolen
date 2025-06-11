@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
@@ -6,14 +7,14 @@ use App\Http\Controllers\Controller;
 use Artisan;
 use DB;
 
-class QueueJobController extends Controller {
-
+class QueueJobController extends Controller
+{
     public function index()
     {
         $isQueueRunning = false;
         if ($this->isQueueWorkerRunning()) {
-            $isQueueRunning = true;;
-        } 
+            $isQueueRunning = true;
+        }
         $failedJobs = DB::table('failed_jobs')->orderBy('failed_at', 'desc')->paginate(10);
         foreach ($failedJobs as $job) {
             // Decode and clean up the payload
@@ -48,7 +49,7 @@ class QueueJobController extends Controller {
 
         return redirect()->back()->with([
             'alert_type' => 'success',
-            'errors'    => AdminHelpers::createMessageBag('Jobs processed successfully.')
+            'errors' => AdminHelpers::createMessageBag('Jobs processed successfully.'),
         ]);
     }
 
@@ -58,7 +59,7 @@ class QueueJobController extends Controller {
 
         return redirect()->back()->with([
             'alert_type' => 'success',
-            'errors'    => AdminHelpers::createMessageBag('All failed jobs retried successfully.')
+            'errors' => AdminHelpers::createMessageBag('All failed jobs retried successfully.'),
         ]);
     }
 
@@ -69,7 +70,7 @@ class QueueJobController extends Controller {
 
         return redirect()->back()->with([
             'alert_type' => 'success',
-            'errors'    => AdminHelpers::createMessageBag('Failed job retried successfully.')
+            'errors' => AdminHelpers::createMessageBag('Failed job retried successfully.'),
         ]);
 
     }
@@ -80,15 +81,15 @@ class QueueJobController extends Controller {
 
         return redirect()->back()->with([
             'alert_type' => 'success',
-            'errors'    => AdminHelpers::createMessageBag('Failed job deleted successfully.')
+            'errors' => AdminHelpers::createMessageBag('Failed job deleted successfully.'),
         ]);
     }
 
-    function isQueueWorkerRunning()
+    public function isQueueWorkerRunning()
     {
         $output = [];
         exec("ps aux | grep 'queue:work' | grep -v grep", $output);
+
         return count($output) > 0;
     }
-
 }

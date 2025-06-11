@@ -24,7 +24,7 @@ class ProjectActivityRequest extends FormRequest
     public function rules()
     {
         return [
-            'activity' => 'required'
+            'activity' => 'required',
         ];
     }
 }

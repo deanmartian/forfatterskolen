@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,15 +34,16 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('no_links', function ($attribute, $value) {
             // This will only accept alpha and spaces.
             // If you want to accept hyphens use: /^[\pL\s-]+$/u.
-            return !preg_match('/\bhttps?:\/\/\S+/', $value);
+            return ! preg_match('/\bhttps?:\/\/\S+/', $value);
         });
 
         // Enable pagination on collection
-        if (!Collection::hasMacro('paginate')) {
+        if (! Collection::hasMacro('paginate')) {
 
             Collection::macro('paginate',
                 function ($perPage = 15, $page = null, $options = []) {
                     $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+
                     return (new LengthAwarePaginator(
                         $this->forPage($page, $perPage)->values()->all(), $this->count(), $perPage, $page, $options))
                         ->withPath('');
@@ -70,12 +71,12 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
         }
 
-        $this->app->singleton('Bambora', function() {
+        $this->app->singleton('Bambora', function () {
             return (object) [
                 'username' => config('services.bambora.access_key').'@'.config('services.bambora.merchant_number'),
                 'password' => config('services.bambora.secret_key'),
                 'credentials' => base64_encode(config('services.bambora.access_key').
-                    '@'.config('services.bambora.merchant_number').':'.config('services.bambora.secret_key'))
+                    '@'.config('services.bambora.merchant_number').':'.config('services.bambora.secret_key')),
             ];
         });
 

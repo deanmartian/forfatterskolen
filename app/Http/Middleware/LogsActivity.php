@@ -13,7 +13,6 @@ class LogsActivity
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -23,18 +22,18 @@ class LogsActivity
         if (auth()->check()) {
 
             // check first if there's a session to avoid error
-            if (is_null(\Session::get('learner_login_id')) || !\Session::has('learner_login_id')) {
-                $browser = new BrowserDetection();
-                $browserName     = $browser->getName();
-                $platformName    = $browser->getPlatformVersion();
+            if (is_null(\Session::get('learner_login_id')) || ! \Session::has('learner_login_id')) {
+                $browser = new BrowserDetection;
+                $browserName = $browser->getName();
+                $platformName = $browser->getPlatformVersion();
 
                 $login = LearnerLogin::create([
-                    'user_id'       => \Auth::user()->id,
-                    'ip'            => $_SERVER['REMOTE_ADDR'],
-                    'country'       => 'Norway',//AdminHelpers::ip_info($request->ip(), "Country"),
-                    'country_code'  => 'NO',//AdminHelpers::ip_info($request->ip(), "Country Code"),
-                    'provider'      => $browserName,
-                    'platform'      => $platformName
+                    'user_id' => \Auth::user()->id,
+                    'ip' => $_SERVER['REMOTE_ADDR'],
+                    'country' => 'Norway', // AdminHelpers::ip_info($request->ip(), "Country"),
+                    'country_code' => 'NO', // AdminHelpers::ip_info($request->ip(), "Country Code"),
+                    'provider' => $browserName,
+                    'platform' => $platformName,
                 ]);
 
                 \Session::put('learner_login_id', $login->id);
@@ -43,7 +42,7 @@ class LogsActivity
 
             LearnerLoginActivity::create([
                 'learner_login_id' => \Session::get('learner_login_id'),
-                'activity'         => "User visited {$request->fullUrl()} | {$request->method()}"
+                'activity' => "User visited {$request->fullUrl()} | {$request->method()}",
             ]);
         }
 

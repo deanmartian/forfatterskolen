@@ -3,36 +3,33 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateAssignmentGroupsTable extends Migration {
+class CreateAssignmentGroupsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('assignment_groups', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('assignment_id')->unsigned()->index('assignment_id');
+            $table->string('title')->default('');
+            $table->dateTime('submission_date')->nullable();
+            $table->boolean('allow_feedback_download')->default(0);
+            $table->date('availability')->nullable();
+            $table->timestamps();
+        });
+    }
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::create('assignment_groups', function(Blueprint $table)
-		{
-			$table->increments('id');
-			$table->integer('assignment_id')->unsigned()->index('assignment_id');
-			$table->string('title')->default('');
-			$table->dateTime('submission_date')->nullable();
-			$table->boolean('allow_feedback_download')->default(0);
-			$table->date('availability')->nullable();
-			$table->timestamps();
-		});
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::drop('assignment_groups');
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('assignment_groups');
+    }
 }

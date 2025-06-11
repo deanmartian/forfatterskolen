@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use App\Traits\Loggable;
@@ -7,17 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class PackageShopManuscript extends Model
 {
     use Loggable;
-    
+
     protected $table = 'package_shop_manuscripts';
+
     protected $fillable = ['package_id', 'shop_manuscript_id'];
-
-
 
     public function package()
     {
         return $this->belongsTo('App\Package');
     }
-
 
     public function shop_manuscript()
     {

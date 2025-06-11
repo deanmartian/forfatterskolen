@@ -1,9 +1,11 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class WritingGroup extends Model {
+class WritingGroup extends Model
+{
     /**
      * The database table used by the model.
      *

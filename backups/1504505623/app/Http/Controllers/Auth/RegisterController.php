@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
+use App\User;
 use Auth;
-use App\Mail\RegistrationEmail;
-use Mail;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-
     protected function validator(array $data)
     {
         return Validator::make($data, [
@@ -23,7 +20,6 @@ class RegisterController extends Controller
         ]);
     }
 
-    
     public function store(Request $request)
     {
         $validator = $this->validator($request->all());
@@ -32,7 +28,7 @@ class RegisterController extends Controller
             return redirect()->back()->withInput()->withErrors($validator);
         }
 
-        $user = new User();
+        $user = new User;
         $user->first_name = $request->register_first_name;
         $user->last_name = $request->register_last_name;
         $user->email = $request->register_email;
@@ -52,5 +48,4 @@ class RegisterController extends Controller
 
         return redirect(route('learner.course'));
     }
-
 }

@@ -3,34 +3,31 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreatePrivateGroupMemberPreferencesTable extends Migration {
+class CreatePrivateGroupMemberPreferencesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('private_group_member_preferences', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('private_group_id')->unsigned()->index('private_group_member_preferences_private_group_id_foreign');
+            $table->integer('user_id')->unsigned()->index('private_group_member_preferences_author_id_foreign');
+            $table->boolean('email_notifications_option')->default(2);
+            $table->timestamps();
+        });
+    }
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::create('private_group_member_preferences', function(Blueprint $table)
-		{
-			$table->increments('id');
-			$table->integer('private_group_id')->unsigned()->index('private_group_member_preferences_private_group_id_foreign');
-			$table->integer('user_id')->unsigned()->index('private_group_member_preferences_author_id_foreign');
-			$table->boolean('email_notifications_option')->default(2);
-			$table->timestamps();
-		});
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::drop('private_group_member_preferences');
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('private_group_member_preferences');
+    }
 }

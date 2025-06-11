@@ -5,25 +5,36 @@ namespace App;
 use App\Http\FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model {
-
+class Order extends Model
+{
     const COURSE_TYPE = 1;
+
     const MANUSCRIPT_TYPE = 2;
+
     const WORKSHOP_TYPE = 3;
+
     const CORRECTION_TYPE = 4;
+
     const COPY_EDITING_TYPE = 5;
+
     const COURSE_UPGRADE_TYPE = 6;
+
     const MANUSCRIPT_UPGRADE_TYPE = 7;
+
     const ASSIGNMENT_UPGRADE_TYPE = 8;
+
     const COACHING_TIME_TYPE = 9;
+
     const EDITING_SERVICES = 10;
 
     protected $fillable = ['user_id', 'item_id', 'type', 'package_id', 'plan_id', 'payment_mode_id', 'price', 'discount',
         'svea_order_id', 'svea_invoice_id', 'svea_payment_type', 'svea_payment_type_description', 'svea_fullname',
         'svea_street', 'svea_postal_code', 'svea_city', 'svea_country_code', 'gift_card', 'svea_delivery_id', 'is_processed',
         'is_credited_amount', 'is_pay_later', 'additional'];
+
     protected $appends = ['item', 'packageVariation', 'created_at_formatted', 'price_formatted', 'discount_formatted',
         'monthly_price_formatted', 'total_formatted', 'total_price'];
+
     protected $with = ['paymentPlan', 'paymentMode', 'company'];
 
     public function paymentPlan()
@@ -93,6 +104,7 @@ class Order extends Model {
             } else {
                 $title .= ' (0,5 time)';
             }
+
             return $title;
         }
 
@@ -101,7 +113,7 @@ class Order extends Model {
         }
 
         if ($this->attributes['type'] === static::EDITING_SERVICES) {
-            return "Editing Service";
+            return 'Editing Service';
         }
 
         return Course::find($this->attributes['item_id'])->title;
@@ -134,9 +146,10 @@ class Order extends Model {
 
     public function getMonthlyPriceFormattedAttribute()
     {
-        $paymentPlan =  PaymentPlan::find($this->attributes['plan_id']);
+        $paymentPlan = PaymentPlan::find($this->attributes['plan_id']);
         $totalPrice = $this->attributes['price'] - $this->attributes['discount'];
-        $price = $paymentPlan ? $totalPrice/$paymentPlan->division : $totalPrice;
+        $price = $paymentPlan ? $totalPrice / $paymentPlan->division : $totalPrice;
+
         return FrontendHelpers::currencyFormat($price);
     }
 
@@ -146,6 +159,7 @@ class Order extends Model {
         if ($this->coachingTime) {
             $total = $total + $this->coachingTime->additional_price;
         }
+
         return FrontendHelpers::currencyFormat($total);
     }
 
@@ -155,6 +169,7 @@ class Order extends Model {
         if ($this->coachingTime) {
             $total = $total + $this->coachingTime->additional_price;
         }
+
         return $total;
     }
 

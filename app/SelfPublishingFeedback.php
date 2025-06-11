@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SelfPublishingFeedback extends Model
 {
     protected $fillable = ['self_publishing_id', 'feedback_user_id', 'manuscript', 'notes'];
+
     protected $appends = ['file_link'];
 
     public function selfPublishing()
@@ -16,11 +17,12 @@ class SelfPublishingFeedback extends Model
 
     public function feedbackUser()
     {
-        return $this->belongsTo('\App\User','feedback_user_id','id');
+        return $this->belongsTo('\App\User', 'feedback_user_id', 'id');
     }
 
     /**
      * Accessor field
+     *
      * @return string
      */
     public function getFileLinkAttribute()

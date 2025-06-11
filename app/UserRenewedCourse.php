@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserRenewedCourse extends Model {
-
+class UserRenewedCourse extends Model
+{
     /**
      * The database table used by the model.
      *
@@ -18,6 +18,5 @@ class UserRenewedCourse extends Model {
      *
      * @var array
      */
-    protected $fillable = [ 'user_id', 'course_id'];
-
+    protected $fillable = ['user_id', 'course_id'];
 }

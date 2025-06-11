@@ -5,10 +5,7 @@ namespace App\Console\Commands;
 use App\CronLog;
 use App\GTWebinar;
 use App\Http\AdminHelpers;
-use App\Http\FrontendHelpers;
-use App\Invoice;
 use App\Mail\SubjectBodyEmail;
-use App\ShopManuscriptsTaken;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -55,13 +52,12 @@ class GoToWebinarReminder extends Command
         $later = Carbon::parse($now)->format('Y-m-d H:59:00');
 
         $tomorrowWebinars = GTWebinar::whereDate('reminder_date', '=', $tomorrow)
-            ->where('send_reminder','=',1)
+            ->where('send_reminder', '=', 1)
             ->whereBetween('reminder_date', [$tomHour, $tomHourPlusOne])
             ->get();
 
-
         $todayWebinars = GTWebinar::whereDate('reminder_date', '=', $today)
-            ->where('send_reminder','=',1)
+            ->where('send_reminder', '=', 1)
             ->whereBetween('reminder_date', [$now, $later])
             ->get();
 
@@ -73,13 +69,13 @@ class GoToWebinarReminder extends Command
             $access_token = AdminHelpers::generateWebinarGTAccessToken();
         }
 
-        foreach($webinars as $webinar) {
+        foreach ($webinars as $webinar) {
             $base_url = 'https://api.getgo.com/G2W/rest/v2';
             $org_key = '5169031040578858252';
             $web_key = $webinar->gt_webinar_key; // id of the webinar from gotowebinar
 
             $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$web_key.'/registrants';
-            $header = array();
+            $header = [];
             $header[] = 'Accept: application/json';
             $header[] = 'Content-type: application/json';
             $header[] = 'Accept: application/vnd.citrix.g2wapi-v1.1+json';
@@ -92,13 +88,13 @@ class GoToWebinarReminder extends Command
             // surround all integer values with quotes
             $attendants = json_decode(preg_replace('/("\w+"):(\d+)/', '\\1:"\\2"', $response));
 
-            $gtWebinar  = AdminHelpers::getGotoWebinarDetails($web_key, $access_token); // get webinar details
+            $gtWebinar = AdminHelpers::getGotoWebinarDetails($web_key, $access_token); // get webinar details
 
-            $subject    = $gtWebinar->subject;
+            $subject = $gtWebinar->subject;
             $organizerEmail = 'postmail@forfatterskolen.no';
-            $times      = $gtWebinar->times[0];
-            $startTime  = $times->startTime;
-            $endTime    = $times->endTime;
+            $times = $gtWebinar->times[0];
+            $startTime = $times->startTime;
+            $endTime = $times->endTime;
             $formattedDate = AdminHelpers::convertTZNoFormat($startTime, $gtWebinar->timeZone)->format('D, M d, H:i').' - '
                 .AdminHelpers::convertTZNoFormat($endTime, $gtWebinar->timeZone)->format('H:i');
 
@@ -108,7 +104,7 @@ class GoToWebinarReminder extends Command
             }
 
             // loop the attendants for the webinar
-            foreach($attendants as $attendee) {
+            foreach ($attendants as $attendee) {
                 if ($attendee->status == 'APPROVED') {
                     $joinURL = $attendee->joinUrl;
                     $explodeJoinURL = explode('/', $joinURL);
@@ -122,7 +118,7 @@ class GoToWebinarReminder extends Command
                     $i_calendar = "<a href='".$calendar_link."&cal=ical' style='text-decoration: none'>iCal<sup>®</sup></a>";
 
                     $admin_email = "<a href='mailto:".$organizerEmail."' style='text-decoration: none'>"
-                        .$organizerEmail."</a>";
+                        .$organizerEmail.'</a>';
 
                     $join_button = "<p style='margin-left: 170px'><a href='".$joinURL."' style='font-size:16px;font-family:Helvetica,Arial,sans-serif;color:#ffffff;
 text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7f;display:inline-block;background-color:#114c7f'>Bli med på webinar</a></p>";
@@ -130,18 +126,18 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 &language=english&experienceType=CLASSIC' style='text-decoration: none'>Test ditt system før webinaret</a>";
 
                     // add dash after every 3rd character
-                    $webinarID = implode("-", str_split($gtWebinar->webinarID, 3));
-                    $cancel_reg = "<a href='https://attendee.gotowebinar.com/cancel/".$web_key."/"
+                    $webinarID = implode('-', str_split($gtWebinar->webinarID, 3));
+                    $cancel_reg = "<a href='https://attendee.gotowebinar.com/cancel/".$web_key.'/'
                         .$attendee->registrantKey."' style='text-decoration: none'>kanselere registreringen</a>";
 
                     $search_string = [
                         '[first_name]', '[webinar_title]', '[admin_email]', '[webinar_date]', '[outlook_calendar]',
                         '[google_calendar]', '[i_cal]', '[join_button]', '[check_system_requirements]', '[webinar_id]',
-                        '[cancel_registration]'
+                        '[cancel_registration]',
                     ];
                     $replace_string = [
                         $attendee->firstName, $subject, $admin_email, $formattedDate, $outlook_calendar,
-                        $google_calendar, $i_calendar, $join_button, $system_req, $webinarID, $cancel_reg
+                        $google_calendar, $i_calendar, $join_button, $system_req, $webinarID, $cancel_reg,
                     ];
 
                     $message = str_replace($search_string, $replace_string, $webinar->reminder_email);
@@ -149,9 +145,9 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
                     // add email to queue
                     $emailData['email_subject'] = $subject;
                     $emailData['email_message'] = $message;
-                    $emailData['from_name'] = NULL;
-                    $emailData['from_email'] = NULL;
-                    $emailData['attach_file'] = NULL;
+                    $emailData['from_name'] = null;
+                    $emailData['from_email'] = null;
+                    $emailData['attach_file'] = null;
 
                     \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
                     /*AdminHelpers::send_email($emailData['email_subject'],

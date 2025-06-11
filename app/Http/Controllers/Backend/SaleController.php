@@ -8,11 +8,10 @@ use App\Http\PowerOffice;
 use App\Jobs\AddMailToQueueJob;
 use App\PowerOfficeInvoice;
 use App\Repositories\Services\SaleService;
-use App\User;
 use Illuminate\Http\Request;
 
-class SaleController extends Controller {
-
+class SaleController extends Controller
+{
     /**
      * @var SaleService
      */
@@ -20,9 +19,8 @@ class SaleController extends Controller {
 
     /**
      * SaleController constructor.
-     * @param SaleService $saleService
      */
-    public function __construct( SaleService $saleService )
+    public function __construct(SaleService $saleService)
     {
         $this->service = $saleService;
     }
@@ -71,7 +69,7 @@ class SaleController extends Controller {
 
         switch ($page) {
             case 'shop-manuscript':
-                
+
                 $newManuscriptsTaken = $this->service->queryShopManuscriptsTaken();
                 $shopManuscriptEmail = AdminHelpers::emailTemplate('Shop Manuscript Welcome Email');
                 $archiveManuscriptsTaken = $this->service->queryShopManuscriptsTaken(1);
@@ -99,19 +97,16 @@ class SaleController extends Controller {
                 $followUpEmailCourseTaken = AdminHelpers::emailTemplate('Course Taken Follow-up Email');
 
                 return view('backend.sale.partials._course', compact(
-                    'tab', 'page', 'newCourses', 'groupCourseEmail', 'singleCourseEmail', 'archiveCourses', 
+                    'tab', 'page', 'newCourses', 'groupCourseEmail', 'singleCourseEmail', 'archiveCourses',
                     'followUpEmailCourseTaken'
                 ));
         }
     }
 
     /**
-     * @param $id
-     * @param $parent
-     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function sendEmail( $id, $parent, Request $request )
+    public function sendEmail($id, $parent, Request $request)
     {
         $record = [];
         if (in_array($parent, ['courses-taken-welcome', 'courses-taken-follow-up'])) {
@@ -122,7 +117,7 @@ class SaleController extends Controller {
             $record = $this->service->shopManuscriptTaken($id);
         }
 
-        if (!$record) {
+        if (! $record) {
             return redirect()->back();
         }
 
@@ -142,7 +137,7 @@ class SaleController extends Controller {
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Email Sent.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
@@ -154,7 +149,7 @@ class SaleController extends Controller {
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Successfuly moved to archive.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
@@ -166,13 +161,13 @@ class SaleController extends Controller {
         if ($order) {
             $order->is_invoice_sent = $request->is_invoice_sent;
             $order->save();
-            $success = TRUE;
+            $success = true;
         }
 
         return response()->json([
             'data' => [
                 'success' => $success,
-            ]
+            ],
         ]);
     }
 
@@ -184,13 +179,13 @@ class SaleController extends Controller {
         if ($order) {
             $order->is_order_withdrawn = $request->is_order_withdrawn;
             $order->save();
-            $success = TRUE;
+            $success = true;
         }
 
         return response()->json([
             'data' => [
                 'success' => $success,
-            ]
+            ],
         ]);
     }
 
@@ -198,17 +193,17 @@ class SaleController extends Controller {
     {
         $order = $this->service->getOrder($order_id);
         $user = $order->user;
-        
+
         $emailToSearch = $user->email;
 
         $foundEntries = array_filter($powerOffice->customers(), function ($entry) use ($emailToSearch) {
             return $entry['EmailAddress'] === $emailToSearch;
         });
 
-        if (!empty($foundEntries)) {
+        if (! empty($foundEntries)) {
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Learner already exists in Power Office.'),
-                'alert_type' => 'danger'
+                'alert_type' => 'danger',
             ]);
         } else {
             // Email address not found
@@ -223,7 +218,6 @@ class SaleController extends Controller {
                 $zip = $userAddress->zip;
             }
 
-            
             return $powerOffice->registerCustomer(
                 $user->first_name,
                 $user->last_name,
@@ -235,9 +229,8 @@ class SaleController extends Controller {
 
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Successfuly added to power office.'),
-                'alert_type' => 'success'
+                'alert_type' => 'success',
             ]);
         }
     }
-
 }

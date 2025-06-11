@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class CourseDiscount extends Model
 {
     use Loggable;
-    
+
     protected $fillable = ['course_id', 'coupon', 'discount', 'valid_from', 'valid_to', 'type'];
 
     protected $types = [
         0 => 'Additional',
-        1 => 'Total'
+        1 => 'Total',
     ];
 
     public function course()

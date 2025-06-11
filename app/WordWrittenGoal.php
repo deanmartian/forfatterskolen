@@ -12,6 +12,7 @@ class WordWrittenGoal extends Model
      * @var string
      */
     protected $table = 'words_written_goals';
+
     /**
      * The attributes that are mass assignable.
      *

@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    
     public function index()
     {
         return view('frontend.chat.index');
@@ -16,7 +15,7 @@ class ChatController extends Controller
 
     public function sendMessage(Request $request)
     {
-        
+
         // Get the user's message from the request
         $message = $request->input('message');
 
@@ -27,15 +26,15 @@ class ChatController extends Controller
 
         $headers = [
             'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer ' . config('services.gpt.api_key'),
+            'Authorization' => 'Bearer '.config('services.gpt.api_key'),
         ];
 
         $data = [
-            //'model' => 'text-davinci-002',
-            //'prompt' => $message,
+            // 'model' => 'text-davinci-002',
+            // 'prompt' => $message,
             'model' => 'gpt-3.5-turbo',
-            'messages' =>  [
-                ["role"=> "system", "content"=> "You are a helpful assistant for https://www.forfatterskolen.no website."],
+            'messages' => [
+                ['role' => 'system', 'content' => 'You are a helpful assistant for https://www.forfatterskolen.no website.'],
                 ['role' => 'user', 'content' => $message],
             ],
             'temperature' => 0.5,
@@ -49,7 +48,7 @@ class ChatController extends Controller
 
         $responseData = json_decode($response->getBody(), true);
 
-        //$answer = $responseData['choices'][0]['text'];
+        // $answer = $responseData['choices'][0]['text'];
         $answer = $responseData['choices'];
 
         // Return the ChatGPT response to the user
@@ -57,5 +56,4 @@ class ChatController extends Controller
             'message' => $answer,
         ]);
     }
-
 }

@@ -24,5 +24,4 @@ class PilotReaderBookBookmark extends Model
     {
         return $this->belongsTo('App\PilotReaderBook');
     }
-
 }

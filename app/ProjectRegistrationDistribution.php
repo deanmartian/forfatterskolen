@@ -6,12 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectRegistrationDistribution extends Model
 {
-
     protected $table = 'project_registration_paid_distribution_cost';
 
     protected $fillable = ['project_registration_id', 'years'];
 
     protected $casts = [
-        'years' => 'array'
+        'years' => 'array',
     ];
 }

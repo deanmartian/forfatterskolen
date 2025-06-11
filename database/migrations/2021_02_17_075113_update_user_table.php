@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\User;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class UpdateUserTable extends Migration
 {
@@ -17,11 +16,11 @@ class UpdateUserTable extends Migration
         DB::beginTransaction();
 
         DB::table('users')
-            ->where('is_editor',1)
+            ->where('is_editor', 1)
             ->update([
-                "role" => 3
-        ]);
-        
+                'role' => 3,
+            ]);
+
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('is_editor');
         });
@@ -30,10 +29,10 @@ class UpdateUserTable extends Migration
         });
 
         DB::table('users')
-            ->where('id',1136)
+            ->where('id', 1136)
             ->update([
-                "head_editor" => 1
-        ]);
+                'head_editor' => 1,
+            ]);
 
         DB::commit();
 

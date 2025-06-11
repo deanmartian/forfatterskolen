@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class LearnerLogin extends Model
 {
-
     /**
      * The database table used by the model.
      *
@@ -30,5 +29,4 @@ class LearnerLogin extends Model
     {
         return $this->hasMany('App\LearnerLoginActivity');
     }
-
 }

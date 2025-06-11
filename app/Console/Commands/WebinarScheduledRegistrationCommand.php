@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\CronLog;
-use App\Package;
 use App\UserAutoRegisterToCourseWebinar;
 use App\WebinarRegistrant;
 use App\WebinarScheduledRegistration;
@@ -52,7 +51,7 @@ class WebinarScheduledRegistrationCommand extends Command
         $counter = 1;
         $isWebinarPakke = false;
 
-        foreach ( $schedules as $schedule ) {
+        foreach ($schedules as $schedule) {
 
             $webinar = $schedule->webinar;
 
@@ -65,22 +64,22 @@ class WebinarScheduledRegistrationCommand extends Command
                     $learners = $webinar->course->webinarLearners->get();
                 }
 
-                foreach ( $learners as $learner ) {
+                foreach ($learners as $learner) {
                     $user = $learner->user;
-                    
-                    if ($user && !$isWebinarPakke || ($user && $isWebinarPakke && $user->coursesTakenNotOld2->count() > 0)) {
+
+                    if ($user && ! $isWebinarPakke || ($user && $isWebinarPakke && $user->coursesTakenNotOld2->count() > 0)) {
                         $data = [
-                            'id'            => $webinar->link,
-                            'email'         => $user->email,
-                            'first_name'    => $user->first_name,
-                            'last_name'     => $user->last_name,
+                            'id' => $webinar->link,
+                            'email' => $user->email,
+                            'first_name' => $user->first_name,
+                            'last_name' => $user->last_name,
                         ];
                         $ch = curl_init();
                         $url = config('services.big_marker.register_link');
 
                         curl_setopt($ch, CURLOPT_URL, $url);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
                         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
                         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
                         $response = curl_exec($ch);
@@ -93,15 +92,14 @@ class WebinarScheduledRegistrationCommand extends Command
                             $webRegister->join_url = $decoded_response->conference_url;
                             $webRegister->save();
 
-                            CronLog::create(['activity' => 'WebinarScheduledRegistration added ' . $user->email .
-                                ' to bigmarker webinar ' . $webinar->link . '.']);
+                            CronLog::create(['activity' => 'WebinarScheduledRegistration added '.$user->email.
+                                ' to bigmarker webinar '.$webinar->link.'.']);
                         }
-                    } 
+                    }
                 }
             }
 
         }
-
 
         CronLog::create(['activity' => 'WebinarScheduledRegistration CRON done running.']);
     }

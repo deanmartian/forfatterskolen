@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectBook extends Model
 {
-
     protected $fillable = ['project_id', 'user_id', 'book_name', 'isbn_hardcover_book', 'isbn_ebook'];
 
     public function detail()
@@ -34,7 +33,8 @@ class ProjectBook extends Model
         return $this->hasMany('\App\ProjectBookSale', 'project_book_id', 'id');
     }
 
-    public function totalDistributionCost() {
+    public function totalDistributionCost()
+    {
         return $this->distributionCosts()->sum('amount');
     }
 

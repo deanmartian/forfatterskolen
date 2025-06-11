@@ -1,19 +1,20 @@
 <?php
+
 namespace App\Repositories\Services;
 
 use App\PageAccess;
 
-class PageAccessService {
-
+class PageAccessService
+{
     /**
      * Store the pageAccess model in this var
+     *
      * @var PageAccess
      */
     protected $pageAccess;
 
     /**
      * PageAccessService constructor.
-     * @param PageAccess $pageAccess
      */
     public function __construct(PageAccess $pageAccess)
     {
@@ -22,8 +23,9 @@ class PageAccessService {
 
     /**
      * Create the access page for the admin
-     * @param $admin_id int user id of the admin
-     * @param $request object
+     *
+     * @param  $admin_id  int user id of the admin
+     * @param  $request  object
      * @return bool|string
      */
     public function createAccessPage($admin_id, $request)
@@ -34,8 +36,10 @@ class PageAccessService {
             foreach ($request->pages as $page) {
                 $this->pageAccess->create(['user_id' => $admin_id, 'page_id' => $page]);
             }
+
             return true;
         }
+
         return false;
     }
 }

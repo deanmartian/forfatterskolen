@@ -11,31 +11,21 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Class IPNRepository
- * @package App\Repositories
  */
 class IPNRepository
 {
-    /**
-     * @param Request $request
-     */
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
 
-    /**
-     * @param $event
-     * @param $verified
-     * @param $invoice_id
-     */
     public function handle($event, $verified, $invoice_id)
     {
         $object = $event->getMessage();
-        Log::info("inside ipn handle");
+        Log::info('inside ipn handle');
         $invoice = Invoice::find($invoice_id);
-        if ($invoice)
-        {
-            Log::info("inside ipn handle check invoice");
+        if ($invoice) {
+            Log::info('inside ipn handle check invoice');
             Log::info(json_encode($invoice));
             $paypal = PayPalIPN::create([
                 'verified' => $verified,
@@ -49,16 +39,16 @@ class IPNRepository
             ]);
 
             if ($paypal->isVerified() && $paypal->isCompleted()) {
-                Log::info("inside ipn handle if verified and completed");
+                Log::info('inside ipn handle if verified and completed');
                 if ($invoice && $invoice->unpaid()) {
-                    Log::info("inside ipn handle if invoice and unpaid");
+                    Log::info('inside ipn handle if invoice and unpaid');
                     $invoice->update([
                         'fiken_is_paid' => $invoice::COMPLETED,
                     ]);
 
                     $email = 'support@forfatterskolen.no';
                     $subject = 'Paypal Payment';
-                    $message = $invoice->user->full_name.' has paid the amount of '.AdminHelpers::currencyFormat($invoice->gross/100).
+                    $message = $invoice->user->full_name.' has paid the amount of '.AdminHelpers::currencyFormat($invoice->gross / 100).
                         ' for invoice #'.$invoice->invoice_number;
                     $from_email = '';
                     $from_name = '';
@@ -67,7 +57,7 @@ class IPNRepository
                     $emailData['email_message'] = $message;
                     $emailData['from_name'] = $from_name;
                     $emailData['from_email'] = $from_email;
-                    $emailData['attach_file'] = NULL;
+                    $emailData['attach_file'] = null;
                     \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
                     \Mail::to('lovelyayobarrientos@gmail.com')->queue(new SubjectBodyEmail($emailData));
                 }

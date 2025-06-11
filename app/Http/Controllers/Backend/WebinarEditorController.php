@@ -2,25 +2,23 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\WebinarEditor;
 use App\Webinar;
+use App\WebinarEditor;
+use Illuminate\Http\Request;
 
 class WebinarEditorController extends Controller
 {
-
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store($webinar_id, Request $request)
     {
         $webinar = Webinar::findOrFail($webinar_id);
 
-        $webinarEditor = new WebinarEditor();
+        $webinarEditor = new WebinarEditor;
         $webinarEditor->webinar_id = $webinar->id;
         $webinarEditor->presenter_url = $request->presenter_url;
         $webinarEditor->editor_id = $request->editor_id;
@@ -33,7 +31,6 @@ class WebinarEditorController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -58,6 +55,7 @@ class WebinarEditorController extends Controller
     {
         $webinarEditor = webinarEditor::findOrFail($id);
         $webinarEditor->forceDelete();
+
         return redirect()->back();
     }
 }

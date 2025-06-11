@@ -14,6 +14,7 @@ class Testimonial extends Model
     protected $table = 'testimonials';
 
     const ACTIVE = true;
+
     const INACTIVE = false;
 
     /**
@@ -23,7 +24,8 @@ class Testimonial extends Model
      */
     protected $fillable = ['name', 'description', 'testimony', 'author_image', 'book_image', 'status'];
 
-    public function getStatusTextAttribute() {
+    public function getStatusTextAttribute()
+    {
         return $this->attributes['status'] == self::ACTIVE ? 'Enabled' : 'Disabled';
     }
 

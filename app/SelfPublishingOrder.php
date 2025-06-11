@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SelfPublishingOrder extends Model
 {
-    
     protected $fillable = [
         'order_id',
         'user_id',
@@ -18,7 +17,7 @@ class SelfPublishingOrder extends Model
         'file',
         'price',
         'word_count',
-        'status'
+        'status',
     ];
 
     protected $appends = ['service_name'];
@@ -48,9 +47,8 @@ class SelfPublishingOrder extends Model
         return $this->belongsTo('App\User');
     }
 
-    public function getServiceNameAttribute() 
+    public function getServiceNameAttribute()
     {
         return $this->service->product_service;
     }
-
 }

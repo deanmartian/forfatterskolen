@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Http\FrontendHelpers;
 
 class LessonContent extends Model
 {
@@ -12,7 +11,7 @@ class LessonContent extends Model
      *
      * @var string
      */
-    //protected $table = 'lesson';
+    // protected $table = 'lesson';
 
     /**
      * The attributes that are mass assignable.

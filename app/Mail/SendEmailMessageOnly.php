@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -22,5 +23,4 @@ class SendEmailMessageOnly extends Mailable
             ->subject('Oppgaven er levert')
             ->view('emails.assignment_submit_confirmed');
     }
-
 }

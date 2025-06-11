@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MarketingPlanQuestion extends Model
 {
-
     protected $fillable = ['marketing_plan_id', 'main_question', 'sub_question'];
+
     protected $appends = ['sub_question_decoded'];
 
     public function getSubQuestionDecodedAttribute()
@@ -19,5 +19,4 @@ class MarketingPlanQuestion extends Model
     {
         return $this->hasMany('App\MarketingPlanQuestionAnswer', 'question_id');
     }
-
 }

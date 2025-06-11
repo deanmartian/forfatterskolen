@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserTask extends Model
 {
     use Loggable;
-    
+
     /**
      * The attributes that are mass assignable.
      *

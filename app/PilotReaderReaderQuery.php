@@ -4,7 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PilotReaderReaderQuery extends Model {
+class PilotReaderReaderQuery extends Model
+{
     /**
      * The database table used by the model.
      *
@@ -17,7 +18,7 @@ class PilotReaderReaderQuery extends Model {
      *
      * @var array
      */
-    protected $fillable = [ 'from', 'to', 'book_id', 'letter', 'status' ];
+    protected $fillable = ['from', 'to', 'book_id', 'letter', 'status'];
 
     public function books()
     {
@@ -28,5 +29,4 @@ class PilotReaderReaderQuery extends Model {
     {
         return $this->hasOne('App\PilotReaderReaderQueryDecision', 'query_id');
     }
-
 }

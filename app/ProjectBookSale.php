@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectBookSale extends Model
 {
-    
     protected $fillable = [
         'project_book_id',
         'project_registration_id',
@@ -27,12 +26,12 @@ class ProjectBookSale extends Model
     ];
 
     protected $appends = [
-        'price_formatted', 
-        'amount_formatted', 
+        'price_formatted',
+        'amount_formatted',
         'total_amount',
         'total_amount_formatted',
         'discount_formatted',
-        //'sale_type_text'
+        // 'sale_type_text'
     ];
 
     public function saleTypes()

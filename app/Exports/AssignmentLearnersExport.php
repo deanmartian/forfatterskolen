@@ -6,9 +6,8 @@ use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class AssignmentLearnersExport implements FromArray, WithHeadings, ShouldAutoSize
+class AssignmentLearnersExport implements FromArray, ShouldAutoSize, WithHeadings
 {
-
     protected $learners;
 
     public function __construct($learners)
@@ -24,7 +23,7 @@ class AssignmentLearnersExport implements FromArray, WithHeadings, ShouldAutoSiz
     public function headings(): array
     {
         $headings = ['Name', 'Email']; // first row in excel
+
         return $headings;
     }
-
 }

@@ -42,15 +42,15 @@ class CheckSveaOrderCommand extends Command
         $orders = Order::whereNotNull('svea_order_id')
             ->whereNull('svea_invoice_id')->get();
 
-        foreach($orders as $order) {
+        foreach ($orders as $order) {
 
-            $base_url = env('SVEA_PROD_URL') . '/orders/' . $order->svea_order_id;
+            $base_url = env('SVEA_PROD_URL').'/orders/'.$order->svea_order_id;
             $timestamp = gmdate('Y-m-d H:i');
             $merchantId = env('SVEA_CHECKOUTID');
             $secret = env('SVEA_CHECKOUT_SECRET');
 
             $token = base64_encode($merchantId.':'.hash('sha512', ''.$secret.$timestamp));
-            $header = array();
+            $header = [];
             $header[] = 'Content-type: application/json';
             $header[] = 'Timestamp: '.$timestamp;
             $header[] = 'Authorization: Svea '.$token;
@@ -78,7 +78,7 @@ class CheckSveaOrderCommand extends Command
             }
         }
 
-        return "done";
+        return 'done';
 
     }
 }

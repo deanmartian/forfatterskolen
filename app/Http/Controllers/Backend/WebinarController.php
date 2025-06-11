@@ -1,34 +1,29 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
+use App\Course;
 use App\Http\AdminHelpers;
+use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
+use App\Http\Requests\AddWebinarRequest;
+use App\Jobs\WebinarScheduleRegistrationJob;
 use App\Mail\SubjectBodyEmail;
 use App\UserAutoRegisterToCourseWebinar;
+use App\Webinar;
 use App\WebinarEmailOut;
 use App\WebinarRegistrant;
 use App\WebinarScheduledRegistration;
+use File;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\AddWebinarRequest;
-use App\Course;
-use App\Jobs\WebinarScheduleRegistrationJob;
-use App\Webinar;
-use File; 
 
 class WebinarController extends Controller
 {
-   
-
-
-
     public function store(AddWebinarRequest $request)
     {
         $course = Course::findOrFail($request->course_id);
-        Course::where('','');
-        $webinar = new Webinar();
+        Course::where('', '');
+        $webinar = new Webinar;
         $webinar->course_id = $course->id;
         $webinar->title = $request->title;
         $webinar->description = $request->description;
@@ -36,7 +31,7 @@ class WebinarController extends Controller
         $webinar->start_date = $request->start_date;
         $webinar->link = $request->link;
 
-        if ($request->hasFile('image')) :
+        if ($request->hasFile('image')) {
             /*
              * original code for inserting image
              *
@@ -45,7 +40,7 @@ class WebinarController extends Controller
             $fileName = time().'.'.$extension; // renameing image
             $request->image->move($destinationPath, $fileName);
             // optimize image
-            if ( strtolower( $extension ) == "png" ) : 
+            if ( strtolower( $extension ) == "png" ) :
                 $image = imagecreatefrompng($destinationPath.$fileName);
                 imagepng($image, $destinationPath.$fileName, 9);
             else :
@@ -53,7 +48,6 @@ class WebinarController extends Controller
                 imagejpeg($image, $destinationPath.$fileName, 70);
             endif;
             $webinar->image = '/'.$destinationPath.$fileName;*/
-
 
             $fileExt = $request->image->extension(); // getting image extension
             $fileType = $request->image->getMimeType();
@@ -64,79 +58,78 @@ class WebinarController extends Controller
             $largeImageLoc = 'storage/webinars/'.$fileName; // upload path
             $thumbImageLoc = 'storage/webinars/thumb/'.$fileName; // upload path thumb
 
-            if(move_uploaded_file($fileTmp, $largeImageLoc)){
-                //file permission
-                chmod ($largeImageLoc, 0777);
+            if (move_uploaded_file($fileTmp, $largeImageLoc)) {
+                // file permission
+                chmod($largeImageLoc, 0777);
 
-                //get dimensions of the original image
-                list($width_org, $height_org) = getimagesize($largeImageLoc);
+                // get dimensions of the original image
+                [$width_org, $height_org] = getimagesize($largeImageLoc);
 
-                //get image coords
+                // get image coords
                 $x = (int) $request->x;
                 $y = (int) $request->y;
                 $width = (int) $request->w;
                 $height = (int) $request->h;
 
-                //define the final size of the cropped image
+                // define the final size of the cropped image
                 $width_new = $width;
                 $height_new = $height;
 
                 $source = '';
 
-                //crop and resize image
-                $newImage = imagecreatetruecolor($width_new,$height_new);
+                // crop and resize image
+                $newImage = imagecreatetruecolor($width_new, $height_new);
 
-                switch($fileType) {
-                    case "image/gif":
+                switch ($fileType) {
+                    case 'image/gif':
                         $source = imagecreatefromgif($largeImageLoc);
                         break;
-                    case "image/pjpeg":
-                    case "image/jpeg":
-                    case "image/jpg":
+                    case 'image/pjpeg':
+                    case 'image/jpeg':
+                    case 'image/jpg':
                         $source = imagecreatefromjpeg($largeImageLoc);
                         break;
-                    case "image/png":
-                    case "image/x-png":
+                    case 'image/png':
+                    case 'image/x-png':
                         $source = imagecreatefrompng($largeImageLoc);
                         break;
                 }
 
-                imagecopyresampled($newImage,$source,0,0,$x,$y,$width_new,$height_new,$width,$height);
+                imagecopyresampled($newImage, $source, 0, 0, $x, $y, $width_new, $height_new, $width, $height);
 
-                //check if the folder exists if not then create the folder
-                if (!file_exists('storage/webinars/thumb/')) {
+                // check if the folder exists if not then create the folder
+                if (! file_exists('storage/webinars/thumb/')) {
                     File::makeDirectory('storage/webinars/thumb/', 0775, true);
                 }
 
-                switch($fileType) {
-                    case "image/gif":
-                        imagegif($newImage,$thumbImageLoc);
+                switch ($fileType) {
+                    case 'image/gif':
+                        imagegif($newImage, $thumbImageLoc);
                         break;
-                    case "image/pjpeg":
-                    case "image/jpeg":
-                    case "image/jpg":
-                        imagejpeg($newImage,$thumbImageLoc,90);
+                    case 'image/pjpeg':
+                    case 'image/jpeg':
+                    case 'image/jpg':
+                        imagejpeg($newImage, $thumbImageLoc, 90);
                         break;
-                    case "image/png":
-                    case "image/x-png":
-                        imagepng($newImage,$thumbImageLoc);
+                    case 'image/png':
+                    case 'image/x-png':
+                        imagepng($newImage, $thumbImageLoc);
                         break;
                 }
                 imagedestroy($newImage);
 
-                //remove large image
+                // remove large image
                 unlink($largeImageLoc);
 
                 $webinar->image = '/'.$thumbImageLoc;
             }
 
-        endif;
+        }
 
         $webinar->save();
+
         return redirect()->back();
     }
-
-
 
     public function update($id, AddWebinarRequest $request)
     {
@@ -147,27 +140,27 @@ class WebinarController extends Controller
         $webinar->start_date = $request->start_date;
         $webinar->link = $request->link;
 
-        if ($request->hasFile('image')) :
-           /*
-            * Original Code
-            *
-            *  $image = substr($webinar->image, 1);
-            if( File::exists($image) ) :
-                File::delete($image);
-            endif;
-            $destinationPath = 'storage/webinars/'; // upload path
-            $extension = $request->image->extension(); // getting image extension
-            $fileName = time().'.'.$extension; // renameing image
-            $request->image->move($destinationPath, $fileName);
-            // optimize image
-            if ( strtolower( $extension ) == "png" ) : 
-                $image = imagecreatefrompng($destinationPath.$fileName);
-                imagepng($image, $destinationPath.$fileName, 9);
-            else :
-                $image = imagecreatefromjpeg($destinationPath.$fileName);
-                imagejpeg($image, $destinationPath.$fileName, 70);
-            endif;
-            $webinar->image = '/'.$destinationPath.$fileName;*/
+        if ($request->hasFile('image')) {
+            /*
+             * Original Code
+             *
+             *  $image = substr($webinar->image, 1);
+             if( File::exists($image) ) :
+                 File::delete($image);
+             endif;
+             $destinationPath = 'storage/webinars/'; // upload path
+             $extension = $request->image->extension(); // getting image extension
+             $fileName = time().'.'.$extension; // renameing image
+             $request->image->move($destinationPath, $fileName);
+             // optimize image
+             if ( strtolower( $extension ) == "png" ) :
+                 $image = imagecreatefrompng($destinationPath.$fileName);
+                 imagepng($image, $destinationPath.$fileName, 9);
+             else :
+                 $image = imagecreatefromjpeg($destinationPath.$fileName);
+                 imagejpeg($image, $destinationPath.$fileName, 70);
+             endif;
+             $webinar->image = '/'.$destinationPath.$fileName;*/
 
             $fileExt = $request->image->extension(); // getting image extension
             $fileType = $request->image->getMimeType();
@@ -178,81 +171,80 @@ class WebinarController extends Controller
             $largeImageLoc = 'storage/webinars/'.$fileName; // upload path
             $thumbImageLoc = 'storage/webinars/thumb/'.$fileName; // upload path thumb
 
-            if(move_uploaded_file($fileTmp, $largeImageLoc)){
-                //file permission
-                chmod ($largeImageLoc, 0777);
+            if (move_uploaded_file($fileTmp, $largeImageLoc)) {
+                // file permission
+                chmod($largeImageLoc, 0777);
 
-                //get dimensions of the original image
-                list($width_org, $height_org) = getimagesize($largeImageLoc);
+                // get dimensions of the original image
+                [$width_org, $height_org] = getimagesize($largeImageLoc);
 
-                //get image coords
+                // get image coords
                 $x = (int) $request->x;
                 $y = (int) $request->y;
                 $width = (int) $request->w;
                 $height = (int) $request->h;
 
-                //define the final size of the cropped image
+                // define the final size of the cropped image
                 $width_new = $width;
                 $height_new = $height;
 
                 $source = '';
 
-                //crop and resize image
-                $newImage = imagecreatetruecolor($width_new,$height_new);
+                // crop and resize image
+                $newImage = imagecreatetruecolor($width_new, $height_new);
 
-                switch($fileType) {
-                    case "image/gif":
+                switch ($fileType) {
+                    case 'image/gif':
                         $source = imagecreatefromgif($largeImageLoc);
                         break;
-                    case "image/pjpeg":
-                    case "image/jpeg":
-                    case "image/jpg":
+                    case 'image/pjpeg':
+                    case 'image/jpeg':
+                    case 'image/jpg':
                         $source = imagecreatefromjpeg($largeImageLoc);
                         break;
-                    case "image/png":
-                    case "image/x-png":
+                    case 'image/png':
+                    case 'image/x-png':
                         $source = imagecreatefrompng($largeImageLoc);
                         break;
                 }
 
-                imagecopyresampled($newImage,$source,0,0,$x,$y,$width_new,$height_new,$width,$height);
+                imagecopyresampled($newImage, $source, 0, 0, $x, $y, $width_new, $height_new, $width, $height);
 
-                //check if the folder exists if not then create the folder
-                if (!file_exists('storage/webinars/thumb/')) {
+                // check if the folder exists if not then create the folder
+                if (! file_exists('storage/webinars/thumb/')) {
                     File::makeDirectory('storage/webinars/thumb/', 0775, true);
                 }
 
-                switch($fileType) {
-                    case "image/gif":
-                        imagegif($newImage,$thumbImageLoc);
+                switch ($fileType) {
+                    case 'image/gif':
+                        imagegif($newImage, $thumbImageLoc);
                         break;
-                    case "image/pjpeg":
-                    case "image/jpeg":
-                    case "image/jpg":
-                        imagejpeg($newImage,$thumbImageLoc,90);
+                    case 'image/pjpeg':
+                    case 'image/jpeg':
+                    case 'image/jpg':
+                        imagejpeg($newImage, $thumbImageLoc, 90);
                         break;
-                    case "image/png":
-                    case "image/x-png":
-                        imagepng($newImage,$thumbImageLoc);
+                    case 'image/png':
+                    case 'image/x-png':
+                        imagepng($newImage, $thumbImageLoc);
                         break;
                 }
                 imagedestroy($newImage);
 
-                //remove large image
+                // remove large image
                 unlink($largeImageLoc);
 
                 $webinar->image = '/'.$thumbImageLoc;
             }
 
-        endif;
+        }
 
         $webinar->save();
+
         return redirect()->back();
     }
 
     /**
-     * @param $id
-     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateField($id, Request $request)
@@ -262,28 +254,31 @@ class WebinarController extends Controller
         $webinar = Webinar::findOrFail($id);
         $webinar->$field = $value;
         $webinar->save();
+
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Webinar hidden successfully.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
-
     public function destroy($id, Request $request)
-    {   
+    {
         $webinar = Webinar::findOrFail($id);
         $webinar->forceDelete();
+
         return redirect()->back();
     }
 
     public function makeReplay($webinar_id, Request $request)
     {
         $webinar = Webinar::find($webinar_id);
-        if($webinar) {
+        if ($webinar) {
             $webinar->set_as_replay = $request->set_as_replay;
             $webinar->save();
+
             return redirect()->back();
         }
+
         return redirect()->route('admin.course.index');
     }
 
@@ -291,41 +286,39 @@ class WebinarController extends Controller
     {
 
         $scheduledRegistration = WebinarScheduledRegistration::firstOrCreate([
-            'webinar_id' => $webinar_id
-         ]);
- 
-         $scheduledRegistration->date = $request->date;
-         $scheduledRegistration->save();
-        
-         if ($request->has('run_cron')) {
+            'webinar_id' => $webinar_id,
+        ]);
+
+        $scheduledRegistration->date = $request->date;
+        $scheduledRegistration->save();
+
+        if ($request->has('run_cron')) {
             dispatch(new WebinarScheduleRegistrationJob($scheduledRegistration));
         }
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Webinar scheduled successfully.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
     /**
      * Save email out for webinar
-     * @param $course_id
-     * @param $webinar_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function webinarEmailOut($webinar_id, $course_id, Request $request)
     {
         $webinar = Webinar::where('course_id', $course_id)->where('id', $webinar_id)->first();
 
-        if (!$webinar) {
+        if (! $webinar) {
             return redirect()->back();
         }
 
         $this->validate($request, [
             'send_date' => 'required|date',
             'message' => 'required',
-            'subject' => 'required'
+            'subject' => 'required',
         ]);
 
         $emailOut = WebinarEmailOut::firstOrNew(['course_id' => $course_id, 'webinar_id' => $webinar_id]);
@@ -337,51 +330,52 @@ class WebinarController extends Controller
         if ($request->test_email) {
             $user_email = $request->test_email;
             $register_link = "<a href='".route('front.goto-webinar.registration.email',
-                    [encrypt($webinar->link), encrypt($user_email)])."'>Registrer meg</a>";
+                [encrypt($webinar->link), encrypt($user_email)])."'>Registrer meg</a>";
 
-            $extractLink        = FrontendHelpers::getTextBetween($request->message, "[redirect]",
-                "[/redirect]");
-            $redirectLabel      =  FrontendHelpers::getTextBetween($request->message, "[redirect_label]",
-                "[/redirect_label]");
+            $extractLink = FrontendHelpers::getTextBetween($request->message, '[redirect]',
+                '[/redirect]');
+            $redirectLabel = FrontendHelpers::getTextBetween($request->message, '[redirect_label]',
+                '[/redirect_label]');
             $encode_email = encrypt($request->test_email);
-            $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
-            $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+            $formatRedirectLink = route('auth.login.emailRedirect', [$encode_email, encrypt($extractLink)]);
+            $redirectLink = "<a href='".$formatRedirectLink."'>".$redirectLabel.'</a>';
             $search_string = [
                 '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]',
-                '[register_link]'
+                '[register_link]',
             ];
             $replace_string = [
-                $redirectLink, '', $register_link
+                $redirectLink, '', $register_link,
             ];
             $message = str_replace($search_string, $replace_string, $request->message);
 
             $emailData['email_subject'] = $request->subject;
             $emailData['email_message'] = $message;
-            $emailData['from_name'] = NULL;
-            $emailData['from_email'] = NULL;
-            $emailData['attach_file'] = NULL;
+            $emailData['from_name'] = null;
+            $emailData['from_email'] = null;
+            $emailData['attach_file'] = null;
 
             // add email to queue
             \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Webinar email save and email sent successfully.'),
-                'alert_type' => 'success'
+                'alert_type' => 'success',
             ]);
         }
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Webinar email save successfully.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
-    public function autoRegisterLearnersToWebinar( $webinar_id, $course_id, Request $request )
+    public function autoRegisterLearnersToWebinar($webinar_id, $course_id, Request $request)
     {
         $webinar = Webinar::find($webinar_id);
         $autoRegisterLearners = UserAutoRegisterToCourseWebinar::where('course_id', $course_id)->get();
 
         $scheduledRegistration = WebinarScheduledRegistration::firstOrCreate([
-            'webinar_id' => $webinar_id
+            'webinar_id' => $webinar_id,
         ]);
 
         $scheduledRegistration->date = $request->date;
@@ -427,13 +421,14 @@ class WebinarController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function registrantList( $webinar_id )
+    public function registrantList($webinar_id)
     {
         $registrants = WebinarRegistrant::where('webinar_id', $webinar_id)->get();
+
         return response()->json($registrants);
     }
 
-    public function removeRegistrant( $registrant_id, Request $request )
+    public function removeRegistrant($registrant_id, Request $request)
     {
         $registrant = WebinarRegistrant::find($registrant_id);
         $user = $registrant->user;
@@ -441,8 +436,8 @@ class WebinarController extends Controller
         $webinar_key = $webinar->link;
 
         $data = [
-            'id'            => $webinar_key,
-            'email'         => $user->email,
+            'id' => $webinar_key,
+            'email' => $user->email,
         ];
 
         $url = config('services.big_marker.register_link');
@@ -450,13 +445,13 @@ class WebinarController extends Controller
         $header[] = 'API-KEY: '.config('services.big_marker.api_key');
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         $response = curl_exec($ch);
         $decoded_response = json_decode($response);
 
-        if (!empty($decoded_response)) {
+        if (! empty($decoded_response)) {
             return response()->json($decoded_response, 400);
         }
 
@@ -468,9 +463,8 @@ class WebinarController extends Controller
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Learner removed from webinar successfully'),
                 'alert_type' => 'success',
-                'not-former-courses' => true
+                'not-former-courses' => true,
             ]);
         }
     }
-    
 }

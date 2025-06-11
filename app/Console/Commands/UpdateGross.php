@@ -38,37 +38,36 @@ class UpdateGross extends Command
      */
     public function handle()
     {
-        $fikenInvoices = "https://fiken.no/api/v1/companies/forfatterskolen-as/invoices";
-        $username = "cleidoscope@gmail.com";
-        $password = "moonfang";
+        $fikenInvoices = 'https://fiken.no/api/v1/companies/forfatterskolen-as/invoices';
+        $username = 'cleidoscope@gmail.com';
+        $password = 'moonfang';
         $headers = [
             'Accept: application/hal+json, application/vnd.error+json',
-            'Content-Type: application/hal+json'
+            'Content-Type: application/hal+json',
         ];
 
         $ch = curl_init($fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $data = curl_exec($ch);
         $data = json_decode($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};
 
-
         $invoices = Invoice::whereNull('gross')
             ->get();
-        foreach( $invoices as $invoice ) {
-            $gross            = NULL;
-            foreach( $fikenInvoices as $fikenInvoice ) :
-                if( $invoice->fiken_url == $fikenInvoice->_links->alternate->href ) :
-                    $gross = isset($fikenInvoice->gross) ? $fikenInvoice->gross : NULL;
+        foreach ($invoices as $invoice) {
+            $gross = null;
+            foreach ($fikenInvoices as $fikenInvoice) {
+                if ($invoice->fiken_url == $fikenInvoice->_links->alternate->href) {
+                    $gross = isset($fikenInvoice->gross) ? $fikenInvoice->gross : null;
                     break;
-                endif;
-            endforeach;
+                }
+            }
             $invoice->update(['gross' => $gross]);
         }
 
-        return "done updating gross";
+        return 'done updating gross';
     }
 }

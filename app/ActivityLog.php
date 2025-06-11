@@ -7,16 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class ActivityLog extends Model
 {
-    
     protected $fillable = [
         'user_id',
         'log_date',
         'table_name',
         'log_type',
-        'data'
+        'data',
     ];
 
     public $dates = ['log_date'];
+
     protected $appends = ['dateHumanize', 'json_data', 'formatted_date'];
 
     public function user()

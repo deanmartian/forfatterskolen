@@ -41,13 +41,13 @@ class CheckFikenCreditNoteCommand extends Command
     {
         CronLog::create(['activity' => 'CheckFikenCreditNote CRON running.']);
         $pageCount = 1;
-        for($page = 0; $page <= $pageCount; $page++) {
-            $fikenCreditNoteUrl = config('services.fiken.api_url') . "/companies/" . config('services.fiken.company_slug')
-                . "/creditNotes?page=". $page . "&pageSize=100";
+        for ($page = 0; $page <= $pageCount; $page++) {
+            $fikenCreditNoteUrl = config('services.fiken.api_url').'/companies/'.config('services.fiken.company_slug')
+                .'/creditNotes?page='.$page.'&pageSize=100';
             $headers = [
                 'Accept: application/json',
                 'Authorization: Bearer '.config('services.fiken.personal_api_key'),
-                'Content-Type: application/json'
+                'Content-Type: application/json',
             ];
 
             $ch = curl_init($fikenCreditNoteUrl);
@@ -58,12 +58,12 @@ class CheckFikenCreditNoteCommand extends Command
             // this function is called by curl for each header received
             $curlHeaders = [];
             curl_setopt($ch, CURLOPT_HEADERFUNCTION,
-                function($curl, $header) use (&$curlHeaders)
-                {
+                function ($curl, $header) use (&$curlHeaders) {
                     $len = strlen($header);
                     $header = explode(':', $header, 2);
-                    if (count($header) < 2) // ignore invalid headers
+                    if (count($header) < 2) { // ignore invalid headers
                         return $len;
+                    }
 
                     $curlHeaders[strtolower(trim($header[0]))][] = trim($header[1]);
 
@@ -86,6 +86,6 @@ class CheckFikenCreditNoteCommand extends Command
         }
 
         CronLog::create(['activity' => 'CheckFikenCreditNote CRON done running.']);
-        echo "Done running cron";
+        echo 'Done running cron';
     }
 }

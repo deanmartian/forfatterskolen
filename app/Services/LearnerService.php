@@ -2,21 +2,18 @@
 
 namespace App\Services;
 
-
 use App\Mail\SubjectBodyEmail;
 use App\User;
 use Illuminate\Http\Request;
 
 class LearnerService
 {
-
     /**
-     * @param Request $request
      * @return User
      */
-    public function registerLearner( Request $request, $is_self_publishing = false )
+    public function registerLearner(Request $request, $is_self_publishing = false)
     {
-        $user = new User();
+        $user = new User;
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->email = $request->email;
@@ -24,7 +21,7 @@ class LearnerService
         $user->default_password = $request->password;
         $user->need_pass_update = 1;
 
-        if($is_self_publishing) {
+        if ($is_self_publishing) {
             $user->is_self_publishing_learner = 1;
         }
 
@@ -42,11 +39,10 @@ class LearnerService
             'email_message' => view('emails.registration', compact('actionText', 'actionUrl', 'user'))->render(),
             'from_name' => '',
             'from_email' => 'post@forfatterskolen.no',
-            'attach_file' => NULL
+            'attach_file' => null,
         ];
         \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
         return $user;
     }
-
 }

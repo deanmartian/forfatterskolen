@@ -1,52 +1,49 @@
 <?php
+
 namespace App\Http\Controllers\Frontend;
 
+use App\Address;
 use App\CheckoutLog;
+use App\Course;
 use App\CourseDiscount;
 use App\CourseOrderAttachment;
 use App\CourseShared;
 use App\CourseSharedUser;
+use App\CoursesTaken;
 use App\Events\AddToCampaignList;
-use App\Helpers\ApiException;
-use App\Helpers\ApiResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Controller;
+use App\Http\FikenInvoice;
+use App\Http\FrontendHelpers;
+use App\Http\Requests\OrderCreateRequest;
+use App\Invoice;
 use App\Jobs\CourseOrderJob;
 use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Mail\SubjectBodyEmail;
 use App\Order;
+use App\Package;
+use App\PaymentMode;
+use App\PaymentPlan;
 use App\Paypal;
-use App\Repositories\VippsRepository;
 use App\Services\CourseService;
+use App\ShopManuscriptsTaken;
+use App\Transaction;
+use App\User;
+use App\WorkshopsTaken;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\AddToCartRequest;
-use App\Http\Requests\OrderCreateRequest;
-use App\Http\FrontendHelpers;
-use App\Http\FikenInvoice;
-use App\Package;
-use App\Address;
-use App\PaymentMode;
-use App\PaymentPlan;
-use App\Transaction;
-use App\Invoice;
-use App\Course;
-use App\User;
-use App\CoursesTaken;
-use App\ShopManuscriptsTaken;
-use App\WorkshopsTaken;
+
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use PaypalIPN;
-use Carbon\Carbon;
 use PhpOffice\PhpWord\SimpleType\DocProtect;
 
 class ShopController extends Controller
 {
-
     /**
      * @var CourseService
      */
@@ -54,34 +51,35 @@ class ShopController extends Controller
 
     /**
      * ShopController constructor.
-     * @param CourseService $courseService
      */
-    public function __construct( CourseService $courseService )
+    public function __construct(CourseService $courseService)
     {
         $this->courseService = $courseService;
     }
 
     public function checkout($course_id, Request $request)
     {
-        $countryCode = AdminHelpers::ip_info($request->ip(), "Country Code");
+        $countryCode = AdminHelpers::ip_info($request->ip(), 'Country Code');
 
         if ($countryCode === 'NO') {
-            //return redirect()->route('front.course.checkout', $course_id);
+            // return redirect()->route('front.course.checkout', $course_id);
         }
 
         $course = Course::findOrFail($course_id);
 
-        if (!$course->is_free): // added this condition to check if the course is for sale
-            if( !FrontendHelpers::isCourseActive($course) || count($course->packages) == 0 ) : // Display 404 if Course has no Packages
+        if (! $course->is_free) { // added this condition to check if the course is for sale
+            if (! FrontendHelpers::isCourseActive($course) || count($course->packages) == 0) { // Display 404 if Course has no Packages
                 return abort(404);
-            endif;
-        endif;
+            }
+        }
 
-        if( !Auth::guest() ) :
-            $course_packages = $course->packages->pluck('id')->toArray(); 
+        if (! Auth::guest()) {
+            $course_packages = $course->packages->pluck('id')->toArray();
             $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
-            if($courseTaken) return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
-        endif;
+            if ($courseTaken) {
+                return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
+            }
+        }
 
         if ($course->hide_price) {
             return redirect()->route('front.course.show', $course->id);
@@ -100,27 +98,27 @@ class ShopController extends Controller
             }
         }
 
-    	return view('frontend.shop.checkout', compact('course', 'packages', 'coupon'));
+        return view('frontend.shop.checkout', compact('course', 'packages', 'coupon'));
     }
 
     /**
      * Checkout page
-     * @param $course_id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
-    public function sveaCheckout( $course_id, Request $request )
+    public function sveaCheckout($course_id, Request $request)
     {
-        $countryCode = AdminHelpers::ip_info($request->ip(), "Country Code");
+        $countryCode = AdminHelpers::ip_info($request->ip(), 'Country Code');
 
         $course = Course::findOrFail($course_id);
 
-        if (!$course->is_free): // added this condition to check if the course is for sale
-            if( !FrontendHelpers::isCourseActive($course) || count($course->packages) == 0 ) : // Display 404 if Course has no Packages
+        if (! $course->is_free) { // added this condition to check if the course is for sale
+            if (! FrontendHelpers::isCourseActive($course) || count($course->packages) == 0) { // Display 404 if Course has no Packages
                 return abort(404);
-            endif;
-        endif;
+            }
+        }
 
-        if (!Auth::guest() && !auth()->user()->could_buy_course) {
+        if (! Auth::guest() && ! auth()->user()->could_buy_course) {
             return redirect()->route('front.course.show', $course_id);
         }
 
@@ -129,22 +127,24 @@ class ShopController extends Controller
         }
 
         $hasPaidCourse = false;
-        if( !Auth::guest() ) :
-            foreach( \Auth::user()->coursesTakenNotOld as $courseTaken ) {
-                if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+        if (! Auth::guest()) {
+            foreach (\Auth::user()->coursesTakenNotOld as $courseTaken) {
+                if ($courseTaken->package->course->type != 'Free' && $courseTaken->is_active) {
                     if ($courseTaken->package->course->is_free != 1) {
                         $hasPaidCourse = true;
                     }
                     break;
-                endif;
+                }
             }
 
             $course_packages = $course->packages->pluck('id')->toArray();
             $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)
                 ->whereIn('package_id', $course_packages)
                 ->first();
-            if($courseTaken) return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
-        endif;
+            if ($courseTaken) {
+                return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
+            }
+        }
 
         if ($course->hide_price) {
             return redirect()->route('front.course.show', $course->id);
@@ -172,7 +172,7 @@ class ShopController extends Controller
             $user['address'] = $user->address;
             $user->checkoutLogs()->firstOrCreate([
                 'parent' => 'course',
-                'parent_id' => $course->id
+                'parent_id' => $course->id,
             ]);
         }
 
@@ -181,16 +181,18 @@ class ShopController extends Controller
             'hasPaidCourse', 'user', 'startIndex', 'countryCode'));
     }
 
-    public function processOrder( $course_id, OrderCreateRequest $request )
+    public function processOrder($course_id, OrderCreateRequest $request)
     {
         // check if webinar-pakke
-       // if ($course_id == 17) {
-            $course = Course::findOrFail($course_id);
-            $course_packages = $course->packages->pluck('id')->toArray();
-            $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
-            // check if the user already avails this course
-            if($courseTaken) return response()->json(['redirect_link' => route('learner.course.show', ['id' => $courseTaken->id])]);
-        //}
+        // if ($course_id == 17) {
+        $course = Course::findOrFail($course_id);
+        $course_packages = $course->packages->pluck('id')->toArray();
+        $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
+        // check if the user already avails this course
+        if ($courseTaken) {
+            return response()->json(['redirect_link' => route('learner.course.show', ['id' => $courseTaken->id])]);
+        }
+        // }
         $hasPaidCourse = $this->hasPaidCourse()->original; // get result of json
 
         $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
@@ -198,10 +200,10 @@ class ShopController extends Controller
         $package = Package::findOrFail($request->package_id);
         $add_to_automation = 0;
 
-        $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
+        $payment_plan = ($paymentMode->mode == 'Paypal') ? 'Hele beløpet' : $paymentPlan->plan;
 
-        /* check if there's an issue date set ir not then use today*/
-        $dueDate = date("Y-m-d");
+        /* check if there's an issue date set ir not then use today */
+        $dueDate = date('Y-m-d');
         if ($package->issue_date && Carbon::parse($package->issue_date)->gt(Carbon::today())) {
             $dueDate = $package->issue_date;
         }
@@ -214,105 +216,105 @@ class ShopController extends Controller
         $discount = 0;
 
         // check payment plan and set price, saleDiscount, product_id and due date
-        if( $paymentPlan->division === 1 ) :
+        if ($paymentPlan->division === 1) {
             $price = $package->full_payment_is_sale && $package->full_payment_sale_price
-                ? (int)$package->full_payment_sale_price*100
-                : (int)$package->full_payment_price*100;
+                ? (int) $package->full_payment_sale_price * 100
+                : (int) $package->full_payment_price * 100;
             $saleDiscount = $package->full_payment_is_sale
                 ? ($package->full_payment_price - $package->full_payment_sale_price) * 100 : 0;
             $product_ID = $package->full_price_product;
             $dueDate->addDays($package->full_price_due_date);
-        elseif( $paymentPlan->division === 3 ) :
+        } elseif ($paymentPlan->division === 3) {
             $price = $package->months_3_is_sale && $package->months_3_sale_price
-                ? (int)$package->months_3_sale_price*100
-                : (int)$package->months_3_price*100;
+                ? (int) $package->months_3_sale_price * 100
+                : (int) $package->months_3_price * 100;
             $saleDiscount = $package->months_3_is_sale
                 ? ($package->months_3_price - $package->months_3_sale_price) * 100 : 0;
             $product_ID = $package->months_3_product;
             $dueDate->addDays($package->months_3_due_date);
-        elseif( $paymentPlan->division === 6 ) :
+        } elseif ($paymentPlan->division === 6) {
             $price = $package->months_6_is_sale && $package->months_6_sale_price
-                ? (int)$package->months_6_sale_price*100
-                : (int)$package->months_6_price*100;
+                ? (int) $package->months_6_sale_price * 100
+                : (int) $package->months_6_price * 100;
             $saleDiscount = $package->months_6_is_sale
                 ? ($package->months_6_price - $package->months_6_sale_price) * 100 : 0;
             $product_ID = $package->months_6_product;
             $dueDate->addDays($package->months_6_due_date);
-        elseif( $paymentPlan->division === 12 ) :
+        } elseif ($paymentPlan->division === 12) {
             $price = $package->months_12_is_sale && $package->months_12_sale_price
-                ? (int)$package->months_12_sale_price*100
-                : (int)$package->months_12_price*100;
+                ? (int) $package->months_12_sale_price * 100
+                : (int) $package->months_12_price * 100;
             $saleDiscount = $package->months_12_is_sale
                 ? ($package->months_12_price - $package->months_12_sale_price) * 100 : 0;
             $product_ID = $package->months_12_product;
             $dueDate->addDays($package->months_12_due_date);
-        endif;
+        }
         $dueDate = date_format(date_create($dueDate), 'Y-m-d');
 
         $payment_mode = $paymentMode->mode;
-        if( $payment_mode == 'Faktura' ) :
+        if ($payment_mode == 'Faktura') {
             $payment_mode = 'Bankoverføring';
-        endif;
+        }
 
-        $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
-        $comment .= 'Betalingsmodus: ' . $payment_mode . ', ';
-        $comment .= 'Betalingsplan: ' . $payment_plan . ')';
+        $comment = '(Kurs: '.$package->course->title.' ['.$package->variation.'], ';
+        $comment .= 'Betalingsmodus: '.$payment_mode.', ';
+        $comment .= 'Betalingsplan: '.$payment_plan.')';
 
         if ($request->coupon) {
             $discountCoupon = CourseDiscount::where('coupon', $request->coupon)->where('course_id', $course_id)->first();
 
             if ($discountCoupon->valid_to) {
                 $valid_from = Carbon::parse($discountCoupon->valid_from)->format('Y-m-d');
-                $valid_to   = Carbon::parse($discountCoupon->valid_to)->format('Y-m-d');
-                $today      = Carbon::today()->format('Y-m-d');
+                $valid_to = Carbon::parse($discountCoupon->valid_to)->format('Y-m-d');
+                $today = Carbon::today()->format('Y-m-d');
 
-                if ( ($today >= $valid_from) && ($today <= $valid_to)) {
-                    //echo "valid date <br/>";
+                if (($today >= $valid_from) && ($today <= $valid_to)) {
+                    // echo "valid date <br/>";
                 } else {
                     return redirect()->back()->withInput()->with([
-                        'errors' => AdminHelpers::createMessageBag('Rabattkupongen er ugyldig eller utløpt.')
+                        'errors' => AdminHelpers::createMessageBag('Rabattkupongen er ugyldig eller utløpt.'),
                     ]);
                 }
             }
 
             if ($discountCoupon) {
-                $discount = ( (int) $discountCoupon->discount) * 100;
+                $discount = ((int) $discountCoupon->discount) * 100;
             }
 
         }
 
-        if( $hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
+        if ($hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
             $groupDiscount = 1000;
             $isStudentDiscounted = true;
 
             if ($groupDiscount > $discount) {
-                $discount = ( (int)$groupDiscount*100 );
+                $discount = ((int) $groupDiscount * 100);
             }
 
             if ($saleDiscount) {
                 $discount = $discount + $saleDiscount;
             }
 
-            $comment .= ' - Discount: Kr '.number_format($discount/100, 2,',','.');
+            $comment .= ' - Discount: Kr '.number_format($discount / 100, 2, ',', '.');
         }
 
-        if( $hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
+        if ($hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
             $singleDiscount = 500;
             $isStudentDiscounted = true;
 
             if ($singleDiscount > $discount) {
-                $discount = ( (int)$singleDiscount*100 );
+                $discount = ((int) $singleDiscount * 100);
             }
 
             if ($saleDiscount) {
                 $discount = $discount + $saleDiscount;
             }
 
-            $comment .= ' - Discount: Kr '.number_format($discount/100, 2,',','.');
+            $comment .= ' - Discount: Kr '.number_format($discount / 100, 2, ',', '.');
         }
 
-        if ($saleDiscount && !$isStudentDiscounted) {
-            $comment .= ' - Discount: Kr '.number_format($saleDiscount/100, 2,',','.');
+        if ($saleDiscount && ! $isStudentDiscounted) {
+            $comment .= ' - Discount: Kr '.number_format($saleDiscount / 100, 2, ',', '.');
         }
 
         $price = $price - $discount;
@@ -320,13 +322,13 @@ class ShopController extends Controller
 
         // check if it's part payment
         if ($paymentPlan->division > 1) {
-            $division   = $paymentPlan->division * 100; // multiply the split count to get the correct value
-            $price      = round($price/$division, 2); // round the value to the nearest tenths
-            $price      = (int)$price*100;
-            for ($i=1; $i <= $paymentPlan->division; $i++ ) { // loop based on the split count
-                /*Carbon::today() - this is the old instead of Carbon parse*/
-                $dueDate = $package->issue_date ?: date("Y-m-d");
-                $dueDate =  Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
+            $division = $paymentPlan->division * 100; // multiply the split count to get the correct value
+            $price = round($price / $division, 2); // round the value to the nearest tenths
+            $price = (int) $price * 100;
+            for ($i = 1; $i <= $paymentPlan->division; $i++) { // loop based on the split count
+                /* Carbon::today() - this is the old instead of Carbon parse */
+                $dueDate = $package->issue_date ?: date('Y-m-d');
+                $dueDate = Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
                 $invoice_fields = [
                     'user_id' => Auth::user()->id,
                     'first_name' => $request->first_name,
@@ -341,11 +343,11 @@ class ShopController extends Controller
                     'postalPlace' => $request->city,
                     'postalCode' => $request->zip,
                     'comment' => $comment,
-                    'payment_mode'  => $paymentMode->mode,
-                    'index'         => $i
+                    'payment_mode' => $paymentMode->mode,
+                    'index' => $i,
                 ];
 
-                $invoice = new FikenInvoice();
+                $invoice = new FikenInvoice;
                 $invoice->create_invoice($invoice_fields);
             }
 
@@ -365,10 +367,10 @@ class ShopController extends Controller
                 'postalPlace' => $request->city,
                 'postalCode' => $request->zip,
                 'comment' => $comment,
-                'payment_mode'  => $paymentMode->mode,
+                'payment_mode' => $paymentMode->mode,
             ];
 
-            $invoice = new FikenInvoice();
+            $invoice = new FikenInvoice;
             $invoice->create_invoice($invoice_fields);
         }
 
@@ -381,17 +383,17 @@ class ShopController extends Controller
         $address->save();
 
         // create course taken record
-        $course_status = $paymentMode->mode == "Vipps" || $paymentMode->mode == "Paypal" ? 1 : 0;
+        $course_status = $paymentMode->mode == 'Vipps' || $paymentMode->mode == 'Paypal' ? 1 : 0;
         $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
         $courseTaken->is_active = $course_status;
         $courseTaken->is_welcome_email_sent = 0;
         $courseTaken->save();
 
-        $newOrder['user_id']    = Auth::user()->id;
-        $newOrder['item_id']    = $course_id;
-        $newOrder['type']       = Order::COURSE_TYPE;
+        $newOrder['user_id'] = Auth::user()->id;
+        $newOrder['item_id'] = $course_id;
+        $newOrder['type'] = Order::COURSE_TYPE;
         $newOrder['package_id'] = $package->id;
-        $newOrder['plan_id']    = $paymentPlan->id;
+        $newOrder['plan_id'] = $paymentPlan->id;
 
         $order = Order::create($newOrder);
 
@@ -399,24 +401,23 @@ class ShopController extends Controller
         CheckoutLog::updateOrCreate([
             'user_id' => \auth()->id(),
             'parent' => 'course',
-            'parent_id' => $course_id
+            'parent_id' => $course_id,
         ], [
-            'is_ordered' => true
+            'is_ordered' => true,
         ]);
 
         // Check for shop manuscripts
-        if( $package->shop_manuscripts->count() > 0 ) :
-            foreach( $package->shop_manuscripts as $shop_manuscript ) :
-                //$shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
-                $shopManuscriptTaken = new ShopManuscriptsTaken();
+        if ($package->shop_manuscripts->count() > 0) {
+            foreach ($package->shop_manuscripts as $shop_manuscript) {
+                // $shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
+                $shopManuscriptTaken = new ShopManuscriptsTaken;
                 $shopManuscriptTaken->user_id = Auth::user()->id;
                 $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
                 $shopManuscriptTaken->is_active = false;
                 $shopManuscriptTaken->package_shop_manuscripts_id = $package->shop_manuscripts[0]->id;
                 $shopManuscriptTaken->save();
-            endforeach;
-        endif;
-
+            }
+        }
 
         if ($package->included_courses->count() > 0) {
             foreach ($package->included_courses as $included_course) {
@@ -427,14 +428,14 @@ class ShopController extends Controller
                 // add user to the included course
                 $courseIncluded = CoursesTaken::firstOrNew([
                     'user_id' => Auth::user()->id,
-                    'package_id' => $included_course->included_package_id
+                    'package_id' => $included_course->included_package_id,
                 ]);
                 $courseIncluded->is_active = $course_status;
                 $courseIncluded->save();
             }
         }
 
-        if ($package->course->id == 17) { //check if webinar-pakke
+        if ($package->course->id == 17) { // check if webinar-pakke
             $add_to_automation++;
         }
 
@@ -443,7 +444,7 @@ class ShopController extends Controller
             $automation_id = 73;
             $user_name = Auth::user()->first_name;
 
-            AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+            AdminHelpers::addToAutomation($user_email, $automation_id, $user_name);
         }
 
         // check if the course has activecampaign list then add the user
@@ -452,32 +453,31 @@ class ShopController extends Controller
             $listData = [
                 'email' => Auth::user()->email,
                 'name' => Auth::user()->first_name,
-                'last_name' => Auth::user()->last_name
+                'last_name' => Auth::user()->last_name,
             ];
 
-            //AdminHelpers::addToActiveCampaignList($list_id, $listData);
+            // AdminHelpers::addToActiveCampaignList($list_id, $listData);
             event(new AddToCampaignList($list_id, $listData)); // fire the event
         }
 
         // Email to support
-        $from       = 'postmail@forfatterskolen.no';
-        $headers1 = "From: Forfatterskolen<".$from.">\r\n";
+        $from = 'postmail@forfatterskolen.no';
+        $headers1 = 'From: Forfatterskolen<'.$from.">\r\n";
         $headers1 .= "MIME-Version: 1.0\r\n";
         $headers1 .= "Content-Type: text/html; charset=UTF-8\r\n";
-        //mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title, $headers1);
+        // mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title, $headers1);
         $to = 'support@forfatterskolen.no'; //
         $emailData = [
             'email_subject' => 'New Course Order',
-            'email_message' => Auth::user()->first_name . ' has ordered the course ' . $package->course->title,
+            'email_message' => Auth::user()->first_name.' has ordered the course '.$package->course->title,
             'from_name' => '',
             'from_email' => 'post@forfatterskolen.no',
-            'attach_file' => NULL
+            'attach_file' => null,
         ];
         \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-        \Mail::to("post@forfatterskolen.no")->queue(new SubjectBodyEmail($emailData));
+        \Mail::to('post@forfatterskolen.no')->queue(new SubjectBodyEmail($emailData));
         /*AdminHelpers::send_email('New Course Order',
             'post@forfatterskolen.no', 'support@forfatterskolen.no', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);*/
-
 
         // Send course email
         $headers = "From: Forfatterskolen<post@forfatterskolen.no>\r\n";
@@ -488,10 +488,10 @@ class ShopController extends Controller
         $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
 
         $search_string = [
-            '[username]', '[password]'
+            '[username]', '[password]',
         ];
         $replace_string = [
-            $courseTaken->user->email, $password
+            $courseTaken->user->email, $password,
         ];
         $email_content = str_replace($search_string, $replace_string, $package->course->email);
 
@@ -499,21 +499,20 @@ class ShopController extends Controller
 
         $encode_email = encrypt($user_email);
         $redirectLink = encrypt(route('learner.course'));
-        $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
+        $actionUrl = route('auth.login.emailRedirect', [$encode_email, $redirectLink]);
         $actionText = 'Mine Kurs';
         $attachments = [asset($this->generateDocx($user->id, $package->id)),
             asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
-
 
         dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
             'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
 
-        if( $paymentMode->mode == "Paypal" ) :
+        if ($paymentMode->mode == 'Paypal') {
             $paypal = new PayPal;
 
             $response = $paypal->purchase([
-                'amount' => ($price/100),
+                'amount' => ($price / 100),
                 'transactionId' => $invoice->invoiceID,
                 'currency' => 'NOK',
                 'cancelUrl' => $paypal->getCancelUrl($invoice->invoiceID),
@@ -521,61 +520,60 @@ class ShopController extends Controller
             ]);
 
             if ($response->isRedirect()) {
-                //$response->redirect();
+                // $response->redirect();
                 return response()->json(['redirect_link' => $response->getRedirectUrl()]);
             }
 
             return response()->json(['message' => $response->getMessage()], 400);
-            //return response()->json(['redirect_link' => route('front.shop.thankyou')]);
-        endif;
+            // return response()->json(['redirect_link' => route('front.shop.thankyou')]);
+        }
 
         // check if vipps payment mode and the current user id is 4
-        if( $paymentMode->mode == "Vipps") :
-            //$orderId = $invoice->invoice_number;
-            $orderId = $order->id."-".$user->id;
+        if ($paymentMode->mode == 'Vipps') {
+            // $orderId = $invoice->invoice_number;
+            $orderId = $order->id.'-'.$user->id;
             $transactionText = $package->course->title;
             $vippsData = [
                 'amount' => $price,
                 'orderId' => $orderId,
                 'transactionText' => $transactionText,
                 'is_ajax' => true,
-                'fallbackUrl' => route('front.shop.thankyou', 'iu='.encrypt($invoice->fikenUrl))
+                'fallbackUrl' => route('front.shop.thankyou', 'iu='.encrypt($invoice->fikenUrl)),
             ];
+
             return response()->json(['redirect_link' => $this->vippsInitiatePayment($vippsData)]);
-        endif;
+        }
 
         return response()->json(['redirect_link' => route('front.course.thank-you', $course_id)]);
     }
 
     /**
      * Check if user has paid course
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function hasPaidCourse()
     {
         $hasPaidCourse = false;
 
-        if( !Auth::guest() ) :
-            foreach( \Auth::user()->coursesTakenNotOld as $courseTaken ) {
-                if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+        if (! Auth::guest()) {
+            foreach (\Auth::user()->coursesTakenNotOld as $courseTaken) {
+                if ($courseTaken->package->course->type != 'Free' && $courseTaken->is_active) {
                     if ($courseTaken->package->course->is_free != 1) {
                         $hasPaidCourse = true;
                         break;
                     }
-                endif;
+                }
             }
-        endif;
-
+        }
 
         return response()->json($hasPaidCourse);
     }
 
     /**
-     * @param $course_id
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function validateCheckoutForm( $course_id, Request $request)
+    public function validateCheckoutForm($course_id, Request $request)
     {
         /*$this->validate($request, [
             'email'         => 'required',
@@ -594,16 +592,16 @@ class ShopController extends Controller
         }*/
 
         $validation = [
-            'email'         => 'required|email',
-            'first_name'    => 'required',
-            'last_name'     => 'required',
-            'street'        => 'required',
-            'zip'           => 'required',
-            'city'          => 'required',
-            'phone'         => 'required',
+            'email' => 'required|email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'street' => 'required',
+            'zip' => 'required',
+            'city' => 'required',
+            'phone' => 'required',
         ];
 
-        if (!\Auth::check()) {
+        if (! \Auth::check()) {
             $validation['password'] = 'required|min:3';
         }
 
@@ -613,12 +611,12 @@ class ShopController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        if (!\Auth::check()) {
+        if (! \Auth::check()) {
             $addressData = [
-                'street'    => $request->street,
-                'zip'       => $request->zip,
-                'city'      => $request->city,
-                'phone'     => $request->phone
+                'street' => $request->street,
+                'zip' => $request->zip,
+                'city' => $request->city,
+                'phone' => $request->phone,
             ];
             $this->courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
         }
@@ -626,28 +624,29 @@ class ShopController extends Controller
         $user = \Auth::user();
         $user->checkoutLogs()->firstOrCreate([
             'parent' => 'course',
-            'parent_id' => $course_id
+            'parent_id' => $course_id,
         ]);
 
-        //return response()->json();
+        // return response()->json();
 
         return response()->json($this->courseService->processCheckout($request));
     }
 
-    public function vippsCheckout( $course_id, Request $request, CourseService $courseService, LoginController $loginController )
+    public function vippsCheckout($course_id, Request $request, CourseService $courseService, LoginController $loginController)
     {
         $package = Package::find($request->package_id);
-        $course =  $package->course;
+        $course = $package->course;
         $calculatedPrice = $courseService->calculatePrice($course, $package, $request);
         $discount = $request->price - $calculatedPrice;
 
         $request->merge([
             'course_id' => $course_id,
             'item_type' => 'course',
-            'discount' => $discount
+            'discount' => $discount,
         ]);
         $checkoutDetails = collect($request->except('_token'));
         \Session::put('vipps_checkout', $checkoutDetails);
+
         return response()->json(['redirect_link' => $loginController->vippsLogin('checkout_state')]);
         /*$vipps = \Session::get('vipps_checkout');
         return response()->json(['redirect_link' => route('front.course.checkout.process-vipps',$vipps['course_id'])]);*/
@@ -657,13 +656,14 @@ class ShopController extends Controller
     {
         $vippsCheckout = \Session::get('vipps_checkout');
         $package = Package::find($vippsCheckout['package_id']);
-        $course =  $package->course;
+        $course = $package->course;
         $course_packages = $course->packages->pluck('id')->toArray();
         $courseTaken = \Auth::user()->coursesTaken()->where('user_id', \Auth::user()->id)
             ->whereIn('package_id', $course_packages)->first();
         // check if the user is already on the course
-        if($courseTaken) {
+        if ($courseTaken) {
             $course_link = route('learner.course.show', $courseTaken->id);
+
             return redirect()->to($course_link);
             /*return [
                 'course_link' => $course_link
@@ -673,19 +673,19 @@ class ShopController extends Controller
         $hasPaidCourse = false;
 
         // check if course bought is not expired yet
-        foreach( Auth::user()->coursesTakenNotOld as $courseTaken ) :
-            if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+        foreach (Auth::user()->coursesTakenNotOld as $courseTaken) {
+            if ($courseTaken->package->course->type != 'Free' && $courseTaken->is_active) {
                 // check if course taken is not free
                 if ($courseTaken->package->course->is_free != 1) {
                     $hasPaidCourse = true;
                     break;
                 }
-            endif;
-        endforeach;
+            }
+        }
 
         $discount = $vippsCheckout['discount'];
 
-        if( $hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
+        if ($hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
             $groupDiscount = 1000;
 
             if ($groupDiscount > $discount) {
@@ -693,7 +693,7 @@ class ShopController extends Controller
             }
         }
 
-        if( $hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
+        if ($hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
             $singleDiscount = 500;
 
             if ($singleDiscount > $discount) {
@@ -702,22 +702,22 @@ class ShopController extends Controller
         }
 
         $vippsCheckout['discount'] = $discount;
-        $request = new \Illuminate\Http\Request();
+        $request = new \Illuminate\Http\Request;
         $request->replace($vippsCheckout->toArray());
 
         $orderRecord = $courseService->createOrder($request);
 
-        $orderId = $orderRecord->id . '-' . $orderRecord->user_id;
+        $orderId = $orderRecord->id.'-'.$orderRecord->user_id;
         $price = $orderRecord->price - $orderRecord->discount;
         $transactionText = $package->course->title;
         $user = Auth::user();
 
         $vippsData = [
-            'amount'                => $price * 100,
-            'orderId'               => $orderId,
-            'transactionText'       => $transactionText,
-            'is_ajax'               => true,
-            'vipps_phone_number'    => $user->address->vipps_phone_number
+            'amount' => $price * 100,
+            'orderId' => $orderId,
+            'transactionText' => $transactionText,
+            'is_ajax' => true,
+            'vipps_phone_number' => $user->address->vipps_phone_number,
         ];
 
         return redirect()->to($this->vippsInitiatePayment($vippsData));
@@ -731,54 +731,55 @@ class ShopController extends Controller
     public function checkoutTest($course_id)
     {
         $course = Course::findOrFail($course_id);
-        if( !Auth::guest() ) :
+        if (! Auth::guest()) {
             $course_packages = $course->packages->pluck('id')->toArray();
             $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
-            if($courseTaken) return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
-        endif;
+            if ($courseTaken) {
+                return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
+            }
+        }
 
         return view('frontend.shop.checkout-test', compact('course'));
     }
 
     /**
      * Checkout for the shared course
-     * @param $share_hash
-     * @param Request $request
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
     public function shareCourseCheckout($share_hash, Request $request)
     {
         $courseShare = CourseShared::where('hash', '=', $share_hash)->first();
-        if (!$courseShare) {
+        if (! $courseShare) {
             return redirect()->route('front.course.index');
         }
         $course = $courseShare->course;
         $package = $courseShare->package;
 
         if ($request->isMethod('post')) {
-            if( Auth::guest() ) :
+            if (Auth::guest()) {
                 $user = User::where('email', $request->email)->first();
-                if( $user ) :
+                if ($user) {
                     return redirect()->back()->withInput()->withErrors(['The email you provided is already registered. <a href="#" data-toggle="collapse" data-target="#checkoutLogin">Login Here</a>']);
-                else :
+                } else {
                     // register new user
-                    $new_user = new User();
+                    $new_user = new User;
                     $new_user->email = $request->email;
                     $new_user->first_name = $request->first_name;
                     $new_user->last_name = $request->last_name;
                     $new_user->password = bcrypt($request->password);
                     $new_user->save();
                     Auth::login($new_user);
-                endif;
-            endif;
+                }
+            }
 
             $alreadyAvailCourse = CourseSharedUser::where(['user_id' => Auth::user()->id, 'course_shared_id' => $courseShare->id])->first();
             if ($alreadyAvailCourse) {
                 return redirect(route('learner.course'));
             }
 
-            //$courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
-            $courseTaken = new CoursesTaken();
+            // $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
+            $courseTaken = new CoursesTaken;
             $courseTaken->user_id = Auth::user()->id;
             $courseTaken->package_id = $package->id;
             $courseTaken->is_active = 1;
@@ -790,17 +791,17 @@ class ShopController extends Controller
             CourseSharedUser::create($courseSharedUser);
 
             // Check for shop manuscripts
-            if( $package->shop_manuscripts->count() > 0 ) :
-                foreach( $package->shop_manuscripts as $shop_manuscript ) :
-                    //$shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
-                    $shopManuscriptTaken = new ShopManuscriptsTaken();
+            if ($package->shop_manuscripts->count() > 0) {
+                foreach ($package->shop_manuscripts as $shop_manuscript) {
+                    // $shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
+                    $shopManuscriptTaken = new ShopManuscriptsTaken;
                     $shopManuscriptTaken->user_id = Auth::user()->id;
                     $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
                     $shopManuscriptTaken->is_active = false;
                     $shopManuscriptTaken->package_shop_manuscripts_id = $package->shop_manuscripts[0]->id;
                     $shopManuscriptTaken->save();
-                endforeach;
-            endif;
+                }
+            }
 
             $add_to_automation = 0;
             if ($package->included_courses->count() > 0) {
@@ -811,7 +812,7 @@ class ShopController extends Controller
                 }
             }
 
-            if ($package->course->id == 17) { //check if webinar-pakke
+            if ($package->course->id == 17) { // check if webinar-pakke
                 $add_to_automation++;
             }
 
@@ -820,7 +821,7 @@ class ShopController extends Controller
                 $automation_id = 73;
                 $user_name = Auth::user()->first_name;
 
-                AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+                AdminHelpers::addToAutomation($user_email, $automation_id, $user_name);
             }
 
             // check if the course has activecampaign list then add the user
@@ -829,7 +830,7 @@ class ShopController extends Controller
                 $listData = [
                     'email' => Auth::user()->email,
                     'name' => Auth::user()->first_name,
-                    'last_name' => Auth::user()->last_name
+                    'last_name' => Auth::user()->last_name,
                 ];
 
                 AdminHelpers::addToActiveCampaignList($list_id, $listData);
@@ -837,53 +838,55 @@ class ShopController extends Controller
 
             return redirect(route('front.shop.thankyou'));
         }
+
         return view('frontend.shop.checkout-share', compact('course', 'package'));
     }
 
     /**
      * Apply discount page
-     * @param $course_id
-     * @param $coupon
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
     public function applyDiscount($course_id, $coupon)
     {
-        return redirect()->to(route('front.course.checkout', $course_id)."?c=".$coupon);
+        return redirect()->to(route('front.course.checkout', $course_id).'?c='.$coupon);
         $course = Course::find($course_id);
-        if (!$course) {
+        if (! $course) {
             return redirect()->route('front.course.index');
         }
 
         $discountData = $course->discounts()->where('coupon', '=', $coupon)->first();
 
-        if (!$discountData) {
+        if (! $discountData) {
             return view('frontend.shop.applied-discount', compact('course', 'coupon', 'discountData'))
                 ->with([
-                    'errors' => AdminHelpers::createMessageBag('Invalid coupon code.')
+                    'errors' => AdminHelpers::createMessageBag('Invalid coupon code.'),
                 ]);
-            //return redirect()->route('front.course.checkout', $course_id);
+            // return redirect()->route('front.course.checkout', $course_id);
         }
 
         if ($discountData->valid_to) {
             $valid_from = Carbon::parse($discountData->valid_from)->format('Y-m-d');
-            $valid_to   = Carbon::parse($discountData->valid_to)->format('Y-m-d');
-            $today      = Carbon::today()->format('Y-m-d');
+            $valid_to = Carbon::parse($discountData->valid_to)->format('Y-m-d');
+            $today = Carbon::today()->format('Y-m-d');
 
-            if ( ($today >= $valid_from) && ($today <= $valid_to)) {
-                //echo "valid date <br/>";
+            if (($today >= $valid_from) && ($today <= $valid_to)) {
+                // echo "valid date <br/>";
             } else {
                 return view('frontend.shop.applied-discount', compact('course', 'coupon', 'discountData'))
                     ->with([
-                    'errors' => AdminHelpers::createMessageBag('Rabattkupongen er ugyldig eller utløpt.')
-                ]);
+                        'errors' => AdminHelpers::createMessageBag('Rabattkupongen er ugyldig eller utløpt.'),
+                    ]);
             }
         }
 
-        if( !Auth::guest() ) :
+        if (! Auth::guest()) {
             $course_packages = $course->packages->pluck('id')->toArray();
             $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
-            if($courseTaken) return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
-        endif;
+            if ($courseTaken) {
+                return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
+            }
+        }
 
         $packages = $course->packages()->isShow()->get();
 
@@ -893,8 +896,7 @@ class ShopController extends Controller
 
     /**
      * Check the discount for the course
-     * @param $course_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function checkDiscount($course_id, Request $request)
@@ -917,22 +919,22 @@ class ShopController extends Controller
                 $months_6_sale_price = $package->months_6_sale_price;
                 $months_12_sale_price = $package->months_12_sale_price;
 
-                $today 			= \Carbon\Carbon::today()->format('Y-m-d');
-                $fromFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
-                $toFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
-                $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
+                $today = \Carbon\Carbon::today()->format('Y-m-d');
+                $fromFull = \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
+                $toFull = \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
+                $isBetweenFull = (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
 
-                $fromMonths3 		= \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
-                $toMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
-                $isBetweenMonths3 	= (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
+                $fromMonths3 = \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
+                $toMonths3 = \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
+                $isBetweenMonths3 = (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
 
-                $fromMonths6 		= \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
-                $toMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
-                $isBetweenMonths6 	= (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
+                $fromMonths6 = \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
+                $toMonths6 = \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
+                $isBetweenMonths6 = (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
 
-                $fromMonths12 		= \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
-                $toMonths12 		= \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
-                $isBetweenMonths12 	= (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
+                $fromMonths12 = \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
+                $toMonths12 = \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
+                $isBetweenMonths12 = (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
 
                 $discountPrice = 0;
                 if ($isBetweenFull && $package->full_payment_sale_price && $payment_plan->division === 1) {
@@ -952,28 +954,29 @@ class ShopController extends Controller
                 }
 
                 $applyDiscount = $discountPrice + $discountCoupon->discount;
-                $formattedDiscount = number_format($applyDiscount, 2,',','.');
+                $formattedDiscount = number_format($applyDiscount, 2, ',', '.');
+
                 return response()->json(['discount' => $applyDiscount, 'discount_text' => 'Kr '.$formattedDiscount,
                     'discount_price' => $discountPrice]);
             }
         }
 
         $hasPaidCourse = false;
-        foreach( Auth::user()->coursesTaken as $courseTaken ) :
-            if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+        foreach (Auth::user()->coursesTaken as $courseTaken) {
+            if ($courseTaken->package->course->type != 'Free' && $courseTaken->is_active) {
                 $hasPaidCourse = true;
                 break;
-            endif;
-        endforeach;
+            }
+        }
 
         $package = Package::findOrFail($request->package_id);
         $price = 0;
-        if( $hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
-            $price = ( (int)1500 );
+        if ($hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
+            $price = ((int) 1500);
         }
 
-        if( $hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
-            $price = ( (int)500 );
+        if ($hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
+            $price = ((int) 500);
         }
 
         if ($request->coupon) {
@@ -982,7 +985,7 @@ class ShopController extends Controller
             $payment_plan = PaymentPlan::find($request->payment_plan_id);
 
             if ($discountCoupon) {
-                $convertDiscount = ( (int)$discountCoupon->discount);
+                $convertDiscount = ((int) $discountCoupon->discount);
                 $applyDiscount = $discountCoupon->discount;
 
                 if ($price > $convertDiscount) {
@@ -999,22 +1002,22 @@ class ShopController extends Controller
                 $months_6_sale_price = $package->months_6_sale_price;
                 $months_12_sale_price = $package->months_12_sale_price;
 
-                $today 			= \Carbon\Carbon::today()->format('Y-m-d');
-                $fromFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
-                $toFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
-                $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
+                $today = \Carbon\Carbon::today()->format('Y-m-d');
+                $fromFull = \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
+                $toFull = \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
+                $isBetweenFull = (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
 
-                $fromMonths3 		= \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
-                $toMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
-                $isBetweenMonths3 	= (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
+                $fromMonths3 = \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
+                $toMonths3 = \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
+                $isBetweenMonths3 = (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
 
-                $fromMonths6 		= \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
-                $toMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
-                $isBetweenMonths6 	= (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
+                $fromMonths6 = \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
+                $toMonths6 = \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
+                $isBetweenMonths6 = (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
 
-                $fromMonths12 		= \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
-                $toMonths12 		= \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
-                $isBetweenMonths12 	= (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
+                $fromMonths12 = \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
+                $toMonths12 = \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
+                $isBetweenMonths12 = (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
 
                 $discountPrice = 0;
                 if ($isBetweenFull && $package->full_payment_sale_price && $payment_plan->division === 1) {
@@ -1035,7 +1038,8 @@ class ShopController extends Controller
 
                 $applyDiscount = $discountPrice + $applyDiscount;
 
-                $formattedDiscount = number_format($applyDiscount, 2,',','.');
+                $formattedDiscount = number_format($applyDiscount, 2, ',', '.');
+
                 return response()->json(['discount' => $applyDiscount, 'discount_text' => 'Kr '.$formattedDiscount]);
             }
 
@@ -1045,40 +1049,37 @@ class ShopController extends Controller
     }
 
     /**
-     * @param $course_id
-     * @param $coupon
-     * @param CourseService $courseService
      * @return \Illuminate\Http\JsonResponse
      */
-    public function checkCouponDiscount( $course_id, $coupon, CourseService $courseService )
+    public function checkCouponDiscount($course_id, $coupon, CourseService $courseService)
     {
         $course = Course::find($course_id);
-        if (!$course) {
+        if (! $course) {
             return response()->json([], 404);
         }
-        return $courseService->checkCouponDiscount( $course_id, $coupon );
-    }
 
+        return $courseService->checkCouponDiscount($course_id, $coupon);
+    }
 
     public function place_order($course_id, OrderCreateRequest $request)
     {
-        if( Auth::guest() ) :
+        if (Auth::guest()) {
             $user = User::where('email', $request->email)->first();
-            if( $user ) :
+            if ($user) {
                 Auth::login($user);
-                //return redirect()->back()->withInput()->withErrors(['The email you provided is already registered.
+                // return redirect()->back()->withInput()->withErrors(['The email you provided is already registered.
                 // <a href="#" data-toggle="collapse" data-target="#checkoutLogin">Login Here</a>']);
-            else :
+            } else {
                 // register new user
-                $new_user = new User();
+                $new_user = new User;
                 $new_user->email = $request->email;
                 $new_user->first_name = $request->first_name;
                 $new_user->last_name = $request->last_name;
                 $new_user->password = bcrypt($request->password);
                 $new_user->save();
                 Auth::login($new_user);
-            endif;
-        endif;
+            }
+        }
 
         // check if webinar-pakke
         if ($course_id == 17) {
@@ -1086,20 +1087,22 @@ class ShopController extends Controller
             $course_packages = $course->packages->pluck('id')->toArray();
             $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
             // check if the user already avails this course
-            if($courseTaken) return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
+            if ($courseTaken) {
+                return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
+            }
         }
 
         $hasPaidCourse = false;
         // check if course bought is not expired yet
-        foreach( Auth::user()->coursesTakenNotOld as $courseTaken ) :
-            if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+        foreach (Auth::user()->coursesTakenNotOld as $courseTaken) {
+            if ($courseTaken->package->course->type != 'Free' && $courseTaken->is_active) {
                 // check if course taken is not free
                 if ($courseTaken->package->course->is_free != 1) {
                     $hasPaidCourse = true;
                     break;
                 }
-            endif;
-        endforeach;
+            }
+        }
 
         $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
         $paymentPlan = PaymentPlan::findOrFail($request->payment_plan_id);
@@ -1109,7 +1112,7 @@ class ShopController extends Controller
         $monthNumbers = [3 => 'months_3_enable', 6 => 'months_6_enable', 12 => 'months_12_enable'];
         // check if monthly payment is selected
         if (array_key_exists($paymentPlan->division, $monthNumbers)) {
-            foreach($monthNumbers as $month => $field) {
+            foreach ($monthNumbers as $month => $field) {
                 // check if the payment plan selected is allowed
                 if ($month == $paymentPlan->division && $package->$field == 0) {
                     return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Invalid payment plan')]);
@@ -1117,24 +1120,21 @@ class ShopController extends Controller
             }
         }
 
-        $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
+        $payment_plan = ($paymentMode->mode == 'Paypal') ? 'Hele beløpet' : $paymentPlan->plan;
 
         // additional checking if the user selects correct payment mode for the selected plan
         // not faktura and payment plan is not full payment or split invoice
         if ($paymentMode->id !== 3 && ($paymentPlan->id != 8 || isset($request->split_invoice))) {
-            return redirect()->back()->with(['errors' =>
-                AdminHelpers::createMessageBag('Invalid payment mode for the selected plan')]);
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Invalid payment mode for the selected plan')]);
         } else {
             // payment is faktura and wants to split invoice
             if ($paymentPlan->id == 8 && (isset($request->split_invoice) && $request->split_invoice)) {
-                return redirect()->back()->with(['errors' =>
-                    AdminHelpers::createMessageBag('Invalid payment mode for the selected plan')]);
+                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Invalid payment mode for the selected plan')]);
             }
         }
 
-
-        /* check if there's an issue date set ir not then use today*/
-        $dueDate = date("Y-m-d");
+        /* check if there's an issue date set ir not then use today */
+        $dueDate = date('Y-m-d');
         if ($package->issue_date && Carbon::parse($package->issue_date)->gt(Carbon::today())) {
             $dueDate = $package->issue_date;
         }
@@ -1143,59 +1143,59 @@ class ShopController extends Controller
 
         // this is use to check if the current date is within a sale date
         // for the 3 plans/payments
-        $today 			= \Carbon\Carbon::today()->format('Y-m-d');
-        $fromFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
-        $toFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
-        $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
+        $today = \Carbon\Carbon::today()->format('Y-m-d');
+        $fromFull = \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
+        $toFull = \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
+        $isBetweenFull = (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
 
-        $fromMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
-        $toMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
-        $isBetweenMonths3 	= (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
+        $fromMonths3 = \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
+        $toMonths3 = \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
+        $isBetweenMonths3 = (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
 
-        $fromMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
-        $toMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
-        $isBetweenMonths6 	= (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
+        $fromMonths6 = \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
+        $toMonths6 = \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
+        $isBetweenMonths6 = (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
 
         // added 12th month
-        $fromMonths12 			= \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
-        $toMonths12 			= \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
-        $isBetweenMonths12 	= (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
+        $fromMonths12 = \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
+        $toMonths12 = \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
+        $isBetweenMonths12 = (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
 
-        if( $payment_plan == "Hele beløpet" ) :
+        if ($payment_plan == 'Hele beløpet') {
             $price = $isBetweenFull && $package->full_payment_sale_price
-                ? (int)$package->full_payment_sale_price*100
-                : (int)$package->full_payment_price*100;
+                ? (int) $package->full_payment_sale_price * 100
+                : (int) $package->full_payment_price * 100;
             $product_ID = $package->full_price_product;
             $dueDate->addDays($package->full_price_due_date);
-        elseif( $payment_plan == "3 måneder" ) :
+        } elseif ($payment_plan == '3 måneder') {
             $price = $isBetweenMonths3 && $package->months_3_sale_price
-                ? (int)$package->months_3_sale_price*100
-                : (int)$package->months_3_price*100;
+                ? (int) $package->months_3_sale_price * 100
+                : (int) $package->months_3_price * 100;
             $product_ID = $package->months_3_product;
             $dueDate->addDays($package->months_3_due_date);
-        elseif( $payment_plan == "6 måneder" ) :
+        } elseif ($payment_plan == '6 måneder') {
             $price = $isBetweenMonths6 && $package->months_6_sale_price
-                ? (int)$package->months_6_sale_price*100
-                : (int)$package->months_6_price*100;
+                ? (int) $package->months_6_sale_price * 100
+                : (int) $package->months_6_price * 100;
             $product_ID = $package->months_6_product;
             $dueDate->addDays($package->months_6_due_date);
-        elseif( $payment_plan == "12 måneder" ) :
+        } elseif ($payment_plan == '12 måneder') {
             $price = $isBetweenMonths12 && $package->months_12_sale_price
-                ? (int)$package->months_12_sale_price*100
-                : (int)$package->months_12_price*100;
+                ? (int) $package->months_12_sale_price * 100
+                : (int) $package->months_12_price * 100;
             $product_ID = $package->months_12_product;
             $dueDate->addDays($package->months_12_due_date);
-        endif;
+        }
         $dueDate = date_format(date_create($dueDate), 'Y-m-d');
 
         $payment_mode = $paymentMode->mode;
-        if( $payment_mode == 'Faktura' ) :
+        if ($payment_mode == 'Faktura') {
             $payment_mode = 'Bankoverføring';
-        endif;
+        }
 
-        $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
-        $comment .= 'Betalingsmodus: ' . $payment_mode . ', ';
-        $comment .= 'Betalingsplan: ' . $payment_plan . ')';
+        $comment = '(Kurs: '.$package->course->title.' ['.$package->variation.'], ';
+        $comment .= 'Betalingsmodus: '.$payment_mode.', ';
+        $comment .= 'Betalingsplan: '.$payment_plan.')';
 
         $discount = 0;
 
@@ -1204,26 +1204,26 @@ class ShopController extends Controller
 
             if ($discountCoupon->valid_to) {
                 $valid_from = Carbon::parse($discountCoupon->valid_from)->format('Y-m-d');
-                $valid_to   = Carbon::parse($discountCoupon->valid_to)->format('Y-m-d');
-                $today      = Carbon::today()->format('Y-m-d');
+                $valid_to = Carbon::parse($discountCoupon->valid_to)->format('Y-m-d');
+                $today = Carbon::today()->format('Y-m-d');
 
-                if ( ($today >= $valid_from) && ($today <= $valid_to)) {
-                    //echo "valid date <br/>";
+                if (($today >= $valid_from) && ($today <= $valid_to)) {
+                    // echo "valid date <br/>";
                 } else {
                     return redirect()->back()->withInput()->with([
-                        'errors' => AdminHelpers::createMessageBag('Rabattkupongen er ugyldig eller utløpt.')
+                        'errors' => AdminHelpers::createMessageBag('Rabattkupongen er ugyldig eller utløpt.'),
                     ]);
                 }
             }
 
             if ($discountCoupon) {
-                $discount = ( (int) $discountCoupon->discount);
-                $price = $price - ( (int)$discount*100 );
+                $discount = ((int) $discountCoupon->discount);
+                $price = $price - ((int) $discount * 100);
             }
 
         }
 
-        if( $hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
+        if ($hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
             /* original code
              * $comment .= ' - Discount: Kr 1.500,00';
             $price = $price - ( (int)1500*100 );*/
@@ -1234,11 +1234,11 @@ class ShopController extends Controller
                 $discount = $groupDiscount;
             }
 
-            $comment .= ' - Discount: Kr '.number_format($discount, 2,',','.');
-            $price = $price - ( (int)$discount*100 );
+            $comment .= ' - Discount: Kr '.number_format($discount, 2, ',', '.');
+            $price = $price - ((int) $discount * 100);
         }
 
-        if( $hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
+        if ($hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
             /* original code
              * $comment .= ' - Discount: Kr 500,00';
             $price = $price - ( (int)500*100 );*/
@@ -1249,8 +1249,8 @@ class ShopController extends Controller
                 $discount = $singleDiscount;
             }
 
-            $comment .= ' - Discount: Kr '.number_format($discount, 2,',','.');
-            $price = $price - ( (int)$discount*100 );
+            $comment .= ' - Discount: Kr '.number_format($discount, 2, ',', '.');
+            $price = $price - ((int) $discount * 100);
         }
         /*if( $hasPaidCourse && $package->course->type == 'Group' ) :
             $comment .= ' - Discount: Kr 1.500,00';
@@ -1278,14 +1278,14 @@ class ShopController extends Controller
         }
 
         // check if the customer wants to split the invoice
-        if ($paymentPlan->division > 1) { //isset($request->split_invoice) && $request->split_invoice
-            $division   = $paymentPlan->division * 100; // multiply the split count to get the correct value
-            $price      = round($price/$division, 2); // round the value to the nearest tenths
-            $price      = (int)$price*100;
-            for ($i=1; $i <= $paymentPlan->division; $i++ ) { // loop based on the split count
-                /*Carbon::today() - this is the old instead of Carbon parse*/
-                $dueDate = $package->issue_date ?: date("Y-m-d");
-                $dueDate =  Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
+        if ($paymentPlan->division > 1) { // isset($request->split_invoice) && $request->split_invoice
+            $division = $paymentPlan->division * 100; // multiply the split count to get the correct value
+            $price = round($price / $division, 2); // round the value to the nearest tenths
+            $price = (int) $price * 100;
+            for ($i = 1; $i <= $paymentPlan->division; $i++) { // loop based on the split count
+                /* Carbon::today() - this is the old instead of Carbon parse */
+                $dueDate = $package->issue_date ?: date('Y-m-d');
+                $dueDate = Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
                 $invoice_fields = [
                     'user_id' => Auth::user()->id,
                     'first_name' => $request->first_name,
@@ -1300,11 +1300,11 @@ class ShopController extends Controller
                     'postalPlace' => $request->city,
                     'postalCode' => $request->zip,
                     'comment' => $comment,
-                    'payment_mode'  => $paymentMode->mode,
-                    'index'         => $i
+                    'payment_mode' => $paymentMode->mode,
+                    'index' => $i,
                 ];
 
-                $invoice = new FikenInvoice();
+                $invoice = new FikenInvoice;
                 $invoice->create_invoice($invoice_fields);
             }
 
@@ -1324,24 +1324,24 @@ class ShopController extends Controller
                 'postalPlace' => $request->city,
                 'postalCode' => $request->zip,
                 'comment' => $comment,
-                'payment_mode'  => $paymentMode->mode,
-                /*'issueDate' => $package->issue_date*/
+                'payment_mode' => $paymentMode->mode,
+                /* 'issueDate' => $package->issue_date */
             ];
 
-            $invoice = new FikenInvoice();
+            $invoice = new FikenInvoice;
             $invoice->create_invoice($invoice_fields);
         }
 
-        //if( $request->update_address ) :
-            $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
-            $address->street = $request->street;
-            $address->city = $request->city;
-            $address->zip = $request->zip;
-            $address->phone = $request->phone;
-            $address->save();
-        //endif;
+        // if( $request->update_address ) :
+        $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
+        $address->street = $request->street;
+        $address->city = $request->city;
+        $address->zip = $request->zip;
+        $address->phone = $request->phone;
+        $address->save();
+        // endif;
 
-        $course_status = $paymentMode->mode == "Vipps" || $paymentMode->mode == "Paypal" ? 1 : 0;
+        $course_status = $paymentMode->mode == 'Vipps' || $paymentMode->mode == 'Paypal' ? 1 : 0;
         $course = $package->course;
         $start_date = $course->type === 'Group' ? $package->course->start_date : Carbon::today();
 
@@ -1351,28 +1351,27 @@ class ShopController extends Controller
         $courseTaken->end_date = Carbon::parse($start_date)->addYear();
         $courseTaken->save();
 
-        $newOrder['user_id']    = Auth::user()->id;
-        $newOrder['item_id']    = $course_id;
-        $newOrder['type']       = Order::COURSE_TYPE;
+        $newOrder['user_id'] = Auth::user()->id;
+        $newOrder['item_id'] = $course_id;
+        $newOrder['type'] = Order::COURSE_TYPE;
         $newOrder['package_id'] = $package->id;
-        $newOrder['plan_id']    = $paymentPlan->id;
+        $newOrder['plan_id'] = $paymentPlan->id;
         $newOrder['payment_mode_id'] = $paymentMode->id;
 
         $order = Order::create($newOrder);
 
         // Check for shop manuscripts
-        if( $package->shop_manuscripts->count() > 0 ) :
-            foreach( $package->shop_manuscripts as $shop_manuscript ) :
-            //$shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
-            $shopManuscriptTaken = new ShopManuscriptsTaken();
-            $shopManuscriptTaken->user_id = Auth::user()->id;
-            $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
-            $shopManuscriptTaken->is_active = false;
-            $shopManuscriptTaken->package_shop_manuscripts_id = $package->shop_manuscripts[0]->id;
-            $shopManuscriptTaken->save();
-            endforeach;
-        endif;
-
+        if ($package->shop_manuscripts->count() > 0) {
+            foreach ($package->shop_manuscripts as $shop_manuscript) {
+                // $shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
+                $shopManuscriptTaken = new ShopManuscriptsTaken;
+                $shopManuscriptTaken->user_id = Auth::user()->id;
+                $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
+                $shopManuscriptTaken->is_active = false;
+                $shopManuscriptTaken->package_shop_manuscripts_id = $package->shop_manuscripts[0]->id;
+                $shopManuscriptTaken->save();
+            }
+        }
 
         if ($package->included_courses->count() > 0) {
             foreach ($package->included_courses as $included_course) {
@@ -1383,7 +1382,7 @@ class ShopController extends Controller
                 // add user to the included course
                 $courseIncluded = CoursesTaken::firstOrNew([
                     'user_id' => Auth::user()->id,
-                    'package_id' => $included_course->included_package_id
+                    'package_id' => $included_course->included_package_id,
                 ]);
                 $courseIncluded->is_active = $course_status;
                 $courseIncluded->save();
@@ -1393,14 +1392,14 @@ class ShopController extends Controller
             if ($add_to_automation) {
                 $user = Auth::user();
                 $userCoursesTaken = $user->coursesTaken;
-                foreach($userCoursesTaken as $userCourseTaken) {
+                foreach ($userCoursesTaken as $userCourseTaken) {
                     $userCourseTaken->end_date = Carbon::parse($start_date)->addYear();
                     $userCourseTaken->save();
                 }
             }
         }
 
-        if ($package->course->id == 17) { //check if webinar-pakke
+        if ($package->course->id == 17) { // check if webinar-pakke
             $add_to_automation++;
         }
 
@@ -1409,7 +1408,7 @@ class ShopController extends Controller
             $automation_id = 73;
             $user_name = Auth::user()->first_name;
 
-            AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+            AdminHelpers::addToAutomation($user_email, $automation_id, $user_name);
         }
 
         // check if the course has activecampaign list then add the user
@@ -1418,7 +1417,7 @@ class ShopController extends Controller
             $listData = [
                 'email' => Auth::user()->email,
                 'name' => Auth::user()->first_name,
-                'last_name' => Auth::user()->last_name
+                'last_name' => Auth::user()->last_name,
             ];
 
             AdminHelpers::addToActiveCampaignList($list_id, $listData);
@@ -1435,28 +1434,23 @@ class ShopController extends Controller
             endforeach;
         endif;*/
 
-
-
-
-
         // Email to support
-        $from       = 'postmail@forfatterskolen.no';
-        $headers1 = "From: Forfatterskolen<".$from.">\r\n";
+        $from = 'postmail@forfatterskolen.no';
+        $headers1 = 'From: Forfatterskolen<'.$from.">\r\n";
         $headers1 .= "MIME-Version: 1.0\r\n";
         $headers1 .= "Content-Type: text/html; charset=UTF-8\r\n";
-        //mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title, $headers1);
+        // mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title, $headers1);
         $to = 'support@forfatterskolen.no'; //
         $emailData = [
             'email_subject' => 'New Course Order',
-            'email_message' => Auth::user()->first_name . ' has ordered the course ' . $package->course->title,
+            'email_message' => Auth::user()->first_name.' has ordered the course '.$package->course->title,
             'from_name' => '',
             'from_email' => 'post@forfatterskolen.no',
-            'attach_file' => NULL
+            'attach_file' => null,
         ];
         \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         /*AdminHelpers::send_email('New Course Order',
             'post@forfatterskolen.no', 'support@forfatterskolen.no', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);*/
-
 
         // Send course email
         $headers = "From: Forfatterskolen<post@forfatterskolen.no>\r\n";
@@ -1467,10 +1461,10 @@ class ShopController extends Controller
         $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
 
         $search_string = [
-            '[username]', '[password]'
+            '[username]', '[password]',
         ];
         $replace_string = [
-            $courseTaken->user->email, $password
+            $courseTaken->user->email, $password,
         ];
         $email_content = str_replace($search_string, $replace_string, $package->course->email);
 
@@ -1478,12 +1472,12 @@ class ShopController extends Controller
 
         $encode_email = encrypt($user_email);
         $redirectLink = encrypt(route('learner.course'));
-        $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
+        $actionUrl = route('auth.login.emailRedirect', [$encode_email, $redirectLink]);
         $actionText = 'Mine Kurs';
         $attachments = [asset($this->generateDocx($user->id, $package->id)),
             asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
 
-        //mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
+        // mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
         /*AdminHelpers::send_email($package->course->title,
             'postmail@forfatterskolen.no', $user_email,
             view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')),
@@ -1492,11 +1486,11 @@ class ShopController extends Controller
             'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
 
-        if( $paymentMode->mode == "Paypal" ) :
+        if ($paymentMode->mode == 'Paypal') {
             $paypal = new PayPal;
 
             $response = $paypal->purchase([
-                'amount' => ($price/100),
+                'amount' => ($price / 100),
                 'transactionId' => $invoice->invoiceID,
                 'currency' => 'NOK',
                 'cancelUrl' => $paypal->getCancelUrl($invoice->invoiceID),
@@ -1522,19 +1516,20 @@ class ShopController extends Controller
             </form>';
             echo '<script>document.getElementById("paypal_form").submit();</script>';
             return;*/
-        endif;
+        }
 
         // check if vipps payment mode and the current user id is 4
-        if( $paymentMode->mode == "Vipps") :
-            $orderId = $order->id."-".$user->id;
+        if ($paymentMode->mode == 'Vipps') {
+            $orderId = $order->id.'-'.$user->id;
             $transactionText = $package->course->title;
             $vippsData = [
                 'amount' => $price,
                 'orderId' => $orderId,
-                'transactionText' => $transactionText
+                'transactionText' => $transactionText,
             ];
+
             return $this->vippsInitiatePayment($vippsData);
-        endif;
+        }
 
         return redirect(route('front.shop.thankyou'));
 
@@ -1542,21 +1537,21 @@ class ShopController extends Controller
 
     public function place_order_test($course_id, OrderCreateRequest $request)
     {
-        if( Auth::guest() ) :
+        if (Auth::guest()) {
             $user = User::where('email', $request->email)->first();
-            if( $user ) :
+            if ($user) {
                 return redirect()->back()->withInput()->withErrors(['The email you provided is already registered. <a href="#" data-toggle="collapse" data-target="#checkoutLogin">Login Here</a>']);
-            else :
+            } else {
                 // register new user
-                $new_user = new User();
+                $new_user = new User;
                 $new_user->email = $request->email;
                 $new_user->first_name = $request->first_name;
                 $new_user->last_name = $request->last_name;
                 $new_user->password = bcrypt($request->password);
                 $new_user->save();
                 Auth::login($new_user);
-            endif;
-        endif;
+            }
+        }
 
         // check if webinar-pakke
         if ($course_id == 17) {
@@ -1564,17 +1559,19 @@ class ShopController extends Controller
             $course_packages = $course->packages->pluck('id')->toArray();
             $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
             // check if the user already avails this course
-            if($courseTaken) return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
+            if ($courseTaken) {
+                return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
+            }
         }
 
         $hasPaidCourse = false;
         // check if course bought is not expired yet
-        foreach( Auth::user()->coursesTakenNotOld as $courseTaken ) :
-            if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+        foreach (Auth::user()->coursesTakenNotOld as $courseTaken) {
+            if ($courseTaken->package->course->type != 'Free' && $courseTaken->is_active) {
                 $hasPaidCourse = true;
                 break;
-            endif;
-        endforeach;
+            }
+        }
 
         $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
         $paymentPlan = PaymentPlan::findOrFail($request->payment_plan_id);
@@ -1584,7 +1581,7 @@ class ShopController extends Controller
         $monthNumbers = [3 => 'months_3_enable', 6 => 'months_6_enable', 12 => 'months_12_enable'];
         // check if monthly payment is selected
         if (array_key_exists($paymentPlan->division, $monthNumbers)) {
-            foreach($monthNumbers as $month => $field) {
+            foreach ($monthNumbers as $month => $field) {
                 // check if the payment plan selected is allowed
                 if ($month == $paymentPlan->division && $package->$field == 0) {
                     return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Invalid payment plan')]);
@@ -1592,69 +1589,68 @@ class ShopController extends Controller
             }
         }
 
-        $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
+        $payment_plan = ($paymentMode->mode == 'Paypal') ? 'Hele beløpet' : $paymentPlan->plan;
 
-
-        /* check if there's an issue date set ir not then use today*/
-        $dueDate = $package->issue_date ?: date("Y-m-d");
+        /* check if there's an issue date set ir not then use today */
+        $dueDate = $package->issue_date ?: date('Y-m-d');
         $dueDate = Carbon::parse($dueDate);
         $payment_plan = trim($payment_plan);
 
         // this is use to check if the current date is within a sale date
         // for the 3 plans/payments
-        $today 			= \Carbon\Carbon::today()->format('Y-m-d');
-        $fromFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
-        $toFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
-        $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
+        $today = \Carbon\Carbon::today()->format('Y-m-d');
+        $fromFull = \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
+        $toFull = \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
+        $isBetweenFull = (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
 
-        $fromMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
-        $toMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
-        $isBetweenMonths3 	= (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
+        $fromMonths3 = \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
+        $toMonths3 = \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
+        $isBetweenMonths3 = (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
 
-        $fromMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
-        $toMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
-        $isBetweenMonths6 	= (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
+        $fromMonths6 = \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
+        $toMonths6 = \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
+        $isBetweenMonths6 = (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
 
         // added 12th month
-        $fromMonths12 			= \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
-        $toMonths12 			= \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
-        $isBetweenMonths12 	= (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
+        $fromMonths12 = \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
+        $toMonths12 = \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
+        $isBetweenMonths12 = (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
 
-        if( $payment_plan == "Hele beløpet" ) :
+        if ($payment_plan == 'Hele beløpet') {
             $price = $isBetweenFull && $package->full_payment_sale_price
-                ? (int)$package->full_payment_sale_price*100
-                : (int)$package->full_payment_price*100;
+                ? (int) $package->full_payment_sale_price * 100
+                : (int) $package->full_payment_price * 100;
             $product_ID = $package->full_price_product;
             $dueDate->addDays($package->full_price_due_date);
-        elseif( $payment_plan == "3 måneder" ) :
+        } elseif ($payment_plan == '3 måneder') {
             $price = $isBetweenMonths3 && $package->months_3_sale_price
-                ? (int)$package->months_3_sale_price*100
-                : (int)$package->months_3_price*100;
+                ? (int) $package->months_3_sale_price * 100
+                : (int) $package->months_3_price * 100;
             $product_ID = $package->months_3_product;
             $dueDate->addDays($package->months_3_due_date);
-        elseif( $payment_plan == "6 måneder" ) :
+        } elseif ($payment_plan == '6 måneder') {
             $price = $isBetweenMonths6 && $package->months_6_sale_price
-                ? (int)$package->months_6_sale_price*100
-                : (int)$package->months_6_price*100;
+                ? (int) $package->months_6_sale_price * 100
+                : (int) $package->months_6_price * 100;
             $product_ID = $package->months_6_product;
             $dueDate->addDays($package->months_6_due_date);
-        elseif( $payment_plan == "12 måneder" ) :
+        } elseif ($payment_plan == '12 måneder') {
             $price = $isBetweenMonths12 && $package->months_12_sale_price
-                ? (int)$package->months_12_sale_price*100
-                : (int)$package->months_12_price*100;
+                ? (int) $package->months_12_sale_price * 100
+                : (int) $package->months_12_price * 100;
             $product_ID = $package->months_12_product;
             $dueDate->addDays($package->months_12_due_date);
-        endif;
+        }
         $dueDate = date_format(date_create($dueDate), 'Y-m-d');
 
         $payment_mode = $paymentMode->mode;
-        if( $payment_mode == 'Faktura' ) :
+        if ($payment_mode == 'Faktura') {
             $payment_mode = 'Bankoverføring';
-        endif;
+        }
 
-        $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
-        $comment .= 'Betalingsmodus: ' . $payment_mode . ', ';
-        $comment .= 'Betalingsplan: ' . $payment_plan . ')';
+        $comment = '(Kurs: '.$package->course->title.' ['.$package->variation.'], ';
+        $comment .= 'Betalingsmodus: '.$payment_mode.', ';
+        $comment .= 'Betalingsplan: '.$payment_plan.')';
 
         $discount = 0;
 
@@ -1663,26 +1659,26 @@ class ShopController extends Controller
 
             if ($discountCoupon->valid_to) {
                 $valid_from = Carbon::parse($discountCoupon->valid_from)->format('Y-m-d');
-                $valid_to   = Carbon::parse($discountCoupon->valid_to)->format('Y-m-d');
-                $today      = Carbon::today()->format('Y-m-d');
+                $valid_to = Carbon::parse($discountCoupon->valid_to)->format('Y-m-d');
+                $today = Carbon::today()->format('Y-m-d');
 
-                if ( ($today >= $valid_from) && ($today <= $valid_to)) {
-                    //echo "valid date <br/>";
+                if (($today >= $valid_from) && ($today <= $valid_to)) {
+                    // echo "valid date <br/>";
                 } else {
                     return redirect()->back()->withInput()->with([
-                        'errors' => AdminHelpers::createMessageBag('Rabattkupongen er ugyldig eller utløpt.')
+                        'errors' => AdminHelpers::createMessageBag('Rabattkupongen er ugyldig eller utløpt.'),
                     ]);
                 }
             }
 
             if ($discountCoupon) {
-                $discount = ( (int) $discountCoupon->discount);
-                $price = $price - ( (int)$discount*100 );
+                $discount = ((int) $discountCoupon->discount);
+                $price = $price - ((int) $discount * 100);
             }
 
         }
 
-        if( $hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
+        if ($hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
             /* original code
              * $comment .= ' - Discount: Kr 1.500,00';
             $price = $price - ( (int)1500*100 );*/
@@ -1693,11 +1689,11 @@ class ShopController extends Controller
                 $discount = $groupDiscount;
             }
 
-            $comment .= ' - Discount: Kr '.number_format($discount, 2,',','.');
-            $price = $price - ( (int)$discount*100 );
+            $comment .= ' - Discount: Kr '.number_format($discount, 2, ',', '.');
+            $price = $price - ((int) $discount * 100);
         }
 
-        if( $hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
+        if ($hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
             /* original code
              * $comment .= ' - Discount: Kr 500,00';
             $price = $price - ( (int)500*100 );*/
@@ -1708,8 +1704,8 @@ class ShopController extends Controller
                 $discount = $singleDiscount;
             }
 
-            $comment .= ' - Discount: Kr '.number_format($discount, 2,',','.');
-            $price = $price - ( (int)$discount*100 );
+            $comment .= ' - Discount: Kr '.number_format($discount, 2, ',', '.');
+            $price = $price - ((int) $discount * 100);
         }
         /*if( $hasPaidCourse && $package->course->type == 'Group' ) :
             $comment .= ' - Discount: Kr 1.500,00';
@@ -1738,13 +1734,13 @@ class ShopController extends Controller
 
         // check if the customer wants to split the invoice
         if (isset($request->split_invoice) && $request->split_invoice) {
-            $division   = $paymentPlan->division * 100; // multiply the split count to get the correct value
-            $price      = round($price/$division, 2); // round the value to the nearest tenths
-            $price      = (int)$price*100;
-            for ($i=1; $i <= $paymentPlan->division; $i++ ) { // loop based on the split count
-                /*Carbon::today() - this is the old instead of Carbon parse*/
-                $dueDate = $package->issue_date ?: date("Y-m-d");
-                $dueDate =  Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
+            $division = $paymentPlan->division * 100; // multiply the split count to get the correct value
+            $price = round($price / $division, 2); // round the value to the nearest tenths
+            $price = (int) $price * 100;
+            for ($i = 1; $i <= $paymentPlan->division; $i++) { // loop based on the split count
+                /* Carbon::today() - this is the old instead of Carbon parse */
+                $dueDate = $package->issue_date ?: date('Y-m-d');
+                $dueDate = Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
                 $invoice_fields = [
                     'user_id' => Auth::user()->id,
                     'first_name' => $request->first_name,
@@ -1758,10 +1754,10 @@ class ShopController extends Controller
                     'address' => $request->street,
                     'postalPlace' => $request->city,
                     'postalCode' => $request->zip,
-                    'comment' => $comment, 'payment_mode'  => $paymentMode->mode,
+                    'comment' => $comment, 'payment_mode' => $paymentMode->mode,
                 ];
 
-                $invoice = new FikenInvoice();
+                $invoice = new FikenInvoice;
                 $invoice->create_invoice($invoice_fields);
             }
 
@@ -1780,43 +1776,39 @@ class ShopController extends Controller
                 'address' => $request->street,
                 'postalPlace' => $request->city,
                 'postalCode' => $request->zip,
-                'comment' => $comment,'payment_mode'  => $paymentMode->mode,
-                /*'issueDate' => $package->issue_date*/
+                'comment' => $comment, 'payment_mode' => $paymentMode->mode,
+                /* 'issueDate' => $package->issue_date */
             ];
 
-            $invoice = new FikenInvoice();
+            $invoice = new FikenInvoice;
             $invoice->create_invoice($invoice_fields);
         }
 
-        if( $request->update_address ) :
+        if ($request->update_address) {
             $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
             $address->street = $request->street;
             $address->city = $request->city;
             $address->zip = $request->zip;
             $address->phone = $request->phone;
-            //$address->save();
-        endif;
-
+            // $address->save();
+        }
 
         $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
         $courseTaken->is_active = 0;
-        //$courseTaken->save();
-
-
+        // $courseTaken->save();
 
         // Check for shop manuscripts
-        if( $package->shop_manuscripts->count() > 0 ) :
-            foreach( $package->shop_manuscripts as $shop_manuscript ) :
-                //$shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
-                $shopManuscriptTaken = new ShopManuscriptsTaken();
+        if ($package->shop_manuscripts->count() > 0) {
+            foreach ($package->shop_manuscripts as $shop_manuscript) {
+                // $shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
+                $shopManuscriptTaken = new ShopManuscriptsTaken;
                 $shopManuscriptTaken->user_id = Auth::user()->id;
                 $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
                 $shopManuscriptTaken->is_active = false;
                 $shopManuscriptTaken->package_shop_manuscripts_id = $package->shop_manuscripts[0]->id;
                 $shopManuscriptTaken->save();
-            endforeach;
-        endif;
-
+            }
+        }
 
         if ($package->included_courses->count() > 0) {
             foreach ($package->included_courses as $included_course) {
@@ -1826,7 +1818,7 @@ class ShopController extends Controller
             }
         }
 
-        if ($package->course->id == 17) { //check if webinar-pakke
+        if ($package->course->id == 17) { // check if webinar-pakke
             $add_to_automation++;
         }
 
@@ -1835,7 +1827,7 @@ class ShopController extends Controller
             $automation_id = 73;
             $user_name = Auth::user()->first_name;
 
-            AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+            AdminHelpers::addToAutomation($user_email, $automation_id, $user_name);
         }
 
         // check if the course has activecampaign list then add the user
@@ -1844,7 +1836,7 @@ class ShopController extends Controller
             $listData = [
                 'email' => Auth::user()->email,
                 'name' => Auth::user()->first_name,
-                'last_name' => Auth::user()->last_name
+                'last_name' => Auth::user()->last_name,
             ];
 
             echo $list_id;
@@ -1863,19 +1855,14 @@ class ShopController extends Controller
             endforeach;
         endif;*/
 
-
-
-
-
         // Email to support
-        $from       = 'postmail@forfatterskolen.no';
-        $headers1 = "From: Forfatterskolen<".$from.">\r\n";
+        $from = 'postmail@forfatterskolen.no';
+        $headers1 = 'From: Forfatterskolen<'.$from.">\r\n";
         $headers1 .= "MIME-Version: 1.0\r\n";
         $headers1 .= "Content-Type: text/html; charset=UTF-8\r\n";
-        //mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title, $headers1);
+        // mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title, $headers1);
         /*AdminHelpers::send_email('New Course Order',
             'post@forfatterskolen.no', 'support@forfatterskolen.no', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);*/
-
 
         // Send course email
         $actionText = 'Mine Kurs';
@@ -1885,32 +1872,32 @@ class ShopController extends Controller
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         $user = Auth::user();
         $email_content = $package->course->email;
-        //mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
+        // mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
         /*AdminHelpers::send_email($package->course->title,
             'post@forfatterskolen.no', $user->email,
             view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));*/
 
-        if( $paymentMode->mode == "Paypal" ) :
+        if ($paymentMode->mode == 'Paypal') {
             echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
                 <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
                 <input type="hidden" name="currency_code" value="NOK">
                 <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
                 <input type="hidden" name="item_name" value="Course Order Invoice">
-                <input type="hidden" name="amount" value="'.($price/100).'">
+                <input type="hidden" name="amount" value="'.($price / 100).'">
                 <input type="hidden" name="return" value="'.route('front.shop.thankyou').'?gateway=Paypal">
                 <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
             </form>';
             echo '<script>document.getElementById("paypal_form").submit();</script>';
+
             return;
-        endif;
+        }
 
-
-        //return redirect(route('front.shop.thankyou'));
+        // return redirect(route('front.shop.thankyou'));
 
     }
 
-    public function thankyou( Request $request, CourseService $courseService )
+    public function thankyou(Request $request, CourseService $courseService)
     {
 
         // check if from svea payment
@@ -1919,14 +1906,14 @@ class ShopController extends Controller
             $order_id = $request->input('svea_ord') ?? $request->input('pl_ord');
             $order = Order::find($order_id);
 
-            Log::info('has svea_ord or pl_ord order_id = ' . $order_id);
+            Log::info('has svea_ord or pl_ord order_id = '.$order_id);
             if ($request->has('svea_ord')) {
-                Log::info('inside has SVEA order ' . $order_id);
+                Log::info('inside has SVEA order '.$order_id);
                 SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
             }
-            
+
             // add course to user
-            if (!$order->is_processed) {
+            if (! $order->is_processed) {
 
                 if ($order->type === 6) {
                     $courseTaken = $courseService->upgradeCourseTaken($order);
@@ -1940,18 +1927,19 @@ class ShopController extends Controller
                     return $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken, true, true);
                 }
 
-                //$courseService->notifyAdmin($order->user_id, $order->package_id);
+                // $courseService->notifyAdmin($order->user_id, $order->package_id);
             }
-return "outside condition";
+
+            return 'outside condition';
             $order->is_processed = 1;
-            //$order->save();
+            // $order->save();
 
             CheckoutLog::updateOrCreate([
                 'user_id' => \auth()->id(),
                 'parent' => 'course',
-                'parent_id' => $order->package->course_id
+                'parent_id' => $order->package->course_id,
             ], [
-                'is_ordered' => true
+                'is_ordered' => true,
             ]);
         }
 
@@ -1959,8 +1947,8 @@ return "outside condition";
         // this is set when vipps payment is cancelled
         if ($request->has('iu')) {
             $fikenUrl = decrypt($request->get('iu'));
-            $fiken = new FikenInvoice();
-            $fikenInvoice   = $fiken->get_invoice_data($fikenUrl);
+            $fiken = new FikenInvoice;
+            $fikenInvoice = $fiken->get_invoice_data($fikenUrl);
             $fiken->send_invoice($fikenInvoice);
         }
 
@@ -1969,13 +1957,13 @@ return "outside condition";
         if ($request->has('pl_ord')) {
             return view('frontend.shop.pay_later_thankyou');
         }
+
         return view('frontend.shop.thankyou');
     }
 
     /**
      * Claim course reward
-     * @param $course_id
-     * @param Request $request
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function claimReward($course_id, Request $request)
@@ -1985,7 +1973,7 @@ return "outside condition";
             if ($request->isMethod('post')) {
                 $reward = $course->rewardCoupons()->where('coupon', $request->coupon)->first();
 
-                if (!$reward) {
+                if (! $reward) {
                     return redirect()->back()->withInput()->with(['errors' => AdminHelpers::createMessageBag('Invalid coupon.')]);
                 }
 
@@ -1997,27 +1985,27 @@ return "outside condition";
                 $reward->is_used = 1;
                 $reward->save();
 
-                //if( $request->update_address ) :
-                    $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
-                    $address->street = $request->street;
-                    $address->city = $request->city;
-                    $address->zip = $request->zip;
-                    $address->phone = $request->phone;
-                    $address->save();
-                //endif;
+                // if( $request->update_address ) :
+                $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
+                $address->street = $request->street;
+                $address->city = $request->city;
+                $address->zip = $request->zip;
+                $address->phone = $request->phone;
+                $address->save();
+                // endif;
 
                 $course_packages = $course->packages->pluck('id')->toArray();
                 $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
 
                 // check if the user already avails this course
-                if($courseTaken) {
+                if ($courseTaken) {
                     $courseTaken->is_active = 1;
                     // add one month to the end date
-                    $courseTaken->end_date = Carbon::parse($courseTaken->end_date)->addMonth(1);//Carbon::now()->addMonth(1);
+                    $courseTaken->end_date = Carbon::parse($courseTaken->end_date)->addMonth(1); // Carbon::now()->addMonth(1);
                 } else {
                     $package = Package::findOrFail($request->package_id);
 
-                    if (!$package) {
+                    if (! $package) {
                         return redirect()->back();
                     }
 
@@ -2033,6 +2021,7 @@ return "outside condition";
 
                 return redirect()->route('learner.course');
             }
+
             return view('frontend.shop.claim-reward', compact('course'));
         }
 
@@ -2041,7 +2030,7 @@ return "outside condition";
 
     /**
      * Get the payment plan options to display in plan section
-     * @param $id
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getPaymentPlanOptions($id)
@@ -2064,6 +2053,7 @@ return "outside condition";
         $paymentPlan = PaymentPlan::whereIn('division', $allowedPaymentMonth)
             ->orderBy('division', 'asc')
             ->get();
+
         return response()->json($paymentPlan);
     }
 
@@ -2072,17 +2062,18 @@ return "outside condition";
         return response()->json(\App\Http\FrontendHelpers::paymentModes(true));
     }
 
-    public function paypalIPN (Request $request){
-        $ipn = new PaypalIPN();
+    public function paypalIPN(Request $request)
+    {
+        $ipn = new PaypalIPN;
 
-        //$ipn->useSandbox();
+        // $ipn->useSandbox();
 
         $verified = $ipn->verifyIPN();
 
-        if ($verified) :
+        if ($verified) {
             // Create new transaction
             $invoice = Invoice::findOrFail($request->custom);
-            $transaction = new Transaction();
+            $transaction = new Transaction;
             $transaction->invoice_id = $invoice->id;
             $transaction->mode = 'Paypal';
             $transaction->mode_transaction = $request->txn_id;
@@ -2090,21 +2081,21 @@ return "outside condition";
             $transaction->save();
 
             $fiken_invoice = FrontendHelpers::FikenConnect($invoice->fiken_url);
-            $balance = (double)$fiken_invoice->gross/100;
+            $balance = (float) $fiken_invoice->gross / 100;
 
-            if($invoice->payment_plan->division == 1 && ($balance - $invoice->transactions->sum('amount') ) <= 0 ) :
+            if ($invoice->payment_plan->division == 1 && ($balance - $invoice->transactions->sum('amount')) <= 0) {
                 $courseTaken = CoursesTaken::where('user_id', $invoice->user_id)->where('package_id', $invoice->package_id)->first();
-                if(! $courseTaken ) :
+                if (! $courseTaken) {
                     $courseTaken = new CoursesTaken;
                     $courseTaken->user_id = $invoice->user_id;
                     $courseTaken->package_id = $invoice->package_id;
-                endif;
+                }
                 $courseTaken->is_active = 1;
                 $courseTaken->save();
-            endif;
-        endif;
+            }
+        }
 
-        return header("HTTP/1.1 200 OK");
+        return header('HTTP/1.1 200 OK');
     }
 
     public function proceedCheckout($course_id, Course $course, Request $request)
@@ -2119,36 +2110,36 @@ return "outside condition";
         $hasPaidCourse = false;
         // check if course bought is not expired yet
         if (Auth::user()) {
-            foreach( Auth::user()->coursesTakenNotOld as $courseTaken ) :
-                if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+            foreach (Auth::user()->coursesTakenNotOld as $courseTaken) {
+                if ($courseTaken->package->course->type != 'Free' && $courseTaken->is_active) {
                     // check if course taken is not free
                     if ($courseTaken->package->course->is_free != 1) {
                         $hasPaidCourse = true;
                         break;
                     }
-                endif;
-            endforeach;
+                }
+            }
         }
 
-        $price = $package->full_payment_price*100;
+        $price = $package->full_payment_price * 100;
         $data['price'] = $price;
 
         $curlRequest = [];
-        $curlRequest["order"] = array();
-        $curlRequest["order"]["id"] = AdminHelpers::generateHash(6);
-        $curlRequest["order"]["amount"] = $price;
-        $curlRequest["order"]["currency"] = "NOK";
+        $curlRequest['order'] = [];
+        $curlRequest['order']['id'] = AdminHelpers::generateHash(6);
+        $curlRequest['order']['amount'] = $price;
+        $curlRequest['order']['currency'] = 'NOK';
 
-        $curlRequest["url"] = array();
-        $curlRequest["url"]["accept"] = "https://www.forfatterskolen.no/bambora/accept";
-        $curlRequest["url"]["cancel"] = "https://www.forfatterskolen.no/thankyou";
-        $curlRequest["url"]["immediateredirecttoaccept"] = 1;
+        $curlRequest['url'] = [];
+        $curlRequest['url']['accept'] = 'https://www.forfatterskolen.no/bambora/accept';
+        $curlRequest['url']['cancel'] = 'https://www.forfatterskolen.no/thankyou';
+        $curlRequest['url']['immediateredirecttoaccept'] = 1;
         /*$curlRequest["url"]["callbacks"] = array();
         $curlRequest["url"]["callbacks"][] = array("url" => "https://example.org/callback");*/
 
-        $curlRequest["paymentwindow"] = array();
-        $curlRequest["paymentwindow"] = ["id" => 1];
-        //$curlRequest["paymentwindow"]["paymentmethod"] = array();
+        $curlRequest['paymentwindow'] = [];
+        $curlRequest['paymentwindow'] = ['id' => 1];
+        // $curlRequest["paymentwindow"]["paymentmethod"] = array();
         /*$curlRequest["paymentwindow"]["paymentmethods"] = [
             ["id" => "paymentcard", "action" => "include"],
             ["id" => "invoice", "action" => "include"],
@@ -2171,21 +2162,21 @@ return "outside condition";
             ["id" => 14, "action" => "include"]
         ];*/
 
-        $checkoutUrl = "https://api.v1.checkout.bambora.com/sessions";
+        $checkoutUrl = 'https://api.v1.checkout.bambora.com/sessions';
 
         $requestJson = json_encode($curlRequest);
         $contentLength = isset($requestJson) ? strlen($requestJson) : 0;
 
-        $headers = array(
+        $headers = [
             'Content-Type: application/json',
-            'Content-Length: ' . $contentLength,
+            'Content-Length: '.$contentLength,
             'Accept: application/json',
-            'Authorization: Basic ' . $apiKey
-        );
+            'Authorization: Basic '.$apiKey,
+        ];
 
         $curl = curl_init();
 
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($curl, CURLOPT_POSTFIELDS, $requestJson);
         curl_setopt($curl, CURLOPT_URL, $checkoutUrl);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -2195,6 +2186,7 @@ return "outside condition";
 
         $rawResponse = curl_exec($curl);
         $response = json_decode($rawResponse);
+
         return response()->json($response);
     }
 
@@ -2206,14 +2198,14 @@ return "outside condition";
         $course = $package->course;
 
         $parseDate = Carbon::today()->addDays(13);
-        if ($course->type === "Group" && Carbon::today()->lt(Carbon::parse($course->start_date))) {
+        if ($course->type === 'Group' && Carbon::today()->lt(Carbon::parse($course->start_date))) {
             $parseDate = Carbon::parse($course->start_date)->addDays(13);
         }
 
         $expirationDate = $parseDate->format('d.m.Y');
         $expirationDay = FrontendHelpers::convertDayLanguage($parseDate->format('N'));
 
-        $phpWord = new \PhpOffice\PhpWord\PhpWord();
+        $phpWord = new \PhpOffice\PhpWord\PhpWord;
         $phpWord->setDefaultFontName('Times New Roman');
         $phpWord->setDefaultFontSize(12);
 
@@ -2221,46 +2213,45 @@ return "outside condition";
         $documentProtection = $phpWord->getSettings()->getDocumentProtection();
         $documentProtection->setEditing(DocProtect::FORMS);
 
-        $sectionStyle = array(
+        $sectionStyle = [
             'marginTop' => 1150,
             'marginBottom' => 1150,
             'marginLeft' => 800,
-            'marginRight' => 800
-        );
+            'marginRight' => 800,
+        ];
         $section = $phpWord->addSection(
             $sectionStyle
         );
 
-        $section->addText("Angreskjema",
+        $section->addText('Angreskjema',
             [
-                'size' => 18
+                'size' => 18,
             ],
             [
                 'alignment' => 'center',
                 'marginBottom' => 0,
-                'space' => array('before' => 0, 'after' => 70),
+                'space' => ['before' => 0, 'after' => 70],
             ]);
 
         $section->addText('ved kjøp av varer og tjenester som ikke er finansielle tjenester',
             ['size' => 10], [
                 'alignment' => 'center',
-                'space' => array('after' => 250)
+                'space' => ['after' => 250],
             ]);
 
         $section->addText('Fyll ut og returner dette skjemaet dersom du ønsker å gå fra avtalen', [],
             [
                 'alignment' => 'center',
-                'space' => array('after' => 350)
+                'space' => ['after' => 350],
             ]);
 
         $section->addText('Utfylt skjema sendes til:', [], [
-            'space' => array('after' => 0)
+            'space' => ['after' => 0],
         ]);
         $section->addText('(den næringsdrivende skal sette inn sitt navn, geografiske adresse og ev.'.
             'telefaksnummer og e-postadresse)', ['size' => 10], [
-            'space' => array('after' => 350)
-        ]);
-
+                'space' => ['after' => 350],
+            ]);
 
         $width = 100 * 100;
 
@@ -2271,37 +2262,37 @@ return "outside condition";
         $table->addRow(0);
         $table->addCell($width, [
             'borderBottomSize' => 6,
-            'height' => 1
+            'height' => 1,
         ])->addText('Forfatterskolen, Postboks 9233, 3064 DRAMMEN', [
             'bgColor' => 'CCCCCC',
         ], [
-            'space' => array('before' => 150, 'after' => 0),
-            'indent' => 0.1
+            'space' => ['before' => 150, 'after' => 0],
+            'indent' => 0.1,
         ]);
 
         $table->addRow(0);
         $table->addCell($width, [
             'borderBottomSize' => 6,
-            'height' => 1
+            'height' => 1,
         ])->addText('post@forfatterskolen.no', [
-            'bgColor' => 'CCCCCC'
+            'bgColor' => 'CCCCCC',
         ], [
-            'space' => array('before' => 250, 'after' => 0),
-            'indent' => 0.1
+            'space' => ['before' => 250, 'after' => 0],
+            'indent' => 0.1,
         ]);
 
         $section->addTable($table);
 
         $listItemRun = $section->addTextRun([
-            'space' => array('before' => 550)
+            'space' => ['before' => 550],
         ]);
         $listItemRun->addText('Jeg/vi underretter herved om at jeg/vi ønsker å gå fra min/vår avtale om kjøp av følgende:');
-        $listItemRun->addText(' (sett kryss)', array('size' => 10));
+        $listItemRun->addText(' (sett kryss)', ['size' => 10]);
 
         $checkBox = $section->addTextRun();
         $checkBox->addFormField('checkbox')->setValue(true);
         $checkBox->addText(' tjenester');
-        $checkBox->addText(' (spesifiser på linjene nedenfor)', array('size' => 10));
+        $checkBox->addText(' (spesifiser på linjene nedenfor)', ['size' => 10]);
 
         $table = $section->addTable([
             'width' => $width,
@@ -2309,104 +2300,103 @@ return "outside condition";
         $table->addRow(0);
         $table->addCell($width, [
             'borderBottomSize' => 6,
-            'height' => 1
+            'height' => 1,
         ])->addText('Gjelder kjøp av '.$course->title, [
             'bgColor' => 'CCCCCC',
         ], [
-            'space' => array('before' => 150, 'after' => 0),
-            'indent' => 0.1
+            'space' => ['before' => 150, 'after' => 0],
+            'indent' => 0.1,
         ]);
 
         $table->addRow(0);
         $table->addCell($width, [
             'borderBottomSize' => 6,
-            'height' => 1
+            'height' => 1,
         ])->addText('Frist for avbestilling for  å kunne benytte angreretten: Innen klokken 23.59 '
-            . $expirationDay .' '. $expirationDate, [
-            'bgColor' => 'CCCCCC',
-        ], [
-            'space' => array('before' => 150, 'after' => 0),
-            'indent' => 0.1
-        ]);
+            .$expirationDay.' '.$expirationDate, [
+                'bgColor' => 'CCCCCC',
+            ], [
+                'space' => ['before' => 150, 'after' => 0],
+                'indent' => 0.1,
+            ]);
 
-        $section->addText('Sett kryss og dato:', ['size'=>10], [
-            'space' => array('before' => 400),
+        $section->addText('Sett kryss og dato:', ['size' => 10], [
+            'space' => ['before' => 400],
         ]);
 
         $textRun = $section->addTextRun();
         $textRun->addFormField('checkbox')->setValue(true);
         $textRun->addText(' Avtalen ble inngått den');
-        $textRun->addText(' (dato)', array('size' => 10));
-        $textRun->addText('     ');//spacing
-        $textRun->addText( Carbon::today()->format('d.m.Y'), [
+        $textRun->addText(' (dato)', ['size' => 10]);
+        $textRun->addText('     '); // spacing
+        $textRun->addText(Carbon::today()->format('d.m.Y'), [
             'bgColor' => 'CCCCCC',
-            'underline' => 'single'
+            'underline' => 'single',
         ]);
-        $textRun->addText(' (ved kjøp av tjenester)', array('size' => 10));
+        $textRun->addText(' (ved kjøp av tjenester)', ['size' => 10]);
 
         $table = $section->addTable([
-            'width' => $width
+            'width' => $width,
         ]);
         $table->addRow(0);
         $table->addCell($width, [
-            'height' => 1
-        ])->addText('Forbrukerens/forbrukemesnavn:', ['size'=>10], [
-            'space' => array('before' => 500),
-        ]);
-
-        $table->addRow(0);
-        $table->addCell($width, [
-            'borderBottomSize' => 6,
-            'height' => 1
-        ])->addFormField('textinput', [
-            'bgColor' => 'CCCCCC'
-        ], [
-            'space' => array('before' => 0, 'after' => 0),
-            'indent' => 0.1
-        ])->setValue(" ");
-
-        $table->addRow(0);
-        $table->addCell($width, [
-            'height' => 1
-        ])->addText('Forbrukerens/forbrukemes adresse:', ['size'=>10], [
-            'space' => array('before' => 300, 'after' => 0)
+            'height' => 1,
+        ])->addText('Forbrukerens/forbrukemesnavn:', ['size' => 10], [
+            'space' => ['before' => 500],
         ]);
 
         $table->addRow(0);
         $table->addCell($width, [
             'borderBottomSize' => 6,
-            'height' => 1
+            'height' => 1,
         ])->addFormField('textinput', [
-            'bgColor' => 'CCCCCC'
+            'bgColor' => 'CCCCCC',
         ], [
-            'space' => array('before' => 200, 'after' => 0),
-            'indent' => 0.1
-        ])->setValue(" ");
+            'space' => ['before' => 0, 'after' => 0],
+            'indent' => 0.1,
+        ])->setValue(' ');
 
+        $table->addRow(0);
+        $table->addCell($width, [
+            'height' => 1,
+        ])->addText('Forbrukerens/forbrukemes adresse:', ['size' => 10], [
+            'space' => ['before' => 300, 'after' => 0],
+        ]);
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1,
+        ])->addFormField('textinput', [
+            'bgColor' => 'CCCCCC',
+        ], [
+            'space' => ['before' => 200, 'after' => 0],
+            'indent' => 0.1,
+        ])->setValue(' ');
 
         $table = $section->addTable();
         $table->addRow();
         $cell = $table->addCell($width)->addTextRun([
-            'space' => array('before' => 1800, 'after' => 0)
+            'space' => ['before' => 1800, 'after' => 0],
         ]);
 
-        $cell->addText('Dato:', array('size' => 10));
-        $cell->addText('     ');//spacing
-        $cell->addFormField('textinput',[
-            'indent' => 2
-        ])->setValue("dd. dd. åååå");
+        $cell->addText('Dato:', ['size' => 10]);
+        $cell->addText('     '); // spacing
+        $cell->addFormField('textinput', [
+            'indent' => 2,
+        ])->setValue('dd. dd. åååå');
 
         $table = $section->addTable();
         $table->addRow(0);
         $table->addCell($width, [
             'borderBottomSize' => 6,
         ])->addText('', [], [
-            'space' => array('before' => 500, 'after' => 0),
+            'space' => ['before' => 500, 'after' => 0],
         ]);
 
-        $section->addText("Forbrukerens/forbrukemes underskrift (dersom papirskjema benyttes)",
+        $section->addText('Forbrukerens/forbrukemes underskrift (dersom papirskjema benyttes)',
             [
-                'size' => 10
+                'size' => 10,
             ],
             [
                 'alignment' => 'center',
@@ -2416,20 +2406,20 @@ return "outside condition";
         try {
             $objWriter->save(public_path('email-attachments/angrerettskjema.docx'));
 
-            $courseOrderAttachmentCopy = '/storage/course-order-attachments/' .
-                str_replace(':','-',$course->title).'-'.$user_id.'.docx';
+            $courseOrderAttachmentCopy = '/storage/course-order-attachments/'.
+                str_replace(':', '-', $course->title).'-'.$user_id.'.docx';
             $objWriter->save(public_path($courseOrderAttachmentCopy));
 
             CourseOrderAttachment::create([
                 'user_id' => $user_id,
                 'course_id' => $course->id,
                 'package_id' => $package_id,
-                'file_path' => $courseOrderAttachmentCopy
+                'file_path' => $courseOrderAttachmentCopy,
             ]);
 
             return 'email-attachments/angrerettskjema.docx';
         } catch (\Exception $e) {
-            return "";
+            return '';
         }
     }
 }

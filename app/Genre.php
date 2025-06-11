@@ -22,7 +22,8 @@ class Genre extends Model
 
     public $timestamps = false; // disable the update of created/updated since field does not exist
 
-    public function editorGenrePreferences(){
+    public function editorGenrePreferences()
+    {
         return $this->hasMany('App\Models\EditorGenrePreferences', 'genre_id', 'id');
     }
 }

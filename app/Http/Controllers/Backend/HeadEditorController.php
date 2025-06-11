@@ -2,44 +2,44 @@
 
 namespace App\Http\Controllers\backend;
 
+use App\AssignmentManuscript;
+use App\CopyEditingManuscript;
+use App\CorrectionManuscript;
+use App\EmailTemplate;
 use App\FreeManuscript;
+use App\Http\AdminHelpers;
+use App\Http\Controllers\Controller;
+use App\Jobs\AddMailToQueueJob;
 use App\SelfPublishing;
 use App\SelfPublishingFeedback;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\AssignmentManuscript;
 use App\ShopManuscriptsTaken;
-use Illuminate\Support\Facades\Auth;
-use App\CorrectionManuscript;
-use App\CopyEditingManuscript;
-use App\EmailTemplate;
 use App\User;
-use App\Jobs\AddMailToQueueJob;
-use App\Http\AdminHelpers;
+use Illuminate\Http\Request;
 
 class HeadEditorController extends Controller
 {
-    public function index(){
-        $assignedAssignmentManuscripts = AssignmentManuscript::where('status', 0) //pending
-        ->where('has_feedback', 1)
-        ->whereHas('assignment', function($query) {
-            $query->where('parent', 'users');
-        })
-        ->get();
+    public function index()
+    {
+        $assignedAssignmentManuscripts = AssignmentManuscript::where('status', 0) // pending
+            ->where('has_feedback', 1)
+            ->whereHas('assignment', function ($query) {
+                $query->where('parent', 'users');
+            })
+            ->get();
         $assigned_shop_manuscripts = ShopManuscriptsTaken::get();
-        $assigned_shop_manuscripts = $assigned_shop_manuscripts->filter(function($model){
+        $assigned_shop_manuscripts = $assigned_shop_manuscripts->filter(function ($model) {
             return $model->status == 'Pending';
         });
-        $assignedAssignments = AssignmentManuscript::where('status', 0) //pending
-        ->where('has_feedback', 1)
-        ->whereHas('assignment', function($query){
-            $query->whereNull('parent');
-            $query->orWhere('parent', 'assignment');
-        })
-        ->get();
+        $assignedAssignments = AssignmentManuscript::where('status', 0) // pending
+            ->where('has_feedback', 1)
+            ->whereHas('assignment', function ($query) {
+                $query->whereNull('parent');
+                $query->orWhere('parent', 'assignment');
+            })
+            ->get();
         $corrections = CorrectionManuscript::where('status', 3)->get();
         $copyEditings = CopyEditingManuscript::where('status', 3)->get();
-        $freeManuscripts = FreeManuscript::where('is_feedback_sent', '=',0)
+        $freeManuscripts = FreeManuscript::where('is_feedback_sent', '=', 0)
             ->whereNotNull('feedback_content')
             ->orderBy('created_at', 'desc')->get();
 
@@ -50,7 +50,7 @@ class HeadEditorController extends Controller
         $assignmentFeedbackEmailTemplates = EmailTemplate::where('is_assignment_manu_feedback', 1)->get();
 
         return view('backend.head-editor.index', compact('assignedAssignmentManuscripts',
-            'assigned_shop_manuscripts', 'assignedAssignments','corrections', 'copyEditings', 'freeManuscripts', 'selfPublishingList',
+            'assigned_shop_manuscripts', 'assignedAssignments', 'corrections', 'copyEditings', 'freeManuscripts', 'selfPublishingList',
             'assignmentFeedbackEmailTemplates'));
     }
 
@@ -59,22 +59,22 @@ class HeadEditorController extends Controller
         // send email
         $to = User::find($editor_id);
         $search_string = [
-            ':type', ':title', ':learner'
+            ':type', ':title', ':learner',
         ];
         $replace_string = [
-            $type, $title, $learner
+            $type, $title, $learner,
         ];
         $message = str_replace($search_string, $replace_string, $request->message);
 
         dispatch(new AddMailToQueueJob($to->email, $request->subject, $message, $request->from_email,
-        null, null, 'head-editor-to-editor-email', $editor_id));
+            null, null, 'head-editor-to-editor-email', $editor_id));
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Successfully sent.'),
             'alert_type' => 'success']);
 
     }
 
-    public function approveSelfPublishingFeedback( $feedback_id, Request $request )
+    public function approveSelfPublishingFeedback($feedback_id, Request $request)
     {
         $feedback = SelfPublishingFeedback::find($feedback_id);
         $feedback->is_approved = 1;
@@ -85,19 +85,19 @@ class HeadEditorController extends Controller
         if ($request->hasFile('manuscript')) {
 
             foreach ($request->file('manuscript') as $k => $file) {
-                $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
-                $actual_name = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_FILENAME);
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+                $extension = pathinfo($_FILES['manuscript']['name'][$k], PATHINFO_EXTENSION); // getting document extension
+                $actual_name = pathinfo($_FILES['manuscript']['name'][$k], PATHINFO_FILENAME);
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
 
                 $expFileName = explode('/', $fileName);
-                $filePath = "/".$destinationPath.end($expFileName);
+                $filePath = '/'.$destinationPath.end($expFileName);
                 $file->move($destinationPath, end($expFileName));
 
-                $filesWithPath .= $filePath.", ";
+                $filesWithPath .= $filePath.', ';
 
             }
 
-            $feedback->manuscript =  trim($filesWithPath,", ");
+            $feedback->manuscript = trim($filesWithPath, ', ');
         }
 
         $feedback->save();
@@ -105,14 +105,14 @@ class HeadEditorController extends Controller
         if ($request->has('send_email')) {
             if ($project = $feedback->selfPublishing->project) {
                 $to = $project->user;
-                //$emailTemplate = AdminHelpers::emailTemplate('Self Publishing Feedback');
+                // $emailTemplate = AdminHelpers::emailTemplate('Self Publishing Feedback');
                 $content = AdminHelpers::formatEmailContent($request->email_content, '', $to->first_name, '');
                 $email = $to->email;
                 dispatch(new AddMailToQueueJob($email, $request->subject, $content, $request->from_email,
-                        null, null, 'learner', $to->id));
+                    null, null, 'learner', $to->id));
             }
         }
-        
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback approved successfully.'),
             'alert_type' => 'success']);
     }

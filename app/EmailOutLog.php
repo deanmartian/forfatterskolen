@@ -28,6 +28,7 @@ class EmailOutLog extends Model
     public function getDateSentAttribute()
     {
         $date = $this->attributes['created_at'];
+
         return date_format(date_create($date), 'M d, Y h:i a');
     }
 }

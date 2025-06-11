@@ -50,10 +50,10 @@ return [
     ],
 
     'gotowebinar' => [
-        'consumer_key'      => '4jVbfF2qGPp6cw7TAJHD24jJmwGK3hlH',
-        'consumer_secret'   => 'C0AByMZssixkcVK0',
-        'user_id'           => env('GT_WEBINAR_USER'),
-        'password'          => env('GT_WEBINAR_PASS')
+        'consumer_key' => '4jVbfF2qGPp6cw7TAJHD24jJmwGK3hlH',
+        'consumer_secret' => 'C0AByMZssixkcVK0',
+        'user_id' => env('GT_WEBINAR_USER'),
+        'password' => env('GT_WEBINAR_PASS'),
     ],
 
     'bambora' => [
@@ -61,33 +61,33 @@ return [
         'access_key' => '3lKQyd8TYvaBBJ0lWmRRfi',
         'merchant_number' => 'T526080101',
         'encoded_api_key' => 'M2xLUXlkOFRZdmFCQkowbFdtUlI=',
-        'md5_key' => 'SMimSoiCqI'
+        'md5_key' => 'SMimSoiCqI',
     ],
 
     'fiken' => [
         'username' => 'elybutabara@yahoo.com',
-        'password' => 'Hpa6057d!', //Hpa6057d! //janiel12
+        'password' => 'Hpa6057d!', // Hpa6057d! //janiel12
         'client_id' => 'xNmlQovYLSHDgAGi46623755940317270',
         'client_secret' => 'a3b5bf4c-6949-4e96-9627-046b586c9be1',
         'personal_api_key' => '1480241174.4djcOoTcjawknSORCxQWr8rF5KToetss', // PERSONAL API KEY
         'api_url' => 'https://api.fiken.no/api/v2',
         'company_slug' => 'forfatterskolen-as',
-        'company_slug_test' => 'fiken-demo-glede-og-bil-as2'
+        'company_slug_test' => 'fiken-demo-glede-og-bil-as2',
     ],
 
     'big_marker' => [
-        'api_key' => '64bd08aa02b7d6ad36b6', //382d97b149ef81d34034
+        'api_key' => '64bd08aa02b7d6ad36b6', // 382d97b149ef81d34034
         'register_link' => 'https://www.bigmarker.com/api/v1/conferences/register',
-        'show_conference_link' => 'https://www.bigmarker.com/api/v1/conferences/'
+        'show_conference_link' => 'https://www.bigmarker.com/api/v1/conferences/',
     ],
 
     'cross-domain' => [
-        'url' => 'https://www.pilotleser.no/api/cross-domain'
+        'url' => 'https://www.pilotleser.no/api/cross-domain',
     ],
 
     'jwt' => [
         'secret' => 'cdDmzJqoOjolwgsyrY4bl6Sl3ThPYlFw', // secret used for cross domain login
-        'private_key' => "51d3e2c89cccc640c52987e2e70fe410c518900cc038211b"
+        'private_key' => '51d3e2c89cccc640c52987e2e70fe410c518900cc038211b',
     ],
 
     'svea' => [
@@ -100,7 +100,7 @@ return [
         'checkoutid_test' => env('SVEA_CHECKOUTID_TEST'),
         'checkout_secret_test' => env('SVEA_CHECKOUT_SECRET_TEST'),
         'checkoutid_test2' => env('SVEA_CHECKOUTID_TEST2'),
-        'checkout_secret_test2' => env('SVEA_CHECKOUT_SECRET_TEST2')
+        'checkout_secret_test2' => env('SVEA_CHECKOUT_SECRET_TEST2'),
     ],
 
     'vipps' => [
@@ -113,11 +113,11 @@ return [
         'login_redirect_uri' => 'https://www.forfatterskolen.no/auth/vipps-login-redirect',
         'login_auth_link' => 'https://api.vipps.no/access-management-1.0/access/oauth2/auth',
         'login_token_link' => 'https://api.vipps.no/access-management-1.0/access/oauth2/token',
-        'login_user_info_link' => 'https://api.vipps.no/vipps-userinfo-api/userinfo'
+        'login_user_info_link' => 'https://api.vipps.no/vipps-userinfo-api/userinfo',
     ],
 
     'gpt' => [
-        'api_key' => env('GPT_API_KEY')
+        'api_key' => env('GPT_API_KEY'),
     ],
 
     'openai' => [

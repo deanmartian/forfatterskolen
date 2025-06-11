@@ -3,12 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Auth;
 
 class Diploma extends Model
 {
-    protected $fillable = [ 'user_id', 'course_id', 'diploma'];
+    protected $fillable = ['user_id', 'course_id', 'diploma'];
 
     public function user()
     {

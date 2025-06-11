@@ -7,10 +7,9 @@ use App\Replay;
 
 class ReplayService
 {
-
     public function saveReplay($request, $id = null)
     {
-        $replay = $id ? Replay::findOrFail($id) : new Replay();
+        $replay = $id ? Replay::findOrFail($id) : new Replay;
 
         $replay->title = $request->title;
         $replay->video_link = $request->video_link;
@@ -27,5 +26,4 @@ class ReplayService
         }
         $replay->save();
     }
-
 }

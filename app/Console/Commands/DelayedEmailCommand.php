@@ -43,18 +43,18 @@ class DelayedEmailCommand extends Command
     {
         CronLog::create(['activity' => 'DelayedEmailCommand CRON running.']);
 
-        $today =  Carbon::today()->format('Y-m-d');
+        $today = Carbon::today()->format('Y-m-d');
         $delayedEmails = DelayedEmail::whereDate('send_date', $today)->get();
         foreach ($delayedEmails as $delayedEmail) {
 
-            $to         = $delayedEmail->recipient;
-            $subject    = $delayedEmail->subject;
-            $message    = $delayedEmail->message;
+            $to = $delayedEmail->recipient;
+            $subject = $delayedEmail->subject;
+            $message = $delayedEmail->message;
             $from_email = $delayedEmail->from_email;
-            $from_name  = $delayedEmail->from_name;
+            $from_name = $delayedEmail->from_name;
             $attachment = $delayedEmail->attachment;
-            $parent     = $delayedEmail->parent;
-            $parent_id  = $delayedEmail->parent_id;
+            $parent = $delayedEmail->parent;
+            $parent_id = $delayedEmail->parent_id;
 
             dispatch(new AddMailToQueueJob($to, $subject, $message, $from_email, $from_name, $attachment,
                 $parent, $parent_id));

@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class LearnerLoginActivity extends Model
 {
-
     /**
      * The database table used by the model.
      *
@@ -20,5 +19,4 @@ class LearnerLoginActivity extends Model
      * @var array
      */
     protected $fillable = ['learner_login_id', 'activity'];
-
 }

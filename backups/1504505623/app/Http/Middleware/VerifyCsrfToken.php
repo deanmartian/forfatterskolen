@@ -13,10 +13,10 @@ class VerifyCsrfToken extends BaseVerifier
      */
     protected $except = [
         //
-    	'/paypalipn',
-    	'/paypalipn*',
-    	'paypalipn',
-    	'paypalipn*',
-    	'paypalipn/*',
+        '/paypalipn',
+        '/paypalipn*',
+        'paypalipn',
+        'paypalipn*',
+        'paypalipn/*',
     ];
 }

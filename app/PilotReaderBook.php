@@ -23,11 +23,12 @@ class PilotReaderBook extends Model
 
     public function author()
     {
-        return $this->belongsTo('App\User','user_id','id');
+        return $this->belongsTo('App\User', 'user_id', 'id');
     }
 
     /**
      * Get chapters and display by display order field where 0 is on the last
+     *
      * @return HasMany
      */
     public function chapters()
@@ -60,16 +61,16 @@ class PilotReaderBook extends Model
 
     public function invitations()
     {
-        return $this->hasMany('App\PilotReaderBookInvitation','book_id','id');
+        return $this->hasMany('App\PilotReaderBookInvitation', 'book_id', 'id');
     }
 
     public function readers()
     {
-        return $this->hasMany('App\PilotReaderBookReading','book_id','id');
+        return $this->hasMany('App\PilotReaderBookReading', 'book_id', 'id');
     }
 
     public function settings()
     {
-        return $this->hasOne('App\PilotReaderBookSettings','book_id','id');
+        return $this->hasOne('App\PilotReaderBookSettings', 'book_id', 'id');
     }
 }

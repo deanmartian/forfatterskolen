@@ -10,8 +10,11 @@ class Invoice extends Model
     use Loggable;
 
     const COMPLETED = 1;
+
     const PENDING = 0;
+
     const FOR_COLLECTION = 2;
+
     const CREDITED = 3;
 
     /**
@@ -44,7 +47,6 @@ class Invoice extends Model
         return $this->belongsTo('App\PaymentPlan');
     }
 
-
     public function transactions()
     {
         return $this->hasMany('App\Transaction')->orderBy('created_at', 'desc');
@@ -58,7 +60,7 @@ class Invoice extends Model
     /**
      * Payment completed.
      *
-     * @return boolean
+     * @return bool
      */
     public function paid()
     {
@@ -68,7 +70,7 @@ class Invoice extends Model
     /**
      * Payment is still pending.
      *
-     * @return boolean
+     * @return bool
      */
     public function unpaid()
     {

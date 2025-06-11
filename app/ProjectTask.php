@@ -6,12 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectTask extends Model
 {
-    
     protected $fillable = [
         'project_id',
         'assigned_to',
         'task',
-        'status'
+        'status',
     ];
 
     public function editor()
@@ -23,5 +22,4 @@ class ProjectTask extends Model
     {
         return $this->belongsTo('App\Project');
     }
-
 }

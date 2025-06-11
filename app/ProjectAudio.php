@@ -6,16 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectAudio extends Model
 {
-    protected $table = "project_audios";
+    protected $table = 'project_audios';
+
     protected $fillable = ['project_id', 'type', 'value'];
+
     protected $appends = ['file_link'];
 
-    public function scopeFiles( $query )
+    public function scopeFiles($query)
     {
         $query->where('type', 'files');
     }
 
-    public function scopeCover( $query )
+    public function scopeCover($query)
     {
         $query->where('type', 'cover');
     }
@@ -23,10 +25,11 @@ class ProjectAudio extends Model
     public function getFileLinkAttribute()
     {
         $filename = $this->attributes['value'];
-        $fileLink = NULL;
+        $fileLink = null;
         if ($filename) {
-            $fileLink = '<a href="'.url('/dropbox/shared-link/' . trim($filename)).'" target="_blank">' .basename($filename).'</a>';
+            $fileLink = '<a href="'.url('/dropbox/shared-link/'.trim($filename)).'" target="_blank">'.basename($filename).'</a>';
         }
+
         return $fileLink;
     }
 }

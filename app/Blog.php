@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use Carbon\Carbon;
@@ -33,10 +34,10 @@ class Blog extends Model
 
     public static function activeOnly()
     {
-        return self::where('status','=', 1)
-            ->where(function($query) {
+        return self::where('status', '=', 1)
+            ->where(function ($query) {
                 $query->whereDate('schedule', '<=', Carbon::today()->format('Y-m-d'))
-                ->orWhereNull('schedule');
+                    ->orWhereNull('schedule');
             });
     }
 }

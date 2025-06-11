@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PilotReaderBookInvitationLink extends Model
 {
@@ -25,5 +24,4 @@ class PilotReaderBookInvitationLink extends Model
     {
         return $this->belongsToMany('App\PilotReaderBook', 'pilot_reader_book_invitation_links', 'id', 'book_id');
     }
-
 }

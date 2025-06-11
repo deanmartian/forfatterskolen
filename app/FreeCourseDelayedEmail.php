@@ -4,10 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FreeCourseDelayedEmail extends Model {
-
+class FreeCourseDelayedEmail extends Model
+{
     protected $table = 'free_course_delayed_email';
+
     protected $fillable = ['user_id', 'course_id', 'send_at'];
+
     public $timestamps = false;
 
     public function user()
@@ -19,5 +21,4 @@ class FreeCourseDelayedEmail extends Model {
     {
         return $this->belongsTo('App\Course');
     }
-
 }

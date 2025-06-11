@@ -1,47 +1,46 @@
 <?php
+
 namespace App;
 
 use App\Http\AdminHelpers;
 use App\Traits\Loggable;
-use Carbon\Carbon;
 use FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 
 class AssignmentManuscript extends Model
 {
-    
     use Loggable;
 
     protected $table = 'assignment_manuscripts';
+
     protected $fillable = ['assignment_id', 'user_id', 'filename', 'words', 'grade', 'type', 'manu_type', 'editor_id',
         'join_group', 'letter_to_editor', 'expected_finish', 'editor_expected_finish', 'uploaded_at'];
+
     protected $appends = [
-        'file_link', 
-        'file_link_with_download', 
-        'assignment_type', 
+        'file_link',
+        'file_link_with_download',
+        'assignment_type',
         'where_in_script',
         'file_extension',
         'file_link_url',
-        'uploaded_date'
+        'uploaded_date',
     ];
 
     const APPROVED_STATUS = 1; // approved feedback status
-    const FINISHED_STATUS = 2; // finished status
 
+    const FINISHED_STATUS = 2; // finished status
 
     public function assignment()
     {
         return $this->belongsTo('App\Assignment');
     }
 
-
     public function user()
     {
         return $this->belongsTo('App\User');
     }
 
-
-    public function feedbacks() //cannot use this. 
+    public function feedbacks() // cannot use this.
     {
         return $this->hasMany('App\AssignmentFeedback');
     }
@@ -58,6 +57,7 @@ class AssignmentManuscript extends Model
 
     /**
      * Accessor field
+     *
      * @return string
      */
     public function getFileLinkAttribute()
@@ -66,9 +66,9 @@ class AssignmentManuscript extends Model
         $filename = $this->attributes['filename'];
 
         $extension = explode('.', basename($filename));
-        if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+        if (end($extension) == 'pdf' || end($extension) == 'odt') {
             $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
-        } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+        } elseif (end($extension) == 'docx' || end($extension) == 'doc') {
             $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
                 .basename($filename).'</a>';
         }
@@ -78,6 +78,7 @@ class AssignmentManuscript extends Model
 
     /**
      * Accessor field
+     *
      * @return string
      */
     public function getFileLinkWithDownloadAttribute()
@@ -113,6 +114,7 @@ class AssignmentManuscript extends Model
     public function getFileExtensionAttribute()
     {
         $file = explode('.', basename($this->attributes['filename']));
+
         return end($file);
     }
 
@@ -123,36 +125,38 @@ class AssignmentManuscript extends Model
         $extension = explode('.', basename($file));
 
         if (end($extension) == 'pdf' || end($extension) == 'odt') {
-            $fileLink = "/js/ViewerJS/#../..".trim($file);
+            $fileLink = '/js/ViewerJS/#../..'.trim($file);
         } else {
-            $fileLink = "https://view.officeapps.live.com/op/embed.aspx?src=".url('').trim($file);
+            $fileLink = 'https://view.officeapps.live.com/op/embed.aspx?src='.url('').trim($file);
         }
 
         return $fileLink;
     }
 
-    public function getExpectedFinishAttribute($value) {
-        return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
+    public function getExpectedFinishAttribute($value)
+    {
+        return $value ? date_format(date_create($value), 'd.m.Y') : null;
     }
 
-    public function getEditorExpectedFinishAttribute($value) {
-        return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
+    public function getEditorExpectedFinishAttribute($value)
+    {
+        return $value ? date_format(date_create($value), 'd.m.Y') : null;
     }
 
     public function getAssignmentTypeAttribute()
     {
-        return isset($this->attributes['type']) && $this->attributes['type'] 
+        return isset($this->attributes['type']) && $this->attributes['type']
         ? AdminHelpers::assignmentType($this->attributes['type']) : 'None';
     }
 
     public function getWhereInScriptAttribute()
     {
-        return isset($this->attributes['manu_type']) && $this->attributes['manu_type'] 
+        return isset($this->attributes['manu_type']) && $this->attributes['manu_type']
         ? AdminHelpers::manuscriptType($this->attributes['manu_type']) : 'None';
     }
 
     public function getUploadedDateAttribute()
     {
-        return $this->attributes['uploaded_at'] ? FrontendHelpers::formatDate($this->attributes['uploaded_at']) : NULL;
+        return $this->attributes['uploaded_at'] ? FrontendHelpers::formatDate($this->attributes['uploaded_at']) : null;
     }
 }

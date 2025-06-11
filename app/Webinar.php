@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use App\Traits\Loggable;
@@ -7,17 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class Webinar extends Model
 {
     use Loggable;
-    
+
     protected $table = 'webinars';
+
     protected $fillable = [
-        'course_id', 'title', 'description', 'host', 'start_date', 'image' , 'link', 'set_as_replay', 'status'
+        'course_id', 'title', 'description', 'host', 'start_date', 'image', 'link', 'set_as_replay', 'status',
     ];
 
     protected static function boot()
     {
         parent::boot();
 
-        static::deleting(function($query) {
+        static::deleting(function ($query) {
             $query->webinar_editors()->delete();
         });
     }
@@ -56,6 +58,4 @@ class Webinar extends Model
     {
         return $this->hasMany('App\WebinarEditor');
     }
-
-
 }

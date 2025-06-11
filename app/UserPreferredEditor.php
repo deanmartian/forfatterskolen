@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserPreferredEditor extends Model
 {
     use Loggable;
-    
+
     /**
      * The database table used by the model.
      *

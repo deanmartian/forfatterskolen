@@ -1,61 +1,63 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\PageMeta;
-use Illuminate\Http\Request;
 use File;
+use Illuminate\Http\Request;
 
 class PageMetaController extends Controller
 {
-
     /**
      * Display the index page
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
         $pageMetas = PageMeta::all();
+
         return view('backend.page-meta.index', compact('pageMetas'));
     }
 
     /**
      * Create new page meta
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
         $this->validate($request, [
-            'url'               => 'required|regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/',
-            'meta_title'        => 'required|max:70|min:40',
-            'meta_description'  => 'required|max:160|min:70'
+            'url' => 'required|regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/',
+            'meta_title' => 'required|max:70|min:40',
+            'meta_description' => 'required|max:160|min:70',
         ]);
 
-        $meta = new PageMeta();
+        $meta = new PageMeta;
 
-        if ($request->hasFile('meta_image')) :
-            if( !File::exists('storage/meta-images/') ) :
+        if ($request->hasFile('meta_image')) {
+            if (! File::exists('storage/meta-images/')) {
                 File::makeDirectory('meta-images');
-            endif;
+            }
             $destinationPath = 'storage/meta-images/'; // upload path
             $extension = $request->meta_image->extension(); // getting image extension
             $fileName = time().'.'.$extension; // renaming image
             $request->meta_image->move($destinationPath, $fileName);
             // optimize image
-            if ( strtolower( $extension ) == "png" ) :
+            if (strtolower($extension) == 'png') {
                 $image = imagecreatefrompng($destinationPath.$fileName);
                 imagepng($image, $destinationPath.$fileName, 9);
-            else :
+            } else {
                 $image = imagecreatefromjpeg($destinationPath.$fileName);
                 imagejpeg($image, $destinationPath.$fileName, 70);
-            endif;
+            }
             $meta->meta_image = '/'.$destinationPath.$fileName;
-        endif;
+        }
 
-        $meta->url              = $request->url;
-        $meta->meta_title       = $request->meta_title;
+        $meta->url = $request->url;
+        $meta->meta_title = $request->meta_title;
         $meta->meta_description = $request->meta_description;
         $meta->save();
 
@@ -64,8 +66,7 @@ class PageMetaController extends Controller
 
     /**
      * Update page meta
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request)
@@ -73,44 +74,45 @@ class PageMetaController extends Controller
         $pageMeta = PageMeta::find($id);
 
         $this->validate($request, [
-            'url'               => 'required|regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/',
-            'meta_title'        => 'required|max:70|min:40',
-            'meta_description'  => 'required|max:160|min:70'
+            'url' => 'required|regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/',
+            'meta_title' => 'required|max:70|min:40',
+            'meta_description' => 'required|max:160|min:70',
         ]);
 
         if ($pageMeta) {
 
-            if ($request->hasFile('meta_image')) :
-                if( !File::exists('storage/meta-images/') ) :
+            if ($request->hasFile('meta_image')) {
+                if (! File::exists('storage/meta-images/')) {
                     File::makeDirectory('meta-images');
-                endif;
+                }
                 $destinationPath = 'storage/meta-images/'; // upload path
                 $extension = $request->meta_image->extension(); // getting image extension
                 $fileName = time().'.'.$extension; // renaming image
                 $request->meta_image->move($destinationPath, $fileName);
                 // optimize image
-                if ( strtolower( $extension ) == "png" ) :
+                if (strtolower($extension) == 'png') {
                     $image = imagecreatefrompng($destinationPath.$fileName);
                     imagepng($image, $destinationPath.$fileName, 9);
-                else :
+                } else {
                     $image = imagecreatefromjpeg($destinationPath.$fileName);
                     imagejpeg($image, $destinationPath.$fileName, 70);
-                endif;
+                }
                 $pageMeta->meta_image = '/'.$destinationPath.$fileName;
-            endif;
+            }
 
-            $pageMeta->url              = $request->url;
-            $pageMeta->meta_title       = $request->meta_title;
+            $pageMeta->url = $request->url;
+            $pageMeta->meta_title = $request->meta_title;
             $pageMeta->meta_description = $request->meta_description;
             $pageMeta->save();
         }
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Page meta updated successfully'),
             'alert_type' => 'success']);
     }
 
     /**
      * Delete page meta
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
@@ -125,5 +127,4 @@ class PageMetaController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Page meta deleted successfully'),
             'alert_type' => 'success']);
     }
-
 }

@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\CronLog;
 use App\FreeCourseDelayedEmail;
-use App\Http\AdminHelpers;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\FreeCourseNewUserEmail;
 use Carbon\Carbon;
@@ -48,7 +47,7 @@ class FreeCourseDelayedEmailCommand extends Command
 
         $delayedEmails = FreeCourseDelayedEmail::whereBetween('send_at', [$from, $to])->get();
 
-        foreach($delayedEmails as $delayedEmail) {
+        foreach ($delayedEmails as $delayedEmail) {
             $course = $delayedEmail->course;
             $user = $delayedEmail->user;
             $encode_email = encrypt($user->email);
@@ -57,10 +56,10 @@ class FreeCourseDelayedEmailCommand extends Command
             $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
 
             $search_string = [
-                '[login_link]', '[username]', '[password]'
+                '[login_link]', '[username]', '[password]',
             ];
             $replace_string = [
-                $loginLink, $user->email, $password
+                $loginLink, $user->email, $password,
             ];
             $message = str_replace($search_string, $replace_string, $course->email);
 
@@ -68,11 +67,11 @@ class FreeCourseDelayedEmailCommand extends Command
             $email_data['email_subject'] = $course->title;
             $toEmail = $user->email;
 
-            //\Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
+            // \Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
             dispatch(new AddMailToQueueJob($toEmail, $course->title, $message, 'postmail@forfatterskolen.no', null, null,
                 'learner', $user->id));
             CronLog::create(['activity' => 'FreeCourseDelayedEmailCommand sent email to user '.$user->id]);
-            //$delayedEmail->delete(); //delete the record after adding it to queue
+            // $delayedEmail->delete(); //delete the record after adding it to queue
         }
     }
 }

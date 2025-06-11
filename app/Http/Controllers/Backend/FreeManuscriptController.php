@@ -1,37 +1,24 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\DelayedEmail;
 use App\EmailTemplate;
+use App\FreeManuscript;
 use App\FreeManuscriptFeedbackHistory;
 use App\Http\AdminHelpers;
+use App\Http\Controllers\Controller;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\Manuscript;
 use App\User;
-use Barryvdh\DomPDF\PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Mail\Mailer;
-use Illuminate\Mail\Message;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\ShopManuscript;
-use App\ShopManuscriptsTaken;
-use App\ShopManuscriptTakenFeedback;
-use App\FreeManuscript;
 use Illuminate\Support\Facades\Input;
-use Validator;
-use Illuminate\Support\Str;
 use Mail;
-use Swift_Mailer;
-use Swift_Message;
-use Swift_Transport;
 
 class FreeManuscriptController extends Controller
 {
-
     /**
      * FreeManuscriptController constructor.
      */
@@ -43,13 +30,13 @@ class FreeManuscriptController extends Controller
 
     public function index(Request $request)
     {
-        $freeManuscripts = FreeManuscript::where('is_feedback_sent', '=',0)->orderBy('created_at', 'desc')->get();
+        $freeManuscripts = FreeManuscript::where('is_feedback_sent', '=', 0)->orderBy('created_at', 'desc')->get();
         $archiveManuscripts = FreeManuscript::with('latestFeedbackHistory')
-            ->where('is_feedback_sent', '=',1)->orderBy('created_at', 'desc')->paginate(20);
+            ->where('is_feedback_sent', '=', 1)->orderBy('created_at', 'desc')->paginate(20);
 
-        if( $request->search && !empty($request->search) ) :
-            $archiveManuscripts = FreeManuscript::with('latestFeedbackHistory')->where('email', 'LIKE', '%' . $request->search  . '%')->where('is_feedback_sent', '=',1)->orderBy('created_at', 'desc')->paginate(20);
-        endif;
+        if ($request->search && ! empty($request->search)) {
+            $archiveManuscripts = FreeManuscript::with('latestFeedbackHistory')->where('email', 'LIKE', '%'.$request->search.'%')->where('is_feedback_sent', '=', 1)->orderBy('created_at', 'desc')->paginate(20);
+        }
         $emailTemplate = EmailTemplate::where('page_name', 'Free Manuscript')->first();
         $emailTemplate2 = EmailTemplate::where('page_name', 'Free Manuscript 2')->first();
         $emailTemplateRoute = 'admin.manuscript.add_email_template';
@@ -59,29 +46,29 @@ class FreeManuscriptController extends Controller
             $isUpdate = 1;
         }
 
-        /*appends is used to append the parameters and to not be ignored by pagination render link*/
+        /* appends is used to append the parameters and to not be ignored by pagination render link */
         return view('backend.shop-manuscript.free-manuscripts',
-            compact('freeManuscripts','emailTemplate', 'emailTemplate2', 'emailTemplateRoute', 'isUpdate'),
+            compact('freeManuscripts', 'emailTemplate', 'emailTemplate2', 'emailTemplateRoute', 'isUpdate'),
             ['archiveManuscripts' => $archiveManuscripts->appends($request->except('page'))]
         );
     }
 
     /**
      * Delete Free Manuscript
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function deleteFreeManuscript($id)
     {
         $freeManuscripts = FreeManuscript::findOrFail($id);
         $freeManuscripts->forceDelete();
+
         return redirect()->back();
     }
 
     /**
      * Edit the content from New tab
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function editContent($id, Request $request)
@@ -90,17 +77,18 @@ class FreeManuscriptController extends Controller
         if ($freeManuscript) {
             $freeManuscript->content = $request->manu_content;
             $freeManuscript->save();
+
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Free manuscript content updated.'),
                 'alert_type' => 'success']);
         }
+
         return redirect()->back();
     }
 
     /**
      * Assign Editor
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function assignEditor($id, Request $request)
@@ -116,7 +104,7 @@ class FreeManuscriptController extends Controller
             'email_message' => $emailTemplate->email_content,
             'from_name' => '',
             'from_email' => $emailTemplate->from_email,
-            'attach_file' => NULL
+            'attach_file' => null,
         ];
         \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
@@ -127,38 +115,40 @@ class FreeManuscriptController extends Controller
 
     /**
      * Display the feedback history
-     * @param $id
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function feedbackHistory($id)
     {
-        $freeManuscriptFeedbackHistory = FreeManuscriptFeedbackHistory::where('free_manuscript_id',$id)->get();
-        if (!$freeManuscriptFeedbackHistory->count()) {
+        $freeManuscriptFeedbackHistory = FreeManuscriptFeedbackHistory::where('free_manuscript_id', $id)->get();
+        if (! $freeManuscriptFeedbackHistory->count()) {
             return response()->json(['data' => 'No feedback history found', 'success' => false]);
         }
+
         return response()->json(['data' => $freeManuscriptFeedbackHistory, 'success' => true]);
     }
 
-    public function downloadContent( $id )
+    public function downloadContent($id)
     {
-        $freeManuscript    = FreeManuscript::find($id);
+        $freeManuscript = FreeManuscript::find($id);
         $pdf = \App::make('dompdf.wrapper');
         $pdf->loadHTML($freeManuscript->content);
-        return $pdf->download(time() . ".pdf");
+
+        return $pdf->download(time().'.pdf');
     }
 
     /**
      * Resend feedback
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function resendFeedback($id)
     {
-        $freeManuscripts    = FreeManuscript::find($id);
+        $freeManuscripts = FreeManuscript::find($id);
         if ($freeManuscripts) {
-            $editor             = User::find($freeManuscripts->editor_id);
-            $to                 = $freeManuscripts->email;
-            $email_content      = $freeManuscripts->feedback_content;
+            $editor = User::find($freeManuscripts->editor_id);
+            $to = $freeManuscripts->email;
+            $email_content = $freeManuscripts->feedback_content;
 
             ob_start();
             include base_path().'/resources/views/emails/free-manuscript-feedback.blade.php';
@@ -166,7 +156,7 @@ class FreeManuscriptController extends Controller
 
             $emailTemplate = $this->emailTemplate('Free Manuscript');
             $search_string = [
-                ':firstname'
+                ':firstname',
             ];
             $replace_string = [
                 $freeManuscripts->name,
@@ -174,23 +164,23 @@ class FreeManuscriptController extends Controller
 
             $message = str_replace($search_string, $replace_string, $message);
 
-            $subject = $emailTemplate->subject;//'Tilbakemelding på din tekst';
-            $from = "postmail@forfatterskolen.no";
+            $subject = $emailTemplate->subject; // 'Tilbakemelding på din tekst';
+            $from = 'postmail@forfatterskolen.no';
 
-            /*AdminHelpers::send_mail($to, $subject, $message, $from );*/
+            /* AdminHelpers::send_mail($to, $subject, $message, $from ); */
             /*AdminHelpers::send_email($subject,
                 'postmail@forfatterskolen.no', $to, $message);*/
             $emailData['email_subject'] = $subject;
             $emailData['email_message'] = $message;
-            $emailData['from_name'] = NULL;
+            $emailData['from_name'] = null;
             $emailData['from_email'] = $from;
-            $emailData['attach_file'] = NULL;
+            $emailData['attach_file'] = null;
 
-            //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            // \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
                 'free-manuscripts', $id));
 
-            $newFeedbackHistory = new FreeManuscriptFeedbackHistory();
+            $newFeedbackHistory = new FreeManuscriptFeedbackHistory;
             $newFeedbackHistory->free_manuscript_id = $id;
             $newFeedbackHistory->date_sent = Carbon::now();
             $newFeedbackHistory->save();
@@ -201,27 +191,27 @@ class FreeManuscriptController extends Controller
 
     /**
      * This would move the feedback to be approved by head editor
-     * @param $id
-     * @param Request $requests
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function sendFeedback($id, Request $requests)
     {
         $url = 'https://forfatterskolen.api-us1.com';
 
-        $freeManuscripts    = FreeManuscript::findOrFail($id);
+        $freeManuscripts = FreeManuscript::findOrFail($id);
 
-        //$freeManuscripts->is_feedback_sent = 1;
+        // $freeManuscripts->is_feedback_sent = 1;
         $freeManuscripts->feedback_content = $requests->email_content;
         $freeManuscripts->save();
+
         return redirect()->back();
     }
 
-    public function approveFeedback( $id, Request $requests )
+    public function approveFeedback($id, Request $requests)
     {
         $url = 'https://forfatterskolen.api-us1.com';
 
-        $freeManuscripts    = FreeManuscript::findOrFail($id);
+        $freeManuscripts = FreeManuscript::findOrFail($id);
 
         $freeManuscripts->is_feedback_sent = 1;
         $freeManuscripts->feedback_content = $requests->email_content;
@@ -301,12 +291,12 @@ class FreeManuscriptController extends Controller
         $headers = "From: Forfatterskolen<postmail@forfatterskolen.no>\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-        //$headers .= 'Reply-To: '. $from . "\r\n";
+        // $headers .= 'Reply-To: '. $from . "\r\n";
         $emailTemplate = $freeManuscripts->from === 'Giutbok' ? $this->emailTemplate('Free Manuscript 2')
             : $this->emailTemplate('Free Manuscript');
 
         $search_string = [
-            ':firstname'
+            ':firstname',
         ];
         $replace_string = [
             $freeManuscripts->name,
@@ -315,18 +305,18 @@ class FreeManuscriptController extends Controller
         $message = str_replace($search_string, $replace_string, $message);
 
         $subject = $emailTemplate->subject;
-        $from = $emailTemplate->from;//"postmail@forfatterskolen.no";
+        $from = $emailTemplate->from; // "postmail@forfatterskolen.no";
 
         $emailData['email_subject'] = $subject;
         $emailData['email_message'] = $message;
-        $emailData['from_name'] = NULL;
+        $emailData['from_name'] = null;
         $emailData['from_email'] = $from;
-        $emailData['attach_file'] = NULL;
+        $emailData['attach_file'] = null;
 
         dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
             'free-manuscripts', $id));
 
-        $newFeedbackHistory = new FreeManuscriptFeedbackHistory();
+        $newFeedbackHistory = new FreeManuscriptFeedbackHistory;
         $newFeedbackHistory->free_manuscript_id = $id;
         $newFeedbackHistory->date_sent = Carbon::now();
         $newFeedbackHistory->save();
@@ -342,7 +332,7 @@ class FreeManuscriptController extends Controller
                 'recipient' => $to,
                 'send_date' => $requests->send_date,
                 'parent' => 'free-manuscript-follow-up',
-                'parent_id' => $freeManuscripts->id
+                'parent_id' => $freeManuscripts->id,
             ]);
         }
 

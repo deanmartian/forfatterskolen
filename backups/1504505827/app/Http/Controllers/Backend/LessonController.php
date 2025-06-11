@@ -1,23 +1,20 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use App\Course;
-use App\Lesson;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\LessonCreateRequest;
 use App\Http\Requests\LessonUpdateRequest;
+use App\Lesson;
+use Illuminate\Http\Request;
 
 class LessonController extends Controller
 {
-   
-
     public function index($course_id)
     {
         $course = Course::findOrFail($course_id);
-        $section = NULL;
+        $section = null;
 
         return view('backend.lesson.index', compact('course', 'section'));
     }
@@ -27,28 +24,28 @@ class LessonController extends Controller
         $course = Course::findOrFail($course_id);
         $lesson = Lesson::findOrFail($id)->toArray();
         $videos = Lesson::findOrFail($id)->videos;
-        $section = NULL;
+        $section = null;
 
-    	return view('backend.lesson.edit', compact('course', 'lesson', 'videos', 'section'));
+        return view('backend.lesson.edit', compact('course', 'lesson', 'videos', 'section'));
     }
 
     public function create($id)
     {
-    	$course = Course::findOrFail($id);
-    	$section = NULL;
+        $course = Course::findOrFail($id);
+        $section = null;
         $lesson = [
             'title' => old('title'),
             'content' => old('content'),
             'delay' => old('delay'),
         ];
 
-    	return view('backend.lesson.create', compact('course', 'lesson', 'section'));
+        return view('backend.lesson.create', compact('course', 'lesson', 'section'));
     }
 
     public function store($course_id, LessonCreateRequest $request)
     {
         $course = Course::findOrFail($course_id);
-        $lesson = new Lesson();
+        $lesson = new Lesson;
         $lesson->course_id = $course->id;
         $lesson->title = $request->title;
         $lesson->content = $request->content;
@@ -57,7 +54,6 @@ class LessonController extends Controller
 
         return redirect(route('admin.lesson.edit', ['course_id' => $lesson->id, 'id' => $course->id]));
     }
-
 
     public function update($course_id, $id, LessonUpdateRequest $request)
     {
@@ -81,20 +77,19 @@ class LessonController extends Controller
         return redirect(route('admin.course.show', $course->id).'?section=lessons');
     }
 
-
     public function save_order(Request $request)
     {
         $lessons = explode(',', $request->lesson_order);
         $i = 0;
 
-        foreach( $lessons as $lesson ) :
+        foreach ($lessons as $lesson) {
             $lesson = Lesson::find($lesson);
-            if( $lesson ) :
+            if ($lesson) {
                 $lesson->order = $i;
                 $lesson->save();
                 $i++;
-            endif;
-        endforeach;
+            }
+        }
 
         return redirect()->back();
     }

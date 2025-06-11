@@ -7,21 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserBookSale extends Model
 {
-
     protected $fillable = [
-        'user_id', 
-        'user_book_for_sale_id', 
+        'user_id',
+        'user_book_for_sale_id',
         'sale_type',
-        'quantity', 
-        'amount', 
-        'date'
+        'quantity',
+        'amount',
+        'date',
     ];
 
     protected $appends = [
-        'amount_formatted', 
+        'amount_formatted',
         'total_amount',
         'total_amount_formatted',
-        'sale_type_text'
+        'sale_type_text',
     ];
 
     protected $saleTypes = [
@@ -66,5 +65,4 @@ class UserBookSale extends Model
     {
         return $this->saleTypes[$this->attributes['sale_type']];
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
@@ -7,12 +8,9 @@ use App\Http\EmailReader;
 use App\LearnerEmail;
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Mockery\Exception;
 
 class EmailController extends Controller
 {
-
     /**
      * EmailController constructor.
      */
@@ -24,14 +22,15 @@ class EmailController extends Controller
 
     /**
      * Display the corresponding view
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
         // check first if the user is already logged in to their email
-        if (\Session::has('email_logged_in'))
-        {
+        if (\Session::has('email_logged_in')) {
             $emails = \Session::get('inbox');
+
             return view('backend.emails.index', compact('emails'));
         } else {
             return view('backend.emails.login');
@@ -50,9 +49,9 @@ class EmailController extends Controller
             $email_id = $email['header']->message_id;
 
             \Session::put('reply_email_id', $email_id);
-            \Session::put('reply_from_email', $email['header']->to[0]->mailbox."@".$email['header']->to[0]->host);
-            \Session::put('reply_to_email', $email['header']->from[0]->mailbox."@".$email['header']->from[0]->host);
-            \Session::put('reply_email_subject', str_replace('_',' ',mb_decode_mimeheader($email['header']->subject)));
+            \Session::put('reply_from_email', $email['header']->to[0]->mailbox.'@'.$email['header']->to[0]->host);
+            \Session::put('reply_to_email', $email['header']->from[0]->mailbox.'@'.$email['header']->from[0]->host);
+            \Session::put('reply_email_subject', str_replace('_', ' ', mb_decode_mimeheader($email['header']->subject)));
 
             return view('backend.emails.show', compact('email', 'email_id'));
         } else {
@@ -64,12 +63,13 @@ class EmailController extends Controller
     {
         session()->flash('message.level', 'success');
         session()->flash('message.content', 'Email sent successfully.');
+
         return redirect()->back();
     }
 
     /**
      * Login the user to the web server
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function login(Request $request)
@@ -91,9 +91,11 @@ class EmailController extends Controller
 
         return redirect()->back();
     }
+
     /**
      * Move the selected email from inbox to the learners
-     * @param int $id email id
+     *
+     * @param  int  $id  email id
      * @return \Illuminate\Http\RedirectResponse
      */
     public function move($id)
@@ -104,65 +106,60 @@ class EmailController extends Controller
         // login to the email server
         $email_reader = new EmailReader($user, $pass);
         if ($email_reader->connect()) {
-            $email          = $email_reader->get($id);
-            $from           = $email['header']->from[0]->mailbox."@".$email['header']->from[0]->host;
-            $subject        = str_replace('_',' ',mb_decode_mimeheader($email['header']->subject));
-            $structure      = $email['structure'];
-            $body           = $email['readable_body'];
-            $attachmentFile = NULL;
+            $email = $email_reader->get($id);
+            $from = $email['header']->from[0]->mailbox.'@'.$email['header']->from[0]->host;
+            $subject = str_replace('_', ' ', mb_decode_mimeheader($email['header']->subject));
+            $structure = $email['structure'];
+            $body = $email['readable_body'];
+            $attachmentFile = null;
 
             $user = User::where('email', $from)->first();
 
             // check if email have attachment
             $attachments = $this->extract_attachments($email_reader->connection(), $id);
 
-            foreach($attachments as $attachment)
-            {
-                if($attachment['is_attachment'] == 1)
-                {
+            foreach ($attachments as $attachment) {
+                if ($attachment['is_attachment'] == 1) {
                     $destinationPath = 'storage/email_attachments/'; // upload path
                     $fileName = $attachment['filename']; // rename document
                     // check if directory exists
-                    if(!\File::exists($destinationPath)) {
+                    if (! \File::exists($destinationPath)) {
                         \File::makeDirectory($destinationPath);
                     }
 
-                    file_put_contents(public_path()."/".$destinationPath.$fileName, $attachment['attachment']);
+                    file_put_contents(public_path().'/'.$destinationPath.$fileName, $attachment['attachment']);
                     $attachmentFile = $destinationPath.$fileName;
                 }
 
             }
 
-            $encodings = array(
+            $encodings = [
                 0 => '7BIT',
                 1 => '8BIT',
                 2 => 'BINARY',
                 3 => 'BASE64',
                 4 => 'QUOTED-PRINTABLE',
                 5 => 'OTHER',
-            );
+            ];
 
             $encoding = $encodings[$structure->encoding];
 
             if ($encoding == 'BASE64') {
                 $body = imap_base64($body);
-            }
-            elseif ($encoding == 'QUOTED-PRINTABLE') {
+            } elseif ($encoding == 'QUOTED-PRINTABLE') {
                 $body = quoted_printable_decode($body);
-            }
-            elseif ($encoding == '8BIT') {
+            } elseif ($encoding == '8BIT') {
                 $body = quoted_printable_decode(imap_8bit($body));
-            }
-            elseif ($encoding == '7BIT') {
+            } elseif ($encoding == '7BIT') {
                 $body = $this->decode7Bit($body);
             }
 
             if ($user) {
-                $learnerEmail               = new LearnerEmail();
-                $learnerEmail->user_id      = $user->id;
-                $learnerEmail->subject      = $subject;
-                $learnerEmail->email        = $body;
-                $learnerEmail->attachment   = $attachmentFile;
+                $learnerEmail = new LearnerEmail;
+                $learnerEmail->user_id = $user->id;
+                $learnerEmail->subject = $subject;
+                $learnerEmail->email = $body;
+                $learnerEmail->attachment = $attachmentFile;
                 $learnerEmail->save();
 
                 session()->flash('message.level', 'success');
@@ -198,25 +195,25 @@ class EmailController extends Controller
 
     /**
      * Reply to particular email
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function reply(Request $request)
     {
 
-        $from       = \Session::get('reply_from_email');
-        $email_id   = \Session::get('reply_email_id');
-        $to         = \Session::get('reply_to_email');
+        $from = \Session::get('reply_from_email');
+        $email_id = \Session::get('reply_email_id');
+        $to = \Session::get('reply_to_email');
 
-        $headers = "From: Forfatterskolen<".$from.">\r\n";
+        $headers = 'From: Forfatterskolen<'.$from.">\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-        $headers .= "In-Reply-To: ".$email_id."\r\n";
+        $headers .= 'In-Reply-To: '.$email_id."\r\n";
 
         $subject = \Session::get('reply_email_subject');
         $content = $request->email_content;
 
-        if (!$content) {
+        if (! $content) {
             AdminHelpers::addFlashMessage('danger', 'Message field is required.');
         } else {
             mail($to, $subject, $content, $headers);
@@ -234,78 +231,78 @@ class EmailController extends Controller
         // login to the email server
         $email_reader = new EmailReader($user, $pass);
         if ($email_reader->connect()) {
-            $email      = $email_reader->get($id);
-            $from       = $email['header']->from[0]->mailbox . "@" . $email['header']->from[0]->host;
-            $subject    = str_replace('_', ' ', mb_decode_mimeheader($email['header']->subject));
-            $structure  = $email['structure'];
-            $body       = $this->getBody($id, $email_reader->connection());
-            $to         = $request->to_email;
+            $email = $email_reader->get($id);
+            $from = $email['header']->from[0]->mailbox.'@'.$email['header']->from[0]->host;
+            $subject = str_replace('_', ' ', mb_decode_mimeheader($email['header']->subject));
+            $structure = $email['structure'];
+            $body = $this->getBody($id, $email_reader->connection());
+            $to = $request->to_email;
 
-            $boundary   = md5(uniqid(time()));
+            $boundary = md5(uniqid(time()));
 
             $messageBody = $request->email_content;
 
             // check if email have attachment
             $attachments = $this->extract_attachments($email_reader->connection(), $id);
-            $attachmentFile = NULL;
+            $attachmentFile = null;
 
-            foreach($attachments as $attachment)
-            {
-                if($attachment['is_attachment'] == 1)
-                {
+            foreach ($attachments as $attachment) {
+                if ($attachment['is_attachment'] == 1) {
                     $destinationPath = 'storage/email_attachments/'; // upload path
                     $fileName = $attachment['filename']; // rename document
                     // check if directory exists
-                    if(!\File::exists($destinationPath)) {
+                    if (! \File::exists($destinationPath)) {
                         \File::makeDirectory($destinationPath);
                     }
 
-                    file_put_contents(public_path()."/".$destinationPath.$fileName, $attachment['attachment']);
+                    file_put_contents(public_path().'/'.$destinationPath.$fileName, $attachment['attachment']);
                     $attachmentFile = $destinationPath.$fileName;
                 }
 
             }
 
-            $headers = "From: Forfatterskolen<".$from.">\r\n";
+            $headers = 'From: Forfatterskolen<'.$from.">\r\n";
             $headers .= "MIME-Version: 1.0\r\n";
-            //$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+            // $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
-            if (!is_null($attachmentFile)) {
-                $file       = public_path($attachmentFile);
-                $fileExp    = explode('/',$file);
-                $fileName   = end($fileExp);
-                $file_size  = filesize($file);
-                $handle     = fopen($file, "r");
-                $content    = fread($handle, $file_size);
+            if (! is_null($attachmentFile)) {
+                $file = public_path($attachmentFile);
+                $fileExp = explode('/', $file);
+                $fileName = end($fileExp);
+                $file_size = filesize($file);
+                $handle = fopen($file, 'r');
+                $content = fread($handle, $file_size);
                 fclose($handle);
-                $content    = chunk_split(base64_encode($content));
-                $mimeType   = mime_content_type($file);
+                $content = chunk_split(base64_encode($content));
+                $mimeType = mime_content_type($file);
 
-                $message = "";
+                $message = '';
 
-                $headers .= "Content-Type: multipart/mixed; boundary=\"".$boundary."\""."\r\n";
+                $headers .= 'Content-Type: multipart/mixed; boundary="'.$boundary.'"'."\r\n";
 
-                $message .= "--".$boundary."\r\n";
+                $message .= '--'.$boundary."\r\n";
                 $message .= "Content-Type: text/html; charset=UTF-8\r\n";
                 $message .= "Content-Transfer-Encoding: base64\r\n\r\n";
                 $message .= chunk_split(base64_encode($messageBody.$body));
 
-                $message .= "--".$boundary."\r\n";
-                $message .= "Content-Type: ".$mimeType."; name=\"".$fileName."\""."\r\n";
-                $message .= "Content-Transfer-Encoding: base64"."\r\n";
-                $message .= "Content-Disposition: attachment; filename=\"".$fileName."\""."\r\n";
+                $message .= '--'.$boundary."\r\n";
+                $message .= 'Content-Type: '.$mimeType.'; name="'.$fileName.'"'."\r\n";
+                $message .= 'Content-Transfer-Encoding: base64'."\r\n";
+                $message .= 'Content-Disposition: attachment; filename="'.$fileName.'"'."\r\n";
                 $message .= $content."\r\n";
-                $message .= "--".$boundary."--";
+                $message .= '--'.$boundary.'--';
 
-                if(mail($to, $subject, $message, $headers)) {
+                if (mail($to, $subject, $message, $headers)) {
                     AdminHelpers::addFlashMessage('success', 'Email forwarded successfully.');
+
                     return redirect()->back();
                 }
             } else {
                 $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
-                if(mail($to, $subject, $messageBody.$body, $headers)) {
+                if (mail($to, $subject, $messageBody.$body, $headers)) {
                     AdminHelpers::addFlashMessage('success', 'Email forwarded successfully.');
+
                     return redirect()->back();
                 }
             }
@@ -317,37 +314,40 @@ class EmailController extends Controller
 
     /**
      * Get body of the email
-     * @param $uid int index id of the message
-     * @param $imap resource imap connection
+     *
+     * @param  $uid  int index id of the message
+     * @param  $imap  resource imap connection
      * @return bool
      */
-    function getBody($uid, $imap)
+    public function getBody($uid, $imap)
     {
-        $body = $this->get_part($imap, $uid, "TEXT/HTML");
+        $body = $this->get_part($imap, $uid, 'TEXT/HTML');
         // if HTML body is empty, try getting text body
-        if ($body == "") {
-            $body = $this->get_part($imap, $uid, "TEXT/PLAIN");
+        if ($body == '') {
+            $body = $this->get_part($imap, $uid, 'TEXT/PLAIN');
         }
+
         return $body;
     }
 
     /**
      * Get the email parts
-     * @param $imap resource imap connection
-     * @param $uid int message id
-     * @param $mimetype string
-     * @param bool $structure
-     * @param bool $partNumber
+     *
+     * @param  $imap  resource imap connection
+     * @param  $uid  int message id
+     * @param  $mimetype  string
+     * @param  bool  $structure
+     * @param  bool  $partNumber
      * @return bool|string
      */
-    function get_part($imap, $uid, $mimetype, $structure = false, $partNumber = false)
+    public function get_part($imap, $uid, $mimetype, $structure = false, $partNumber = false)
     {
-        if (!$structure) {
+        if (! $structure) {
             $structure = imap_fetchstructure($imap, $uid);
         }
         if ($structure) {
             if ($mimetype == $this->get_mime_type($structure)) {
-                if (!$partNumber) {
+                if (! $partNumber) {
                     $partNumber = 1;
                 }
                 $text = imap_fetchbody($imap, $uid, $partNumber);
@@ -364,31 +364,33 @@ class EmailController extends Controller
             // multipart
             if ($structure->type == 1) {
                 foreach ($structure->parts as $index => $subStruct) {
-                    $prefix = "";
+                    $prefix = '';
                     if ($partNumber) {
-                        $prefix = $partNumber . ".";
+                        $prefix = $partNumber.'.';
                     }
-                    $data = $this->get_part($imap, $uid, $mimetype, $subStruct, $prefix . ($index + 1));
+                    $data = $this->get_part($imap, $uid, $mimetype, $subStruct, $prefix.($index + 1));
                     if ($data) {
                         return $data;
                     }
                 }
             }
         }
+
         return false;
     }
 
     /*
      * Get the mime type of the email
      */
-    function get_mime_type($structure)
+    public function get_mime_type($structure)
     {
-        $primaryMimetype = ["TEXT", "MULTIPART", "MESSAGE", "APPLICATION", "AUDIO", "IMAGE", "VIDEO", "OTHER"];
+        $primaryMimetype = ['TEXT', 'MULTIPART', 'MESSAGE', 'APPLICATION', 'AUDIO', 'IMAGE', 'VIDEO', 'OTHER'];
 
         if ($structure->subtype) {
-            return $primaryMimetype[(int)$structure->type] . "/" . $structure->subtype;
+            return $primaryMimetype[(int) $structure->type].'/'.$structure->subtype;
         }
-        return "TEXT/PLAIN";
+
+        return 'TEXT/PLAIN';
     }
 
     /**
@@ -403,13 +405,13 @@ class EmailController extends Controller
      *
      * Results are not guaranteed, but it's pretty good at what it does.
      *
-     * @param $text (string)
-     *   7-Bit text to convert.
-     *
+     * @param  $text  (string)
+     *               7-Bit text to convert.
      * @return (string)
-     *   Decoded text.
+     *                  Decoded text.
      */
-    public function decode7Bit($text) {
+    public function decode7Bit($text)
+    {
         // If there are no spaces on the first line, assume that the body is
         // actually base64-encoded, and decode it.
         $original_text = $text;
@@ -419,11 +421,11 @@ class EmailController extends Controller
             $text = base64_decode($text);
         }
 
-        if (!strlen($text)) {
+        if (! strlen($text)) {
             $text = $original_text;
         }
         // Manually convert common encoded characters into their UTF-8 equivalents.
-        $characters = array(
+        $characters = [
             '=20' => ' ', // space.
             '=2C' => ',', // comma.
             '=E2=80=99' => "'", // single quote.
@@ -437,54 +439,55 @@ class EmailController extends Controller
             '=E2=80=A2' => '&bull;', // bullet.
             '=E2=80=93' => '&ndash;', // en dash.
             '=E2=80=94' => '&mdash;', // em dash.
-        );
+        ];
         // Loop through the encoded characters and replace any that are found.
         foreach ($characters as $key => $value) {
             $text = str_replace($key, $value, $text);
         }
+
         return $text;
     }
 
-    function extract_attachments($connection, $message_number) {
+    public function extract_attachments($connection, $message_number)
+    {
 
-        $attachments = array();
+        $attachments = [];
         $structure = imap_fetchstructure($connection, $message_number);
 
-        if(isset($structure->parts) && count($structure->parts)) {
+        if (isset($structure->parts) && count($structure->parts)) {
 
-            for($i = 0; $i < count($structure->parts); $i++) {
+            for ($i = 0; $i < count($structure->parts); $i++) {
 
-                $attachments[$i] = array(
+                $attachments[$i] = [
                     'is_attachment' => false,
                     'filename' => '',
                     'name' => '',
-                    'attachment' => ''
-                );
+                    'attachment' => '',
+                ];
 
-                if($structure->parts[$i]->ifdparameters) {
-                    foreach($structure->parts[$i]->dparameters as $object) {
-                        if(strtolower($object->attribute) == 'filename') {
+                if ($structure->parts[$i]->ifdparameters) {
+                    foreach ($structure->parts[$i]->dparameters as $object) {
+                        if (strtolower($object->attribute) == 'filename') {
                             $attachments[$i]['is_attachment'] = true;
                             $attachments[$i]['filename'] = $object->value;
                         }
                     }
                 }
 
-                if($structure->parts[$i]->ifparameters) {
-                    foreach($structure->parts[$i]->parameters as $object) {
-                        if(strtolower($object->attribute) == 'name') {
+                if ($structure->parts[$i]->ifparameters) {
+                    foreach ($structure->parts[$i]->parameters as $object) {
+                        if (strtolower($object->attribute) == 'name') {
                             $attachments[$i]['is_attachment'] = true;
                             $attachments[$i]['name'] = $object->value;
                         }
                     }
                 }
 
-                if($attachments[$i]['is_attachment']) {
-                    $attachments[$i]['attachment'] = imap_fetchbody($connection, $message_number, $i+1);
-                    if($structure->parts[$i]->encoding == 3) { // 3 = BASE64
+                if ($attachments[$i]['is_attachment']) {
+                    $attachments[$i]['attachment'] = imap_fetchbody($connection, $message_number, $i + 1);
+                    if ($structure->parts[$i]->encoding == 3) { // 3 = BASE64
                         $attachments[$i]['attachment'] = base64_decode($attachments[$i]['attachment']);
-                    }
-                    elseif($structure->parts[$i]->encoding == 4) { // 4 = QUOTED-PRINTABLE
+                    } elseif ($structure->parts[$i]->encoding == 4) { // 4 = QUOTED-PRINTABLE
                         $attachments[$i]['attachment'] = quoted_printable_decode($attachments[$i]['attachment']);
                     }
                 }

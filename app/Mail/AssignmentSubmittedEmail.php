@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -22,5 +23,4 @@ class AssignmentSubmittedEmail extends Mailable
             ->subject('New manuscript submitted for assignment')
             ->view('emails.assignment_submitted');
     }
-
 }

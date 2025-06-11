@@ -3,34 +3,31 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateFeedbacksTable extends Migration {
+class CreateFeedbacksTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('feedbacks', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('manuscript_id')->unsigned()->index('manuscript_id');
+            $table->text('filename');
+            $table->string('notes')->nullable();
+            $table->timestamps();
+        });
+    }
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::create('feedbacks', function(Blueprint $table)
-		{
-			$table->increments('id');
-			$table->integer('manuscript_id')->unsigned()->index('manuscript_id');
-			$table->text('filename');
-			$table->string('notes')->nullable();
-			$table->timestamps();
-		});
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::drop('feedbacks');
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('feedbacks');
+    }
 }

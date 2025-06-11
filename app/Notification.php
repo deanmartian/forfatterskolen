@@ -1,10 +1,11 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Notification extends Model {
-
+class Notification extends Model
+{
     /**
      * The database table used by the model.
      *

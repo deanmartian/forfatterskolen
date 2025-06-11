@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-
 use App\Contract;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -23,19 +22,16 @@ use App\ProjectPrint;
 use App\ProjectWholeBook;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Http\Concerns\InteractsWithInput;
 use Illuminate\Http\Request;
 
 class ProjectService
 {
-
     /**
-     * @param Request $request
      * @return $this|mixed
      */
-    public function saveProject( Request $request )
+    public function saveProject(Request $request)
     {
-        $model = $request->id ? Project::find($request->id) : new Project();
+        $model = $request->id ? Project::find($request->id) : new Project;
         $model->user_id = $request->user_id;
         $model->name = $request->name;
         $model->identifier = $request->number;
@@ -45,16 +41,16 @@ class ProjectService
         $model->description = $request->description;
         $model->status = $request->status;
         $model->editor_id = $request->editor_id;
-        $model->notes = NULL;
+        $model->notes = null;
         $model->save();
 
         if ($request->user_id) {
             $model->books()->update([
-                'user_id' => $request->user_id
+                'user_id' => $request->user_id,
             ]);
 
             $model->copyEditings()->update([
-                'user_id' => $request->user_id
+                'user_id' => $request->user_id,
             ]);
         }
 
@@ -62,14 +58,13 @@ class ProjectService
     }
 
     /**
-     * @param Request $request
      * @return ProjectActivity
      */
-    public function saveActivity( Request $request )
+    public function saveActivity(Request $request)
     {
-        $model = $request->id ? ProjectActivity::find($request->id) : new ProjectActivity();
+        $model = $request->id ? ProjectActivity::find($request->id) : new ProjectActivity;
         $model->activity = $request->activity;
-        $model->project_id = $request->project_id ?: NULL;
+        $model->project_id = $request->project_id ?: null;
         $model->description = $request->description;
         $model->invoicing = $request->invoicing;
         $model->hourly_rate = $request->hourly_rate;
@@ -79,12 +74,11 @@ class ProjectService
     }
 
     /**
-     * @param Request $request
      * @return array
      */
-    public function saveBook( Request $request )
+    public function saveBook(Request $request)
     {
-        $model = $request->id ? ProjectBook::find($request->id) : new ProjectBook();
+        $model = $request->id ? ProjectBook::find($request->id) : new ProjectBook;
         $model->project_id = $request->project_id;
         $model->user_id = $request->user_id;
         $model->book_name = $request->book_name;
@@ -100,18 +94,18 @@ class ProjectService
 
         return [
             'book' => $model,
-            'project' => $project
+            'project' => $project,
         ];
     }
 
-    public function saveBookPicture( Request $request )
+    public function saveBookPicture(Request $request)
     {
-        if ($request->hasFile('images')) :
+        if ($request->hasFile('images')) {
             /* $destinationPath = 'storage/project-book-pictures'; // upload path
 
             AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveMultipleFileOrImage($destinationPath, 'images'); */
-            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/book-pictures/';
+            $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id.'/graphic-work/book-pictures/';
             $filePath = $this->saveMultipleFileOrImageDropbox($destinationPath, 'images');
             if ($request->id) {
                 $bookPicture = ProjectBookPicture::find($request->id);
@@ -123,45 +117,45 @@ class ProjectService
                     ProjectBookPicture::create([
                         'project_id' => $request->project_id,
                         'image' => $picture,
-                        'description' => $request->description
+                        'description' => $request->description,
                     ]);
                 }
             }
-        endif;
+        }
     }
 
-    public function saveBookFormatting( Request $request )
+    public function saveBookFormatting(Request $request)
     {
 
-        $filePath = NULL;
-        $corporatePage = NULL;
-        $formatImage = NULL;
+        $filePath = null;
+        $corporatePage = null;
+        $formatImage = null;
 
-        if ($request->hasFile('file')) :
-            //$destinationPath = 'storage/project-book-formatting'; // upload path
+        if ($request->hasFile('file')) {
+            // $destinationPath = 'storage/project-book-formatting'; // upload path
 
-            //AdminHelpers::createDirectory($destinationPath);
-            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/book-formatting/';
+            // AdminHelpers::createDirectory($destinationPath);
+            $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id.'/graphic-work/book-formatting/';
             $filePath = $this->saveMultipleFileOrImageDropbox($destinationPath, 'file');
-        endif;
+        }
 
         if ($request->hasFile('corporate_page')) {
-            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id 
-            . '/graphic-work/book-formatting/corporate_page';
+            $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id
+            .'/graphic-work/book-formatting/corporate_page';
             $corporatePage = $this->saveFileOrImageDropbox($destinationPath, 'corporate_page');
         }
 
         if ($request->format && $request->hasFile('format_image')) {
-            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id 
-                . '/graphic-work/book-formatting/format_image';
+            $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id
+                .'/graphic-work/book-formatting/format_image';
             $formatImage = $this->saveFileOrImageDropbox($destinationPath, 'format_image');
         }
 
         $format = $request->input('format');
-        $customFormat = $request->width  . "x" . $request->height;
+        $customFormat = $request->width.'x'.$request->height;
 
         // If "Other" is selected, use the custom format
-        if ((empty($format) || is_null($format)) && !empty($request->width) && !empty($request->height)) {
+        if ((empty($format) || is_null($format)) && ! empty($request->width) && ! empty($request->height)) {
             $finalFormat = $customFormat;
         } else {
             // Use the selected predefined format
@@ -184,7 +178,7 @@ class ProjectService
                 'project_id' => $request->project_id,
                 'file' => $filePath,
                 'corporate_page' => $corporatePage,
-                'designer_id' => $request->has('designer_id') ? $request->designer_id : NULL, 
+                'designer_id' => $request->has('designer_id') ? $request->designer_id : null,
                 'format' => $finalFormat,
                 'format_image' => $formatImage,
                 'description' => $request->description,
@@ -203,23 +197,23 @@ class ProjectService
             ];
 
             $replaceString = [
-                "<a href='$loginLink'>Klikk her for å logge inn</a>"
+                "<a href='$loginLink'>Klikk her for å logge inn</a>",
             ];
 
-
             $emailContent = str_replace($searchString, $replaceString, $emailTemplate->email_content);
-        
+
             dispatch(new AddMailToQueueJob($to, $emailTemplate->subject, $emailContent,
-                    $emailTemplate->from_email, null, null,
-                    'admin', $user->id));
+                $emailTemplate->from_email, null, null,
+                'admin', $user->id));
         }
+
         return $bookPicture;
 
     }
 
-    public function saveBookFormatFeedback( Request $request )
+    public function saveBookFormatFeedback(Request $request)
     {
-        $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/book-formatting/feedback';
+        $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id.'/graphic-work/book-formatting/feedback';
         $filePath = $this->saveFileOrImageDropbox($destinationPath, 'file');
 
         $bookPicture = ProjectBookFormatting::find($request->id);
@@ -229,14 +223,13 @@ class ProjectService
     }
 
     /**
-     * @param Request $request
      * @return string
      */
-    public function saveOtherService( $project_id, Request $request )
+    public function saveOtherService($project_id, Request $request)
     {
         $filePath = null;
         $calculatedPrice = 0;
-        
+
         if ($request->has('manuscript')) {
             $filePath = $this->saveFile($project_id, $request);
             $calculatedPrice = $this->calculateFileTextPrice($filePath, $request->is_copy_editing);
@@ -246,19 +239,19 @@ class ProjectService
         if ($request->is_copy_editing == 1) {
             $manuType = 'Copy Editing';
             CopyEditingManuscript::create([
-                'user_id'       => $request->user_id,
-                'project_id'    => $request->project_id,
-                'file'          => $filePath,
+                'user_id' => $request->user_id,
+                'project_id' => $request->project_id,
+                'file' => $filePath,
                 'payment_price' => $calculatedPrice,
-                'editor_id'     => $request->exists('editor_id') ? $request->editor_id : NULL
+                'editor_id' => $request->exists('editor_id') ? $request->editor_id : null,
             ]);
         } else {
             CorrectionManuscript::create([
-                'user_id'       => $request->user_id,
-                'project_id'    => $request->project_id,
-                'file'          => $filePath,
+                'user_id' => $request->user_id,
+                'project_id' => $request->project_id,
+                'file' => $filePath,
                 'payment_price' => $calculatedPrice,
-                'editor_id'     => $request->exists('editor_id') ? $request->editor_id : NULL
+                'editor_id' => $request->exists('editor_id') ? $request->editor_id : null,
             ]);
         }
 
@@ -266,32 +259,30 @@ class ProjectService
     }
 
     /**
-     * @param Request $request
      * @return string
      */
-    public function saveFile( $project_id, Request $request )
+    public function saveFile($project_id, Request $request)
     {
         $extension = $request->manuscript->extension();
-        $destinationPath = 'Forfatterskolen_app/project/project-' . $project_id . '/correction-manuscripts'; // upload path
+        $destinationPath = 'Forfatterskolen_app/project/project-'.$project_id.'/correction-manuscripts'; // upload path
 
         if ($request->type == 1) {
-            $destinationPath = 'Forfatterskolen_app/project/project-' . $project_id . '/copy-editing-manuscripts'; // upload path
+            $destinationPath = 'Forfatterskolen_app/project/project-'.$project_id.'/copy-editing-manuscripts'; // upload path
         }
 
         $time = time();
-        $fileName = $time.'.'.$extension;//$original_filename; // rename document
-        //$request->manuscript->move($destinationPath, $fileName);
+        $fileName = $time.'.'.$extension; // $original_filename; // rename document
+
+        // $request->manuscript->move($destinationPath, $fileName);
         return $this->saveFileOrImageDropbox($destinationPath, 'manuscript');
     }
 
     /**
-     * @param $file
-     * @param $is_copy_editing
      * @return int
      */
-    public function calculateFileTextPrice( $file, $is_copy_editing )
+    public function calculateFileTextPrice($file, $is_copy_editing)
     {
-        
+
         $word_count = AdminHelpers::dropboxFileCountWords($file, basename($file));
         /* $docObj = new FileToText($file);
         // count characters with space
@@ -305,50 +296,51 @@ class ProjectService
             $price_per_word = 30;
         }
 
-        $rounded_word       = FrontendHelpers::roundUpToNearestMultiple($word_count);
-        $calculated_price   = ($rounded_word/$word_per_price) * $price_per_word;
+        $rounded_word = FrontendHelpers::roundUpToNearestMultiple($word_count);
+        $calculated_price = ($rounded_word / $word_per_price) * $price_per_word;
+
         return $calculated_price;
     }
 
     /**
      * Update project relations
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return mixed
      */
-    public function updateUserInProjectChildren( $project_id, $user_id )
+    public function updateUserInProjectChildren($project_id, $user_id)
     {
         $project = Project::find($project_id);
         $project->update(['user_id' => $user_id]);
         $project->copyEditings()->update([
-            'user_id' => $user_id
+            'user_id' => $user_id,
         ]);
 
         return $project;
     }
 
     /**
-     * @param Request $request
      * @return $this|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
      */
-    public function saveGraphicWorks( Request $request )
+    public function saveGraphicWorks(Request $request)
     {
         $data = $request->except('_token');
 
         switch ($request->type) {
             case 'cover':
-                $destinationPathCover = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/cover/';
+                $destinationPathCover = 'Forfatterskolen_app/project/project-'.$request->project_id.'/graphic-work/cover/';
                 if (\request()->hasFile('cover')) {
                     $data['value'] = $this->saveMultipleFileOrImageDropbox($destinationPathCover, 'cover');
                 }
-                
-                //$data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover');
-                //$data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', null, true);
+
+                // $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover');
+                // $data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', null, true);
                 $data['is_checked'] = $request->has('is_approved') && $request->is_approved ? 1 : 0;
                 $format = $request->input('cover_format');
-                $customFormat = $request->cover_width  . "x" . $request->cover_height;
-        
+                $customFormat = $request->cover_width.'x'.$request->cover_height;
+
                 // If "Other" is selected, use the custom format
-                if ((empty($format) || is_null($format)) && !empty($request->cover_width) && !empty($request->cover_height)) {
+                if ((empty($format) || is_null($format)) && ! empty($request->cover_width) && ! empty($request->cover_height)) {
                     $finalFormat = $customFormat;
                 } else {
                     // Use the selected predefined format
@@ -357,11 +349,11 @@ class ProjectService
                 $data['format'] = $finalFormat;
 
                 if (\request()->hasFile('backside_image')) {
-                    $destinationPathCover = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/cover/backside_image/';
+                    $destinationPathCover = 'Forfatterskolen_app/project/project-'.$request->project_id.'/graphic-work/cover/backside_image/';
                     $data['backside_image'] = $this->saveMultipleFileOrImageDropbox($destinationPathCover, 'backside_image');
                 }
 
-                if (!\request()->has('backside_type')) {
+                if (! \request()->has('backside_type')) {
                     if (\request()->hasFile('backside_file')) {
                         $data['backside_text'] = $this->saveGraphicWorkFileOrImage($request, 'backside_file', 'cover/');
                     } else {
@@ -392,10 +384,10 @@ class ProjectService
                 $data['print_ready'] = null;
 
                 $format = $request->input('format');
-                $customFormat = $request->width  . "x" . $request->height;
-        
+                $customFormat = $request->width.'x'.$request->height;
+
                 // If "Other" is selected, use the custom format
-                if ((empty($format) || is_null($format)) && !empty($request->width) && !empty($request->height)) {
+                if ((empty($format) || is_null($format)) && ! empty($request->width) && ! empty($request->height)) {
                     $finalFormat = $customFormat;
                 } else {
                     // Use the selected predefined format
@@ -409,20 +401,20 @@ class ProjectService
                 break;
 
             case 'indesign':
-                //$data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover', 'indesign/');
+                // $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover', 'indesign/');
                 if (\request()->hasFile('cover')) {
-                    $destinationPathCover = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/indesign/cover/';
+                    $destinationPathCover = 'Forfatterskolen_app/project/project-'.$request->project_id.'/graphic-work/indesign/cover/';
                     $data['value'] = $this->saveMultipleFileOrImageDropbox($destinationPathCover, 'cover');
                 }
 
                 if (\request()->hasFile('interior')) {
                     $data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', 'indesign/', true);
-                }                
+                }
                 break;
 
             case 'cover-print-ready':
                 $data['type'] = 'cover';
-                $data['print_ready'] = $this->saveGraphicWorkFileOrImage($request, 'cover_print_ready', 'cover/', true);              
+                $data['print_ready'] = $this->saveGraphicWorkFileOrImage($request, 'cover_print_ready', 'cover/', true);
                 break;
         }
 
@@ -436,7 +428,7 @@ class ProjectService
         return $graphicWork;
     }
 
-    public function saveEbook( Request $request )
+    public function saveEbook(Request $request)
     {
         $data = $request->except('_token');
 
@@ -464,7 +456,7 @@ class ProjectService
         return $ebook;
     }
 
-    public function saveAudio( Request $request )
+    public function saveAudio(Request $request)
     {
         $data = $request->except('_token');
 
@@ -493,252 +485,247 @@ class ProjectService
         $data = $request->except('_token');
 
         return ProjectPrint::updateOrCreate([
-            'project_id' => $data['project_id']
+            'project_id' => $data['project_id'],
         ], $data);
     }
 
     /**
-     * @param Request $request
-     * @param $fieldName
      * @return null|string
      */
-    public function saveGraphicWorkFileOrImage( Request $request, $fieldName, $additionFolder = null, $isDescription = false)
+    public function saveGraphicWorkFileOrImage(Request $request, $fieldName, $additionFolder = null, $isDescription = false)
     {
-        $filePath = NULL;
+        $filePath = null;
 
         if ($request->id) {
             $graphicWork = ProjectGraphicWork::find($request->id);
             $filePath = $isDescription ? $graphicWork->description : $graphicWork->value;
         }
 
-        if ($request->hasFile($fieldName)) :
-            //$destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
-            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/' 
-                . $additionFolder . $fieldName; // upload path
+        if ($request->hasFile($fieldName)) {
+            // $destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
+            $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id.'/graphic-work/'
+                .$additionFolder.$fieldName; // upload path
 
-            //AdminHelpers::createDirectory($destinationPath);
+            // AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveFileOrImageDropbox($destinationPath, $fieldName);
 
-        endif;
+        }
 
         return $filePath;
     }
 
-    public function saveEbookFile( Request $request, $fieldName)
+    public function saveEbookFile(Request $request, $fieldName)
     {
-        $filePath = NULL;
+        $filePath = null;
 
         if ($request->id) {
             $ebook = ProjectEbook::find($request->id);
             $filePath = $ebook->value;
         }
 
-        if ($request->hasFile($fieldName)) :
-            //$destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
-            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/ebook/' . $fieldName; // upload path
+        if ($request->hasFile($fieldName)) {
+            // $destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
+            $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id.'/ebook/'.$fieldName; // upload path
 
-            //AdminHelpers::createDirectory($destinationPath);
+            // AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveFileOrImageDropbox($destinationPath, $fieldName);
 
-        endif;
+        }
 
         return $filePath;
     }
 
-    public function saveAudioFile( Request $request, $fieldName)
+    public function saveAudioFile(Request $request, $fieldName)
     {
-        $filePath = NULL;
+        $filePath = null;
 
         if ($request->id) {
             $audio = ProjectAudio::find($request->id);
             $filePath = $audio->value;
         }
 
-        if ($request->hasFile($fieldName)) :
-            //$destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
-            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/audio/' . $fieldName; // upload path
+        if ($request->hasFile($fieldName)) {
+            // $destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
+            $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id.'/audio/'.$fieldName; // upload path
 
-            //AdminHelpers::createDirectory($destinationPath);
+            // AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveFileOrImageDropbox($destinationPath, $fieldName);
 
-        endif;
+        }
 
         return $filePath;
     }
 
-    public function uploadWholeBook( $project_id, Request $request )
+    public function uploadWholeBook($project_id, Request $request)
     {
-        $filePath = NULL;
+        $filePath = null;
 
         if ($request->id) {
             $wholeBook = ProjectWholeBook::find($request->id);
             $filePath = $wholeBook->book_content;
         }
 
-        if ($request->hasFile('book_file')) :
-            $destinationPath = 'Forfatterskolen_app/project/project-' . $project_id . '/project-books'; // upload path
+        if ($request->hasFile('book_file')) {
+            $destinationPath = 'Forfatterskolen_app/project/project-'.$project_id.'/project-books'; // upload path
 
             if ($request->has('is_book_critique')) {
-                $destinationPath = 'Forfatterskolen_app/project/project-' . $project_id . '/project-book-critique'; // upload path
+                $destinationPath = 'Forfatterskolen_app/project/project-'.$project_id.'/project-book-critique'; // upload path
             }
 
-            //AdminHelpers::createDirectory($destinationPath);
+            // AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveFileOrImageDropbox($destinationPath, 'book_file');
 
-        endif;
+        }
 
         return $filePath;
     }
 
     public function uploadFeedback(Request $request)
     {
-        $filePath = NULL;
+        $filePath = null;
         $destinationPath = 'storage/project-book-critiques'; // upload path
         AdminHelpers::createDirectory($destinationPath);
         $filePath = $this->saveFileOrImage($destinationPath, 'feedback');
+
         return $filePath;
     }
 
     /**
-     * @param Request $request
-     * @param $fieldName
      * @return null|string
      */
-    public function saveMarketingFileOrImage( Request $request, $fieldName)
+    public function saveMarketingFileOrImage(Request $request, $fieldName)
     {
-        $filePath = NULL;
+        $filePath = null;
 
         if ($request->has('id') && $request->id) {
             $marketing = ProjectMarketing::find($request->id);
             $filePath = $marketing->value;
         }
 
-        if ($request->hasFile($fieldName)) :
-            $destinationPath = 'storage/project-marketing/' . $fieldName; // upload path
+        if ($request->hasFile($fieldName)) {
+            $destinationPath = 'storage/project-marketing/'.$fieldName; // upload path
 
             AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveFileOrImage($destinationPath, $fieldName);
 
-        endif;
+        }
 
         return $filePath;
     }
 
     /**
-     * @param $destinationPath
-     * @param $requestFile
+     * @param  $requestFile
      * @return string
      */
-    public function saveFileOrImage( $destinationPath, $requestFilename )
+    public function saveFileOrImage($destinationPath, $requestFilename)
     {
         $requestFile = \request()->file($requestFilename);
         $extension = $requestFile->getClientOriginalExtension();
         $original_filename = $requestFile->getClientOriginalName();
         $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
 
-        $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+        $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
         $requestFile->move($destinationPath, $fileName);
+
         return '/'.$fileName;
     }
 
-    public function saveFileOrImageDropbox( $destinationPath, $requestFilename )
+    public function saveFileOrImageDropbox($destinationPath, $requestFilename)
     {
         $requestFile = \request()->file($requestFilename);
         $extension = $requestFile->getClientOriginalExtension();
         $original_filename = $requestFile->getClientOriginalName();
         $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
 
-        $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension);// rename document
+        $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name.'.'.$extension); // rename document
         $expFileName = explode('/', $fileName);
         $dropboxFileName = end($expFileName);
 
         $requestFile->storeAs($destinationPath, $dropboxFileName, 'dropbox');
 
         // remove the project_id in front which is numeric
-        return "/" . $destinationPath ."/". $dropboxFileName;
+        return '/'.$destinationPath.'/'.$dropboxFileName;
     }
 
     /**
-     * @param $destinationPath
-     * @param $requestFile
+     * @param  $requestFile
      * @return string
      */
-    public function saveMultipleFileOrImage( $destinationPath, $requestFilename )
+    public function saveMultipleFileOrImage($destinationPath, $requestFilename)
     {
         $filesWithPath = '';
         foreach (\request()->file($requestFilename) as $k => $file) {
-            $extension = pathinfo($_FILES[$requestFilename]['name'][$k],PATHINFO_EXTENSION);
+            $extension = pathinfo($_FILES[$requestFilename]['name'][$k], PATHINFO_EXTENSION);
             $original_filename = $file->getClientOriginalName();
             $filename = pathinfo($original_filename, PATHINFO_FILENAME);
             $fileName = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
-            $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $filename, $extension).", ";
+            $filesWithPath .= '/'.AdminHelpers::checkFileName($destinationPath, $filename, $extension).', ';
 
             $file->move($destinationPath, $fileName);
         }
 
-        return $filesWithPath = trim($filesWithPath,", ");
+        return $filesWithPath = trim($filesWithPath, ', ');
     }
 
-    public function saveMultipleFileOrImageDropbox( $destinationPath, $requestFilename )
+    public function saveMultipleFileOrImageDropbox($destinationPath, $requestFilename)
     {
         $filesWithPath = '';
         foreach (\request()->file($requestFilename) as $k => $file) {
-            $extension = pathinfo($_FILES[$requestFilename]['name'][$k],PATHINFO_EXTENSION);
+            $extension = pathinfo($_FILES[$requestFilename]['name'][$k], PATHINFO_EXTENSION);
             $original_filename = $file->getClientOriginalName();
             $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
 
-            $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension);// rename document
+            $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name.'.'.$extension); // rename document
             $expFileName = explode('/', $fileName);
             $dropboxFileName = end($expFileName);
 
-            $filesWithPath .= "/". $destinationPath . $fileName.", ";
+            $filesWithPath .= '/'.$destinationPath.$fileName.', ';
 
             $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
         }
 
-        return $filesWithPath = trim($filesWithPath,", ");
+        return $filesWithPath = trim($filesWithPath, ', ');
     }
 
     /**
-     * @param Request $request
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
-    public function uploadContract( Request $request )
+    public function uploadContract(Request $request)
     {
         $data = $request->except('_token');
-        if ($request->hasFile('sent_file')) :
+        if ($request->hasFile('sent_file')) {
             $destinationPath = 'storage/contract-sent-file/'; // upload path
 
-            if (!\File::exists($destinationPath)) {
+            if (! \File::exists($destinationPath)) {
                 \File::makeDirectory($destinationPath);
             }
 
-            $extension = pathinfo($_FILES['sent_file']['name'],PATHINFO_EXTENSION);
+            $extension = pathinfo($_FILES['sent_file']['name'], PATHINFO_EXTENSION);
             $original_filename = $request->sent_file->getClientOriginalName();
             $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
 
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
             $request->sent_file->move($destinationPath, $fileName);
             $data['sent_file'] = '/'.$fileName;
-        endif;
+        }
 
-        if ($request->hasFile('signed_file')) :
+        if ($request->hasFile('signed_file')) {
             $destinationPath = 'storage/contract-signed-file/'; // upload path
 
-            if (!\File::exists($destinationPath)) {
+            if (! \File::exists($destinationPath)) {
                 \File::makeDirectory($destinationPath);
             }
 
-            $extension = pathinfo($_FILES['signed_file']['name'],PATHINFO_EXTENSION);
+            $extension = pathinfo($_FILES['signed_file']['name'], PATHINFO_EXTENSION);
             $original_filename = $request->signed_file->getClientOriginalName();
             $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
 
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
             $request->signed_file->move($destinationPath, $fileName);
             $data['signed_file'] = '/'.$fileName;
             $data['signed_date'] = Carbon::now();
             $data['signature'] = 'Signed';
-        endif;
+        }
 
         $data['is_file'] = 1;
 
@@ -752,46 +739,46 @@ class ProjectService
         return $contract;
     }
 
-    public function saveContract( Request $request, $id = null )
+    public function saveContract(Request $request, $id = null)
     {
         $data = $request->except('_token');
 
-        if ($request->hasFile('sent_file')) :
+        if ($request->hasFile('sent_file')) {
             $destinationPath = 'storage/contract-sent-file/'; // upload path
 
-            if (!\File::exists($destinationPath)) {
+            if (! \File::exists($destinationPath)) {
                 \File::makeDirectory($destinationPath);
             }
 
-            $extension = pathinfo($_FILES['sent_file']['name'],PATHINFO_EXTENSION);
+            $extension = pathinfo($_FILES['sent_file']['name'], PATHINFO_EXTENSION);
             $original_filename = $request->sent_file->getClientOriginalName();
             $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
 
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
             $request->sent_file->move($destinationPath, $fileName);
             $data['sent_file'] = '/'.$fileName;
-        endif;
+        }
 
-        if ($request->hasFile('signed_file')) :
+        if ($request->hasFile('signed_file')) {
             $destinationPath = 'storage/contract-signed-file/'; // upload path
 
-            if (!\File::exists($destinationPath)) {
+            if (! \File::exists($destinationPath)) {
                 \File::makeDirectory($destinationPath);
             }
 
-            $extension = pathinfo($_FILES['signed_file']['name'],PATHINFO_EXTENSION);
+            $extension = pathinfo($_FILES['signed_file']['name'], PATHINFO_EXTENSION);
             $original_filename = $request->signed_file->getClientOriginalName();
             $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
 
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
             $request->signed_file->move($destinationPath, $fileName);
             $data['signed_file'] = '/'.$fileName;
-        endif;
+        }
 
         $data['status'] = 1;
         $data['is_file'] = $request->has('is_file') && $request->is_file ? 1 : 0;
-        if($data['is_file']) {
-            $data['signature'] = $request->has('signature') ? 'Signed' : NULL;
+        if ($data['is_file']) {
+            $data['signature'] = $request->has('signature') ? 'Signed' : null;
             if ($request->has('signature')) {
                 $data['signed_date'] = Carbon::now();
             }

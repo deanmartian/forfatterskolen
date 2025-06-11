@@ -12,6 +12,7 @@ class LearnerEmail extends Model
      * @var string
      */
     protected $table = 'learner_emails';
+
     /**
      * The attributes that are mass assignable.
      *

@@ -11,7 +11,6 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 
 class WebinarRegistrantsImport implements ToCollection
 {
-
     protected $link;
 
     public function __construct($link)
@@ -21,7 +20,7 @@ class WebinarRegistrantsImport implements ToCollection
 
     public function collection(Collection $rows)
     {
-        Log::info("------------ link ---------------");
+        Log::info('------------ link ---------------');
         Log::info($this->link);
         // Handle the imported data
         $count = 0;
@@ -30,7 +29,7 @@ class WebinarRegistrantsImport implements ToCollection
         if ($webinar) {
             $registrant['webinar_id'] = $webinar->id;
             foreach ($rows as $row) {
-                Log::info("---------------- row ------------------");
+                Log::info('---------------- row ------------------');
                 $user = User::where('email', $row[2])->first();
                 if ($user && isset($row[6])) {
                     $registrant['user_id'] = $user->id;
