@@ -19,7 +19,7 @@ class PublisherBookLibrary extends Model
 
     public function publisher()
     {
-        return $this->belongsTo('App\PublisherBook');
+        return $this->belongsTo(\App\PublisherBook::class);
     }
 
     public function getBookImageNameAttribute()

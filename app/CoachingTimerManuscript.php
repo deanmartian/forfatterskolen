@@ -32,11 +32,11 @@ class CoachingTimerManuscript extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function editor()
     {
-        return $this->belongsTo('App\User', 'editor_id', 'id');
+        return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 }

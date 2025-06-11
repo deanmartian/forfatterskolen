@@ -17,22 +17,22 @@ class AssignmentFeedbackNoGroup extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function manuscript()
     {
-        return $this->belongsTo('App\AssignmentManuscript', 'assignment_manuscript_id', 'id');
+        return $this->belongsTo(\App\AssignmentManuscript::class, 'assignment_manuscript_id', 'id');
     }
 
     public function feedbackUser()
     {
-        return $this->belongsTo('App\User', 'feedback_user_id', 'id');
+        return $this->belongsTo(\App\User::class, 'feedback_user_id', 'id');
     }
 
     public function learner()
     {
-        return $this->belongsTo('App\User', 'learner_id', 'id');
+        return $this->belongsTo(\App\User::class, 'learner_id', 'id');
     }
 
     /**

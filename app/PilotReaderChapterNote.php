@@ -22,6 +22,6 @@ class PilotReaderChapterNote extends Model
 
     public function chapter()
     {
-        return $this->belongsTo('App\PilotReaderBookChapter');
+        return $this->belongsTo(\App\PilotReaderBookChapter::class);
     }
 }

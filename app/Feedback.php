@@ -22,7 +22,7 @@ class Feedback extends Model
 
     public function manuscript()
     {
-        return $this->belongsTo('App\Manuscript');
+        return $this->belongsTo(\App\Manuscript::class);
     }
 
     public function getFilenameAttribute($value)

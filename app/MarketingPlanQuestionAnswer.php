@@ -17,11 +17,11 @@ class MarketingPlanQuestionAnswer extends Model
 
     public function question()
     {
-        return $this->belongsTo('App\MarketingPlanQuestion', 'question_id', 'id');
+        return $this->belongsTo(\App\MarketingPlanQuestion::class, 'question_id', 'id');
     }
 
     public function project()
     {
-        return $this->belongsTo('App\Project', 'project_id', 'id');
+        return $this->belongsTo(\App\Project::class, 'project_id', 'id');
     }
 }

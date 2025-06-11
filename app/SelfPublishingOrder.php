@@ -39,12 +39,12 @@ class SelfPublishingOrder extends Model
 
     public function service()
     {
-        return $this->belongsTo('App\PublishingService', 'parent_id', 'id');
+        return $this->belongsTo(\App\PublishingService::class, 'parent_id', 'id');
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function getServiceNameAttribute()

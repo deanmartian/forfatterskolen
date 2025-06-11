@@ -12,11 +12,11 @@ class WebinarEmailOut extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function webinar()
     {
-        return $this->belongsTo('App\Webinar');
+        return $this->belongsTo(\App\Webinar::class);
     }
 }

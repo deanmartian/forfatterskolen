@@ -22,7 +22,7 @@ class LessonDocuments extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Lesson');
+        return $this->belongsTo(\App\Lesson::class);
     }
 
     /**

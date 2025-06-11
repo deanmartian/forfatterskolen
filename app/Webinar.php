@@ -26,17 +26,17 @@ class Webinar extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function registrants()
     {
-        return $this->hasMany('App\WebinarRegistrant');
+        return $this->hasMany(\App\WebinarRegistrant::class);
     }
 
     public function webinar_presenters()
     {
-        return $this->hasMany('App\WebinarPresenter');
+        return $this->hasMany(\App\WebinarPresenter::class);
     }
 
     public function scopeActive($query)
@@ -51,11 +51,11 @@ class Webinar extends Model
 
     public function schedule()
     {
-        return $this->hasOne('App\WebinarScheduledRegistration');
+        return $this->hasOne(\App\WebinarScheduledRegistration::class);
     }
 
     public function webinar_editors()
     {
-        return $this->hasMany('App\WebinarEditor');
+        return $this->hasMany(\App\WebinarEditor::class);
     }
 }

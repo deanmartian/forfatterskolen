@@ -25,12 +25,12 @@ class PilotReaderBookReading extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'user_id', 'id');
+        return $this->belongsTo(\App\User::class, 'user_id', 'id');
     }
 
     public function book()
     {
-        return $this->belongsTo('App\PilotReaderBook');
+        return $this->belongsTo(\App\PilotReaderBook::class);
     }
 
     public function getStartedAtAttribute($value)
@@ -45,6 +45,6 @@ class PilotReaderBookReading extends Model
 
     public function reason()
     {
-        return $this->hasOne('App\PilotReaderQuittedReason', 'book_reader_id', 'id');
+        return $this->hasOne(\App\PilotReaderQuittedReason::class, 'book_reader_id', 'id');
     }
 }

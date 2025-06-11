@@ -15,11 +15,11 @@ class PackageShopManuscript extends Model
 
     public function package()
     {
-        return $this->belongsTo('App\Package');
+        return $this->belongsTo(\App\Package::class);
     }
 
     public function shop_manuscript()
     {
-        return $this->belongsTo('App\ShopManuscript');
+        return $this->belongsTo(\App\ShopManuscript::class);
     }
 }

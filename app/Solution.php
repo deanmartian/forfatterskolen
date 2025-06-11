@@ -22,7 +22,7 @@ class Solution extends Model
 
     public function articles()
     {
-        return $this->hasMany('App\SolutionArticle');
+        return $this->hasMany(\App\SolutionArticle::class);
     }
 
     protected static function boot()

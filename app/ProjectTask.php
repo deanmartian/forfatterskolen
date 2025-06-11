@@ -15,11 +15,11 @@ class ProjectTask extends Model
 
     public function editor()
     {
-        return $this->belongsTo('App\User', 'assigned_to', 'id');
+        return $this->belongsTo(\App\User::class, 'assigned_to', 'id');
     }
 
     public function project()
     {
-        return $this->belongsTo('App\Project');
+        return $this->belongsTo(\App\Project::class);
     }
 }

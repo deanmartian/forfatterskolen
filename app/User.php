@@ -136,23 +136,23 @@ class User extends Authenticatable
 
     public function userAutoRegisterToCourseWebinar()
     {
-        return $this->hasOne('App\UserAutoRegisterToCourseWebinar');
+        return $this->hasOne(\App\UserAutoRegisterToCourseWebinar::class);
     }
 
     public function coursesTaken()
     {
-        return $this->hasMany('App\CoursesTaken')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\CoursesTaken::class)->orderBy('created_at', 'desc');
     }
 
     public function coursesTakenNoFree()
     {
-        return $this->hasMany('App\CoursesTaken')->where('is_free', '=', 0)
+        return $this->hasMany(\App\CoursesTaken::class)->where('is_free', '=', 0)
             ->orderBy('created_at', 'desc');
     }
 
     public function coursesTakenNotOld()
     {
-        return $this->hasMany('App\CoursesTaken')
+        return $this->hasMany(\App\CoursesTaken::class)
             ->where(function ($query) {
                 // check if expired 2 months ago or the end date is not yet set
                 $query->where('end_date', '>=', Carbon::now()->subDays(60))
@@ -165,7 +165,7 @@ class User extends Authenticatable
     {
         $webinarPakkePackages = Course::find(17)->packages()->pluck('id')->toArray();
 
-        return $this->hasMany('App\CoursesTaken')
+        return $this->hasMany(\App\CoursesTaken::class)
             ->where(function ($query) {
                 $query->where('started_at', '>=', Carbon::now()->subYear(1))
                     ->orWhere('end_date', '>=', Carbon::now())
@@ -177,109 +177,109 @@ class User extends Authenticatable
 
     public function coursesTakenOld()
     {
-        return $this->hasMany('App\CoursesTaken')
+        return $this->hasMany(\App\CoursesTaken::class)
             ->where('end_date', '<=', Carbon::now()->subDays(60))
             ->orderBy('created_at', 'desc');
     }
 
     public function formerCourses()
     {
-        return $this->hasMany('App\FormerCourse')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\FormerCourse::class)->orderBy('created_at', 'desc');
     }
 
     public function coursesTakenNotExpired()
     {
-        return $this->hasMany('App\CoursesTaken')
+        return $this->hasMany(\App\CoursesTaken::class)
             ->where('end_date', '>=', Carbon::now()->subDays(1))
             ->orderBy('created_at', 'desc');
     }
 
     public function shopManuscriptsTaken()
     {
-        return $this->hasMany('App\ShopManuscriptsTaken')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\ShopManuscriptsTaken::class)->orderBy('created_at', 'desc');
     }
 
     public function freeCourses()
     {
-        return $this->hasMany('App\CoursesTaken')->where('is_free', '=', 1)
+        return $this->hasMany(\App\CoursesTaken::class)->where('is_free', '=', 1)
             ->orderBy('created_at', 'desc');
     }
 
     public function workshopsTaken()
     {
-        return $this->hasMany('App\WorkshopsTaken')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\WorkshopsTaken::class)->orderBy('created_at', 'desc');
     }
 
     public function workshopTakenCount()
     {
-        return $this->hasOne('App\WorkshopTakenCount');
+        return $this->hasOne(\App\WorkshopTakenCount::class);
     }
 
     public function logins()
     {
-        return $this->hasMany('App\LearnerLogin')->orderBy('created_at', 'desc')->take(15);
+        return $this->hasMany(\App\LearnerLogin::class)->orderBy('created_at', 'desc')->take(15);
     }
 
     public function invoices()
     {
-        return $this->hasMany('App\Invoice')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\Invoice::class)->orderBy('created_at', 'desc');
     }
 
     public function orders()
     {
-        return $this->hasMany('App\Order')->where('is_processed', 1)
+        return $this->hasMany(\App\Order::class)->where('is_processed', 1)
             ->orderBy('created_at', 'desc');
     }
 
     public function books()
     {
-        return $this->hasMany('App\PilotReaderBook');
+        return $this->hasMany(\App\PilotReaderBook::class);
     }
 
     public function readingBooks()
     {
-        return $this->hasMany('App\PilotReaderBookReading')
+        return $this->hasMany(\App\PilotReaderBookReading::class)
             ->where('status', 0);
     }
 
     public function finishedBooks()
     {
-        return $this->hasMany('App\PilotReaderBookReading')
+        return $this->hasMany(\App\PilotReaderBookReading::class)
             ->where('status', 1);
     }
 
     public function notifications()
     {
-        return $this->hasMany('App\Notification')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\Notification::class)->orderBy('created_at', 'desc');
     }
 
     public function pageAccess()
     {
-        return $this->hasMany('App\PageAccess');
+        return $this->hasMany(\App\PageAccess::class);
     }
 
     public function wordWritten()
     {
-        return $this->hasMany('App\WordWritten')->orderBy('date', 'ASC');
+        return $this->hasMany(\App\WordWritten::class)->orderBy('date', 'ASC');
     }
 
     public function wordWrittenGoal()
     {
-        return $this->hasMany('App\WordWrittenGoal');
+        return $this->hasMany(\App\WordWrittenGoal::class);
     }
 
     public function projects()
     {
-        return $this->hasMany('App\Project');
+        return $this->hasMany(\App\Project::class);
     }
 
     public function standardProject()
     {
         // Attempt to get the first project where `is_standard` is 1
-        $project = $this->hasMany('App\Project')->where('is_standard', 1)->first();
+        $project = $this->hasMany(\App\Project::class)->where('is_standard', 1)->first();
 
         // If no project is found, return the first project
-        return $project ?? $this->hasMany('App\Project')->first();
+        return $project ?? $this->hasMany(\App\Project::class)->first();
     }
 
     public function getProfileImageAttribute($value)
@@ -300,13 +300,13 @@ class User extends Authenticatable
 
     public function HowManyManuscriptYouCanTake()
     {
-        return $this->hasMany('App\ManuscriptEditorCanTake', 'editor_id', 'id')
+        return $this->hasMany(\App\ManuscriptEditorCanTake::class, 'editor_id', 'id')
             ->orderBy('date_from', 'DESC');
     }
 
     public function HowManyManuscriptYouCanTakeActive()
     {
-        return $this->hasMany('App\ManuscriptEditorCanTake', 'editor_id', 'id')
+        return $this->hasMany(\App\ManuscriptEditorCanTake::class, 'editor_id', 'id')
             ->whereDate('date_to', '>=', \Carbon\Carbon::today()->format('Y-m-d'))
             ->orderBy('date_from', 'DESC');
     }
@@ -320,12 +320,12 @@ class User extends Authenticatable
 
     public function emails()
     {
-        return $this->hasMany('App\LearnerEmail')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\LearnerEmail::class)->orderBy('created_at', 'desc');
     }
 
     public function secondaryEmails()
     {
-        return $this->hasMany('App\UserEmail');
+        return $this->hasMany(\App\UserEmail::class);
     }
 
     public function getIsAdminAttribute()
@@ -335,46 +335,46 @@ class User extends Authenticatable
 
     public function coachingTimers()
     {
-        return $this->hasMany('App\CoachingTimerManuscript')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\CoachingTimerManuscript::class)->orderBy('created_at', 'desc');
     }
 
     public function corrections()
     {
-        return $this->hasMany('App\CorrectionManuscript')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\CorrectionManuscript::class)->orderBy('created_at', 'desc');
     }
 
     public function copyEditings()
     {
-        return $this->hasMany('App\CopyEditingManuscript')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\CopyEditingManuscript::class)->orderBy('created_at', 'desc');
     }
 
     public function coachingTimersTaken()
     {
-        return $this->hasMany('App\CoachingTimerTaken');
+        return $this->hasMany(\App\CoachingTimerTaken::class);
     }
 
     public function diplomas()
     {
-        return $this->hasMany('App\Diploma');
+        return $this->hasMany(\App\Diploma::class);
     }
 
     public function assignedCoachingTimers()
     {
-        return $this->hasMany('App\CoachingTimerManuscript', 'editor_id', 'id')
+        return $this->hasMany(\App\CoachingTimerManuscript::class, 'editor_id', 'id')
             ->where('is_approved', '=', 1)
             ->orderBy('created_at', 'desc');
     }
 
     public function assignedCorrections()
     {
-        return $this->hasMany('App\CorrectionManuscript', 'editor_id', 'id')
+        return $this->hasMany(\App\CorrectionManuscript::class, 'editor_id', 'id')
             ->where('status', '!=', 2)
             ->orderBy('created_at', 'desc');
     }
 
     public function assignedCopyEditing()
     {
-        return $this->hasMany('App\CopyEditingManuscript', 'editor_id', 'id')
+        return $this->hasMany(\App\CopyEditingManuscript::class, 'editor_id', 'id')
             ->where('status', '!=', 2)
             ->orderBy('created_at', 'desc');
     }
@@ -398,7 +398,7 @@ class User extends Authenticatable
 
     public function assignments()
     {
-        return $this->hasMany('App\Assignment', 'parent_id', 'id')
+        return $this->hasMany(\App\Assignment::class, 'parent_id', 'id')
             ->where('parent', 'users')
             ->orderBy('created_at', 'desc');
     }
@@ -406,7 +406,7 @@ class User extends Authenticatable
     // active assignment assigned
     public function activeAssignments()
     {
-        return $this->hasMany('App\Assignment', 'parent_id', 'id')
+        return $this->hasMany(\App\Assignment::class, 'parent_id', 'id')
             ->where('parent', 'users')
             ->where(function ($query) {
                 // check if available date is less than or equal to date or if it's null
@@ -418,60 +418,60 @@ class User extends Authenticatable
     // expired assignment assigned
     public function expiredAssignments()
     {
-        return $this->hasMany('App\Assignment', 'parent_id', 'id')
+        return $this->hasMany(\App\Assignment::class, 'parent_id', 'id')
             ->where('parent', 'users')
             ->orderBy('created_at', 'desc');
     }
 
     public function assignmentManuscripts()
     {
-        return $this->hasMany('App\AssignmentManuscript');
+        return $this->hasMany(\App\AssignmentManuscript::class);
     }
 
     public function assignmentAddOns()
     {
-        return $this->hasMany('App\AssignmentAddon', 'user_id', 'id')
+        return $this->hasMany(\App\AssignmentAddon::class, 'user_id', 'id')
             ->orderBy('created_at', 'desc');
     }
 
     public function personalTrainerApplication()
     {
-        return $this->hasMany('App\PersonalTrainerApplicant');
+        return $this->hasMany(\App\PersonalTrainerApplicant::class);
     }
 
     public function comeptitionApplication()
     {
-        return $this->hasMany('App\CompetitionApplicant');
+        return $this->hasMany(\App\CompetitionApplicant::class);
     }
 
     public function messages()
     {
-        return $this->hasMany('App\PrivateMessage', 'user_id', 'id');
+        return $this->hasMany(\App\PrivateMessage::class, 'user_id', 'id');
     }
 
     public function courseOrderAttachments()
     {
-        return $this->hasMany('App\CourseOrderAttachment', 'user_id', 'id');
+        return $this->hasMany(\App\CourseOrderAttachment::class, 'user_id', 'id');
     }
 
     public function preferredEditor()
     {
-        return $this->hasOne('App\UserPreferredEditor', 'user_id', 'id');
+        return $this->hasOne(\App\UserPreferredEditor::class, 'user_id', 'id');
     }
 
     public function registeredWebinars()
     {
-        return $this->hasMany('App\WebinarRegistrant', 'user_id', 'id');
+        return $this->hasMany(\App\WebinarRegistrant::class, 'user_id', 'id');
     }
 
     public function editorGenrePreferences()
     {
-        return $this->hasMany('App\EditorGenrePreferences', 'editor_id', 'id');
+        return $this->hasMany(\App\EditorGenrePreferences::class, 'editor_id', 'id');
     }
 
     public function assignmentManuscriptEditorCanTake()
     {
-        return $this->hasMany('App\AssignmentManuscriptEditorCanTake', 'editor_id', 'id');
+        return $this->hasMany(\App\AssignmentManuscriptEditorCanTake::class, 'editor_id', 'id');
     }
 
     public function getAssignedWithNoFeedbackAttribute() // not availble if currently assigned on manuscript assignment
@@ -482,41 +482,41 @@ class User extends Authenticatable
 
     public function shopManuscriptRequests()
     {
-        return $this->hasMany('App\RequestToEditor', 'editor_id', 'id')->where('from_type', 'shop-manuscript');
+        return $this->hasMany(\App\RequestToEditor::class, 'editor_id', 'id')->where('from_type', 'shop-manuscript');
     }
 
     public function assignedWebinars()
     {
-        return $this->hasMany('App\WebinarEditor', 'editor_id', 'id');
+        return $this->hasMany(\App\WebinarEditor::class, 'editor_id', 'id');
     }
 
     public function checkoutLogs()
     {
-        return $this->hasMany('App\CheckoutLog');
+        return $this->hasMany(\App\CheckoutLog::class);
     }
 
     public function giftPurchases()
     {
-        return $this->hasMany('App\GiftPurchase');
+        return $this->hasMany(\App\GiftPurchase::class);
     }
 
     public function selfPublishingList()
     {
-        return $this->hasMany('App\SelfPublishingLearner');
+        return $this->hasMany(\App\SelfPublishingLearner::class);
     }
 
     public function timeRegisters()
     {
-        return $this->hasMany('App\TimeRegister');
+        return $this->hasMany(\App\TimeRegister::class);
     }
 
     public function booksForSale()
     {
-        return $this->hasMany('App\UserBookForSale');
+        return $this->hasMany(\App\UserBookForSale::class);
     }
 
     public function bookSales()
     {
-        return $this->hasMany('App\UserBookSale');
+        return $this->hasMany(\App\UserBookSale::class);
     }
 }

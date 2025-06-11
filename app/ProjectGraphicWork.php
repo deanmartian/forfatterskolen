@@ -66,7 +66,7 @@ class ProjectGraphicWork extends Model
 
     public function isbn()
     {
-        return $this->hasOne('\App\ProjectRegistration', 'id', 'isbn_id');
+        return $this->hasOne(\App\ProjectRegistration::class, 'id', 'isbn_id');
     }
 
     public function getImageAttribute()

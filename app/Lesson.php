@@ -26,7 +26,7 @@ class Lesson extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function getCreatedAtAttribute($value)
@@ -36,17 +36,17 @@ class Lesson extends Model
 
     public function videos()
     {
-        return $this->hasMany('App\Video')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\Video::class)->orderBy('created_at', 'desc');
     }
 
     public function documents()
     {
-        return $this->hasMany('App\LessonDocuments')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\LessonDocuments::class)->orderBy('created_at', 'desc');
     }
 
     public function lessonContent()
     {
-        return $this->hasMany('App\LessonContent')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\LessonContent::class)->orderBy('created_at', 'desc');
     }
 
     /**

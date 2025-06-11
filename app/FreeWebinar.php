@@ -27,7 +27,7 @@ class FreeWebinar extends Model
      */
     public function webinar_presenters()
     {
-        return $this->hasMany('App\FreeWebinarPresenter');
+        return $this->hasMany(\App\FreeWebinarPresenter::class);
     }
 
     /**

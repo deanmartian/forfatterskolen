@@ -23,7 +23,7 @@ class PilotReaderBook extends Model
 
     public function author()
     {
-        return $this->belongsTo('App\User', 'user_id', 'id');
+        return $this->belongsTo(\App\User::class, 'user_id', 'id');
     }
 
     /**
@@ -33,14 +33,14 @@ class PilotReaderBook extends Model
      */
     public function chapters()
     {
-        return $this->hasMany('App\PilotReaderBookChapter')
+        return $this->hasMany(\App\PilotReaderBookChapter::class)
             ->select(['*', \DB::raw('IF(display_order > 0, display_order, 1000000) display_order')])
             ->orderBy('display_order', 'asc');
     }
 
     public function chaptersOnly()
     {
-        return $this->hasMany('App\PilotReaderBookChapter')
+        return $this->hasMany(\App\PilotReaderBookChapter::class)
             ->select(['*', \DB::raw('IF(display_order > 0, display_order, 1000000) display_order')])
             ->where('type', 1)
             ->orderBy('display_order', 'asc');
@@ -48,7 +48,7 @@ class PilotReaderBook extends Model
 
     public function chapterQuestionnaire()
     {
-        return $this->hasMany('App\PilotReaderBookChapter')
+        return $this->hasMany(\App\PilotReaderBookChapter::class)
             ->select(['*', \DB::raw('IF(display_order > 0, display_order, 1000000) display_order')])
             ->where('type', 2)
             ->orderBy('display_order', 'asc');
@@ -56,21 +56,21 @@ class PilotReaderBook extends Model
 
     public function chapterWordSum()
     {
-        return $this->hasMany('App\PilotReaderBookChapter')->sum('word_count');
+        return $this->hasMany(\App\PilotReaderBookChapter::class)->sum('word_count');
     }
 
     public function invitations()
     {
-        return $this->hasMany('App\PilotReaderBookInvitation', 'book_id', 'id');
+        return $this->hasMany(\App\PilotReaderBookInvitation::class, 'book_id', 'id');
     }
 
     public function readers()
     {
-        return $this->hasMany('App\PilotReaderBookReading', 'book_id', 'id');
+        return $this->hasMany(\App\PilotReaderBookReading::class, 'book_id', 'id');
     }
 
     public function settings()
     {
-        return $this->hasOne('App\PilotReaderBookSettings', 'book_id', 'id');
+        return $this->hasOne(\App\PilotReaderBookSettings::class, 'book_id', 'id');
     }
 }

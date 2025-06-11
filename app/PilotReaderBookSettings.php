@@ -23,6 +23,6 @@ class PilotReaderBookSettings extends Model
 
     public function book()
     {
-        return $this->belongsToMany('App\PilotReaderBook', 'pilot_reader_book_settings', 'id');
+        return $this->belongsToMany(\App\PilotReaderBook::class, 'pilot_reader_book_settings', 'id');
     }
 }

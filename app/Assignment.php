@@ -32,24 +32,24 @@ class Assignment extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function manuscripts()
     {
-        return $this->hasMany('App\AssignmentManuscript')->orderBy('grade', 'desc');
+        return $this->hasMany(\App\AssignmentManuscript::class)->orderBy('grade', 'desc');
     }
 
     public function notFinishedManuscripts()
     {
-        return $this->hasMany('App\AssignmentManuscript')
+        return $this->hasMany(\App\AssignmentManuscript::class)
             ->where('status', 0)
             ->orderBy('grade', 'desc');
     }
 
     public function groups()
     {
-        return $this->hasMany('App\AssignmentGroup')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\AssignmentGroup::class)->orderBy('created_at', 'desc');
     }
 
     public function getSubmissionDateAttribute($value)
@@ -73,7 +73,7 @@ class Assignment extends Model
 
     public function learner()
     {
-        return $this->belongsTo('App\User', 'parent_id', 'id');
+        return $this->belongsTo(\App\User::class, 'parent_id', 'id');
     }
 
     public function getAllowedPackagesAttribute()
@@ -103,22 +103,22 @@ class Assignment extends Model
 
     public function assignmentManuscriptEditorCanTake()
     {
-        return $this->hasMany('App\AssignmentManuscriptEditorCanTake', 'assignment_manuscript_id', 'id');
+        return $this->hasMany(\App\AssignmentManuscriptEditorCanTake::class, 'assignment_manuscript_id', 'id');
     }
 
     public function editor()
     {
-        return $this->belongsTo('App\User', 'editor_id', 'id');
+        return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 
     public function linkedAssignment()
     {
-        return $this->belongsTo('App\Assignment', 'parent_id', 'id');
+        return $this->belongsTo(\App\Assignment::class, 'parent_id', 'id');
     }
 
     public function disabledLearners()
     {
-        return $this->hasMany('App\AssignmentDisabledLearner');
+        return $this->hasMany(\App\AssignmentDisabledLearner::class);
     }
 
     public function getLinkedPersonalAssignment($user_id)

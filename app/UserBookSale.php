@@ -31,12 +31,12 @@ class UserBookSale extends Model
 
     public function user()
     {
-        return $this->belongsTo('\App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function book()
     {
-        return $this->belongsTo('\App\UserBookForSale', 'user_book_for_sale_id', 'id');
+        return $this->belongsTo(\App\UserBookForSale::class, 'user_book_for_sale_id', 'id');
     }
 
     public function saleTypes()

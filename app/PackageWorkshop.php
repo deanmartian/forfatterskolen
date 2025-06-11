@@ -12,11 +12,11 @@ class PackageWorkshop extends Model
 
     public function package()
     {
-        return $this->belongsTo('App\Package');
+        return $this->belongsTo(\App\Package::class);
     }
 
     public function workshop()
     {
-        return $this->belongsTo('App\Workshop');
+        return $this->belongsTo(\App\Workshop::class);
     }
 }

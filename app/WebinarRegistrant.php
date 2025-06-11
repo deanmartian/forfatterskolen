@@ -14,11 +14,11 @@ class WebinarRegistrant extends Model
 
     public function webinar()
     {
-        return $this->belongsTo('App\Webinar');
+        return $this->belongsTo(\App\Webinar::class);
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 }

@@ -24,7 +24,7 @@ class Blog extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function getCreatedAtAttribute($value)

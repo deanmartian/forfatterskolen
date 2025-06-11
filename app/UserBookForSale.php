@@ -23,37 +23,37 @@ class UserBookForSale extends Model
 
     public function user()
     {
-        return $this->belongsTo('\App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function project()
     {
-        return $this->belongsTo('\App\Project');
+        return $this->belongsTo(\App\Project::class);
     }
 
     public function sales()
     {
-        return $this->hasMany('\App\UserBookSale', 'user_book_for_sale_id', 'id');
+        return $this->hasMany(\App\UserBookSale::class, 'user_book_for_sale_id', 'id');
     }
 
     public function detail()
     {
-        return $this->hasOne('\App\StorageDetail');
+        return $this->hasOne(\App\StorageDetail::class);
     }
 
     public function various()
     {
-        return $this->hasOne('\App\StorageVarious');
+        return $this->hasOne(\App\StorageVarious::class);
     }
 
     public function inventory()
     {
-        return $this->hasOne('\App\StorageInventory');
+        return $this->hasOne(\App\StorageInventory::class);
     }
 
     public function distributionCosts()
     {
-        return $this->hasMany('\App\StorageDistributionCost', 'user_book_for_sale_id', 'id');
+        return $this->hasMany(\App\StorageDistributionCost::class, 'user_book_for_sale_id', 'id');
     }
 
     public function totalDistributionCost()

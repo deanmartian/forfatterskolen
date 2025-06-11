@@ -16,7 +16,7 @@ class PublisherBook extends Model
 
     public function libraries()
     {
-        return $this->hasMany('App\PublisherBookLibrary');
+        return $this->hasMany(\App\PublisherBookLibrary::class);
     }
 
     public function getAuthorImageJpgAttribute()

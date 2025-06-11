@@ -22,6 +22,6 @@ class PilotReaderChapterFeedbackMessage extends Model
 
     public function feedback()
     {
-        return $this->belongsTo('App\PilotReaderChapterFeedback', 'feedback_id', 'id');
+        return $this->belongsTo(\App\PilotReaderChapterFeedback::class, 'feedback_id', 'id');
     }
 }

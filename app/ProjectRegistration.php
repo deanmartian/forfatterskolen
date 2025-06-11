@@ -46,17 +46,17 @@ class ProjectRegistration extends Model
 
     public function detail()
     {
-        return $this->hasOne('\App\StorageDetail', 'project_book_id', 'id');
+        return $this->hasOne(\App\StorageDetail::class, 'project_book_id', 'id');
     }
 
     public function various()
     {
-        return $this->hasOne('\App\StorageVarious', 'project_book_id', 'id');
+        return $this->hasOne(\App\StorageVarious::class, 'project_book_id', 'id');
     }
 
     public function distributionCosts()
     {
-        return $this->hasMany('\App\StorageDistributionCost', 'project_book_id', 'id');
+        return $this->hasMany(\App\StorageDistributionCost::class, 'project_book_id', 'id');
     }
 
     public function getIsbnTypeAttribute()

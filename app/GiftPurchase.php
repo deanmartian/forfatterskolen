@@ -13,17 +13,17 @@ class GiftPurchase extends Model
 
     public function buyer()
     {
-        return $this->belongsTo('App\User', 'user_id', 'id');
+        return $this->belongsTo(\App\User::class, 'user_id', 'id');
     }
 
     public function coursePackage()
     {
-        return $this->belongsTo('App\Package', 'parent_id', 'id');
+        return $this->belongsTo(\App\Package::class, 'parent_id', 'id');
     }
 
     public function shopManuscript()
     {
-        return $this->belongsTo('App\ShopManuscript', 'parent_id', 'id');
+        return $this->belongsTo(\App\ShopManuscript::class, 'parent_id', 'id');
     }
 
     public function getItemNameAttribute()

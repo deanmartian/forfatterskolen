@@ -15,11 +15,11 @@ class AssignmentFeedback extends Model
 
     public function assignment_group_learner()
     {
-        return $this->belongsTo('App\AssignmentGroupLearner', 'assignment_group_learner_id');
+        return $this->belongsTo(\App\AssignmentGroupLearner::class, 'assignment_group_learner_id');
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 }

@@ -15,27 +15,27 @@ class SelfPublishing extends Model
 
     public function learners()
     {
-        return $this->hasMany('App\SelfPublishingLearner');
+        return $this->hasMany(\App\SelfPublishingLearner::class);
     }
 
     public function editor()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function feedback()
     {
-        return $this->hasOne('App\SelfPublishingFeedback');
+        return $this->hasOne(\App\SelfPublishingFeedback::class);
     }
 
     public function project()
     {
-        return $this->belongsTo('App\Project');
+        return $this->belongsTo(\App\Project::class);
     }
 
     public function poInvoice()
     {
-        return $this->hasOne('App\PowerOfficeInvoice', 'parent_id', 'id')->where('parent', 'self-publishing');
+        return $this->hasOne(\App\PowerOfficeInvoice::class, 'parent_id', 'id')->where('parent', 'self-publishing');
     }
 
     /**

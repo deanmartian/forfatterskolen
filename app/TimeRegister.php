@@ -15,22 +15,22 @@ class TimeRegister extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function project()
     {
-        return $this->hasOne('App\Project', 'id', 'project_id');
+        return $this->hasOne(\App\Project::class, 'id', 'project_id');
     }
 
     public function usedTimes()
     {
-        return $this->hasMany('App\TimeRegisterUsed');
+        return $this->hasMany(\App\TimeRegisterUsed::class);
     }
 
     public function usedTimesDurationSum()
     {
-        return $this->hasMany('App\TimeRegisterUsed')->selectRaw('SUM(time_used) as total_duration')
+        return $this->hasMany(\App\TimeRegisterUsed::class)->selectRaw('SUM(time_used) as total_duration')
             ->groupBy('time_register_id');
     }
 

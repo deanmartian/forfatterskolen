@@ -14,7 +14,7 @@ class ProjectWholeBook extends Model
 
     public function designer()
     {
-        return $this->belongsTo('\App\User', 'designer_id', 'id');
+        return $this->belongsTo(\App\User::class, 'designer_id', 'id');
     }
 
     public function getFilenameAttribute()

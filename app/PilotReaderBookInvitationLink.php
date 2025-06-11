@@ -22,6 +22,6 @@ class PilotReaderBookInvitationLink extends Model
 
     public function books()
     {
-        return $this->belongsToMany('App\PilotReaderBook', 'pilot_reader_book_invitation_links', 'id', 'book_id');
+        return $this->belongsToMany(\App\PilotReaderBook::class, 'pilot_reader_book_invitation_links', 'id', 'book_id');
     }
 }

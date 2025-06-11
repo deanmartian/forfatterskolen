@@ -12,12 +12,12 @@ class RequestToEditor extends Model
 
     public function editor()
     {
-        return $this->belongsTo('App\User', 'editor_id', 'id');
+        return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 
     public function manuscript()
     {
-        return $this->belongsTo('App\ShopManuscriptsTaken', 'manuscript_id', 'id');
+        return $this->belongsTo(\App\ShopManuscriptsTaken::class, 'manuscript_id', 'id');
     }
 
     public function getEditorNameAttribute()

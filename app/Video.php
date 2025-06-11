@@ -22,7 +22,7 @@ class Video extends Model
 
     public function lesson()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function getPreviewAttribute()

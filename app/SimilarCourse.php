@@ -12,11 +12,11 @@ class SimilarCourse extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function similar_course()
     {
-        return $this->belongsTo('App\Course', 'similar_course_id');
+        return $this->belongsTo(\App\Course::class, 'similar_course_id');
     }
 }

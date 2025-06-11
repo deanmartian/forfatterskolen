@@ -13,31 +13,31 @@ class Workshop extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function presenters()
     {
-        return $this->hasMany('App\WorkshopPresenter')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\WorkshopPresenter::class)->orderBy('created_at', 'desc');
     }
 
     public function taken()
     {
-        return $this->hasMany('App\WorkshopsTaken')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\WorkshopsTaken::class)->orderBy('created_at', 'desc');
     }
 
     public function menus()
     {
-        return $this->hasMany('App\WorkshopMenu')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\WorkshopMenu::class)->orderBy('created_at', 'desc');
     }
 
     public function attendees()
     {
-        return $this->hasMany('App\WorkshopsTaken')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\WorkshopsTaken::class)->orderBy('created_at', 'desc');
     }
 
     public function emailLog()
     {
-        return $this->hasMany('App\WorkshopEmailLog')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\WorkshopEmailLog::class)->orderBy('created_at', 'desc');
     }
 }

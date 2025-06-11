@@ -18,6 +18,6 @@ class UserEmail extends Model
 
     public function users()
     {
-        return $this->belongsToMany('App\User', 'user_emails', 'id');
+        return $this->belongsToMany(\App\User::class, 'user_emails', 'id');
     }
 }

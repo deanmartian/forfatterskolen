@@ -12,22 +12,22 @@ class PrivateGroup extends Model
 
     public function books_shared()
     {
-        return $this->hasMany('App\PrivateGroupSharedBook');
+        return $this->hasMany(\App\PrivateGroupSharedBook::class);
     }
 
     public function discussions()
     {
-        return $this->hasMany('App\PrivateGroupDiscussion');
+        return $this->hasMany(\App\PrivateGroupDiscussion::class);
     }
 
     public function invitations()
     {
-        return $this->hasMany('App\PrivateGroupMemberInvitation');
+        return $this->hasMany(\App\PrivateGroupMemberInvitation::class);
     }
 
     public function members()
     {
-        return $this->hasMany('App\PrivateGroupMember');
+        return $this->hasMany(\App\PrivateGroupMember::class);
     }
 
     /**
@@ -37,7 +37,7 @@ class PrivateGroup extends Model
      */
     public function manager()
     {
-        return $this->hasOne('App\PrivateGroupMember')
+        return $this->hasOne(\App\PrivateGroupMember::class)
             ->where(['role' => 'manager', 'user_id' => Auth::user()->id]);
     }
 }

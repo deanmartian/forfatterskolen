@@ -12,12 +12,12 @@ class SelfPublishingFeedback extends Model
 
     public function selfPublishing()
     {
-        return $this->belongsTo('\App\SelfPublishing');
+        return $this->belongsTo(\App\SelfPublishing::class);
     }
 
     public function feedbackUser()
     {
-        return $this->belongsTo('\App\User', 'feedback_user_id', 'id');
+        return $this->belongsTo(\App\User::class, 'feedback_user_id', 'id');
     }
 
     /**

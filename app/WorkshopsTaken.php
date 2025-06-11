@@ -12,17 +12,17 @@ class WorkshopsTaken extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function workshop()
     {
-        return $this->belongsTo('App\Workshop');
+        return $this->belongsTo(\App\Workshop::class);
     }
 
     public function menu()
     {
-        return $this->belongsTo('App\WorkshopMenu');
+        return $this->belongsTo(\App\WorkshopMenu::class);
     }
 
     public function getCreatedAtAttribute($value)

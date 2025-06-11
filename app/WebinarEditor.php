@@ -13,11 +13,11 @@ class WebinarEditor extends Model
 
     public function editor()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function webinar()
     {
-        return $this->belongsTo('App\Webinar');
+        return $this->belongsTo(\App\Webinar::class);
     }
 }

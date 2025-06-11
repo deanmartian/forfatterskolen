@@ -25,7 +25,7 @@ class Manuscript extends Model
 
     public function courseTaken()
     {
-        return $this->belongsTo('App\CoursesTaken', 'coursetaken_id');
+        return $this->belongsTo(\App\CoursesTaken::class, 'coursetaken_id');
     }
 
     public function getUserAttribute()
@@ -37,7 +37,7 @@ class Manuscript extends Model
 
     public function feedbacks()
     {
-        return $this->hasMany('App\Feedback')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\Feedback::class)->orderBy('created_at', 'desc');
     }
 
     public function getCreatedAtAttribute($value)
@@ -52,7 +52,7 @@ class Manuscript extends Model
 
     public function admin()
     {
-        return $this->belongsTo('App\User', 'feedback_user_id');
+        return $this->belongsTo(\App\User::class, 'feedback_user_id');
     }
 
     public function getStatusAttribute()

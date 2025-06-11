@@ -12,6 +12,6 @@ class WorkshopPresenter extends Model
 
     public function workshop()
     {
-        return $this->belongsTo('App\Workshop');
+        return $this->belongsTo(\App\Workshop::class);
     }
 }

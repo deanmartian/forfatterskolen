@@ -28,12 +28,12 @@ class EmailOut extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function recipients()
     {
-        return $this->hasMany('App\EmailOutRecipient');
+        return $this->hasMany(\App\EmailOutRecipient::class);
     }
 
     public function getSendImmediatelyTextAttribute()

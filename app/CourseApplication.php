@@ -24,12 +24,12 @@ class CourseApplication extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function package()
     {
-        return $this->belongsTo('App\Package');
+        return $this->belongsTo(\App\Package::class);
     }
 
     public function getFileLinkAttribute()

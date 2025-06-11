@@ -12,16 +12,16 @@ class AssignmentLearner extends Model
 
     public function assignment()
     {
-        return $this->belongsTo('App\Assignment');
+        return $this->belongsTo(\App\Assignment::class);
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function feedbacks()
     {
-        return $this->hasMany('App\AssignmentFeedback');
+        return $this->hasMany(\App\AssignmentFeedback::class);
     }
 }

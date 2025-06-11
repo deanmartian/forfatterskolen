@@ -22,11 +22,11 @@ class SurveyQuestion extends Model
 
     public function survey()
     {
-        return $this->belongsTo('App\Survey');
+        return $this->belongsTo(\App\Survey::class);
     }
 
     public function answers()
     {
-        return $this->hasMany('App\SurveyAnswer');
+        return $this->hasMany(\App\SurveyAnswer::class);
     }
 }

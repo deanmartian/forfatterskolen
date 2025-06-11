@@ -20,22 +20,22 @@ class ShopManuscriptsTaken extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function feedbacks()
     {
-        return $this->hasMany('App\ShopManuscriptTakenFeedback', 'shop_manuscript_taken_id')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\ShopManuscriptTakenFeedback::class, 'shop_manuscript_taken_id')->orderBy('created_at', 'desc');
     }
 
     public function shop_manuscript()
     {
-        return $this->belongsTo('App\ShopManuscript');
+        return $this->belongsTo(\App\ShopManuscript::class);
     }
 
     public function comments()
     {
-        return $this->hasMany('App\ShopManuscriptComment', 'shop_manuscript_taken_id')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\ShopManuscriptComment::class, 'shop_manuscript_taken_id')->orderBy('created_at', 'desc');
     }
 
     public function getCreatedAtAttribute($value)
@@ -81,36 +81,36 @@ class ShopManuscriptsTaken extends Model
 
     public function admin()
     {
-        return $this->belongsTo('App\User', 'feedback_user_id');
+        return $this->belongsTo(\App\User::class, 'feedback_user_id');
     }
 
     public function receivedWelcomeEmail()
     {
-        return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
+        return $this->hasOne(\App\EmailHistory::class, 'parent_id', 'id')
             ->where('parent', 'shop-manuscripts-taken-welcome')->latest();
     }
 
     public function receivedExpectedFinishEmail()
     {
-        return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
+        return $this->hasOne(\App\EmailHistory::class, 'parent_id', 'id')
             ->where('parent', 'shop-manuscripts-taken-expected-finish')->latest();
     }
 
     public function receivedAdminFeedbackEmail()
     {
-        return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
+        return $this->hasOne(\App\EmailHistory::class, 'parent_id', 'id')
             ->where('parent', 'shop-manuscripts-taken-admin-feedback')->latest();
     }
 
     public function receivedFollowUpEmail()
     {
-        return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
+        return $this->hasOne(\App\EmailHistory::class, 'parent_id', 'id')
             ->where('parent', 'shop-manuscripts-taken-follow-up')->latest();
     }
 
     public function requests()
     {
-        return $this->hasMany('App\RequestToEditor', 'manuscript_id', 'id')
+        return $this->hasMany(\App\RequestToEditor::class, 'manuscript_id', 'id')
             ->whereHas('editor')
             ->where('from_type', 'shop-manuscript');
     }

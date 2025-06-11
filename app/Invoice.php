@@ -34,22 +34,22 @@ class Invoice extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function package()
     {
-        return $this->belongsTo('App\Package');
+        return $this->belongsTo(\App\Package::class);
     }
 
     public function payment_plan()
     {
-        return $this->belongsTo('App\PaymentPlan');
+        return $this->belongsTo(\App\PaymentPlan::class);
     }
 
     public function transactions()
     {
-        return $this->hasMany('App\Transaction')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\Transaction::class)->orderBy('created_at', 'desc');
     }
 
     public function getCreatedAtAttribute($value)

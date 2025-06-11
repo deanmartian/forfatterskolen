@@ -16,11 +16,11 @@ class PowerOfficeInvoice extends Model
 
     public function user()
     {
-        return $this->belongsTo('\App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function selfPublishing()
     {
-        return $this->belongsTo('App\SelfPublishing', 'parent_id', 'id');
+        return $this->belongsTo(\App\SelfPublishing::class, 'parent_id', 'id');
     }
 }

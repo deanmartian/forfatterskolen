@@ -24,17 +24,17 @@ class CoursesTaken extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function package()
     {
-        return $this->belongsTo('App\Package');
+        return $this->belongsTo(\App\Package::class);
     }
 
     public function manuscripts()
     {
-        return $this->hasMany('App\Manuscript', 'coursetaken_id')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\Manuscript::class, 'coursetaken_id')->orderBy('created_at', 'desc');
     }
 
     public function getStartedAtAttribute($value)
@@ -137,13 +137,13 @@ class CoursesTaken extends Model
 
     public function receivedWelcomeEmail()
     {
-        return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
+        return $this->hasOne(\App\EmailHistory::class, 'parent_id', 'id')
             ->where('parent', 'courses-taken-welcome')->latest();
     }
 
     public function receivedFollowUpEmail()
     {
-        return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
+        return $this->hasOne(\App\EmailHistory::class, 'parent_id', 'id')
             ->where('parent', 'courses-taken-follow-up')->latest();
     }
 

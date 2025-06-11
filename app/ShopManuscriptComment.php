@@ -12,12 +12,12 @@ class ShopManuscriptComment extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function shop_manuscript_taken()
     {
-        return $this->belongsTo('App\ShopManuscriptsTaken');
+        return $this->belongsTo(\App\ShopManuscriptsTaken::class);
     }
 
     public function getCreatedAtAttribute($value)

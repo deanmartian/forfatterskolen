@@ -12,6 +12,6 @@ class TimeRegisterUsed extends Model
 
     public function timeRegister()
     {
-        return $this->belongsTo('App\TimeRegister');
+        return $this->belongsTo(\App\TimeRegister::class);
     }
 }

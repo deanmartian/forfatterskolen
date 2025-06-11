@@ -32,27 +32,27 @@ class AssignmentManuscript extends Model
 
     public function assignment()
     {
-        return $this->belongsTo('App\Assignment');
+        return $this->belongsTo(\App\Assignment::class);
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function feedbacks() // cannot use this.
     {
-        return $this->hasMany('App\AssignmentFeedback');
+        return $this->hasMany(\App\AssignmentFeedback::class);
     }
 
     public function noGroupFeedbacks()
     {
-        return $this->hasMany('App\AssignmentFeedbackNoGroup');
+        return $this->hasMany(\App\AssignmentFeedbackNoGroup::class);
     }
 
     public function editor()
     {
-        return $this->belongsTo('App\User', 'editor_id', 'id');
+        return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 
     /**

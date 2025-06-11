@@ -12,7 +12,7 @@ class ShopManuscriptTakenFeedback extends Model
 
     public function shop_manuscript_taken()
     {
-        return $this->belongsTo('App\ShopManuscriptsTaken', 'shop_manuscript_taken_id');
+        return $this->belongsTo(\App\ShopManuscriptsTaken::class, 'shop_manuscript_taken_id');
     }
 
     public function getFilenameAttribute($value)

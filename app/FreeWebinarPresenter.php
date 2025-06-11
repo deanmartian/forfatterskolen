@@ -12,6 +12,6 @@ class FreeWebinarPresenter extends Model
 
     public function webinar()
     {
-        return $this->belongsTo('App\FreeWebinar');
+        return $this->belongsTo(\App\FreeWebinar::class);
     }
 }

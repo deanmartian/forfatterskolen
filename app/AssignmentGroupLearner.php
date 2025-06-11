@@ -16,12 +16,12 @@ class AssignmentGroupLearner extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function group()
     {
-        return $this->belongsTo('App\AssignmentGroup', 'assignment_group_id');
+        return $this->belongsTo(\App\AssignmentGroup::class, 'assignment_group_id');
     }
 
     public function getCouldSendFeedbackToIdListAttribute()
@@ -31,7 +31,7 @@ class AssignmentGroupLearner extends Model
 
     public function feedback()
     {
-        return $this->hasOne('App\AssignmentFeedback', 'assignment_group_learner_id', 'id');
+        return $this->hasOne(\App\AssignmentFeedback::class, 'assignment_group_learner_id', 'id');
     }
 
     public function learnerManuscript()

@@ -22,14 +22,14 @@ class Course extends Model
 
     public function packages()
     {
-        return $this->hasMany('App\Package')
+        return $this->hasMany(\App\Package::class)
             ->where('is_reward', 0)
             ->orderBy('full_payment_price', 'asc');
     }
 
     public function packagesIsShow()
     {
-        return $this->hasMany('App\Package')
+        return $this->hasMany(\App\Package::class)
             ->where('is_reward', 0)
             ->where('is_show', 1)
             ->orderBy('full_payment_price', 'asc');
@@ -37,39 +37,39 @@ class Course extends Model
 
     public function allPackages()
     {
-        return $this->hasMany('App\Package')
+        return $this->hasMany(\App\Package::class)
             ->orderBy('full_payment_price', 'asc');
     }
 
     public function rewardPackages()
     {
-        return $this->hasMany('App\Package')
+        return $this->hasMany(\App\Package::class)
             ->where('is_reward', 1)
             ->orderBy('full_payment_price', 'asc');
     }
 
     public function workshops()
     {
-        return $this->hasMany('App\Workshop')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\Workshop::class)->orderBy('created_at', 'desc');
     }
 
     public function webinars()
     {
         // display id of 24 first then other record is by start date
-        return $this->hasMany('App\Webinar')->orderByRaw('id=24 DESC')->orderBy('start_date', 'asc');
+        return $this->hasMany(\App\Webinar::class)->orderByRaw('id=24 DESC')->orderBy('start_date', 'asc');
     }
 
     public function activeWebinars()
     {
         // display id of 24 first then other record is by start date
-        return $this->hasMany('App\Webinar')->orderByRaw('id=24 DESC')
+        return $this->hasMany(\App\Webinar::class)->orderByRaw('id=24 DESC')
             ->where('start_date', '>=', Carbon::today())
             ->orderBy('start_date', 'asc');
     }
 
     public function assignments()
     {
-        return $this->hasMany('App\Assignment')
+        return $this->hasMany(\App\Assignment::class)
             ->where(function ($query) {
                 $query->whereNull('parent');
                 $query->orWhere('parent', 'assignment');
@@ -79,7 +79,7 @@ class Course extends Model
 
     public function activeAssignments()
     {
-        return $this->hasMany('App\Assignment')
+        return $this->hasMany(\App\Assignment::class)
             // commented because the field now accepts int also not just date
             /*->where(function($query) {
                 // check if expired 2 months ago or the end date is not yet set
@@ -100,7 +100,7 @@ class Course extends Model
 
     public function expiredAssignments()
     {
-        return $this->hasMany('App\Assignment')
+        return $this->hasMany(\App\Assignment::class)
             // commented because the field now accepts int also not just date
             /*->where(function($query) {
                 // check if expired 2 months ago or the end date is not yet set
@@ -112,7 +112,7 @@ class Course extends Model
 
     public function lessons()
     {
-        return $this->hasMany('App\Lesson')->orderBy('order', 'asc');
+        return $this->hasMany(\App\Lesson::class)->orderBy('order', 'asc');
     }
 
     public function lesson_kursplan()
@@ -122,32 +122,32 @@ class Course extends Model
 
     public function discounts()
     {
-        return $this->hasMany('App\CourseDiscount')->orderBy('id', 'asc');
+        return $this->hasMany(\App\CourseDiscount::class)->orderBy('id', 'asc');
     }
 
     public function notes()
     {
-        return $this->hasMany('App\CalendarNote');
+        return $this->hasMany(\App\CalendarNote::class);
     }
 
     public function similar_courses()
     {
-        return $this->hasMany('App\SimilarCourse')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\SimilarCourse::class)->orderBy('created_at', 'desc');
     }
 
     public function testimonials()
     {
-        return $this->hasMany('App\CourseTestimonial');
+        return $this->hasMany(\App\CourseTestimonial::class);
     }
 
     public function emailOut()
     {
-        return $this->hasMany('App\EmailOut');
+        return $this->hasMany(\App\EmailOut::class);
     }
 
     public function emailOutOrdered()
     {
-        return $this->hasMany('App\EmailOut')->orderByRaw('delay + 0 ASC')
+        return $this->hasMany(\App\EmailOut::class)->orderByRaw('delay + 0 ASC')
             ->orderBy('delay', 'asc');
     }
 
@@ -155,7 +155,7 @@ class Course extends Model
     {
         $today = now()->toDateString();
 
-        return $this->hasMany('App\EmailOut')
+        return $this->hasMany(\App\EmailOut::class)
             ->where(function ($query) use ($today) {
                 $query->where('delay', '>=', $today)
                     ->orWhereRaw('delay REGEXP "^[0-9]+$"')
@@ -169,7 +169,7 @@ class Course extends Model
     {
         $today = now()->toDateString();
 
-        return $this->hasMany('App\EmailOut')
+        return $this->hasMany(\App\EmailOut::class)
             ->where('delay', '<', $today)
             ->whereRaw('delay REGEXP "[0-9]{4}-[0-9]{2}-[0-9]{2}"')
             ->orderByRaw('delay + 0 ASC')
@@ -178,12 +178,12 @@ class Course extends Model
 
     public function emailOutLog()
     {
-        return $this->hasMany('App\EmailOutLog');
+        return $this->hasMany(\App\EmailOutLog::class);
     }
 
     public function rewardCoupons()
     {
-        return $this->hasMany('App\CourseRewardCoupon');
+        return $this->hasMany(\App\CourseRewardCoupon::class);
     }
 
     public static function free()
@@ -193,7 +193,7 @@ class Course extends Model
 
     public function expiryReminders()
     {
-        return $this->hasOne('App\CourseExpiryReminder');
+        return $this->hasOne(\App\CourseExpiryReminder::class);
     }
 
     public function surveys()
@@ -203,7 +203,7 @@ class Course extends Model
 
     public function certificate()
     {
-        return $this->hasOne('App\CourseCertificate');
+        return $this->hasOne(\App\CourseCertificate::class);
     }
 
     // for deleting the children

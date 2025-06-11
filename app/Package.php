@@ -34,27 +34,27 @@ class Package extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course')->orderBy('created_at', 'desc');
+        return $this->belongsTo(\App\Course::class)->orderBy('created_at', 'desc');
     }
 
     public function shop_manuscripts()
     {
-        return $this->hasMany('App\PackageShopManuscript')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\PackageShopManuscript::class)->orderBy('created_at', 'desc');
     }
 
     public function workshops()
     {
-        return $this->hasMany('App\PackageWorkshop')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\PackageWorkshop::class)->orderBy('created_at', 'desc');
     }
 
     public function included_courses()
     {
-        return $this->hasMany('App\PackageCourse', 'package_id')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\PackageCourse::class, 'package_id')->orderBy('created_at', 'desc');
     }
 
     public function certificate()
     {
-        return $this->hasOne('App\CourseCertificate');
+        return $this->hasOne(\App\CourseCertificate::class);
     }
 
     public function getDescriptionFormattedAttribute()

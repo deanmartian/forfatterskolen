@@ -18,12 +18,12 @@ class CheckoutLog extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function course()
     {
-        return $this->belongsTo('App\Course', 'parent_id', 'id');
+        return $this->belongsTo(\App\Course::class, 'parent_id', 'id');
     }
 
     public function getItemLinkAttribute()

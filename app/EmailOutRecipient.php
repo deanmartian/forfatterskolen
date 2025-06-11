@@ -22,6 +22,6 @@ class EmailOutRecipient extends Model
 
     public function emailOut()
     {
-        return $this->belongsTo('App\EmailOut');
+        return $this->belongsTo(\App\EmailOut::class);
     }
 }

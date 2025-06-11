@@ -12,11 +12,11 @@ class Assignment extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function learners()
     {
-        return $this->hasMany('App\AssignmentLearner')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\AssignmentLearner::class)->orderBy('created_at', 'desc');
     }
 }

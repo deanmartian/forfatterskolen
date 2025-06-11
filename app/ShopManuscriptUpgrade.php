@@ -20,7 +20,7 @@ class ShopManuscriptUpgrade extends Model
 
     public function upgrade_manuscript()
     {
-        return $this->belongsTo('App\ShopManuscript', 'upgrade_shop_manuscript_id');
+        return $this->belongsTo(\App\ShopManuscript::class, 'upgrade_shop_manuscript_id');
     }
 
     public function getPriceFormattedAttribute()

@@ -18,7 +18,7 @@ class CourseDiscount extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function typeList()

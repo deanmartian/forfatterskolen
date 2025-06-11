@@ -21,17 +21,17 @@ class FreeManuscript extends Model
 
     public function editor()
     {
-        return $this->belongsTo('App\User', 'editor_id', 'id');
+        return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 
     public function latestFeedbackHistory()
     {
-        return $this->hasOne('App\FreeManuscriptFeedbackHistory')->latest();
+        return $this->hasOne(\App\FreeManuscriptFeedbackHistory::class)->latest();
     }
 
     public function feedbackHistory()
     {
-        return $this->hasMany('App\FreeManuscriptFeedbackHistory');
+        return $this->hasMany(\App\FreeManuscriptFeedbackHistory::class);
     }
 
     public function getFollowUpEmailAttribute()

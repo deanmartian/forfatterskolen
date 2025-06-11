@@ -22,11 +22,11 @@ class PilotReaderReaderQuery extends Model
 
     public function books()
     {
-        return $this->belongsToMany('App\PilotReaderBook', 'pilot_reader_reader_queries', 'id', 'book_id');
+        return $this->belongsToMany(\App\PilotReaderBook::class, 'pilot_reader_reader_queries', 'id', 'book_id');
     }
 
     public function decision()
     {
-        return $this->hasOne('App\PilotReaderReaderQueryDecision', 'query_id');
+        return $this->hasOne(\App\PilotReaderReaderQueryDecision::class, 'query_id');
     }
 }

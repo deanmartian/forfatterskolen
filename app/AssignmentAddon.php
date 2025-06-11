@@ -12,6 +12,6 @@ class AssignmentAddon extends Model
 
     public function assignment()
     {
-        return $this->belongsTo('App\Assignment');
+        return $this->belongsTo(\App\Assignment::class);
     }
 }

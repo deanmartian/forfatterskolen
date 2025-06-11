@@ -13,6 +13,6 @@ class CourseTestimonialRepository extends Repository
      */
     public function model()
     {
-        return 'App\CourseTestimonial';
+        return \App\CourseTestimonial::class;
     }
 }

@@ -10,6 +10,6 @@ class OrderUpgrade extends Model
 
     public function order()
     {
-        return $this->belongsTo('App\Order');
+        return $this->belongsTo(\App\Order::class);
     }
 }

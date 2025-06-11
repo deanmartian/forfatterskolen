@@ -22,6 +22,6 @@ class PilotReaderBookInvitation extends Model
 
     public function book()
     {
-        return $this->belongsTo('App\PilotReaderBook');
+        return $this->belongsTo(\App\PilotReaderBook::class);
     }
 }

@@ -39,37 +39,37 @@ class Order extends Model
 
     public function paymentPlan()
     {
-        return $this->belongsTo('App\PaymentPlan', 'plan_id', 'id');
+        return $this->belongsTo(\App\PaymentPlan::class, 'plan_id', 'id');
     }
 
     public function package()
     {
-        return $this->belongsTo('App\Package');
+        return $this->belongsTo(\App\Package::class);
     }
 
     public function shopManuscriptOrder()
     {
-        return $this->hasOne('App\OrderShopManuscript');
+        return $this->hasOne(\App\OrderShopManuscript::class);
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function upgrade()
     {
-        return $this->hasOne('App\OrderUpgrade');
+        return $this->hasOne(\App\OrderUpgrade::class);
     }
 
     public function coachingTime()
     {
-        return $this->hasOne('App\OrderCoachingTime');
+        return $this->hasOne(\App\OrderCoachingTime::class);
     }
 
     public function paymentMode()
     {
-        return $this->hasOne('App\PaymentMode', 'id', 'payment_mode_id');
+        return $this->hasOne(\App\PaymentMode::class, 'id', 'payment_mode_id');
     }
 
     public function scopeSvea($query)
@@ -175,6 +175,6 @@ class Order extends Model
 
     public function company()
     {
-        return $this->hasOne('App\OrderCompany');
+        return $this->hasOne(\App\OrderCompany::class);
     }
 }

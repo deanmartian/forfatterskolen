@@ -10,16 +10,16 @@ class PrivateGroupDiscussion extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function replies()
     {
-        return $this->hasMany('App\PrivateGroupDiscussionReply', 'disc_id');
+        return $this->hasMany(\App\PrivateGroupDiscussionReply::class, 'disc_id');
     }
 
     public function group()
     {
-        return $this->belongsTo('App\PrivateGroup', 'private_group_id');
+        return $this->belongsTo(\App\PrivateGroup::class, 'private_group_id');
     }
 }

@@ -11,12 +11,12 @@ class AssignmentManuscriptEditorCanTake extends Model
 
     public function assignment()
     {
-        return $this->belongsTo('App\Assignment', 'assignment_manuscript_id', 'id');
+        return $this->belongsTo(\App\Assignment::class, 'assignment_manuscript_id', 'id');
     }
 
     public function editor()
     {
-        return $this->belongsTo('App\User', 'editor_id', 'id');
+        return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 
     public function getAssignedCountAttribute()

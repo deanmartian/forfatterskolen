@@ -19,12 +19,12 @@ class AssignmentGroup extends Model
 
     public function assignment()
     {
-        return $this->belongsTo('App\Assignment');
+        return $this->belongsTo(\App\Assignment::class);
     }
 
     public function learners()
     {
-        return $this->hasMany('App\AssignmentGroupLearner')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\AssignmentGroupLearner::class)->orderBy('created_at', 'desc');
     }
 
     public function getSubmissionDateAttribute($value)

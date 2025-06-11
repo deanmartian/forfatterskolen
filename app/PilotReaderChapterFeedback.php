@@ -22,22 +22,22 @@ class PilotReaderChapterFeedback extends Model
 
     public function chapter()
     {
-        return $this->belongsTo('App\PilotReaderBookChapter', 'chapter_id', 'id');
+        return $this->belongsTo(\App\PilotReaderBookChapter::class, 'chapter_id', 'id');
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'user_id', 'id');
+        return $this->belongsTo(\App\User::class, 'user_id', 'id');
     }
 
     public function messages()
     {
-        return $this->hasMany('App\PilotReaderChapterFeedbackMessage', 'feedback_id', 'id');
+        return $this->hasMany(\App\PilotReaderChapterFeedbackMessage::class, 'feedback_id', 'id');
     }
 
     public function readerMessages()
     {
-        return $this->hasMany('App\PilotReaderChapterFeedbackMessage', 'feedback_id', 'id')
+        return $this->hasMany(\App\PilotReaderChapterFeedbackMessage::class, 'feedback_id', 'id')
             ->where('is_reply', 0)
             ->where('published', 1);
     }

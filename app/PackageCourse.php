@@ -17,12 +17,12 @@ class PackageCourse extends Model
 
     public function package()
     {
-        return $this->belongsTo('App\Package', 'package_id');
+        return $this->belongsTo(\App\Package::class, 'package_id');
     }
 
     public function included_package()
     {
-        return $this->belongsTo('App\Package', 'included_package_id');
+        return $this->belongsTo(\App\Package::class, 'included_package_id');
     }
 
     public function getIncludedPackageCourseTitleAttribute()

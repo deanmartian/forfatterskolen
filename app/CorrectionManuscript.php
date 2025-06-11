@@ -29,23 +29,23 @@ class CorrectionManuscript extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function editor()
     {
-        return $this->belongsTo('App\User', 'editor_id', 'id');
+        return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 
     public function feedback()
     {
-        return $this->hasOne('App\OtherServiceFeedback', 'service_id', 'id')
+        return $this->hasOne(\App\OtherServiceFeedback::class, 'service_id', 'id')
             ->where('service_type', '=', 2);
     }
 
     public function project()
     {
-        return $this->belongsTo('App\Project', 'project_id', 'id');
+        return $this->belongsTo(\App\Project::class, 'project_id', 'id');
     }
 
     public function getExpectedFinishFormattedAttribute()

@@ -17,6 +17,6 @@ class MarketingPlanQuestion extends Model
 
     public function answers()
     {
-        return $this->hasMany('App\MarketingPlanQuestionAnswer', 'question_id');
+        return $this->hasMany(\App\MarketingPlanQuestionAnswer::class, 'question_id');
     }
 }
