@@ -14,7 +14,6 @@
         "barryvdh/laravel-ide-helper": "^2.8",
         "barryvdh/laravel-translation-manager": "^0.5.0",
         "firebase/php-jwt": "^5.0",
-        "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.83",
         "laravel/helpers": "^1.5",
