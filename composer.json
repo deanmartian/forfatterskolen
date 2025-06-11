@@ -25,7 +25,6 @@
         "omnipay/paypal": "^3.0",
         "phpoffice/phpword": "^0.14.0",
         "spatie/flysystem-dropbox": "*",
-        "sudiptpa/paypal-ipn": "^2.0",
         "sveaekonomi/webpay": "^3.13",
         "symfony/event-dispatcher": "^5.0",
         "symfony/polyfill-iconv": "^1.8",
@@ -81,6 +80,9 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }
