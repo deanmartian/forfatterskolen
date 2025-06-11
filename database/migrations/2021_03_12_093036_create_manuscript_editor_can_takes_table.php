@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateManuscriptEditorCanTakesTable extends Migration
 {
@@ -18,8 +18,8 @@ class CreateManuscriptEditorCanTakesTable extends Migration
             $table->integer('editor_id')->unsigned()->index('editor_id');
             $table->date('date_from');
             $table->date('date_to');
-            $table->decimal('how_many_script',11)->default(0);
-            $table->decimal('how_many_hours',11)->default(0);
+            $table->decimal('how_many_script', 11)->default(0);
+            $table->decimal('how_many_hours', 11)->default(0);
             $table->timestamps();
         });
     }

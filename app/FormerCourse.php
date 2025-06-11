@@ -1,10 +1,11 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FormerCourse extends Model {
-
+class FormerCourse extends Model
+{
     /**
      * The database table used by the model.
      *
@@ -22,12 +23,11 @@ class FormerCourse extends Model {
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function package()
     {
-        return $this->belongsTo('App\Package');
+        return $this->belongsTo(\App\Package::class);
     }
-
 }

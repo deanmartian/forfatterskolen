@@ -16,10 +16,10 @@ class PublisherBookLibrarySeeder extends Seeder
         foreach ($publisherBooks as $publisherBook) {
             $publisherBook->libraries()->create([
                 'book_image' => $publisherBook->book_image,
-                'book_link' => $publisherBook->book_image_link
+                'book_link' => $publisherBook->book_image_link,
             ]);
             $counter++;
         }
-        echo $counter . " books inserted to library \n";
+        echo $counter." books inserted to library \n";
     }
 }

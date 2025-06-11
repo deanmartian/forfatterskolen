@@ -17,10 +17,10 @@ class CreatePublishingServicesTable extends Migration
             $table->increments('id');
             $table->string('product_service', 500);
             $table->longText('description')->nullable();
-            $table->decimal('price', 11,2)->nullable();
-            $table->decimal('per_word_hour', 11,2)->nullable();
+            $table->decimal('price', 11, 2)->nullable();
+            $table->decimal('per_word_hour', 11, 2)->nullable();
             $table->string('per_unit', 50)->nullable();
-            $table->decimal('base_char_word', 11,2)->default(0);
+            $table->decimal('base_char_word', 11, 2)->default(0);
             $table->string('slug', 1000);
             $table->string('service_type')->nullable();
             $table->tinyInteger('is_active')->default(1);

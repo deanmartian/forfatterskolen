@@ -14,7 +14,7 @@ class AddStatusFieldToSelfPublishingTable extends Migration
     public function up()
     {
         Schema::table('self_publishing', function (Blueprint $table) {
-            $table->enum('status', ['pending','started','finished'])->after('expected_finish')->nullable();
+            $table->enum('status', ['pending', 'started', 'finished'])->after('expected_finish')->nullable();
         });
     }
 

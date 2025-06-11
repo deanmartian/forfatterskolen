@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CourseCertificate extends Model
 {
     use Loggable;
-    
+
     /**
      * The database table used by the model.
      *
@@ -25,6 +25,6 @@ class CourseCertificate extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 }

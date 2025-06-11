@@ -1,20 +1,18 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use App\CoursesTaken;
-use App\WorkshopsTaken;
+use App\Http\Controllers\Controller;
 use App\Manuscript;
 use App\ShopManuscriptsTaken;
-use Artisan;
+use App\WorkshopsTaken;
+use Illuminate\Support\Facades\Auth;
+
 require '../app/Http/BackupDB/MySQLDump.php';
 
 class PageController extends Controller
 {
-   
     public function dashboard()
     {
         $pending_courses = CoursesTaken::where('is_active', false)->orderBy('created_at', 'desc')->get();
@@ -22,12 +20,9 @@ class PageController extends Controller
         $pending_workshops = WorkshopsTaken::where('is_active', false)->orderBy('created_at', 'desc')->get();
         $assigned_course_manuscripts = Manuscript::where('feedback_user_id', Auth::user()->id)->get();
         $assigned_shop_manuscripts = ShopManuscriptsTaken::where('feedback_user_id', Auth::user()->id)->get();
+
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts', 'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts'));
     }
-
-
-
-
 
     public function calendar()
     {
@@ -54,41 +49,38 @@ class PageController extends Controller
         return view('backend.calendar', compact('events'));
     }
 
-
-
     public function backup()
     {
-
 
         $time = time();
         $backupDir = '../backups/'.$time;
 
-        if( !file_exists($backupDir) ) :
+        if (! file_exists($backupDir)) {
             mkdir($backupDir);
-        endif;
+        }
 
         $dump = new \MySQLDump(new \mysqli('forfatterskolen3.mysql.domeneshop.no', 'forfatterskolen3', '2KJM8yuQoWL7Zkg', 'forfatterskolen3'));
-        //$dump = new \MySQLDump(new \mysqli('localhost', 'root', 'root', 'forfatterskolen_laravel'));
+        // $dump = new \MySQLDump(new \mysqli('localhost', 'root', 'root', 'forfatterskolen_laravel'));
 
         $dump->save($backupDir.'/'.$time.'.sql');
 
         $folders = ['app', 'config', 'public', 'resources', 'routes', 'storage'];
-        foreach( $folders as $folder ) :
+        foreach ($folders as $folder) {
             $destination = $backupDir.'/'.$folder;
-            if( file_exists('../'.$folder) ) :
+            if (file_exists('../'.$folder)) {
                 $this->xcopy('../'.$folder, $destination);
-            endif;
-        endforeach;
+            }
+        }
 
         $files = ['composer.json', 'package.json'];
-        foreach( $files as $file ) :
+        foreach ($files as $file) {
             $destination = $backupDir;
-            if( file_exists('../'.$file) ) :
+            if (file_exists('../'.$file)) {
                 copy('../'.$file, $destination.'/'.basename($file));
-            endif;
-        endforeach;
-        //$this->Zip($backupDir, $backupDir.'.zip');
-        //$this->deleteDirectory($backupDir);
+            }
+        }
+        // $this->Zip($backupDir, $backupDir.'.zip');
+        // $this->deleteDirectory($backupDir);
 
         /*try{
             $directory = '../backups/'.time();
@@ -119,9 +111,6 @@ class PageController extends Controller
         }*/
     }
 
-
-
-
     public function xcopy($source, $dest, $permissions = 0755)
     {
         // Check for symlinks
@@ -135,7 +124,7 @@ class PageController extends Controller
         }
 
         // Make destination directory
-        if (!is_dir($dest)) {
+        if (! is_dir($dest)) {
             mkdir($dest, $permissions);
         }
 
@@ -153,64 +142,54 @@ class PageController extends Controller
 
         // Clean up
         $dir->close();
+
         return true;
     }
 
-
-
-
     public function Zip($source, $destination)
     {
-        if (!extension_loaded('zip') || !file_exists($source)) {
+        if (! extension_loaded('zip') || ! file_exists($source)) {
             return false;
         }
 
-        $zip = new \ZipArchive();
-        if (!$zip->open($destination, \ZIPARCHIVE::CREATE)) {
+        $zip = new \ZipArchive;
+        if (! $zip->open($destination, \ZIPARCHIVE::CREATE)) {
             return false;
         }
 
         $source = str_replace('\\', '/', realpath($source));
 
-        if (is_dir($source) === true)
-        {
+        if (is_dir($source) === true) {
             $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source), \RecursiveIteratorIterator::SELF_FIRST);
 
-            foreach ($files as $file)
-            {
+            foreach ($files as $file) {
                 $file = str_replace('\\', '/', $file);
 
                 // Ignore "." and ".." folders
-                if( in_array(substr($file, strrpos($file, '/')+1), array('.', '..')) )
+                if (in_array(substr($file, strrpos($file, '/') + 1), ['.', '..'])) {
                     continue;
+                }
 
                 $file = realpath($file);
 
-                if (is_dir($file) === true)
-                {
-                    $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
-                }
-                else if (is_file($file) === true)
-                {
-                    $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+                if (is_dir($file) === true) {
+                    $zip->addEmptyDir(str_replace($source.'/', '', $file.'/'));
+                } elseif (is_file($file) === true) {
+                    $zip->addFromString(str_replace($source.'/', '', $file), file_get_contents($file));
                 }
             }
-        }
-        else if (is_file($source) === true)
-        {
+        } elseif (is_file($source) === true) {
             $zip->addFromString(basename($source), file_get_contents($source));
         }
 
         return $zip->close();
     }
 
-
-
     public function deleteDirectory($dir)
     {
         if (is_link($dir)) {
             unlink($dir);
-        } elseif (!file_exists($dir)) {
+        } elseif (! file_exists($dir)) {
             return;
         } elseif (is_dir($dir)) {
             foreach (scandir($dir) as $file) {
@@ -223,5 +202,4 @@ class PageController extends Controller
             unlink($dir);
         }
     }
-    
 }

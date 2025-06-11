@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserTask extends Model
 {
     use Loggable;
-    
+
     /**
      * The attributes that are mass assignable.
      *
@@ -18,6 +18,6 @@ class UserTask extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 }

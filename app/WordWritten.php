@@ -12,6 +12,7 @@ class WordWritten extends Model
      * @var string
      */
     protected $table = 'words_written';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +22,6 @@ class WordWritten extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 }

@@ -22,13 +22,14 @@ class Solution extends Model
 
     public function articles()
     {
-        return $this->hasMany('App\SolutionArticle');
+        return $this->hasMany(\App\SolutionArticle::class);
     }
 
-    protected static function boot() {
+    protected static function boot()
+    {
         parent::boot();
 
-        static::deleting(function($lesson) { // before delete() method call this
+        static::deleting(function ($lesson) { // before delete() method call this
             $lesson->articles()->delete(); // delete lesson document
         });
     }

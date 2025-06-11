@@ -4,9 +4,8 @@ namespace App\Providers;
 
 use App\CoursesTaken;
 use App\Invoice;
-use App\Policies\LearnerPolicy;
 use App\Policies\InvoicePolicy;
-use Illuminate\Support\Facades\Gate;
+use App\Policies\LearnerPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider

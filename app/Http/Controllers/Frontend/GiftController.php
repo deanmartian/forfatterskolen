@@ -3,17 +3,12 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Course;
-use App\CoursesTaken;
 use App\Editor;
 use App\GiftPurchase;
-use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
-use App\Http\Middleware\Learner;
-use App\Http\Requests\OrderCreateRequest;
 use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Order;
-use App\Package;
 use App\Services\CourseService;
 use App\Services\GiftService;
 use App\ShopManuscript;
@@ -25,14 +20,13 @@ use Illuminate\Support\Facades\Session;
 
 class GiftController extends Controller
 {
-
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function course()
     {
         $courses = Course::where('status', 1)
-            //->orderBy('created_at', 'desc')
+            // ->orderBy('created_at', 'desc')
             // display the 0 last
             ->select(['*', \DB::raw('IF(display_order > 0, display_order, 1000000) display_order')])
             ->orderBy('display_order', 'asc')
@@ -41,55 +35,55 @@ class GiftController extends Controller
                 return count($query) > 0;
             })*/
             ->get()
-            ->filter(function($item) {
+            ->filter(function ($item) {
                 return $item->is_active || $item->is_free;
             }); // the original don't have this filter
         $showRoute = 'front.gift.course.show';
+
         return view('frontend.course.index', compact('courses', 'showRoute'));
     }
 
     /**
-     * @param $course_id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|mixed
      */
     public function courseShow($course_id)
     {
         $course = Course::findOrFail($course_id);
 
-        if (!$course->is_free): // added this condition to display page if it's free
-            if( !FrontendHelpers::isCourseActive($course) || count($course->packages) == 0 ) : // Display 404 if Course has no Packages
+        if (! $course->is_free) { // added this condition to display page if it's free
+            if (! FrontendHelpers::isCourseActive($course) || count($course->packages) == 0) { // Display 404 if Course has no Packages
                 return abort(404);
-            endif;
-        endif;
+            }
+        }
         $checkoutRoute = 'front.gift.course.checkout';
+
         return view('frontend.course.show', compact('course', 'checkoutRoute'));
     }
 
     /**
-     * @param $course_id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View|mixed
      */
-    public function courseCheckout( $course_id )
+    public function courseCheckout($course_id)
     {
         $course = Course::findOrFail($course_id);
 
-        if (!$course->is_free): // added this condition to check if the course is for sale
-            if( !FrontendHelpers::isCourseActive($course) || count($course->packages) == 0 ) : // Display 404 if Course has no Packages
+        if (! $course->is_free) { // added this condition to check if the course is for sale
+            if (! FrontendHelpers::isCourseActive($course) || count($course->packages) == 0) { // Display 404 if Course has no Packages
                 return abort(404);
-            endif;
-        endif;
+            }
+        }
 
         $hasPaidCourse = false;
-        if( !Auth::guest() ) :
-            foreach( \Auth::user()->coursesTakenNotOld as $courseTaken ) {
-                if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+        if (! Auth::guest()) {
+            foreach (\Auth::user()->coursesTakenNotOld as $courseTaken) {
+                if ($courseTaken->package->course->type != 'Free' && $courseTaken->is_active) {
                     if ($courseTaken->package->course->is_free != 1) {
                         $hasPaidCourse = true;
                     }
                     break;
-                endif;
+                }
             }
-        endif;
+        }
 
         if ($course->hide_price) {
             return redirect()->route('front.course.show', $course->id);
@@ -107,7 +101,7 @@ class GiftController extends Controller
             $user['address'] = $user->address;
             $user->checkoutLogs()->firstOrCreate([
                 'parent' => 'course',
-                'parent_id' => $course->id
+                'parent_id' => $course->id,
             ]);
         }
 
@@ -119,13 +113,9 @@ class GiftController extends Controller
     }
 
     /**
-     * @param $course_id
-     * @param Request $request
-     * @param CourseService $courseService
-     * @param GiftService $giftService
      * @return \Illuminate\Http\JsonResponse
      */
-    public function validateCheckoutForm( $course_id, Request $request, CourseService $courseService, GiftService $giftService )
+    public function validateCheckoutForm($course_id, Request $request, CourseService $courseService, GiftService $giftService)
     {
         $validator = $this->getValidator($request);
 
@@ -133,12 +123,12 @@ class GiftController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        if (!\Auth::check()) {
+        if (! \Auth::check()) {
             $addressData = [
-                'street'    => $request->street,
-                'zip'       => $request->zip,
-                'city'      => $request->city,
-                'phone'     => $request->phone
+                'street' => $request->street,
+                'zip' => $request->zip,
+                'city' => $request->city,
+                'phone' => $request->phone,
             ];
             $courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
         }
@@ -154,16 +144,16 @@ class GiftController extends Controller
     public function getValidator(Request $request)
     {
         $validation = [
-            'email'         => 'required|email',
-            'first_name'    => 'required',
-            'last_name'     => 'required',
-            'street'        => 'required',
-            'zip'           => 'required',
-            'city'          => 'required',
-            'phone'         => 'required',
+            'email' => 'required|email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'street' => 'required',
+            'zip' => 'required',
+            'city' => 'required',
+            'phone' => 'required',
         ];
 
-        if (!\Auth::check()) {
+        if (! \Auth::check()) {
             $validation['password'] = 'required|min:3';
         }
 
@@ -171,12 +161,9 @@ class GiftController extends Controller
     }
 
     /**
-     * @param $item_id
-     * @param Request $request
-     * @param GiftService $giftService
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function thankyou( $item_id, Request $request, GiftService $giftService )
+    public function thankyou($item_id, Request $request, GiftService $giftService)
     {
 
         // check if from svea payment
@@ -191,7 +178,7 @@ class GiftController extends Controller
                 $course = Course::find($item_id);
                 $parent = 'course-package';
                 $parent_id = $order->package_id;
-                if (!$course) {
+                if (! $course) {
                     abort(404);
                 }
             }
@@ -200,7 +187,7 @@ class GiftController extends Controller
                 $shopManuscript = ShopManuscript::find($item_id);
                 $parent = 'shop-manuscript';
                 $parent_id = $order->item_id;
-                if (!$shopManuscript) {
+                if (! $shopManuscript) {
                     abort(404);
                 }
             }
@@ -208,7 +195,7 @@ class GiftController extends Controller
             SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
 
             // add course to user
-            if (!$order->is_processed) {
+            if (! $order->is_processed) {
                 $giftPurchase = $giftService->addGiftPurchase($order->user_id, $parent, $parent_id);
                 $giftService->notifyGiftBuyer($giftPurchase, $order);
                 $giftService->notifyAdmin($giftPurchase);
@@ -217,6 +204,7 @@ class GiftController extends Controller
             $order->is_processed = 1;
             $order->save();
         }
+
         return view('frontend.gift.thankyou', ['page' => 'gift-course']);
     }
 
@@ -225,10 +213,11 @@ class GiftController extends Controller
         $shopManuscripts = ShopManuscript::orderBy('full_payment_price', 'asc')->get();
         $editors = Editor::orderBy('id', 'ASC')->get();
         $checkoutRoute = 'front.gift.shop-manuscript.checkout';
+
         return view('frontend.shop-manuscript.index', compact('shopManuscripts', 'editors', 'checkoutRoute'));
     }
 
-    public function shopManuscriptCheckout( $manuscript_id )
+    public function shopManuscriptCheckout($manuscript_id)
     {
         $shopManuscript = ShopManuscript::findOrFail($manuscript_id);
 
@@ -249,34 +238,34 @@ class GiftController extends Controller
         return view('frontend.gift.redeem');
     }
 
-    public function redeemGift( Request $request, LearnerController $learnerController )
+    public function redeemGift(Request $request, LearnerController $learnerController)
     {
         $giftPurchase = GiftPurchase::where('redeem_code', $request->redeem_code)->first();
 
         $this->validate($request, [
             'email' => 'required|email',
-            'redeem_code' => 'required'
+            'redeem_code' => 'required',
         ]);
 
         if (Auth::guest()) {
             $user = User::where('email', $request->email)->first();
 
-            if (!$user) {
+            if (! $user) {
                 return redirect()->route('auth.login.show', [
-                    "t" => "register",
-                    "r" => "redeem-gift"
+                    't' => 'register',
+                    'r' => 'redeem-gift',
                 ])->withErrors([
-                    'login_error' => 'User does not exist. Please create one before claiming'
+                    'login_error' => 'User does not exist. Please create one before claiming',
                 ]);
             }
 
             Auth::login($user);
         }
 
-        if (!$giftPurchase || $giftPurchase->is_redeemed || $giftPurchase->user_id === Auth::user()->id) {
+        if (! $giftPurchase || $giftPurchase->is_redeemed || $giftPurchase->user_id === Auth::user()->id) {
 
             $errorMessage = '';
-            if (!$giftPurchase) {
+            if (! $giftPurchase) {
                 $errorMessage = 'Invalid Redeem code.';
             }
 
@@ -289,17 +278,17 @@ class GiftController extends Controller
             }
 
             return redirect()->back()->withInput()->withErrors([
-                'login_error' => $errorMessage
+                'login_error' => $errorMessage,
             ]);
 
         }
 
         if ($giftPurchase->parent === 'course-package') {
-            $learnerController->redeemCourse( $giftPurchase );
+            $learnerController->redeemCourse($giftPurchase);
         }
 
         if ($giftPurchase->parent === 'shop-manuscript') {
-            $learnerController->redeemManuscript( $giftPurchase );
+            $learnerController->redeemManuscript($giftPurchase);
         }
 
         $giftPurchase->is_redeemed = 1;

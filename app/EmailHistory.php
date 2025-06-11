@@ -9,9 +9,11 @@ class EmailHistory extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = [ 'subject', 'from_email', 'token', 'message', 'parent', 'parent_id', 'recipient',
-        'track_code', 'date_open' ];
+    protected $fillable = ['subject', 'from_email', 'token', 'message', 'parent', 'parent_id', 'recipient',
+        'track_code', 'date_open'];
+
     protected $table = 'email_history';
+
     protected $appends = ['recipient', 'recipient_id', 'recipient_email'];
 
     public function getCreatedAtAttribute($value)
@@ -21,7 +23,7 @@ class EmailHistory extends Model
 
     public function getDateOpenAttribute($value)
     {
-        return $value ? date_format(date_create($value), 'M d, Y h:i a') : NULL;
+        return $value ? date_format(date_create($value), 'M d, Y h:i a') : null;
     }
 
     public function getRecipientAttribute()
@@ -47,65 +49,65 @@ class EmailHistory extends Model
         $learner_id = '';
         $full_name = $this->attributes['recipient'];
 
-        if (strpos($parent, 'shop-manuscripts-taken') !== false ) {
+        if (strpos($parent, 'shop-manuscripts-taken') !== false) {
             $shopManuscript = ShopManuscriptsTaken::with('user')->where('id', $parent_id)->first();
-            if($shopManuscript) {
+            if ($shopManuscript) {
                 $learner_id = $shopManuscript->user_id;
                 $full_name = $shopManuscript->user->full_name;
             }
         }
 
-        if (strpos($parent, 'courses-taken') !== false ) {
+        if (strpos($parent, 'courses-taken') !== false) {
             $courseTaken = CoursesTaken::with('user')->where('id', $parent_id)->first();
-            if($courseTaken) {
+            if ($courseTaken) {
                 $learner_id = $courseTaken->user_id;
                 $full_name = $courseTaken->user->full_name;
             }
         }
 
-        if (strpos($parent, 'assignment-manuscripts') !== false ) {
+        if (strpos($parent, 'assignment-manuscripts') !== false) {
             $assignmentManuscript = AssignmentManuscript::with('user')->where('id', $parent_id)->first();
-            if($assignmentManuscript) {
+            if ($assignmentManuscript) {
                 $learner_id = $assignmentManuscript->user_id;
                 $full_name = $assignmentManuscript->user->full_name;
             }
         }
 
-        if (strpos($parent, 'webinar-registrant') !== false ) {
+        if (strpos($parent, 'webinar-registrant') !== false) {
             $webinarRegistrant = WebinarRegistrant::with('user')->where('id', $parent_id)->first();
-            if($webinarRegistrant) {
+            if ($webinarRegistrant) {
                 $learner_id = $webinarRegistrant->user_id;
                 $full_name = $webinarRegistrant->user->full_name;
             }
         }
 
-        if (strpos($parent, 'copy-editing') !== false ) {
+        if (strpos($parent, 'copy-editing') !== false) {
             $webinarRegistrant = CopyEditingManuscript::with('user')->where('id', $parent_id)->first();
-            if($webinarRegistrant) {
+            if ($webinarRegistrant) {
                 $learner_id = $webinarRegistrant->user_id;
                 $full_name = $webinarRegistrant->user->full_name;
             }
         }
 
-        if (strpos($parent, 'correction') !== false ) {
+        if (strpos($parent, 'correction') !== false) {
             $webinarRegistrant = CorrectionManuscript::with('user')->where('id', $parent_id)->first();
-            if($webinarRegistrant) {
+            if ($webinarRegistrant) {
                 $learner_id = $webinarRegistrant->user_id;
                 $full_name = $webinarRegistrant->user->full_name;
             }
         }
 
-        if (strpos($parent, 'coaching-time') !== false ) {
+        if (strpos($parent, 'coaching-time') !== false) {
             $coaching = CoachingTimerManuscript::with('user')->where('id', $parent_id)->first();
-            if($coaching) {
+            if ($coaching) {
                 $learner_id = $coaching->user_id;
                 $full_name = $coaching->user->full_name;
             }
         }
 
-        if (strpos($parent, 'gift-purchase') !== false ) {
+        if (strpos($parent, 'gift-purchase') !== false) {
             $giftPurchase = GiftPurchase::with('buyer')->where('id', $parent_id)->first();
-            if($giftPurchase) {
+            if ($giftPurchase) {
                 $learner_id = $giftPurchase->buyer->id;
                 $full_name = $giftPurchase->buyer->full_name;
             }
@@ -129,7 +131,7 @@ class EmailHistory extends Model
 
         return [
             'learner_id' => $learner_id,
-            'full_name' => $full_name
+            'full_name' => $full_name,
         ];
 
     }

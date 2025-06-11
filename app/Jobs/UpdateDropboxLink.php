@@ -38,7 +38,7 @@ class UpdateDropboxLink implements ShouldQueue
         try {
             $path = $this->projectWholeBook->book_content;
             $response = $dropboxClient->createSharedLinkWithSettings($path, [
-                'requested_visibility' => 'public'
+                'requested_visibility' => 'public',
             ]);
 
             if (isset($response['url'])) {
@@ -46,11 +46,11 @@ class UpdateDropboxLink implements ShouldQueue
                 $this->projectWholeBook->save();
                 Log::info("Dropbox link for project ID {$this->projectWholeBook->id} updated successfully.");
             } else {
-                Log::error("Failed to get Dropbox link for project ID {$this->projectWholeBook->id}. Response: " 
-                . json_encode($response));
+                Log::error("Failed to get Dropbox link for project ID {$this->projectWholeBook->id}. Response: "
+                .json_encode($response));
             }
         } catch (\Exception $e) {
-            Log::error("Error fetching Dropbox link for project ID {$this->projectWholeBook->id}: " . $e->getMessage());
+            Log::error("Error fetching Dropbox link for project ID {$this->projectWholeBook->id}: ".$e->getMessage());
         }
     }
 }

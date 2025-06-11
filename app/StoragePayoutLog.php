@@ -15,7 +15,7 @@ class StoragePayoutLog extends Model
     ];
 
     protected $appends = [
-        'date'
+        'date',
     ];
 
     public function getDateAttribute()

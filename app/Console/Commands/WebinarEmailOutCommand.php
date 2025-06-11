@@ -63,48 +63,48 @@ class WebinarEmailOutCommand extends Command
             $coursesTaken = CoursesTaken::where(function ($query) use ($course_id) {
                 $query->whereIn('package_id', Course::find($course_id)->packages()->pluck('id'));
             })
-            ->where(function($query) {
-                $query->where('end_date','>=', Carbon::now())
-                    ->orWhereNull('end_date');
-            })
-            ->where('can_receive_email', 1)
-            ->get();
+                ->where(function ($query) {
+                    $query->where('end_date', '>=', Carbon::now())
+                        ->orWhereNull('end_date');
+                })
+                ->where('can_receive_email', 1)
+                ->get();
 
             $webinarDetails = AdminHelpers::getBigMarkerDetails($webinar->link);
             $presenterList = AdminHelpers::getBigMarkerPanelist($webinarDetails->conference->presenters);
-            $startDate      = AdminHelpers::convertTZNoFixedTZFormat($webinarDetails->conference->start_time, 'Europe/Madrid')->format('d, M Y');
-            $startTime      = AdminHelpers::convertTZNoFixedTZFormat($webinarDetails->conference->start_time, 'Europe/Madrid')->format('H:i');
-            $webinarDate    = $startDate.' klokken '.$startTime;
-            $subject = $emailOut->subject;//"Webinar ".$webinarDate." med ".$presenterList;
+            $startDate = AdminHelpers::convertTZNoFixedTZFormat($webinarDetails->conference->start_time, 'Europe/Madrid')->format('d, M Y');
+            $startTime = AdminHelpers::convertTZNoFixedTZFormat($webinarDetails->conference->start_time, 'Europe/Madrid')->format('H:i');
+            $webinarDate = $startDate.' klokken '.$startTime;
+            $subject = $emailOut->subject; // "Webinar ".$webinarDate." med ".$presenterList;
             foreach ($coursesTaken as $courseTaken) {
                 $user_email = $courseTaken->user->email;
                 $register_link = "<a href='".route('front.goto-webinar.registration.email',
-                        [encrypt($webinar->link), encrypt($user_email)])."'>Registrer meg</a>";
+                    [encrypt($webinar->link), encrypt($user_email)])."'>Registrer meg</a>";
 
-                $extractLink        = FrontendHelpers::getTextBetween($emailOut->message, "[redirect]",
-                    "[/redirect]");
-                $redirectLabel      =  FrontendHelpers::getTextBetween($emailOut->message, "[redirect_label]",
-                    "[/redirect_label]");
+                $extractLink = FrontendHelpers::getTextBetween($emailOut->message, '[redirect]',
+                    '[/redirect]');
+                $redirectLabel = FrontendHelpers::getTextBetween($emailOut->message, '[redirect_label]',
+                    '[/redirect_label]');
                 $encode_email = encrypt($user_email);
-                $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
-                $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+                $formatRedirectLink = route('auth.login.emailRedirect', [$encode_email, encrypt($extractLink)]);
+                $redirectLink = "<a href='".$formatRedirectLink."'>".$redirectLabel.'</a>';
                 $search_string = [
                     '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]',
-                    '[register_link]'
+                    '[register_link]',
                 ];
                 $replace_string = [
-                    $redirectLink, '', $register_link
+                    $redirectLink, '', $register_link,
                 ];
                 $message = str_replace($search_string, $replace_string, $emailOut->message);
 
                 $emailData['email_subject'] = $subject;
                 $emailData['email_message'] = $message;
-                $emailData['from_name'] = NULL;
-                $emailData['from_email'] = NULL;
-                $emailData['attach_file'] = NULL;
+                $emailData['from_name'] = null;
+                $emailData['from_email'] = null;
+                $emailData['attach_file'] = null;
 
                 // add email to queue
-                //\Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+                // \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
                 dispatch(new AddMailToQueueJob($user_email, $subject, $message, 'postmail@forfatterskolen.no',
                     null, null, 'courses-taken', $courseTaken->id));
                 CronLog::create(['activity' => 'WebinarEmailOutCommand CRON send email to '.$user_email]);

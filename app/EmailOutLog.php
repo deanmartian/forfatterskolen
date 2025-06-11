@@ -22,12 +22,13 @@ class EmailOutLog extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function getDateSentAttribute()
     {
         $date = $this->attributes['created_at'];
+
         return date_format(date_create($date), 'M d, Y h:i a');
     }
 }

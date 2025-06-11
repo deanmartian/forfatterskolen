@@ -1,10 +1,11 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SurveyQuestion extends Model {
-
+class SurveyQuestion extends Model
+{
     /**
      * The database table used by the model.
      *
@@ -21,11 +22,11 @@ class SurveyQuestion extends Model {
 
     public function survey()
     {
-        return $this->belongsTo('App\Survey');
+        return $this->belongsTo(\App\Survey::class);
     }
 
     public function answers()
     {
-        return $this->hasMany('App\SurveyAnswer');
+        return $this->hasMany(\App\SurveyAnswer::class);
     }
 }

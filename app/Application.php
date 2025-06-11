@@ -25,9 +25,9 @@ class Application extends Model
         $filename = $this->attributes['file'];
 
         $extension = explode('.', basename($filename));
-        if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+        if (end($extension) == 'pdf' || end($extension) == 'odt') {
             $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
-        } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+        } elseif (end($extension) == 'docx' || end($extension) == 'doc') {
             $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
                 .basename($filename).'</a>';
         }

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateEditorAssignmentPricesTable extends Migration
 {
@@ -18,7 +18,7 @@ class CreateEditorAssignmentPricesTable extends Migration
             $table->increments('id');
             $table->string('assignment', 100)->default('');
             $table->string('unit', 40)->default('');
-            $table->decimal('price',11)->default(0);
+            $table->decimal('price', 11)->default(0);
             $table->timestamps();
         });
 
@@ -28,7 +28,7 @@ class CreateEditorAssignmentPricesTable extends Migration
             ['assignment' => 'Assignment', 'unit' => 'Item', 'price' => '0.00'],
             ['assignment' => 'Coaching Timer', 'unit' => 'Item', 'price' => '0.00'],
             ['assignment' => 'Correction', 'unit' => 'Hour', 'price' => '0.00'],
-            ['assignment' => 'Copy Editing', 'unit' => 'Hour', 'price' => '0.00']
+            ['assignment' => 'Copy Editing', 'unit' => 'Hour', 'price' => '0.00'],
         ];
         DB::table('editor_assignment_prices')->insert($data);
         DB::commit();

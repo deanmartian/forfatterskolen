@@ -10,27 +10,28 @@ class TimeRegister extends Model
     use Loggable;
 
     protected $fillable = ['user_id', 'project_id', 'date', 'time', 'time_used', 'description', 'invoice_file', 'notes'];
+
     protected $appends = ['file_link', 'notes_formatted'];
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function project()
     {
-        return $this->hasOne('App\Project', 'id', 'project_id');
+        return $this->hasOne(\App\Project::class, 'id', 'project_id');
     }
 
     public function usedTimes()
     {
-        return $this->hasMany('App\TimeRegisterUsed');
+        return $this->hasMany(\App\TimeRegisterUsed::class);
     }
 
     public function usedTimesDurationSum()
     {
-        return $this->hasMany('App\TimeRegisterUsed')->selectRaw('SUM(time_used) as total_duration')
-        ->groupBy('time_register_id');
+        return $this->hasMany(\App\TimeRegisterUsed::class)->selectRaw('SUM(time_used) as total_duration')
+            ->groupBy('time_register_id');
     }
 
     public function getFileLinkAttribute()
@@ -39,9 +40,9 @@ class TimeRegister extends Model
         if (array_key_exists('invoice_file', $this->attributes)) {
             $filename = $this->attributes['invoice_file'];
             $extension = explode('.', basename($filename));
-            if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+            if (end($extension) == 'pdf' || end($extension) == 'odt') {
                 $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
-            } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+            } elseif (end($extension) == 'docx' || end($extension) == 'doc') {
                 $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
                     .basename($filename).'</a>';
             }
@@ -54,5 +55,4 @@ class TimeRegister extends Model
     {
         return nl2br($this->attributes['notes']);
     }
-
 }

@@ -11,7 +11,7 @@ class CronLog extends Model
      *
      * @var string
      */
-    //protected $table = 'courses_email_out';
+    // protected $table = 'courses_email_out';
 
     /**
      * The attributes that are mass assignable.

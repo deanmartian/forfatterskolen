@@ -12,6 +12,7 @@ class LearnerEmail extends Model
      * @var string
      */
     protected $table = 'learner_emails';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +22,6 @@ class LearnerEmail extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 }

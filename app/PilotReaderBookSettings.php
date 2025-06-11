@@ -18,12 +18,11 @@ class PilotReaderBookSettings extends Model
      *
      * @var array
      */
-    protected $fillable = [ 'book_id', 'is_reading_reminder_on', 'days_of_reminder', 'will_receive_a_feedback_email',
+    protected $fillable = ['book_id', 'is_reading_reminder_on', 'days_of_reminder', 'will_receive_a_feedback_email',
         'is_feedback_shared', 'is_inline_commenting_allowed', 'book_units', 'is_table_of_contents_numbered', 'is_deactivated'];
 
     public function book()
     {
-        return $this->belongsToMany('App\PilotReaderBook','pilot_reader_book_settings', 'id');
+        return $this->belongsToMany(\App\PilotReaderBook::class, 'pilot_reader_book_settings', 'id');
     }
-
 }

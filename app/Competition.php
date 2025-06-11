@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
@@ -10,5 +11,5 @@ class Competition extends Model
      *
      * @var array
      */
-    protected $fillable = ['title', 'genre', 'description', 'start_date', 'image' , 'link'];
+    protected $fillable = ['title', 'genre', 'description', 'start_date', 'image', 'link'];
 }

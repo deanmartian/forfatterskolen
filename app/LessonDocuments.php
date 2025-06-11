@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-
 class LessonDocuments extends Model
 {
     /**
@@ -19,11 +18,11 @@ class LessonDocuments extends Model
      *
      * @var array
      */
-    protected $fillable = ['lesson_id', 'name','document'];
+    protected $fillable = ['lesson_id', 'name', 'document'];
 
     public function course()
     {
-        return $this->belongsTo('App\Lesson');
+        return $this->belongsTo(\App\Lesson::class);
     }
 
     /**
@@ -34,12 +33,11 @@ class LessonDocuments extends Model
         parent::boot();
 
         // if the row is deleted, delete also the document for that row
-        LessonDocuments::deleted(function($photo){
+        LessonDocuments::deleted(function ($photo) {
             $file = public_path($photo->document);
-            if(\File::isFile($file)){
+            if (\File::isFile($file)) {
                 \File::delete($file);
             }
         });
     }
-
 }

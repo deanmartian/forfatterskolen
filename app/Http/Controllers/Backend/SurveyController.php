@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
@@ -7,21 +8,20 @@ use App\Http\Requests\SurveyRequest;
 use App\Repositories\Services\SurveyService;
 use App\Survey;
 use App\SurveyAnswer;
-use App\SurveyQuestion;
 use App\User;
 use Illuminate\Http\Request;
 
-class SurveyController extends Controller {
-
+class SurveyController extends Controller
+{
     /**
      * Storage for survey service
+     *
      * @var SurveyService
      */
     protected $surveyService;
 
     /**
      * SurveyController constructor.
-     * @param SurveyService $surveyService
      */
     public function __construct(SurveyService $surveyService)
     {
@@ -30,17 +30,19 @@ class SurveyController extends Controller {
 
     /**
      * Display all of the surveys
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
         $surveys = $this->surveyService->getRecord();
+
         return view('backend.survey.index', compact('surveys'));
     }
 
     /**
      * Create new survey
-     * @param SurveyRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(SurveyRequest $request)
@@ -48,7 +50,7 @@ class SurveyController extends Controller {
         if ($this->surveyService->store($request)) {
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Survey created successfully.'),
-                'alert_type' => 'success'
+                'alert_type' => 'success',
             ]);
         }
 
@@ -57,13 +59,14 @@ class SurveyController extends Controller {
 
     /**
      * Display single survey
-     * @param $id SurveyService
+     *
+     * @param  $id  SurveyService
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function show($id)
     {
         $survey = $this->surveyService->getRecord($id);
-        if (!$survey) {
+        if (! $survey) {
             return redirect()->route('admin.survey.index');
         }
 
@@ -73,8 +76,7 @@ class SurveyController extends Controller {
 
     /**
      * Update survey
-     * @param $id
-     * @param SurveyRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, SurveyRequest $request)
@@ -85,7 +87,7 @@ class SurveyController extends Controller {
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Survey updated successfully.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
@@ -97,21 +99,23 @@ class SurveyController extends Controller {
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Survey updated successfully.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
     /**
      * Delete a survey
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
         if ($this->surveyService->getRecord($id)) {
             $this->surveyService->destroy($id);
+
             return redirect()->route('admin.survey.index');
         }
+
         return redirect()->back();
     }
 
@@ -120,24 +124,25 @@ class SurveyController extends Controller {
         if ($survey = Survey::find($id)) {
             $answers = $survey->answers;
             $questions = $survey->questions()->with('answers')->get();
+
             return view('backend.survey.answers', compact('survey', 'questions', 'answers'));
         }
 
         return redirect()->route('admin.survey.index');
     }
-    
+
     public function downloadAnswers($id)
     {
         $survey = $this->surveyService->getRecord($id);
-        if(!$survey) {
+        if (! $survey) {
             abort(404);
         }
 
-        $excel     = \App::make('excel');
+        $excel = \App::make('excel');
         $questions = $survey->questions;
         $downloadList = [];
         $questionList = ['Learner ID'];
-        $answerList   = [];
+        $answerList = [];
 
         // add questions on the first row
         foreach ($questions as $qk => $question) {
@@ -150,10 +155,10 @@ class SurveyController extends Controller {
             $storeAnswerWithUser = [$answer->user->id];
             $searchByGroupedUser = SurveyAnswer::where(['survey_id' => $id, 'user_id' => $answer->user_id])
                 ->get()->toArray();
-            foreach($searchByGroupedUser as $search) {
+            foreach ($searchByGroupedUser as $search) {
                 $result = json_decode($search['answer']);
                 if (json_last_error() === JSON_ERROR_NONE) {
-                    $result = implode(", ", (array)$result);
+                    $result = implode(', ', (array) $result);
                 } else {
                     $result = $search['answer'];
                 }
@@ -178,10 +183,10 @@ class SurveyController extends Controller {
         $downloadList[] = $questionList;
         $downloadList = array_merge($downloadList, $answerList);
 
-        $excel->create($survey->title.' Answers', function($excel) use ($downloadList) {
+        $excel->create($survey->title.' Answers', function ($excel) use ($downloadList) {
 
             // Build the spreadsheet, passing in the payments array
-            $excel->sheet('sheet1', function($sheet) use ($downloadList) {
+            $excel->sheet('sheet1', function ($sheet) use ($downloadList) {
                 // prevent inserting an empty first row
                 $sheet->fromArray($downloadList, null, 'A1', false, false);
             });

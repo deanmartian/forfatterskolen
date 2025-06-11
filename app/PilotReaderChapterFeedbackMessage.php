@@ -4,7 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PilotReaderChapterFeedbackMessage extends Model {
+class PilotReaderChapterFeedbackMessage extends Model
+{
     /**
      * The database table used by the model.
      *
@@ -21,6 +22,6 @@ class PilotReaderChapterFeedbackMessage extends Model {
 
     public function feedback()
     {
-        return $this->belongsTo('App\PilotReaderChapterFeedback','feedback_id','id');
+        return $this->belongsTo(\App\PilotReaderChapterFeedback::class, 'feedback_id', 'id');
     }
 }

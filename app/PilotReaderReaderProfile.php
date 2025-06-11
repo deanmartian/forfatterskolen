@@ -4,7 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PilotReaderReaderProfile extends Model {
+class PilotReaderReaderProfile extends Model
+{
     /**
      * The database table used by the model.
      *
@@ -17,10 +18,10 @@ class PilotReaderReaderProfile extends Model {
      *
      * @var array
      */
-    protected $fillable = [ 'user_id', 'genre_preferences', 'dislike_contents', 'expertise', 'favourite_author', 'availability'];
+    protected $fillable = ['user_id', 'genre_preferences', 'dislike_contents', 'expertise', 'favourite_author', 'availability'];
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 }

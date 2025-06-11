@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Course;
@@ -7,33 +8,36 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class ShareableCourseController extends Controller {
-
+class ShareableCourseController extends Controller
+{
     /**
      * Get index page
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
         $courseShared = CourseShared::all();
+
         return view('backend.course.shareable.index', compact('courseShared'));
     }
 
     /**
      * Get the packages of the given course
-     * @param $course_id
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getCoursePackage($course_id)
     {
         $course = Course::find($course_id);
         $packages = $course->packages;
+
         return response()->json($packages);
     }
 
     /**
      * Insert new data
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
@@ -42,14 +46,14 @@ class ShareableCourseController extends Controller {
         $hash = substr(md5(microtime()), 0, 6);
         $data['hash'] = $hash;
         CourseShared::create($data);
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Course shared created successfully'),
             'alert_type' => 'success']);
     }
 
     /**
      * Update the shared course
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request)
@@ -71,7 +75,7 @@ class ShareableCourseController extends Controller {
 
     /**
      * Delete the shared course
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
@@ -80,10 +84,11 @@ class ShareableCourseController extends Controller {
 
         if ($courseShared) {
             $courseShared->delete();
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Course shared deleted successfully'),
                 'alert_type' => 'success']);
         }
+
         return redirect()->back();
     }
-
 }

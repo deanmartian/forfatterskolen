@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use Carbon\Carbon;
@@ -23,7 +24,7 @@ class Blog extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function getCreatedAtAttribute($value)
@@ -33,10 +34,10 @@ class Blog extends Model
 
     public static function activeOnly()
     {
-        return self::where('status','=', 1)
-            ->where(function($query) {
+        return self::where('status', '=', 1)
+            ->where(function ($query) {
                 $query->whereDate('schedule', '<=', Carbon::today()->format('Y-m-d'))
-                ->orWhereNull('schedule');
+                    ->orWhereNull('schedule');
             });
     }
 }

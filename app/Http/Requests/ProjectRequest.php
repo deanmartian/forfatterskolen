@@ -2,12 +2,10 @@
 
 namespace App\Http\Requests;
 
-
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProjectRequest extends FormRequest
 {
-
     public function authorize()
     {
         return true;
@@ -17,8 +15,7 @@ class ProjectRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'number' => 'required|unique:projects,identifier,' . \Request::instance()->id
+            'number' => 'required|unique:projects,identifier,'.\Request::instance()->id,
         ];
     }
-
 }

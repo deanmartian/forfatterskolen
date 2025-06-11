@@ -15,8 +15,8 @@ class AddOtherSalePriceFieldToPackagesTable extends Migration
     {
         Schema::table('packages', function (Blueprint $table) {
             $table->integer('full_payment_other_sale_price')->nullable()->after('full_payment_sale_price_to');
-			$table->date('full_payment_other_sale_price_from')->nullable()->after('full_payment_other_sale_price');
-			$table->date('full_payment_other_sale_price_to')->nullable()->after('full_payment_other_sale_price_from');
+            $table->date('full_payment_other_sale_price_from')->nullable()->after('full_payment_other_sale_price');
+            $table->date('full_payment_other_sale_price_to')->nullable()->after('full_payment_other_sale_price_from');
         });
     }
 

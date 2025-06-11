@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Package extends Model
 {
     protected $table = 'packages';
-    protected $fillable = ['course_id', 'variation', 'full_months_price', 'months_3_price', 'months_6_price', 'full_price_product', 'months_3_product', 'months_6_product', 'full_price_due_date', 'months_3_due_date', 'months_6_due_date', 'manuscripts_count' , 'due_date'];
+
+    protected $fillable = ['course_id', 'variation', 'full_months_price', 'months_3_price', 'months_6_price', 'full_price_product', 'months_3_product', 'months_6_product', 'full_price_due_date', 'months_3_due_date', 'months_6_due_date', 'manuscripts_count', 'due_date'];
 
     public function course()
     {
@@ -16,15 +17,13 @@ class Package extends Model
 
     public function shop_manuscripts()
     {
-    	return $this->hasMany('App\PackageShopManuscript')->orderBy('created_at', 'desc');
+        return $this->hasMany('App\PackageShopManuscript')->orderBy('created_at', 'desc');
     }
-
 
     public function workshops()
     {
         return $this->hasMany('App\PackageWorkshop')->orderBy('created_at', 'desc');
     }
-
 
     public function included_courses()
     {

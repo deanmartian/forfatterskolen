@@ -8,35 +8,36 @@ use Illuminate\Support\Facades\Auth;
 
 class PrivateGroup extends Model
 {
-    protected $fillable = [ 'name', 'policy', 'welcome_msg', 'contact_email' ];
+    protected $fillable = ['name', 'policy', 'welcome_msg', 'contact_email'];
 
     public function books_shared()
     {
-        return $this->hasMany('App\PrivateGroupSharedBook');
+        return $this->hasMany(\App\PrivateGroupSharedBook::class);
     }
 
     public function discussions()
     {
-        return $this->hasMany('App\PrivateGroupDiscussion');
+        return $this->hasMany(\App\PrivateGroupDiscussion::class);
     }
 
     public function invitations()
     {
-        return $this->hasMany('App\PrivateGroupMemberInvitation');
+        return $this->hasMany(\App\PrivateGroupMemberInvitation::class);
     }
 
     public function members()
     {
-        return $this->hasMany('App\PrivateGroupMember');
+        return $this->hasMany(\App\PrivateGroupMember::class);
     }
 
     /**
      * Get the manager of the group
+     *
      * @return Relation
      */
     public function manager()
     {
-        return $this->hasOne('App\PrivateGroupMember')
+        return $this->hasOne(\App\PrivateGroupMember::class)
             ->where(['role' => 'manager', 'user_id' => Auth::user()->id]);
     }
 }

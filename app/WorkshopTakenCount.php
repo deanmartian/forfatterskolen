@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ class WorkshopTakenCount extends Model
      * @var string
      */
     protected $table = 'workshop_taken_count';
+
     /**
      * The attributes that are mass assignable.
      *

@@ -6,10 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectPrint extends Model
 {
-
     protected $fillable = [
-        'project_id', 
-        'isbn', 
+        'project_id',
+        'isbn',
         'number',
         'pages',
         'format',
@@ -21,6 +20,6 @@ class ProjectPrint extends Model
         'media',
         'print_method',
         'color',
-        'number_of_color_pages'
+        'number_of_color_pages',
     ];
 }

@@ -1,6 +1,9 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
+use App\Course;
+use App\CourseApplication;
 use App\CourseCertificate;
 use App\CourseExpiryReminder;
 use App\CoursesTaken;
@@ -8,40 +11,32 @@ use App\EmailAttachment;
 use App\EmailOutLog;
 use App\Exports\CourseLearnerExport;
 use App\Exports\GenericExport;
+use App\FormerCourse;
+use App\Http\AdminHelpers;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\FrontendHelpers;
+use App\Http\Requests\CourseCreateRequest;
+use App\Http\Requests\CourseUpdateRequest;
 use App\Jobs\AddMailToQueueJob;
 use App\Jobs\CourseOrderJob;
 use App\Jobs\WebinarScheduleRegistrationJob;
 use App\Mail\SubjectBodyEmail;
 use App\Package;
 use App\PackageCourse;
-use App\PageMeta;
+use App\Services\CourseService;
+use App\SimilarCourse;
 use App\User;
-use App\UserAutoRegisterToCourseWebinar;
+use App\Webinar;
 use App\WebinarRegistrant;
 use App\WebinarScheduledRegistration;
 use Carbon\Carbon;
-use Illuminate\Contracts\Logging\Log;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Course;
-use App\CourseApplication;
-use App\FormerCourse;
-use App\SimilarCourse;
-use App\Http\AdminHelpers;
-use App\Http\Requests\CourseCreateRequest;
-use App\Http\Requests\CourseUpdateRequest;
-use App\Services\CourseService;
-use App\Webinar;
 use File;
+use Illuminate\Http\Request;
 use Maatwebsite\Excel\Excel;
 
 class CourseController extends Controller
 {
-
     /**
      * CourseController constructor.
      */
@@ -53,35 +48,30 @@ class CourseController extends Controller
 
     public function index(Request $request)
     {
-        if( $request->search && !empty($request->search) ) :
-            $courses = Course::where('title', 'LIKE', '%' . $request->search  . '%')->orderBy('created_at', 'desc')->paginate(25);
-        else :
+        if ($request->search && ! empty($request->search)) {
+            $courses = Course::where('title', 'LIKE', '%'.$request->search.'%')->orderBy('created_at', 'desc')->paginate(25);
+        } else {
             // display 0 value last
             $courses = Course::orderByRaw('display_order = 0, display_order')->orderBy('created_at', 'desc')->paginate(25);
-        endif;
-    	return view('backend.course.index', compact('courses'));
+        }
+
+        return view('backend.course.index', compact('courses'));
     }
-
-
 
     public function show(Request $request, $id)
     {
-    	$section = isset( $request->section ) ? $request->section : "overview";
-    	AdminHelpers::validateCourseSubpage($section);
+        $section = isset($request->section) ? $request->section : 'overview';
+        AdminHelpers::validateCourseSubpage($section);
 
-    	$course = Course::findOrFail($id);
-    	return $this->showSection($section, $course);
+        $course = Course::findOrFail($id);
+
+        return $this->showSection($section, $course);
     }
-
-
 
     public function showSection($section, $course)
     {
-    	return view('backend.course.' . $section, compact('course', 'section'));
+        return view('backend.course.'.$section, compact('course', 'section'));
     }
-
-
-
 
     public function create()
     {
@@ -105,12 +95,11 @@ class CourseController extends Controller
             'meta_description' => '',
             'meta_image' => '',
             'pay_later_with_application' => '',
-            'free_for_days' => ''
+            'free_for_days' => '',
         ];
+
         return view('backend.course.create', compact('course'));
     }
-
-
 
     public function store(CourseCreateRequest $request)
     {
@@ -118,58 +107,58 @@ class CourseController extends Controller
         $requestData = $request->toArray();
         $requestData['display_order'] = $requestData['display_order'] ? $requestData['display_order'] : 0;
 
-        $course = new Course();
+        $course = new Course;
         $course->title = $request->title;
         $course->description = $request->description;
         $course->display_order = $requestData['display_order'];
 
-        if ($request->hasFile('course_image')) :
+        if ($request->hasFile('course_image')) {
             $destinationPath = 'storage/course-images/'; // upload path
             $extension = $request->course_image->extension(); // getting image extension
             $fileName = time().'.'.$extension; // renameing image
             $request->course_image->move($destinationPath, $fileName);
             // optimize image
-            if ( strtolower( $extension ) == "png" ) :
+            if (strtolower($extension) == 'png') {
                 $image = imagecreatefrompng($destinationPath.$fileName);
                 imagepng($image, $destinationPath.$fileName, 9);
-            else :
+            } else {
                 $image = imagecreatefromjpeg($destinationPath.$fileName);
                 imagejpeg($image, $destinationPath.$fileName, 70);
-            endif;
+            }
             $course->course_image = '/'.$destinationPath.$fileName;
-        endif;
+        }
 
-        if ($request->hasFile('meta_image')) :
-            if( !File::exists('storage/meta-images/') ) :
+        if ($request->hasFile('meta_image')) {
+            if (! File::exists('storage/meta-images/')) {
                 File::makeDirectory('meta-images');
-            endif;
+            }
             $destinationPath = 'storage/meta-images/'; // upload path
             $extension = $request->meta_image->extension(); // getting image extension
             $fileName = time().'.'.$extension; // renaming image
             $request->meta_image->move($destinationPath, $fileName);
             // optimize image
-            if ( strtolower( $extension ) == "png" ) :
+            if (strtolower($extension) == 'png') {
                 $image = imagecreatefrompng($destinationPath.$fileName);
                 imagepng($image, $destinationPath.$fileName, 9);
-            else :
+            } else {
                 $image = imagecreatefromjpeg($destinationPath.$fileName);
                 imagejpeg($image, $destinationPath.$fileName, 70);
-            endif;
+            }
             $course->meta_image = '/'.$destinationPath.$fileName;
-        endif;
+        }
 
-        $course->type               = $request->type;
-        $course->start_date         = $request->start_date;
-        $course->end_date           = $request->end_date;
-        $course->is_free            = isset($request->is_free) ? 1 : 0;
-        $course->instructor         = $request->instructor;
-        $course->auto_list_id       = $request->auto_list_id ?: 0;
-        $course->photographer       = $request->photographer;
-        $course->hide_price         = isset($request->hide_price) ? 1 : 0;
+        $course->type = $request->type;
+        $course->start_date = $request->start_date;
+        $course->end_date = $request->end_date;
+        $course->is_free = isset($request->is_free) ? 1 : 0;
+        $course->instructor = $request->instructor;
+        $course->auto_list_id = $request->auto_list_id ?: 0;
+        $course->photographer = $request->photographer;
+        $course->hide_price = isset($request->hide_price) ? 1 : 0;
         $course->pay_later_with_application = isset($request->pay_later_with_application) ? 1 : 0;
-        $course->meta_title         = $request->meta_title;
-        $course->meta_description   = $request->meta_description;
-        $course->free_for_days      = $free_for_days;
+        $course->meta_title = $request->meta_title;
+        $course->meta_description = $request->meta_description;
+        $course->free_for_days = $free_for_days;
         $course->save();
 
         $display_order = $requestData['display_order'];
@@ -178,18 +167,12 @@ class CourseController extends Controller
         return redirect(route('admin.course.show', $course->id));
     }
 
-
-
-
     public function edit($id)
     {
         $course = Course::findOrFail($id)->toArray();
+
         return view('backend.course.edit', compact('course'));
     }
-
-
-
-
 
     public function update($id, CourseUpdateRequest $request)
     {
@@ -205,7 +188,7 @@ class CourseController extends Controller
         $course->course_plan_data = $request->course_plan_data;
         $course->display_order = $requestData['display_order'];
 
-        if ($request->hasFile('course_image') && $request->file('course_image')->isValid()) :
+        if ($request->hasFile('course_image') && $request->file('course_image')->isValid()) {
             $checkImageExistCount = Course::where('course_image', 'LIKE', '%'.$course->course_image.'%')
                 ->get()->count();
             $image = substr($course->course_image, 1);
@@ -217,60 +200,61 @@ class CourseController extends Controller
             $fileName = time().'.'.$extension; // renameing image
             $request->course_image->move($destinationPath, $fileName);
             // optimize image
-            if ( strtolower( $extension ) == "png" ) :
+            if (strtolower($extension) == 'png') {
                 $image = imagecreatefrompng($destinationPath.$fileName);
                 imagepng($image, $destinationPath.$fileName, 9);
-            else :
+            } else {
                 $image = imagecreatefromjpeg($destinationPath.$fileName);
                 imagejpeg($image, $destinationPath.$fileName, 70);
-            endif;
+            }
             $course->course_image = '/'.$destinationPath.$fileName;
-        endif;
+        }
 
-        if ($request->hasFile('meta_image')) :
-            if( !File::exists('storage/meta-images/') ) :
+        if ($request->hasFile('meta_image')) {
+            if (! File::exists('storage/meta-images/')) {
                 File::makeDirectory('meta-images');
-            endif;
+            }
             $destinationPath = 'storage/meta-images/'; // upload path
             $extension = $request->meta_image->extension(); // getting image extension
             $fileName = time().'.'.$extension; // renaming image
             $request->meta_image->move($destinationPath, $fileName);
             // optimize image
-            if ( strtolower( $extension ) == "png" ) :
+            if (strtolower($extension) == 'png') {
                 $image = imagecreatefrompng($destinationPath.$fileName);
                 imagepng($image, $destinationPath.$fileName, 9);
-            else :
+            } else {
                 $image = imagecreatefromjpeg($destinationPath.$fileName);
                 imagejpeg($image, $destinationPath.$fileName, 70);
-            endif;
+            }
             $course->meta_image = '/'.$destinationPath.$fileName;
-        endif;
+        }
 
-        $course->type               = $request->type;
-        $course->start_date         = $request->start_date;
-        $course->end_date           = $request->end_date;
-        $course->instructor         = $request->instructor;
-        $course->auto_list_id       = $request->auto_list_id ?: 0;
-        $course->photographer       = $request->photographer;
-        $course->is_free            = isset($request->is_free) ? 1 : 0;
-        $course->hide_price         = isset($request->hide_price) ? 1 : 0;
+        $course->type = $request->type;
+        $course->start_date = $request->start_date;
+        $course->end_date = $request->end_date;
+        $course->instructor = $request->instructor;
+        $course->auto_list_id = $request->auto_list_id ?: 0;
+        $course->photographer = $request->photographer;
+        $course->is_free = isset($request->is_free) ? 1 : 0;
+        $course->hide_price = isset($request->hide_price) ? 1 : 0;
         $course->pay_later_with_application = isset($request->pay_later_with_application) ? 1 : 0;
-        $course->meta_title         = $request->meta_title;
-        $course->meta_description   = $request->meta_description;
-        $course->free_for_days      = $free_for_days; 
+        $course->meta_title = $request->meta_title;
+        $course->meta_description = $request->meta_description;
+        $course->free_for_days = $free_for_days;
         $course->save();
 
         $display_order = $requestData['display_order'];
         $this->updateDisplayOrder($display_order, $id);
+
         return redirect(route('admin.course.show', $course->id));
     }
 
     public function updateDisplayOrder($display_order, $id)
     {
-        while($course = Course::where('display_order', $display_order)->where('id', '!=', $id)->first()) {
+        while ($course = Course::where('display_order', $display_order)->where('id', '!=', $id)->first()) {
             $lastCourse = Course::orderBy('display_order', 'DESC')->first();
             if ($course && $course->id !== $lastCourse->id) {
-                $course->display_order = $display_order+1;
+                $course->display_order = $display_order + 1;
                 $course->save();
             } else {
                 $lastDisplay = Course::where('display_order', $display_order)->get();
@@ -285,31 +269,28 @@ class CourseController extends Controller
         }
     }
 
-
-
-    public function destroy($id){
+    public function destroy($id)
+    {
         $course = Course::findOrFail($id);
         $image = substr($course->course_image, 1);
-        if( File::exists($image) ) :
+        if (File::exists($image)) {
             File::delete($image);
-        endif;
+        }
         $course->forceDelete();
+
         return redirect(route('admin.course.index'));
     }
-
-
-
-
 
     public function update_email($id, Request $request)
     {
         $course = Course::findOrFail($id);
         $course->email = $request->email;
         $course->save();
+
         return redirect()->back();
     }
 
-    public function sendWelcomeEmail( $id, Request $request )
+    public function sendWelcomeEmail($id, Request $request)
     {
         $course = Course::find($id);
 
@@ -318,18 +299,18 @@ class CourseController extends Controller
             $to = $user->email;
 
             $emailData = [
-            'email_subject' => $course->title,
-            'email_message' => $course->email,
-            'from_name' => '',
-            'from_email' => 'post@forfatterskolen.no',
-            'attach_file' => NULL
+                'email_subject' => $course->title,
+                'email_message' => $course->email,
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => null,
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         }
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Email sent successfully.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
@@ -339,13 +320,13 @@ class CourseController extends Controller
         $clone_course = $course->replicate();
         $clone_course->push();
 
-        foreach( $course->lessons as $lesson ) :
+        foreach ($course->lessons as $lesson) {
             $clone_lesson = $lesson->replicate();
             $clone_lesson->course_id = $clone_course->id;
             $clone_lesson->push();
 
             // clone the documents of the lesson
-            foreach($lesson->documents as $document) {
+            foreach ($lesson->documents as $document) {
                 // get parts of the file
                 $parts = pathinfo($document->document);
 
@@ -358,17 +339,17 @@ class CourseController extends Controller
                 $clone_document->document = $newDocumentName;
                 $clone_document->push();
             }
-        endforeach;
+        }
 
-        foreach( $course->packages as $package ):
+        foreach ($course->packages as $package) {
             $clone_package = $package->replicate();
             $clone_package->course_id = $clone_course->id;
             $clone_package->push();
-        endforeach;
+        }
 
-        foreach( $course->webinars as $webinar ):
+        foreach ($course->webinars as $webinar) {
 
-            $newImage = NULL;
+            $newImage = null;
             if ($webinar->image) {
                 $parts = pathinfo($webinar->image);
                 // check filename and copy the file
@@ -380,9 +361,9 @@ class CourseController extends Controller
             $clone_webinar->course_id = $clone_course->id;
             $clone_webinar->image = $newImage;
             $clone_webinar->push();
-        endforeach;
+        }
 
-        foreach( $course->emailOut as $emailOut ):
+        foreach ($course->emailOut as $emailOut) {
             $clone_email_out = $emailOut->replicate();
 
             // check if email has attachment
@@ -393,43 +374,39 @@ class CourseController extends Controller
                 File::copy(ltrim($emailOut->attachment, '/'), $newAttachment); // use ltrim to remove first /
 
                 // create email-attachment record
-                $emailAttach['filename'] =  $newAttachment;
+                $emailAttach['filename'] = $newAttachment;
                 $emailAttach['hash'] = substr(md5(microtime()), 0, 6);
                 $emailAttachment = EmailAttachment::create($emailAttach);
 
                 $clone_email_out->attachment = $newAttachment;
                 $clone_email_out->attachment_hash = $emailAttachment->hash;
             }
-            $clone_email_out->allowed_package = NULL;
+            $clone_email_out->allowed_package = null;
             $clone_email_out->course_id = $clone_course->id;
             $clone_email_out->push();
-        endforeach;
+        }
 
         return redirect(route('admin.course.show', $clone_course->id));
     }
-
-
-
-
 
     public function add_similar_course($id, Request $request)
     {
         $course = Course::findOrFail($id);
         $similar_course_id = Course::findOrFail($request->similar_course_id);
 
-        $similar_course = new SimilarCourse();
+        $similar_course = new SimilarCourse;
         $similar_course->course_id = $course->id;
         $similar_course->similar_course_id = $similar_course_id->id;
         $similar_course->save();
+
         return redirect()->back();
     }
-
-
 
     public function remove_similar_course($similar_course_id)
     {
         $similar_course = SimilarCourse::findOrFail($similar_course_id);
         $similar_course->forceDelete();
+
         return redirect()->back();
     }
 
@@ -442,13 +419,13 @@ class CourseController extends Controller
         if ($course) {
             $course->status = $request->status;
             $course->save();
-            $success = TRUE;
+            $success = true;
         }
 
         return response()->json([
             'data' => [
                 'success' => $success,
-            ]
+            ],
         ]);
     }
 
@@ -460,19 +437,19 @@ class CourseController extends Controller
         if ($course) {
             $course->for_sale = $request->for_sale;
             $course->save();
-            $success = TRUE;
+            $success = true;
         }
 
         return response()->json([
             'data' => [
                 'success' => $success,
-            ]
+            ],
         ]);
     }
 
     /**
      * Update is free field
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateIsFreeStatus(Request $request)
@@ -483,13 +460,13 @@ class CourseController extends Controller
         if ($course) {
             $course->is_free = $request->is_free;
             $course->save();
-            $success = TRUE;
+            $success = true;
         }
 
         return response()->json([
             'data' => [
                 'success' => $success,
-            ]
+            ],
         ]);
     }
 
@@ -501,46 +478,46 @@ class CourseController extends Controller
             $this->validate($request,
                 [
                     'subject' => 'required',
-                    'message' => 'required'
+                    'message' => 'required',
                 ]
             );
 
-            $learners   = isset($request->check_all) || isset($request->learners) ?
+            $learners = isset($request->check_all) || isset($request->learners) ?
                 $course->learners->whereIn('user_id', $request->learners)->get()
                 : $course->learners->get();
-            $subject    = $request->subject;
-            $message    = '';
+            $subject = $request->subject;
+            $message = '';
             $from_email = $request->from_email ?: 'postmail@forfatterskolen.no';
-            $from_name  = $request->from_name ?: 'Forfatterskolen';
+            $from_name = $request->from_name ?: 'Forfatterskolen';
 
             // check for attachment
             // save the file first before attaching it on email
-            $attachment = NULL;
+            $attachment = null;
             $attachmentText = '';
-            if ($request->hasFile('attachment')) :
+            if ($request->hasFile('attachment')) {
                 $destinationPath = 'storage/email_attachments'; // upload path
 
-                if (!\File::exists($destinationPath)) {
+                if (! \File::exists($destinationPath)) {
                     \File::makeDirectory($destinationPath);
                 }
 
                 $extension = $request->attachment->extension(); // getting image extension
                 $uploadedFile = $request->attachment->getClientOriginalName();
                 $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
-                //remove spaces to avoid error on attachment
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+                // remove spaces to avoid error on attachment
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
                 $request->attachment->move($destinationPath, $fileName);
 
                 $attachment = '/'.$fileName;
-                $emailAttach['filename'] =  $attachment;
+                $emailAttach['filename'] = $attachment;
                 $emailAttach['hash'] = substr(md5(microtime()), 0, 6);
                 $emailAttachment = EmailAttachment::create($emailAttach);
                 $attachmentText = "<p style='margin-top: 10px'><b>Vedlegg:</b> 
 <a href='".route('front.email-attachment', $emailAttachment->hash)."'>"
-                    .AdminHelpers::extractFileName($attachment)."</a></p>";
-            endif;
+                    .AdminHelpers::extractFileName($attachment).'</a></p>';
+            }
 
-            foreach($learners as $learner) {
+            foreach ($learners as $learner) {
                 /*$email = $learner->user->email;
                 AdminHelpers::send_email($subject,
                     $from_email, $email, $message, $from_name);*/
@@ -550,24 +527,24 @@ class CourseController extends Controller
                 $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
                 $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
 
-                if (strpos($request->message, "[redirect]")) {
-                    $extractLink        = FrontendHelpers::getTextBetween($request->message, "[redirect]", "[/redirect]");
-                    $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
-                    $redirectLabel      =  FrontendHelpers::getTextBetween($request->message, "[redirect_label]", "[/redirect_label]");
-                    $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+                if (strpos($request->message, '[redirect]')) {
+                    $extractLink = FrontendHelpers::getTextBetween($request->message, '[redirect]', '[/redirect]');
+                    $formatRedirectLink = route('auth.login.emailRedirect', [$encode_email, encrypt($extractLink)]);
+                    $redirectLabel = FrontendHelpers::getTextBetween($request->message, '[redirect_label]', '[/redirect_label]');
+                    $redirectLink = "<a href='".$formatRedirectLink."'>".$redirectLabel.'</a>';
                     $search_string = [
-                        '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+                        '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]',
                     ];
                     $replace_string = [
-                        $redirectLink, ''
+                        $redirectLink, '',
                     ];
                     $message = str_replace($search_string, $replace_string, $request->message);
                 } else {
                     $search_string = [
-                        '[login_link]', '[username]', '[password]'
+                        '[login_link]', '[username]', '[password]',
                     ];
                     $replace_string = [
-                        $loginLink, $learner->user->email, $password
+                        $loginLink, $learner->user->email, $password,
                     ];
                     $message = str_replace($search_string, $replace_string, $request->message);
                 }
@@ -577,13 +554,13 @@ class CourseController extends Controller
                 $emailData['email_message'] = $message.$attachmentText;
                 $emailData['from_name'] = $from_name;
                 $emailData['from_email'] = $from_email;
-                $emailData['attach_file'] = NULL;
-                //\Mail::to($email)->queue(new SubjectBodyEmail($emailData));
+                $emailData['attach_file'] = null;
+                // \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
                 dispatch(new AddMailToQueueJob($email, $subject, $message.$attachmentText, $from_email,
                     $from_name, null, 'courses-taken', $learner->id));
             }
 
-            $selected_learners = NULL;
+            $selected_learners = null;
             if (isset($request->check_all) || isset($request->learners)) {
                 $selected_learners = json_encode($request->learners);
             }
@@ -595,9 +572,10 @@ class CourseController extends Controller
                 'learners' => $selected_learners,
                 'from_name' => $from_name,
                 'from_email' => $from_email,
-                'attachment' => $attachment
+                'attachment' => $attachment,
             ];
             EmailOutLog::create($emailOutLog);
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Mail sent successfully.'),
                 'alert_type' => 'success']);
         }
@@ -607,8 +585,7 @@ class CourseController extends Controller
 
     /**
      * Send email to the learners that haven't started the free course yet
-     * @param $course_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function notStartedCourseReminder($course_id, Request $request)
@@ -619,19 +596,19 @@ class CourseController extends Controller
             $this->validate($request,
                 [
                     'subject' => 'required',
-                    'message' => 'required'
+                    'message' => 'required',
                 ]
             );
 
             // check courses taken that's not yet started with the specified course id
-            $coursesTaken = CoursesTaken::whereHas('package', function($query) use ($course_id) {
+            $coursesTaken = CoursesTaken::whereHas('package', function ($query) use ($course_id) {
                 $query->where('course_id', $course_id);
             })
-            ->whereNull('started_at')
-            ->get();
+                ->whereNull('started_at')
+                ->get();
 
             // get the other courses of the learner
-            $learnerOtherCourse = CoursesTaken::whereIn('user_id',$coursesTaken->pluck('user_id')->toArray())
+            $learnerOtherCourse = CoursesTaken::whereIn('user_id', $coursesTaken->pluck('user_id')->toArray())
                 ->whereNotNull('started_at')
                 ->get()->pluck('user_id')->toArray();
 
@@ -647,42 +624,42 @@ class CourseController extends Controller
                     $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
 
                     $search_string = [
-                        '[login_link]', '[username]', '[password]'
+                        '[login_link]', '[username]', '[password]',
                     ];
                     $replace_string = [
-                        $loginLink, $email, $password
+                        $loginLink, $email, $password,
                     ];
                     $convert_message = str_replace($search_string, $replace_string, $request->message);
 
                     $emailData['email_subject'] = $request->subject;
                     $emailData['email_message'] = $convert_message;
-                    $emailData['from_name'] = NULL;
-                    $emailData['from_email'] = NULL;
-                    $emailData['attach_file'] = NULL;
+                    $emailData['from_name'] = null;
+                    $emailData['from_email'] = null;
+                    $emailData['attach_file'] = null;
                     \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
                 }
             } else {
-                foreach($coursesTaken as $courseTaken) {
-                    if (!in_array($courseTaken->user_id, $learnerOtherCourse)) {
+                foreach ($coursesTaken as $courseTaken) {
+                    if (! in_array($courseTaken->user_id, $learnerOtherCourse)) {
                         $encode_email = encrypt($courseTaken->user->email);
                         $user = $courseTaken->user;
                         $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
                         $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
 
                         $search_string = [
-                            '[login_link]', '[username]', '[password]'
+                            '[login_link]', '[username]', '[password]',
                         ];
                         $replace_string = [
-                            $loginLink, $courseTaken->user->email, $password
+                            $loginLink, $courseTaken->user->email, $password,
                         ];
                         $convert_message = str_replace($search_string, $replace_string, $request->message);
 
                         $email = $courseTaken->user->email;
                         $emailData['email_subject'] = $request->subject;
                         $emailData['email_message'] = $convert_message;
-                        $emailData['from_name'] = NULL;
-                        $emailData['from_email'] = NULL;
-                        $emailData['attach_file'] = NULL;
+                        $emailData['from_name'] = null;
+                        $emailData['from_email'] = null;
+                        $emailData['attach_file'] = null;
                         \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
 
                         array_push($learners, $courseTaken->user->id);
@@ -693,10 +670,11 @@ class CourseController extends Controller
                     'course_id' => $course_id,
                     'subject' => $request->subject,
                     'message' => $request->message,
-                    'learners' => json_encode($learners)
+                    'learners' => json_encode($learners),
                 ];
                 EmailOutLog::create($emailOutLog);
             }
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Mail sent successfully.'),
                 'alert_type' => 'success']);
         }
@@ -704,11 +682,11 @@ class CourseController extends Controller
         return redirect()->back();
     }
 
-    public function setCourseTakenEndDate ($courseId, Request $request)
+    public function setCourseTakenEndDate($courseId, Request $request)
     {
         $learners = Course::find($courseId)->learners;
         $learners->update([
-            'end_date' => $request->date
+            'end_date' => $request->date,
         ]);
 
         return redirect()->back();
@@ -716,16 +694,17 @@ class CourseController extends Controller
 
     /**
      * Export the learners to excel
-     * @param $course_id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function learnerListExcel($course_id, $type = 'email')
     {
         $course = Course::find($course_id);
         if ($course) {
-            $excel          = \App::make('excel');
+            $excel = \App::make('excel');
+
             // for new version of excel
-            return $excel->download(new CourseLearnerExport($course_id, $type),$course->title.' Learners.xlsx');
+            return $excel->download(new CourseLearnerExport($course_id, $type), $course->title.' Learners.xlsx');
             /*$learners       = $course->learners->get();
             $learnerList    = [];
 
@@ -758,19 +737,20 @@ class CourseController extends Controller
             });
             })->download('xlsx');*/
         }
+
         return redirect()->back();
     }
 
     /**
      * Course with learners from included package
-     * @param $course_id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function learnerActiveListExcel($course_id)
     {
         $course = Course::find($course_id);
         if ($course) {
-            $excel          = \App::make('excel');
+            $excel = \App::make('excel');
             $packageIdsOfCourse = $course->packages()->pluck('id')->toArray();
             $packageCourses = PackageCourse::whereIn('included_package_id', $packageIdsOfCourse)->get()
                 ->pluck('package_id')
@@ -778,18 +758,19 @@ class CourseController extends Controller
             $packageCourses[] = 29; // add the actual package id of webinar-pakke
 
             $learnerWithCourse = CoursesTaken::whereIn('package_id', $packageCourses)
-                ->where('end_date','>=', Carbon::now())
+                ->where('end_date', '>=', Carbon::now())
                 ->groupBy('user_id')
                 ->orderBy('updated_at', 'desc')
                 ->get();
 
-            $learnerList    = [];
-            $headers  = ['id', 'learner', 'email']; // first row in excel
+            $learnerList = [];
+            $headers = ['id', 'learner', 'email']; // first row in excel
 
             // loop all the learners that have the course (included from other course)
             foreach ($learnerWithCourse as $learner) {
                 $learnerList[] = [$learner->user->id, $learner->user->full_name, $learner->user->email];
             }
+
             return $excel->download(new GenericExport($learnerList, $headers), $course->title.' Active Learners.xlsx');
             /*$excel->create($course->title.' Active Learners', function($excel) use ($learnerList) {
 
@@ -806,19 +787,18 @@ class CourseController extends Controller
 
     /**
      * Save expiration email reminder
-     * @param $course_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function expirationReminder($course_id, Request $request)
     {
-        $this->validate($request,[
-           'subject_28_days' => 'required',
-           'message_28_days' => 'required',
+        $this->validate($request, [
+            'subject_28_days' => 'required',
+            'message_28_days' => 'required',
             'subject_1_week' => 'required',
             'message_1_week' => 'required',
             'subject_1_day' => 'required',
-            'message_1_day' => 'required'
+            'message_1_day' => 'required',
         ]);
 
         $expiryReminderEmail = CourseExpiryReminder::firstOrNew(['course_id' => $course_id]);
@@ -831,19 +811,19 @@ class CourseController extends Controller
         $expiryReminderEmail->save();
 
         return redirect()->back()->with([
-           'errors' => AdminHelpers::createMessageBag('Expiration email reminder saved.'),
-           'alert_type' => 'success'
+            'errors' => AdminHelpers::createMessageBag('Expiration email reminder saved.'),
+            'alert_type' => 'success',
         ]);
     }
 
     /**
      * Add all learners to all webinars
-     * @param $course_id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addLearnersToWebinars( $course_id, Request $request )
+    public function addLearnersToWebinars($course_id, Request $request)
     {
-        if (!$request->webinar_id) {
+        if (! $request->webinar_id) {
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Webinar id is required.'),
                 'alert_type' => 'danger']);
         }
@@ -853,12 +833,11 @@ class CourseController extends Controller
         $learners = $course->learners->get();
 
         $scheduledRegistration = WebinarScheduledRegistration::firstOrCreate([
-           'webinar_id' => $request->webinar_id
+            'webinar_id' => $request->webinar_id,
         ]);
 
         $scheduledRegistration->date = $request->date;
         $scheduledRegistration->save();
-
 
         // run the cron
         if ($request->has('run_cron')) {
@@ -914,13 +893,7 @@ class CourseController extends Controller
 
     }
 
-    /**
-     * @param $package_id
-     * @param $user_id
-     * @param $courseTakenID
-     * @param ShopController $shopController
-     */
-    public function resendWelcomeEmailToUser( $package_id, $user_id, $courseTakenID, ShopController $shopController )
+    public function resendWelcomeEmailToUser($package_id, $user_id, $courseTakenID, ShopController $shopController)
     {
         $user = User::findOrFail($user_id);
         $package = Package::findOrFail($package_id);
@@ -930,16 +903,16 @@ class CourseController extends Controller
         $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
 
         $search_string = [
-            '[username]', '[password]'
+            '[username]', '[password]',
         ];
         $replace_string = [
-            $user_email, $password
+            $user_email, $password,
         ];
         $email_content = str_replace($search_string, $replace_string, $package->course->email);
 
         $encode_email = encrypt($user_email);
         $redirectLink = encrypt(route('learner.course'));
-        $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
+        $actionUrl = route('auth.login.emailRedirect', [$encode_email, $redirectLink]);
         $actionText = 'Mine Kurs';
         $attachments = [asset($shopController->generateDocx($user->id, $package->id)),
             asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
@@ -950,53 +923,51 @@ class CourseController extends Controller
     }
 
     /**
-     * @param $course_id
-     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateCertificateDates( $course_id, Request $request )
+    public function updateCertificateDates($course_id, Request $request)
     {
         $course = Course::find($course_id);
-        $course->completed_date = $request->completed_date ?: NULL;
-        $course->issue_date = $request->issue_date ?: NULL;
+        $course->completed_date = $request->completed_date ?: null;
+        $course->issue_date = $request->issue_date ?: null;
         $course->save();
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Certificate dates updated successfully.'),
             'alert_type' => 'success']);
     }
 
     /**
-     * @param $course_id
-     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function saveCertificateTemplate( $course_id, Request $request )
+    public function saveCertificateTemplate($course_id, Request $request)
     {
 
-        CourseCertificate::updateOrCreate([
-            'course_id' => $course_id
-        ], [
-            'template' => $request->template
-        ]);
-        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Certificate saved successfully.'),
-            'alert_type' => 'success']);
-
-    }
-
-    public function savePackageCertificateTemplate( $course_id, $package_id, Request $request )
-    {
-        
         CourseCertificate::updateOrCreate([
             'course_id' => $course_id,
-            'package_id' => $package_id
         ], [
-            'template' => $request->template
+            'template' => $request->template,
+        ]);
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Certificate saved successfully.'),
+            'alert_type' => 'success']);
+
+    }
+
+    public function savePackageCertificateTemplate($course_id, $package_id, Request $request)
+    {
+
+        CourseCertificate::updateOrCreate([
+            'course_id' => $course_id,
+            'package_id' => $package_id,
+        ], [
+            'template' => $request->template,
         ]);
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Certificate saved successfully.'),
             'alert_type' => 'success']);
     }
 
-    public function exportHiddenWebinars( $course_id )
+    public function exportHiddenWebinars($course_id)
     {
         $course = Course::find($course_id);
         if ($course) {
@@ -1006,18 +977,20 @@ class CourseController extends Controller
             foreach ($course->webinars()->where('status', 0)->get() as $webinar) {
                 $webinars[] = [$webinar->title, $webinar->description, $webinar->start_date, $webinar->link];
             }
-            $excel          = \App::make('excel');
+            $excel = \App::make('excel');
+
             return $excel->download(new GenericExport($webinars, $headers), 'Hidden Webinars.xlsx');
         }
+
         return redirect()->back();
     }
 
     public function exportFormerLearners()
     {
         $formerCourses = FormerCourse::join('packages', 'former_courses.package_id', '=', 'packages.id')
-        ->whereIn('packages.course_id', [47, 68, 74])
-        ->select('former_courses.*')
-        ->get();
+            ->whereIn('packages.course_id', [47, 68, 74])
+            ->select('former_courses.*')
+            ->get();
 
         $headers = ['name', 'email'];
         $learners = [];
@@ -1026,16 +999,17 @@ class CourseController extends Controller
             $learners[] = [$formerCourse->user->full_name, $formerCourse->user->email];
         }
 
-        $excel          = \App::make('excel');
+        $excel = \App::make('excel');
+
         return $excel->download(new GenericExport($learners, $headers), 'Former Learners.xlsx');
     }
 
     public function exportCurrentLearners()
     {
         $coursesTaken = CoursesTaken::join('packages', 'courses_taken.package_id', '=', 'packages.id')
-        ->whereIn('packages.course_id', [47, 68, 74])
-        ->select('courses_taken.*')
-        ->get();
+            ->whereIn('packages.course_id', [47, 68, 74])
+            ->select('courses_taken.*')
+            ->get();
 
         $headers = ['name', 'email'];
         $learners = [];
@@ -1044,26 +1018,28 @@ class CourseController extends Controller
             $learners[] = [$courseTaken->user->full_name, $courseTaken->user->email];
         }
 
-        $excel          = \App::make('excel');
+        $excel = \App::make('excel');
+
         return $excel->download(new GenericExport($learners, $headers), 'Current Learners.xlsx');
     }
 
     public function applicationDetails($application_id)
     {
         $application = CourseApplication::find($application_id);
+
         return view('backend.course.partials._application-details', compact('application'));
     }
 
     public function applicationDownload($application_id)
     {
         $application = CourseApplication::find($application_id);
-        
-        $zipFileName = $application->user->full_name . '.zip';
-        $public_dir  = public_path('storage');
-        $zip         = new \ZipArchive();
 
-        if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
-            die ("An error occurred creating your ZIP file.");
+        $zipFileName = $application->user->full_name.'.zip';
+        $public_dir = public_path('storage');
+        $zip = new \ZipArchive;
+
+        if ($zip->open($public_dir.'/'.$zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== true) {
+            exit('An error occurred creating your ZIP file.');
         }
 
         $pdf = \App::make('dompdf.wrapper');
@@ -1073,7 +1049,7 @@ class CourseController extends Controller
         $filePaths = explode(', ', $application->file_path);
         foreach ($filePaths as $applicationFile) {
             $filePath = trim($applicationFile);
-            //get the correct filename
+            // get the correct filename
             $expFileName = explode('/', $filePath);
             $file = str_replace('\\', '/', public_path());
 
@@ -1105,7 +1081,7 @@ class CourseController extends Controller
         $courseService->notifyUser($application->user_id, $application->package_id, $courseTaken, true, true);
         $application->approved_date = now();
         $application->save();
-        
+
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Application approved.'),
             'alert_type' => 'success',
@@ -1122,7 +1098,7 @@ class CourseController extends Controller
         ]);
     }
 
-    public function canReceiveEmailUpdate( $course_taken_id, Request $request )
+    public function canReceiveEmailUpdate($course_taken_id, Request $request)
     {
         $courseTaken = CoursesTaken::find($course_taken_id);
         $success = false;
@@ -1130,17 +1106,17 @@ class CourseController extends Controller
         if ($courseTaken) {
             $courseTaken->can_receive_email = $request->can_receive_email;
             $courseTaken->save();
-            $success = TRUE;
+            $success = true;
         }
 
         return response()->json([
             'data' => [
                 'success' => $success,
-            ]
+            ],
         ]);
     }
 
-    public function inFacebookGroupUpdate( $course_taken_id, Request $request )
+    public function inFacebookGroupUpdate($course_taken_id, Request $request)
     {
         $courseTaken = CoursesTaken::find($course_taken_id);
         $success = false;
@@ -1148,13 +1124,13 @@ class CourseController extends Controller
         if ($courseTaken) {
             $courseTaken->in_facebook_group = $request->in_facebook_group;
             $courseTaken->save();
-            $success = TRUE;
+            $success = true;
         }
 
         return response()->json([
             'data' => [
                 'success' => $success,
-            ]
+            ],
         ]);
     }
 
@@ -1166,43 +1142,41 @@ class CourseController extends Controller
         if ($courseTaken) {
             $courseTaken->exclude_in_scheduled_registration = $request->exclude_in_scheduled_registration;
             $courseTaken->save();
-            $success = TRUE;
+            $success = true;
         }
 
         return response()->json([
             'data' => [
                 'success' => $success,
-            ]
+            ],
         ]);
     }
 
     /**
-     * @param $course_id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function certificate( $course_id, $package_id )
+    public function certificate($course_id, $package_id)
     {
         $course = Course::find($course_id);
         $package = Package::find($package_id);
         $section = 'certificate';
         $certificate = CourseCertificate::where('course_id', $course_id)
-        ->where('package_id', $package_id)->first();
+            ->where('package_id', $package_id)->first();
 
-        if (!$certificate) {
+        if (! $certificate) {
             $certificate = view('backend.course.partials.certificate-template')->render();
         } else {
             $certificate = $certificate->template;
         }
 
         return view('backend.course.certificate.form', compact('course', 'package', 'section', 'certificate'));
-        //return response()->json($certificate);
+        // return response()->json($certificate);
     }
 
     /**
-     * @param $course_id
      * @return mixed
      */
-    public function downloadCertificate( $course_id )
+    public function downloadCertificate($course_id)
     {
         $course = Course::find($course_id);
         $certificate = $course->certificate;
@@ -1210,7 +1184,8 @@ class CourseController extends Controller
         $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML($certificate->template);
-        return $pdf->download($course->title . ' certificate.pdf');
+
+        return $pdf->download($course->title.' certificate.pdf');
     }
 
     public function downloadPackageCertificate($course_id, $package_id)
@@ -1225,7 +1200,8 @@ class CourseController extends Controller
         $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML($certificate->template);
-        return $pdf->download($course->title . ' certificate.pdf');
+
+        return $pdf->download($course->title.' certificate.pdf');
     }
 
     public function getAllPaidLearners()
@@ -1234,27 +1210,28 @@ class CourseController extends Controller
         $packages = Package::whereIn('course_id', $courses)->get()->pluck('id')->toArray();
 
         $coursesTaken = CoursesTaken::whereYear('created_at', 2021)
-            //->where('is_free', 0)
+            // ->where('is_free', 0)
             ->whereIn('package_id', $packages)
             ->get();
 
-        $learnerList    = [];
-        $headers  = ['learner', 'email', 'course']; // first row in excel
+        $learnerList = [];
+        $headers = ['learner', 'email', 'course']; // first row in excel
 
         foreach ($coursesTaken as $courseTaken) {
             $learnerList[] = [$courseTaken->user->full_name, $courseTaken->user->email, $courseTaken->package->course->title];
         }
 
         $excel = \App::make('excel');
+
         return $excel->download(new GenericExport($learnerList, $headers), 'Course Buyers 2021.xlsx');
     }
 
     public function allUpcomingWebinars()
     {
-        $webinars = Webinar::where('start_date', '>=' , now()->format('Y-m-d H:i:s'))
+        $webinars = Webinar::where('start_date', '>=', now()->format('Y-m-d H:i:s'))
             ->oldest('start_date')
             ->paginate(20);
-        
+
         return view('backend.course.webinars.upcoming', compact('webinars'));
     }
 
@@ -1262,17 +1239,18 @@ class CourseController extends Controller
     {
         $courses = Course::whereNotIn('id', function ($query) {
             $query->select('course_id')
-                  ->from('course_certificates');
+                ->from('course_certificates');
         })->get();
 
         $courseList = [];
-        $headers  = ['id', 'title'];
+        $headers = ['id', 'title'];
 
-        foreach($courses as $course) {
+        foreach ($courses as $course) {
             $courseList[] = [$course->id, $course->title];
         }
 
         $excel = \App::make('excel');
+
         return $excel->download(new GenericExport($courseList, $headers), 'Course without Certificate.xlsx');
     }
 }

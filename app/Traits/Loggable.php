@@ -4,15 +4,18 @@ namespace App\Traits;
 
 use DB;
 
-trait Loggable {
+trait Loggable
+{
+    protected static $logTable = 'activity_logs';
 
-    static protected $logTable = 'activity_logs';
-
-    static function logToDb($model, $logType) 
+    public static function logToDb($model, $logType)
     {
-        if (!auth()->check()) return;
-        if ($logType == 'create') $originalData = json_encode($model);
-        else {
+        if (! auth()->check()) {
+            return;
+        }
+        if ($logType == 'create') {
+            $originalData = json_encode($model);
+        } else {
             $originalData = json_encode($model->getOriginal());
         }
 
@@ -28,7 +31,6 @@ trait Loggable {
                 }
             }
         }
-        
 
         $tableName = $model->getTable();
         $dateTime = date('Y-m-d H:i:s');
@@ -39,23 +41,22 @@ trait Loggable {
             'log_date' => $dateTime,
             'table_name' => $tableName,
             'log_type' => $logType,
-            'data' => $originalData
+            'data' => $originalData,
         ]);
     }
 
     public static function bootLoggable()
     {
-        self::updated(function($model) {
+        self::updated(function ($model) {
             self::logToDb($model, 'edit');
         });
 
-        self::deleted(function($model) {
+        self::deleted(function ($model) {
             self::logToDb($model, 'delete');
         });
 
-        self::created(function($model) {
+        self::created(function ($model) {
             self::logToDb($model, 'create');
         });
     }
-
 }

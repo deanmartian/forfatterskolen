@@ -14,6 +14,7 @@ class UpdateFikenContactDetailsJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $learner;
+
     protected $headers = [];
 
     /**
@@ -37,36 +38,36 @@ class UpdateFikenContactDetailsJob implements ShouldQueue
     public function handle()
     {
         $address = $this->learner->address;
-        Log::info("------------------------- Update fiken contact details job here -------------------------");
+        Log::info('------------------------- Update fiken contact details job here -------------------------');
 
         $fields = [
             'name' => $this->learner->full_name,
             'email' => $this->learner->email,
             'address' => [
                 'streetAddress' => $address->street,
-                'city'          => $address->city,
-                'postCode'      => $address->zip,
-                'country'       => 'Norge'
-            ]
+                'city' => $address->city,
+                'postCode' => $address->zip,
+                'country' => 'Norge',
+            ],
         ];
 
         $field_string = json_encode($fields, true);
-        
-        $fikenUrl = 'https://api.fiken.no/api/v2/companies/forfatterskolen-as/contacts/' . $this->learner->fiken_contact_id;
+
+        $fikenUrl = 'https://api.fiken.no/api/v2/companies/forfatterskolen-as/contacts/'.$this->learner->fiken_contact_id;
         $ch = curl_init($fikenUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         $data = curl_exec($ch);
-        Log::info("after request");
+        Log::info('after request');
         Log::info($data);
 
         // get the http code response
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        Log::info("http code = " .$http_code);
-        if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
-            Log::info("error ================= " .$http_code);
+        Log::info('http code = '.$http_code);
+        if (! in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
+            Log::info('error ================= '.$http_code);
         }
         curl_close($ch);
     }

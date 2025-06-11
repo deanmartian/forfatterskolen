@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Address extends Model
 {
     use Loggable;
-    
+
     /**
      * The database table used by the model.
      *
@@ -25,6 +25,6 @@ class Address extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 }

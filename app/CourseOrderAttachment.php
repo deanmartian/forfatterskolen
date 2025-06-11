@@ -6,17 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class CourseOrderAttachment extends Model
 {
-
     protected $table = 'course_order_attachments';
+
     protected $guarded = ['id'];
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function package()
     {
-        return $this->belongsTo('App\Package');
+        return $this->belongsTo(\App\Package::class);
     }
 }

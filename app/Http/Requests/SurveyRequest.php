@@ -26,7 +26,7 @@ class SurveyRequest extends FormRequest
         return [
             'title' => 'required',
             'description' => 'required',
-            'course_id' => 'required|exists:courses,id'
+            'course_id' => 'required|exists:courses,id',
         ];
     }
 }

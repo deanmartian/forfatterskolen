@@ -22,22 +22,20 @@ class Feedback extends Model
 
     public function manuscript()
     {
-        return $this->belongsTo('App\Manuscript');
+        return $this->belongsTo(\App\Manuscript::class);
     }
-
-
-    
 
     public function getFilenameAttribute($value)
     {
-        if( !$value ) return [];
+        if (! $value) {
+            return [];
+        }
+
         return json_decode($value);
     }
 
-    
     public function getCreatedAtAttribute($value)
     {
         return date_format(date_create($value), 'M d, Y h:i a');
     }
-
 }

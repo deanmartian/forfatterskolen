@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use App\Traits\Loggable;
@@ -7,34 +8,35 @@ use Illuminate\Database\Eloquent\Model;
 class Webinar extends Model
 {
     use Loggable;
-    
+
     protected $table = 'webinars';
+
     protected $fillable = [
-        'course_id', 'title', 'description', 'host', 'start_date', 'image' , 'link', 'set_as_replay', 'status'
+        'course_id', 'title', 'description', 'host', 'start_date', 'image', 'link', 'set_as_replay', 'status',
     ];
 
     protected static function boot()
     {
         parent::boot();
 
-        static::deleting(function($query) {
+        static::deleting(function ($query) {
             $query->webinar_editors()->delete();
         });
     }
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function registrants()
     {
-        return $this->hasMany('App\WebinarRegistrant');
+        return $this->hasMany(\App\WebinarRegistrant::class);
     }
 
     public function webinar_presenters()
     {
-        return $this->hasMany('App\WebinarPresenter');
+        return $this->hasMany(\App\WebinarPresenter::class);
     }
 
     public function scopeActive($query)
@@ -49,13 +51,11 @@ class Webinar extends Model
 
     public function schedule()
     {
-        return $this->hasOne('App\WebinarScheduledRegistration');
+        return $this->hasOne(\App\WebinarScheduledRegistration::class);
     }
 
     public function webinar_editors()
     {
-        return $this->hasMany('App\WebinarEditor');
+        return $this->hasMany(\App\WebinarEditor::class);
     }
-
-
 }

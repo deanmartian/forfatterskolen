@@ -2,13 +2,13 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Http\FrontendHelpers;
 use App\Traits\Loggable;
+use Illuminate\Database\Eloquent\Model;
 
 class Lesson extends Model
 {
     use Loggable;
+
     /**
      * The database table used by the model.
      *
@@ -22,46 +22,45 @@ class Lesson extends Model
      * @var array
      */
     protected $fillable = ['course_id', 'title', 'whole_lesson_file', 'description', 'description_simplemde', 'delay', 'period',
-                'allow_lesson_download'];
+        'allow_lesson_download'];
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
-    
     public function getCreatedAtAttribute($value)
     {
         return date_format(date_create($value), 'M d, Y h:i a');
     }
 
-
     public function videos()
     {
-        return $this->hasMany('App\Video')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\Video::class)->orderBy('created_at', 'desc');
     }
 
     public function documents()
     {
-        return $this->hasMany('App\LessonDocuments')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\LessonDocuments::class)->orderBy('created_at', 'desc');
     }
 
     public function lessonContent()
     {
-        return $this->hasMany('App\LessonContent')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\LessonContent::class)->orderBy('created_at', 'desc');
     }
 
     /**
      * Delete related table/model
      */
-    protected static function boot() {
+    protected static function boot()
+    {
         parent::boot();
 
-        static::deleting(function($lesson) { // before delete() method call this
+        static::deleting(function ($lesson) { // before delete() method call this
             // delete the lesson documents first before deleting the actual record
             foreach ($lesson->documents as $document) {
                 $file = public_path($document->document);
-                if(\File::isFile($file)){
+                if (\File::isFile($file)) {
                     \File::delete($file);
                 }
             }
@@ -69,5 +68,4 @@ class Lesson extends Model
             $lesson->documents()->delete(); // delete lesson document
         });
     }
-
 }

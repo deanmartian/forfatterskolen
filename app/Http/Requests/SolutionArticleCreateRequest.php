@@ -15,7 +15,7 @@ class SolutionArticleCreateRequest extends FormRequest
     {
         return [
             'title' => 'required|string',
-            'details' => 'required|string'
+            'details' => 'required|string',
         ];
     }
 }

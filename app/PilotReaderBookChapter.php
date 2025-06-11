@@ -16,6 +16,7 @@ class PilotReaderBookChapter extends Model
     /**
      * The attributes that are mass assignable.
      * field type 1 = chapter, 2 = questionnaire
+     *
      * @var array
      */
     protected $fillable = ['pilot_reader_book_id', 'title', 'pre_read_guidance', 'post_read_guidance', 'notify_readers',
@@ -23,36 +24,36 @@ class PilotReaderBookChapter extends Model
 
     public function book()
     {
-        return $this->belongsTo('App\PilotReaderBook');
+        return $this->belongsTo(\App\PilotReaderBook::class);
     }
 
     public function notes()
     {
-        return $this->hasMany('App\PilotReaderChapterNote');
+        return $this->hasMany(\App\PilotReaderChapterNote::class);
     }
 
     public function ownFeedback()
     {
-        return $this->hasMany('App\PilotReaderChapterFeedback','chapter_id','id')
+        return $this->hasMany(\App\PilotReaderChapterFeedback::class, 'chapter_id', 'id')
             ->where('user_id', \Auth::user()->id);
     }
 
     public function feedbacks()
     {
-        return $this->hasMany('App\PilotReaderChapterFeedback','chapter_id','id')
+        return $this->hasMany(\App\PilotReaderChapterFeedback::class, 'chapter_id', 'id')
             ->where('user_id', '!=', \Auth::user()->id);
     }
 
     // get the chapter that the logged in user have read
     public function readingChapter()
     {
-        return $this->hasMany('App\PilotReaderBookReadingChapter','chapter_id','id')
-        ->where('user_id', \Auth::user()->id);
+        return $this->hasMany(\App\PilotReaderBookReadingChapter::class, 'chapter_id', 'id')
+            ->where('user_id', \Auth::user()->id);
     }
 
     public function readers()
     {
-        return $this->hasMany('App\PilotReaderBookReadingChapter','chapter_id','id');
+        return $this->hasMany(\App\PilotReaderBookReadingChapter::class, 'chapter_id', 'id');
     }
 
     public function getCreatedAtAttribute($value)
@@ -62,6 +63,6 @@ class PilotReaderBookChapter extends Model
 
     public function versions()
     {
-        return $this->hasMany('App\PilotReaderBookChapterVersion','chapter_id','id');
+        return $this->hasMany(\App\PilotReaderBookChapterVersion::class, 'chapter_id', 'id');
     }
 }

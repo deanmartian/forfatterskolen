@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Transformer;
 
-use App\PilotReaderBook;
 use App\PilotReaderBookReading;
-use League\Fractal\TransformerAbstract;
-use Carbon\Carbon;
 use App\User;
+use Carbon\Carbon;
+use League\Fractal\TransformerAbstract;
 
 class ReadersTransformer extends TransformerAbstract
 {
@@ -26,18 +26,18 @@ class ReadersTransformer extends TransformerAbstract
     protected function getFullName($user_id)
     {
         $user = User::where('id', $user_id)->first();
-        return $user->first_name . " " . $user->last_name ."<br/>". $user->email;
+
+        return $user->first_name.' '.$user->last_name.'<br/>'.$user->email;
     }
 
     protected function getRemoveAt($remove_at)
     {
-        return $remove_at? Carbon::parse($remove_at)->format('M d, H:ia') : null;
+        return $remove_at ? Carbon::parse($remove_at)->format('M d, H:ia') : null;
     }
 
     public function getReason($book_reader)
     {
-        if($book_reader->status === 2)
-        {
+        if ($book_reader->status === 2) {
             return $book_reader->reason;
         }
 

@@ -1,22 +1,24 @@
 <?php
+
 namespace App\Transformer;
-use League\Fractal\TransformerAbstract;
 
 use App\PrivateGroupDiscussion;
-
 use Auth;
 use Carbon\Carbon;
+use League\Fractal\TransformerAbstract;
+
 class PrivateGroupDiscussionsRepliesTransFormer extends TransformerAbstract
 {
     public function transform(PrivateGroupDiscussion $discussion)
-	{  
+    {
         $replies = $discussion->replies()->orderBy('created_at', 'desc')->get();
         $author = $discussion->user;
+
         return [
             'id' => (int) $discussion->id,
             'group_title' => $discussion->group->name,
             'subject' => $discussion->subject,
-            'owner' => $author->first_name . " " . $author->last_name,
+            'owner' => $author->first_name.' '.$author->last_name,
             'is_owner' => $author->id === Auth::user()->id,
             'is_announcement' => $discussion->is_announcement,
             'message' => $discussion->message,
@@ -40,6 +42,7 @@ class PrivateGroupDiscussionsRepliesTransFormer extends TransformerAbstract
             $data[$key]['is_owner'] = $reply->user->id === Auth::user()->id;
             $data[$key]['date'] = $this->getDate($reply->created_at);
         }
+
         return $data;
     }
 }

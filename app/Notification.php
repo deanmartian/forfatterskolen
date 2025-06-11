@@ -1,10 +1,11 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Notification extends Model {
-
+class Notification extends Model
+{
     /**
      * The database table used by the model.
      *
@@ -21,6 +22,6 @@ class Notification extends Model {
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 }

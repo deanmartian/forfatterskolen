@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -16,7 +17,6 @@ class CheckPageAccess
     /**
      * Create a new filter instance.
      *
-     * @param  Guard  $auth
      * @return void
      */
     public function __construct(Guard $auth)
@@ -28,16 +28,16 @@ class CheckPageAccess
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param int $page_id
+     * @param  int  $page_id
      * @return mixed
      */
     public function handle($request, Closure $next, $page_id)
     {
         // check if the admin have set page access and if no access to the page id passed
-        if (\Auth::user()->pageAccess->count() && !in_array($page_id, \Auth::user()->pageAccess->pluck('page_id')->toArray())) {
+        if (\Auth::user()->pageAccess->count() && ! in_array($page_id, \Auth::user()->pageAccess->pluck('page_id')->toArray())) {
             return redirect()->to('/');
         }
+
         return $next($request);
     }
 }

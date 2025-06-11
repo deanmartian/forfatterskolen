@@ -6,20 +6,18 @@ use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class GenericExport implements FromArray, WithHeadings, ShouldAutoSize
+class GenericExport implements FromArray, ShouldAutoSize, WithHeadings
 {
-
     /**
-     * @var $records array list of data
-     * @var $headers array list of headers
+     * @var array list of data
+     * @var array list of headers
      */
     protected $records;
+
     protected $headers;
 
     /**
      * GenericExport constructor.
-     * @param $records
-     * @param $headers
      */
     public function __construct($records, $headers)
     {
@@ -29,19 +27,14 @@ class GenericExport implements FromArray, WithHeadings, ShouldAutoSize
 
     /**
      * data to be export
-     * @return array
      */
     public function array(): array
     {
         return $this->records;
     }
 
-    /**
-     * @return array
-     */
     public function headings(): array
     {
         return $this->headers;
     }
-
 }

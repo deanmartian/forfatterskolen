@@ -24,7 +24,7 @@ class AddWorkshopRequest extends FormRequest
      */
     public function rules(Request $request)
     {
-        //check if the workshop is free and use this rule
+        // check if the workshop is free and use this rule
         if ($request->is_free) {
             return [
                 'title' => 'required|string',

@@ -2,12 +2,10 @@
 
 namespace App;
 
-
 use Illuminate\Database\Eloquent\Model;
 
 class EmailOutRecipient extends Model
 {
-
     /**
      * The database table used by the model.
      *
@@ -24,7 +22,6 @@ class EmailOutRecipient extends Model
 
     public function emailOut()
     {
-        return $this->belongsTo('App\EmailOut');
+        return $this->belongsTo(\App\EmailOut::class);
     }
-
 }

@@ -8,16 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class ShopManuscriptUpgrade extends Model
 {
     protected $table = 'shop_manuscripts_upgrade';
+
     protected $fillable = ['shop_manuscript_id', 'upgrade_shop_manuscript_id', 'price'];
+
     protected $with = ['upgrade_manuscript'];
+
     protected $appends = [
         'price_formatted',
-        'price_25_additional'
+        'price_25_additional',
     ];
 
     public function upgrade_manuscript()
     {
-        return $this->belongsTo('App\ShopManuscript', 'upgrade_shop_manuscript_id');
+        return $this->belongsTo(\App\ShopManuscript::class, 'upgrade_shop_manuscript_id');
     }
 
     public function getPriceFormattedAttribute()
@@ -31,7 +34,7 @@ class ShopManuscriptUpgrade extends Model
         if ($userHasPaidCourse) {
             return 0;
         }
+
         return $this->attributes['price'] * .25;
     }
-
 }

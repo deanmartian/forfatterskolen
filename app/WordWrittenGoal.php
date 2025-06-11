@@ -12,6 +12,7 @@ class WordWrittenGoal extends Model
      * @var string
      */
     protected $table = 'words_written_goals';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,7 +22,7 @@ class WordWrittenGoal extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function getFromDateAttribute($value)

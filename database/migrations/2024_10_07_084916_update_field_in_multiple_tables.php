@@ -6,13 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 class UpdateFieldInMultipleTables extends Migration
 {
-
     protected $tables = [
         'storage_distribution_costs',
         'storage_inventories',
         'storage_sales',
         'storage_various',
     ];
+
     /**
      * Run the migrations.
      *

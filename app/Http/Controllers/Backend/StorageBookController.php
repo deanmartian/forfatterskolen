@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\ProjectRegistration;
 use DB;
 
-class StorageBookController extends Controller {
-
+class StorageBookController extends Controller
+{
     public function index()
     {
-        /* $projectCentralDistributions = ProjectRegistration::join('project_books', 
+        /* $projectCentralDistributions = ProjectRegistration::join('project_books',
             'project_registrations.project_id', '=', 'project_books.project_id')
             ->select('project_registrations.*', 'book_name')
         ->where([
@@ -36,10 +36,9 @@ class StorageBookController extends Controller {
             ->where('cd.in_storage', 1)
             ->select('cd.*', 'project_books.book_name', 'isbn.type as type_of_isbn', 'isbn.book_price as isbn_book_price')
             ->get();
-        
+
         $isbnTypes = (new ProjectRegistration)->isbnTypes();
 
         return view('backend.storage-books.index', compact('projectCentralDistributions', 'isbnTypes'));
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -10,7 +11,9 @@ class MultipleEmailConfirmation extends Mailable
     use Queueable, SerializesModels;
 
     public $name;
+
     public $email;
+
     public $token;
 
     public function __construct($email_data)
@@ -26,5 +29,4 @@ class MultipleEmailConfirmation extends Mailable
             ->subject('Email Confirmation')
             ->view('emails.email_confirmation');
     }
-
 }

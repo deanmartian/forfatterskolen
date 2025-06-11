@@ -22,12 +22,13 @@ class WorkshopEmailLog extends Model
 
     public function workshop()
     {
-        return $this->belongsTo('App\Workshop');
+        return $this->belongsTo(\App\Workshop::class);
     }
 
     public function getDateSentAttribute()
     {
         $date = $this->attributes['created_at'];
+
         return date_format(date_create($date), 'M d, Y h:i a');
     }
 }

@@ -10,21 +10,20 @@ use Illuminate\Http\Request;
 
 class CourseDiscountController extends Controller
 {
-
     /**
      * Display all of the course discounts
-     * @param $course_id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index($course_id)
     {
         $course = Course::find($course_id);
 
-        if (!$course) {
+        if (! $course) {
             abort(404);
         }
-        
-        $typeList = (new CourseDiscount())->typeList();
+
+        $typeList = (new CourseDiscount)->typeList();
 
         $discounts = $course->discounts()->paginate(15);
 
@@ -33,25 +32,24 @@ class CourseDiscountController extends Controller
 
     /**
      * Create new course discount
-     * @param $course_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store($course_id, Request $request)
     {
 
-        if ($request->valid_from && !$request->valid_to) {
+        if ($request->valid_from && ! $request->valid_to) {
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Please add a valid to value.'),
                 'alert_type' => 'danger']);
         }
 
         CourseDiscount::create([
-            'course_id'     => $course_id,
-            'coupon'        => $request->coupon,
-            'discount'      => $request->discount,
-            'valid_from'    => $request->valid_from,
-            'valid_to'      => $request->valid_to,
-            'type'          => $request->type
+            'course_id' => $course_id,
+            'coupon' => $request->coupon,
+            'discount' => $request->discount,
+            'valid_from' => $request->valid_from,
+            'valid_to' => $request->valid_to,
+            'type' => $request->type,
         ]);
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Discount added successfully.'),
@@ -62,7 +60,7 @@ class CourseDiscountController extends Controller
     {
         $discount = CourseDiscount::find($discount_id);
 
-        if (!$discount) {
+        if (! $discount) {
             abort(404);
         }
 
@@ -82,16 +80,15 @@ class CourseDiscountController extends Controller
 
     /**
      * Delete the course discount
-     * @param $course_id
-     * @param $discount_id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($course_id, $discount_id)
     {
         $discount = CourseDiscount::findOrFail($discount_id);
         $discount->forceDelete();
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Discount deleted successfully.'),
             'alert_type' => 'success']);
     }
-
 }

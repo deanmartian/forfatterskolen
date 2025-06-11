@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class WorkshopMenu extends Model
 {
     protected $table = 'workshop_menus';
+
     protected $fillable = ['workshop_id', 'title', 'description', 'image'];
 
     public function workshop()
     {
-        return $this->belongsTo('App\Workshop');
+        return $this->belongsTo(\App\Workshop::class);
     }
 }

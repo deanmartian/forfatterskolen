@@ -22,25 +22,25 @@ class AssembleBookController extends Controller
         $printCounts = PublishingPrintCount::all();
         $printCovers = PublishingPrintCover::all();
         $marketingHelps = PublishingMarketingHelp::all();
+
         return response()->json([
             'print_colors' => $printColors,
             'print_counts' => $printCounts,
             'print_covers' => $printCovers,
-            'marketing_helps' => $marketingHelps
+            'marketing_helps' => $marketingHelps,
         ]);
     }
 
     /**
      * save the cover or color
      *
-     * @param Request $request
      * @return json
      */
-    public function saveCoverOrColor( Request $request )
+    public function saveCoverOrColor(Request $request)
     {
         $this->validate($request, [
             'name' => 'required',
-            'price' => 'required'
+            'price' => 'required',
         ]);
 
         $model = $request->formType === 'cover' ? PublishingPrintCover::find($request->id) : PublishingPrintColor::find($request->id);
@@ -51,12 +51,12 @@ class AssembleBookController extends Controller
         return $model;
     }
 
-    public function saveCountOrHelp( Request $request )
+    public function saveCountOrHelp(Request $request)
     {
         $this->validate($request, [
             'name' => 'required',
             'value' => 'required|numeric',
-            'price' => 'required|numeric'
+            'price' => 'required|numeric',
         ]);
 
         $model = $request->formType === 'count' ? PublishingPrintCount::find($request->id) : PublishingMarketingHelp::find($request->id);

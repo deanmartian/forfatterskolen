@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Jobs\AddMailToQueueJob;
-use App\Mail\SubjectBodyEmail;
 use App\User;
 use Illuminate\Console\Command;
 
@@ -43,10 +42,10 @@ class DontAvailAnythingCommand extends Command
     public function handle()
     {
         CronLog::create(['activity' => 'DontAvailAnything CRON running.']);
-        $yesterday = date("Y-m-d", strtotime( '-1 days' ) ); // get the date yesterday
-        $users = User::whereDate('created_at', $yesterday )
-                ->where('role', 2)->get(); // get users created yesterday
-        foreach($users as $user) {
+        $yesterday = date('Y-m-d', strtotime('-1 days')); // get the date yesterday
+        $users = User::whereDate('created_at', $yesterday)
+            ->where('role', 2)->get(); // get users created yesterday
+        foreach ($users as $user) {
             // check if the user don't have workshop, manuscript and courses taken
             if ($user->workshopsTaken->count() == 0 && $user->shopManuscriptsTaken->count() == 0 && count($user->coursesTaken) == 0
             && $user->comeptitionApplication->count() === 0 && $user->giftPurchases->count() === 0) {

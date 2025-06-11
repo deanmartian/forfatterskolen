@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\CronLog;
 use App\Http\FikenInvoice;
-use App\Invoice;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -44,25 +43,25 @@ class InvoiceVippsEfakturaCommand extends Command
     {
         CronLog::create(['activity' => 'InvoiceVippsEfaktura CRON running.']);
 
-        $dueDate    = Carbon::today()->addDay(15)->format('Y-m-d');
-        $invoices   = \DB::table('invoices')
+        $dueDate = Carbon::today()->addDay(15)->format('Y-m-d');
+        $invoices = \DB::table('invoices')
             ->select('invoices.*', 'vipps_phone_number')
             ->leftJoin('users', 'users.id', '=', 'invoices.user_id')
             ->leftJoin('addresses', 'addresses.user_id', '=', 'users.id')
-            ->whereDate('fiken_dueDate',  $dueDate)
-            ->where('fiken_is_paid', '=',0)
+            ->whereDate('fiken_dueDate', $dueDate)
+            ->where('fiken_is_paid', '=', 0)
             ->whereNotNull('vipps_phone_number')
             ->get();
 
         foreach ($invoices as $invoice) {
             $user = User::find($invoice->user_id);
-            $fikenInvoice = new FikenInvoice();
+            $fikenInvoice = new FikenInvoice;
             $fikenInvoice->setMobileNumber($invoice->vipps_phone_number);
             $fikenInvoice->setFikenInvoiceId($invoice->fiken_invoice_id);
             $response = $fikenInvoice->vippsEFaktura($user);
 
-            if ($response['code'] == 200 ) {
-                CronLog::create(['activity' => 'InvoiceVippsEfaktura created for invoice id ' . $invoice->id . '.']);
+            if ($response['code'] == 200) {
+                CronLog::create(['activity' => 'InvoiceVippsEfaktura created for invoice id '.$invoice->id.'.']);
             }
 
         }

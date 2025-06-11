@@ -7,7 +7,6 @@ use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Invoice;
 use App\Jobs\AddMailToQueueJob;
-use App\Mail\SubjectBodyEmail;
 use App\Transaction;
 use App\User;
 use Carbon\Carbon;
@@ -48,17 +47,17 @@ class InvoiceDueReminder extends Command
     {
         CronLog::create(['activity' => 'InvoiceDueReminder CRON running.']);
 
-        $dueDate    = Carbon::today()->addDay(14)->format('Y-m-d');
+        $dueDate = Carbon::today()->addDay(14)->format('Y-m-d');
         /*$invoices = Invoice::whereDate('fiken_dueDate',  $dueDate)
             ->where('fiken_is_paid', '=',0)
             ->get();*/
 
-        $invoices   = \DB::table('invoices')
+        $invoices = \DB::table('invoices')
             ->select('invoices.*', 'vipps_phone_number')
             ->leftJoin('users', 'users.id', '=', 'invoices.user_id')
             ->leftJoin('addresses', 'addresses.user_id', '=', 'users.id')
-            ->whereDate('fiken_dueDate',  $dueDate)
-            ->where('fiken_is_paid', '=',0)
+            ->whereDate('fiken_dueDate', $dueDate)
+            ->where('fiken_is_paid', '=', 0)
             ->whereNull('vipps_phone_number')
             ->whereNull('users.deleted_at')
             ->get();
@@ -68,21 +67,21 @@ class InvoiceDueReminder extends Command
 
         foreach ($invoices as $invoice) {
 
-            $balance            = $invoice->fiken_balance;
-            $transactions_sum   = Transaction::where('invoice_id', $invoice->id)->get()->sum('amount');
-            $remaining          = $balance - $transactions_sum;
-            $user               = User::find($invoice->user_id);
-            $redirectLink       = route('learner.invoice', ['filter' => $invoice->id]);
+            $balance = $invoice->fiken_balance;
+            $transactions_sum = Transaction::where('invoice_id', $invoice->id)->get()->sum('amount');
+            $remaining = $balance - $transactions_sum;
+            $user = User::find($invoice->user_id);
+            $redirectLink = route('learner.invoice', ['filter' => $invoice->id]);
 
-            if ($user && !empty($user)) {
-                $to                 = $user->email;
+            if ($user && ! empty($user)) {
+                $to = $user->email;
                 $emailContent = AdminHelpers::formatEmailContent($email_template->email_content, $to, $user->first_name, $redirectLink);
                 $emailContent = str_replace([
                     ':price',
-                    ':kid_number'
+                    ':kid_number',
                 ], [
                     FrontendHelpers::currencyFormat($remaining),
-                    $invoice->kid_number
+                    $invoice->kid_number,
                 ], $emailContent);
                 dispatch(new AddMailToQueueJob($to, $email_template->subject, $emailContent, $from, null, null,
                     'invoice', $invoice->id));

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -10,6 +11,7 @@ class CoachingSuggestionDateEmail extends Mailable
     use Queueable, SerializesModels;
 
     public $sender;
+
     public $suggested_dates;
 
     public function __construct($email_data)
@@ -24,5 +26,4 @@ class CoachingSuggestionDateEmail extends Mailable
             ->subject('New suggestion date')
             ->view('emails.suggestion_date');
     }
-
 }

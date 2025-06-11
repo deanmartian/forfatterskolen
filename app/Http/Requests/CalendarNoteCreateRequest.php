@@ -27,7 +27,7 @@ class CalendarNoteCreateRequest extends FormRequest
             'note' => 'required',
             'from_date' => 'required|date',
             'to_date' => 'required|date',
-            'course_id' => 'required|exists:courses,id'
+            'course_id' => 'required|exists:courses,id',
         ];
     }
 }

@@ -3,33 +3,30 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateUserPreferredEditorTable extends Migration {
+class CreateUserPreferredEditorTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('user_preferred_editor', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->integer('user_id')->unsigned()->index('user_id');
+            $table->integer('editor_id')->unsigned()->index('editor_id');
+            $table->timestamps();
+        });
+    }
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::create('user_preferred_editor', function(Blueprint $table)
-		{
-			$table->integer('id', true);
-			$table->integer('user_id')->unsigned()->index('user_id');
-			$table->integer('editor_id')->unsigned()->index('editor_id');
-			$table->timestamps();
-		});
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::drop('user_preferred_editor');
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('user_preferred_editor');
+    }
 }

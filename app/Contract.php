@@ -29,7 +29,7 @@ class Contract extends Model
         'signed_date',
         'send_date',
         'is_file',
-        'status'
+        'status',
     ];
 
     protected $appends = ['sent_file_link', 'signed_file_link', 'learner_download_link', 'signature_text'];
@@ -51,22 +51,23 @@ class Contract extends Model
 
     public function project()
     {
-        return $this->belongsTo('App\Project');
+        return $this->belongsTo(\App\Project::class);
     }
 
     /**
      * Accessor field
+     *
      * @return string
      */
     public function getSentFileLinkAttribute()
     {
         $fileLink = '';
-        $filename = isset($this->attributes['sent_file']) ? $this->attributes['sent_file'] : NULL;
+        $filename = isset($this->attributes['sent_file']) ? $this->attributes['sent_file'] : null;
 
         $extension = explode('.', basename($filename));
-        if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+        if (end($extension) == 'pdf' || end($extension) == 'odt') {
             $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
-        } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+        } elseif (end($extension) == 'docx' || end($extension) == 'doc') {
             $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
                 .basename($filename).'</a>';
         }
@@ -76,6 +77,7 @@ class Contract extends Model
 
     /**
      * Accessor field
+     *
      * @return string
      */
     public function getSignedFileLinkAttribute()
@@ -85,9 +87,9 @@ class Contract extends Model
             $filename = $this->attributes['signed_file'];
 
             $extension = explode('.', basename($filename));
-            if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+            if (end($extension) == 'pdf' || end($extension) == 'odt') {
                 $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
-            } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+            } elseif (end($extension) == 'docx' || end($extension) == 'doc') {
                 $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
                     .basename($filename).'</a>';
             }
@@ -102,6 +104,7 @@ class Contract extends Model
         if ($this->attributes['is_file'] && isset($this->attributes['signed_file'])) {
             $link = $this->attributes['signed_file'];
         }
+
         return $link;
     }
 
@@ -111,7 +114,7 @@ class Contract extends Model
         if (isset($this->attributes['signature']) && $this->attributes['signature']) {
             $label = '<label class="label label-success">Signed</label>';
         }
+
         return $label;
     }
-
 }

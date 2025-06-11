@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\CourseTestimonial;
@@ -7,20 +8,23 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CourseTestimonialCreateRequest;
 use File;
 
-class CourseTestimonialController extends Controller {
-
+class CourseTestimonialController extends Controller
+{
     /**
      * Display all testimonials
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
         $testimonials = CourseTestimonial::paginate(15);
+
         return view('backend.course.testimonials.index', compact('testimonials'));
     }
 
     /**
      * Display the create testimonial page
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
@@ -29,46 +33,47 @@ class CourseTestimonialController extends Controller {
             'name' => '',
             'testimony' => '',
             'user_image' => '',
-            'course_id' => ''
+            'course_id' => '',
         ];
+
         return view('backend.course.testimonials.create', compact('testimonial'));
     }
 
     /**
      * Create new testimonial
-     * @param CourseTestimonialCreateRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CourseTestimonialCreateRequest $request)
     {
-        $testimonial = new CourseTestimonial();
-        $testimonial->name      = $request->name;
+        $testimonial = new CourseTestimonial;
+        $testimonial->name = $request->name;
         $testimonial->testimony = $request->testimony;
         $testimonial->course_id = $request->course_id;
 
-        if ($request->hasFile('user_image')) :
+        if ($request->hasFile('user_image')) {
             $destinationPath = 'images/course-testimonials'; // upload path
 
-            if (!\File::exists($destinationPath)) {
+            if (! \File::exists($destinationPath)) {
                 \File::makeDirectory($destinationPath);
             }
 
             $extension = $request->user_image->extension(); // getting image extension
             $uploadedFile = $request->user_image->getClientOriginalName();
             $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
             $request->user_image->move($destinationPath, $fileName);
 
             // optimize image
-            if ( strtolower( $extension ) == "png" ) :
+            if (strtolower($extension) == 'png') {
                 $image = imagecreatefrompng($fileName);
                 imagepng($image, $fileName, 9);
-            else :
+            } else {
                 $image = imagecreatefromjpeg($fileName);
                 imagejpeg($image, $fileName, 70);
-            endif;
+            }
             $testimonial->user_image = '/'.$fileName;
-        endif;
+        }
 
         $testimonial->save();
 
@@ -77,105 +82,108 @@ class CourseTestimonialController extends Controller {
 
     /**
      * Display the edit page
-     * @param $id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function edit($id)
     {
         $testimonial = CourseTestimonial::findOrFail($id)->toArray();
+
         return view('backend.course.testimonials.edit', compact('testimonial'));
     }
 
     /**
      * Update a testimonial
-     * @param $id
-     * @param CourseTestimonialCreateRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, CourseTestimonialCreateRequest $request)
     {
         $testimonial = CourseTestimonial::find($id);
         if ($testimonial) {
-            $testimonial->name      = $request->name;
+            $testimonial->name = $request->name;
             $testimonial->testimony = $request->testimony;
             $testimonial->course_id = $request->course_id;
 
-            if ($request->hasFile('user_image')) :
+            if ($request->hasFile('user_image')) {
                 $destinationPath = 'images/course-testimonials'; // upload path
 
-                if (!\File::exists($destinationPath)) {
+                if (! \File::exists($destinationPath)) {
                     \File::makeDirectory($destinationPath);
                 }
 
                 $extension = $request->user_image->extension(); // getting image extension
                 $uploadedFile = $request->user_image->getClientOriginalName();
                 $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
                 $request->user_image->move($destinationPath, $fileName);
 
                 // optimize image
-                if ( strtolower( $extension ) == "png" ) :
+                if (strtolower($extension) == 'png') {
                     $image = imagecreatefrompng($fileName);
                     imagepng($image, $fileName, 9);
-                else :
+                } else {
                     $image = imagecreatefromjpeg($fileName);
                     imagejpeg($image, $fileName, 70);
-                endif;
+                }
                 $testimonial->user_image = '/'.$fileName;
-            endif;
+            }
 
             $testimonial->save();
         }
+
         return redirect()->route('admin.course-testimonial.index');
     }
 
     /**
      * Delete testimonial
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id){
+    public function destroy($id)
+    {
         $testimonial = CourseTestimonial::find($id);
         if ($testimonial) {
             $image = substr($testimonial->user_image, 1);
-            if( File::exists($image) ) :
+            if (File::exists($image)) {
                 File::delete($image);
-            endif;
+            }
             $testimonial->forceDelete();
         }
+
         return redirect()->route('admin.course-testimonial.index');
     }
 
     /**
      * Clone a testimony
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function cloneRecord($id)
     {
         $testimonial = CourseTestimonial::find($id);
         if ($testimonial) {
-            $image      = substr($testimonial->user_image, 1);
-            $fileName   = NULL;
+            $image = substr($testimonial->user_image, 1);
+            $fileName = null;
 
             // check if file exist
-            if( File::exists($image) ) :
-                $expFilePath            = explode('/', $image);
-                $destinationPath        = 'images/course-testimonials';
-                $extractNameExtension   = explode('.', end($expFilePath));
-                $extension              = end($extractNameExtension);
-                $getFilename            = array_slice($extractNameExtension, 0, -1);
-                $actual_name            = implode(" ", $getFilename);
-                $fileName               = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            if (File::exists($image)) {
+                $expFilePath = explode('/', $image);
+                $destinationPath = 'images/course-testimonials';
+                $extractNameExtension = explode('.', end($expFilePath));
+                $extension = end($extractNameExtension);
+                $getFilename = array_slice($extractNameExtension, 0, -1);
+                $actual_name = implode(' ', $getFilename);
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
                 copy($image, $fileName); // clone the file
-            endif;
+            }
 
-            $newTestimonial             = new CourseTestimonial();
-            $newTestimonial->course_id  = $testimonial->course_id;
-            $newTestimonial->name       = $testimonial->name;
-            $newTestimonial->testimony  = $testimonial->testimony;
+            $newTestimonial = new CourseTestimonial;
+            $newTestimonial->course_id = $testimonial->course_id;
+            $newTestimonial->name = $testimonial->name;
+            $newTestimonial->testimony = $testimonial->testimony;
             $newTestimonial->user_image = $fileName;
-            $newTestimonial->is_video   = $testimonial->is_video;
+            $newTestimonial->is_video = $testimonial->is_video;
             $newTestimonial->save();
 
             if ($testimonial->is_video) {

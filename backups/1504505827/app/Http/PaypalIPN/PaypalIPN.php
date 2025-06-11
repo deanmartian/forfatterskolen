@@ -2,31 +2,32 @@
 
 class PaypalIPN
 {
-
     /**
-     * @var bool $use_sandbox     Indicates if the sandbox endpoint is used.
+     * @var bool Indicates if the sandbox endpoint is used.
      */
     private $use_sandbox = false;
+
     /**
-     * @var bool $use_local_certs Indicates if the local certificates are used.
+     * @var bool Indicates if the local certificates are used.
      */
     private $use_local_certs = true;
 
     /** Production Postback URL */
     const VERIFY_URI = 'https://ipnpb.paypal.com/cgi-bin/webscr';
+
     /** Sandbox Postback URL */
     const SANDBOX_VERIFY_URI = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
 
-
     /** Response from PayPal indicating validation was successful */
     const VALID = 'VERIFIED';
+
     /** Response from PayPal indicating validation failed */
     const INVALID = 'INVALID';
-
 
     /**
      * Sets the IPN verification to sandbox mode (for use when testing,
      * should not be enabled in production).
+     *
      * @return void
      */
     public function useSandbox()
@@ -37,6 +38,7 @@ class PaypalIPN
     /**
      * Sets curl to use php curl's built in certs (may be required in some
      * environments).
+     *
      * @return void
      */
     public function usePHPCerts()
@@ -44,9 +46,9 @@ class PaypalIPN
         $this->use_local_certs = false;
     }
 
-
     /**
      * Determine endpoint to post the verification data to.
+     *
      * @return string
      */
     public function getPaypalUri()
@@ -58,23 +60,23 @@ class PaypalIPN
         }
     }
 
-
     /**
      * Verification Function
      * Sends the incoming post data back to PayPal using the cURL library.
      *
      * @return bool
+     *
      * @throws Exception
      */
     public function verifyIPN()
     {
-        if ( ! count($_POST)) {
-            throw new Exception("Missing POST Data");
+        if (! count($_POST)) {
+            throw new Exception('Missing POST Data');
         }
 
         $raw_post_data = file_get_contents('php://input');
         $raw_post_array = explode('&', $raw_post_data);
-        $myPost = array();
+        $myPost = [];
         foreach ($raw_post_array as $keyval) {
             $keyval = explode('=', $keyval);
             if (count($keyval) == 2) {
@@ -115,13 +117,13 @@ class PaypalIPN
 
         // This is often required if the server is missing a global cert bundle, or is using an outdated one.
         if ($this->use_local_certs) {
-            curl_setopt($ch, CURLOPT_CAINFO, __DIR__ . "/cert/cacert.pem");
+            curl_setopt($ch, CURLOPT_CAINFO, __DIR__.'/cert/cacert.pem');
         }
         curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Connection: Close']);
         $res = curl_exec($ch);
-        if ( ! ($res)) {
+        if (! ($res)) {
             $errno = curl_errno($ch);
             $errstr = curl_error($ch);
             curl_close($ch);

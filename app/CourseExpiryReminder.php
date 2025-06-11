@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CourseExpiryReminder extends Model {
-
+class CourseExpiryReminder extends Model
+{
     /**
      * The database table used by the model.
      *
@@ -23,6 +23,6 @@ class CourseExpiryReminder extends Model {
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 }

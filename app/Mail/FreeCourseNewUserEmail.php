@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -10,6 +11,7 @@ class FreeCourseNewUserEmail extends Mailable
     use Queueable, SerializesModels;
 
     public $email_message;
+
     public $email_subject;
 
     public function __construct($email_data)
@@ -25,5 +27,4 @@ class FreeCourseNewUserEmail extends Mailable
             ->view('emails.free_course_new_user')
             ->text('emails.subject_body_plain');
     }
-
 }

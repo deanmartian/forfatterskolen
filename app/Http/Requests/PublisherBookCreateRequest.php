@@ -24,10 +24,10 @@ class PublisherBookCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'             => 'required',
-            'description'       => 'required',
-            'author_image'      => 'required|image',
-            /*'book_image'        => 'required|image'*/
+            'title' => 'required',
+            'description' => 'required',
+            'author_image' => 'required|image',
+            /* 'book_image'        => 'required|image' */
         ];
     }
 }

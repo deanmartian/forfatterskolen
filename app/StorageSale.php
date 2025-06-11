@@ -15,7 +15,7 @@ class StorageSale extends Model
     ];
 
     protected $appends = [
-        'inventory_type'
+        'inventory_type',
     ];
 
     public function getInventoryTypeAttribute()

@@ -2,12 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\CronLog;
-use App\Http\AdminHelpers;
-use App\Http\FrontendHelpers;
-use App\Invoice;
 use App\ShopManuscriptsTaken;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class LockFinishedManuscript extends Command

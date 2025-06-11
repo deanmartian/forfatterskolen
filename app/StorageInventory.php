@@ -14,6 +14,6 @@ class StorageInventory extends Model
         'returns',
         'balance',
         'order',
-        'reservations'
+        'reservations',
     ];
 }

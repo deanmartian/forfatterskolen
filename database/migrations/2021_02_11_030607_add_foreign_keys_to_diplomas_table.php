@@ -3,35 +3,31 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToDiplomasTable extends Migration {
+class AddForeignKeysToDiplomasTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('diplomas', function (Blueprint $table) {
+            $table->foreign('course_id', 'diploma_course_id')->references('id')->on('courses')->onUpdate('RESTRICT')->onDelete('CASCADE');
+            $table->foreign('user_id', 'diploma_user_id')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('CASCADE');
+        });
+    }
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::table('diplomas', function(Blueprint $table)
-		{
-			$table->foreign('course_id', 'diploma_course_id')->references('id')->on('courses')->onUpdate('RESTRICT')->onDelete('CASCADE');
-			$table->foreign('user_id', 'diploma_user_id')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('CASCADE');
-		});
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::table('diplomas', function(Blueprint $table)
-		{
-			$table->dropForeign('diploma_course_id');
-			$table->dropForeign('diploma_user_id');
-		});
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('diplomas', function (Blueprint $table) {
+            $table->dropForeign('diploma_course_id');
+            $table->dropForeign('diploma_user_id');
+        });
+    }
 }

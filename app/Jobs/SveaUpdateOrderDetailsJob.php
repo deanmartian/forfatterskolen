@@ -5,10 +5,10 @@ namespace App\Jobs;
 use App\Http\FrontendHelpers;
 use App\Order;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
 class SveaUpdateOrderDetailsJob implements ShouldQueue
@@ -32,16 +32,16 @@ class SveaUpdateOrderDetailsJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle() {
+    public function handle()
+    {
 
-        Log::info('inside SVEA update order details job for order_id ' . $this->order_id);
+        Log::info('inside SVEA update order details job for order_id '.$this->order_id);
         $order = Order::find($this->order_id);
         $sveaOrderDetails = FrontendHelpers::sveaOrderDetails($order->svea_order_id);
 
         if (isset($sveaOrderDetails['Campaign'])) {
             $order->svea_payment_type_description = $sveaOrderDetails['Campaign']['Description'];
         }
-
 
         $fullname = $sveaOrderDetails['BillingAddress']['FullName'] ?: $sveaOrderDetails['ShippingAddress']['FullName'];
         $street = $sveaOrderDetails['BillingAddress']['StreetAddress'] ?: $sveaOrderDetails['ShippingAddress']['StreetAddress'];
@@ -57,11 +57,11 @@ class SveaUpdateOrderDetailsJob implements ShouldQueue
         $order->svea_country_code = $countryCode;
         $order->save();
 
-        Log::info('inside SVEA update order details job svea_payment_type .' . $sveaOrderDetails['PaymentType']);
-        Log::info('inside SVEA update order details job svea_fullname .' . $fullname);
-        Log::info('inside SVEA update order details job svea_street .' . $street);
-        Log::info('inside SVEA update order details job svea_postal_code .' . $postalCode);
-        Log::info('inside SVEA update order details job svea_city .' . $city);
+        Log::info('inside SVEA update order details job svea_payment_type .'.$sveaOrderDetails['PaymentType']);
+        Log::info('inside SVEA update order details job svea_fullname .'.$fullname);
+        Log::info('inside SVEA update order details job svea_street .'.$street);
+        Log::info('inside SVEA update order details job svea_postal_code .'.$postalCode);
+        Log::info('inside SVEA update order details job svea_city .'.$city);
         Log::info('inside SVEA update order details job after saving order');
     }
 }

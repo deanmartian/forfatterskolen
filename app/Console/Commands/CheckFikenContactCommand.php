@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Address;
 use App\User;
 use Illuminate\Console\Command;
 
@@ -42,12 +41,12 @@ class CheckFikenContactCommand extends Command
         $users = User::whereNull('fiken_contact_id')->get();
         $company = 'forfatterskolen-as';
 
-        foreach($users as $user){
-            $fikenUrl = "https://api.fiken.no/api/v2/companies/" . $company . "/contacts?email=" . $user->email;
+        foreach ($users as $user) {
+            $fikenUrl = 'https://api.fiken.no/api/v2/companies/'.$company.'/contacts?email='.$user->email;
             $headers = [
                 'Accept: application/json',
                 'Authorization: Bearer '.config('services.fiken.personal_api_key'),
-                'Content-Type: Application/json'
+                'Content-Type: Application/json',
             ];
 
             $ch = curl_init($fikenUrl);
@@ -60,18 +59,18 @@ class CheckFikenContactCommand extends Command
             $body = substr($response, $header_size);
             $fikenContacts = json_decode($body);
 
-            if($fikenContacts) {
+            if ($fikenContacts) {
                 $user->fill([
-                    'fiken_contact_id' => $fikenContacts[0]->contactId
+                    'fiken_contact_id' => $fikenContacts[0]->contactId,
                 ])->save();
             } else {
                 $user->fill([
-                    'fiken_contact_id' => 'none'
+                    'fiken_contact_id' => 'none',
                 ])->save();
             }
 
         }
 
-        echo "Done";
+        echo 'Done';
     }
 }

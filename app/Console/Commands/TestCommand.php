@@ -37,6 +37,6 @@ class TestCommand extends Command
      */
     public function handle()
     {
-        return "this is test command";
+        return 'this is test command';
     }
 }

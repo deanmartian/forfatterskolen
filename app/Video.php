@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Http\FrontendHelpers;
 
 class Video extends Model
 {
@@ -23,7 +22,7 @@ class Video extends Model
 
     public function lesson()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function getPreviewAttribute()
@@ -31,10 +30,8 @@ class Video extends Model
         return str_replace('videoFoam=true"', 'videoFoam=true autoPlay=false"', $this->attributes['embed_code']);
     }
 
-    
     public function getCreatedAtAttribute($value)
     {
         return date_format(date_create($value), 'M d, Y h:i a');
     }
-
 }

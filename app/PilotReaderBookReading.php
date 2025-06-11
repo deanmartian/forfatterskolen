@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PilotReaderBookReading extends Model
@@ -22,29 +21,30 @@ class PilotReaderBookReading extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'book_id', 'role','started_at', 'last_seen', 'status', 'status_date'];
+    protected $fillable = ['user_id', 'book_id', 'role', 'started_at', 'last_seen', 'status', 'status_date'];
 
     public function user()
     {
-        return $this->belongsTo('App\User','user_id','id');
+        return $this->belongsTo(\App\User::class, 'user_id', 'id');
     }
 
     public function book()
     {
-        return $this->belongsTo('App\PilotReaderBook');
+        return $this->belongsTo(\App\PilotReaderBook::class);
     }
 
     public function getStartedAtAttribute($value)
     {
-        return $value ? date_format(date_create($value), 'M d, H:i a') : NULL;
+        return $value ? date_format(date_create($value), 'M d, H:i a') : null;
     }
 
     public function getLastSeenAttribute($value)
     {
-        return $value ? date_format(date_create($value), 'M d, H:i a') : NULL;
+        return $value ? date_format(date_create($value), 'M d, H:i a') : null;
     }
 
-    public function reason(){
-        return $this->hasOne('App\PilotReaderQuittedReason', 'book_reader_id', 'id');
+    public function reason()
+    {
+        return $this->hasOne(\App\PilotReaderQuittedReason::class, 'book_reader_id', 'id');
     }
 }

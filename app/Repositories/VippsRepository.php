@@ -11,19 +11,21 @@ use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\Services\CourseService;
 use App\Services\ShopManuscriptService;
-use App\Settings;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log as Log;
+use Illuminate\Support\Facades\Log;
 
-class VippsRepository extends BaseRepository {
-
+class VippsRepository extends BaseRepository
+{
     const PAYMENT_RESERVED = 'RESERVED';
+
     const PAYMENT_CANCELLED = 'CANCELLED';
+
     const PAYMENT_REJECTED = 'REJECTED';
+
     /**
      * Get the access token
+     *
      * @return ApiException|array
      */
     public function getAccessToken()
@@ -32,8 +34,8 @@ class VippsRepository extends BaseRepository {
         $client_secret = env('VIPPS_CLIENT_SECRET');
 
         $url = '/accesstoken/get';
-        $method = "POST";
-        $header = array();
+        $method = 'POST';
+        $header = [];
         $header[] = 'client_id: '.$client_id;
         $header[] = 'client_secret: '.$client_secret;
         $header[] = 'Content-Length: 0';
@@ -43,8 +45,9 @@ class VippsRepository extends BaseRepository {
         if ($response['http_code'] != ApiResponse::HTTPCODE_SUCCESS) {
             Log::info('VIPPS GET ACCESS TOKEN ERROR');
             Log::info(json_encode($response['data']));
+
             return new ApiException(property_exists($response['data'], 'message')
-                ? $response['data']->message : $response['data']->error_description , null, $response['http_code']);
+                ? $response['data']->message : $response['data']->error_description, null, $response['http_code']);
         }
 
         return $response;
@@ -52,45 +55,46 @@ class VippsRepository extends BaseRepository {
 
     /**
      * Initiate the payment process
-     * @param $token_access
+     *
      * @return ApiException|array
      */
     public function initiatePayment($token_access, $data)
     {
-        Log::info("VIPPS inside initiate payment");
+        Log::info('VIPPS inside initiate payment');
         $url = '/ecomm/v2/payments';
-        $method = "POST";
-        $header = array();
+        $method = 'POST';
+        $header = [];
         $header[] = 'Authorization: '.$token_access;
-        $fallbackUrl = isset($data['fallbackUrl']) ? $data['fallbackUrl'] : route('front.shop.thankyou');//'https://www.forfatterskolen.no/thankyou'
+        $fallbackUrl = isset($data['fallbackUrl']) ? $data['fallbackUrl'] : route('front.shop.thankyou'); // 'https://www.forfatterskolen.no/thankyou'
 
-        $body = array(
+        $body = [
             'customerInfo' => [
-                'mobileNumber' => isset($data['vipps_phone_number']) ? $data['vipps_phone_number'] : ''
+                'mobileNumber' => isset($data['vipps_phone_number']) ? $data['vipps_phone_number'] : '',
             ],
 
             'merchantInfo' => [
-                'callbackPrefix' => route('vipps.payment'),//url('/vipps/payment'),
-                'fallBack' => route('vipps.fallback',['t' => $data['orderId']]),//$fallbackUrl,//url('/thankyou'),
+                'callbackPrefix' => route('vipps.payment'), // url('/vipps/payment'),
+                'fallBack' => route('vipps.fallback', ['t' => $data['orderId']]), // $fallbackUrl,//url('/thankyou'),
                 'paymentType' => 'eComm Regular Payment',
-                'merchantSerialNumber' => env('VIPPS_MSN')//AdminHelpers::generateHash(6)
+                'merchantSerialNumber' => env('VIPPS_MSN'), // AdminHelpers::generateHash(6)
             ],
 
             'transaction' => [
                 'amount' => $data['amount'],
                 'orderId' => $data['orderId'],
-                'transactionText' => $data['transactionText']
-            ]
-        );
+                'transactionText' => $data['transactionText'],
+            ],
+        ];
 
         $body = json_encode($body);
         $response = AdminHelpers::vippsAPI($method, $url, $body, $header);
 
         if ($response['http_code'] != ApiResponse::HTTPCODE_SUCCESS) {
-            Log::info("VIPPS inside not success on initiate payment orderId = " . $data['orderId']);
+            Log::info('VIPPS inside not success on initiate payment orderId = '.$data['orderId']);
             Log::info(json_encode($response));
             if (isset($response['data'][0])) {
                 Log::info(json_encode($response['data'][0]));
+
                 return new ApiException($response['data'][0]->errorMessage, null, $response['http_code']);
             }
 
@@ -101,14 +105,13 @@ class VippsRepository extends BaseRepository {
     }
 
     /**
-     * @param $orderId
-     * @param $request Request
+     * @param  $request  Request
      */
     public function paymentCallback($orderId, $request)
     {
         $transactionInfo = $request['transactionInfo'];
 
-        Log::info("payment callback here");
+        Log::info('payment callback here');
         Log::info(json_encode($transactionInfo));
         Log::info(json_encode($request->all()));
         // check if the payment is done
@@ -117,14 +120,15 @@ class VippsRepository extends BaseRepository {
         }
 
         if ($transactionInfo['status'] == self::PAYMENT_REJECTED) {
-            Log::info("inside rejected here");
+            Log::info('inside rejected here');
             if (strpos($orderId, '-') !== false) {
-                Log::info("inside if");
+                Log::info('inside if');
                 $expOrder = explode('-', $orderId);
                 $order = Order::find($expOrder[0]);
-                if($order) {
-                    Log::info("inside if order");
+                if ($order) {
+                    Log::info('inside if order');
                     $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.checkout' : 'front.course.checkout';
+
                     return redirect()->route($route, $order->item_id);
                 }
             }
@@ -133,15 +137,14 @@ class VippsRepository extends BaseRepository {
 
     /**
      * Get the payment details of the order
-     * @param $orderId
-     * @param $token_access
+     *
      * @return ApiException|array
      */
     public function getPaymentDetails($orderId, $token_access)
     {
         $url = '/ecomm/v2/payments/'.$orderId.'/details';
-        $method = "GET";
-        $header = array();
+        $method = 'GET';
+        $header = [];
         $header[] = 'Authorization: '.$token_access;
 
         $response = AdminHelpers::vippsAPI($method, $url, [], $header);
@@ -159,13 +162,13 @@ class VippsRepository extends BaseRepository {
 
     /**
      * Capture payment by order od
-     * @param $orderId
+     *
      * @return ApiException|array|\Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
     public function capturePayment($orderId)
     {
         $get_token = $this->getAccessToken();
-        Log::info("VIPPS inside capture payment");
+        Log::info('VIPPS inside capture payment');
         if ($get_token instanceof ApiException) {
             return ApiResponse::error($get_token->getMessage(), $get_token->getData(), $get_token->getCode());
         }
@@ -173,19 +176,19 @@ class VippsRepository extends BaseRepository {
         $access_token = $get_token['data']->access_token;
 
         $url = '/ecomm/v2/payments/'.$orderId.'/capture';
-        $method = "POST";
-        $header = array();
+        $method = 'POST';
+        $header = [];
         $header[] = 'Authorization: '.$access_token;
 
-        $body = array(
+        $body = [
             'merchantInfo' => [
-                'merchantSerialNumber' => env('VIPPS_MSN')
+                'merchantSerialNumber' => env('VIPPS_MSN'),
             ],
 
             'transaction' => [
-                'transactionText' => 'Captured Payment for order #'.$orderId
-            ]
-        );
+                'transactionText' => 'Captured Payment for order #'.$orderId,
+            ],
+        ];
 
         $body = json_encode($body);
         $response = AdminHelpers::vippsAPI($method, $url, $body, $header);
@@ -197,26 +200,26 @@ class VippsRepository extends BaseRepository {
 
             return new ApiException($response['data']->message, null, $response['http_code']);
         }
-        Log::info("VIPPS inside capture payment after IF");
+        Log::info('VIPPS inside capture payment after IF');
         $data = $response['data'];
-        $invoice = Invoice::where('fiken_invoice_id',$orderId)->first(); //invoice_number
+        $invoice = Invoice::where('fiken_invoice_id', $orderId)->first(); // invoice_number
         $transactionInfo = $response['data']->transactionInfo;
-        $message = "<p>Payment Captured <br/><br> Invoice Number: ".$orderId." <br/> Amount:".$transactionInfo->amount." 
-<br/> Transaction id: ".$transactionInfo->transactionId."</p>";
+        $message = '<p>Payment Captured <br/><br> Invoice Number: '.$orderId.' <br/> Amount:'.$transactionInfo->amount.' 
+<br/> Transaction id: '.$transactionInfo->transactionId.'</p>';
 
         $subject = 'Payment Captured for Invoice #'.$orderId;
         $from = 'postmail@forfatterskolen.no';
         $to = 'support@forfatterskolen.no';
         $emailData['email_subject'] = $subject;
         $emailData['email_message'] = $message;
-        $emailData['from_name'] = NULL;
-        $emailData['from_email'] = NULL;
-        $emailData['attach_file'] = NULL;
-        Log::info("VIPPS order id " . $orderId);
-        Log::info("VIPPS inside capture payment before if captured");
+        $emailData['from_name'] = null;
+        $emailData['from_email'] = null;
+        $emailData['attach_file'] = null;
+        Log::info('VIPPS order id '.$orderId);
+        Log::info('VIPPS inside capture payment before if captured');
         // notify admin once the payment is captured
         if ($transactionInfo->status == 'Captured') {
-            Log::info("VIPPS inside capture payment inside captured");
+            Log::info('VIPPS inside capture payment inside captured');
             Log::info(json_encode($emailData));
             // mark the invoice as paid
             if ($invoice) {
@@ -226,21 +229,21 @@ class VippsRepository extends BaseRepository {
                 $expOrderId = explode('-', $orderId);
                 $order_id = $expOrderId[0];
                 $user_id = $expOrderId[1];
-                Log::info("VIPPS order id = " . $order_id . " and user id = " . $user_id);
+                Log::info('VIPPS order id = '.$order_id.' and user id = '.$user_id);
 
                 $order = Order::find($order_id);
                 // add shop manuscript to user
-                if (!$order->is_processed && $order->type === Order::MANUSCRIPT_TYPE) {
-                    $shopManuscriptService = new ShopManuscriptService();
+                if (! $order->is_processed && $order->type === Order::MANUSCRIPT_TYPE) {
+                    $shopManuscriptService = new ShopManuscriptService;
                     $shopManuscriptService->createInvoiceFromOder($order);
                     $shopManuscriptTaken = $shopManuscriptService->addShopManuscriptToLearner($order);
                     $shopManuscriptService->notifyAdmin($order);
                     $shopManuscriptService->notifyUser($order, $shopManuscriptTaken);
                 }
 
-                if (!$order->is_processed && $order->type === Order::COURSE_TYPE) {
-                    $course = new Course();
-                    $user = new User();
+                if (! $order->is_processed && $order->type === Order::COURSE_TYPE) {
+                    $course = new Course;
+                    $user = new User;
                     $courseService = new CourseService($course, $user);
                     $courseService->createInvoiceFromOder($order);
                     $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
@@ -253,7 +256,7 @@ class VippsRepository extends BaseRepository {
 
             }
 
-            //AdminHelpers::send_email($subject,$from, $to, $message);
+            // AdminHelpers::send_email($subject,$from, $to, $message);
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             \Mail::to('post@forfatterskolen.no')->queue(new SubjectBodyEmail($emailData));
             \Mail::to('elybutabara@gmail.com')->queue(new SubjectBodyEmail($emailData));
@@ -261,5 +264,4 @@ class VippsRepository extends BaseRepository {
 
         return $response;
     }
-
 }

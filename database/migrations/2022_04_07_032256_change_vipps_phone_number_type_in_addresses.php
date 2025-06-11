@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class ChangeVippsPhoneNumberTypeInAddresses extends Migration
 {
@@ -14,7 +14,7 @@ class ChangeVippsPhoneNumberTypeInAddresses extends Migration
     public function up()
     {
         Schema::table('addresses', function (Blueprint $table) {
-            $table->string('vipps_phone_number',50)->change();
+            $table->string('vipps_phone_number', 50)->change();
         });
     }
 

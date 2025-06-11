@@ -13,11 +13,11 @@ class VerifyCsrfToken extends BaseVerifier
      */
     protected $except = [
         //
-    	'/paypalipn',
-    	'/paypalipn*',
-    	'paypalipn',
-    	'paypalipn*',
-    	'paypalipn/*',
+        '/paypalipn',
+        '/paypalipn*',
+        'paypalipn',
+        'paypalipn*',
+        'paypalipn/*',
         '/webhook/paypal/*',
         'webhook/paypal/*',
         'gotowebinar',
@@ -27,6 +27,6 @@ class VerifyCsrfToken extends BaseVerifier
         '/vipps*',
         '/vipps/payment/v2/payments/*',
         '/vipps/payment/v2/payments*',
-        '/fb-leads'
+        '/fb-leads',
     ];
 }

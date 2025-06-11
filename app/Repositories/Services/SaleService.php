@@ -8,36 +8,35 @@ use App\Order;
 use App\ShopManuscriptsTaken;
 use DB;
 
-class SaleService {
-
+class SaleService
+{
     protected $coursesTaken;
+
     protected $shopManuscriptsTaken;
+
     protected $order;
 
     /**
      * SaleService constructor.
-     * @param CoursesTaken $coursesTaken
-     * @param ShopManuscriptsTaken $shopManuscriptsTaken
      */
     public function __construct(
-        CoursesTaken $coursesTaken, 
+        CoursesTaken $coursesTaken,
         ShopManuscriptsTaken $shopManuscriptsTaken,
         Order $order
-    )
-    {
+    ) {
         $this->coursesTaken = $coursesTaken;
         $this->shopManuscriptsTaken = $shopManuscriptsTaken;
         $this->order = $order;
     }
 
     /**
-     * @param int $is_archive
+     * @param  int  $is_archive
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function queryCoursesTaken( $is_archive = 0 )
+    public function queryCoursesTaken($is_archive = 0)
     {
         return $this->coursesTaken->whereHas('user') // , 'receivedWelcomeEmail', 'receivedFollowUpEmail'
-            ->whereHas('package.course', function($query) {
+            ->whereHas('package.course', function ($query) {
                 $query->where('is_free', 0);
             })
             ->where('is_welcome_email_sent', '=', $is_archive)
@@ -46,7 +45,6 @@ class SaleService {
     }
 
     /**
-     * @param $id
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
      */
     public function courseTaken($id)
@@ -55,31 +53,26 @@ class SaleService {
     }
 
     /**
-     * @param $subject
-     * @param $from_email
-     * @param $message
-     * @param $parent
-     * @param $parent_id
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
-    public function createEmailHistory( $subject, $from_email, $message, $parent, $parent_id, $recipient = null, $track_code = null )
+    public function createEmailHistory($subject, $from_email, $message, $parent, $parent_id, $recipient = null, $track_code = null)
     {
         return EmailHistory::create([
-            'subject'       => $subject,
-            'from_email'    => $from_email,
-            'message'       => $message,
-            'parent'        => $parent,
-            'parent_id'     => $parent_id,
-            'recipient'     => $recipient,
-            'track_code'    => $track_code
+            'subject' => $subject,
+            'from_email' => $from_email,
+            'message' => $message,
+            'parent' => $parent,
+            'parent_id' => $parent_id,
+            'recipient' => $recipient,
+            'track_code' => $track_code,
         ]);
     }
 
     /**
-     * @param int $is_archive
+     * @param  int  $is_archive
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function queryShopManuscriptsTaken( $is_archive = 0 )
+    public function queryShopManuscriptsTaken($is_archive = 0)
     {
 
         $query = DB::table('shop_manuscripts_taken')
@@ -93,6 +86,7 @@ class SaleService {
             )
             ->where('shop_manuscripts_taken.is_welcome_email_sent', '=', $is_archive)
             ->paginate(25);
+
         return $query;
         /* $query = ShopManuscriptsTaken::leftJoin('shop_manuscript_taken_feedbacks', 'shop_manuscripts_taken.id',
             '=', 'shop_manuscript_taken_feedbacks.shop_manuscript_taken_id')
@@ -108,7 +102,6 @@ class SaleService {
     }
 
     /**
-     * @param $id
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
      */
     public function shopManuscriptTaken($id)
@@ -125,5 +118,4 @@ class SaleService {
     {
         return $this->order->find($order_id);
     }
-
 }

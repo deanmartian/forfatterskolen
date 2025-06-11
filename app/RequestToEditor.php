@@ -10,12 +10,14 @@ class RequestToEditor extends Model
 
     protected $appends = ['editor_name', 'AnswerP'];
 
-    public function editor(){
-        return $this->belongsTo('App\User', 'editor_id', 'id');
+    public function editor()
+    {
+        return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 
-    public function manuscript(){
-        return $this->belongsTo('App\ShopManuscriptsTaken', 'manuscript_id', 'id');
+    public function manuscript()
+    {
+        return $this->belongsTo(\App\ShopManuscriptsTaken::class, 'manuscript_id', 'id');
     }
 
     public function getEditorNameAttribute()
@@ -25,11 +27,10 @@ class RequestToEditor extends Model
 
     public function getAnswerPAttribute()
     {
-        if($this->attributes['answer']){
+        if ($this->attributes['answer']) {
             return $this->attributes['answer'];
-        }else{
+        } else {
             return trans('site.no-answer');
         }
     }
-
 }

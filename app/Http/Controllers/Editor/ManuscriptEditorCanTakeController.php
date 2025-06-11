@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Editor;
 
-use Illuminate\Http\Request;
+use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\ManuscriptEditorCanTake;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\AdminHelpers;
 
 class ManuscriptEditorCanTakeController extends Controller
 {
     public function index()
     {
         $manuscriptEditorCanTake = ManuscriptEditorCanTake::where('editor_id', Auth::user()->id)
-                                                            ->orderBy('date_from', 'asc')
-                                                            ->get();
+            ->orderBy('date_from', 'asc')
+            ->get();
+
         return view('editor.how-many-manuscript-you-can-take', compact('manuscriptEditorCanTake'));
     }
 
@@ -23,13 +24,13 @@ class ManuscriptEditorCanTakeController extends Controller
         $data = $request->except('_token');
         $message = '';
 
-        if($request->id){
+        if ($request->id) {
 
             $manuscriptEditorCanTake = ManuscriptEditorCanTake::find($request->id);
             $manuscriptEditorCanTake->update($data);
             $message = 'Record updated successfully.';
-           
-        }else{
+
+        } else {
 
             $data['editor_id'] = Auth::user()->id;
             ManuscriptEditorCanTake::create($data);
@@ -41,9 +42,11 @@ class ManuscriptEditorCanTakeController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         $manuscriptEditorCanTake = ManuscriptEditorCanTake::find($id);
         $manuscriptEditorCanTake->delete();
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record Successfully Deleted.'),
             'alert_type' => 'success']);
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use App\Http\FrontendHelpers;
@@ -7,30 +8,30 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class FreeManuscript
- * @package App
+ *
  * @mixin \Eloquent
  */
 class FreeManuscript extends Model
 {
-    
     protected $table = 'free_manuscripts';
-    protected $fillable = ['name', 'last_name', 'email', 'content', 'editor_id', 'genre', 'from', 'deadline'];
-    protected $appends = ['deadline_date'];
 
+    protected $fillable = ['name', 'last_name', 'email', 'content', 'editor_id', 'genre', 'from', 'deadline'];
+
+    protected $appends = ['deadline_date'];
 
     public function editor()
     {
-    	return $this->belongsTo('App\User', 'editor_id', 'id');
+        return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 
     public function latestFeedbackHistory()
     {
-        return $this->hasOne('App\FreeManuscriptFeedbackHistory')->latest();
+        return $this->hasOne(\App\FreeManuscriptFeedbackHistory::class)->latest();
     }
 
     public function feedbackHistory()
     {
-        return $this->hasMany('App\FreeManuscriptFeedbackHistory');
+        return $this->hasMany(\App\FreeManuscriptFeedbackHistory::class);
     }
 
     public function getFollowUpEmailAttribute()
@@ -55,5 +56,4 @@ class FreeManuscript extends Model
         return $this->attributes['deadline'] ? FrontendHelpers::formatDate($this->attributes['deadline'])
             : FrontendHelpers::formatDate(Carbon::parse($this->attributes['created_at'])->addDays(6));
     }
-
 }

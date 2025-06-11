@@ -5,24 +5,23 @@ namespace App\Http\Controllers;
 use App\EmailTemplate;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
-use App\Log;
 use App\Repositories\VippsRepository;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /**
-     * @param $data array
+     * @param  $data  array
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function vippsInitiatePayment($data)
     {
-        $repository = new VippsRepository();
+        $repository = new VippsRepository;
         $result = $repository->getAccessToken(); // get the access token
 
         if ($result instanceof ApiException) {
@@ -35,13 +34,15 @@ class Controller extends BaseController
 
         if ($initiatePaymentResult instanceof ApiException) {
             abort($initiatePaymentResult->getCode(), $initiatePaymentResult->getMessage());
+
             return ApiResponse::error($initiatePaymentResult->getMessage(), $initiatePaymentResult->getData(),
                 $initiatePaymentResult->getCode());
         }
 
         if (isset($data['is_ajax'])) {
-            \Illuminate\Support\Facades\Log::info("VIPPS inside is ajax");
+            \Illuminate\Support\Facades\Log::info('VIPPS inside is ajax');
             \Illuminate\Support\Facades\Log::info(json_encode($initiatePaymentResult['data']));
+
             return $initiatePaymentResult['data']->url;
         }
 

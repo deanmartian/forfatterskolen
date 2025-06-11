@@ -3,7 +3,6 @@
 /**
  * Laravel - A PHP Framework For Web Artisans
  *
- * @package  Laravel
  * @author   Taylor Otwell <taylor@laravel.com>
  */
 
@@ -56,6 +55,6 @@ $response = $kernel->handle(
 $response->send();
 
 $kernel->terminate($request, $response);
-/*$target = '../storage/app/public'; 
-$shortcut = '../public/storage'; 
+/*$target = '../storage/app/public';
+$shortcut = '../public/storage';
 symlink($target, $shortcut); */

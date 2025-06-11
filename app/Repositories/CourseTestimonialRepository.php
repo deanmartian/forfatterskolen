@@ -1,17 +1,18 @@
 <?php
+
 namespace App\Repositories;
 
 use App\Repositories\Eloquent\Repository;
 
-class CourseTestimonialRepository extends Repository {
-
+class CourseTestimonialRepository extends Repository
+{
     /**
      * Specify Model class name
      *
      * @return mixed
      */
-    function model()
+    public function model()
     {
-        return 'App\CourseTestimonial';
+        return \App\CourseTestimonial::class;
     }
 }

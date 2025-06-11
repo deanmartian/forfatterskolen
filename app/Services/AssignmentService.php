@@ -9,12 +9,10 @@ use Illuminate\Http\Request;
 
 class AssignmentService
 {
-
     /**
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function generateSveaCheckout( Request $request )
+    public function generateSveaCheckout(Request $request)
     {
         $assignment = Assignment::find($request->assignment_id);
         $price = (int) $request->price;
@@ -25,7 +23,7 @@ class AssignmentService
         $checkoutMerchantId = env('SVEA_CHECKOUTID');
         $checkoutSecret = env('SVEA_CHECKOUT_SECRET');
 
-        //set endpoint url. Eg. test or prod
+        // set endpoint url. Eg. test or prod
         $baseUrl = \Svea\Checkout\Transport\Connector::PROD_BASE_URL;
 
         try {
@@ -50,47 +48,47 @@ class AssignmentService
             /**
              * create order
              */
-            $data = array(
-                "countryCode" => env('SVEA_COUNTRY_CODE'),
-                "currency" => env('SVEA_CURRENCY'),
-                "locale" => env('SVEA_LOCALE'),
-                "clientOrderNumber" => env('SVEA_IDENTIFIER').$orderRecord->id,//rand(10000,30000000),
-                "merchantData" => $assignment->title." order",
-                "cart" => array(
-                    "items" => array(
-                        array(
-                            "name" => \Illuminate\Support\Str::limit($assignment->title, 35),
-                            "quantity" => 100,
-                            "unitPrice" => $price*100,
-                            "unit" => "pc"
-                        )
-                    )
-                ),
-                "presetValues" => array(
-                    array(
-                        "typeName" => "emailAddress",
-                        "value" => $request->email,
-                        "isReadonly" => false
-                    ),
-                    array(
-                        "typeName" => "postalCode",
-                        "value" => $request->zip,
-                        "isReadonly" => false
-                    ),
-                    array(
-                        "typeName" => "PhoneNumber",
-                        "value" => $request->phone,
-                        "isReadonly" => false
-                    )
-                ),
-                "merchantSettings" => array(
-                    "termsUri" => url('/terms/manuscript-terms'),
-                    "checkoutUri" => url('/account/upgrade/assignment/' . $request->assignment_id), // load checkout
-                    "confirmationUri" => $confirmationUrl,
-                    "pushUri" => url('/svea-callback?svea_order_id={checkout.order.uri}')
-                    //"https://localhost:51925/push.php?svea_order_id={checkout.order.uri}",
-                )
-            );
+            $data = [
+                'countryCode' => env('SVEA_COUNTRY_CODE'),
+                'currency' => env('SVEA_CURRENCY'),
+                'locale' => env('SVEA_LOCALE'),
+                'clientOrderNumber' => env('SVEA_IDENTIFIER').$orderRecord->id, // rand(10000,30000000),
+                'merchantData' => $assignment->title.' order',
+                'cart' => [
+                    'items' => [
+                        [
+                            'name' => \Illuminate\Support\Str::limit($assignment->title, 35),
+                            'quantity' => 100,
+                            'unitPrice' => $price * 100,
+                            'unit' => 'pc',
+                        ],
+                    ],
+                ],
+                'presetValues' => [
+                    [
+                        'typeName' => 'emailAddress',
+                        'value' => $request->email,
+                        'isReadonly' => false,
+                    ],
+                    [
+                        'typeName' => 'postalCode',
+                        'value' => $request->zip,
+                        'isReadonly' => false,
+                    ],
+                    [
+                        'typeName' => 'PhoneNumber',
+                        'value' => $request->phone,
+                        'isReadonly' => false,
+                    ],
+                ],
+                'merchantSettings' => [
+                    'termsUri' => url('/terms/manuscript-terms'),
+                    'checkoutUri' => url('/account/upgrade/assignment/'.$request->assignment_id), // load checkout
+                    'confirmationUri' => $confirmationUrl,
+                    'pushUri' => url('/svea-callback?svea_order_id={checkout.order.uri}'),
+                    // "https://localhost:51925/push.php?svea_order_id={checkout.order.uri}",
+                ],
+            ];
 
             $response = $checkoutClient->create($data);
             $orderId = $response['OrderId'];
@@ -98,6 +96,7 @@ class AssignmentService
             $orderStatus = $response['Status'];
             $orderRecord->svea_order_id = $orderId;
             $orderRecord->save(); // update the checkout and save the order id from svea
+
             return $guiSnippet;
 
         } catch (\Svea\Checkout\Exception\SveaApiException $ex) {
@@ -112,37 +111,32 @@ class AssignmentService
     }
 
     /**
-     * @param Request $request
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
-    public function createOrder( Request $request )
+    public function createOrder(Request $request)
     {
-        $newOrder['user_id']    = \Auth::user()->id;
-        $newOrder['item_id']    = $request->assignment_id;
-        $newOrder['type']       = $request->order_type;
+        $newOrder['user_id'] = \Auth::user()->id;
+        $newOrder['item_id'] = $request->assignment_id;
+        $newOrder['type'] = $request->order_type;
         $newOrder['package_id'] = 0;
-        $newOrder['plan_id']    = $request->payment_plan_id;
-        $newOrder['price']      = $request->price;
-        $newOrder['discount']   = 0;
-        $newOrder['payment_mode_id']   = $request->payment_mode_id;
+        $newOrder['plan_id'] = $request->payment_plan_id;
+        $newOrder['price'] = $request->price;
+        $newOrder['discount'] = 0;
+        $newOrder['payment_mode_id'] = $request->payment_mode_id;
         $newOrder['is_processed'] = 0;
 
         return Order::create($newOrder);
     }
 
-    /**
-     * @param $order
-     */
-    public function upgradeAssignment( $order )
+    public function upgradeAssignment($order)
     {
         $assignment = Assignment::find($order->item_id);
         if ($assignment) {
 
             AssignmentAddon::create([
                 'user_id' => $order->user_id,
-                'assignment_id' => $assignment->id
+                'assignment_id' => $assignment->id,
             ]);
         }
     }
-
 }

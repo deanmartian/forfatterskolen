@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -16,7 +17,6 @@ class Learner
     /**
      * Create a new filter instance.
      *
-     * @param  Guard  $auth
      * @return void
      */
     public function __construct(Guard $auth)
@@ -28,26 +28,25 @@ class Learner
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        if ($this->auth->guest()) :
-            if ($request->ajax()) :
+        if ($this->auth->guest()) {
+            if ($request->ajax()) {
                 return response('Unauthorized.', 401);
-            else :
+            } else {
                 return response(view('frontend.auth.login'));
-            endif;
-        else :
-            if ($this->auth->user()->role != 2) :
+            }
+        } else {
+            if ($this->auth->user()->role != 2) {
                 $this->auth->logout();
-                echo "Forbidden <br />";
+                echo 'Forbidden <br />';
+
                 return redirect('/');
-            endif;
-        endif;
+            }
+        }
 
         return $next($request);
     }
 }
-

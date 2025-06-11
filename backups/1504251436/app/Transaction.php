@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Http\FrontendHelpers;
 
 class Transaction extends Model
 {
@@ -25,10 +24,9 @@ class Transaction extends Model
     {
         return $this->belongsTo('App\Invoice');
     }
-    
+
     public function getCreatedAtAttribute($value)
     {
         return date_format(date_create($value), 'M d, Y h:i a');
     }
-
 }

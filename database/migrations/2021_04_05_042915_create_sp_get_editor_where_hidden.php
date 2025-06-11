@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateSpGetEditorWhereHidden extends Migration
@@ -38,6 +36,6 @@ class CreateSpGetEditorWhereHidden extends Migration
      */
     public function down()
     {
-        DB::unprepared("DROP PROCEDURE IF EXISTS getIDWhereHidden;");
+        DB::unprepared('DROP PROCEDURE IF EXISTS getIDWhereHidden;');
     }
 }

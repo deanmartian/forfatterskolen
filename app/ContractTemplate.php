@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Http\AdminHelpers;
 use Illuminate\Database\Eloquent\Model;
 
 class ContractTemplate extends Model
@@ -11,7 +10,6 @@ class ContractTemplate extends Model
         'title',
         'details',
         'signature_label',
-        'show_in_project'
+        'show_in_project',
     ];
-
 }

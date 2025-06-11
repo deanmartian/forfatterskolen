@@ -22,6 +22,6 @@ class SolutionArticle extends Model
 
     public function solution()
     {
-        return $this->belongsTo('App\Solution');
+        return $this->belongsTo(\App\Solution::class);
     }
 }

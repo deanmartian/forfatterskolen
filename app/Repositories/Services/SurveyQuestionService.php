@@ -1,22 +1,24 @@
 <?php
+
 namespace App\Repositories\Services;
 
 use App\Http\Requests\SurveyQuestionRequest;
-use App\Http\Requests\SurveyRequest;
 use App\Survey;
 use App\SurveyQuestion;
 
-class SurveyQuestionService {
-
+class SurveyQuestionService
+{
     /**
      * Store the solution model
+     *
      * @var SurveyQuestion
      */
     protected $surveyQuestion;
 
     /**
      * SurveyService constructor.
-     * @param SurveyQuestion $survey
+     *
+     * @param  SurveyQuestion  $survey
      */
     public function __construct(SurveyQuestion $surveyQuestion)
     {
@@ -24,22 +26,23 @@ class SurveyQuestionService {
     }
 
     /**
-     * @param null $id
-     * @param int $page
+     * @param  null  $id
+     * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getRecord($id = NULL, $page = 15)
+    public function getRecord($id = null, $page = 15)
     {
         if ($id) {
             return $this->surveyQuestion->find($id);
         }
+
         return $this->surveyQuestion->paginate($page);
     }
 
     public function findSurvey($survey_id)
     {
         $survey = Survey::find($survey_id);
-        if (!$survey) {
+        if (! $survey) {
             return false;
         }
 
@@ -48,8 +51,9 @@ class SurveyQuestionService {
 
     /**
      * Create new survey
-     * @param $request SurveyQuestionRequest
-     * @param $survey_id Survey id
+     *
+     * @param  $request  SurveyQuestionRequest
+     * @param  $survey_id  Survey id
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
     public function store($survey_id, $request)
@@ -60,13 +64,14 @@ class SurveyQuestionService {
         }
 
         $survey = Survey::find($survey_id);
+
         return $survey->questions()->create($requestData);
     }
 
     /**
      * For displaying edit page
-     * @param $survey_id Survey
-     * @param $id
+     *
+     * @param  $survey_id  Survey
      * @return bool
      */
     public function edit($survey_id, $id)
@@ -79,23 +84,24 @@ class SurveyQuestionService {
     }
 
     /**
-     * @param $id SurveyQuestion int
-     * @param $request SurveyQuestionRequest
+     * @param  $id  SurveyQuestion int
+     * @param  $request  SurveyQuestionRequest
      * @return bool
      */
     public function update($id, $request)
     {
         $requestData = $request->except('_token', '_method');
         $requestData['option_name'] = isset($requestData['option_name']) ?
-            json_encode($requestData['option_name']) : NULL;
+            json_encode($requestData['option_name']) : null;
 
         $surveyQuestion = $this->getRecord($id);
+
         return $surveyQuestion->update($requestData);
     }
 
     /**
      * Delete a survey question
-     * @param $id
+     *
      * @return bool
      */
     public function destroy($id)
@@ -104,6 +110,7 @@ class SurveyQuestionService {
         if ($surveyQuestion) {
             $surveyQuestion->forceDelete();
         }
+
         return false;
     }
 }

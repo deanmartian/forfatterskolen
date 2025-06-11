@@ -19,5 +19,4 @@ class PaymentMode extends Model
      * @var array
      */
     protected $fillable = ['mode'];
-
 }

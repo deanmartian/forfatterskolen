@@ -6,12 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderCompany extends Model
 {
-
     protected $guarded = ['id'];
-
 
     public function order()
     {
-        return $this->belongsTo('App\Order');
+        return $this->belongsTo(\App\Order::class);
     }
 }

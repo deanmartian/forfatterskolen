@@ -4,10 +4,9 @@ namespace App\Helpers;
 
 class ApiException extends \Exception
 {
-
     protected $data;
 
-    public function __construct($message = "", $data = '', $code = 0, \Exception $previous = null)
+    public function __construct($message = '', $data = '', $code = 0, ?\Exception $previous = null)
     {
         $this->data = $data;
 
@@ -15,7 +14,6 @@ class ApiException extends \Exception
     }
 
     /**
-     *
      * Get the error data
      *
      * @return mixed
@@ -24,5 +22,4 @@ class ApiException extends \Exception
     {
         return $this->data;
     }
-
 }

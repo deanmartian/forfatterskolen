@@ -1,15 +1,14 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
-use App\Http\AdminHelpers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
 use App\Faq;
+use App\Http\AdminHelpers;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class FaqController extends Controller
 {
-
     /**
      * FaqController constructor.
      */
@@ -21,57 +20,56 @@ class FaqController extends Controller
 
     public function index()
     {
-    	$faqs = Faq::orderBy('created_at', 'asc')->get();
-    	return view('backend.faq.index', compact('faqs'));
+        $faqs = Faq::orderBy('created_at', 'asc')->get();
+
+        return view('backend.faq.index', compact('faqs'));
     }
 
     public function store(Request $request)
     {
-    	$this->validate($request, [
-    		'title' => 'required|max:255',
-    		'description' => 'required',
-    	]);
-    	Faq::create([
-    		'title' => $request->title,
-    		'description' => $request->description
-    	]);
+        $this->validate($request, [
+            'title' => 'required|max:255',
+            'description' => 'required',
+        ]);
+        Faq::create([
+            'title' => $request->title,
+            'description' => $request->description,
+        ]);
 
-    	return redirect()->back()->with([
-    	    'errors'                => AdminHelpers::createMessageBag('Faq created successfully.'),
-            'alert_type'            => 'success',
-            'not-former-courses'    => true
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Faq created successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
         ]);
     }
 
-
-
     public function update($id, Request $request)
     {
-    	$this->validate($request, [
-    		'title' => 'required|max:255',
-    		'description' => 'required',
-    	]);
-    	$faq = Faq::findOrFail($id);
-    	$faq->title = $request->title;
-    	$faq->description = $request->description;
-    	$faq->save();
+        $this->validate($request, [
+            'title' => 'required|max:255',
+            'description' => 'required',
+        ]);
+        $faq = Faq::findOrFail($id);
+        $faq->title = $request->title;
+        $faq->description = $request->description;
+        $faq->save();
 
-    	return redirect()->back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Faq updated successfully.'),
-            'alert_type'            => 'success',
-            'not-former-courses'    => true
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Faq updated successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
         ]);
     }
 
     public function destroy($id, Request $request)
     {
-    	$faq = Faq::findOrFail($id);
-    	$faq->forceDelete();
+        $faq = Faq::findOrFail($id);
+        $faq->forceDelete();
 
-    	return redirect()->back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Faq deleted successfully.'),
-            'alert_type'            => 'success',
-            'not-former-courses'    => true
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Faq deleted successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
         ]);
     }
 }

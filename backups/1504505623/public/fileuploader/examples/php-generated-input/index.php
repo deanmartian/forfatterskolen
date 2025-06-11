@@ -1,4 +1,4 @@
-<?php include_once('php/included_upload.php'); ?><!DOCTYPE html>
+<?php include_once 'php/included_upload.php'; ?><!DOCTYPE html>
 <html lang="en">
 
 	<head>
@@ -35,17 +35,17 @@
 	<body>
 		<form action="index.php" method="post" enctype="multipart/form-data">
 			<?php
-				// this variable is comming from the included file
-				$input = $FileUploader->generateInput();
-				
-				// change file path from ../uploads/ to uploads/
-				// used for data-fileuploader-files attribute
-				// in other words used only for appended files
-				$input = str_replace('..\/uploads\/', 'uploads\/', $input);
-			
-				// echo the input
-				echo $input;
-			?>
+                // this variable is comming from the included file
+                $input = $FileUploader->generateInput();
+
+// change file path from ../uploads/ to uploads/
+// used for data-fileuploader-files attribute
+// in other words used only for appended files
+$input = str_replace('..\/uploads\/', 'uploads\/', $input);
+
+// echo the input
+echo $input;
+?>
 			<input type="submit">
 		</form>
     </body>

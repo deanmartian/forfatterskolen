@@ -12,12 +12,12 @@ class ProjectRoadmapStep extends Model
 
     public const STEPS = [
         1 => 'Ferdig manuskript',
-        2 => 'Språkvask', //'Redaktør & korrektur',
-        3 => 'Korrektur',//'Bokdesign & layout',
-        4 => 'Omslag',//'ISBN & metadata',
-        5 => 'Ombrekk',//'Publisering',
-        6 => 'Ebok',//'Markedsføring',
-        7 => 'Lydbok',//'Oppfølging & salg',
+        2 => 'Språkvask', // 'Redaktør & korrektur',
+        3 => 'Korrektur', // 'Bokdesign & layout',
+        4 => 'Omslag', // 'ISBN & metadata',
+        5 => 'Ombrekk', // 'Publisering',
+        6 => 'Ebok', // 'Markedsføring',
+        7 => 'Lydbok', // 'Oppfølging & salg',
         8 => 'Print',
         /* 8 => 'Publisering (sende til trykk)',
         9 => 'Utsending av bøker når de har kommet inn på lager',

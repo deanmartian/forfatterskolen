@@ -16,8 +16,8 @@ class PilotReaderBookChapterVersion extends Model
     /**
      * The attributes that are mass assignable.
      * field type 1 = chapter, 2 = questionnaire
+     *
      * @var array
      */
     protected $fillable = ['chapter_id', 'content', 'change_description'];
-
 }

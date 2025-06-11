@@ -13,12 +13,11 @@ class SelfPublishingLearner extends Model
 
     public function selfPublishing()
     {
-        return $this->belongsTo('App\SelfPublishing');
+        return $this->belongsTo(\App\SelfPublishing::class);
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
-
 }

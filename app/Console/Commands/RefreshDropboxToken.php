@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 use Log;
 use SebastianBergmann\Environment\Console;
 
@@ -41,7 +40,7 @@ class RefreshDropboxToken extends Command
      */
     public function handle()
     {
-        $client = new Client();
+        $client = new Client;
         $response = $client->post('https://api.dropboxapi.com/oauth2/token', [
             'form_params' => [
                 'grant_type' => 'refresh_token',
@@ -56,12 +55,12 @@ class RefreshDropboxToken extends Command
             $accessToken = $data['access_token'];
 
             $path = base_path('.env');
-            Log::info("path = " . $path);
+            Log::info('path = '.$path);
             if (file_exists($path)) {
                 echo $accessToken;
                 file_put_contents($path, str_replace(
-                    'DROPBOX_TOKEN=' . env('DROPBOX_TOKEN'),
-                    'DROPBOX_TOKEN=' . $accessToken,
+                    'DROPBOX_TOKEN='.env('DROPBOX_TOKEN'),
+                    'DROPBOX_TOKEN='.$accessToken,
                     file_get_contents($path)
                 ));
             }

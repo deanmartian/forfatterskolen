@@ -6,7 +6,6 @@ use App\AssignmentTemplate;
 use App\EmailHistory;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
-use App\Mail\SubjectBodyEmail;
 use App\SelfPublishing;
 use App\Services\LearnerService;
 use App\User;
@@ -14,30 +13,29 @@ use Illuminate\Http\Request;
 
 class LearnerController extends Controller
 {
-
     public function index(Request $request, User $user)
     {
         $learners = $user->newQuery();
-        if( $request->sid || $request->sfname || $request->slname || $request->semail) :
+        if ($request->sid || $request->sfname || $request->slname || $request->semail) {
             if ($request->sid) {
                 $learners->where('id', $request->sid);
             }
 
             if ($request->sfname) {
-                $learners->where('first_name', 'LIKE', '%' . $request->sfname  . '%');
+                $learners->where('first_name', 'LIKE', '%'.$request->sfname.'%');
             }
 
             if ($request->slname) {
-                $learners->where('last_name', 'LIKE', '%' . $request->slname  . '%');
+                $learners->where('last_name', 'LIKE', '%'.$request->slname.'%');
             }
 
             if ($request->semail) {
-                $learners->where('email', 'LIKE', '%' . $request->semail  . '%');
+                $learners->where('email', 'LIKE', '%'.$request->semail.'%');
             }
 
             $learners->orderBy('first_name', 'asc')
                 ->orderBy('email', 'asc');
-        endif;
+        }
 
         if ($request->has('free-course')) {
             $learners->has('freeCourses');
@@ -70,7 +68,7 @@ class LearnerController extends Controller
     {
         $learner = User::findOrFail($id);
 
-        if ((\Auth::user()->role === 4 || \Auth::user()->admin_with_giutbok_access) && !$learner->is_self_publishing_learner) {
+        if ((\Auth::user()->role === 4 || \Auth::user()->admin_with_giutbok_access) && ! $learner->is_self_publishing_learner) {
             return abort(404);
         }
 
@@ -88,51 +86,51 @@ class LearnerController extends Controller
         $selfPublishingList = SelfPublishing::whereNotIn('id',
             $learner->selfPublishingList()->pluck('self_publishing_id')->toArray())->get();
 
-        $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
+        $emailHistories = EmailHistory::where(function ($query) use ($learnerAssignmentManuscripts) {
             $query->where('parent', 'LIKE', 'assignment-manuscripts%');
             $query->whereIn('parent_id', $learnerAssignmentManuscripts);
         })
-            ->orWhere(function($query) use ($learnerShopManuscriptsTaken){
+            ->orWhere(function ($query) use ($learnerShopManuscriptsTaken) {
                 $query->where('parent', 'LIKE', 'shop-manuscripts-taken%');
                 $query->whereIn('parent_id', $learnerShopManuscriptsTaken);
             })
-            ->orWhere(function($query) use ($learnerCoursesTaken){
+            ->orWhere(function ($query) use ($learnerCoursesTaken) {
                 $query->where('parent', 'LIKE', 'courses-taken%');
                 $query->whereIn('parent_id', $learnerCoursesTaken);
             })
-            ->orWhere(function($query) use ($registeredWebinarLists){
+            ->orWhere(function ($query) use ($registeredWebinarLists) {
                 $query->where('parent', '=', 'webinar-registrant');
                 $query->whereIn('parent_id', $registeredWebinarLists);
             })
-            ->orWhere(function($query) use ($learner){
+            ->orWhere(function ($query) use ($learner) {
                 $query->where('parent', '=', 'learner');
                 $query->where('parent_id', $learner->id);
             })
-            ->orWhere(function($query) use ($learner){
+            ->orWhere(function ($query) use ($learner) {
                 $query->where('parent', '=', 'free-manuscripts');
                 $query->where('recipient', $learner->email);
             })
-            ->orWhere(function($query) use ($learnerInvoices){
+            ->orWhere(function ($query) use ($learnerInvoices) {
                 $query->where('parent', '=', 'invoice');
                 $query->whereIn('parent_id', $learnerInvoices);
             })
-            ->orWhere(function($query) use ($learnerInvoices){
+            ->orWhere(function ($query) use ($learnerInvoices) {
                 $query->where('parent', '=', 'invoice');
                 $query->whereIn('parent_id', $learnerInvoices);
             })
-            ->orWhere(function($query) use ($learner){
+            ->orWhere(function ($query) use ($learner) {
                 $query->where('parent', 'LIKE', 'copy-editing%');
                 $query->where('recipient', $learner->email);
             })
-            ->orWhere(function($query) use ($learner){
+            ->orWhere(function ($query) use ($learner) {
                 $query->where('parent', 'LIKE', 'correction%');
                 $query->where('recipient', $learner->email);
             })
-            ->orWhere(function($query) use ($learner){
+            ->orWhere(function ($query) use ($learner) {
                 $query->where('parent', 'LIKE', 'gift-purchase');
                 $query->where('recipient', $learner->email);
             })
-            ->orWhere(function($query) use ($learner){
+            ->orWhere(function ($query) use ($learner) {
                 $query->where('recipient', $learner->email);
             })
             ->latest()
@@ -143,7 +141,7 @@ class LearnerController extends Controller
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList'));
     }
 
-    public function registerLearner( Request $request, LearnerService $learnerService )
+    public function registerLearner(Request $request, LearnerService $learnerService)
     {
         $this->validate($request, [
             'first_name' => 'required|string|max:255',
@@ -157,5 +155,4 @@ class LearnerController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Learner created successfully.'),
             'alert_type' => 'success', 'not-former-courses' => true]);
     }
-
 }

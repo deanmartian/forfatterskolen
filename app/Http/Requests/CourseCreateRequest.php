@@ -28,8 +28,8 @@ class CourseCreateRequest extends FormRequest
             'description' => 'required',
             'course_image' => 'required',
             'type' => 'required',
-            'meta_title'        => 'required|max:70|min:40',
-            'meta_description'  => 'required|max:160|min:70'
+            'meta_title' => 'required|max:70|min:40',
+            'meta_description' => 'required|max:160|min:70',
         ];
     }
 }

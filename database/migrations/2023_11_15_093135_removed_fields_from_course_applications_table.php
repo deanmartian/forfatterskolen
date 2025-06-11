@@ -31,10 +31,10 @@ class RemovedFieldsFromCourseApplicationsTable extends Migration
     {
         Schema::table('course_applications', function (Blueprint $table) {
             $table->text('optional_words')->nullable();
-			$table->longText('reason_for_applying');
-			$table->longText('need_in_course');
-			$table->longText('expectations');
-			$table->longText('how_ready');
+            $table->longText('reason_for_applying');
+            $table->longText('need_in_course');
+            $table->longText('expectations');
+            $table->longText('how_ready');
         });
     }
 }

@@ -10,13 +10,13 @@ class Cors
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
         header('Access-Control-Allow-Origin: https://apitest.vipps.no');
         header('Access-Control-Allow-Origin: https://api.vipps.no');
+
         return $next($request);
     }
 }

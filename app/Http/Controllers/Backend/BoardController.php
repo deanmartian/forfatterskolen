@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Helpers\ApiException;
@@ -11,8 +12,7 @@ class BoardController extends Controller
 {
     /**
      * Show board pulses
-     * @param $id
-     * @param DapulseRepository $repository
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function show($id, DapulseRepository $repository)
@@ -29,9 +29,7 @@ class BoardController extends Controller
 
     /**
      * Assign user to a pulse
-     * @param $board_id
-     * @param Request $request
-     * @param DapulseRepository $repository
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function assignUser($board_id, Request $request, DapulseRepository $repository)
@@ -42,13 +40,13 @@ class BoardController extends Controller
         if ($result instanceof ApiException) {
             abort($result->getCode(), $result->getMessage());
         }
+
         return redirect()->back();
     }
 
     /**
      * Add new board
-     * @param Request $request
-     * @param DapulseRepository $repository
+     *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(Request $request, DapulseRepository $repository)
@@ -69,9 +67,7 @@ class BoardController extends Controller
 
     /**
      * Add pulse to board
-     * @param $board_id
-     * @param Request $request
-     * @param DapulseRepository $repository
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function addPulse($board_id, Request $request, DapulseRepository $repository)
@@ -81,14 +77,13 @@ class BoardController extends Controller
         if ($result instanceof ApiException) {
             abort($result->getCode(), $result->getMessage());
         }
+
         return redirect()->back();
     }
 
     /**
      * Update the group title inside board
-     * @param $board_id
-     * @param Request $request
-     * @param DapulseRepository $repository
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateGroupTitle($board_id, Request $request, DapulseRepository $repository)
@@ -98,14 +93,13 @@ class BoardController extends Controller
         if ($result instanceof ApiException) {
             return response()->json(ApiResponse::error($result->getMessage()), $result->getCode());
         }
+
         return response()->json('', 200);
     }
 
     /**
      * Set pulse status
-     * @param $board_id
-     * @param Request $request
-     * @param DapulseRepository $repository
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function setStatus($board_id, Request $request, DapulseRepository $repository)
@@ -126,11 +120,11 @@ class BoardController extends Controller
     public function setTimeline($board_id, Request $request, DapulseRepository $repository)
     {
 
-        $timeline = explode('-',$request->timeline);
-        $from   = $timeline[0]."-".$timeline[1]."-".$timeline[2];
-        $to     = $timeline[3]."-".$timeline[4]."-".$timeline[5];
-        $from   = date('Y-m-d',strtotime($from));
-        $to     = date('Y-m-d',strtotime($to));
+        $timeline = explode('-', $request->timeline);
+        $from = $timeline[0].'-'.$timeline[1].'-'.$timeline[2];
+        $to = $timeline[3].'-'.$timeline[4].'-'.$timeline[5];
+        $from = date('Y-m-d', strtotime($from));
+        $to = date('Y-m-d', strtotime($to));
         $result = $repository->setTimeline($board_id, $request->pulse_id, $from, $to);
 
         if ($result instanceof ApiException) {

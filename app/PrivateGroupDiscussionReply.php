@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class PrivateGroupDiscussionReply extends Model
 {
-    protected $fillable = [ 'disc_id', 'user_id', 'message'];
+    protected $fillable = ['disc_id', 'user_id', 'message'];
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function discussion()
     {
-        return $this->belongsTo('App\PrivateGroupDiscussion', 'disc_id');
+        return $this->belongsTo(\App\PrivateGroupDiscussion::class, 'disc_id');
     }
 }

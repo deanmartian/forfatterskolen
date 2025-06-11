@@ -1,21 +1,22 @@
 <?php
+
 namespace App\Repositories\Services;
 
 use App\Http\AdminHelpers;
 use App\OptIn;
 use Illuminate\Http\Request;
 
-class OptInService {
-
+class OptInService
+{
     /**
      * Store the solution model
+     *
      * @var OptIn
      */
     protected $optIn;
 
     /**
      * BlogService constructor.
-     * @param OptIn $optIn
      */
     public function __construct(OptIn $optIn)
     {
@@ -23,76 +24,80 @@ class OptInService {
     }
 
     /**
-     * @param null $id
-     * @param int $page
+     * @param  null  $id
+     * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getRecord($id = NULL, $page = 15)
+    public function getRecord($id = null, $page = 15)
     {
         if ($id) {
             return $this->optIn->find($id);
         }
+
         return $this->optIn->paginate($page);
     }
 
     /**
      * Create new record
-     * @param $request Request
+     *
+     * @param  $request  Request
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
     public function store($request)
     {
         $data = $request->all();
 
-        if ($request->hasFile('pdf_file')) :
+        if ($request->hasFile('pdf_file')) {
             $destinationPath = 'storage/opt-in-files'; // upload path
             $extensions = ['pdf'];
-            $extension = pathinfo($_FILES['pdf_file']['name'],PATHINFO_EXTENSION); // getting document extension
-            $actual_name = pathinfo($_FILES['pdf_file']['name'],PATHINFO_FILENAME); ;
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $extension = pathinfo($_FILES['pdf_file']['name'], PATHINFO_EXTENSION); // getting document extension
+            $actual_name = pathinfo($_FILES['pdf_file']['name'], PATHINFO_FILENAME);
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
 
             $expFileName = explode('/', $fileName);
 
-            if( in_array($extension, $extensions) ) :
+            if (in_array($extension, $extensions)) {
                 $request->pdf_file->move($destinationPath, end($expFileName));
                 $data['pdf_file'] = $fileName;
-            endif;
-        endif;
+            }
+        }
 
         return $this->optIn->create($data);
     }
 
     /**
      * Update record
-     * @param $optIn \Illuminate\Database\Eloquent\Model
-     * @param $request Request
+     *
+     * @param  $optIn  \Illuminate\Database\Eloquent\Model
+     * @param  $request  Request
      * @return bool
      */
     public function update($optIn, $request)
     {
         $data = $request->toArray();
 
-        if ($request->hasFile('pdf_file')) :
+        if ($request->hasFile('pdf_file')) {
             $destinationPath = 'storage/opt-in-files'; // upload path
             $extensions = ['pdf'];
-            $extension = pathinfo($_FILES['pdf_file']['name'],PATHINFO_EXTENSION); // getting document extension
-            $actual_name = pathinfo($_FILES['pdf_file']['name'],PATHINFO_FILENAME); ;
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $extension = pathinfo($_FILES['pdf_file']['name'], PATHINFO_EXTENSION); // getting document extension
+            $actual_name = pathinfo($_FILES['pdf_file']['name'], PATHINFO_FILENAME);
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
 
             $expFileName = explode('/', $fileName);
 
-            if( in_array($extension, $extensions) ) :
+            if (in_array($extension, $extensions)) {
                 $request->pdf_file->move($destinationPath, end($expFileName));
                 $data['pdf_file'] = $fileName;
-            endif;
-        endif;
+            }
+        }
 
         return $optIn->update($data);
     }
 
     /**
      * Delete record
-     * @param $optIn \Illuminate\Database\Eloquent\Model
+     *
+     * @param  $optIn  \Illuminate\Database\Eloquent\Model
      * @return bool
      */
     public function destroy($optIn)
@@ -100,6 +105,7 @@ class OptInService {
         if ($optIn->forceDelete()) {
             return true;
         }
+
         return false;
     }
 }

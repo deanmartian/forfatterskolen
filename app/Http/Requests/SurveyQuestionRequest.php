@@ -25,7 +25,7 @@ class SurveyQuestionRequest extends FormRequest
     {
         return [
             'title' => 'required',
-            'question_type' => 'required'
+            'question_type' => 'required',
         ];
     }
 }

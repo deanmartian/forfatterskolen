@@ -1,7 +1,7 @@
 <?php
+
 namespace App;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class CourseShared extends Model
@@ -22,11 +22,11 @@ class CourseShared extends Model
 
     public function course()
     {
-        return $this->belongsTo('App\Course');
+        return $this->belongsTo(\App\Course::class);
     }
 
     public function package()
     {
-        return $this->belongsTo('App\Package');
+        return $this->belongsTo(\App\Package::class);
     }
 }

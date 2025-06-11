@@ -1,13 +1,13 @@
 <?php
+
 namespace App\Repositories\Services;
 
 use App\Http\AdminHelpers;
 
-class CourseVideoTestimonialService {
-
+class CourseVideoTestimonialService
+{
     /**
      * CourseVideoTestimonialService constructor.
-     * @param $model
      */
     public function __construct($model)
     {
@@ -16,7 +16,7 @@ class CourseVideoTestimonialService {
 
     /**
      * Insert testimonial
-     * @param $request
+     *
      * @return bool
      */
     public function store($request)
@@ -25,23 +25,23 @@ class CourseVideoTestimonialService {
             'name' => $request->name,
             'course_id' => $request->course_id,
             'testimony' => $request->testimony,
-            'is_video' => 1
+            'is_video' => 1,
         ];
 
-        if ($request->hasFile('user_image')) :
+        if ($request->hasFile('user_image')) {
             $destinationPath = 'images/course-testimonials'; // upload path
 
-            if (!\File::exists($destinationPath)) {
+            if (! \File::exists($destinationPath)) {
                 \File::makeDirectory($destinationPath);
             }
-            $extension      = $request->user_image->extension(); // getting image extension
-            $uploadedFile   = $request->user_image->getClientOriginalName();
-            $actual_name    = pathinfo($uploadedFile, PATHINFO_FILENAME);
-            $fileName       = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $extension = $request->user_image->extension(); // getting image extension
+            $uploadedFile = $request->user_image->getClientOriginalName();
+            $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
             $request->user_image->move($destinationPath, $fileName);
 
             $createData['user_image'] = '/'.$fileName;
-        endif;
+        }
 
         // call the create from the RepositoryInterface
         if ($this->courseTestimonial->create($createData)) {
@@ -53,8 +53,7 @@ class CourseVideoTestimonialService {
 
     /**
      * Update testimonial
-     * @param $request
-     * @param $id
+     *
      * @return bool
      */
     public function update($request, $id)
@@ -63,23 +62,23 @@ class CourseVideoTestimonialService {
             'name' => $request->name,
             'course_id' => $request->course_id,
             'testimony' => $request->testimony,
-            'is_video' => 1
+            'is_video' => 1,
         ];
 
-        if ($request->hasFile('user_image')) :
+        if ($request->hasFile('user_image')) {
             $destinationPath = 'images/course-testimonials'; // upload path
 
-            if (!\File::exists($destinationPath)) {
+            if (! \File::exists($destinationPath)) {
                 \File::makeDirectory($destinationPath);
             }
-            $extension      = $request->user_image->extension(); // getting image extension
-            $uploadedFile   = $request->user_image->getClientOriginalName();
-            $actual_name    = pathinfo($uploadedFile, PATHINFO_FILENAME);
-            $fileName       = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $extension = $request->user_image->extension(); // getting image extension
+            $uploadedFile = $request->user_image->getClientOriginalName();
+            $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
             $request->user_image->move($destinationPath, $fileName);
 
             $updateData['user_image'] = '/'.$fileName;
-        endif;
+        }
 
         // call the update from the RepositoryInterface
         if ($this->courseTestimonial->update($updateData, $id)) {

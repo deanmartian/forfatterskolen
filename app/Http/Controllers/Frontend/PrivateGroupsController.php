@@ -1,58 +1,59 @@
 <?php
+
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
 use App\PrivateGroup;
-use App\PrivateGroupDiscussion;
 use App\PrivateGroupMember;
 use App\PrivateGroupMemberPreference;
-use App\Transformer\PrivateGroupDiscussionsTransFormer;
 use App\Transformer\PrivateGroupTransFormer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 
-class PrivateGroupsController extends Controller {
-
+class PrivateGroupsController extends Controller
+{
     /**
      * Display the private groups page
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
         $members = PrivateGroupMember::with('private_group')->where('user_id', \Auth::user()->id)->get();
+
         return view('frontend.learner.pilot-reader.private-groups.index', compact('members'));
     }
 
     /**
      * Create a new group
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function createGroup(Request $request)
     {
         $this->validate($request, [
             'name' => 'required|alpha_num_spaces|unique:private_groups|max:50',
-            'contact_email' => 'nullable|email|unique:private_groups'
+            'contact_email' => 'nullable|email|unique:private_groups',
         ]);
         $data = $request->all();
         \DB::beginTransaction();
         $model = PrivateGroup::create($data);
-        if(! $model)
-        {
+        if (! $model) {
             \DB::rollback();
+
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
         }
         $this->addGroupMember(['private_group_id' => $model->id, 'user_id' => \Auth::user()->id, 'role' => 'manager']);
         \DB::commit();
 
-        $fractal = new Manager();
+        $fractal = new Manager;
         $private_group_members = PrivateGroupMember::where('user_id', \Auth::user()->id)
             ->where('private_group_id', $model->id)
             ->get();
-        $resource = new Collection($private_group_members, new PrivateGroupTransFormer());
+        $resource = new Collection($private_group_members, new PrivateGroupTransFormer);
         $privateGroup = $fractal->createData($resource)->toArray();
 
         return response()->json(['success' => 'New Group Created.', 'privateGroup' => $privateGroup['data'][0]], 200);
@@ -60,32 +61,33 @@ class PrivateGroupsController extends Controller {
 
     /**
      * Add a group member
-     * @param $data
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     private function addGroupMember($data)
     {
-        if(! PrivateGroupMember::create($data))
-        {
+        if (! PrivateGroupMember::create($data)) {
             \DB::rollback();
+
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
         }
     }
 
     /**
      * Display a private group
-     * @param $id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function show($id)
     {
-        if($privateGroup = PrivateGroup::find($id)) {
+        if ($privateGroup = PrivateGroup::find($id)) {
             if (FrontendHelpers::isPrivateGroupMember($id, Auth::user()->id)) {
-                $page_title             = $privateGroup->name;
-                $announcements          = $privateGroup->discussions()->where('is_announcement',1)->get();
-                $featured_book_shared   = $privateGroup->books_shared()->where('visibility',1);
-                $featured_books         =  $featured_book_shared->with('book')->orderBy('created_at','desc')->get();
-                $manager                = $privateGroup->manager;
+                $page_title = $privateGroup->name;
+                $announcements = $privateGroup->discussions()->where('is_announcement', 1)->get();
+                $featured_book_shared = $privateGroup->books_shared()->where('visibility', 1);
+                $featured_books = $featured_book_shared->with('book')->orderBy('created_at', 'desc')->get();
+                $manager = $privateGroup->manager;
+
                 return view('frontend.learner.pilot-reader.private-groups.show', compact('privateGroup',
                     'page_title', 'announcements', 'featured_books', 'manager'));
             }
@@ -96,7 +98,7 @@ class PrivateGroupsController extends Controller {
 
     /**
      * Get private group details
-     * @param $id
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getGroupData($id)
@@ -110,18 +112,19 @@ class PrivateGroupsController extends Controller {
 
     /**
      * Show the edit group page
-     * @param $id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function editGroup($id)
     {
-        if($privateGroup = PrivateGroup::find($id)) {
+        if ($privateGroup = PrivateGroup::find($id)) {
             if (FrontendHelpers::isPrivateGroupMember($id, Auth::user()->id)) {
-                $page_title             = $privateGroup->name.' Edit Group';
-                $announcements          = $privateGroup->discussions()->where('is_announcement',1)->get();
-                $featured_book_shared   = $privateGroup->books_shared()->where('visibility',1);
-                $featured_books         =  $featured_book_shared->with('book')->orderBy('created_at','desc')->get();
-                $manager                = $privateGroup->manager;
+                $page_title = $privateGroup->name.' Edit Group';
+                $announcements = $privateGroup->discussions()->where('is_announcement', 1)->get();
+                $featured_book_shared = $privateGroup->books_shared()->where('visibility', 1);
+                $featured_books = $featured_book_shared->with('book')->orderBy('created_at', 'desc')->get();
+                $manager = $privateGroup->manager;
+
                 return view('frontend.learner.pilot-reader.private-groups.edit-group', compact('privateGroup',
                     'page_title', 'announcements', 'featured_books', 'manager'));
             }
@@ -132,31 +135,32 @@ class PrivateGroupsController extends Controller {
 
     /**
      * Update the private group
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateGroup(Request $request)
     {
         $data = $request->except('id');
         $model = PrivateGroup::find($request->id);
-        if(! $model->update($data))
-        {
+        if (! $model->update($data)) {
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
         }
+
         return response()->json(['success' => 'Group Updated.', 'data' => $model], 200);
     }
 
     /**
      * Display the books page
-     * @param $id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function books($id)
     {
-        if($privateGroup = PrivateGroup::find($id)) {
+        if ($privateGroup = PrivateGroup::find($id)) {
             if (FrontendHelpers::isPrivateGroupMember($id, Auth::user()->id)) {
-                $page_title = $privateGroup->name . ' Books';
-                $manager    = $privateGroup->manager;
+                $page_title = $privateGroup->name.' Books';
+                $manager = $privateGroup->manager;
+
                 return view('frontend.learner.pilot-reader.private-groups.books', compact('privateGroup',
                     'page_title', 'manager'));
             }
@@ -167,15 +171,16 @@ class PrivateGroupsController extends Controller {
 
     /**
      * Display preferences page
-     * @param $id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function preferences($id)
     {
-        if($privateGroup = PrivateGroup::find($id)) {
+        if ($privateGroup = PrivateGroup::find($id)) {
             if (FrontendHelpers::isPrivateGroupMember($id, Auth::user()->id)) {
-                $page_title = $privateGroup->name . ' Preferences';
-                $manager    = $privateGroup->manager;
+                $page_title = $privateGroup->name.' Preferences';
+                $manager = $privateGroup->manager;
+
                 return view('frontend.learner.pilot-reader.private-groups.preferences', compact('privateGroup',
                     'page_title', 'manager'));
             }
@@ -186,37 +191,34 @@ class PrivateGroupsController extends Controller {
 
     /**
      * Set the preference
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function setPreference(Request $request)
     {
         $preference = $this->viewPreference($request->private_group_id);
         $data = $request->all();
-        if(! $preference)
-        {
+        if (! $preference) {
             $data['user_id'] = Auth::user()->id;
-            if(! PrivateGroupMemberPreference::create($data))
-            {
+            if (! PrivateGroupMemberPreference::create($data)) {
                 return response()->json(['error' => 'Opss. Something went wrong'], 500);
             }
-        }else
-        {
-            if(! $preference->update($data))
-            {
+        } else {
+            if (! $preference->update($data)) {
                 return response()->json(['error' => 'Opss. Something went wrong'], 500);
             }
         }
+
         return response()->json(['success' => 'Preferences Saved.', compact('')], 200);
     }
 
     /**
      * View preference
-     * @param $group_id
+     *
      * @return \Illuminate\Database\Eloquent\Model|null|static
      */
     public function viewPreference($group_id)
     {
-        return PrivateGroupMemberPreference::where([ 'user_id' => Auth::user()->id, 'private_group_id' => $group_id ])->first();
+        return PrivateGroupMemberPreference::where(['user_id' => Auth::user()->id, 'private_group_id' => $group_id])->first();
     }
 }

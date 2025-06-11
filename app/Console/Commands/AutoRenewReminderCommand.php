@@ -5,14 +5,13 @@ namespace App\Console\Commands;
 use App\CoursesTaken;
 use App\CronLog;
 use App\Http\AdminHelpers;
-use App\Http\FikenInvoice;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
-use App\Package;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class AutoRenewReminderCommand extends Command {
+class AutoRenewReminderCommand extends Command
+{
     /**
      * The name and signature of the console command.
      *
@@ -51,17 +50,17 @@ class AutoRenewReminderCommand extends Command {
         $yearDate = $dateAddDays->subYear(1)->format('Y-m-d'); // subYear to get the correct started_at
 
         // get courses taken by end date
-        $coursesTaken = CoursesTaken::whereHas('package', function($query){
+        $coursesTaken = CoursesTaken::whereHas('package', function ($query) {
             $query->where('course_id', 17);
-        })->whereNotNull('end_date')->where('end_date',$monthDate)->get();
+        })->whereNotNull('end_date')->where('end_date', $monthDate)->get();
 
         // get courses taken by started at field
-        $coursesTakenByStartDate = CoursesTaken::whereHas('package', function($query){
+        $coursesTakenByStartDate = CoursesTaken::whereHas('package', function ($query) {
             $query->where('course_id', 17);
         })
             ->whereNotNull('started_at')
             ->whereNull('end_date')
-            ->whereDate('started_at',$yearDate)
+            ->whereDate('started_at', $yearDate)
             ->get();
 
         // merge the collections
@@ -76,11 +75,11 @@ class AutoRenewReminderCommand extends Command {
 
                 $emailData['email_subject'] = $emailTemplate->subject;
                 $emailData['email_message'] = $emailTemplate->email_content;
-                $emailData['from_name'] = NULL;
+                $emailData['from_name'] = null;
                 $emailData['from_email'] = $emailTemplate->from_email;
-                $emailData['attach_file'] = NULL;
+                $emailData['attach_file'] = null;
 
-                //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+                // \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
                 dispatch(new AddMailToQueueJob($to, $emailTemplate->subject, $emailTemplate->email_content,
                     $emailTemplate->from_email, null, null,
                     'courses-taken', $courseTaken->id));

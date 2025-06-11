@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Blog;
@@ -10,16 +11,17 @@ use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
-
     /**
      * Storage for survey service
+     *
      * @var BlogService
      */
     protected $blogService;
 
     /**
      * SurveyController constructor.
-     * @param BlogService $surveyService
+     *
+     * @param  BlogService  $surveyService
      */
     public function __construct(BlogService $blogService)
     {
@@ -28,16 +30,19 @@ class BlogController extends Controller
 
     /**
      * Display the blog list
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
         $blogList = $this->blogService->getRecord();
+
         return view('backend.blog.index', compact('blogList'));
     }
 
     /**
      * Display the create page
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
@@ -50,14 +55,14 @@ class BlogController extends Controller
             'author_name' => '',
             'author_image' => '',
             'status' => '',
-            'schedule' => ''
+            'schedule' => '',
 
         ];
+
         return view('backend.blog.create', compact('blog'));
     }
 
     /**
-     * @param BlogRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(BlogRequest $request)
@@ -65,7 +70,7 @@ class BlogController extends Controller
         if ($this->blogService->store($request)) {
             return redirect()->route('admin.blog.index')->with([
                 'errors' => AdminHelpers::createMessageBag('Blog created successfully.'),
-                'alert_type' => 'success'
+                'alert_type' => 'success',
             ]);
         }
 
@@ -74,31 +79,33 @@ class BlogController extends Controller
 
     /**
      * Display the edit page for blog
-     * @param $id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function edit($id)
     {
         if ($blog = $this->blogService->getRecord($id)) {
-            $blog['author_name'] = $blog['author_name']?: $blog->user->full_name;
+            $blog['author_name'] = $blog['author_name'] ?: $blog->user->full_name;
+
             return view('backend.blog.edit', compact('blog'));
         }
+
         return redirect()->route('admin.blog.index');
     }
 
     /**
      * Update blog
-     * @param $id
-     * @param BlogRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, BlogRequest $request)
     {
         if ($this->blogService->getRecord($id)) {
             $this->blogService->update($id, $request);
+
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Blog updated successfully.'),
-                'alert_type' => 'success'
+                'alert_type' => 'success',
             ]);
         }
 
@@ -107,36 +114,39 @@ class BlogController extends Controller
 
     /**
      * Delete a survey
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
         if ($this->blogService->getRecord($id)) {
             $this->blogService->destroy($id);
+
             return redirect()->route('admin.blog.index')->with([
                 'errors' => AdminHelpers::createMessageBag('Blog deleted successfully.'),
-                'alert_type' => 'success'
+                'alert_type' => 'success',
             ]);
         }
+
         return redirect()->back();
     }
 
     /**
      * Update blog status
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function statusUpdate($id, Request $request)
     {
-        if (!$this->blogService->getRecord($id)) {
+        if (! $this->blogService->getRecord($id)) {
             $response = AdminHelpers::createMessageBag('Invalid blog.');
-            return response()->json(['message' => $response ]);
+
+            return response()->json(['message' => $response]);
         }
 
         $response = AdminHelpers::createMessageBag('Status updated');
         $this->blogService->updateStatus($id, $request);
-        return response()->json(['message' => $response ]);
+
+        return response()->json(['message' => $response]);
     }
 }

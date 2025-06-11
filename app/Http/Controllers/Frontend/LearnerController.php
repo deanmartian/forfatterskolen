@@ -1,35 +1,49 @@
 <?php
+
 namespace App\Http\Controllers\Frontend;
 
+use App\Address;
+use App\Assignment;
 use App\AssignmentAddon;
+use App\AssignmentFeedback;
 use App\AssignmentFeedbackNoGroup;
+use App\AssignmentGroup;
 use App\AssignmentGroupLearner;
+use App\AssignmentManuscript;
 use App\CalendarNote;
 use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
 use App\Contract;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
+use App\Course;
 use App\CourseCertificate;
-use App\CourseOrderAttachment;
+use App\CourseDiscount;
+use App\CoursesTaken;
 use App\Diploma;
 use App\EmailConfirmation;
 use App\Genre;
 use App\GiftPurchase;
 use App\Http\AdminHelpers;
+use App\Http\Controllers\Controller;
+use App\Http\FikenInvoice;
+use App\Http\FrontendHelpers;
 use App\Http\Middleware\Admin;
-use App\Http\Requests\AddWritingGroupRequest;
-use App\Http\Requests\OrderCreateRequest;
+use App\Http\Requests\ProfileUpdateRequest;
+use App\Invoice;
 use App\Jobs\AddMailToQueueJob;
 use App\Jobs\CourseOrderJob;
 use App\Jobs\SveaUpdateOrderDetailsJob;
+use App\Jobs\UpdateFikenContactDetailsJob;
+use App\Lesson;
 use App\LessonContent;
 use App\LessonDocuments;
-use App\Mail\SendEmailMessageOnly;
+use App\Log;
 use App\Mail\AssignmentSubmittedEmail;
 use App\Mail\CoachingSuggestionDateEmail;
-use App\Mail\MultipleEmailConfirmation;
+use App\Mail\SendEmailMessageOnly;
 use App\Mail\SubjectBodyEmail;
+use App\Manuscript;
 use App\MarketingPlan;
 use App\MarketingPlanQuestionAnswer;
 use App\Notification;
@@ -40,24 +54,34 @@ use App\Package;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\Paypal;
-use App\PilotReaderReaderProfile;
 use App\Project;
+use App\ProjectBook;
+use App\ProjectBookFormatting;
+use App\ProjectBookSale;
 use App\ProjectGraphicWork;
 use App\ProjectInvoice;
 use App\ProjectMarketing;
 use App\ProjectRegistration;
+use App\ProjectRegistrationDistribution;
+use App\PublishingService as AppPublishingService;
 use App\Repositories\Services\CompetitionService;
 use App\Repositories\Services\PublishingService;
 use App\Repositories\Services\WritingGroupService;
 use App\SelfPublishing;
 use App\SelfPublishingLearner;
+use App\SelfPublishingPortalRequest;
 use App\Services\AssignmentService;
 use App\Services\CourseService;
 use App\Services\ProjectService;
 use App\Services\ShopManuscriptService;
 use App\Settings;
+use App\ShopManuscript;
+use App\ShopManuscriptComment;
+use App\ShopManuscriptsTaken;
 use App\ShopManuscriptTakenFeedback;
 use App\ShopManuscriptUpgrade;
+use App\StoragePayout;
+use App\StorageSale;
 use App\Survey;
 use App\SurveyAnswer;
 use App\TimeRegister;
@@ -69,49 +93,17 @@ use App\UserEmail;
 use App\UserRenewedCourse;
 use App\UserSocial;
 use App\WebinarRegistrant;
-use App\WordWritten;
 use App\WordWrittenGoal;
-use App\WritingGroup;
-use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
+use File;
 use Firebase\JWT\JWT;
+use Hash;
 use Illuminate\Http\Request;
-use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
-use App\Course;
-use App\Manuscript;
-use App\CoursesTaken;
-use App\WorkshopsTaken;
-use App\Http\FikenInvoice;
-use App\ShopManuscriptsTaken;
-use App\ShopManuscriptComment;
-use App\Lesson;
-use App\Invoice;
-use App\Address;
-use App\Assignment;
-use App\AssignmentManuscript;
-use App\AssignmentGroup;
-use App\AssignmentFeedback;
-use App\CourseDiscount;
-use App\Log;
-use Hash;
-use File;
-use App\Http\FrontendHelpers;
-use App\Jobs\UpdateFikenContactDetailsJob;
-use App\ProjectBook;
-use App\ProjectBookFormatting;
-use App\ProjectBookSale;
-use App\ProjectRegistrationDistribution;
-use App\ProjectRoadmapStep;
-use App\PublishingService as AppPublishingService;
-use App\SelfPublishingPortalRequest;
-use App\ShopManuscript;
-use App\StoragePayout;
-use App\StorageSale;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
@@ -120,19 +112,21 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\In;
-use PaypalIPN;
 
-include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
-include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
-include_once($_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class LearnerController extends Controller
 {
-    // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk 
+    // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk
     // Forfatterskolen: forfatterskolen-as
-    public $fikenInvoices = "https://fiken.no/api/v1/companies/forfatterskolen-as/invoices";
-    public $username = "elybutabara@yahoo.com";
-    public $password = "janiel12";
+    public $fikenInvoices = 'https://fiken.no/api/v1/companies/forfatterskolen-as/invoices';
+
+    public $username = 'elybutabara@yahoo.com';
+
+    public $password = 'janiel12';
+
     /* old
      * public $headers = [
         'Accept: application/hal+json, application/vnd.error+json',
@@ -149,16 +143,16 @@ class LearnerController extends Controller
 
     public function dashboard()
     {
-        $user           = Auth::user();
-        $coursesTaken   = $user->coursesTaken()->limit(3)->get();
-        $invoices       = $user->invoices()->limit(5)->get();
-        $packageArr     = Auth::user()->coursesTaken()->pluck('package_id')->toArray();
-        $courses        = Package::whereIn('id', $packageArr)->pluck('course_id')->toArray();
-        $surveyTaken    = Auth::user()->surveyTaken()->pluck("survey_id")->toArray();
-        $today          = date('Y-m-d');
-        $surveys        = DB::table('survey')->whereIn("course_id",$courses)
-            ->whereNotIn("id", $surveyTaken)
-            ->where(function($query) use($today) {
+        $user = Auth::user();
+        $coursesTaken = $user->coursesTaken()->limit(3)->get();
+        $invoices = $user->invoices()->limit(5)->get();
+        $packageArr = Auth::user()->coursesTaken()->pluck('package_id')->toArray();
+        $courses = Package::whereIn('id', $packageArr)->pluck('course_id')->toArray();
+        $surveyTaken = Auth::user()->surveyTaken()->pluck('survey_id')->toArray();
+        $today = date('Y-m-d');
+        $surveys = DB::table('survey')->whereIn('course_id', $courses)
+            ->whereNotIn('id', $surveyTaken)
+            ->where(function ($query) use ($today) {
                 $query->whereDate('start_date', '<=', $today);
                 $query->whereDate('end_date', '>=', $today);
             })
@@ -170,9 +164,9 @@ class LearnerController extends Controller
         $selfPublishingList = SelfPublishing::whereIn('id', $selfPublishingLearners)->get(); */
         $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
         $inventorySummaries = [];
-        $selfPublishingList = $standardProject 
-            ? SelfPublishing::where('project_id', $standardProject->id)->latest()->get() 
-            : [];        
+        $selfPublishingList = $standardProject
+            ? SelfPublishing::where('project_id', $standardProject->id)->latest()->get()
+            : [];
         $projects = Project::where('user_id', Auth::user()->id)->get();
 
         if ($standardProject) {
@@ -197,7 +191,7 @@ class LearnerController extends Controller
                 'defective' => 'Defective',
                 'corrections' => 'Corrections',
                 'counts' => 'Counts',
-                //'returns' => 'Returns'
+                // 'returns' => 'Returns'
             ];
 
             foreach ($projectCentralDistributions as $distribution) {
@@ -245,35 +239,35 @@ class LearnerController extends Controller
                 $dataMapper = function ($typeKey, $typeName, $field) use ($distribution, $quantitySold) {
                     return [
                         'name' => $typeName,
-                        'value' => $typeKey == 'quantity-sold' 
-                            ? $quantitySold 
+                        'value' => $typeKey == 'quantity-sold'
+                            ? $quantitySold
                             : ($distribution ? $this->storageSalesByTypeArray($distribution->id, $typeKey)[$field] : 0),
                     ];
                 };
-                
+
                 $overallData = array_map(function ($key, $name) use ($dataMapper) {
                     return $dataMapper($key, $name, 'overall');
                 }, array_keys($types), $types);
-                
-                $calculatedBalance = array_reduce($overallData, function($sum, $data) {
-                    return !in_array($data['name'], ['Quantity Sold']) ? $sum + $data['value'] : $sum;
+
+                $calculatedBalance = array_reduce($overallData, function ($sum, $data) {
+                    return ! in_array($data['name'], ['Quantity Sold']) ? $sum + $data['value'] : $sum;
                 }, 0);
 
                 $balanceCount = $this->salesReportCounter($distribution->id, 'balance');
 
-                $totalBalance = $balanceCount ? $balanceCount 
+                $totalBalance = $balanceCount ? $balanceCount
                     : $inventoryTotal - ($calculatedBalance + $totalQuantitySold);
 
                 $inventorySummaries[] = [
                     'registration_id' => $distribution->id,
                     'isbn' => $distribution->value,
                     'inventory_physical_items' => $inventoryPhysicalItems,
-                    'inventory_delivered'      => $inventoryDelivered,
-                    'inventory_returns'        => $inventoryReturns,
-                    'inventory_total'          => $inventoryTotal,
-                    'quantity_sold'            => $totalQuantitySold,
-                    'total_balance'            => $totalBalance
-                ];  
+                    'inventory_delivered' => $inventoryDelivered,
+                    'inventory_returns' => $inventoryReturns,
+                    'inventory_total' => $inventoryTotal,
+                    'quantity_sold' => $totalQuantitySold,
+                    'total_balance' => $totalBalance,
+                ];
             }
         }
 
@@ -288,29 +282,27 @@ class LearnerController extends Controller
             'dashboardCalendar', 'freeCourses', 'projects', 'inventorySummaries'));
     }
 
-
-
-
     public function course()
     {
         $user = Auth::user();
         $surveys = Survey::all();
         $coursesTaken = $user->coursesTaken()->paginate(5);
         $formerCourses = $user->formerCourses;
+
         return view('frontend.learner.course', compact('surveys', 'coursesTaken', 'formerCourses'));
     }
 
     /**
      * Display the survey page
-     * @param $id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function survey($id)
     {
-        $surveyTaken    = Auth::user()->surveyTaken()->pluck("survey_id")->toArray();
+        $surveyTaken = Auth::user()->surveyTaken()->pluck('survey_id')->toArray();
         $survey = Survey::with('questions')->where('id', $id)
-            ->whereNotIn("id", $surveyTaken)->first();
-        if (!$survey) {
+            ->whereNotIn('id', $surveyTaken)->first();
+        if (! $survey) {
             return redirect()->route('learner.dashboard');
         }
 
@@ -319,8 +311,7 @@ class LearnerController extends Controller
 
     /**
      * Survey Submit
-     * @param $id
-     * @param Request $request
+     *
      * @return array
      */
     public function takeSurvey($id, Request $request)
@@ -329,62 +320,61 @@ class LearnerController extends Controller
         $filtered_data = array_filter($data);
         foreach ($filtered_data as $key => $value) {
             if ($value) {
-                $answer = new SurveyAnswer();
-                if( strpos($value, ", ") !== false ) {
-                    $value = json_encode(explode(", ", $value));
+                $answer = new SurveyAnswer;
+                if (strpos($value, ', ') !== false) {
+                    $value = json_encode(explode(', ', $value));
                 }
 
-                $answer->answer             = $value;
+                $answer->answer = $value;
                 $answer->survey_question_id = $key;
-                $answer->user_id            = Auth::id();
-                $answer->survey_id          = $id;
+                $answer->user_id = Auth::id();
+                $answer->survey_id = $id;
 
                 $answer->save();
             }
         }
+
         return $filtered_data;
     }
-
-
 
     public function shopManuscript()
     {
         $shopManuscriptsTaken = Auth::user()->shopManuscriptsTaken()->paginate(4);
+
         return view('frontend.learner.shop-manuscript', compact('shopManuscriptsTaken'));
     }
-
-
 
     public function shopManuscriptShow($id)
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('user_id', Auth::user()->id)->where('id', $id)->where('is_active', true)->first();
-        if( $shopManuscriptTaken ) :
+        if ($shopManuscriptTaken) {
             return view('frontend.learner.shopManuscriptShow', compact('shopManuscriptTaken'));
-        endif;
+        }
+
         return abort('503');
     }
 
     /**
      * Download shop-manuscript file
-     * @param $id
-     * @param $type string
+     *
+     * @param  $type  string
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadManuscript($id, $type)
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::find($id);
         if ($shopManuscriptTaken) {
-            $file           = $shopManuscriptTaken->file;
+            $file = $shopManuscriptTaken->file;
             if ($type == 'synopsis') {
                 $file = $shopManuscriptTaken->synopsis;
             }
-            $fileInfo       = pathinfo(public_path($file));
-            $filename       = $fileInfo['filename'];
-            $fileExt        = $fileInfo['extension'];
-            $newName        = $filename.".".$fileExt;
+            $fileInfo = pathinfo(public_path($file));
+            $filename = $fileInfo['filename'];
+            $fileExt = $fileInfo['extension'];
+            $newName = $filename.'.'.$fileExt;
 
             if ($type == 'synopsis') {
-                $newName = $filename."-synopsis.".$fileExt;
+                $newName = $filename.'-synopsis.'.$fileExt;
             }
 
             return response()->download(public_path($file), $newName);
@@ -395,8 +385,7 @@ class LearnerController extends Controller
 
     /**
      * Download the manuscript feedback
-     * @param $id
-     * @param $feedback_id
+     *
      * @return $this|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadManuscriptFeedback($id, $feedback_id)
@@ -404,28 +393,28 @@ class LearnerController extends Controller
         $shopmanuscriptTaken = ShopManuscriptsTaken::find($id);
         $shopManuFeed = ShopManuscriptTakenFeedback::where([
             'id' => $feedback_id,
-            'shop_manuscript_taken_id' => $id
+            'shop_manuscript_taken_id' => $id,
         ])->first();
 
-        if (!$shopManuFeed) {
+        if (! $shopManuFeed) {
             return redirect()->back();
         }
 
         $feedbacks = $shopManuFeed->filename;
         if (count($feedbacks) > 1) {
-            $zipFileName    = $shopmanuscriptTaken->shop_manuscript->title.' Feedbacks.zip';
-            $public_dir     = public_path('storage');
-            $zip            = new \ZipArchive();
+            $zipFileName = $shopmanuscriptTaken->shop_manuscript->title.' Feedbacks.zip';
+            $public_dir = public_path('storage');
+            $zip = new \ZipArchive;
 
             // open zip file connection and create the zip
-            if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
-                die ("An error occurred creating your ZIP file.");
+            if ($zip->open($public_dir.'/'.$zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== true) {
+                exit('An error occurred creating your ZIP file.');
             }
 
-            foreach($feedbacks as $feedFile) {
+            foreach ($feedbacks as $feedFile) {
                 if (file_exists(public_path().'/'.trim($feedFile))) {
 
-                    //get the correct filename
+                    // get the correct filename
                     $expFileName = explode('/', $feedFile);
                     $file = str_replace('\\', '/', public_path());
 
@@ -436,21 +425,21 @@ class LearnerController extends Controller
 
             $zip->close(); // close zip connection
 
-            $headers = array(
+            $headers = [
                 'Content-Type' => 'application/octet-stream',
-            );
+            ];
 
             $fileToPath = $public_dir.'/'.$zipFileName;
 
-            if(file_exists($fileToPath)){
+            if (file_exists($fileToPath)) {
                 return response()->download($fileToPath, $zipFileName, $headers)->deleteFileAfterSend(true);
             }
 
             return redirect()->back();
         }
+
         return response()->download(public_path($feedbacks[0]));
     }
-
 
     public function workshop()
     {
@@ -459,8 +448,7 @@ class LearnerController extends Controller
 
     /**
      * Approve the coaching date set by admin
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function approveCoachingDate($id, Request $request)
@@ -468,6 +456,7 @@ class LearnerController extends Controller
         if ($coachingTimer = CoachingTimerManuscript::find($id)) {
             $data = $request->except('_token');
             $coachingTimer->update($data);
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Date approved successfully.'),
                 'alert_type' => 'success']);
         }
@@ -477,8 +466,7 @@ class LearnerController extends Controller
 
     /**
      * Suggest coaching date
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function suggestCoachingDate($id, Request $request)
@@ -496,11 +484,12 @@ class LearnerController extends Controller
 
             $coachingTimer->update($data);
 
-            $email_data['sender']           = Auth::user()->full_name;
-            $email_data['suggested_dates']  = $data['suggested_date'];
+            $email_data['sender'] = Auth::user()->full_name;
+            $email_data['suggested_dates'] = $data['suggested_date'];
             $toMail = 'post@forfatterskolen.no';
             // use queue to send email on background
             Mail::to($toMail)->queue(new CoachingSuggestionDateEmail($email_data));
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Suggested date saved successfully.'),
                 'alert_type' => 'success']);
         }
@@ -508,8 +497,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-
-    public function webinar( Request $request )
+    public function webinar(Request $request)
     {
         $isPost = 0;
         $isReplay = 0;
@@ -539,14 +527,14 @@ class LearnerController extends Controller
             ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
             ->join('courses', 'packages.course_id', '=', 'courses.id')
             ->join('webinars', 'courses.id', '=', 'webinars.course_id')
-            ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title')
-            ->where('user_id',Auth::user()->id)
-            ->where('courses.id',17) // just added this line to show all webinar pakke webinars
-            ->where(function($query){
-                $query->whereIn('webinars.id',[24, 25, 31]);
-                $query->orWhere('set_as_replay',1);
+            ->select('webinars.*', 'courses_taken.id as courses_taken_id', 'courses.title as course_title')
+            ->where('user_id', Auth::user()->id)
+            ->where('courses.id', 17) // just added this line to show all webinar pakke webinars
+            ->where(function ($query) {
+                $query->whereIn('webinars.id', [24, 25, 31]);
+                $query->orWhere('set_as_replay', 1);
             })
-            //->whereIn('webinars.id',[24, 25, 31]) // remove this to return the original
+            // ->whereIn('webinars.id',[24, 25, 31]) // remove this to return the original
             ->orderBy('courses.type', 'ASC')
             ->orderBy('webinars.start_date', 'ASC')
             ->get();
@@ -561,74 +549,74 @@ class LearnerController extends Controller
 
         $coursesTaken = Auth::user()->coursesTaken;
         $courses = DB::table('courses')
-                ->leftJoin('packages', 'courses.id', '=', 'packages.course_id')
-                ->leftJoin('courses_taken', 'courses_taken.package_id', '=', 'packages.id')
-                ->where('courses_taken.user_id', Auth::user()->id)
-                ->whereNull('courses_taken.deleted_at')
-                ->pluck('courses.id')
-                ->toArray();
+            ->leftJoin('packages', 'courses.id', '=', 'packages.course_id')
+            ->leftJoin('courses_taken', 'courses_taken.package_id', '=', 'packages.id')
+            ->where('courses_taken.user_id', Auth::user()->id)
+            ->whereNull('courses_taken.deleted_at')
+            ->pluck('courses.id')
+            ->toArray();
 
         $replayWebinars = DB::table('lesson_contents')->select('lesson_contents.*')
-                            ->leftJoin('lessons', 'lesson_contents.lesson_id', '=', 'lessons.id')
-                            ->leftJoin('courses', 'lessons.course_id', '=', 'courses.id')
-                            ->where('courses.id', '=', 17)
-                            ->whereIn('courses.id', $courses);
+            ->leftJoin('lessons', 'lesson_contents.lesson_id', '=', 'lessons.id')
+            ->leftJoin('courses', 'lessons.course_id', '=', 'courses.id')
+            ->where('courses.id', '=', 17)
+            ->whereIn('courses.id', $courses);
 
-                if ($request->exists('search_replay')) {
-                    $replayWebinars = $replayWebinars->where(function($query) use ($request) {
-                        $query->where('lesson_contents.title', 'like', '%'.$request->search_replay.'%')
-                        ->orWhere('tags', 'like', '%'.$request->search_replay.'%');
-                    });
-                }
-                
-        $replayWebinars = $replayWebinars                            
-                            ->latest('lesson_contents.id')
-                            ->paginate(10);
+        if ($request->exists('search_replay')) {
+            $replayWebinars = $replayWebinars->where(function ($query) use ($request) {
+                $query->where('lesson_contents.title', 'like', '%'.$request->search_replay.'%')
+                    ->orWhere('tags', 'like', '%'.$request->search_replay.'%');
+            });
+        }
+
+        $replayWebinars = $replayWebinars
+            ->latest('lesson_contents.id')
+            ->paginate(10);
 
         $subscriptionWebinars = DB::table('courses_taken')
-                    ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
-                    ->join('courses', 'packages.course_id', '=', 'courses.id')
-                    ->join('webinars', 'courses.id', '=', 'webinars.course_id')
-                    ->select(
-                        'webinars.*',
-                        'courses_taken.id as courses_taken_id',
-                        'courses.title as course_title',
-                        DB::raw('TIMESTAMPDIFF(HOUR, NOW(), webinars.start_date) as diffWithHours')
-                    )
-                    ->where('user_id',Auth::user()->id)
-                    ->where('courses.id',17) // just added this line to show all webinar pakke webinars
-                    ->whereNotIn('webinars.id',[24, 25, 31])
-                    ->where('set_as_replay',0)
-                    ->whereNull('courses_taken.deleted_at');
+            ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
+            ->join('courses', 'packages.course_id', '=', 'courses.id')
+            ->join('webinars', 'courses.id', '=', 'webinars.course_id')
+            ->select(
+                'webinars.*',
+                'courses_taken.id as courses_taken_id',
+                'courses.title as course_title',
+                DB::raw('TIMESTAMPDIFF(HOUR, NOW(), webinars.start_date) as diffWithHours')
+            )
+            ->where('user_id', Auth::user()->id)
+            ->where('courses.id', 17) // just added this line to show all webinar pakke webinars
+            ->whereNotIn('webinars.id', [24, 25, 31])
+            ->where('set_as_replay', 0)
+            ->whereNull('courses_taken.deleted_at');
 
         if ($request->exists('search_upcoming')) {
-            $subscriptionWebinars = $subscriptionWebinars->where('webinars.start_date', '>=' ,Carbon::today())
-            ->where('webinars.title','LIKE','%'.$request->search_upcoming.'%');
+            $subscriptionWebinars = $subscriptionWebinars->where('webinars.start_date', '>=', Carbon::today())
+                ->where('webinars.title', 'LIKE', '%'.$request->search_upcoming.'%');
         }
 
         $subscriptionWebinars = $subscriptionWebinars->orderBy('courses.type', 'ASC')
-                    ->orderBy('webinars.start_date', 'ASC')
-                    ->having('diffWithHours', '>=', 0) // filter results after 'SELECT'
-                    ->get()
-                    ->paginate(8);
+            ->orderBy('webinars.start_date', 'ASC')
+            ->having('diffWithHours', '>=', 0) // filter results after 'SELECT'
+            ->get()
+            ->paginate(8);
+
         return view('frontend.learner.webinar', compact('searchResult', 'isPost', 'isReplay', 'replayWebinars',
             'subscriptionWebinars'));
     }
 
     /**
      * Register the user to the webinar
-     * @param $webinar_key
-     * @param $webinar_id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function webinarRegister($webinar_key, $webinar_id)
     {
-        $user       = Auth::user();
+        $user = Auth::user();
         $data = [
-            'id'            => $webinar_key,
-            'email'         => $user->email,
-            'first_name'    => $user->first_name,
-            'last_name'     => $user->last_name,
+            'id' => $webinar_key,
+            'email' => $user->email,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
         ];
 
         $url = config('services.big_marker.register_link');
@@ -636,7 +624,7 @@ class LearnerController extends Controller
         $header[] = 'API-KEY: '.config('services.big_marker.api_key');
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         $response = curl_exec($ch);
@@ -653,8 +641,9 @@ class LearnerController extends Controller
             if (isset($decoded_response->error)) {
                 $message = $decoded_response->error;
             }
+
             return redirect()->back()->withInput()->with([
-                'errors' => AdminHelpers::createMessageBag($message)
+                'errors' => AdminHelpers::createMessageBag($message),
             ]);
         }
 
@@ -663,8 +652,7 @@ class LearnerController extends Controller
 
     /**
      * Add the user as registrant on the webinar
-     * @param $webinar_key
-     * @param $webinar_id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function webinarRegisterOrig($webinar_key, $webinar_id)
@@ -679,22 +667,22 @@ class LearnerController extends Controller
         $access_token = AdminHelpers::generateWebinarGTAccessToken(); // from here http://app.gotowp.com/
         $org_key = '5169031040578858252';
 
-        $vals['body'] = (object) array(
+        $vals['body'] = (object) [
             'firstName' => $first_name,
             'lastName' => $last_name,
-            'email' => $user_email
-        );
+            'email' => $user_email,
+        ];
 
         $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$webinar_key.'/registrants';
-        $header = array();
+        $header = [];
         $header[] = 'Accept: application/json';
         $header[] = 'Content-type: application/json';
         $header[] = 'Accept: application/vnd.citrix.g2wapi-v1.1+json';
         $header[] = 'Authorization: OAuth oauth_token='.$access_token;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $long_url);
-        curl_setopt( $ch, CURLOPT_POST, 1);
-        curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode($vals['body']));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($vals['body']));
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $response = curl_exec($ch);
@@ -707,6 +695,7 @@ class LearnerController extends Controller
                 $webRegister = WebinarRegistrant::firstOrNew($registrant);
                 $webRegister->join_url = $decoded_response->joinUrl;
                 $webRegister->save();
+
                 return redirect()->back()->with('success', true);
             }
         } else {
@@ -767,45 +756,45 @@ class LearnerController extends Controller
 
         /* this is new query until the end, the top is the old function/query */
         $webinars = DB::table('courses_taken')
-                    ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
-                    ->join('courses', 'packages.course_id', '=', 'courses.id')
-                    ->join('webinars', 'courses.id', '=', 'webinars.course_id')
-                    ->select(
-                        'webinars.*',
-                        'courses_taken.id as courses_taken_id',
-                        'courses.title as course_title',
-                        'courses_taken.deleted_at',
-                        DB::raw('TIMESTAMPDIFF(HOUR, NOW(), webinars.start_date) as diffWithHours')
-                    )
-                    ->where('user_id', Auth::user()->id)
-                    ->where('courses.id','!=',17) // just added this line to show all webinar pakke webinars
-                    ->whereNull('courses_taken.deleted_at');
+            ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
+            ->join('courses', 'packages.course_id', '=', 'courses.id')
+            ->join('webinars', 'courses.id', '=', 'webinars.course_id')
+            ->select(
+                'webinars.*',
+                'courses_taken.id as courses_taken_id',
+                'courses.title as course_title',
+                'courses_taken.deleted_at',
+                DB::raw('TIMESTAMPDIFF(HOUR, NOW(), webinars.start_date) as diffWithHours')
+            )
+            ->where('user_id', Auth::user()->id)
+            ->where('courses.id', '!=', 17) // just added this line to show all webinar pakke webinars
+            ->whereNull('courses_taken.deleted_at');
 
         if ($request->exists('search_upcoming')) {
-            $webinars = $webinars->whereNotIn('webinars.id',[24, 25, 31])
-            ->where('webinars.start_date', '>=' ,Carbon::today())
-            ->where('webinars.title','LIKE','%'.$request->search_upcoming.'%')
-            ->where('set_as_replay',0);
+            $webinars = $webinars->whereNotIn('webinars.id', [24, 25, 31])
+                ->where('webinars.start_date', '>=', Carbon::today())
+                ->where('webinars.title', 'LIKE', '%'.$request->search_upcoming.'%')
+                ->where('set_as_replay', 0);
         } else {
-            $webinars = $webinars->where(function($query){
-                $query->where(function($subQuery) {
-                    $subQuery->whereIn('webinars.id',[24, 25, 31]);
-                    $subQuery->orWhere('set_as_replay',1);
+            $webinars = $webinars->where(function ($query) {
+                $query->where(function ($subQuery) {
+                    $subQuery->whereIn('webinars.id', [24, 25, 31]);
+                    $subQuery->orWhere('set_as_replay', 1);
                 });
 
-                $query->orWhere(function($subQuery) {
-                    $subQuery->whereNotIn('webinars.id',[24, 25, 31])
-                    ->where('set_as_replay',0);
+                $query->orWhere(function ($subQuery) {
+                    $subQuery->whereNotIn('webinars.id', [24, 25, 31])
+                        ->where('set_as_replay', 0);
                 });
             });
         }
 
         $webinars = $webinars->orderBy('courses.type', 'ASC')
-                    ->orderBy('webinars.set_as_replay', 'DESC')
-                    ->orderBy('webinars.start_date', 'ASC')
-                    ->having('diffWithHours', '>=', 0) // filter results after 'SELECT'
-                    ->get()
-                    ->paginate(8);
+            ->orderBy('webinars.set_as_replay', 'DESC')
+            ->orderBy('webinars.start_date', 'ASC')
+            ->having('diffWithHours', '>=', 0) // filter results after 'SELECT'
+            ->get()
+            ->paginate(8);
 
         $lessonContents = [];
         if ($request->exists('search_replay')) {
@@ -813,22 +802,23 @@ class LearnerController extends Controller
                 ->paginate(8);
             $isReplay = 1;
         }
-        return view('frontend.learner.course-webinar', compact('isReplay', 'webinars', 'lessonContents', 
-        /* 'webinarsRepriser', 'isPost', 'searchResult' */));
-    }
 
+        return view('frontend.learner.course-webinar', compact('isReplay', 'webinars', 'lessonContents',
+            /* 'webinarsRepriser', 'isPost', 'searchResult' */));
+    }
 
     public function courseShow($id)
     {
         $courseTaken = CoursesTaken::findOrFail($id);
 
-        if( Auth::user()->can('participateCourse', $courseTaken) ) :
-            if ($courseTaken->hasEnded):
+        if (Auth::user()->can('participateCourse', $courseTaken)) {
+            if ($courseTaken->hasEnded) {
                 return redirect()->route('learner.course');
-            endif;
+            }
 
             return view('frontend.learner.course_show', compact('courseTaken'));
-        endif;
+        }
+
         return abort('450', 'testing here');
     }
 
@@ -841,72 +831,72 @@ class LearnerController extends Controller
     {
         $events = [];
 
-        foreach( Auth::user()->coursesTaken as $courseTaken ) :
+        foreach (Auth::user()->coursesTaken as $courseTaken) {
             // Course lessons
             $token = str_random(10);
-            foreach( $courseTaken->package->course->lessons as $lesson ) :
+            foreach ($courseTaken->package->course->lessons as $lesson) {
                 $availability = strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)) * 1000;
-                $newAvailability = date('Y-m-d',strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)));
+                $newAvailability = date('Y-m-d', strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)));
                 $events[] = [
                     'id' => $lesson->course->id,
-                    'title' => 'Lesson: ' . $lesson->title . ' from ' . $lesson->course->title,
+                    'title' => 'Lesson: '.$lesson->title.' from '.$lesson->course->title,
                     'class' => 'event-important',
-                    'start' => $newAvailability,//$availability,
-                    'end' => $newAvailability,//$availability,
-                    'color' => '#d95e66'
+                    'start' => $newAvailability, // $availability,
+                    'end' => $newAvailability, // $availability,
+                    'color' => '#d95e66',
                 ];
-            endforeach;
+            }
 
             // Course webinars
             $token = str_random(10);
-            foreach( $courseTaken->package->course->webinars as $webinar ) :
+            foreach ($courseTaken->package->course->webinars as $webinar) {
                 $events[] = [
                     'id' => $webinar->course->id,
-                    'title' => 'Webinar: ' . $webinar->title . ' from ' . $webinar->course->title,
+                    'title' => 'Webinar: '.$webinar->title.' from '.$webinar->course->title,
                     'class' => 'event-warning',
-                    'start' => date('Y-m-d',strtotime($webinar->start_date)),//strtotime($webinar->start_date) * 1000,
-                    'end' => date('Y-m-d',strtotime($webinar->start_date)),//strtotime($webinar->start_date) * 1000,
-                    'color' => '#ff9c00'
+                    'start' => date('Y-m-d', strtotime($webinar->start_date)), // strtotime($webinar->start_date) * 1000,
+                    'end' => date('Y-m-d', strtotime($webinar->start_date)), // strtotime($webinar->start_date) * 1000,
+                    'color' => '#ff9c00',
                 ];
-            endforeach;
+            }
 
             // manuscripts
-            foreach ($courseTaken->manuscripts as $manuscript) :
+            foreach ($courseTaken->manuscripts as $manuscript) {
                 $events[] = [
                     'id' => $courseTaken->package->course->id,
-                    'title' => 'Manus: ' . basename($manuscript->filename). ' from '.$courseTaken->package->course->title,
+                    'title' => 'Manus: '.basename($manuscript->filename).' from '.$courseTaken->package->course->title,
                     'class' => 'event-info',
-                    'start' => date('Y-m-d',strtotime($manuscript->expected_finish)),//strtotime($manuscript->expected_finish) * 1000,
-                    'end' => date('Y-m-d',strtotime($manuscript->expected_finish)),//strtotime($manuscript->expected_finish) * 1000,
-                    'color' => '#29b5f5'
+                    'start' => date('Y-m-d', strtotime($manuscript->expected_finish)), // strtotime($manuscript->expected_finish) * 1000,
+                    'end' => date('Y-m-d', strtotime($manuscript->expected_finish)), // strtotime($manuscript->expected_finish) * 1000,
+                    'color' => '#29b5f5',
                 ];
-            endforeach;
+            }
 
             // assignments
-            foreach ($courseTaken->package->course->assignments as $assignment) :
+            foreach ($courseTaken->package->course->assignments as $assignment) {
                 $events[] = [
                     'id' => $assignment->course->id,
-                    'title' => 'Oppgaver: ' . $assignment->title. ' from '.$assignment->course->title,
+                    'title' => 'Oppgaver: '.$assignment->title.' from '.$assignment->course->title,
                     'class' => 'event-success-new',
-                    'start' => date('Y-m-d',strtotime($assignment->submission_date)),//strtotime($assignment->submission_date) * 1000,
-                    'end' => date('Y-m-d',strtotime($assignment->submission_date)),//strtotime($assignment->submission_date) * 1000,
-                    'color' => '#44af5e'
+                    'start' => date('Y-m-d', strtotime($assignment->submission_date)), // strtotime($assignment->submission_date) * 1000,
+                    'end' => date('Y-m-d', strtotime($assignment->submission_date)), // strtotime($assignment->submission_date) * 1000,
+                    'color' => '#44af5e',
                 ];
-            endforeach;
+            }
 
             // get the calendar notes created by admin for certain course only
-            foreach ($courseTaken->package->course->notes as $note):
+            foreach ($courseTaken->package->course->notes as $note) {
                 $events[] = [
                     'id' => $note->id,
                     'title' => $note->note,
                     'class' => 'event-inverse',
-                    'start' => date('Y-m-d',strtotime($note->from_date)),//strtotime($note->date) * 1000,
-                    'end' => date('Y-m-d',strtotime($note->to_date)),//strtotime($note->date) * 1000,
-                    'color' => '#1b1b1b' // for full calendar
+                    'start' => date('Y-m-d', strtotime($note->from_date)), // strtotime($note->date) * 1000,
+                    'end' => date('Y-m-d', strtotime($note->to_date)), // strtotime($note->date) * 1000,
+                    'color' => '#1b1b1b', // for full calendar
                 ];
-            endforeach;
+            }
 
-        endforeach;
+        }
 
         // get the calendar notes created by admin
         /*foreach(CalendarNote::all() as $calendar) :
@@ -920,29 +910,26 @@ class LearnerController extends Controller
         endforeach;*/
 
         $approved_coaching = Auth::user()->coachingTimers()->whereNotNull('approved_date')->get();
-        foreach($approved_coaching as $coaching) {
+        foreach ($approved_coaching as $coaching) {
             $events[] = [
                 'id' => $coaching->id,
-                'title' => 'Coaching Session at '.date('H:i A',strtotime($coaching->approved_date)),
+                'title' => 'Coaching Session at '.date('H:i A', strtotime($coaching->approved_date)),
                 'class' => 'event-inverse',
-                'start' => date('Y-m-d',strtotime($coaching->approved_date)),//strtotime($note->date) * 1000,
-                'end' => date('Y-m-d',strtotime($coaching->approved_date)),//strtotime($note->date) * 1000,
-                'color' => '#f00' // for full calendar
+                'start' => date('Y-m-d', strtotime($coaching->approved_date)), // strtotime($note->date) * 1000,
+                'end' => date('Y-m-d', strtotime($coaching->approved_date)), // strtotime($note->date) * 1000,
+                'color' => '#f00', // for full calendar
             ];
         }
 
+        $event_1 = [
+            'title' => 'Event 1',
+            'class' => 'event-important',
+            'start' => '1494259200000',
+            'end' => '1494259300000', 1503292298,
+        ];
 
-    	$event_1 = [
-    		'title' => 'Event 1',
-    		'class' => 'event-important',
-    		'start' => '1494259200000',
-    		'end' => '1494259300000',1503292298
-    	];
-
-    	return view('frontend.learner.calendar', compact('events'));
+        return view('frontend.learner.calendar', compact('events'));
     }
-
-
 
     public function assignment()
     {
@@ -955,7 +942,7 @@ class LearnerController extends Controller
         $upcomingPersonalAssignments = Assignment::where('parent', 'users')
             ->where('parent_id', Auth::user()->id)
             ->where('submission_date', '>=', Carbon::now())
-            ->where('available_date','>', Carbon::now())
+            ->where('available_date', '>', Carbon::now())
             ->oldest('submission_date')
             ->get();
 
@@ -965,30 +952,30 @@ class LearnerController extends Controller
         $noWordLimitAssignments = [];
 
         $assignmentGroupLearners = AssignmentGroupLearner::with(['group.assignment.course'])
-                                ->where('user_id', Auth::user()->id)->get();
+            ->where('user_id', Auth::user()->id)->get();
 
-        foreach( $coursesTaken as $courseTaken ) :
-            foreach( $courseTaken->package->course->activeAssignments as $assignment ) :
+        foreach ($coursesTaken as $courseTaken) {
+            foreach ($courseTaken->package->course->activeAssignments as $assignment) {
 
                 $allowed_package = json_decode($assignment->allowed_package);
                 $assignmentDisabledLearners = $assignment->disabledLearners()->pluck('user_id')->toArray();
                 $package_id = $courseTaken->package->id;
                 $course = $courseTaken->package->course;
                 // check if the assignment is allowed on the learners package or there's no set package allowed
-                if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
-                    if (!in_array($courseTaken->user_id, $assignmentDisabledLearners)) {
-                        
-                        $assignmentManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
-                        ->where('assignment_id', $assignment->id)
-                        ->first();
+                if ((! is_null($allowed_package) && in_array($package_id, $allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
+                    if (! in_array($courseTaken->user_id, $assignmentDisabledLearners)) {
 
-                        if(!$assignmentManuscript || ($assignmentManuscript && !$assignmentManuscript->locked
-                            && !$assignmentManuscript->has_feedback)) {
+                        $assignmentManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
+                            ->where('assignment_id', $assignment->id)
+                            ->first();
+
+                        if (! $assignmentManuscript || ($assignmentManuscript && ! $assignmentManuscript->locked
+                            && ! $assignmentManuscript->has_feedback)) {
                             // added the condition because of the update for submission date
                             // the original is the else
-                            if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
+                            if (! AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
                                 if ($course->type == 'Single' && $assignment->submission_date == '365') {
-                                    if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
+                                    if (\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
                                         $includeAssignment = $assignment;
                                         $includeAssignment->course_taken_end_date = $courseTaken->end_date; // for displaying submit button
                                         if ($assignment->max_words === 0) {
@@ -998,7 +985,7 @@ class LearnerController extends Controller
                                         }
                                     }
                                 } else {
-                                    if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
+                                    if (\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
                                         ->gt(Carbon::now())) {
                                         if ($assignment->max_words === 0) {
                                             $noWordLimitAssignments[] = $assignment;
@@ -1020,50 +1007,50 @@ class LearnerController extends Controller
                             }
                         }
 
-                        if ($assignmentManuscript && $assignmentManuscript->locked && !$assignmentManuscript->has_feedback) {
+                        if ($assignmentManuscript && $assignmentManuscript->locked && ! $assignmentManuscript->has_feedback) {
                             $waitingForResponse[] = $assignment;
                             $waitingForResponseIDs[] = $assignment->id;
                         }
                     }
                 }
-            endforeach;
+            }
 
-            foreach( $courseTaken->package->course->expiredAssignments as $assignment ) :
+            foreach ($courseTaken->package->course->expiredAssignments as $assignment) {
 
                 $allowed_package = json_decode($assignment->allowed_package);
                 $package_id = $courseTaken->package->id;
                 $course = $courseTaken->package->course;
                 // check if the assignment is allowed on the learners package or there's no set package allowed
-                if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
+                if ((! is_null($allowed_package) && in_array($package_id, $allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
                     // added the condition because of the update for submission date
                     // the original is the else
 
                     // this waiting for response is new, if it's removed use the commented one
                     $waitingForResponseManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
-                            ->where('editor_id', '!=', 0)
-                            ->where('locked', 1)
-                            ->where('status', 0)
-                            ->where('assignment_id', $assignment->id)->first();
+                        ->where('editor_id', '!=', 0)
+                        ->where('locked', 1)
+                        ->where('status', 0)
+                        ->where('assignment_id', $assignment->id)->first();
 
-                    if ($waitingForResponseManuscript && !in_array($assignment->id, $waitingForResponseIDs)) {
+                    if ($waitingForResponseManuscript && ! in_array($assignment->id, $waitingForResponseIDs)) {
                         $waitingForResponse[] = $assignment;
-                    }                    
-                        
-                    if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
+                    }
+
+                    if (! AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
                         if ($course->type == 'Single' && $assignment->submission_date == '365') {
-                            if(\Carbon\Carbon::parse($courseTaken->end_date)->lt(Carbon::now())) {
+                            if (\Carbon\Carbon::parse($courseTaken->end_date)->lt(Carbon::now())) {
                                 $expiredAssignments[] = $assignment;
                             }
                         } else {
-                            if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
+                            if (\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
                                 ->lt(Carbon::now())) {
                                 $expiredAssignments[] = $assignment;
                             }
                         }
                     } else {
                         $assignmentManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
-                                    ->where('assignment_id', $assignment->id)->first();
-                                    
+                            ->where('assignment_id', $assignment->id)->first();
+
                         if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
                             if ($course->type == 'Group') {
                                 // check if assignment manuscript has feedback
@@ -1072,12 +1059,12 @@ class LearnerController extends Controller
                                     $assignmentGroups = AssignmentGroup::where('assignment_id', $assignment->id)->pluck('id')->toArray();
                                     $userAssignmentGroupLearner = AssignmentGroupLearner::where('user_id', Auth::user()->id)
                                         ->whereIn('assignment_group_id', $assignmentGroups)->first();
-                                    
+
                                     // for assignment no group check if there's a feedback and the manuscript status is not 0
                                     if (($assignmentFeedback && $assignmentManuscript->status > 0) || $userAssignmentGroupLearner) {
                                         $expiredAssignments[] = $assignment;
                                     } else {
-                                        //$waitingForResponse[] = $assignment; this is the old one
+                                        // $waitingForResponse[] = $assignment; this is the old one
                                     }
                                 } else {
                                     $expiredAssignments[] = $assignment;
@@ -1087,29 +1074,29 @@ class LearnerController extends Controller
                             }
                         }
 
-                        if (!$assignmentManuscript && AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)
+                        if (! $assignmentManuscript && AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)
                             && \Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now()) &&
                             \Carbon\Carbon::parse($assignment->available_date)->gt(Carbon::now())) {
-                                $upcomingAssignments[] = $assignment;
+                            $upcomingAssignments[] = $assignment;
                         }
                     }
                 }
-            endforeach;
-        endforeach;
+            }
+        }
 
         foreach ($userAssignments as $assignment) {
             $manuscript = $assignment->manuscripts->first();
             $feedback = null;
             if ($manuscript) {
                 $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript['id'])
-                    ->where('is_active',1)->first();
+                    ->where('is_active', 1)->first();
             }
 
-            if (!$feedback) {
+            if (! $feedback) {
                 if ($manuscript && $manuscript->locked) {
                     $waitingForResponse[] = $assignment;
                 } else {
-                    if(\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
+                    if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
                         $assignments[] = $assignment;
                     }
                 }
@@ -1127,7 +1114,7 @@ class LearnerController extends Controller
             $feedback = null;
             if ($manuscript) {
                 $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript['id'])
-                ->where('is_active',1)->first();
+                    ->where('is_active', 1)->first();
             }
 
             if ($feedback) {
@@ -1143,7 +1130,7 @@ class LearnerController extends Controller
         $expiredAssignmentCreated = array_column($expiredAssignments, 'created_at');
         array_multisort($expiredAssignmentCreated, SORT_DESC, $expiredAssignments);
 
-        foreach($upcomingPersonalAssignments as $upcomingPersonalAssignment) {
+        foreach ($upcomingPersonalAssignments as $upcomingPersonalAssignment) {
             $upcomingAssignments[] = $upcomingPersonalAssignment;
         }
 
@@ -1157,23 +1144,22 @@ class LearnerController extends Controller
             'upcomingAssignments', 'waitingForResponse', 'assignmentGroupLearners', 'noWordLimitAssignments'));
     }
 
-
     public function assignmentManuscriptUpload($id, Request $request)
     {
         $assignment = Assignment::findOrFail($id);
         $assignmentManuscript = AssignmentManuscript::where('assignment_id', $assignment->id)->where('user_id', Auth::user()->id)->first();
         $courseIds = [];
         $coursesTaken = Auth::user()->coursesTaken;
-        foreach( $coursesTaken as $course ) :
-            foreach( $course->package->course as $course ) :
+        foreach ($coursesTaken as $course) {
+            foreach ($course->package->course as $course) {
                 $courseIds[] = $course;
-            endforeach;
-        endforeach;
+            }
+        }
 
-        if ( $request->hasFile('filename') && 
-            $request->file('filename')->isValid() && 
+        if ($request->hasFile('filename') &&
+            $request->file('filename')->isValid() &&
             (in_array($assignment->course_id, $courseIds) || $assignment->parent === 'users') &&
-            !$assignmentManuscript) :
+            ! $assignmentManuscript) {
             $time = time();
             $destinationPath = 'storage/assignment-manuscripts/'; // upload path
 
@@ -1182,44 +1168,44 @@ class LearnerController extends Controller
                 $extensions = ['docx', 'doc'];
             }
 
-            $extension = pathinfo($_FILES['filename']['name'],PATHINFO_EXTENSION); // getting document extension
+            $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
             $actual_name = Auth::user()->id;
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
 
             $expFileName = explode('/', $fileName);
 
             $request->filename->move($destinationPath, end($expFileName));
 
-            if( !in_array($extension, $extensions) ) :
+            if (! in_array($extension, $extensions)) {
                 return redirect()->back()->withInput()->with(
                     'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF'
                 );
-            endif;
+            }
 
             // count words
             $word_count = 0;
-            if($extension == "pdf") :
-              $pdf  =  new \PdfToText ( $destinationPath.end($expFileName) ) ;
-              $pdf_content = $pdf->Text; 
-              $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-            elseif($extension == "docx") :
-              $docObj = new \Docx2Text($destinationPath.end($expFileName));
-              $docText= $docObj->convertToText();
-              $word_count = FrontendHelpers::get_num_of_words($docText);
-            elseif($extension == "doc") :
+            if ($extension == 'pdf') {
+                $pdf = new \PdfToText($destinationPath.end($expFileName));
+                $pdf_content = $pdf->Text;
+                $word_count = FrontendHelpers::get_num_of_words($pdf_content);
+            } elseif ($extension == 'docx') {
+                $docObj = new \Docx2Text($destinationPath.end($expFileName));
+                $docText = $docObj->convertToText();
+                $word_count = FrontendHelpers::get_num_of_words($docText);
+            } elseif ($extension == 'doc') {
                 $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
                 $word_count = FrontendHelpers::get_num_of_words($docText);
-            elseif($extension == "odt") :
-              $doc = odt2text($destinationPath.end($expFileName));
-              $word_count = FrontendHelpers::get_num_of_words($doc);
-            endif;
+            } elseif ($extension == 'odt') {
+                $doc = odt2text($destinationPath.end($expFileName));
+                $word_count = FrontendHelpers::get_num_of_words($doc);
+            }
 
             $word_to_deduct = $word_count * 0.02;
             $new_word_count = ceil($word_count - $word_to_deduct);
             $assignment_max_words = $assignment->allow_up_to > 0 ? $assignment->allow_up_to : $assignment->max_words;
 
             // check if the assignment is for editor only and if it meets the max word
-            /*$assignment->for_editor && */
+            /* $assignment->for_editor && */
             if ($new_word_count > $assignment_max_words && $assignment->check_max_words) {
                 return redirect()->back()->with(['errorMaxWord' => true, 'editorMaxWord' => $assignment->max_words]);
             }
@@ -1229,28 +1215,28 @@ class LearnerController extends Controller
                 $join_group = isset($request->join_group) ? 1 : 0;
             }
 
-            $letterToEditor = NULL;
+            $letterToEditor = null;
             if ($request->hasFile('letter_to_editor') && $request->file('letter_to_editor')->isValid()
-                && $assignment->send_letter_to_editor) :
+                && $assignment->send_letter_to_editor) {
                 $destinationPathLetter = 'storage/letter-to-editor';
-                $extensionLetter = pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_EXTENSION);
-                $actualNameLetter = time();//pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_FILENAME);
-                $fileNameLetter = AdminHelpers::checkFileName($destinationPathLetter, $actualNameLetter, $extension);// rename document
-                $expFileNameLetter = explode("/",$fileNameLetter);
+                $extensionLetter = pathinfo($_FILES['letter_to_editor']['name'], PATHINFO_EXTENSION);
+                $actualNameLetter = time(); // pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_FILENAME);
+                $fileNameLetter = AdminHelpers::checkFileName($destinationPathLetter, $actualNameLetter, $extension); // rename document
+                $expFileNameLetter = explode('/', $fileNameLetter);
 
-                if( !in_array($extensionLetter, $extensions) ) :
+                if (! in_array($extensionLetter, $extensions)) {
                     return redirect()->back()->withInput()->with(
                         'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF'
                     );
-                endif;
+                }
 
                 $request->letter_to_editor->move($destinationPathLetter, end($expFileNameLetter));
                 $letterToEditor = '/'.$fileNameLetter;
 
-            endif;
+            }
 
-            //assigned_editor is used in check_max_words
-            $editor_id = $assignment->editor_id ? $assignment->editor_id 
+            // assigned_editor is used in check_max_words
+            $editor_id = $assignment->editor_id ? $assignment->editor_id
                 : ($assignment->assigned_editor ? $assignment->assigned_editor : 0);
 
             $submittedManuscript = AssignmentManuscript::create([
@@ -1263,16 +1249,16 @@ class LearnerController extends Controller
                 'join_group' => $join_group,
                 'letter_to_editor' => $letterToEditor,
                 'editor_id' => $editor_id,
-                'uploaded_at' => now()
+                'uploaded_at' => now(),
             ]);
             Log::create([
-                'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for assignment '.$assignment->title
+                'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for assignment '.$assignment->title,
             ]);
 
             // Admin notification
-            if (($assignment->course && $assignment->course->type === "Single") || $assignment->parent === 'users') {
+            if (($assignment->course && $assignment->course->type === 'Single') || $assignment->parent === 'users') {
                 $message = Auth::user()->full_name.' submitted a manuscript for assignment '.$assignment->title;
-                $toMail = 'post@forfatterskolen.no'; //post@forfatterskolen.no
+                $toMail = 'post@forfatterskolen.no'; // post@forfatterskolen.no
 
                 $email_data['email_message'] = $message;
                 // use queue to send email on background
@@ -1283,10 +1269,10 @@ class LearnerController extends Controller
                 $emailTemplate = AdminHelpers::emailTemplate('Personal Assignment Editor Notification');
                 $email_content = str_replace([
                     '_learner_',
-                    '_assignment_'
+                    '_assignment_',
                 ], [
                     Auth::user()->full_name,
-                    $assignment->title
+                    $assignment->title,
                 ], $emailTemplate->email_content);
 
                 $editor = User::find($assignment->editor_id);
@@ -1296,7 +1282,7 @@ class LearnerController extends Controller
                     'email_message' => $email_content,
                     'from_name' => '',
                     'from_email' => 'post@forfatterskolen.no',
-                    'attach_file' => NULL
+                    'attach_file' => null,
                 ];
                 \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
@@ -1305,7 +1291,7 @@ class LearnerController extends Controller
             // notify user
             $user_email = Auth::user()->email;
             $confirm_email['email_message'] = 'Oppgaven din er levert, har vi problemer med filen vil vi ta kontakt med med deg.';
-            //Mail::to($user_email)->queue(new SendEmailMessageOnly($confirm_email));
+            // Mail::to($user_email)->queue(new SendEmailMessageOnly($confirm_email));
 
             $emailTemplate = AdminHelpers::emailTemplate('Assignment Submitted');
             $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
@@ -1316,17 +1302,14 @@ class LearnerController extends Controller
                 $submittedManuscript->id));
 
             return redirect()->back()->with('success', true);
-        endif;
+        }
 
         return redirect()->back();
     }
 
-
-
-
     public function group_show($id)
     {
-        $group = AssignmentGroup::where('id', $id)->whereHas('learners', function($query){
+        $group = AssignmentGroup::where('id', $id)->whereHas('learners', function ($query) {
             $query->where('user_id', Auth::user()->id);
         })->firstOrFail();
         $groupLearners = AssignmentGroupLearner::where('assignment_group_id', $id)
@@ -1338,17 +1321,17 @@ class LearnerController extends Controller
         $assignmentManuscript = AssignmentManuscript::where('assignment_id', $group->assignment_id)
             ->where('user_id', Auth::user()->id)->first();
 
-
         array_push($could_send_feedback_to, $groupLearner->id);
         $groupLearnerList = AssignmentGroupLearner::where('assignment_group_id', $id)
             ->whereIn('id', $could_send_feedback_to)->orderBy('created_at', 'desc')->get();
+
         return view('frontend.learner.groupShow', compact('group', 'otherLearnersIdList', 'could_send_feedback_to',
             'groupLearnerList', 'assignmentManuscript'));
     }
 
     public function groupShowDetails($id)
     {
-        $group = AssignmentGroup::where('id', $id)->whereHas('learners', function($query){
+        $group = AssignmentGroup::where('id', $id)->whereHas('learners', function ($query) {
             $query->where('user_id', Auth::user()->id);
         })->firstOrFail();
         $groupLearners = AssignmentGroupLearner::where('assignment_group_id', $id)
@@ -1358,11 +1341,12 @@ class LearnerController extends Controller
         $otherLearnersIdList = $groupLearners->pluck('id')->toArray();
         $could_send_feedback_to = $groupLearner->could_send_feedback_to_id_list ?: $otherLearnersIdList;
         $assignmentManuscript = AssignmentManuscript::where('assignment_id', $group->assignment_id)
-            ->where('user_id', Auth::user()->id)->first(); 
+            ->where('user_id', Auth::user()->id)->first();
 
         array_push($could_send_feedback_to, $groupLearner->id);
         $groupLearnerList = AssignmentGroupLearner::where('assignment_group_id', $id)
             ->whereIn('id', $could_send_feedback_to)->orderBy('created_at', 'desc')->get();
+
         return view('frontend.partials.assignment._group_show', compact('group', 'otherLearnersIdList', 'could_send_feedback_to',
             'groupLearnerList', 'assignmentManuscript'));
     }
@@ -1389,7 +1373,7 @@ class LearnerController extends Controller
             'groupLearnerList' => $groupLearnerList
         ]; */
 
-        $group = AssignmentGroup::where('id', $group_id)->whereHas('learners', function($query){
+        $group = AssignmentGroup::where('id', $group_id)->whereHas('learners', function ($query) {
             $query->where('user_id', Auth::user()->id);
         })->firstOrFail();
 
@@ -1405,7 +1389,7 @@ class LearnerController extends Controller
                     ->toArray()
             )
             ->orderBy('created_at', 'desc')
-            ->with(['feedback' => function($query) use ($userId) {
+            ->with(['feedback' => function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             }])
             ->with('user')
@@ -1414,20 +1398,21 @@ class LearnerController extends Controller
         // Manually call the accessor for each model instance
         $groupLearnerList->map(function ($groupLearner) {
             $groupLearner->learnerManuscript = $groupLearner->learnerManuscript();
+
             return $groupLearner;
         });
 
         return [
-            'groupLearnerList' => $groupLearnerList
+            'groupLearnerList' => $groupLearnerList,
         ];
     }
 
     public function submit_feedback($group_id, $id, Request $request)
     {
-        $group = AssignmentGroup::where('id', $group_id)->whereHas('learners', function($query) use ($id){
+        $group = AssignmentGroup::where('id', $group_id)->whereHas('learners', function ($query) use ($id) {
             $query->where('id', $id)->where('user_id', '<>', Auth::user()->id);
         })->firstOrFail();
-        if ( $request->hasFile('filename')) :
+        if ($request->hasFile('filename')) {
             $time = time();
             $destinationPath = 'storage/assignment-feedbacks'; // upload path
             $extensions = ['pdf', 'docx', 'odt'];
@@ -1435,42 +1420,35 @@ class LearnerController extends Controller
             $filesWithPath = '';
             // loop through all the uploaded files
             foreach ($request->file('filename') as $k => $file) {
-                $extension = pathinfo($_FILES['filename']['name'][$k],PATHINFO_EXTENSION);
+                $extension = pathinfo($_FILES['filename']['name'][$k], PATHINFO_EXTENSION);
                 $actual_name = AssignmentGroupLearner::find($id)->user_id;
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension);
-                $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension).", ";
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension);
+                $filesWithPath .= '/'.AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension).', ';
 
-                if( !in_array($extension, $extensions) ) :
+                if (! in_array($extension, $extensions)) {
                     return redirect()->back();
-                endif;
+                }
 
                 $file->move($destinationPath, $fileName);
 
             }
 
-            $filesWithPath = trim($filesWithPath,", ");
+            $filesWithPath = trim($filesWithPath, ', ');
 
             AssignmentFeedback::create([
                 'assignment_group_learner_id' => $id,
                 'user_id' => Auth::user()->id,
-                'filename' => $filesWithPath
+                'filename' => $filesWithPath,
             ]);
+
             return redirect()->back();
-        endif;
+        }
     }
-
-
-
-
-
-
-
 
     public function manuscript()
     {
         return view('frontend.learner.manuscript');
     }
-
 
     public function invoice(Request $request)
     {
@@ -1480,7 +1458,7 @@ class LearnerController extends Controller
             ->get();
 
         $paid = Invoice::where('user_id', Auth::user()->id)
-            ->whereIn('fiken_is_paid', [1,3])
+            ->whereIn('fiken_is_paid', [1, 3])
             ->orderBy('fiken_dueDate', 'DESC')
             ->get();
 
@@ -1488,16 +1466,16 @@ class LearnerController extends Controller
 
         if ($request->has('filter') && $request->get('filter')) {
             $invoices = Auth::user()->invoices()->where('id', $request->get('filter'))
-            ->paginate(15);
+                ->paginate(15);
         }
 
         $sveaOrders = Auth::user()->orders()->svea()->with('coachingTime')->paginate(10);
         $user = Auth::user();
 
         $orderAttachments = DB::table('course_order_attachments')
-            ->leftJoin('courses', 'course_order_attachments.course_id','=','courses.id')
-            ->leftJoin('packages','course_order_attachments.package_id','=','packages.id')
-            ->leftJoin('courses_taken','courses_taken.package_id', '=','packages.id')
+            ->leftJoin('courses', 'course_order_attachments.course_id', '=', 'courses.id')
+            ->leftJoin('packages', 'course_order_attachments.package_id', '=', 'packages.id')
+            ->leftJoin('courses_taken', 'courses_taken.package_id', '=', 'packages.id')
             ->select('course_order_attachments.*', 'courses.title as course_title',
                 'courses_taken.id as course_taken_id', 'courses_taken.deleted_at')
             ->where('courses_taken.user_id', $user->id)
@@ -1520,38 +1498,36 @@ class LearnerController extends Controller
         $data = json_decode($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};*/
         return view('frontend.learner.invoice', compact('invoices', 'sveaOrders', 'user',
-            'orderAttachments', 'giftPurchases', 'orderHistory' ,'timeRegisters'));
+            'orderAttachments', 'giftPurchases', 'orderHistory', 'timeRegisters'));
     }
-
-
-
 
     public function invoiceShow($id)
     {
         $invoice = Invoice::findOrFail($id);
-        if(Auth::user()->can('viewInvoice', $invoice)) :
-            $ch = curl_init($this->fikenInvoices); 
+        if (Auth::user()->can('viewInvoice', $invoice)) {
+            $ch = curl_init($this->fikenInvoices);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
-            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
             $data = curl_exec($ch);
             $data = json_decode($data);
             $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};
+
             return view('frontend.learner.invoiceShow', compact('invoice', 'fikenInvoices'));
-        endif;
-            return abort('503');
+        }
+
+        return abort('503');
     }
 
-    public function changePortal( $portal )
+    public function changePortal($portal)
     {
         \Session::put('current-portal', $portal);
+
         return redirect()->route('learner.dashboard');
     }
 
     /**
-     *
-     * @param $fiken_invoice_id
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function invoiceVippsPayment($fiken_invoice_id)
@@ -1566,7 +1542,7 @@ class LearnerController extends Controller
                 'amount' => $price,
                 'orderId' => $orderId,
                 'transactionText' => $transactionText,
-                'fallbackUrl' => 'https://www.forfatterskolen.no/thankyou?page=vipps'
+                'fallbackUrl' => 'https://www.forfatterskolen.no/thankyou?page=vipps',
             ];
 
             return $this->vippsInitiatePayment($vippsData);
@@ -1575,7 +1551,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function downloadOrder( $order_id )
+    public function downloadOrder($order_id)
     {
         $order = Order::find($order_id);
 
@@ -1584,10 +1560,10 @@ class LearnerController extends Controller
         $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->loadHTML(view('frontend.pdf.order-receipt-new', compact('order', 'user')));
 
-        return $pdf->download($order->id . '.pdf');
+        return $pdf->download($order->id.'.pdf');
     }
 
-    public function downloadCreditedOrder( $order_id )
+    public function downloadCreditedOrder($order_id)
     {
         $order = Order::find($order_id);
 
@@ -1596,17 +1572,17 @@ class LearnerController extends Controller
         $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->loadHTML(view('frontend.pdf.svea-credit-note', compact('order', 'user')));
 
-        return $pdf->download($order->id . '-Kreditnota.pdf');
+        return $pdf->download($order->id.'-Kreditnota.pdf');
     }
 
-    public function saveCompany( $order_id, Request $request )
+    public function saveCompany($order_id, Request $request)
     {
-        $this->validate($request,[
+        $this->validate($request, [
             'customer_number' => 'required',
             'company_name' => 'required',
             'street_address' => 'required',
             'post_number' => 'required',
-            'place' => 'required'
+            'place' => 'required',
         ]);
 
         $orderCompany = OrderCompany::find($request->id) ? OrderCompany::find($request->id) : new OrderCompany;
@@ -1623,19 +1599,19 @@ class LearnerController extends Controller
 
     /**
      * Redeem purchased gift
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function redeemGift( Request $request )
+    public function redeemGift(Request $request)
     {
 
         $giftPurchase = GiftPurchase::where('redeem_code', $request->redeem_code)->first();
 
-        if (!$giftPurchase || $giftPurchase->is_redeemed || $giftPurchase->user_id === Auth::user()->id
+        if (! $giftPurchase || $giftPurchase->is_redeemed || $giftPurchase->user_id === Auth::user()->id
             || ($giftPurchase->expired_at && Carbon::now()->gt($giftPurchase->expired_at))) {
 
             $errorMessage = '';
-            if (!$giftPurchase) {
+            if (! $giftPurchase) {
                 $errorMessage = AdminHelpers::createMessageBag('Invalid Redeem code.');
             }
 
@@ -1652,32 +1628,29 @@ class LearnerController extends Controller
             }
 
             return redirect()->back()->with([
-                'errors'                => $errorMessage,
-                'alert_type'            => 'danger'
+                'errors' => $errorMessage,
+                'alert_type' => 'danger',
             ]);
         }
 
         if ($giftPurchase->parent === 'course-package') {
-            $this->redeemCourse( $giftPurchase );
+            $this->redeemCourse($giftPurchase);
         }
 
         if ($giftPurchase->parent === 'shop-manuscript') {
-            $this->redeemManuscript( $giftPurchase );
+            $this->redeemManuscript($giftPurchase);
         }
 
         $giftPurchase->is_redeemed = 1;
         $giftPurchase->save();
 
         return redirect()->back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Gift redeemed successfully.'),
-            'alert_type'            => 'success'
+            'errors' => AdminHelpers::createMessageBag('Gift redeemed successfully.'),
+            'alert_type' => 'success',
         ]);
     }
 
-    /**
-     * @param GiftPurchase $giftPurchase
-     */
-    public function redeemCourse( GiftPurchase $giftPurchase )
+    public function redeemCourse(GiftPurchase $giftPurchase)
     {
         $package = $giftPurchase->coursePackage;
         $course_status = 0;
@@ -1688,25 +1661,24 @@ class LearnerController extends Controller
         $courseTaken->save();
 
         // Check for shop manuscripts
-        if( $package->shop_manuscripts->count() > 0 ) :
-            foreach( $package->shop_manuscripts as $shop_manuscript ) :
-                $shopManuscriptTaken = new ShopManuscriptsTaken();
+        if ($package->shop_manuscripts->count() > 0) {
+            foreach ($package->shop_manuscripts as $shop_manuscript) {
+                $shopManuscriptTaken = new ShopManuscriptsTaken;
                 $shopManuscriptTaken->user_id = Auth::user()->id;
                 $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
                 $shopManuscriptTaken->is_active = false;
                 $shopManuscriptTaken->package_shop_manuscripts_id = $package->shop_manuscripts[0]->id;
                 $shopManuscriptTaken->gift_purchase_id = $giftPurchase->id;
                 $shopManuscriptTaken->save();
-            endforeach;
-        endif;
-
+            }
+        }
 
         if ($package->included_courses->count() > 0) {
             foreach ($package->included_courses as $included_course) {
                 // add user to the included course
                 $courseIncluded = CoursesTaken::firstOrNew([
                     'user_id' => Auth::user()->id,
-                    'package_id' => $included_course->included_package_id
+                    'package_id' => $included_course->included_package_id,
                 ]);
                 $courseIncluded->is_active = $course_status;
                 $courseIncluded->gift_purchase_id = $giftPurchase->id;
@@ -1719,18 +1691,18 @@ class LearnerController extends Controller
 
         $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
         $search_string = [
-            '[username]', '[password]'
+            '[username]', '[password]',
         ];
         $replace_string = [
-            $courseTaken->user->email, $password
+            $courseTaken->user->email, $password,
         ];
 
         $email_content = str_replace($search_string, $replace_string, $package->course->email);
-        $attachments = NULL;
+        $attachments = null;
 
         $encode_email = encrypt($user_email);
         $redirectLink = encrypt(route('learner.course'));
-        $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
+        $actionUrl = route('auth.login.emailRedirect', [$encode_email, $redirectLink]);
         $actionText = 'Mine Kurs';
 
         dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
@@ -1738,18 +1710,15 @@ class LearnerController extends Controller
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
     }
 
-    /**
-     * @param $giftPurchase
-     */
-    public function redeemManuscript( $giftPurchase )
+    public function redeemManuscript($giftPurchase)
     {
         $user = Auth::user();
         $user_email = $user->email;
 
-        $shopManuscriptTaken = new ShopManuscriptsTaken();
-        $shopManuscriptTaken->user_id               = $user->id;
-        $shopManuscriptTaken->description           = NULL;
-        $shopManuscriptTaken->shop_manuscript_id    = $giftPurchase->parent_id;
+        $shopManuscriptTaken = new ShopManuscriptsTaken;
+        $shopManuscriptTaken->user_id = $user->id;
+        $shopManuscriptTaken->description = null;
+        $shopManuscriptTaken->shop_manuscript_id = $giftPurchase->parent_id;
         $shopManuscriptTaken->is_active = false;
         $shopManuscriptTaken->coaching_time_later = 0;
         $shopManuscriptTaken->is_welcome_email_sent = 0;
@@ -1763,12 +1732,12 @@ class LearnerController extends Controller
             $emailTemplate->from_email, null, null, 'shop-manuscripts-taken', $shopManuscriptTaken->id));
     }
 
-    public function vippsEFaktura( $invoice_id, Request $request)
+    public function vippsEFaktura($invoice_id, Request $request)
     {
-        $invoice = new Invoice();
+        $invoice = new Invoice;
         $invoice = $invoice->find($invoice_id);
 
-        $fikenInvoice = new FikenInvoice();
+        $fikenInvoice = new FikenInvoice;
         $fikenInvoice->setMobileNumber($request->mobile_number);
         $fikenInvoice->setFikenInvoiceId($invoice->fiken_invoice_id);
 
@@ -1776,72 +1745,73 @@ class LearnerController extends Controller
         $alert_type = 'success';
         $message = 'Invoice sent.';
 
-        if ($response['code']!= 200 ) {
+        if ($response['code'] != 200) {
             $alert_type = 'danger';
             $message = $response['message'];
         }
 
         return redirect()->back()->with([
-            'errors'                => AdminHelpers::createMessageBag($message),
-            'alert_type'            => $alert_type,
-            'not-former-courses'    => true
+            'errors' => AdminHelpers::createMessageBag($message),
+            'alert_type' => $alert_type,
+            'not-former-courses' => true,
         ]);
     }
 
     /**
      * Set the phone number that would be use for sending vipss-efaktura
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function setVippsEFaktura( Request $request )
+    public function setVippsEFaktura(Request $request)
     {
-        if($request->mobile_number) {
+        if ($request->mobile_number) {
             $this->validate($request, [
-                'mobile_number' => 'digits:8'
+                'mobile_number' => 'digits:8',
             ]);
         }
 
         $address = Address::firstOrNew([
-            'user_id' => Auth::user()->id
+            'user_id' => Auth::user()->id,
         ]);
-        $address->vipps_phone_number = $request->mobile_number ?: NULL;
+        $address->vipps_phone_number = $request->mobile_number ?: null;
         $address->save();
 
         return redirect()->back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Record saved.'),
-            'alert_type'            => 'success'
+            'errors' => AdminHelpers::createMessageBag('Record saved.'),
+            'alert_type' => 'success',
         ]);
     }
 
     /**
      * Download Svea invoice
-     * @param $id
-     * @param $type String
+     *
+     * @param  $type  String
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function downloadInvoiceByType( $id, $type )
+    public function downloadInvoiceByType($id, $type)
     {
         $order = Order::find($id);
 
-        if ( $type === 'receipt' ) {
+        if ($type === 'receipt') {
 
             $user = \Auth::user();
             $pdf = \App::make('dompdf.wrapper');
             $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
             $pdf->loadHTML(view('frontend.pdf.order-receipt', compact('order', 'user')));
-            return $pdf->download($order->id . '.pdf');
+
+            return $pdf->download($order->id.'.pdf');
 
         } else {
 
             $orderID = $order->svea_order_id;
             $invoiceID = $order->svea_invoice_id;
-            $base_url = env('SVEA_PROD_URL') . '/pdf/'.$orderID.'/'.$invoiceID;
+            $base_url = env('SVEA_PROD_URL').'/pdf/'.$orderID.'/'.$invoiceID;
             $timestamp = gmdate('Y-m-d H:i');
             $merchantId = env('SVEA_CHECKOUTID');
             $secret = env('SVEA_CHECKOUT_SECRET');
 
             $token = base64_encode($merchantId.':'.hash('sha512', ''.$secret.$timestamp));
-            $header = array();
+            $header = [];
             $header[] = 'Content-type: application/json';
             $header[] = 'Timestamp: '.$timestamp;
             $header[] = 'Authorization: Svea '.$token;
@@ -1863,13 +1833,13 @@ class LearnerController extends Controller
                 $decodeResponse = json_decode($responseBody);
 
                 if ($decodeResponse->Pdf) {
-                    $path       = public_path($invoiceID.'.pdf');
-                    $contents   = base64_decode($decodeResponse->Pdf);
+                    $path = public_path($invoiceID.'.pdf');
+                    $contents = base64_decode($decodeResponse->Pdf);
 
-                    //store file temporarily
+                    // store file temporarily
                     file_put_contents($path, $contents);
 
-                    //download file and delete it
+                    // download file and delete it
                     return response()->download($path);
                 }
             }
@@ -1881,17 +1851,16 @@ class LearnerController extends Controller
 
     /**
      * Publishing Page
-     * @param Request $request
-     * @param PublishingService $publishingService
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function publishing(Request $request, PublishingService $publishingService)
     {
-        if( $request->search && !empty($request->search) ) :
-            $searchFromGenre = Genre::where('name', 'LIKE', '%' . $request->search  . '%')
+        if ($request->search && ! empty($request->search)) {
+            $searchFromGenre = Genre::where('name', 'LIKE', '%'.$request->search.'%')
                 ->get(['id'])->toArray();
 
-            $searchCollection = new \Illuminate\Database\Eloquent\Collection();
+            $searchCollection = new \Illuminate\Database\Eloquent\Collection;
 
             // loop through all of the search result from the genre
             // then search it on the field in publishing
@@ -1900,11 +1869,11 @@ class LearnerController extends Controller
                 $searchCollection = $searchCollection->merge($result); // merge the result found
             }
 
-            $searchCollection   = $searchCollection->toArray(); // convert the collection to array
-            $total              = count($searchCollection);
-            $page               = Paginator::resolveCurrentPage('page') ?: 1; // get the current page
-            $startIndex         = ($page - 1) * 15; // 15 is per page
-            $results            = array_slice($searchCollection, $startIndex, 15);
+            $searchCollection = $searchCollection->toArray(); // convert the collection to array
+            $total = count($searchCollection);
+            $page = Paginator::resolveCurrentPage('page') ?: 1; // get the current page
+            $startIndex = ($page - 1) * 15; // 15 is per page
+            $results = array_slice($searchCollection, $startIndex, 15);
 
             // create a paginator based on the search result
             $publishingHouses = new LengthAwarePaginator($results, $total, 15, $page, [
@@ -1912,49 +1881,52 @@ class LearnerController extends Controller
                 'pageName' => 'page',
             ]);
 
-        else :
+        } else {
             $publishingHouses = $publishingService->paginate(15);
-        endif;
+        }
+
         return view('frontend.learner.publishing', compact('publishingHouses'));
     }
 
     /**
      * Get the competitions
-     * @param CompetitionService $competitionService
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function competition(CompetitionService $competitionService)
     {
         $competitions = $competitionService->getActiveRecords();
+
         return view('frontend.learner.competition', compact('competitions'));
     }
 
     /**
      * Display all private messages
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function privateMessage()
     {
         $messages = Auth::user()->messages()->paginate(10);
+
         return view('frontend.learner.private-message', compact('messages'));
     }
 
     /**
      * Display all writing groups
-     * @param WritingGroupService $writingGroupService
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function writingGroups(WritingGroupService $writingGroupService)
     {
         $writingGroups = $writingGroupService->getRecord();
+
         return view('frontend.learner.writing-groups', compact('writingGroups'));
     }
 
     /**
      * Get writing group or update the record
-     * @param $id
-     * @param WritingGroupService $writingGroupService
-     * @param Request $request
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function writingGroup($id, WritingGroupService $writingGroupService, Request $request)
@@ -1966,6 +1938,7 @@ class LearnerController extends Controller
                 $writingGroup->next_meeting = $request->next_meeting;
                 $writingGroup->save();
             }
+
             return view('frontend.learner.writing-group', compact('writingGroup'));
         }
 
@@ -1985,8 +1958,8 @@ class LearnerController extends Controller
             }
 
             // add shop manuscript to user
-            if (!$order->is_processed) {
-                $shopManuscriptService = new ShopManuscriptService();
+            if (! $order->is_processed) {
+                $shopManuscriptService = new ShopManuscriptService;
                 $shopManuscriptService->upgradeShopManuscript($order);
             }
 
@@ -1994,30 +1967,29 @@ class LearnerController extends Controller
             $order->save();
         }
 
-
         $assignments = [];
         $coursesTaken = Auth::user()->coursesTaken;
         $today = Carbon::now();
 
         $addOns = AssignmentAddon::where('user_id', \Auth::user()->id)->pluck('assignment_id')->toArray();
 
-        foreach( $coursesTaken as $course ) :
-            foreach( $course->package->course->assignments as $assignment ) :
+        foreach ($coursesTaken as $course) {
+            foreach ($course->package->course->assignments as $assignment) {
 
                 $allowed_package = json_decode($assignment->allowed_package);
                 $package_id = $course->package->id;
-                $submission_date =  \App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date) ?
+                $submission_date = \App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date) ?
                     Carbon::parse($assignment->submission_date) : Carbon::parse($course->started_at)->addDays($assignment->submission_date);
-                //$submission_date =  Carbon::parse($assignment->submission_date);
+                // $submission_date =  Carbon::parse($assignment->submission_date);
 
                 // check if the assignment is allowed on the learners package and the submission date is in future
                 // or there's no set package allowed and the submission date is in future
-                if ((!is_null($allowed_package) && !in_array($package_id,$allowed_package) && $today->lt($submission_date) && !in_array($assignment->id, $addOns))
-                    || (is_null($allowed_package) && $today->lt($submission_date) && !in_array($assignment->id, $addOns))) {
+                if ((! is_null($allowed_package) && ! in_array($package_id, $allowed_package) && $today->lt($submission_date) && ! in_array($assignment->id, $addOns))
+                    || (is_null($allowed_package) && $today->lt($submission_date) && ! in_array($assignment->id, $addOns))) {
                     $assignments[] = $assignment;
                 }
-            endforeach;
-        endforeach;
+            }
+        }
 
         $user = Auth::user();
 
@@ -2034,16 +2006,16 @@ class LearnerController extends Controller
                 ->where('is_show', 1)
                 ->get();
         });
-        
+
         return view('frontend.learner.upgrade', compact('assignments', 'coursesTaken'));
     }
 
     public function takeCourse(Request $request)
     {
         $courseTaken = CoursesTaken::findOrFail($request->courseTakenId);
-        if( Auth::user()->can('participateCourse', $courseTaken) && 
-            FrontendHelpers::isCourseTakenAvailable($courseTaken) ) :
-            //removed because the course is not always active
+        if (Auth::user()->can('participateCourse', $courseTaken) &&
+            FrontendHelpers::isCourseTakenAvailable($courseTaken)) {
+            // removed because the course is not always active
             // &&FrontendHelpers::isCourseActive($courseTaken->package->course)
 
             $course = $courseTaken->package->course;
@@ -2054,18 +2026,20 @@ class LearnerController extends Controller
              * set an end date (this is for courses that is for sale for a month)
              */
             if ($courseTaken->package->validity_period > 0) {
-                if (!$courseTaken->end_date) {
+                if (! $courseTaken->end_date) {
                     $courseTaken->end_date = Carbon::today()->addMonth($courseTaken->package->validity_period);
                 }
             } else {
-                if (!$courseTaken->end_date) {
+                if (! $courseTaken->end_date) {
                     $courseTaken->end_date = Carbon::parse($course->start_date)->addYear(1);
                 }
             }
 
             $courseTaken->save();
+
             return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
-        endif;
+        }
+
         return redirect()->back();
     }
 
@@ -2080,14 +2054,14 @@ class LearnerController extends Controller
 
     public function bookSale()
     {
-        /* $bookSales = Auth::user()->bookSales;*/
-        $learner = Auth::user(); 
+        /* $bookSales = Auth::user()->bookSales; */
+        $learner = Auth::user();
 
         $uniqueYears = ProjectBookSale::selectRaw('YEAR(date) as year')
-        ->leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
-        ->where('user_id', $learner->id)
-        ->distinct()
-        ->pluck('year');
+            ->leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
+            ->where('user_id', $learner->id)
+            ->distinct()
+            ->pluck('year');
 
         $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
         $projectUserBook = null;
@@ -2109,38 +2083,38 @@ class LearnerController extends Controller
 
             // Get Total Sales by Year and Quarter
             $salesData = DB::table('project_books as books')
-            ->select(
-                DB::raw('YEAR(sales.date) as year'),
-                DB::raw('QUARTER(sales.date) as quarter'), 
-                DB::raw('SUM(amount) as total_sales')
-            )
-            ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
-            ->whereBetween(DB::raw('YEAR(sales.date)'), [$startYear, $currentYear])
-            ->where('books.project_id', $standardProject->id)
-            ->groupBy('year', 'quarter')
-            ->orderBy('year', 'DESC')
-            ->get()
-            ->groupBy('year');//->keyBy('year'); // Store results by year for easy lookup
+                ->select(
+                    DB::raw('YEAR(sales.date) as year'),
+                    DB::raw('QUARTER(sales.date) as quarter'),
+                    DB::raw('SUM(amount) as total_sales')
+                )
+                ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
+                ->whereBetween(DB::raw('YEAR(sales.date)'), [$startYear, $currentYear])
+                ->where('books.project_id', $standardProject->id)
+                ->groupBy('year', 'quarter')
+                ->orderBy('year', 'DESC')
+                ->get()
+                ->groupBy('year'); // ->keyBy('year'); // Store results by year for easy lookup
 
             // Get Total Distributions by Year and Quarter
             $distributionsData = DB::table('project_registrations as distribution')
-            ->select(
-                DB::raw('YEAR(distribution_costs.date) as year'),
-                DB::raw('QUARTER(distribution_costs.date) as quarter'),
-                DB::raw('SUM(amount) as total_distributions')
-            )
-            ->leftJoin('storage_distribution_costs as distribution_costs', 
-                'distribution_costs.project_book_id', '=', 'distribution.id')
-            ->where('distribution.id', $registration->id)
-            ->groupBy('year', 'quarter')
-            ->orderBy('year', 'DESC')
-            ->orderBy('quarter', 'ASC')
-            ->get()
-            ->groupBy('year'); // Store results by year for easy lookup
+                ->select(
+                    DB::raw('YEAR(distribution_costs.date) as year'),
+                    DB::raw('QUARTER(distribution_costs.date) as quarter'),
+                    DB::raw('SUM(amount) as total_distributions')
+                )
+                ->leftJoin('storage_distribution_costs as distribution_costs',
+                    'distribution_costs.project_book_id', '=', 'distribution.id')
+                ->where('distribution.id', $registration->id)
+                ->groupBy('year', 'quarter')
+                ->orderBy('year', 'DESC')
+                ->orderBy('quarter', 'ASC')
+                ->get()
+                ->groupBy('year'); // Store results by year for easy lookup
 
             // Merge Data for Year and Quarter
             $storageCosts = collect($years)->map(function ($year) use ($salesData, $distributionsData, $quarters, $selectedQuarters) {
-                //$sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
+                // $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
                 $allSales = [];
                 $allDistributions = [];
 
@@ -2190,8 +2164,8 @@ class LearnerController extends Controller
         }
 
         $payouts = StoragePayout::where('project_registration_id', $registration->id)->get()->groupBy(['year', 'quarter']);
-        
-        return view('frontend.learner.self-publishing.sales', compact('learner', 'uniqueYears', 'projectUserBook', 
+
+        return view('frontend.learner.self-publishing.sales', compact('learner', 'uniqueYears', 'projectUserBook',
             'storageCosts', 'paidDistributionYears', 'registration', 'payouts'));
     }
 
@@ -2205,22 +2179,22 @@ class LearnerController extends Controller
 
         // Fetch sales data
         $salesData = DB::table('project_books as books')
-            ->select(DB::raw('YEAR(sales.date) as year'), DB::raw('QUARTER(sales.date) as quarter'), 
+            ->select(DB::raw('YEAR(sales.date) as year'), DB::raw('QUARTER(sales.date) as quarter'),
                 DB::raw('SUM(amount) as total_sales'))
             ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
             ->whereRaw('YEAR(sales.date) = ?', [$selectedYear])
             ->where('books.project_id', $project_id)
-            ->groupBy('year', 'quarter')//->groupBy('year')
+            ->groupBy('year', 'quarter')// ->groupBy('year')
             ->orderBy('year')
             ->orderBy('quarter')
             ->get()
-            ->groupBy('year');//->keyBy('year');
+            ->groupBy('year'); // ->keyBy('year');
 
         // Fetch distributions data
         $distributionsData = DB::table('project_registrations as distribution')
-            ->select(DB::raw('YEAR(distribution_costs.date) as year'), DB::raw('QUARTER(distribution_costs.date) as quarter'), 
+            ->select(DB::raw('YEAR(distribution_costs.date) as year'), DB::raw('QUARTER(distribution_costs.date) as quarter'),
                 DB::raw('SUM(amount) as total_distributions'))
-            ->leftJoin('storage_distribution_costs as distribution_costs', 
+            ->leftJoin('storage_distribution_costs as distribution_costs',
                 'distribution_costs.project_book_id', '=', 'distribution.id')
             ->where('distribution.id', $registration_id)
             ->whereRaw('YEAR(distribution_costs.date) = ?', [$selectedYear])
@@ -2232,7 +2206,7 @@ class LearnerController extends Controller
 
         // Process data
         $data = collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters, $selectedQuarters) {
-            //$sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
+            // $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
             $allSales = [];
             $allDistributions = [];
 
@@ -2280,15 +2254,18 @@ class LearnerController extends Controller
         $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML(view('frontend.pdf.distribution-cost', compact('data')));
-        return $pdf->download("Royalty_" . $selectedYear . "_" . $bookName . ".pdf");
-        //return $pdf->stream('distribution-cost.pdf');
+
+        return $pdf->download('Royalty_'.$selectedYear.'_'.$bookName.'.pdf');
+        // return $pdf->stream('distribution-cost.pdf');
     }
 
     public function bookForSale($id)
     {
         $userBookForSaleList = Auth::user()->booksForSale()->pluck('id')->toArray();
-        
-        if (!in_array($id, $userBookForSaleList)) return redirect()->route('learner.book-sale');
+
+        if (! in_array($id, $userBookForSaleList)) {
+            return redirect()->route('learner.book-sale');
+        }
 
         $book = UserBookForSale::find($id);
         $totalBookSold = $book->sales()->sum('quantity');
@@ -2304,9 +2281,9 @@ class LearnerController extends Controller
         $countsCount = $this->salesReportCounter($id, 'counts');
         $returnsCount = $this->salesReportCounter($id, 'returns');
 
-        return view('frontend.learner.self-publishing.book-for-sale', compact('book','totalBookSold', 'totalBookSale', 
-        'quantitySoldCount', 'turnedOverCount', 'freeCount', 'commissionCount', 'shreddedCount',
-        'defectiveCount', 'correctionsCount', 'countsCount', 'returnsCount',));
+        return view('frontend.learner.self-publishing.book-for-sale', compact('book', 'totalBookSold', 'totalBookSale',
+            'quantitySoldCount', 'turnedOverCount', 'freeCount', 'commissionCount', 'shreddedCount',
+            'defectiveCount', 'correctionsCount', 'countsCount', 'returnsCount', ));
     }
 
     public function bookSaleByMonth($year)
@@ -2338,7 +2315,7 @@ class LearnerController extends Controller
                 DB::raw("DATE_FORMAT(date, '%m') as month"),
             )
             ->whereYear('date', $year)
-            //->where('user_id', $learner->id)
+            // ->where('user_id', $learner->id)
             ->where('project_id', $standardProject->id)
             ->groupBy('month')
             ->orderBy('month', 'ASC')
@@ -2353,55 +2330,58 @@ class LearnerController extends Controller
         return $data;
     }
 
-    public function saveForSaleBooks( Request $request )
+    public function saveForSaleBooks(Request $request)
     {
         $this->validate($request, [
             'title' => 'required',
-            'price' => 'required|numeric'
+            'price' => 'required|numeric',
         ]);
         $request->merge(['user_id' => Auth::user()->id]);
 
         UserBookForSale::updateOrCreate([
-            'id' => $request->id
+            'id' => $request->id,
         ], $request->except('id'));
 
         return redirect()->back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Book for sale saved successfully.'),
-            'alert_type'            => 'success',
-            'not-former-courses'    => true
+            'errors' => AdminHelpers::createMessageBag('Book for sale saved successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
         ]);
     }
 
-    public function deleteForSaleBooks( $id )
+    public function deleteForSaleBooks($id)
     {
         UserBookForSale::find($id)->delete();
+
         return redirect()->back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Book for sale deleted successfully.'),
-            'alert_type'            => 'success',
-            'not-former-courses'    => true
+            'errors' => AdminHelpers::createMessageBag('Book for sale deleted successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
         ]);
     }
 
     public function requestSelfPublishingPortal()
     {
         SelfPublishingPortalRequest::firstOrCreate(['user_id' => Auth::id()]);
+
         return back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Request submitted to admin.'),
-            'alert_type'            => 'success',
-            'not-former-courses'    => true
+            'errors' => AdminHelpers::createMessageBag('Request submitted to admin.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
         ]);
     }
 
     public function project()
     {
         $projects = Project::where('user_id', Auth::user()->id)->get();
+
         return view('frontend.learner.self-publishing.project.index', compact('projects'));
     }
 
     public function saveProject(Request $request, ProjectService $projectService)
     {
         $this->validate($request, [
-            'name' => 'required|no_links'
+            'name' => 'required|no_links',
         ]);
 
         $nextProjectNumber = DB::table('projects')
@@ -2412,27 +2392,28 @@ class LearnerController extends Controller
         $request->merge([
             'user_id' => Auth::id(),
             'number' => $nextProjectNumber,
-            'status' => 'active'
+            'status' => 'active',
         ]);
 
         $projectService->saveProject($request);
 
         return back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Project created.'),
-            'alert_type'            => 'success'
+            'errors' => AdminHelpers::createMessageBag('Project created.'),
+            'alert_type' => 'success',
         ]);
     }
 
-    public function showProject( $project_id )
+    public function showProject($project_id)
     {
         $project = Project::where('user_id', Auth::user()->id)->where('id', $project_id)->firstOrFail();
+
         return view('frontend.learner.self-publishing.project.show', compact('project'));
     }
 
     public function setStandardProject($project_id)
     {
         $project = Project::where('user_id', Auth::user()->id)->where('id', $project_id)->firstOrFail();
-        
+
         $project = Project::where('user_id', Auth::id())->where('id', $project_id)->firstOrFail();
 
         // Set `is_standard` to 0 for all user's projects
@@ -2444,18 +2425,19 @@ class LearnerController extends Controller
         $project->update(['is_standard' => 1]);
 
         return back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Standard project updated.'),
-            'alert_type'            => 'success'
+            'errors' => AdminHelpers::createMessageBag('Standard project updated.'),
+            'alert_type' => 'success',
         ]);
     }
 
     public function orderService($projectId, $serviceId)
     {
         $service = AppPublishingService::findOrFail($serviceId);
+
         return view('frontend.learner.self-publishing.project.service-order', compact('service', 'projectId'));
     }
 
-    public function projectGraphicWork( $project_id )
+    public function projectGraphicWork($project_id)
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $covers = ProjectGraphicWork::cover()->where('project_id', $project_id)->get();
@@ -2471,7 +2453,7 @@ class LearnerController extends Controller
             'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs', 'bookFormattingList', 'indesigns', 'printReadyList'));
     }
 
-    public function projectRegistration( $project_id )
+    public function projectRegistration($project_id)
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
@@ -2479,6 +2461,7 @@ class LearnerController extends Controller
         $mentorBookBases = ProjectRegistration::mentorBookBase()->where('project_id', $project_id)->get();
         $uploadFilesToMentorBookBases = ProjectRegistration::uploadFilesToMentorBookBase()
             ->where('project_id', $project_id)->get();
+
         return view('frontend.learner.self-publishing.project.registration', compact('project', 'isbns',
             'centralDistributions', 'mentorBookBases', 'uploadFilesToMentorBookBases'));
     }
@@ -2486,16 +2469,17 @@ class LearnerController extends Controller
     public function marketing()
     {
         $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
-        $marketingPlans = $standardProject ? MarketingPlan::with(['questions.answers' => function($query) use ($standardProject) {
+        $marketingPlans = $standardProject ? MarketingPlan::with(['questions.answers' => function ($query) use ($standardProject) {
             $query->where('marketing_plan_question_answers.project_id', $standardProject->id);
         }])->get() : [];
+
         return view('frontend.learner.self-publishing.marketing', compact('marketingPlans'));
     }
 
     public function marketingDownload()
     {
         $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
-        $marketingPlans = MarketingPlan::with(['questions.answers' => function($query) use ($standardProject) {
+        $marketingPlans = MarketingPlan::with(['questions.answers' => function ($query) use ($standardProject) {
             $query->where('marketing_plan_question_answers.project_id', $standardProject->id);
         }])->get();
 
@@ -2503,11 +2487,12 @@ class LearnerController extends Controller
         $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML(view('frontend.pdf.marketing-plan', compact('marketingPlans')));
+
         return $pdf->download('Marketing Plan.pdf');
-        //return $pdf->stream('marketing-plan.pdf');
+        // return $pdf->stream('marketing-plan.pdf');
     }
 
-    public function projectMarketing( $project_id )
+    public function projectMarketing($project_id)
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $emailBookstores = ProjectMarketing::emailBookstores()->where('project_id', $project_id)->get();
@@ -2528,6 +2513,7 @@ class LearnerController extends Controller
         $updateTheBookBase = ProjectMarketing::updateTheBookBase()->where('project_id', $project_id)->get();
         $ebookOrdered = ProjectMarketing::ebookOrdered()->where('project_id', $project_id)->get();
         $ebookReceived = ProjectMarketing::ebookReceived()->where('project_id', $project_id)->get();
+
         return view('frontend.learner.self-publishing.project.marketing', compact('project', 'emailBookstores',
             'emailLibraries', 'emailPresses', 'reviewCopiesSent', 'setupOnlineStore', 'setupFacebook', 'advertisementFacebook',
             'manuscriptSentToPrint', 'culturalCouncils', 'freeWords', 'agreementOnTimeRegistration', 'printEBooks',
@@ -2536,73 +2522,73 @@ class LearnerController extends Controller
     }
 
     /**
-     * @param $project_id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function projectMarketingPlan( $project_id )
+    public function projectMarketingPlan($project_id)
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
-        $marketingPlans = MarketingPlan::with(['questions.answers' => function($query) use ($project_id) {
+        $marketingPlans = MarketingPlan::with(['questions.answers' => function ($query) use ($project_id) {
             $query->where('marketing_plan_question_answers.project_id', $project_id);
         }])->get();
+
         return view('frontend.learner.self-publishing.project.marketing-plan', compact('project', 'marketingPlans'));
     }
 
     /**
-     * @param $project_id
-     * @param Request $request
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function saveMarketingPlanQA( $project_id, Request $request )
+    public function saveMarketingPlanQA($project_id, Request $request)
     {
         foreach ($request->arr as $input) {
             $answer = MarketingPlanQuestionAnswer::firstOrNew([
                 'project_id' => $project_id,
-                'question_id' => $input['main_question_id']
+                'question_id' => $input['main_question_id'],
             ]);
             $answer->main_answer = $input['main_answer'];
             $answer->sub_answer = isset($input['sub_answer'])
-                ? json_encode($input['sub_answer'], JSON_UNESCAPED_UNICODE )
-                : NULL;
+                ? json_encode($input['sub_answer'], JSON_UNESCAPED_UNICODE)
+                : null;
             $answer->save();
         }
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Answer saved.'),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
-    public function projectContract( $project_id )
+    public function projectContract($project_id)
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $contracts = Contract::where('project_id', $project_id)->paginate(10);
+
         return view('frontend.learner.self-publishing.project.contract', compact('project', 'contracts'));
     }
 
-    public function projectInvoice( $project_id )
+    public function projectInvoice($project_id)
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $invoices = ProjectInvoice::where('project_id', $project_id)->get();
+
         return view('frontend.learner.self-publishing.project.invoice', compact('project', 'invoices'));
     }
 
-    public function projectStorage( $project_id )
+    public function projectStorage($project_id)
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $projectBook = $project->book;
         $projectCentralDistributions = $project->registrations()
             ->where([
                 'field' => 'central-distribution',
-                'in_storage' => 1
+                'in_storage' => 1,
             ])
             ->get();
-        
-            return view('frontend.learner.self-publishing.project.storage', compact('project', 'projectBook', 
+
+        return view('frontend.learner.self-publishing.project.storage', compact('project', 'projectBook',
             'projectCentralDistributions'));
     }
 
-    public function projectStorageDetails( $project_id, $registration_id )
+    public function projectStorageDetails($project_id, $registration_id)
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $projectBook = $project->book;
@@ -2643,7 +2629,7 @@ class LearnerController extends Controller
                 case 'inventory_returns':
                     $inventoryReturns = $sale->total_sales;
                     break;
-                // Add more cases as needed for other types
+                    // Add more cases as needed for other types
             }
         }
 
@@ -2656,13 +2642,13 @@ class LearnerController extends Controller
             'defective' => 'Defective',
             'corrections' => 'Corrections',
             'counts' => 'Counts',
-            'returns' => 'Returns'
+            'returns' => 'Returns',
         ];
-        
-        $yearlyData = array_map(function($key, $name) use ($projectUserBook) {
+
+        $yearlyData = array_map(function ($key, $name) use ($projectUserBook) {
             return [
                 'name' => $name,
-                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, $key) : 0
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, $key) : 0,
             ];
         }, array_keys($types), $types);
 
@@ -2678,45 +2664,46 @@ class LearnerController extends Controller
         $project_book_id = $projectUserBook->id;
         $categories = ['quantity-sold', 'turned-over', 'free', 'commission', 'shredded'];
 
-        $categories = ['quantitySoldCount' => 'quantity-sold', 'turnedOverCount' => 'turned-over', 
-        'freeCount' => 'free', 'commissionCount' => 'commission', 'shreddedCount' => 'shredded',
-        'defectiveCount' => 'defective', 'correctionsCount' => 'corrections', 'countsCount' => 'counts',
-        'returnsCount' => 'returns'];
+        $categories = ['quantitySoldCount' => 'quantity-sold', 'turnedOverCount' => 'turned-over',
+            'freeCount' => 'free', 'commissionCount' => 'commission', 'shreddedCount' => 'shredded',
+            'defectiveCount' => 'defective', 'correctionsCount' => 'corrections', 'countsCount' => 'counts',
+            'returnsCount' => 'returns'];
 
-        $counts = array_map(function($label) use ($project_book_id) {
+        $counts = array_map(function ($label) use ($project_book_id) {
             return $this->salesReportCounter($project_book_id, $label);
         }, $categories);
 
         extract($counts);
-        
+
         return view('frontend.learner.self-publishing.project.storage-details', compact('project', 'projectBook',
-        'projectUserBook', 'totalBookSold', 'totalBookSale', 'inventoryPhysicalItems', 'inventoryDelivered',
-        'inventoryReturns', 'years', 'yearlyData', 'inventorySales', array_keys($categories)));
+            'projectUserBook', 'totalBookSold', 'totalBookSale', 'inventoryPhysicalItems', 'inventoryDelivered',
+            'inventoryReturns', 'years', 'yearlyData', 'inventorySales', array_keys($categories)));
     }
 
     public function countFileCharacters(Request $request)
     {
         $compute = null;
-        if( $request->hasFile('manuscript') &&  $request->file('manuscript')->isValid() ) :
+        if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
             $compute = FrontendHelpers::countFileWords(0, $request);
-        endif;
+        }
+
         return $compute;
     }
 
-    public function uploadSelfPublishingManuscript( $id, Request $request )
+    public function uploadSelfPublishingManuscript($id, Request $request)
     {
         $this->validate($request, ['manuscript' => 'required']);
 
         $publishing = SelfPublishing::find($id);
 
-        //$destinationPath = 'storage/self-publishing-manuscript/'; // upload path
+        // $destinationPath = 'storage/self-publishing-manuscript/'; // upload path
         $destinationPath = 'Forfatterskolen_app/self-publishing-manuscript/';
-        
+
         if ($publishing->project_id) {
-            $destinationPath = 'Forfatterskolen_app/project/project-' . $publishing->project_id . '/self-publishing-manuscript/';
+            $destinationPath = 'Forfatterskolen_app/project/project-'.$publishing->project_id.'/self-publishing-manuscript/';
         }
 
-        if ( $request->hasFile('manuscript') ) :
+        if ($request->hasFile('manuscript')) {
 
             $filesWithPath = '';
             $word_count = 0;
@@ -2726,39 +2713,39 @@ class LearnerController extends Controller
                 $extension = pathinfo($_FILES[$requestFilename]['name'][$k], PATHINFO_EXTENSION);
                 $original_filename = $file->getClientOriginalName();
                 $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
-        
-                $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension); // rename document
+
+                $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name.'.'.$extension); // rename document
                 $expFileName = explode('/', $fileName);
                 $dropboxFileName = end($expFileName);
-        
+
                 // Store the file in Dropbox
                 $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
-        
+
                 // Full file path for reference
-                $filesWithPath .= "/" . $destinationPath . $fileName . ", ";
-        
+                $filesWithPath .= '/'.$destinationPath.$fileName.', ';
+
                 // File path in Dropbox
-                $filePath = $destinationPath . $dropboxFileName;
+                $filePath = $destinationPath.$dropboxFileName;
 
                 // Download the file locally from Dropbox (temporarily)
                 $tempFile = Storage::disk('dropbox')->get($filePath);
-                $localPath = storage_path('app/temp/' . $dropboxFileName); // Define temporary local path
+                $localPath = storage_path('app/temp/'.$dropboxFileName); // Define temporary local path
 
                 file_put_contents($localPath, $tempFile); // Save it locally temporarily
-        
+
                 // Word counting logic based on the file extension
-                if ($extension == "pdf") {
+                if ($extension == 'pdf') {
                     $pdf = new \PdfToText($localPath);
                     $pdfContent = $pdf->Text;
                     $word_count += FrontendHelpers::get_num_of_words($pdfContent);
-                } elseif ($extension == "docx") {
+                } elseif ($extension == 'docx') {
                     $docObj = new \Docx2Text($localPath);
                     $docText = $docObj->convertToText();
                     $word_count += FrontendHelpers::get_num_of_words($docText);
-                } elseif ($extension == "doc") {
+                } elseif ($extension == 'doc') {
                     $docText = FrontendHelpers::readWord($localPath);
                     $word_count += FrontendHelpers::get_num_of_words($docText);
-                } elseif ($extension == "odt") {
+                } elseif ($extension == 'odt') {
                     $doc = odt2text($localPath);
                     $word_count += FrontendHelpers::get_num_of_words($doc);
                 }
@@ -2766,7 +2753,7 @@ class LearnerController extends Controller
                 // Delete the temporary local file after processing
                 unlink($localPath);
             }
-            
+
             /* foreach ($request->file('manuscript') as $k => $file) {
                 $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
                 $actual_name = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_FILENAME);
@@ -2796,25 +2783,21 @@ class LearnerController extends Controller
                 endif;
             } */
 
-            $publishing->manuscript = $filesWithPath = trim($filesWithPath,", ");
+            $publishing->manuscript = $filesWithPath = trim($filesWithPath, ', ');
             $publishing->word_count = $word_count;
-        endif;
+        }
         $publishing->save();
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
     /**
-     * @param $id
-     * @param $type
-     * @param Request $request
-     * @param ProjectService $projectService
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function uploadOtherServiceManuscript( $id, $type, Request $request, ProjectService $projectService )
+    public function uploadOtherServiceManuscript($id, $type, Request $request, ProjectService $projectService)
     {
         $this->validate($request, ['manuscript' => 'required']);
 
@@ -2823,8 +2806,8 @@ class LearnerController extends Controller
             $request->merge(['type' => $type]);
 
             $folderName = $type == 1 ? 'copy-editing-manuscripts' : 'correction-manuscripts';
-            $destinationPath = 'Forfatterskolen_app/' . ($data->project_id ? 'project/project-' . $data->project_id . '/' : '') 
-                . $folderName . '/';
+            $destinationPath = 'Forfatterskolen_app/'.($data->project_id ? 'project/project-'.$data->project_id.'/' : '')
+                .$folderName.'/';
 
             $requestFilename = 'manuscript';
             $file = \request()->file($requestFilename);
@@ -2832,33 +2815,34 @@ class LearnerController extends Controller
             $extension = pathinfo($_FILES[$requestFilename]['name'], PATHINFO_EXTENSION);
             $original_filename = $file->getClientOriginalName();
             $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
-    
-            $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension); // rename document
+
+            $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name.'.'.$extension); // rename document
             $expFileName = explode('/', $fileName);
             $dropboxFileName = end($expFileName);
-    
+
             // Store the file in Dropbox
             $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
-    
+
             // File path in Dropbox
-            $filePath = $destinationPath . $dropboxFileName;
+            $filePath = $destinationPath.$dropboxFileName;
             $calculatedPrice = $projectService->calculateFileTextPrice($filePath, $type);
 
-            //$file = $projectService->saveFile($data->project_id, $request);
-            $data->file = "/" . $filePath;
+            // $file = $projectService->saveFile($data->project_id, $request);
+            $data->file = '/'.$filePath;
             $data->payment_price = $calculatedPrice;
             $data->save();
         }
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
-            'alert_type' => 'success'
+            'alert_type' => 'success',
         ]);
     }
 
-    public function downloadTimeRegisterInvoice( $id )
+    public function downloadTimeRegisterInvoice($id)
     {
         $timeRegister = TimeRegister::find($id);
+
         return response()->download($timeRegister->invoice_file);
     }
 
@@ -2866,54 +2850,51 @@ class LearnerController extends Controller
     {
         // get course certificates based on users course taken
         $certificates = DB::table('course_certificates')
-            ->leftJoin('courses', 'course_certificates.course_id','=','courses.id')
-            ->leftJoin('packages','packages.id','=','course_certificates.package_id')
-            ->leftJoin('courses_taken','courses_taken.package_id', '=','packages.id')
+            ->leftJoin('courses', 'course_certificates.course_id', '=', 'courses.id')
+            ->leftJoin('packages', 'packages.id', '=', 'course_certificates.package_id')
+            ->leftJoin('courses_taken', 'courses_taken.package_id', '=', 'packages.id')
             ->select('course_certificates.*', 'courses.title as course_title')
             ->where('courses.completed_date', '<=', Carbon::now())
             ->whereNotNull('courses.issue_date')
             ->whereNotNull('course_certificates.package_id')
             ->where('courses_taken.user_id', \Auth::user()->id)
-            //->whereNull('courses_taken.deleted_at') //remove this to not show deleted courses_taken
+            // ->whereNull('courses_taken.deleted_at') //remove this to not show deleted courses_taken
             ->groupBy('course_certificates.id')
             ->get();
+
         return view('frontend.learner.profile', compact('certificates'));
     }
 
-
-
-
-
     public function profileUpdate(ProfileUpdateRequest $request)
     {
-        if(! empty($request->new_password) ) :
-            if (Hash::check($request->old_password, Auth::user()->password)) :
+        if (! empty($request->new_password)) {
+            if (Hash::check($request->old_password, Auth::user()->password)) {
                 Auth::user()->password = bcrypt($request->new_password);
                 \Session::forget('new_user_social');
-            else :
+            } else {
                 return redirect()->back()->withErrors('Invalid old password.');
-            endif;
-        endif;
+            }
+        }
 
-        if ($request->hasFile('image') && $request->file('image')->isValid()) :
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $image = substr(Auth::user()->profile_image, 1);
-            if( Auth::user()->hasProfileImage && File::exists($image) ) :
+            if (Auth::user()->hasProfileImage && File::exists($image)) {
                 File::delete($image);
-            endif;
+            }
             $destinationPath = 'storage/profile-images/'; // upload path
             $extension = $request->image->extension(); // getting image extension
             $fileName = time().'.'.$extension; // renameing image
             $request->image->move($destinationPath, $fileName);
             // optimize image
-            if ( strtolower( $extension ) == "png" ) : 
+            if (strtolower($extension) == 'png') {
                 $image = imagecreatefrompng($destinationPath.$fileName);
                 imagepng($image, $destinationPath.$fileName, 9);
-            else :
+            } else {
                 $image = imagecreatefromjpeg($destinationPath.$fileName);
                 imagejpeg($image, $destinationPath.$fileName, 70);
-            endif;
+            }
             Auth::user()->profile_image = '/'.$destinationPath.$fileName;
-        endif;
+        }
 
         Auth::user()->first_name = $request->first_name;
         Auth::user()->last_name = $request->last_name;
@@ -2926,7 +2907,7 @@ class LearnerController extends Controller
         $address->zip = $request->zip;
         $address->phone = $request->phone;
         $address->save();
-        
+
         $learner = Auth::user();
         if ($learner->fiken_contact_id && $learner->fiken_contact_id != 'none') {
             dispatch(new UpdateFikenContactDetailsJob($learner));
@@ -2943,31 +2924,31 @@ class LearnerController extends Controller
 
     /**
      * Update the profile image of user
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function profileUpdatePhoto(Request $request)
     {
-        if ($request->hasFile('image') && $request->file('image')->isValid()) :
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $image = substr(Auth::user()->profile_image, 1);
-            if( Auth::user()->hasProfileImage && File::exists($image) ) :
+            if (Auth::user()->hasProfileImage && File::exists($image)) {
                 File::delete($image);
-            endif;
+            }
             $destinationPath = 'storage/profile-images/'; // upload path
             $extension = $request->image->extension(); // getting image extension
             $fileName = time().'.'.$extension; // renameing image
             $request->image->move($destinationPath, $fileName);
             // optimize image
-            if ( strtolower( $extension ) == "png" ) :
+            if (strtolower($extension) == 'png') {
                 $image = imagecreatefrompng($destinationPath.$fileName);
                 imagepng($image, $destinationPath.$fileName, 9);
-            else :
+            } else {
                 $image = imagecreatefromjpeg($destinationPath.$fileName);
                 imagejpeg($image, $destinationPath.$fileName, 70);
-            endif;
+            }
             Auth::user()->profile_image = '/'.$destinationPath.$fileName;
             Auth::user()->save();
-        endif;
+        }
 
         return redirect()->back();
     }
@@ -2975,12 +2956,13 @@ class LearnerController extends Controller
     public function passwordUpdate(Request $request)
     {
         $this->validate($request, [
-            'password' => 'required'
+            'password' => 'required',
         ]);
 
         Auth::user()->password = bcrypt($request->password);
         Auth::user()->need_pass_update = 0;
         Auth::user()->save();
+
         return redirect()->back()->with(['passUpdated' => 1]);
     }
 
@@ -2996,7 +2978,7 @@ class LearnerController extends Controller
 
         $lesson_content = $lesson->lessonContent;
 
-        if (!FrontendHelpers::checkIfLearnerHasAccessToLesson(Auth::user()->id, $course_id, $id)) {
+        if (! FrontendHelpers::checkIfLearnerHasAccessToLesson(Auth::user()->id, $course_id, $id)) {
             abort(404);
         }
 
@@ -3006,21 +2988,21 @@ class LearnerController extends Controller
         }
 
         $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)
-            ->whereIn('package_id', $course->allPackages->pluck('id')->toArray()) //$course->packages->pluck('id')
+            ->whereIn('package_id', $course->allPackages->pluck('id')->toArray()) // $course->packages->pluck('id')
             ->first();
 
         $lessons = $courseTaken->package->course->lessons;
-        if(  $courseTaken || FrontendHelpers::hasLessonAccess($courseTaken, $lesson) ) :
-            return view('frontend.learner.lesson_show', compact('lesson', 'course', 'courseTaken', 'lesson_content' , 'lessons'));
-        endif;
+        if ($courseTaken || FrontendHelpers::hasLessonAccess($courseTaken, $lesson)) {
+            return view('frontend.learner.lesson_show', compact('lesson', 'course', 'courseTaken', 'lesson_content', 'lessons'));
+        }
+
         return redirect()->route('learner.dashboard');
-        //return abort('503');
+        // return abort('503');
     }
 
     /**
      * Download lesson as pdf file
-     * @param $course_id
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse | mixed
      */
     public function downloadLesson($course_id, $id)
@@ -3028,83 +3010,80 @@ class LearnerController extends Controller
         $course = Course::findOrFail($course_id);
         $lesson = Lesson::findOrFail($id);
 
-        if (!FrontendHelpers::checkIfLearnerHasAccessToLesson(Auth::user()->id, $course_id, $id)) {
+        if (! FrontendHelpers::checkIfLearnerHasAccessToLesson(Auth::user()->id, $course_id, $id)) {
             abort(404);
         }
 
         $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course->packages->pluck('id')->toArray())->first();
 
         // set a cookie to re-enable download button
-        $cookie_name = "_lesson_dl";
+        $cookie_name = '_lesson_dl';
         $cookie_value = 1;
-        setcookie($cookie_name, $cookie_value, time() + 60, "/"); // 86400 = 1 day
+        setcookie($cookie_name, $cookie_value, time() + 60, '/'); // 86400 = 1 day
 
-        if(  $courseTaken || FrontendHelpers::hasLessonAccess($courseTaken, $lesson) ) :
+        if ($courseTaken || FrontendHelpers::hasLessonAccess($courseTaken, $lesson)) {
             // replace the laravel-filemanager with the actual file path location
-            $content = str_replace('/laravel-filemanager',public_path(), $lesson->content);
+            $content = str_replace('/laravel-filemanager', public_path(), $lesson->content);
             $title = $lesson->title;
             $pdf = PDF::loadView('frontend.pdf.lesson', compact('content', 'title'));
 
             // set a cookie to re-enable download button
-            $cookie_name = "_lesson_dl";
+            $cookie_name = '_lesson_dl';
             $cookie_value = 1;
-            setcookie($cookie_name, $cookie_value, time() + 600, "/"); // 86400 = 1 day
+            setcookie($cookie_name, $cookie_value, time() + 600, '/'); // 86400 = 1 day
 
             return $pdf->download($lesson->title.'.pdf');
-        endif;
+        }
 
         return redirect()->back();
     }
-
-
 
     public function uploadManuscript($id, Request $request)
     {
         $courseTaken = CoursesTaken::findOrFail($id);
         $coursesTaken_ids = Auth::user()->coursesTaken->pluck('id')->toArray();
         $extensions = ['pdf', 'docx', 'odt'];
-        
-        if( $courseTaken->manuscripts->count() < $courseTaken->package->manuscripts_count && in_array($courseTaken->id, $coursesTaken_ids) ) :
-            if( $request->hasFile('file') &&  $request->file('file')->isValid() ) :
-                if( Auth::user()->can('participateCourse', $courseTaken) &&
-                    !$courseTaken->hasEnded
-                ) :
+
+        if ($courseTaken->manuscripts->count() < $courseTaken->package->manuscripts_count && in_array($courseTaken->id, $coursesTaken_ids)) {
+            if ($request->hasFile('file') && $request->file('file')->isValid()) {
+                if (Auth::user()->can('participateCourse', $courseTaken) &&
+                    ! $courseTaken->hasEnded
+                ) {
                     $time = time();
                     $destinationPath = 'storage/manuscripts/'; // upload path
-                    $extension = pathinfo($_FILES['file']['name'],PATHINFO_EXTENSION); // getting document extension
+                    $extension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION); // getting document extension
                     $fileName = $time.'.'.$extension; // rename document
                     $request->file->move($destinationPath, $fileName);
 
-                    if( !in_array($extension, $extensions) ) :
+                    if (! in_array($extension, $extensions)) {
                         return redirect()->back();
-                    endif;
+                    }
 
                     // count words
-                    if($extension == "pdf") :
-                      $pdf  =  new \PdfToText ( $destinationPath.$fileName ) ;
-                      $pdf_content = $pdf->Text; 
-                      $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-                    elseif($extension == "docx") :
-                      $docObj = new \Docx2Text($destinationPath.$fileName);
-                      $docText= $docObj->convertToText();
-                      $word_count = FrontendHelpers::get_num_of_words($docText);
-                    elseif($extension == "odt") :
-                      $doc = odt2text($destinationPath.$fileName);
-                      $word_count = FrontendHelpers::get_num_of_words($doc);
-                    endif;
-
+                    if ($extension == 'pdf') {
+                        $pdf = new \PdfToText($destinationPath.$fileName);
+                        $pdf_content = $pdf->Text;
+                        $word_count = FrontendHelpers::get_num_of_words($pdf_content);
+                    } elseif ($extension == 'docx') {
+                        $docObj = new \Docx2Text($destinationPath.$fileName);
+                        $docText = $docObj->convertToText();
+                        $word_count = FrontendHelpers::get_num_of_words($docText);
+                    } elseif ($extension == 'odt') {
+                        $doc = odt2text($destinationPath.$fileName);
+                        $word_count = FrontendHelpers::get_num_of_words($doc);
+                    }
 
                     Manuscript::create([
                         'coursetaken_id' => $courseTaken->id,
                         'filename' => '/'.$destinationPath.$fileName,
-                        'word_count' => $word_count
+                        'word_count' => $word_count,
                     ]);
                     Log::create([
-                        'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for course '.$courseTaken->package->course->title
+                        'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for course '.$courseTaken->package->course->title,
                     ]);
                     // Admin notification
                     $message = Auth::user()->full_name.' submitted a manuscript for course '.$courseTaken->package->course->title;
-                    //mail('post@forfatterskolen.no', 'New manuscript submitted for course', $message);
+                    // mail('post@forfatterskolen.no', 'New manuscript submitted for course', $message);
                     /*AdminHelpers::send_email('New manuscript submitted for course',
                         'post@forfatterskolen.no','post@forfatterskolen.no', $message);*/
                     $to = 'post@forfatterskolen.no'; //
@@ -3113,48 +3092,43 @@ class LearnerController extends Controller
                         'email_message' => $message,
                         'from_name' => '',
                         'from_email' => 'post@forfatterskolen.no',
-                        'attach_file' => NULL
+                        'attach_file' => null,
                     ];
                     \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-                else :
+                } else {
                     return abort('503');
-                endif;
-            endif;
-        endif;
+                }
+            }
+        }
 
         return redirect()->back()->with('success', true);
     }
 
-
-
-
     public function manuscriptShow($id)
     {
         $manuscript = Manuscript::findOrFail($id);
-        if( Auth::user()->id == $manuscript->courseTaken->user_id ) :
+        if (Auth::user()->id == $manuscript->courseTaken->user_id) {
             return view('frontend.learner.manuscriptShow', compact('manuscript'));
-        else :
+        } else {
             return abort('503');
-        endif;
+        }
     }
 
-
-
-    public function shopManuscriptPostComment( $id, Request $request )
+    public function shopManuscriptPostComment($id, Request $request)
     {
         $shopManuscriptsTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->firstOrFail();
-        if( !empty($request->comment) && $shopManuscriptsTaken->is_active ) :
-            $ShopManuscriptComment = new ShopManuscriptComment();
+        if (! empty($request->comment) && $shopManuscriptsTaken->is_active) {
+            $ShopManuscriptComment = new ShopManuscriptComment;
             $ShopManuscriptComment->shop_manuscript_taken_id = $shopManuscriptsTaken->id;
             $ShopManuscriptComment->user_id = Auth::user()->id;
             $ShopManuscriptComment->comment = $request->comment;
             $ShopManuscriptComment->save();
 
-            // send email to head editor. change - head editor is moved from settings to user table. 
+            // send email to head editor. change - head editor is moved from settings to user table.
             $headEditor = User::where('head_editor', 1)->first();
             $editor = user::where('id', $shopManuscriptsTaken->feedback_user_id)->first();
             // $headEditor = Settings::headEditor();
-            
+
             $user = Auth::user();
             $emailTemplate = AdminHelpers::emailTemplate('Shop Manuscript Comment');
             $link = route('shop_manuscript_taken', [$user->id, $id]);
@@ -3164,11 +3138,11 @@ class LearnerController extends Controller
             ];
             $replace_string = [
                 $user->first_name,
-                "<a href='" . $link . "'>".$link."</a>"
+                "<a href='".$link."'>".$link.'</a>',
             ];
             $email_content = str_replace($search_string, $replace_string, $emailTemplate->email_content);
 
-            if($headEditor) {
+            if ($headEditor) {
                 AdminHelpers::queue_mail($headEditor->email, $emailTemplate->subject, $email_content, $emailTemplate->from_email);
             }
             /*if($editor){
@@ -3176,92 +3150,84 @@ class LearnerController extends Controller
             }*/
 
             return redirect()->back();
-        else :
+        } else {
             return abort('503');
-        endif;
+        }
     }
 
-
-
     public function search(Request $request)
-    {   
-        $courses = Auth::user()->coursesTaken()->whereHas('package', function($query) use ($request){
-            $query->whereHas('course', function($query) use ($request){
-                $query->where('title', 'LIKE', '%' . $request->search . '%');
+    {
+        $courses = Auth::user()->coursesTaken()->whereHas('package', function ($query) use ($request) {
+            $query->whereHas('course', function ($query) use ($request) {
+                $query->where('title', 'LIKE', '%'.$request->search.'%');
             });
         })->get();
 
-
-        $assignments = Auth::user()->coursesTaken()->whereHas('package', function($query) use ($request){
-            $query->whereHas('course', function($query) use ($request){
-                $query->whereHas('assignments', function($query) use ($request){
-                    $query->where('title', 'LIKE', '%' . $request->search . '%');
+        $assignments = Auth::user()->coursesTaken()->whereHas('package', function ($query) use ($request) {
+            $query->whereHas('course', function ($query) use ($request) {
+                $query->whereHas('assignments', function ($query) use ($request) {
+                    $query->where('title', 'LIKE', '%'.$request->search.'%');
                 });
             });
         })->get();
 
-
-        $webinars = Auth::user()->coursesTaken()->whereHas('package', function($query) use ($request){
-            $query->whereHas('course', function($query) use ($request){
-                $query->whereHas('webinars', function($query) use ($request){
-                    $query->where('title', 'LIKE', '%' . $request->search . '%');
+        $webinars = Auth::user()->coursesTaken()->whereHas('package', function ($query) use ($request) {
+            $query->whereHas('course', function ($query) use ($request) {
+                $query->whereHas('webinars', function ($query) use ($request) {
+                    $query->where('title', 'LIKE', '%'.$request->search.'%');
                 });
             });
         })->get();
 
-
-        $workshops = Auth::user()->workshopsTaken()->whereHas('workshop', function($query) use ($request){
-            $query->where('title', 'LIKE', '%' . $request->search . '%');
+        $workshops = Auth::user()->workshopsTaken()->whereHas('workshop', function ($query) use ($request) {
+            $query->where('title', 'LIKE', '%'.$request->search.'%');
         })->get();
-
 
         return view('frontend.learner.search', compact('courses', 'assignments', 'webinars', 'workshops'));
     }
 
     /**
      * Renew specific course
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|void
      */
     public function courseRenew(Request $request)
     {
         $courseTaken = CoursesTaken::find($request->course_id);
         if ($courseTaken) {
-            $user       = User::find($courseTaken->user_id);
-            $package    = Package::findOrFail($courseTaken->package_id);
+            $user = User::find($courseTaken->user_id);
+            $package = Package::findOrFail($courseTaken->package_id);
             $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
-            $price      = (int)1490*100;
+            $price = (int) 1490 * 100;
             $product_ID = $package->full_price_product;
-            $send_to    = $user->email;
-            $dueDate = date("Y-m-d");
+            $send_to = $user->email;
+            $dueDate = date('Y-m-d');
 
             $payment_mode = $paymentMode->mode;
-            if( $payment_mode == 'Faktura' ) {
+            if ($payment_mode == 'Faktura') {
                 $payment_mode = 'Bankoverføring';
             }
 
-
-            $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
-            $comment .= 'Betalingsmodus: ' . $payment_mode . ')';
+            $comment = '(Kurs: '.$package->course->title.' ['.$package->variation.'], ';
+            $comment .= 'Betalingsmodus: '.$payment_mode.')';
 
             $invoice_fields = [
-                'user_id'       => $user->id,
-                'first_name'    => $user->first_name,
-                'last_name'     => $user->last_name,
-                'netAmount'     => $price,
-                'dueDate'       => $dueDate,
-                'description'   => 'Kursordrefaktura',
-                'productID'     => $product_ID,
-                'email'         => $send_to,
-                'telephone'     => $user->address->phone,
-                'address'       => $user->address->street,
-                'postalPlace'   => $user->address->city,
-                'postalCode'    => $user->address->zip,
-                'comment'       => $comment,
+                'user_id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'netAmount' => $price,
+                'dueDate' => $dueDate,
+                'description' => 'Kursordrefaktura',
+                'productID' => $product_ID,
+                'email' => $send_to,
+                'telephone' => $user->address->phone,
+                'address' => $user->address->street,
+                'postalPlace' => $user->address->city,
+                'postalCode' => $user->address->zip,
+                'comment' => $comment,
             ];
 
-
-            $invoice = new FikenInvoice();
+            $invoice = new FikenInvoice;
             $invoice->create_invoice($invoice_fields);
 
             $courseTaken->sent_renew_email = 0;
@@ -3269,17 +3235,17 @@ class LearnerController extends Controller
             $courseTaken->save();
 
             // Email to support
-            //mail('support@forfatterskolen.no', 'Course Renewed', Auth::user()->first_name . ' has renewed the course ' . $package->course->title);
+            // mail('support@forfatterskolen.no', 'Course Renewed', Auth::user()->first_name . ' has renewed the course ' . $package->course->title);
             /*AdminHelpers::send_email('Course Renewed',
                 'post@forfatterskolen.no', 'support@forfatterskolen.no',
                 Auth::user()->first_name . ' has renewed the course ' . $package->course->title);*/
             $to = 'support@forfatterskolen.no'; //
             $emailData = [
                 'email_subject' => 'Course Renewed',
-                'email_message' => Auth::user()->first_name . ' has renewed the course ' . $package->course->title,
+                'email_message' => Auth::user()->first_name.' has renewed the course '.$package->course->title,
                 'from_name' => '',
                 'from_email' => 'post@forfatterskolen.no',
-                'attach_file' => NULL
+                'attach_file' => null,
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
@@ -3290,7 +3256,7 @@ class LearnerController extends Controller
             $headers .= "MIME-Version: 1.0\r\n";
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
             $email_content = $package->course->email;
-            //mail($send_to, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
+            // mail($send_to, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
             /*AdminHelpers::send_email($package->course->title, 'post@forfatterskolen.no', $send_to,
                 view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));*/
             $to = $send_to; //
@@ -3299,75 +3265,75 @@ class LearnerController extends Controller
                 'email_message' => view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content'))->render(),
                 'from_name' => '',
                 'from_email' => 'post@forfatterskolen.no',
-                'attach_file' => NULL
+                'attach_file' => null,
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
-            if( $paymentMode->mode == "Paypal" ) :
+            if ($paymentMode->mode == 'Paypal') {
                 echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
                 <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
                 <input type="hidden" name="currency_code" value="NOK">
                 <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
                 <input type="hidden" name="item_name" value="Course Order Invoice">
-                <input type="hidden" name="amount" value="'.($price/100).'">
+                <input type="hidden" name="amount" value="'.($price / 100).'">
                 <input type="hidden" name="return" value="'.route('front.shop.thankyou').'?gateway=Paypal">
                 <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
             </form>';
                 echo '<script>document.getElementById("paypal_form").submit();</script>';
-                return;
-            endif;
 
+                return;
+            }
 
             return redirect(route('front.shop.thankyou'));
         }
+
         return redirect()->back();
     }
 
     public function courseRenewAllDisabled($course_id)
     {
-        $courseTaken    = CoursesTaken::find($course_id);
+        $courseTaken = CoursesTaken::find($course_id);
 
         if ($courseTaken) {
-            $user           = Auth::user();
-            $package        = Package::findOrFail($courseTaken->package_id);
-            $paymentMode    = PaymentMode::findOrFail(3); // hardcoded faktura payment
-            $payment_mode   = 'Bankoverføring';
-            $price          = (int)1490*100;
-            $product_ID     = $package->full_price_product;
-            $send_to        = $user->email;
-            $dueDate = date("Y-m-d");
+            $user = Auth::user();
+            $package = Package::findOrFail($courseTaken->package_id);
+            $paymentMode = PaymentMode::findOrFail(3); // hardcoded faktura payment
+            $payment_mode = 'Bankoverføring';
+            $price = (int) 1490 * 100;
+            $product_ID = $package->full_price_product;
+            $send_to = $user->email;
+            $dueDate = date('Y-m-d');
 
-            $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
-            $comment .= 'Betalingsmodus: ' . $payment_mode . ')';
+            $comment = '(Kurs: '.$package->course->title.' ['.$package->variation.'], ';
+            $comment .= 'Betalingsmodus: '.$payment_mode.')';
 
             $invoice_fields = [
-                'user_id'       => $user->id,
-                'first_name'    => $user->first_name,
-                'last_name'     => $user->last_name,
-                'netAmount'     => $price,
-                'dueDate'       => $dueDate,
-                'description'   => 'Kursordrefaktura',
-                'productID'     => $product_ID,
-                'email'         => $send_to,
-                'telephone'     => $user->address->phone,
-                'address'       => $user->address->street,
-                'postalPlace'   => $user->address->city,
-                'postalCode'    => $user->address->zip,
-                'comment'       => $comment, 'payment_mode'  => $paymentMode->mode,
+                'user_id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'netAmount' => $price,
+                'dueDate' => $dueDate,
+                'description' => 'Kursordrefaktura',
+                'productID' => $product_ID,
+                'email' => $send_to,
+                'telephone' => $user->address->phone,
+                'address' => $user->address->street,
+                'postalPlace' => $user->address->city,
+                'postalCode' => $user->address->zip,
+                'comment' => $comment, 'payment_mode' => $paymentMode->mode,
             ];
 
-
-            $invoice = new FikenInvoice();
+            $invoice = new FikenInvoice;
             $invoice->create_invoice($invoice_fields);
 
             // update all the started at of each courses taken
-            //Auth::user()->coursesTaken()->update(['started_at' => Carbon::now()]); -- original code
+            // Auth::user()->coursesTaken()->update(['started_at' => Carbon::now()]); -- original code
 
             foreach (Auth::user()->coursesTaken as $coursesTaken) {
                 // check if course taken have set end date and add one year to it
                 if ($coursesTaken->end_date) {
-                    $addYear = date("Y-m-d", strtotime(date("Y-m-d", strtotime($coursesTaken->end_date)) . " + 1 year"));
+                    $addYear = date('Y-m-d', strtotime(date('Y-m-d', strtotime($coursesTaken->end_date)).' + 1 year'));
                     $coursesTaken->end_date = $addYear;
                 }
 
@@ -3376,26 +3342,27 @@ class LearnerController extends Controller
             }
 
             // add to automation
-            $user_email     = Auth::user()->email;
-            $automation_id  = 73;
-            $user_name      = Auth::user()->first_name;
+            $user_email = Auth::user()->email;
+            $automation_id = 73;
+            $user_name = Auth::user()->first_name;
 
-            AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+            AdminHelpers::addToAutomation($user_email, $automation_id, $user_name);
 
             // Email to support
-            //mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
+            // mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
             /*AdminHelpers::send_email('All Courses Renewed',
                 'post@forfatterskolen.no', 'support@forfatterskolen.no',
                 Auth::user()->first_name . ' has renewed all the courses');*/
             $to = 'support@forfatterskolen.no'; //
             $emailData = [
                 'email_subject' => 'All Courses Renewed',
-                'email_message' => Auth::user()->first_name . ' has renewed all the courses',
+                'email_message' => Auth::user()->first_name.' has renewed all the courses',
                 'from_name' => '',
                 'from_email' => 'post@forfatterskolen.no',
-                'attach_file' => NULL
+                'attach_file' => null,
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+
             return redirect(route('front.shop.thankyou'));
         }
 
@@ -3404,16 +3371,16 @@ class LearnerController extends Controller
 
     /**
      * Set value of auto renew courses field
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function setAutoRenewCourses(Request $request)
     {
-        $user                       = User::find(Auth::user()->id);
-        $user->auto_renew_courses   = $request->auto_renew;
+        $user = User::find(Auth::user()->id);
+        $user->auto_renew_courses = $request->auto_renew;
         $user->save();
 
-        if (!$request->auto_renew) {
+        if (! $request->auto_renew) {
             return redirect()->back();
         }
 
@@ -3421,63 +3388,62 @@ class LearnerController extends Controller
 
         $monthDate = \Carbon\Carbon::now()->format('Y-m-d');
         // get courses taken by end date
-        $coursesTaken = Auth::user()->coursesTaken()->whereHas('package', function($query){
+        $coursesTaken = Auth::user()->coursesTaken()->whereHas('package', function ($query) {
             $query->where('course_id', 17);
         })->whereNotNull('end_date')->where('end_date', '<=', $monthDate)->get();
 
         // get courses taken by started at field
-        $coursesTakenByStartDate = Auth::user()->coursesTaken()->whereHas('package', function($query){
+        $coursesTakenByStartDate = Auth::user()->coursesTaken()->whereHas('package', function ($query) {
             $query->where('course_id', 17);
         })
             ->whereNotNull('started_at')
             ->whereNull('end_date')
-            ->whereDate('started_at',$monthDate)
+            ->whereDate('started_at', $monthDate)
             ->get();
 
         // webinar-pakke is expired
-        $user_name      = Auth::user()->first_name;
+        $user_name = Auth::user()->first_name;
         if (count($coursesTaken)) {
-            $user_email     = Auth::user()->email;
-            $automation_id  = 73;
+            $user_email = Auth::user()->email;
+            $automation_id = 73;
 
-            AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+            AdminHelpers::addToAutomation($user_email, $automation_id, $user_name);
         }
 
         $coursesTaken = $coursesTaken->merge($coursesTakenByStartDate)->all();
         foreach ($coursesTaken as $courseTaken) {
-            $user           = $courseTaken->user;
-            $package        = Package::findOrFail($courseTaken->package_id);
-            $payment_mode   = 'Bankoverføring';
-            $price          = (int)1490*100;
-            $product_ID     = $package->full_price_product;
-            $send_to        = $user->email;
-            $end_date       = $courseTaken->end_date ? $courseTaken->end_date : date("Y-m-d");
+            $user = $courseTaken->user;
+            $package = Package::findOrFail($courseTaken->package_id);
+            $payment_mode = 'Bankoverføring';
+            $price = (int) 1490 * 100;
+            $product_ID = $package->full_price_product;
+            $send_to = $user->email;
+            $end_date = $courseTaken->end_date ? $courseTaken->end_date : date('Y-m-d');
             // add 10 days from today
-            //$dueDate        = date('Y-m-d', strtotime(date("Y-m-d") . " +10 days"));
-            $dueDate        = date("Y-m-d", strtotime($end_date));
+            // $dueDate        = date('Y-m-d', strtotime(date("Y-m-d") . " +10 days"));
+            $dueDate = date('Y-m-d', strtotime($end_date));
 
-            $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
-            $comment .= 'Betalingsmodus: ' . $payment_mode . ')';
+            $comment = '(Kurs: '.$package->course->title.' ['.$package->variation.'], ';
+            $comment .= 'Betalingsmodus: '.$payment_mode.')';
 
             $invoice_fields = [
-                'user_id'       => $user->id,
-                'first_name'    => $user->first_name,
-                'last_name'     => $user->last_name,
-                'netAmount'     => $price,
-                'dueDate'       => $dueDate,
-                'description'   => 'Kursordrefaktura',
-                'productID'     => $product_ID,
-                'email'         => $send_to,
-                'telephone'     => $user->address->phone,
-                'address'       => $user->address->street,
-                'postalPlace'   => $user->address->city,
-                'postalCode'    => $user->address->zip,
-                'comment'       => $comment,
-                'payment_mode'  => "Faktura",
+                'user_id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'netAmount' => $price,
+                'dueDate' => $dueDate,
+                'description' => 'Kursordrefaktura',
+                'productID' => $product_ID,
+                'email' => $send_to,
+                'telephone' => $user->address->phone,
+                'address' => $user->address->street,
+                'postalPlace' => $user->address->city,
+                'postalCode' => $user->address->zip,
+                'comment' => $comment,
+                'payment_mode' => 'Faktura',
             ];
 
-
-            $invoice = new FikenInvoice();
+            $invoice = new FikenInvoice;
             $invoice->create_invoice($invoice_fields);
 
             // update all the started at of each courses taken
@@ -3486,44 +3452,44 @@ class LearnerController extends Controller
             foreach ($courseTaken->user->coursesTaken as $coursesTaken) {
                 $notExpiredCourses = $courseTaken->user->coursesTakenNotExpired()->pluck('id')->toArray();
                 // check if there's other course that's not expired yet and update it
-                if (!in_array($coursesTaken->id, $notExpiredCourses)) {
+                if (! in_array($coursesTaken->id, $notExpiredCourses)) {
                     // check if course taken have set end date and add one year to it
                     if ($coursesTaken->end_date) {
-                        $addYear = date("Y-m-d", strtotime(date("Y-m-d", strtotime($coursesTaken->end_date)) . " + 1 year"));
+                        $addYear = date('Y-m-d', strtotime(date('Y-m-d', strtotime($coursesTaken->end_date)).' + 1 year'));
                         $dateToday = Carbon::today();
 
                         // check if the end date after adding a year is still less than today
                         // add another year on date today
                         if (Carbon::parse($addYear)->lt($dateToday)) {
-                            $addYear = date("Y-m-d", strtotime(date("Y-m-d", strtotime($dateToday)) . " + 1 year"));
+                            $addYear = date('Y-m-d', strtotime(date('Y-m-d', strtotime($dateToday)).' + 1 year'));
                         }
 
                         $coursesTaken->end_date = $addYear;
                         $coursesTaken->renewed_at = Carbon::now();
                     }
 
-                    //$coursesTaken->started_at = Carbon::now();
+                    // $coursesTaken->started_at = Carbon::now();
                     $coursesTaken->save();
                     $courseCounter++;
                 }
             }
 
             // create order record
-            $newOrder['user_id']    = $courseTaken->user->id;
-            $newOrder['item_id']    = $package->course_id;
-            $newOrder['type']       = Order::COURSE_TYPE;
+            $newOrder['user_id'] = $courseTaken->user->id;
+            $newOrder['item_id'] = $package->course_id;
+            $newOrder['type'] = Order::COURSE_TYPE;
             $newOrder['package_id'] = $package->id;
-            $newOrder['plan_id']    = 8; // Full payment
-            $newOrder['price']      = $price / 100;
-            $newOrder['discount']   = 0;
-            $newOrder['payment_mode_id']   = 3; // Faktura
+            $newOrder['plan_id'] = 8; // Full payment
+            $newOrder['price'] = $price / 100;
+            $newOrder['discount'] = 0;
+            $newOrder['payment_mode_id'] = 3; // Faktura
             $newOrder['is_processed'] = 1;
             $order = Order::create($newOrder);
 
             // Email to support
             $from = 'post@forfatterskolen.no';
             $to = 'support@forfatterskolen.no';
-            $messageText = $user_name . ' has renewed webinar-pakke';
+            $messageText = $user_name.' has renewed webinar-pakke';
             $message = $courseCounter > 1 ? $messageText.$extraText : $messageText;
             /*AdminHelpers::send_email('Webinar-pakke Course Renewed',
                 $from, $to, $message);*/
@@ -3532,7 +3498,7 @@ class LearnerController extends Controller
                 'email_message' => $message,
                 'from_name' => '',
                 'from_email' => $from,
-                'attach_file' => NULL
+                'attach_file' => null,
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         }
@@ -3546,6 +3512,7 @@ class LearnerController extends Controller
 
     /**
      * Renew all courses from the upgrade page
+     *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function renewLearnerCourses()
@@ -3559,7 +3526,7 @@ class LearnerController extends Controller
 
                 if ($webinarPakkeCourse) {
                     $expiredDate = $courseTaken->end_date;
-                    $now = new \DateTime();
+                    $now = new \DateTime;
                     $checkDate = date('m/Y', strtotime($expiredDate));
                     $input = \DateTime::createFromFormat('m/Y', $checkDate);
                     $diff = $input->diff($now); // Returns DateInterval
@@ -3567,19 +3534,19 @@ class LearnerController extends Controller
                     $withinAMonth = $diff->y === 0 && $diff->m <= 1;
 
                     // check if this is really expired
-                    if (!$withinAMonth) {
+                    if (! $withinAMonth) {
                         return redirect()->back();
                     }
 
-                    $user           = Auth::user();
-                    $package        = Package::findOrFail($webinarPakkeCourse->package_id);
-                    $payment_mode   = 'Bankoverføring';
-                    $price          = (int)1490*100;
-                    $product_ID     = $package->full_price_product;
-                    $send_to        = $user->email;
-                    $end_date       = $courseTaken->end_date ? $courseTaken->end_date : date("Y-m-d");
-                    //$dueDate        = date("Y-m-d", strtotime(date("Y-m-d", strtotime($end_date)) . " + 1 year"));
-                    //$dueDate        = date("Y-m-d", strtotime($end_date));
+                    $user = Auth::user();
+                    $package = Package::findOrFail($webinarPakkeCourse->package_id);
+                    $payment_mode = 'Bankoverføring';
+                    $price = (int) 1490 * 100;
+                    $product_ID = $package->full_price_product;
+                    $send_to = $user->email;
+                    $end_date = $courseTaken->end_date ? $courseTaken->end_date : date('Y-m-d');
+                    // $dueDate        = date("Y-m-d", strtotime(date("Y-m-d", strtotime($end_date)) . " + 1 year"));
+                    // $dueDate        = date("Y-m-d", strtotime($end_date));
                     $today = Carbon::today();
                     $parseEndDate = Carbon::parse($end_date);
                     $dueDate = $parseEndDate->addDays(14)->format('Y-m-d');
@@ -3588,88 +3555,87 @@ class LearnerController extends Controller
                         $dueDate = $today->addDays(14)->format('Y-m-d');
                     }
 
-                    $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
-                    $comment .= 'Betalingsmodus: ' . $payment_mode . ')';
+                    $comment = '(Kurs: '.$package->course->title.' ['.$package->variation.'], ';
+                    $comment .= 'Betalingsmodus: '.$payment_mode.')';
 
                     $invoice_fields = [
-                        'user_id'       => $user->id,
-                        'first_name'    => $user->first_name,
-                        'last_name'     => $user->last_name,
-                        'netAmount'     => $price,
-                        'dueDate'       => $dueDate,
-                        'description'   => 'Kursordrefaktura',
-                        'productID'     => $product_ID,
-                        'email'         => $send_to,
-                        'telephone'     => $user->address->phone,
-                        'address'       => $user->address->street,
-                        'postalPlace'   => $user->address->city,
-                        'postalCode'    => $user->address->zip,
-                        'comment'       => $comment,
-                        'payment_mode'  => "Faktura",
+                        'user_id' => $user->id,
+                        'first_name' => $user->first_name,
+                        'last_name' => $user->last_name,
+                        'netAmount' => $price,
+                        'dueDate' => $dueDate,
+                        'description' => 'Kursordrefaktura',
+                        'productID' => $product_ID,
+                        'email' => $send_to,
+                        'telephone' => $user->address->phone,
+                        'address' => $user->address->street,
+                        'postalPlace' => $user->address->city,
+                        'postalCode' => $user->address->zip,
+                        'comment' => $comment,
+                        'payment_mode' => 'Faktura',
                     ];
 
-
-                    $invoice = new FikenInvoice();
+                    $invoice = new FikenInvoice;
                     $invoice->create_invoice($invoice_fields);
 
                     // update all the started at of each courses taken
                     foreach (Auth::user()->coursesTaken as $coursesTaken) {
                         $formerCourse = Auth::user()->coursesTakenOld()->pluck('id')->toArray();
                         // check if course is not former course
-                        if (!in_array($coursesTaken->id, $formerCourse)){
+                        if (! in_array($coursesTaken->id, $formerCourse)) {
                             // check if course taken have set end date and add one year to it
                             if ($coursesTaken->end_date) {
-                                $addYear = date("Y-m-d", strtotime(date("Y-m-d", strtotime($coursesTaken->end_date)) . " + 1 year"));
+                                $addYear = date('Y-m-d', strtotime(date('Y-m-d', strtotime($coursesTaken->end_date)).' + 1 year'));
                                 $coursesTaken->end_date = $addYear;
                             }
 
                             $coursesTaken->renewed_at = Carbon::now();
-                            //$coursesTaken->started_at = Carbon::now();
+                            // $coursesTaken->started_at = Carbon::now();
                             $coursesTaken->save();
                         }
                     }
 
                     // create order record
-                    $newOrder['user_id']    = $courseTaken->user->id;
-                    $newOrder['item_id']    = $package->course_id;
-                    $newOrder['type']       = Order::COURSE_TYPE;
+                    $newOrder['user_id'] = $courseTaken->user->id;
+                    $newOrder['item_id'] = $package->course_id;
+                    $newOrder['type'] = Order::COURSE_TYPE;
                     $newOrder['package_id'] = $package->id;
-                    $newOrder['plan_id']    = 8; // Full payment
-                    $newOrder['price']      = $price / 100;
-                    $newOrder['discount']   = 0;
-                    $newOrder['payment_mode_id']   = 3; // Faktura
+                    $newOrder['plan_id'] = 8; // Full payment
+                    $newOrder['price'] = $price / 100;
+                    $newOrder['discount'] = 0;
+                    $newOrder['payment_mode_id'] = 3; // Faktura
                     $newOrder['is_processed'] = 1;
                     $order = Order::create($newOrder);
 
                     // add to automation
-                    $user_email     = Auth::user()->email;
-                    $automation_id  = 73;
-                    $user_name      = Auth::user()->first_name;
+                    $user_email = Auth::user()->email;
+                    $automation_id = 73;
+                    $user_name = Auth::user()->first_name;
 
                     // disable the adding to automation, instead save to db
-                    //AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+                    // AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
 
                     // add user that renew the course
                     UserRenewedCourse::firstOrCreate([
                         'user_id' => Auth::user()->id,
-                        'course_id' => $package->course_id
+                        'course_id' => $package->course_id,
                     ]);
 
-
                     // Email to support
-                    //mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
+                    // mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
                     /*AdminHelpers::send_email('All Courses Renewed',
                         'post@forfatterskolen.no', 'support@forfatterskolen.no',
                         Auth::user()->first_name . ' has renewed all the courses');*/
                     $to = 'support@forfatterskolen.no'; //
                     $emailData = [
                         'email_subject' => 'All Courses Renewed',
-                        'email_message' => Auth::user()->first_name . ' has renewed all the courses',
+                        'email_message' => Auth::user()->first_name.' has renewed all the courses',
                         'from_name' => '',
                         'from_email' => 'post@forfatterskolen.no',
-                        'attach_file' => NULL
+                        'attach_file' => null,
                     ];
                     \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+
                     return redirect(route('front.shop.thankyou'));
                 }
             }
@@ -3680,21 +3646,20 @@ class LearnerController extends Controller
 
     /**
      * Display the course upgrade page
-     * @param $courseTakenId
-     * @param $package_id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function getUpgradeCourse($courseTakenId, $package_id)
     {
-        $courseTaken    = CoursesTaken::where('id', $courseTakenId)
+        $courseTaken = CoursesTaken::where('id', $courseTakenId)
             ->where('user_id', Auth::user()->id)
             ->first();
-        if (!$courseTaken) {
+        if (! $courseTaken) {
             return redirect()->route('learner.upgrade');
         }
 
-        $currentPackage = Package::where('id',$package_id)->where('course_id', $courseTaken->package->course->id)->first();
-        if (!$currentPackage) {
+        $currentPackage = Package::where('id', $package_id)->where('course_id', $courseTaken->package->course->id)->first();
+        if (! $currentPackage) {
             return redirect()->route('learner.upgrade');
         }
 
@@ -3704,21 +3669,18 @@ class LearnerController extends Controller
     }
 
     /**
-     * @param $courseTakenId
-     * @param Request $request
-     * @param CourseService $courseService
      * @return \Illuminate\Http\JsonResponse
      */
-    public function validateUpgradeCourseForm( $courseTakenId, Request $request, CourseService $courseService )
+    public function validateUpgradeCourseForm($courseTakenId, Request $request, CourseService $courseService)
     {
         $validation = [
-            'email'         => 'required|email',
-            'first_name'    => 'required',
-            'last_name'     => 'required',
-            'street'        => 'required',
-            'zip'           => 'required',
-            'city'          => 'required',
-            'phone'         => 'required',
+            'email' => 'required|email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'street' => 'required',
+            'zip' => 'required',
+            'city' => 'required',
+            'phone' => 'required',
         ];
 
         $validator = \Validator::make($request->all(), $validation);
@@ -3741,18 +3703,16 @@ class LearnerController extends Controller
     /**
      * Upgrade the course of the learner
      * this is using the place_order function on ShopController
-     * @param $courseTakenId
-     * @param Request $request
      */
     public function upgradeCourse($courseTakenId, Request $request)
     {
         $hasPaidCourse = false;
-        foreach( Auth::user()->coursesTaken as $courseTaken ) :
-            if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+        foreach (Auth::user()->coursesTaken as $courseTaken) {
+            if ($courseTaken->package->course->type != 'Free' && $courseTaken->is_active) {
                 $hasPaidCourse = true;
                 break;
-            endif;
-        endforeach;
+            }
+        }
 
         $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
         $paymentPlan = PaymentPlan::findOrFail($request->payment_plan_id);
@@ -3761,37 +3721,37 @@ class LearnerController extends Controller
         $currentCourseType = $courseTaken->package->course_type;
         $add_to_automation = 0;
 
-        $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
+        $payment_plan = ($paymentMode->mode == 'Paypal') ? 'Hele beløpet' : $paymentPlan->plan;
 
-        $dueDate = date("Y-m-d", strtotime($package->issue_date ? $package->issue_date : date('Y-m-d')));
+        $dueDate = date('Y-m-d', strtotime($package->issue_date ? $package->issue_date : date('Y-m-d')));
         $dueDate = Carbon::parse($dueDate);
         $payment_plan = trim($payment_plan);
 
         // this is use to check if the current date is within a sale date
         // for the 3 plans/payments
-        $today 			= \Carbon\Carbon::today()->format('Y-m-d');
-        $fromFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
-        $toFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
-        $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
+        $today = \Carbon\Carbon::today()->format('Y-m-d');
+        $fromFull = \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
+        $toFull = \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
+        $isBetweenFull = (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
 
-        $fromMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
-        $toMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
-        $isBetweenMonths3 	= (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
+        $fromMonths3 = \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
+        $toMonths3 = \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
+        $isBetweenMonths3 = (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
 
-        $fromMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
-        $toMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
-        $isBetweenMonths6 	= (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
+        $fromMonths6 = \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
+        $toMonths6 = \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
+        $isBetweenMonths6 = (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
 
         // added 12th month
-        $fromMonths12 			= \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
-        $toMonths12 			= \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
-        $isBetweenMonths12 	= (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
+        $fromMonths12 = \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
+        $toMonths12 = \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
+        $isBetweenMonths12 = (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
 
-        if( $payment_plan == "Hele beløpet" ) :
+        if ($payment_plan == 'Hele beløpet') {
             /*$price = $isBetweenFull && $package->full_payment_sale_price
                 ? (int)$package->full_payment_sale_price*100
                 : (int)$package->full_payment_upgrade_price*100;*/
-            $price = $package->full_payment_upgrade_price*100;
+            $price = $package->full_payment_upgrade_price * 100;
 
             // check if the current course of learner is standard and is trying to buy pro course
             // then apply this price
@@ -3799,16 +3759,16 @@ class LearnerController extends Controller
                 /*$price = $isBetweenFull && $package->full_payment_sale_price
                     ? (int)$package->full_payment_sale_price*100
                     : (int)$package->full_payment_standard_upgrade_price*100;*/
-                $price = $package->full_payment_standard_upgrade_price*100;
+                $price = $package->full_payment_standard_upgrade_price * 100;
             }
 
             $product_ID = $package->full_price_product;
             $dueDate->addDays($package->full_price_due_date);
-        elseif( $payment_plan == "3 måneder" ) :
+        } elseif ($payment_plan == '3 måneder') {
             /*$price = $isBetweenMonths3 && $package->months_3_sale_price
                 ? (int)$package->months_3_sale_price*100
                 : (int)$package->months_3_upgrade_price*100;*/
-            $price = $package->months_3_upgrade_price*100;
+            $price = $package->months_3_upgrade_price * 100;
 
             // check if the current course of learner is standard and is trying to buy pro course
             // then apply this price
@@ -3816,16 +3776,16 @@ class LearnerController extends Controller
                 /*$price = $isBetweenMonths3 && $package->months_3_sale_price
                     ? (int)$package->months_3_sale_price*100
                     : (int)$package->months_3_standard_upgrade_price*100;*/
-                $price = $package->months_3_standard_upgrade_price*100;
+                $price = $package->months_3_standard_upgrade_price * 100;
             }
 
             $product_ID = $package->months_3_product;
             $dueDate->addDays($package->months_3_due_date);
-        elseif( $payment_plan == "6 måneder" ) :
+        } elseif ($payment_plan == '6 måneder') {
             /*$price = $isBetweenMonths6 && $package->months_6_sale_price
                 ? (int)$package->months_6_sale_price*100
                 : (int)$package->months_6_upgrade_price*100;*/
-            $price = $package->months_6_upgrade_price*100;
+            $price = $package->months_6_upgrade_price * 100;
 
             // check if the current course of learner is standard and is trying to buy pro course
             // then apply this price
@@ -3833,16 +3793,16 @@ class LearnerController extends Controller
                 /*$price = $isBetweenMonths6 && $package->months_6_sale_price
                     ? (int)$package->months_6_sale_price*100
                     : (int)$package->months_6_standard_upgrade_price*100;*/
-                $price = $package->months_6_standard_upgrade_price*100;
+                $price = $package->months_6_standard_upgrade_price * 100;
             }
 
             $product_ID = $package->months_6_product;
             $dueDate->addDays($package->months_6_due_date);
-        elseif( $payment_plan == "12 måneder" ) :
+        } elseif ($payment_plan == '12 måneder') {
             /*$price = $isBetweenMonths12 && $package->months_12_sale_price
                 ? (int)$package->months_12_sale_price*100
                 : (int)$package->months_12_upgrade_price*100;*/
-            $price = $package->months_12_upgrade_price*100;
+            $price = $package->months_12_upgrade_price * 100;
 
             // check if the current course of learner is standard and is trying to buy pro course
             // then apply this price
@@ -3850,22 +3810,22 @@ class LearnerController extends Controller
                 /*$price = $isBetweenMonths12 && $package->months_12_sale_price
                     ? (int)$package->months_12_sale_price*100
                     : (int)$package->months_12_standard_upgrade_price*100;*/
-                $price = $package->months_12_standard_upgrade_price*100;
+                $price = $package->months_12_standard_upgrade_price * 100;
             }
 
             $product_ID = $package->months_12_product;
             $dueDate->addDays($package->months_12_due_date);
-        endif;
+        }
         $dueDate = date_format(date_create($dueDate), 'Y-m-d');
 
         $payment_mode = $paymentMode->mode;
-        if( $payment_mode == 'Faktura' ) :
+        if ($payment_mode == 'Faktura') {
             $payment_mode = 'Bankoverføring';
-        endif;
+        }
 
-        $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
-        $comment .= 'Betalingsmodus: ' . $payment_mode . ', ';
-        $comment .= 'Betalingsplan: ' . $payment_plan . ')';
+        $comment = '(Kurs: '.$package->course->title.' ['.$package->variation.'], ';
+        $comment .= 'Betalingsmodus: '.$payment_mode.', ';
+        $comment .= 'Betalingsplan: '.$payment_plan.')';
 
         $discount = 0;
 
@@ -3875,8 +3835,8 @@ class LearnerController extends Controller
             $discountCoupon = CourseDiscount::where('coupon', $request->coupon)->where('course_id', $course_id)->first();
 
             if ($discountCoupon) {
-                $discount = ( (int) $discountCoupon->discount);
-                $price = $price - ( (int)$discount*100 );
+                $discount = ((int) $discountCoupon->discount);
+                $price = $price - ((int) $discount * 100);
             }
 
         }
@@ -3906,10 +3866,10 @@ class LearnerController extends Controller
 
         // check if the customer wants to split the invoice
         if (isset($request->split_invoice) && $request->split_invoice) {
-            $division   = $paymentPlan->division * 100; // multiply the split count to get the correct value
-            $price      = round($price/$division, 2); // round the value to the nearest tenths
-            $price      = (int)$price*100;
-            for ($i=1; $i <= $paymentPlan->division; $i++ ) { // loop based on the split count
+            $division = $paymentPlan->division * 100; // multiply the split count to get the correct value
+            $price = round($price / $division, 2); // round the value to the nearest tenths
+            $price = (int) $price * 100;
+            for ($i = 1; $i <= $paymentPlan->division; $i++) { // loop based on the split count
                 $issue_date = $package->issue_date ? $package->issue_date : date('Y-m-d');
                 $dueDate = Carbon::parse($issue_date)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
                 $invoice_fields = [
@@ -3926,11 +3886,11 @@ class LearnerController extends Controller
                     'postalPlace' => Auth::user()->address->city,
                     'postalCode' => Auth::user()->address->zip,
                     'comment' => $comment,
-                    'payment_mode'  => $paymentMode->mode,
-                    'index'         => $i
+                    'payment_mode' => $paymentMode->mode,
+                    'index' => $i,
                 ];
 
-                $invoice = new FikenInvoice();
+                $invoice = new FikenInvoice;
                 $invoice->create_invoice($invoice_fields);
             }
 
@@ -3950,10 +3910,10 @@ class LearnerController extends Controller
                 'postalPlace' => Auth::user()->address->city,
                 'postalCode' => Auth::user()->address->zip,
                 'comment' => $comment,
-                'payment_mode'  => $paymentMode->mode,
+                'payment_mode' => $paymentMode->mode,
             ];
 
-            $invoice = new FikenInvoice();
+            $invoice = new FikenInvoice;
             $invoice->create_invoice($invoice_fields);
         }
 
@@ -3961,15 +3921,15 @@ class LearnerController extends Controller
         $courseTaken->save();
 
         // Check for shop manuscripts
-        if( $package->shop_manuscripts->count() > 0 ) :
-            foreach( $package->shop_manuscripts as $shop_manuscript ) :
+        if ($package->shop_manuscripts->count() > 0) {
+            foreach ($package->shop_manuscripts as $shop_manuscript) {
                 $shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
                 $shopManuscriptTaken->user_id = Auth::user()->id;
                 $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
                 $shopManuscriptTaken->is_active = false;
                 $shopManuscriptTaken->save();
-            endforeach;
-        endif;
+            }
+        }
 
         if ($package->included_courses->count() > 0) {
             foreach ($package->included_courses as $included_course) {
@@ -3979,7 +3939,7 @@ class LearnerController extends Controller
             }
         }
 
-        if ($package->course->id == 17) { //check if webinar-pakke
+        if ($package->course->id == 17) { // check if webinar-pakke
             $add_to_automation++;
         }
 
@@ -3988,21 +3948,21 @@ class LearnerController extends Controller
             $automation_id = 73;
             $user_name = Auth::user()->first_name;
 
-            AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+            AdminHelpers::addToAutomation($user_email, $automation_id, $user_name);
         }
 
         // Email to support
-        //mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);
+        // mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);
         /*AdminHelpers::send_email('New Course Order',
             'post@forfatterskolen.no', 'support@forfatterskolen.no',
             Auth::user()->first_name . ' has ordered the course ' . $package->course->title);*/
         $to = 'support@forfatterskolen.no'; //
         $emailData = [
             'email_subject' => 'New Course Order',
-            'email_message' => Auth::user()->first_name . ' has ordered the course ' . $package->course->title,
+            'email_message' => Auth::user()->first_name.' has ordered the course '.$package->course->title,
             'from_name' => '',
             'from_email' => 'post@forfatterskolen.no',
-            'attach_file' => NULL
+            'attach_file' => null,
         ];
         \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
@@ -4015,7 +3975,7 @@ class LearnerController extends Controller
         $user = Auth::user();
         $user_email = $user->email;
         $email_content = $package->course->email;
-        //mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
+        // mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
         /*AdminHelpers::send_email($package->course->title,
             'post@forfatterskolen.no', $user->email,
             view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));*/
@@ -4023,10 +3983,10 @@ class LearnerController extends Controller
             'postmail@forfatterskolen.no', 'Forfatterskolen', null, 'courses-taken-upgrade',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
 
-        if( $paymentMode->mode == "Paypal" ) :
-            $paypal = new Paypal();
+        if ($paymentMode->mode == 'Paypal') {
+            $paypal = new Paypal;
             $response = $paypal->purchase([
-                'amount' => ($price/100),
+                'amount' => ($price / 100),
                 'transactionId' => $invoice->invoiceID,
                 'currency' => 'NOK',
                 'cancelUrl' => $paypal->getCancelUrl($invoice->invoiceID),
@@ -4052,28 +4012,30 @@ class LearnerController extends Controller
             </form>';
             echo '<script>document.getElementById("paypal_form").submit();</script>';
             return;*/
-        endif;
+        }
 
         // check if vipps payment mode and the current user id is 4
-        if( $paymentMode->mode == "Vipps") :
-            //$orderId = $invoice->invoice_number;
+        if ($paymentMode->mode == 'Vipps') {
+            // $orderId = $invoice->invoice_number;
             $orderId = $invoice->fiken_invoice_id;
             $transactionText = $package->course->title;
             $vippsData = [
                 'amount' => $price,
                 'orderId' => $orderId,
                 'transactionText' => $transactionText,
-                'fallbackUrl' => 'https://www.forfatterskolen.no/thankyou?page=vipps'
+                'fallbackUrl' => 'https://www.forfatterskolen.no/thankyou?page=vipps',
             ];
+
             return $this->vippsInitiatePayment($vippsData);
-        endif;
+        }
 
         return redirect(route('front.shop.thankyou'));
     }
 
     /**
      * Display the upgrade page of manuscript
-     * @param $shopManuscriptTakenId ShopManuscriptsTaken
+     *
+     * @param  $shopManuscriptTakenId  ShopManuscriptsTaken
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function getUpgradeManuscript($shopManuscriptTakenId)
@@ -4100,17 +4062,17 @@ class LearnerController extends Controller
         if ($shopManuscriptTaken) {
             $is_active = $shopManuscriptTaken->is_active ?? false;
             $file = $shopManuscriptTaken->file ?? null;
-            
+
             $feedbacks = DB::table('shop_manuscript_taken_feedbacks')
-            ->where('shop_manuscript_taken_id', $shopManuscriptTakenId)
-            ->get();
+                ->where('shop_manuscript_taken_id', $shopManuscriptTakenId)
+                ->get();
 
             $feedbackCount = $feedbacks->count();
             $approved = $feedbacks->first()->approved ?? 0;
 
             // Apply status logic
             $status = 'Not started'; // Default
-            if (!$is_active) {
+            if (! $is_active) {
                 $status = 'Not started';
             } elseif ($file && $feedbackCount > 0 && $approved == 1) {
                 $status = 'Finished';
@@ -4123,12 +4085,12 @@ class LearnerController extends Controller
             // Attach status to the object (if needed for further use)
             $shopManuscriptTaken->status = $status;
 
-            if ($status == "Not started") {
+            if ($status == 'Not started') {
                 $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
                 $shopManuscriptId = $shopManuscriptTaken->shop_manuscript_id;
                 $shopManuscript = ShopManuscript::find($shopManuscriptId);
                 $shopManuscriptUpgrades = ShopManuscriptUpgrade::where('shop_manuscript_id', $shopManuscriptId)->get()
-                    ->each(function($upgrade) use ($shopManuscript, $excessPerWordAmount) {
+                    ->each(function ($upgrade) use ($shopManuscript, $excessPerWordAmount) {
                         // check if the one being upgraded is Manuscript Start
                         if ($shopManuscript->id == 9 && $upgrade->upgrade_manuscript->id == 3) {
                             $upgrade->price = $upgrade->upgrade_manuscript->full_payment_price - $shopManuscript->full_payment_price;
@@ -4137,9 +4099,11 @@ class LearnerController extends Controller
                             $excessWordAmount = $excessWords * $excessPerWordAmount;
                             $upgrade->price = $excessWordAmount;
                         }
+
                         return $upgrade;
                     });
                 $currentUser = $this->currentUser();
+
                 return view('frontend.learner.upgrade-manuscript',
                     compact('shopManuscriptTaken', 'shopManuscriptUpgrades', 'currentUser', 'shopManuscript'));
             }
@@ -4148,16 +4112,16 @@ class LearnerController extends Controller
         return redirect()->route('learner.upgrade');
     }
 
-    public function validateUpgradeManuscriptForm( $manuscriptTakenId, Request $request, ShopManuscriptService $shopManuscriptService )
+    public function validateUpgradeManuscriptForm($manuscriptTakenId, Request $request, ShopManuscriptService $shopManuscriptService)
     {
         $validation = [
-            'email'         => 'required|email',
-            'first_name'    => 'required',
-            'last_name'     => 'required',
-            'street'        => 'required',
-            'zip'           => 'required',
-            'city'          => 'required',
-            'phone'         => 'required',
+            'email' => 'required|email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'street' => 'required',
+            'zip' => 'required',
+            'city' => 'required',
+            'phone' => 'required',
         ];
 
         $validator = \Validator::make($request->all(), $validation);
@@ -4176,8 +4140,9 @@ class LearnerController extends Controller
 
         if ($request->additional > 0) {
             $request->merge([
-                'is_pay_later' => true
+                'is_pay_later' => true,
             ]);
+
             return response()->json($shopManuscriptService->processPayLaterOrder($request));
         }
 
@@ -4186,8 +4151,7 @@ class LearnerController extends Controller
 
     /**
      * Upgrade the learners manuscript
-     * @param $shopManuscriptTakenId
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|void
      */
     public function upgradeManuscript($shopManuscriptTakenId, Request $request)
@@ -4205,17 +4169,17 @@ class LearnerController extends Controller
 
             $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
             $paymentPlan = PaymentPlan::findOrFail(8); // default to full payment $request->payment_plan_id
-            $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
+            $payment_plan = ($paymentMode->mode == 'Paypal') ? 'Hele beløpet' : $paymentPlan->plan;
 
-            $comment = '(Manuskript: Oppgradering fra ' . $oldManuscript. ' til '. $shopManuscript->title . ', ';
-            $comment .= 'Betalingsmodus: ' . $paymentMode->mode . ', ';
-            $comment .= 'Betalingsplan: ' . $payment_plan . ')';
+            $comment = '(Manuskript: Oppgradering fra '.$oldManuscript.' til '.$shopManuscript->title.', ';
+            $comment .= 'Betalingsmodus: '.$paymentMode->mode.', ';
+            $comment .= 'Betalingsplan: '.$payment_plan.')';
 
-            $dueDate = date("Y-m-d");
+            $dueDate = date('Y-m-d');
             $dueDate = Carbon::parse($dueDate);
             $dueDate->addDays(14);
             $dueDate = date_format(date_create($dueDate), 'Y-m-d');
-            $price = (int)$shopManuscriptUpgrade->price*100;
+            $price = (int) $shopManuscriptUpgrade->price * 100;
 
             $invoice_fields = [
                 'user_id' => Auth::user()->id,
@@ -4231,16 +4195,16 @@ class LearnerController extends Controller
                 'postalPlace' => Auth::user()->address->city,
                 'postalCode' => Auth::user()->address->zip,
                 'comment' => $comment,
-                'payment_mode'  => $paymentMode->mode,
+                'payment_mode' => $paymentMode->mode,
             ];
 
-            $invoice = new FikenInvoice();
+            $invoice = new FikenInvoice;
             $invoice->create_invoice($invoice_fields);
 
-            if( $paymentMode->mode == "Paypal" ) :
-                $paypal = new Paypal();
+            if ($paymentMode->mode == 'Paypal') {
+                $paypal = new Paypal;
                 $response = $paypal->purchase([
-                    'amount' => ($price/100),
+                    'amount' => ($price / 100),
                     'transactionId' => $invoice->invoiceID,
                     'currency' => 'NOK',
                     'cancelUrl' => $paypal->getCancelUrl($invoice->invoiceID),
@@ -4266,31 +4230,31 @@ class LearnerController extends Controller
             </form>';
                 echo '<script>document.getElementById("paypal_form").submit();</script>';
                 return;*/
-            endif;
+            }
 
-
-            if( $paymentMode->mode == "Vipps") :
-                //$orderId = $invoice->invoice_number;
+            if ($paymentMode->mode == 'Vipps') {
+                // $orderId = $invoice->invoice_number;
                 $orderId = $invoice->fiken_invoice_id;
                 $transactionText = $shopManuscript->title;
                 $vippsData = [
                     'amount' => $price,
                     'orderId' => $orderId,
                     'transactionText' => $transactionText,
-                    'fallbackUrl' => 'https://www.forfatterskolen.no/thankyou?page=vipps'
+                    'fallbackUrl' => 'https://www.forfatterskolen.no/thankyou?page=vipps',
                 ];
+
                 return $this->vippsInitiatePayment($vippsData);
-            endif;
+            }
 
-
-            //return redirect(route('front.shop.thankyou'));
+            // return redirect(route('front.shop.thankyou'));
         }
+
         return redirect()->route('learner.upgrade');
     }
 
     /**
      * Display the Buy/Upgrade Assignment Page
-     * @param $assignment_id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function getUpgradeAssignment($assignment_id)
@@ -4299,25 +4263,23 @@ class LearnerController extends Controller
         if ($assignment) {
             return view('frontend.learner.upgrade-assignment', compact('assignment'));
         }
+
         return redirect()->route('learner.upgrade');
     }
 
     /**
-     * @param $assignment_id
-     * @param Request $request
-     * @param AssignmentService $assignmentService
      * @return \Illuminate\Http\JsonResponse
      */
-    public function validateUpgradeAssignmentForm( $assignment_id, Request $request, AssignmentService $assignmentService )
+    public function validateUpgradeAssignmentForm($assignment_id, Request $request, AssignmentService $assignmentService)
     {
         $validation = [
-            'email'         => 'required|email',
-            'first_name'    => 'required',
-            'last_name'     => 'required',
-            'street'        => 'required',
-            'zip'           => 'required',
-            'city'          => 'required',
-            'phone'         => 'required',
+            'email' => 'required|email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'street' => 'required',
+            'zip' => 'required',
+            'city' => 'required',
+            'phone' => 'required',
         ];
 
         $validator = \Validator::make($request->all(), $validation);
@@ -4337,8 +4299,7 @@ class LearnerController extends Controller
 
     /**
      * Upgrade/Buy assignment
-     * @param $assignment_id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|void
      */
     public function upgradeAssignment($assignment_id, Request $request)
@@ -4348,70 +4309,72 @@ class LearnerController extends Controller
 
             AssignmentAddon::create([
                 'user_id' => Auth::user()->id,
-                'assignment_id' => $assignment_id
+                'assignment_id' => $assignment_id,
             ]);
 
             $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
             $paymentPlan = PaymentPlan::findOrFail(8);
-            $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
+            $payment_plan = ($paymentMode->mode == 'Paypal') ? 'Hele beløpet' : $paymentPlan->plan;
 
-            $comment = '(Assignment: ' . $assignment->title . ', ';
-            $comment .= 'Betalingsmodus: ' . $paymentMode->mode . ', ';
-            $comment .= 'Betalingsplan: ' . $payment_plan . ')';
+            $comment = '(Assignment: '.$assignment->title.', ';
+            $comment .= 'Betalingsmodus: '.$paymentMode->mode.', ';
+            $comment .= 'Betalingsplan: '.$payment_plan.')';
 
-            $dueDate    = date("Y-m-d");
-            $dueDate    = Carbon::parse($dueDate);
+            $dueDate = date('Y-m-d');
+            $dueDate = Carbon::parse($dueDate);
             $dueDate->addDays(14);
             $dueDate = date_format(date_create($dueDate), 'Y-m-d');
-            $price      = (int)$assignment->add_on_price*100;
+            $price = (int) $assignment->add_on_price * 100;
 
-            $product_id =  287613124; // default product id
+            $product_id = 287613124; // default product id
 
             $invoice_fields = [
-                'user_id'       => Auth::user()->id,
-                'first_name'    => Auth::user()->first_name,
-                'last_name'     => Auth::user()->last_name,
-                'netAmount'     => $price,
-                'dueDate'       => $dueDate,
-                'description'   => 'Assignment Add On',
-                'productID'     => $product_id,
-                'email'         => Auth::user()->email,
-                'telephone'     => Auth::user()->address->phone,
-                'address'       => Auth::user()->address->street,
-                'postalPlace'   => Auth::user()->address->city,
-                'postalCode'    => Auth::user()->address->zip,
-                'comment'       => $comment,
-                'payment_mode'  => $paymentMode->mode,
+                'user_id' => Auth::user()->id,
+                'first_name' => Auth::user()->first_name,
+                'last_name' => Auth::user()->last_name,
+                'netAmount' => $price,
+                'dueDate' => $dueDate,
+                'description' => 'Assignment Add On',
+                'productID' => $product_id,
+                'email' => Auth::user()->email,
+                'telephone' => Auth::user()->address->phone,
+                'address' => Auth::user()->address->street,
+                'postalPlace' => Auth::user()->address->city,
+                'postalCode' => Auth::user()->address->zip,
+                'comment' => $comment,
+                'payment_mode' => $paymentMode->mode,
             ];
 
-            $invoice = new FikenInvoice();
+            $invoice = new FikenInvoice;
             $invoice->create_invoice($invoice_fields);
 
-            if( $paymentMode->mode == "Paypal" ) :
+            if ($paymentMode->mode == 'Paypal') {
                 echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
                 <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
                 <input type="hidden" name="currency_code" value="NOK">
                 <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
                 <input type="hidden" name="item_name" value="Course Order Invoice">
-                <input type="hidden" name="amount" value="'.($price/100).'">
+                <input type="hidden" name="amount" value="'.($price / 100).'">
                 <input type="hidden" name="return" value="'.route('front.shop.thankyou').'">
                 <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
             </form>';
                 echo '<script>document.getElementById("paypal_form").submit();</script>';
+
                 return;
-            endif;
+            }
 
             return redirect(route('front.shop.thankyou'));
 
         }
+
         return redirect()->route('learner.upgrade');
     }
 
     /**
      * Replace the manuscript from particular assignment
-     * @param $id int assignment id
-     * @param Request $request
+     *
+     * @param  $id  int assignment id
      * @return \Illuminate\Http\RedirectResponse
      */
     public function replaceAssignmentManuscript($id, Request $request)
@@ -4419,42 +4382,42 @@ class LearnerController extends Controller
         $assignmentManuscript = AssignmentManuscript::find($id);
 
         if ($assignmentManuscript) {
-            if ( $request->hasFile('filename') && $request->file('filename')->isValid() ) {
+            if ($request->hasFile('filename') && $request->file('filename')->isValid()) {
                 $oldManuscript = $assignmentManuscript->filename;
                 $time = time();
                 $destinationPath = 'storage/assignment-manuscripts/'; // upload path
                 $extensions = ['pdf', 'doc', 'docx', 'odt'];
-                $extension = pathinfo($_FILES['filename']['name'],PATHINFO_EXTENSION); // getting document extension
+                $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
                 $actual_name = Auth::user()->id;
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
 
                 $expFileName = explode('/', $fileName);
 
                 $request->filename->move($destinationPath, end($expFileName));
 
-                if( !in_array($extension, $extensions) ) :
+                if (! in_array($extension, $extensions)) {
                     return redirect()->back()->withInput()->with(
                         'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
                     );
-                endif;
+                }
 
                 // count words
                 $word_count = 0;
-                if($extension == "pdf") :
-                    $pdf  =  new \PdfToText ( $destinationPath.end($expFileName) ) ;
+                if ($extension == 'pdf') {
+                    $pdf = new \PdfToText($destinationPath.end($expFileName));
                     $pdf_content = $pdf->Text;
                     $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-                elseif($extension == "docx") :
+                } elseif ($extension == 'docx') {
                     $docObj = new \Docx2Text($destinationPath.end($expFileName));
-                    $docText= $docObj->convertToText();
+                    $docText = $docObj->convertToText();
                     $word_count = FrontendHelpers::get_num_of_words($docText);
-                elseif($extension == "doc") :
+                } elseif ($extension == 'doc') {
                     $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
                     $word_count = FrontendHelpers::get_num_of_words($docText);
-                elseif($extension == "odt") :
+                } elseif ($extension == 'odt') {
                     $doc = odt2text($destinationPath.end($expFileName));
                     $word_count = FrontendHelpers::get_num_of_words($doc);
-                endif;
+                }
 
                 // check if the assignment is for editor only and if it meets the max word
                 // $assignmentManuscript->assignment->for_editor &&
@@ -4477,7 +4440,7 @@ class LearnerController extends Controller
                 // notify user
                 $user_email = Auth::user()->email;
                 $confirm_email['email_message'] = 'Oppgaven din er levert, har vi problemer med filen vil vi ta kontakt med med deg.';
-                //Mail::to($user_email)->queue(new SendEmailMessageOnly($confirm_email));
+                // Mail::to($user_email)->queue(new SendEmailMessageOnly($confirm_email));
 
                 $emailTemplate = AdminHelpers::emailTemplate('Assignment Submitted');
                 $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
@@ -4497,24 +4460,23 @@ class LearnerController extends Controller
         $assignmentManuscript = AssignmentManuscript::find($id);
 
         if ($assignmentManuscript) {
-            if ( $request->hasFile('filename') && $request->file('filename')->isValid() ) {
+            if ($request->hasFile('filename') && $request->file('filename')->isValid()) {
                 $oldManuscript = $assignmentManuscript->filename;
 
                 $destinationPath = 'storage/letter-to-editor'; // upload path
-                $extension = pathinfo($_FILES['filename']['name'],PATHINFO_EXTENSION); // getting document extension
+                $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
                 $actual_name = time();
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
                 $expFileName = explode('/', $fileName);
 
                 $extensions = ['doc', 'docx', 'odt', 'pdf'];
-                if( !in_array($extension, $extensions) ) :
+                if (! in_array($extension, $extensions)) {
                     return redirect()->back()->withInput()->with(
                         'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF'
                     );
-                endif;
+                }
 
                 $request->filename->move($destinationPath, end($expFileName));
-
 
                 // delete the old file from the server
                 if (File::exists(public_path($oldManuscript))) {
@@ -4531,7 +4493,8 @@ class LearnerController extends Controller
 
     /**
      * Delete the manuscript from particular assignment
-     * @param $id int assignment id
+     *
+     * @param  $id  int assignment id
      * @return \Illuminate\Http\RedirectResponse
      */
     public function deleteAssignmentManuscript($id)
@@ -4545,13 +4508,13 @@ class LearnerController extends Controller
         }
 
         $manuscript->forceDelete();
+
         return redirect()->back();
     }
 
     /**
      * Replace the feedback
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function replaceFeedback($id, Request $request)
@@ -4559,17 +4522,17 @@ class LearnerController extends Controller
         $feedback = AssignmentFeedback::find($id);
 
         if ($feedback) {
-            if ( $request->hasFile('filename') && $request->file('filename')->isValid() ) {
+            if ($request->hasFile('filename') && $request->file('filename')->isValid()) {
                 $time = time();
                 $destinationPath = 'storage/assignment-feedbacks/'; // upload path
                 $extensions = ['pdf', 'docx', 'odt'];
-                $extension = pathinfo($_FILES['filename']['name'],PATHINFO_EXTENSION); // getting document extension
+                $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
                 $fileName = $time.'.'.$extension; // rename document
                 $request->filename->move($destinationPath, $fileName);
 
-                if( !in_array($extension, $extensions) ) :
+                if (! in_array($extension, $extensions)) {
                     return redirect()->back();
-                endif;
+                }
 
                 $feedback->filenmae = '/'.$destinationPath.$fileName;
 
@@ -4583,48 +4546,51 @@ class LearnerController extends Controller
     {
         $feedback = AssignmentFeedback::findOrFail($id);
         $feedback->forceDelete();
+
         return redirect()->back();
     }
 
     /**
      * Download assignment group manuscript
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadAssignmentGroupManuscript($id)
     {
         $manuscript = AssignmentManuscript::find($id);
         if ($manuscript) {
-            $filename =  $manuscript->filename;
+            $filename = $manuscript->filename;
+
             return response()->download(public_path($filename));
         }
+
         return redirect()->back();
     }
 
     /**
      * Download assignment feedback
-     * @param $feedback_id
+     *
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadAssignmentGroupFeedback($feedback_id)
     {
         $feedback = AssignmentFeedback::find($feedback_id);
         if ($feedback) {
-            $files =  explode(',', $feedback->filename);
+            $files = explode(',', $feedback->filename);
             if (count($files) > 1) {
-                $zipFileName    = $feedback->assignment_group_learner->group->title.' Feedbacks.zip';
-                $public_dir     = public_path('storage');
-                $zip            = new \ZipArchive();
+                $zipFileName = $feedback->assignment_group_learner->group->title.' Feedbacks.zip';
+                $public_dir = public_path('storage');
+                $zip = new \ZipArchive;
 
                 // open zip file connection and create the zip
-                if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
-                    die ("An error occurred creating your ZIP file.");
+                if ($zip->open($public_dir.'/'.$zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== true) {
+                    exit('An error occurred creating your ZIP file.');
                 }
 
-                foreach($files as $feedFile) {
+                foreach ($files as $feedFile) {
                     if (file_exists(public_path().'/'.trim($feedFile))) {
 
-                        //get the correct filename
+                        // get the correct filename
                         $expFileName = explode('/', $feedFile);
                         $file = str_replace('\\', '/', public_path());
 
@@ -4635,13 +4601,13 @@ class LearnerController extends Controller
 
                 $zip->close(); // close zip connection
 
-                $headers = array(
+                $headers = [
                     'Content-Type' => 'application/octet-stream',
-                );
+                ];
 
                 $fileToPath = $public_dir.'/'.$zipFileName;
 
-                if(file_exists($fileToPath)){
+                if (file_exists($fileToPath)) {
                     return response()->download($fileToPath, $zipFileName, $headers)->deleteFileAfterSend(true);
                 }
 
@@ -4649,33 +4615,34 @@ class LearnerController extends Controller
                 return response()->download(public_path($files[0]));
             }
         }
+
         return redirect()->back();
     }
 
     /**
      * Download assignment feedback that don't have a group
-     * @param $feedback_id
+     *
      * @return $this|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadAssignmentNoGroupFeedback($feedback_id)
     {
         $feedback = AssignmentFeedbackNoGroup::find($feedback_id);
         if ($feedback) {
-            $files =  explode(',', $feedback->filename);
+            $files = explode(',', $feedback->filename);
             if (count($files) > 1) {
-                $zipFileName    = $feedback->manuscript->assignment->title.' Feedbacks.zip';
-                $public_dir     = public_path('storage');
-                $zip            = new \ZipArchive();
+                $zipFileName = $feedback->manuscript->assignment->title.' Feedbacks.zip';
+                $public_dir = public_path('storage');
+                $zip = new \ZipArchive;
 
                 // open zip file connection and create the zip
-                if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
-                    die ("An error occurred creating your ZIP file.");
+                if ($zip->open($public_dir.'/'.$zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== true) {
+                    exit('An error occurred creating your ZIP file.');
                 }
 
-                foreach($files as $feedFile) {
+                foreach ($files as $feedFile) {
                     if (file_exists(public_path().'/'.trim($feedFile))) {
 
-                        //get the correct filename
+                        // get the correct filename
                         $expFileName = explode('/', $feedFile);
                         $file = str_replace('\\', '/', public_path());
 
@@ -4686,13 +4653,13 @@ class LearnerController extends Controller
 
                 $zip->close(); // close zip connection
 
-                $headers = array(
+                $headers = [
                     'Content-Type' => 'application/octet-stream',
-                );
+                ];
 
                 $fileToPath = $public_dir.'/'.$zipFileName;
 
-                if(file_exists($fileToPath)){
+                if (file_exists($fileToPath)) {
                     return response()->download($fileToPath, $zipFileName, $headers)->deleteFileAfterSend(true);
                 }
 
@@ -4700,12 +4667,13 @@ class LearnerController extends Controller
                 return response()->download(public_path($files[0]));
             }
         }
+
         return redirect()->back();
     }
 
     /**
      * Download all assignment group feedback
-     * @param $group_id
+     *
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadAssignmentGroupAllFeedback($group_id)
@@ -4718,24 +4686,24 @@ class LearnerController extends Controller
             $feedbacks = AssignmentFeedback::where('assignment_group_learner_id', $assignment_group_learner_id)->get();
             $manuscript = $group->assignment->manuscripts->where('user_id', $user_id)->first();
             if ($feedbacks->count()) {
-                $zipFileName    = $group->title.' Feedbacks.zip';
-                $public_dir     = public_path('storage');
-                $zip            = new \ZipArchive();
+                $zipFileName = $group->title.' Feedbacks.zip';
+                $public_dir = public_path('storage');
+                $zip = new \ZipArchive;
 
                 // open zip file connection and create the zip
-                if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
-                    die ("An error occurred creating your ZIP file.");
+                if ($zip->open($public_dir.'/'.$zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== true) {
+                    exit('An error occurred creating your ZIP file.');
                 }
 
-                foreach($feedbacks as $feedback) {
+                foreach ($feedbacks as $feedback) {
                     if (($manuscript->editor_id === $feedback->user_id && $manuscript->status) || $manuscript->editor_id !== $feedback->user_id) {
                         $files = explode(',', $feedback->filename);
                         // for multiple files in a feedback
                         if (count($files) > 1) {
-                            foreach($files as $feedFile) {
+                            foreach ($files as $feedFile) {
                                 if (file_exists(public_path().'/'.trim($feedFile))) {
 
-                                    //get the correct filename
+                                    // get the correct filename
                                     $expFileName = explode('/', $feedFile);
                                     $file = str_replace('\\', '/', public_path());
 
@@ -4745,7 +4713,7 @@ class LearnerController extends Controller
                             }
                         } else {
                             if (file_exists(public_path().'/'.$feedback->filename)) {
-                                //get the correct filename
+                                // get the correct filename
                                 $expFileName = explode('/', $feedback->filename);
                                 $file = str_replace('\\', '/', public_path());
 
@@ -4758,24 +4726,26 @@ class LearnerController extends Controller
 
                 $zip->close(); // close zip connection
 
-                $headers = array(
+                $headers = [
                     'Content-Type' => 'application/octet-stream',
-                );
+                ];
 
                 $fileToPath = $public_dir.'/'.$zipFileName;
 
-                if(file_exists($fileToPath)){
+                if (file_exists($fileToPath)) {
                     return response()->download($fileToPath, $zipFileName, $headers)->deleteFileAfterSend(true);
                 }
             }
+
             return redirect()->back();
         }
+
         return redirect()->back();
     }
 
     /**
      * Download all assignment group feedback
-     * @param $group_id
+     *
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadAssignmentGroupAllFeedbackOrig($group_id)
@@ -4791,23 +4761,23 @@ class LearnerController extends Controller
             // get all feedback for the assignment group
             $feedbacks = AssignmentFeedback::whereIn('assignment_group_learner_id', $assignment_group_learners)->get();
             if ($feedbacks->count()) {
-                $zipFileName    = $group->title.' Feedbacks.zip';
-                $public_dir     = public_path('storage');
-                $zip            = new \ZipArchive();
+                $zipFileName = $group->title.' Feedbacks.zip';
+                $public_dir = public_path('storage');
+                $zip = new \ZipArchive;
 
                 // open zip file connection and create the zip
-                if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
-                    die ("An error occurred creating your ZIP file.");
+                if ($zip->open($public_dir.'/'.$zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== true) {
+                    exit('An error occurred creating your ZIP file.');
                 }
 
-                foreach($feedbacks as $feedback) {
+                foreach ($feedbacks as $feedback) {
                     $files = explode(',', $feedback->filename);
                     // for multiple files in a feedback
                     if (count($files) > 1) {
-                        foreach($files as $feedFile) {
+                        foreach ($files as $feedFile) {
                             if (file_exists(public_path().'/'.trim($feedFile))) {
 
-                                //get the correct filename
+                                // get the correct filename
                                 $expFileName = explode('/', $feedFile);
                                 $file = str_replace('\\', '/', public_path());
 
@@ -4817,7 +4787,7 @@ class LearnerController extends Controller
                         }
                     } else {
                         if (file_exists(public_path().'/'.$feedback->filename)) {
-                            //get the correct filename
+                            // get the correct filename
                             $expFileName = explode('/', $feedback->filename);
                             $file = str_replace('\\', '/', public_path());
 
@@ -4829,24 +4799,26 @@ class LearnerController extends Controller
 
                 $zip->close(); // close zip connection
 
-                $headers = array(
+                $headers = [
                     'Content-Type' => 'application/octet-stream',
-                );
+                ];
 
                 $fileToPath = $public_dir.'/'.$zipFileName;
 
-                if(file_exists($fileToPath)){
+                if (file_exists($fileToPath)) {
                     return response()->download($fileToPath, $zipFileName, $headers)->deleteFileAfterSend(true);
                 }
             }
+
             return redirect()->back();
         }
+
         return redirect()->back();
     }
 
     /**
      * Display or create word written by logged in learner
-     * @param Request $request
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function wordWritten(Request $request)
@@ -4854,15 +4826,17 @@ class LearnerController extends Controller
         if ($request->isMethod('post')) {
             $data = $request->all();
             Auth::user()->wordWritten()->create($data); // use the relationship to insert new record
+
             return redirect()->back();
         }
         $words = Auth::user()->wordWritten()->paginate(15);
+
         return view('frontend.learner.word-written', compact('words'));
     }
 
     /**
      * Display or create word written goal by logged in user
-     * @param Request $request
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function wordWrittenGoals(Request $request)
@@ -4870,16 +4844,17 @@ class LearnerController extends Controller
         if ($request->isMethod('post')) {
             $data = $request->all();
             Auth::user()->wordWrittenGoal()->create($data);
+
             return redirect()->back();
         }
         $wordsGoal = Auth::user()->wordWrittenGoal()->paginate(15);
+
         return view('frontend.learner.word-written-goals', compact('wordsGoal'));
     }
 
     /**
      * Edit the goal
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function wordWrittenGoalsUpdate($id, Request $request)
@@ -4887,28 +4862,32 @@ class LearnerController extends Controller
         if ($goal = WordWrittenGoal::find($id)) {
             $data = $request->except('_token');
             $goal->update($data);
+
             return redirect()->back();
         }
+
         return redirect()->route('learner.word-written-goals');
     }
 
     /**
      * Delete a goal
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function wordWrittenGoalsDelete($id)
     {
         if ($goal = WordWrittenGoal::find($id)) {
             $goal->forceDelete();
+
             return redirect()->back();
         }
+
         return redirect()->route('learner.word-written-goals');
     }
 
     /**
      * Get the statistics
-     * @param $goal_id
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function goalStatistic($goal_id)
@@ -4919,12 +4898,11 @@ class LearnerController extends Controller
         $from_ymd = date('Y-m-d', strtotime($goal->from_date));
         $to_ymd = date('Y-m-d', strtotime($goal->to_date));
 
-        $statisticsData = \App\WordWritten::where('user_id',$goal->user_id)
-            ->whereBetween('date',[$from_ymd, $to_ymd])
-            ->select(\DB::raw('sum(words) as `words`'),  \DB::raw('YEAR(date) year, MONTH(date) month'))
+        $statisticsData = \App\WordWritten::where('user_id', $goal->user_id)
+            ->whereBetween('date', [$from_ymd, $to_ymd])
+            ->select(\DB::raw('sum(words) as `words`'), \DB::raw('YEAR(date) year, MONTH(date) month'))
             ->groupby('year', 'month')
             ->get();
-
 
         foreach ($statisticsData as $statistic) {
             $statistics[] = [
@@ -4936,7 +4914,7 @@ class LearnerController extends Controller
         }
         $statistics[] = [
             'words' => $totalStatistic,
-            'month' => 'Total Words'
+            'month' => 'Total Words',
         ];
 
         return response()->json($statistics);
@@ -4944,7 +4922,7 @@ class LearnerController extends Controller
 
     /**
      * Download the document from a lesson
-     * @param $lessonId
+     *
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadLessonDocument($lessonId)
@@ -4952,21 +4930,24 @@ class LearnerController extends Controller
         $document = LessonDocuments::find($lessonId);
         if ($document) {
             $filename = $document->document;
+
             return response()->download(public_path($filename));
         }
+
         return redirect()->back();
     }
 
     /**
      * Mark notification as read
-     * @param $id
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function markNotificationAsRead($id)
     {
-        if($notification = Notification::find($id)) {
+        if ($notification = Notification::find($id)) {
             $notification->is_read = 1;
             $notification->save();
+
             return response()->json(['success' => 'Notification marked as read.'], 200);
         }
 
@@ -4975,13 +4956,14 @@ class LearnerController extends Controller
 
     /**
      * Delete a notification
-     * @param $id
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function deleteNotification($id)
     {
-        if($notification = Notification::find($id)) {
+        if ($notification = Notification::find($id)) {
             $notification->forceDelete();
+
             return response()->json(['success' => 'Notification deleted successfully.'], 200);
         }
 
@@ -5001,34 +4983,34 @@ class LearnerController extends Controller
             }
 
             $extensions = ['docx'];
-            $file   = NULL;
+            $file = null;
 
-            if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
+            if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
                 $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
                 $original_filename = $request->manuscript->getClientOriginalName();
 
-                if( !in_array($extension, $extensions) ) :
+                if (! in_array($extension, $extensions)) {
                     return redirect()->back();
-                endif;
+                }
 
                 $destinationPath = 'storage/coaching-timer-manuscripts/'; // upload path
 
                 $time = time();
-                $fileName = $time.'.'.$extension;//$original_filename; // rename document0
+                $fileName = $time.'.'.$extension; // $original_filename; // rename document0
                 $file = $destinationPath.$fileName;
                 $request->manuscript->move($destinationPath, $fileName);
-            endif;
+            }
 
             CoachingTimerManuscript::create([
-                'user_id'           => Auth::user()->id,
-                'file'              => $file,
-                'plan_type'         => $data['plan_type'],
-                'suggested_date'    => json_encode($suggested_dates)
+                'user_id' => Auth::user()->id,
+                'file' => $file,
+                'plan_type' => $data['plan_type'],
+                'suggested_date' => json_encode($suggested_dates),
             ]);
 
             CoachingTimerTaken::create([
-                'user_id'           => Auth::user()->id,
-                'course_taken_id'   => $course_taken_id
+                'user_id' => Auth::user()->id,
+                'course_taken_id' => $course_taken_id,
             ]);
 
         }
@@ -5038,7 +5020,7 @@ class LearnerController extends Controller
 
     /**
      * Download the diploma
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadDiploma($id)
@@ -5046,13 +5028,14 @@ class LearnerController extends Controller
         $shopManuscriptTaken = Diploma::find($id);
         if ($shopManuscriptTaken) {
             $filename = $shopManuscriptTaken->diploma;
+
             return response()->download(public_path($filename));
         }
 
         return redirect()->route('admin.learner.index');
     }
 
-    public function downloadCourseCertificate( $course_id )
+    public function downloadCourseCertificate($course_id)
     {
         $certificate = CourseCertificate::findOrFail($course_id);
         $course = $certificate->course;
@@ -5065,29 +5048,28 @@ class LearnerController extends Controller
             '{LEARNERNAME}',
             '{COURSENAME}',
             '{COMPLETEDDATE}',
-            '{ISSUEDDATE}'
-            ],
+            '{ISSUEDDATE}',
+        ],
             [
                 Auth::user()->full_name,
                 $course->title,
                 $course->completed_date,
-                $issueDate->format('d') . '. ' . FrontendHelpers::convertMonthLanguage($issueDate->format('n')) . ' ' . $issueDate->format('Y')
+                $issueDate->format('d').'. '.FrontendHelpers::convertMonthLanguage($issueDate->format('n')).' '.$issueDate->format('Y'),
             ],
             $certificate->template
         );
-
 
         $pdf = \App::make('dompdf.wrapper');
         $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML($template);
-        return $pdf->download($course->title . ' certificate.pdf');
+
+        return $pdf->download($course->title.' certificate.pdf');
     }
 
     /**
      * Download file
-     * @param $service_id
-     * @param $service_type
+     *
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadOtherServiceDoc($service_id, $service_type)
@@ -5098,7 +5080,7 @@ class LearnerController extends Controller
                 $filename = $copyEditing->file;
             }
 
-            if ($service_type == 2 && $correction = CorrectionManuscript::find($service_id)){
+            if ($service_type == 2 && $correction = CorrectionManuscript::find($service_id)) {
                 $filename = $correction->file;
             }
 
@@ -5110,13 +5092,14 @@ class LearnerController extends Controller
 
     /**
      * Download the feedback for other service
-     * @param $feedback_id
+     *
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function downloadOtherServiceFeedback($feedback_id)
     {
         if ($feedback = OtherServiceFeedback::find($feedback_id)) {
             $filename = $feedback->manuscript;
+
             return response()->download(public_path($filename));
         }
 
@@ -5125,15 +5108,15 @@ class LearnerController extends Controller
 
     /**
      * Update the help with field of coaching timer
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateHelpWith($id, Request $request)
     {
-        if($coachingTimer = CoachingTimerManuscript::find($id)) {
+        if ($coachingTimer = CoachingTimerManuscript::find($id)) {
             $coachingTimer->help_with = $request->help_with;
             $coachingTimer->save();
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Skriv litt her om hva du vil ha hjelp til saved successfully.'),
                 'alert_type' => 'success']);
         }
@@ -5142,13 +5125,11 @@ class LearnerController extends Controller
     }
 
     /**
-     * @param $id
-     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function setCoachingStatus($id, Request $request)
     {
-        if($coachingTimer = CoachingTimerManuscript::find($id)) {
+        if ($coachingTimer = CoachingTimerManuscript::find($id)) {
             $coachingTimer->status = $request->status;
             $coachingTimer->save();
         }
@@ -5158,6 +5139,7 @@ class LearnerController extends Controller
 
     /**
      * List all user emails
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function listEmails()
@@ -5165,20 +5147,21 @@ class LearnerController extends Controller
         $user = Auth::user();
         $data['primary'] = $user;
         $data['secondary'] = UserEmail::where('user_id', $user->id)->get();
+
         return response()->json($data);
     }
 
     /**
      * Send email confirmation to check if user owns the inputted email
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendEmailConfirmation(Request $request){
+    public function sendEmailConfirmation(Request $request)
+    {
 
         $this->validate($request, [
             'email' => 'required|email|unique:users|unique:user_emails',
         ]);
-
 
         $email_data = $request->all();
         $email_data['token'] = md5(microtime());
@@ -5189,8 +5172,7 @@ class LearnerController extends Controller
         $saveEmail = EmailConfirmation::firstOrNew($saveData);
         $saveEmail->token = $email_data['token'];
 
-        if(! $saveEmail->save())
-        {
+        if (! $saveEmail->save()) {
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
         }
 
@@ -5199,50 +5181,49 @@ class LearnerController extends Controller
 
         /*AdminHelpers::send_email('Email Confirmation',
             'post@forfatterskolen.no', $email_data['email'], view('emails.email_confirmation', compact('email_data')));*/
-        $buttonStyle = "text-decoration: none; color: #fff; background: #e83945; border-color: #e83945;" .
-                    "padding-right: 1.1rem; padding-left: 1.1rem; padding-top: 0.5rem; padding-bottom: 0.5rem;" .
-                    "-webkit-text-size-adjust: none;line-height: 1.5;border-radius: .2rem;margin-right: 10px";
+        $buttonStyle = 'text-decoration: none; color: #fff; background: #e83945; border-color: #e83945;'.
+                    'padding-right: 1.1rem; padding-left: 1.1rem; padding-top: 0.5rem; padding-bottom: 0.5rem;'.
+                    '-webkit-text-size-adjust: none;line-height: 1.5;border-radius: .2rem;margin-right: 10px';
         $emailTemplate = AdminHelpers::emailTemplate('Confirm Additional Email');
         $emailContent = str_replace([
             ':firstname',
             ':email',
             ':button',
-            ':end_button'
+            ':end_button',
         ], [
             $user->first_name,
             $user->email,
-            '<a href="'. route("front.email-confirmation",$email_data['token']) .'" style="' . $buttonStyle . '">',
-            "</a>"
+            '<a href="'.route('front.email-confirmation', $email_data['token']).'" style="'.$buttonStyle.'">',
+            '</a>',
 
         ], $emailTemplate->email_content);
 
         dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
             $emailTemplate->from_email, null, null, 'learner', $user->id));
 
-
         return response()->json(['success' => 'Email Confirmation Sent.'], 200);
     }
 
     /**
      * Set Primary Email
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function setPrimaryEmail(Request $request)
     {
         DB::beginTransaction();
-        $user           = Auth::user();
-        $user_emails    = UserEmail::find($request->id);
-        $primary        = $user_emails->email;
-        $secondary      = $user->email;
-        if( !$user->update(['email' => $primary]))
-        {
+        $user = Auth::user();
+        $user_emails = UserEmail::find($request->id);
+        $primary = $user_emails->email;
+        $secondary = $user->email;
+        if (! $user->update(['email' => $primary])) {
             DB::rollback();
+
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
         }
-        if(! $user_emails->update(['email' => $secondary]))
-        {
+        if (! $user_emails->update(['email' => $secondary])) {
             DB::rollback();
+
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
         }
         DB::commit();
@@ -5266,15 +5247,15 @@ class LearnerController extends Controller
 
     /**
      * Remove a secondary email
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function removeSecondaryEmail(Request $request)
     {
-        if(! UserEmail::destroy($request->id))
-        {
+        if (! UserEmail::destroy($request->id)) {
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
         }
+
         return response()->json(['success' => 'Secondary email deleted'], 200);
     }
 
@@ -5282,93 +5263,93 @@ class LearnerController extends Controller
     {
         $events = [];
         $today = Carbon::today();
-        foreach( Auth::user()->coursesTaken as $courseTaken ) :
+        foreach (Auth::user()->coursesTaken as $courseTaken) {
             // Course lessons
-            foreach( $courseTaken->package->course->lessons as $lesson ) :
+            foreach ($courseTaken->package->course->lessons as $lesson) {
                 $availability = strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)) * 1000;
-                $newAvailability = date('Y-m-d',strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)));
+                $newAvailability = date('Y-m-d', strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)));
 
                 if (Carbon::parse($newAvailability)->gte($today)) {
                     $events[] = [
                         'id' => $lesson->course->id,
-                        'title' => 'Leksjon: ' . $lesson->title . ' from ' . $lesson->course->title,
+                        'title' => 'Leksjon: '.$lesson->title.' from '.$lesson->course->title,
                         'class' => 'event-important',
-                        'start' => $newAvailability,//$availability,
-                        'end' => $newAvailability,//$availability,
-                        'color' => '#d95e66'
+                        'start' => $newAvailability, // $availability,
+                        'end' => $newAvailability, // $availability,
+                        'color' => '#d95e66',
                     ];
                 }
-            endforeach;
+            }
 
             // Course webinars
-            foreach( $courseTaken->package->course->webinars as $webinar ) :
-                $start = date('Y-m-d',strtotime($webinar->start_date));
-                $end = date('Y-m-d',strtotime($webinar->start_date));
+            foreach ($courseTaken->package->course->webinars as $webinar) {
+                $start = date('Y-m-d', strtotime($webinar->start_date));
+                $end = date('Y-m-d', strtotime($webinar->start_date));
 
                 if (Carbon::parse($start)->gte($today)) {
                     $events[] = [
                         'id' => $webinar->course->id,
-                        'title' => 'Webinar: ' . $webinar->title . ' from ' . $webinar->course->title,
+                        'title' => 'Webinar: '.$webinar->title.' from '.$webinar->course->title,
                         'class' => 'event-warning',
-                        'start' => $start,//strtotime($webinar->start_date) * 1000,
-                        'end' => $end,//strtotime($webinar->start_date) * 1000,
-                        'color' => '#ff9c00'
+                        'start' => $start, // strtotime($webinar->start_date) * 1000,
+                        'end' => $end, // strtotime($webinar->start_date) * 1000,
+                        'color' => '#ff9c00',
                     ];
                 }
-            endforeach;
+            }
 
             // manuscripts
-            foreach ($courseTaken->manuscripts as $manuscript) :
-                $start = date('Y-m-d',strtotime($manuscript->expected_finish));
-                $end = date('Y-m-d',strtotime($manuscript->expected_finish));
+            foreach ($courseTaken->manuscripts as $manuscript) {
+                $start = date('Y-m-d', strtotime($manuscript->expected_finish));
+                $end = date('Y-m-d', strtotime($manuscript->expected_finish));
 
                 if (Carbon::parse($start)->gte($today)) {
                     $events[] = [
                         'id' => $courseTaken->package->course->id,
-                        'title' => 'Manus: ' . basename($manuscript->filename) . ' from ' . $courseTaken->package->course->title,
+                        'title' => 'Manus: '.basename($manuscript->filename).' from '.$courseTaken->package->course->title,
                         'class' => 'event-info',
-                        'start' => $start,//strtotime($manuscript->expected_finish) * 1000,
-                        'end' => $end,//strtotime($manuscript->expected_finish) * 1000,
-                        'color' => '#29b5f5'
+                        'start' => $start, // strtotime($manuscript->expected_finish) * 1000,
+                        'end' => $end, // strtotime($manuscript->expected_finish) * 1000,
+                        'color' => '#29b5f5',
                     ];
                 }
-            endforeach;
+            }
 
             // assignments
-            foreach ($courseTaken->package->course->assignments as $assignment) :
-                $start = date('Y-m-d',strtotime($assignment->submission_date));
-                $end = date('Y-m-d',strtotime($assignment->submission_date));
+            foreach ($courseTaken->package->course->assignments as $assignment) {
+                $start = date('Y-m-d', strtotime($assignment->submission_date));
+                $end = date('Y-m-d', strtotime($assignment->submission_date));
 
                 if (Carbon::parse($start)->gte($today)) {
                     $events[] = [
                         'id' => $assignment->course->id,
-                        'title' => 'Oppgaver: ' . $assignment->title . ' from ' . $assignment->course->title,
+                        'title' => 'Oppgaver: '.$assignment->title.' from '.$assignment->course->title,
                         'class' => 'event-success-new',
-                        'start' => $start,//strtotime($assignment->submission_date) * 1000,
-                        'end' => $end,//strtotime($assignment->submission_date) * 1000,
-                        'color' => '#44af5e'
+                        'start' => $start, // strtotime($assignment->submission_date) * 1000,
+                        'end' => $end, // strtotime($assignment->submission_date) * 1000,
+                        'color' => '#44af5e',
                     ];
                 }
-            endforeach;
+            }
 
             // get the calendar notes created by admin for certain course only
-            foreach ($courseTaken->package->course->notes as $note):
-                $start = date('Y-m-d',strtotime($note->from_date));
-                $end = date('Y-m-d',strtotime($note->to_date));
+            foreach ($courseTaken->package->course->notes as $note) {
+                $start = date('Y-m-d', strtotime($note->from_date));
+                $end = date('Y-m-d', strtotime($note->to_date));
 
                 if (Carbon::parse($start)->gte($today)) {
                     $events[] = [
                         'id' => $note->id,
                         'title' => $note->note,
                         'class' => 'event-inverse',
-                        'start' => $start,//strtotime($note->date) * 1000,
-                        'end' => $end,//strtotime($note->date) * 1000,
-                        'color' => '#1b1b1b' // for full calendar
+                        'start' => $start, // strtotime($note->date) * 1000,
+                        'end' => $end, // strtotime($note->date) * 1000,
+                        'color' => '#1b1b1b', // for full calendar
                     ];
                 }
-            endforeach;
+            }
 
-        endforeach;
+        }
 
         return $events;
     }
@@ -5379,16 +5360,16 @@ class LearnerController extends Controller
         $coursesTaken = Auth::user()->coursesTaken;
         $addOns = AssignmentAddon::where('user_id', \Auth::user()->id)->pluck('assignment_id')->toArray();
 
-        foreach( $coursesTaken as $course ) :
-            foreach( $course->package->course->activeAssignments as $assignment ) :
+        foreach ($coursesTaken as $course) {
+            foreach ($course->package->course->activeAssignments as $assignment) {
                 $allowed_package = json_decode($assignment->allowed_package);
                 $package_id = $course->package->id;
                 // check if the assignment is allowed on the learners package or there's no set package allowed
-                if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
-                    //$assignments[] = $assignment;
+                if ((! is_null($allowed_package) && in_array($package_id, $allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
+                    // $assignments[] = $assignment;
 
-                    if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
-                        if(\Carbon\Carbon::parse($course->started_at)->addDays($assignment->submission_date)
+                    if (! AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
+                        if (\Carbon\Carbon::parse($course->started_at)->addDays($assignment->submission_date)
                             ->gt(Carbon::now())) {
                             $assignments[] = $assignment;
                         }
@@ -5398,8 +5379,8 @@ class LearnerController extends Controller
                         }
                     }
                 }
-            endforeach;
-        endforeach;
+            }
+        }
 
         $userAssignments = Auth::user()->activeAssignments;
         foreach ($userAssignments as $assignment) {
@@ -5414,13 +5395,12 @@ class LearnerController extends Controller
     }
 
     /**
-     * @param $url
      * @return mixed|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function downloadInvoice( $url )
+    public function downloadInvoice($url)
     {
         $invoice = Invoice::find($url); // this is invoice id
-        $exp_pdf = count(explode('.pdf',$invoice->pdf_url));
+        $exp_pdf = count(explode('.pdf', $invoice->pdf_url));
 
         // check if the pdf url is for version 2
         if (strpos($invoice->pdf_url, 'v2')) {
@@ -5430,7 +5410,7 @@ class LearnerController extends Controller
             if ($exp_pdf == 1) {
                 $pdf_url = $pdf_url.'.pdf';
             }
-            $expFile = explode("/", $pdf_url);
+            $expFile = explode('/', $pdf_url);
 
             $filename = 'fiken-invoice/'.end($expFile);
 
@@ -5445,32 +5425,32 @@ class LearnerController extends Controller
             curl_exec($ch);
             curl_close($ch);
             fclose($out);
+
             return response()->download($filename);
 
         }
-
 
         return $this->downloadInvoiceV1($url);
     }
 
     /**
      * Get the invoice pdf from the url with login credentials
-     * @param $url
+     *
      * @return mixed
      */
     public function downloadInvoiceV1($url)
     {
         $invoice = Invoice::find($url); // this is invoice id
-        $exp_pdf = count(explode('.pdf',$invoice->pdf_url));
-        $pdf_url = str_replace("https://fiken.no/filer/", "https://fiken.no/api/v1/files/", $invoice->pdf_url);
+        $exp_pdf = count(explode('.pdf', $invoice->pdf_url));
+        $pdf_url = str_replace('https://fiken.no/filer/', 'https://fiken.no/api/v1/files/', $invoice->pdf_url);
         if ($exp_pdf == 1) {
             $pdf_url = $pdf_url.'.pdf';
         }
-        $expFile = explode("/", $pdf_url);
+        $expFile = explode('/', $pdf_url);
 
-        //$filename = 'fiken-invoice/'.end($expFile);
+        // $filename = 'fiken-invoice/'.end($expFile);
         $serverFilename = explode('.', end($expFile));
-        $filename =  AdminHelpers::checkFileName('fiken-invoice', $serverFilename[0], 'pdf');
+        $filename = AdminHelpers::checkFileName('fiken-invoice', $serverFilename[0], 'pdf');
 
         // write file on the server
         $out = fopen($filename, 'wb');
@@ -5485,15 +5465,16 @@ class LearnerController extends Controller
         curl_exec($ch);
         curl_close($ch);
         fclose($out);
+
         return response()->download($filename);
     }
 
-    public function downloadCreditNote( $invoice_id )
+    public function downloadCreditNote($invoice_id)
     {
         $invoice = Invoice::find($invoice_id); // this is invoice id
         $pdf_url = $invoice->credit_note_url;
 
-        $expFile = explode("/", $pdf_url);
+        $expFile = explode('/', $pdf_url);
 
         $filename = 'fiken-invoice/'.end($expFile);
 
@@ -5508,18 +5489,19 @@ class LearnerController extends Controller
         curl_exec($ch);
         curl_close($ch);
         fclose($out);
+
         return response()->download($filename);
     }
 
     public function downloadInvoiceOrig($url)
     {
         $check_url = $url;
-        $exp_url = explode("https://fiken.no/filer/",$check_url);
+        $exp_url = explode('https://fiken.no/filer/', $check_url);
 
         $host = $check_url;
         // check if it contains https://fiken.no/filer/ then change the url
         if (count($exp_url) > 1) {
-            $host = "https://fiken.no/api/v1/files/".end($exp_url);
+            $host = 'https://fiken.no/api/v1/files/'.end($exp_url);
         }
 
         $exp_link = explode('/', $host);
@@ -5532,69 +5514,69 @@ class LearnerController extends Controller
         curl_setopt($ch, CURLOPT_VERBOSE, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_AUTOREFERER, false);
-        curl_setopt($ch, CURLOPT_REFERER, "http://www.xcontest.org");
+        curl_setopt($ch, CURLOPT_REFERER, 'http://www.xcontest.org');
         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_USERPWD,
-            config('services.fiken.username').":".config('services.fiken.password'));
+            config('services.fiken.username').':'.config('services.fiken.password'));
         $result = curl_exec($ch);
         curl_close($ch);
 
-
         // to download the file on the browser
         header('Cache-Control: public');
-        header("Content-type:application/pdf");
+        header('Content-type:application/pdf');
         header('Content-Disposition: attachment; filename="'.$pdf_name.'.pdf"');
         header('Content-Length: '.strlen($result));
-        //readfile($pdf_storage_link);
+
+        // readfile($pdf_storage_link);
         return $result;
     }
 
     /**
      * Redirect to forum page
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function forum()
     {
         $token = $this->createUserToken();
-        $redirect_url = "https://forum.forfatterskolen.no/auth/sso?ssoToken=".$token."&redirect=/";
+        $redirect_url = 'https://forum.forfatterskolen.no/auth/sso?ssoToken='.$token.'&redirect=/';
+
         return response()->json([
-            'redirect_url' => $redirect_url
+            'redirect_url' => $redirect_url,
         ]);
     }
 
-    /**
-     * @param Request $request
-     */
-    public function autoRegisterCourseWebinar( Request $request )
+    public function autoRegisterCourseWebinar(Request $request)
     {
         $user = Auth::user();
         $course_id = 17; // webinar-pakke course
 
         $autoRenewToCourse = UserAutoRegisterToCourseWebinar::firstOrCreate([
-           'user_id' => $user->id,
-            'course_id' => $course_id
+            'user_id' => $user->id,
+            'course_id' => $course_id,
         ]);
 
         // check if not auto renew then delete the record
-        if (!$request->auto_renew) {
+        if (! $request->auto_renew) {
             $autoRenewToCourse->delete();
         }
     }
 
     /**
      * Generate a user token
+     *
      * @return string
      */
     public function createUserToken()
     {
         $user = Auth::user();
-        $privateKey = config("services.jwt.private_key");
+        $privateKey = config('services.jwt.private_key');
 
         $userData = [
             'email' => $user->email,
-            'id'    => $user->id,
-            'name'  => $user->fullname
+            'id' => $user->id,
+            'name' => $user->fullname,
         ];
 
         return JWT::encode($userData, $privateKey, 'HS256');
@@ -5602,6 +5584,7 @@ class LearnerController extends Controller
 
     /**
      * Login to pilotleser
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function pilotleserLogin()
@@ -5609,15 +5592,14 @@ class LearnerController extends Controller
         $user = Auth::user();
         // create token
         $token = JWT::encode([
-            'sub'   => $user->id,
-            'iat'   => Carbon::now()->timestamp,
+            'sub' => $user->id,
+            'iat' => Carbon::now()->timestamp,
             'jti' => \Illuminate\Support\Str::limit(md5(Carbon::now()->timestamp + $user->id), 16),
-            'exp' => Carbon::now()->timestamp * 60
+            'exp' => Carbon::now()->timestamp * 60,
         ], config('services.jwt.secret'));
 
-
         $base_url = config('services.cross-domain.url').'/get-token';
-        $header = array();
+        $header = [];
         $header[] = 'Content-type: application/x-www-form-urlencoded';
         $header[] = 'Accept: application/json';
         $header[] = 'Authorization: Bearer '.$token;
@@ -5625,8 +5607,8 @@ class LearnerController extends Controller
         $body = [];
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $base_url);
-        curl_setopt( $ch, CURLOPT_POST, 1);
-        curl_setopt( $ch, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $response = curl_exec($ch);
@@ -5636,22 +5618,22 @@ class LearnerController extends Controller
         // check if an access token is generated
         if ($httpcode === 200) {
             $request_url = config('services.cross-domain.url').'/login';
-            $login_header = array();
+            $login_header = [];
             $login_header[] = 'Content-type: application/x-www-form-urlencoded';
             $login_header[] = 'Accept: application/json';
 
             $login_body = [
-                'jti'           => $decode[0]->jti,
-                'first_name'    => $user->first_name,
-                'last_name'     => $user->last_name,
-                'email'         => $user->email,
-                'password'      => $user->password ?: bcrypt(123)
+                'jti' => $decode[0]->jti,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'password' => $user->password ?: bcrypt(123),
             ];
 
             $login_ch = curl_init();
             curl_setopt($login_ch, CURLOPT_URL, $request_url);
-            curl_setopt( $login_ch, CURLOPT_POST, 1);
-            curl_setopt( $login_ch, CURLOPT_POSTFIELDS, http_build_query($login_body));
+            curl_setopt($login_ch, CURLOPT_POST, 1);
+            curl_setopt($login_ch, CURLOPT_POSTFIELDS, http_build_query($login_body));
             curl_setopt($login_ch, CURLOPT_HTTPHEADER, $login_header);
             curl_setopt($login_ch, CURLOPT_RETURNTRANSFER, 1);
 
@@ -5662,18 +5644,18 @@ class LearnerController extends Controller
             // check for error
             if ($login_httpcode !== 200) {
                 return response()->json([
-                    'message' => $login_decode->message
+                    'message' => $login_decode->message,
                 ], $login_httpcode);
             }
 
             return response()->json([
-                "redirect_url" => $login_decode->redirect_url
+                'redirect_url' => $login_decode->redirect_url,
             ]);
         }
 
         // added fiter for $decode->message: this causes error : cron fix
         return response()->json([
-            'message' => $decode ? $decode->message : ''
+            'message' => $decode ? $decode->message : '',
         ], $httpcode);
     }
 
@@ -5681,30 +5663,34 @@ class LearnerController extends Controller
     {
         $user = Auth::user();
         $user['address'] = $user->address;
+
         return $user;
     }
 
-    private function salesReportCounter($project_book_id, $type) {
+    private function salesReportCounter($project_book_id, $type)
+    {
         return StorageSale::where('project_book_id', $project_book_id)
-        ->where('type', $type)
-        ->sum('value');
+            ->where('type', $type)
+            ->sum('value');
     }
 
-    private function storageSalesByType($user_book_for_sale_id, $type) {
+    private function storageSalesByType($user_book_for_sale_id, $type)
+    {
         return StorageSale::where('project_book_id', $user_book_for_sale_id)
-        ->where('type', $type)
-        ->when(request()->filled('year') && request('year') != 'all', function ($query) {
-            $query->whereYear('date', request('year'));
-        })
-        ->when(request()->filled('month') && request('month') != 'all', function ($query) {
-            $query->whereMonth('date', request('month'));
-        })->sum('value');
+            ->where('type', $type)
+            ->when(request()->filled('year') && request('year') != 'all', function ($query) {
+                $query->whereYear('date', request('year'));
+            })
+            ->when(request()->filled('month') && request('month') != 'all', function ($query) {
+                $query->whereMonth('date', request('month'));
+            })->sum('value');
     }
 
-    private function storageSalesByTypeArray($user_book_for_sale_id, $type) {
+    private function storageSalesByTypeArray($user_book_for_sale_id, $type)
+    {
         $baseQuery = StorageSale::where('project_book_id', $user_book_for_sale_id)
             ->where('type', $type);
-    
+
         $sales = (clone $baseQuery)
             ->when(request()->filled('year') && request('year') != 'all', function ($query) {
                 $query->whereYear('date', request('year'));
@@ -5713,9 +5699,9 @@ class LearnerController extends Controller
                 $query->whereMonth('date', request('month'));
             })
             ->sum('value');
-    
+
         $overallSales = (clone $baseQuery)->sum('value');
-    
+
         return [
             'yearly' => $sales,
             'overall' => $overallSales,

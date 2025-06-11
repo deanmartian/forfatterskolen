@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectBookCritique extends Model
 {
     protected $fillable = ['project_id', 'book_content', 'description', 'is_file', 'feedback'];
+
     protected $appends = [
-        'file_link', 
-        'filename', 
+        'file_link',
+        'filename',
         'date_uploaded',
-        'feedback_file'
+        'feedback_file',
     ];
 
     public function getFilenameAttribute()
@@ -27,9 +28,9 @@ class ProjectBookCritique extends Model
 
         if ($this->attributes['is_file']) {
             $extension = explode('.', basename($filename));
-            if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+            if (end($extension) == 'pdf' || end($extension) == 'odt') {
                 $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
-            } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+            } elseif (end($extension) == 'docx' || end($extension) == 'doc') {
                 $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
                     .basename($filename).'</a>';
             }
@@ -49,9 +50,9 @@ class ProjectBookCritique extends Model
         $filename = $this->attributes['feedback'];
 
         $extension = explode('.', basename($filename));
-        if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+        if (end($extension) == 'pdf' || end($extension) == 'odt') {
             $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
-        } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+        } elseif (end($extension) == 'docx' || end($extension) == 'doc') {
             $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
                 .basename($filename).'</a>';
         }

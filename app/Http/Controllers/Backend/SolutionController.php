@@ -1,21 +1,22 @@
 <?php
+
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SolutionCreateRequest;
 use App\Repositories\Services\SolutionService;
 
-class SolutionController extends Controller {
-
+class SolutionController extends Controller
+{
     /**
      * Storage of solution service
+     *
      * @var SolutionService
      */
     protected $solutionService;
 
     /**
      * SolutionController constructor.
-     * @param SolutionService $solutionService
      */
     public function __construct(SolutionService $solutionService)
     {
@@ -24,17 +25,19 @@ class SolutionController extends Controller {
 
     /**
      * Display all solutions
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
         $solutions = $this->solutionService->getRecord();
+
         return view('backend.solution.index', compact('solutions'));
     }
 
     /**
      * Create new solution
-     * @param SolutionCreateRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(SolutionCreateRequest $request)
@@ -48,8 +51,8 @@ class SolutionController extends Controller {
 
     /**
      * Update a solution
-     * @param int $id
-     * @param SolutionCreateRequest $request
+     *
+     * @param  int  $id
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, SolutionCreateRequest $request)
@@ -63,12 +66,13 @@ class SolutionController extends Controller {
 
     /**
      * Delete a solution
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
         $this->solutionService->destroy($id);
+
         return redirect()->route('admin.solution.index');
     }
 }

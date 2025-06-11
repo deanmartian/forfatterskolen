@@ -3,33 +3,29 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToOrdersTable extends Migration {
+class AddForeignKeysToOrdersTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('orders', function (Blueprint $table) {
+            $table->foreign('user_id', 'orders_user')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('CASCADE');
+        });
+    }
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::table('orders', function(Blueprint $table)
-		{
-			$table->foreign('user_id', 'orders_user')->references('id')->on('users')->onUpdate('RESTRICT')->onDelete('CASCADE');
-		});
-	}
-
-
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::table('orders', function(Blueprint $table)
-		{
-			$table->dropForeign('orders_user');
-		});
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('orders', function (Blueprint $table) {
+            $table->dropForeign('orders_user');
+        });
+    }
 }

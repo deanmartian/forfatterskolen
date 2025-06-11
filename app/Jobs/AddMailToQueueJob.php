@@ -2,29 +2,34 @@
 
 namespace App\Jobs;
 
-use App\EmailHistory;
-use App\Http\AdminHelpers;
 use App\Mail\AddMailToQueueMail;
-use App\Mail\SubjectBodyEmail;
 use App\Repositories\Services\SaleService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class AddMailToQueueJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $recipient;
+
     private $email_message;
+
     private $email_subject;
+
     private $from_name;
+
     private $from_email;
+
     private $attach_file;
+
     private $parent;
+
     private $parent_id;
+
     private $email_view;
 
     /**
@@ -32,8 +37,8 @@ class AddMailToQueueJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($recipient, $subject, $message, $from_email = null, $from_name = null,
-        $attachment = null, $parent, $parent_id, $email_view = 'emails.mail_to_queue')
+    public function __construct($recipient, $subject, $message, $from_email, $from_name,
+        $attachment, $parent, $parent_id, $email_view = 'emails.mail_to_queue')
     {
         $this->recipient = $recipient;
         $this->email_subject = $subject;
@@ -51,7 +56,8 @@ class AddMailToQueueJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle(SaleService $saleService) {
+    public function handle(SaleService $saleService)
+    {
 
         $track_code = md5(rand());
         \Mail::send(new AddMailToQueueMail($this->recipient, $this->email_subject, $this->email_message, $this->from_email,

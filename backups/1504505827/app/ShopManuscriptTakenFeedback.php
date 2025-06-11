@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ShopManuscriptTakenFeedback extends Model
 {
     protected $table = 'shop_manuscript_taken_feedbacks';
+
     protected $fillable = ['shop_manuscript_taken_id', 'filename', 'grade', 'notes'];
 
     public function shop_manuscript_taken()
@@ -14,16 +15,13 @@ class ShopManuscriptTakenFeedback extends Model
         return $this->belongsTo('App\ShopManuscriptTaken', 'shop_manuscript_taken_id');
     }
 
-    
     public function getFilenameAttribute($value)
     {
         return json_decode($value);
     }
 
-    
     public function getCreatedAtAttribute($value)
     {
         return date_format(date_create($value), 'M d, Y h:i a');
     }
-
 }

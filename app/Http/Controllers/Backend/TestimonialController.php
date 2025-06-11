@@ -7,8 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Repositories\TestimonialRepository;
 use Illuminate\Http\Request;
 
-class TestimonialController extends Controller {
-
+class TestimonialController extends Controller
+{
     /**
      * @var TestimonialRepository
      */
@@ -16,7 +16,6 @@ class TestimonialController extends Controller {
 
     /**
      * TestimonialController constructor.
-     * @param TestimonialRepository $repository
      */
     public function __construct(TestimonialRepository $repository)
     {
@@ -25,23 +24,26 @@ class TestimonialController extends Controller {
 
     /**
      * Display all testimonials
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
         $testimonials = $this->repository->paginate(15);
-        return view('backend.testimonials.index',compact('testimonials'));
+
+        return view('backend.testimonials.index', compact('testimonials'));
     }
 
     /**
      * Display create page
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
     {
         $fields = $this->repository->getModel()->getFillable();
         $testimonial = [];
-        foreach($fields as $field) {
+        foreach ($fields as $field) {
             $testimonial[$field] = '';
         }
 
@@ -50,7 +52,7 @@ class TestimonialController extends Controller {
 
     /**
      * Create testimonial
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
@@ -59,7 +61,7 @@ class TestimonialController extends Controller {
 
         $return['alert_type'] = 'success';
         $return['errors'] = AdminHelpers::createMessageBag('Testimonial created successfully.');
-        if (!$this->repository->createOrUpdate(null, $request)) {
+        if (! $this->repository->createOrUpdate(null, $request)) {
             $return['alert_type'] = 'danger';
             $return['errors'] = AdminHelpers::createMessageBag('Problem saving testimonial.');
         }
@@ -69,13 +71,13 @@ class TestimonialController extends Controller {
 
     /**
      * Display the edit page
-     * @param $id
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function edit($id)
     {
         $testimonial = $this->repository->find($id);
-        if (!$testimonial) {
+        if (! $testimonial) {
             return redirect()->route('admin.testimonial.index');
         }
 
@@ -86,20 +88,19 @@ class TestimonialController extends Controller {
 
     /**
      * Update record
-     * @param $id
-     * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request)
     {
         $testimonial = $this->repository->find($id);
-        if (!$testimonial) {
+        if (! $testimonial) {
             return redirect()->route('admin.testimonial.index');
         }
 
         $return['alert_type'] = 'success';
         $return['errors'] = AdminHelpers::createMessageBag('Testimonial updated successfully.');
-        if (!$this->repository->createOrUpdate($id, $request)) {
+        if (! $this->repository->createOrUpdate($id, $request)) {
             $return['alert_type'] = 'danger';
             $return['errors'] = AdminHelpers::createMessageBag('Problem saving testimonial.');
         }
@@ -109,19 +110,19 @@ class TestimonialController extends Controller {
 
     /**
      * Delete record
-     * @param $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
         $testimonial = $this->repository->find($id);
-        if (!$testimonial) {
+        if (! $testimonial) {
             return redirect()->route('admin.testimonial.index');
         }
 
         $return['alert_type'] = 'success';
         $return['errors'] = AdminHelpers::createMessageBag('Testimonial deleted successfully.');
-        if (!$this->repository->destroy($id)) {
+        if (! $this->repository->destroy($id)) {
             $return['alert_type'] = 'danger';
             $return['errors'] = AdminHelpers::createMessageBag('Problem saving testimonial.');
         }

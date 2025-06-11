@@ -17,27 +17,27 @@ use Illuminate\Http\Request;
 
 class PublishingServiceController extends Controller
 {
-    
     public function show($id)
     {
         $service = PublishingService::findOrFail($id);
         abort(404);
+
         return view('frontend.publising-service.checkout', compact('service'));
     }
 
     public function validateForm(Request $request, CourseService $courseService)
     {
         $validation = [
-            'email'         => 'required|email',
-            'first_name'    => 'required',
-            'last_name'     => 'required',
-            'street'        => 'required',
-            'zip'           => 'required',
-            'city'          => 'required',
-            'phone'         => 'required',
+            'email' => 'required|email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'street' => 'required',
+            'zip' => 'required',
+            'city' => 'required',
+            'phone' => 'required',
         ];
 
-        if (!\Auth::check()) {
+        if (! \Auth::check()) {
             $validation['password'] = 'required|min:3';
         }
 
@@ -47,18 +47,18 @@ class PublishingServiceController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        if (!\Auth::check()) {
+        if (! \Auth::check()) {
             $addressData = [
-                'street'    => $request->street,
-                'zip'       => $request->zip,
-                'city'      => $request->city,
-                'phone'     => $request->phone
+                'street' => $request->street,
+                'zip' => $request->zip,
+                'city' => $request->city,
+                'phone' => $request->phone,
             ];
             $courseService->evaluateUser(
-                $request->email, 
-                $request->password, 
-                $request->first_name, 
-                $request->last_name, 
+                $request->email,
+                $request->password,
+                $request->first_name,
+                $request->last_name,
                 $addressData
             );
         }
@@ -74,27 +74,28 @@ class PublishingServiceController extends Controller
         return view('frontend.publising-service.thankyou');
     }
 
-    public function addToCart(Request $request) {
-        $file = NULL;
-        
+    public function addToCart(Request $request)
+    {
+        $file = null;
+
         if ($request->has('file')) {
             $file = FrontendHelpers::saveFile($request, 'self_publishing_order', 'file');
         }
 
-        $title = $request->title === "null" ? NULL : $request->title;
-        $description = $request->description === "null" ? NULL : $request->description;
+        $title = $request->title === 'null' ? null : $request->title;
+        $description = $request->description === 'null' ? null : $request->description;
 
         SelfPublishingOrder::create([
-            'user_id'       => Auth::id(),
-            'project_id'    => $request->project_id,
-            'parent'        => $request->parent,
-            'parent_id'     => $request->parent_id,
-            'title'         => $title,
-            'description'   => $description,
-            'file'          => $file,
-            'price'         => floatval($request->totalPrice),
-            'word_count'    => $request->word_count,
-            'status'        => 'active'
+            'user_id' => Auth::id(),
+            'project_id' => $request->project_id,
+            'parent' => $request->parent,
+            'parent_id' => $request->parent_id,
+            'title' => $title,
+            'description' => $description,
+            'file' => $file,
+            'price' => floatval($request->totalPrice),
+            'word_count' => $request->word_count,
+            'status' => 'active',
         ]);
 
     }
@@ -106,61 +107,61 @@ class PublishingServiceController extends Controller
         $currentOrderTotal = $currentOrderQuery->sum('price');
 
         $order = Order::create([
-            'user_id'       => Auth::id(),
-            'item_id'       => $currentOrders[0]->id,
-            'type'          => Order::EDITING_SERVICES,
-            'plan_id'       => 8,
-            'price'         => $currentOrderTotal,
-            'discount'      => 0,
-            'is_processed'  => 1
+            'user_id' => Auth::id(),
+            'item_id' => $currentOrders[0]->id,
+            'type' => Order::EDITING_SERVICES,
+            'plan_id' => 8,
+            'price' => $currentOrderTotal,
+            'discount' => 0,
+            'is_processed' => 1,
         ]);
 
         SelfPublishingOrder::whereIn('id', $currentOrders->pluck('id'))
-        ->update([
-            'order_id' => $order->id,
-            'status' => 'paid'
-        ]);
+            ->update([
+                'order_id' => $order->id,
+                'status' => 'paid',
+            ]);
 
-        foreach( $currentOrders as $currentOrder ) {
+        foreach ($currentOrders as $currentOrder) {
             $publishingService = PublishingService::find($currentOrder->parent_id);
-            
+
             if ($publishingService->slug === 'sprakvask') {
                 CopyEditingManuscript::create([
-                    'user_id'       => Auth::id(),
-                    'project_id'    => $currentOrder->project_id,
-                    'file'          => $currentOrder->file,
+                    'user_id' => Auth::id(),
+                    'project_id' => $currentOrder->project_id,
+                    'file' => $currentOrder->file,
                     'payment_price' => $currentOrder->price,
-                    'status'        => 0,
-                    'is_locked'     => 0
+                    'status' => 0,
+                    'is_locked' => 0,
                 ]);
             }
 
             if ($publishingService->slug === 'korrektur') {
                 CorrectionManuscript::create([
-                    'user_id'       => Auth::id(),
-                    'project_id'    => $currentOrder->project_id,
-                    'file'          => $currentOrder->file,
+                    'user_id' => Auth::id(),
+                    'project_id' => $currentOrder->project_id,
+                    'file' => $currentOrder->file,
                     'payment_price' => $currentOrder->price,
-                    'status'        => 0,
-                    'is_locked'     => 0
+                    'status' => 0,
+                    'is_locked' => 0,
                 ]);
             }
 
             // redaktor
             if ($publishingService->id === 3) {
                 $selfPublishing = SelfPublishing::create([
-                    'title'         => $currentOrder->title,
-                    'description'   => $currentOrder->description,
-                    'user_id'       => Auth::id(),
-                    'project_id'    => $currentOrder->project_id,
-                    'manuscript'    => $currentOrder->file,
-                    'word_count'    => $currentOrder->word_count,
-                    'price'         => $currentOrder->price,
+                    'title' => $currentOrder->title,
+                    'description' => $currentOrder->description,
+                    'user_id' => Auth::id(),
+                    'project_id' => $currentOrder->project_id,
+                    'manuscript' => $currentOrder->file,
+                    'word_count' => $currentOrder->word_count,
+                    'price' => $currentOrder->price,
                 ]);
 
                 SelfPublishingLearner::create([
                     'self_publishing_id' => $selfPublishing->id,
-                    'user_id' => Auth::id()
+                    'user_id' => Auth::id(),
                 ]);
             }
         }
@@ -169,7 +170,7 @@ class PublishingServiceController extends Controller
     public function serviceCalculator()
     {
         $serviceList = PublishingService::where('is_active', 1)->orderBy('service_type', 'ASC')->get();
+
         return view('frontend.publising-service.service-calculator', compact('serviceList'));
     }
-
 }

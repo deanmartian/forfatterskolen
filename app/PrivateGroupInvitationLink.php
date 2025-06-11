@@ -10,6 +10,6 @@ class PrivateGroupInvitationLink extends Model
 
     public function group()
     {
-        return $this->belongsTo('App\PrivateGroup', 'private_group_id');
+        return $this->belongsTo(\App\PrivateGroup::class, 'private_group_id');
     }
 }

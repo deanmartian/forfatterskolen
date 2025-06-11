@@ -26,7 +26,7 @@ class CourseTestimonialCreateRequest extends FormRequest
         return [
             'name' => 'required',
             'testimony' => 'required',
-            'course_id' => 'required|exists:courses,id'
+            'course_id' => 'required|exists:courses,id',
         ];
     }
 }

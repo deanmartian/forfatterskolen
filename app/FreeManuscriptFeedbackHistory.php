@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ class FreeManuscriptFeedbackHistory extends Model
      * @var string
      */
     protected $table = 'free_manuscript_feedbacks_history';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -25,11 +27,11 @@ class FreeManuscriptFeedbackHistory extends Model
 
     /**
      * Format the date sent
-     * @param $value
+     *
      * @return false|null|string
      */
     public function getDateSentAttribute($value)
     {
-        return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
+        return $value ? date_format(date_create($value), 'd.m.Y') : null;
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateBlocksContentsTables extends Migration
 {
@@ -45,4 +45,3 @@ class CreateBlocksContentsTables extends Migration
         Schema::drop('lb_contents');
     }
 }
-

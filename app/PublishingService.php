@@ -2,13 +2,11 @@
 
 namespace App;
 
-use FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 use Str;
 
 class PublishingService extends Model
 {
-    
     protected $table = 'publishing_services';
 
     protected $fillable = [
@@ -20,13 +18,13 @@ class PublishingService extends Model
         'base_char_word',
         'slug',
         'service_type',
-        'is_active'
+        'is_active',
     ];
 
     protected $appends = ['short_description'];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function getShortDescriptionAttribute()
@@ -40,6 +38,6 @@ class PublishingService extends Model
             $truncatedText = $text;
         }
 
-        return $truncatedText; 
+        return $truncatedText;
     }
 }

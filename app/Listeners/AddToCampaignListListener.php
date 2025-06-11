@@ -5,8 +5,8 @@ namespace App\Listeners;
 use App\Events\AddToCampaignList;
 use App\Jobs\AddToCampaignListJob;
 
-class AddToCampaignListListener {
-
+class AddToCampaignListListener
+{
     /**
      * Create the event listener.
      *
@@ -19,11 +19,9 @@ class AddToCampaignListListener {
 
     /**
      * Handle the event.
-     * @param AddToCampaignList $event
      */
     public function handle(AddToCampaignList $event)
     {
         dispatch(new AddToCampaignListJob($event->list_id, $event->listData));
     }
-
 }

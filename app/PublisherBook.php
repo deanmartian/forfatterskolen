@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 use FrontendHelpers;
@@ -7,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class PublisherBook extends Model
 {
     protected $table = 'publisher_books';
+
     protected $fillable = ['title', 'description', 'quote_description', 'author_image', 'book_image', 'book_image_link',
         'display_order'];
 
@@ -14,12 +16,11 @@ class PublisherBook extends Model
 
     public function libraries()
     {
-        return $this->hasMany('App\PublisherBookLibrary');
+        return $this->hasMany(\App\PublisherBookLibrary::class);
     }
 
     public function getAuthorImageJpgAttribute()
     {
         return FrontendHelpers::checkJpegImg($this->attributes['author_image']);
     }
-
 }

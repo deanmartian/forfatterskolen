@@ -14,13 +14,13 @@ use Illuminate\Http\Request;
 
 class BookForSaleController extends Controller
 {
-    
     public function index()
     {
         $books = UserBookForSale::paginate(25);
         $learners = User::where('role', 2)->with(['projects.registrations' => function ($query) {
             $query->where('field', 'isbn');
         }])->get();
+
         return view('backend.book-for-sale.index', compact('books', 'learners'));
     }
 
@@ -40,7 +40,7 @@ class BookForSaleController extends Controller
         $countsCount = $this->salesReportCounter($id, 'counts');
         $returnsCount = $this->salesReportCounter($id, 'returns');
 
-        $bookSale = new UserBookSale();
+        $bookSale = new UserBookSale;
         $bookSaleTypes = $bookSale->saleTypes();
 
         return view('backend.book-for-sale.show', compact('book', 'totalBookSold', 'totalBookSale',
@@ -48,28 +48,28 @@ class BookForSaleController extends Controller
             'defectiveCount', 'correctionsCount', 'countsCount', 'returnsCount', 'bookSaleTypes'));
     }
 
-    public function saveInventory($book_for_sale_id, Request $request) 
+    public function saveInventory($book_for_sale_id, Request $request)
     {
         StorageInventory::updateOrCreate([
-            'user_book_for_sale_id' => $book_for_sale_id
+            'user_book_for_sale_id' => $book_for_sale_id,
         ], $request->except('id'));
 
         return back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Inventory saved successfully.'),
-            'alert_type'            => 'success'
+            'errors' => AdminHelpers::createMessageBag('Inventory saved successfully.'),
+            'alert_type' => 'success',
         ]);
     }
 
-    public function saveSales($book_for_sale_id, Request $request) 
+    public function saveSales($book_for_sale_id, Request $request)
     {
         StorageSale::updateOrCreate([
             'id' => $request->id,
-            'user_book_for_sale_id' => $book_for_sale_id
+            'user_book_for_sale_id' => $book_for_sale_id,
         ], $request->except('id'));
-        
+
         return back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Sales updated successfully.'),
-            'alert_type'            => 'success'
+            'errors' => AdminHelpers::createMessageBag('Sales updated successfully.'),
+            'alert_type' => 'success',
         ]);
     }
 
@@ -80,7 +80,7 @@ class BookForSaleController extends Controller
             ->get();
 
         return response()->json([
-            'details' => $details
+            'details' => $details,
         ]);
     }
 
@@ -89,8 +89,8 @@ class BookForSaleController extends Controller
         StorageSale::find($storage_sales_id)->delete();
 
         return back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Sales report deleted successfully.'),
-            'alert_type'            => 'success'
+            'errors' => AdminHelpers::createMessageBag('Sales report deleted successfully.'),
+            'alert_type' => 'success',
         ]);
     }
 
@@ -98,12 +98,12 @@ class BookForSaleController extends Controller
     {
         StorageDistributionCost::updateOrCreate([
             'id' => $request->id,
-            'user_book_for_sale_id' => $book_for_sale_id
+            'user_book_for_sale_id' => $book_for_sale_id,
         ], $request->except('id'));
-        
+
         return back()->with([
-            'errors'                => AdminHelpers::createMessageBag('Distribution Cost saved successfully.'),
-            'alert_type'            => 'success'
+            'errors' => AdminHelpers::createMessageBag('Distribution Cost saved successfully.'),
+            'alert_type' => 'success',
         ]);
     }
 
@@ -112,15 +112,15 @@ class BookForSaleController extends Controller
         StorageDistributionCost::find($distribution_cost_id)->delete();
 
         return back()->with([
-            'errors'      => AdminHelpers::createMessageBag('Distribution cost deleted successfully.'),
-            'alert_type'  => 'success'
+            'errors' => AdminHelpers::createMessageBag('Distribution cost deleted successfully.'),
+            'alert_type' => 'success',
         ]);
     }
 
-    private function salesReportCounter($book_for_sale_id, $type) {
+    private function salesReportCounter($book_for_sale_id, $type)
+    {
         return StorageSale::where('user_book_for_sale_id', $book_for_sale_id)
-        ->where('type', $type)
-        ->sum('value');
+            ->where('type', $type)
+            ->sum('value');
     }
-
 }

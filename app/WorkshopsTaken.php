@@ -7,27 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 class WorkshopsTaken extends Model
 {
     protected $table = 'workshops_taken';
+
     protected $fillable = ['user_id', 'workshop_id', 'menu_id', 'notes', 'is_active'];
 
-    
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
-
 
     public function workshop()
     {
-        return $this->belongsTo('App\Workshop');
+        return $this->belongsTo(\App\Workshop::class);
     }
-
-
 
     public function menu()
     {
-        return $this->belongsTo('App\WorkshopMenu');
+        return $this->belongsTo(\App\WorkshopMenu::class);
     }
-    
+
     public function getCreatedAtAttribute($value)
     {
         return date_format(date_create($value), 'M d, Y h:i a');

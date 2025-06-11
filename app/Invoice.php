@@ -10,8 +10,11 @@ class Invoice extends Model
     use Loggable;
 
     const COMPLETED = 1;
+
     const PENDING = 0;
+
     const FOR_COLLECTION = 2;
+
     const CREDITED = 3;
 
     /**
@@ -31,23 +34,22 @@ class Invoice extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(\App\User::class);
     }
 
     public function package()
     {
-        return $this->belongsTo('App\Package');
+        return $this->belongsTo(\App\Package::class);
     }
 
     public function payment_plan()
     {
-        return $this->belongsTo('App\PaymentPlan');
+        return $this->belongsTo(\App\PaymentPlan::class);
     }
-
 
     public function transactions()
     {
-        return $this->hasMany('App\Transaction')->orderBy('created_at', 'desc');
+        return $this->hasMany(\App\Transaction::class)->orderBy('created_at', 'desc');
     }
 
     public function getCreatedAtAttribute($value)
@@ -58,7 +60,7 @@ class Invoice extends Model
     /**
      * Payment completed.
      *
-     * @return boolean
+     * @return bool
      */
     public function paid()
     {
@@ -68,7 +70,7 @@ class Invoice extends Model
     /**
      * Payment is still pending.
      *
-     * @return boolean
+     * @return bool
      */
     public function unpaid()
     {

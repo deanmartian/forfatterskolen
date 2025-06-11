@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -10,6 +11,7 @@ class AssignmentManuscriptEmailToList extends Mailable
     use Queueable, SerializesModels;
 
     public $data;
+
     public $email_subject;
 
     public function __construct($email_data)
@@ -23,5 +25,4 @@ class AssignmentManuscriptEmailToList extends Mailable
             ->subject($this->data['subject'])
             ->view('emails.assignment_manuscript_email_to_list');
     }
-
 }

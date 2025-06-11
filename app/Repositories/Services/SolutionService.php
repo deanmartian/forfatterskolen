@@ -1,21 +1,22 @@
 <?php
+
 namespace App\Repositories\Services;
 
 use App\Http\Requests\SolutionCreateRequest;
 use App\Solution;
 use File;
 
-class SolutionService {
-
+class SolutionService
+{
     /**
      * Store the solution model
+     *
      * @var Solution
      */
     protected $solution;
 
     /**
      * SolutionService constructor.
-     * @param Solution $solution
      */
     public function __construct(Solution $solution)
     {
@@ -23,21 +24,23 @@ class SolutionService {
     }
 
     /**
-     * @param null $id
-     * @param int $page
+     * @param  null  $id
+     * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getRecord($id = NULL, $page = 15)
+    public function getRecord($id = null, $page = 15)
     {
         if ($id) {
             return $this->solution->find($id);
         }
+
         return $this->solution->paginate($page);
     }
 
     /**
      * Create new solution
-     * @param SolutionCreateRequest $request
+     *
+     * @param  SolutionCreateRequest  $request
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function store($request)
@@ -125,7 +128,7 @@ class SolutionService {
             }
         endif;*/
 
-        if ($request->hasFile('image')) :
+        if ($request->hasFile('image')) {
             $destinationPath = 'storage/solution-images/'; // upload path
             $extension = $request->image->extension(); // getting image extension
             $fileName = time().'.'.$extension; // renameing image
@@ -139,7 +142,7 @@ class SolutionService {
                 imagejpeg($image, $destinationPath.$fileName, 70);
             endif;*/
             $requestData['image'] = '/'.$destinationPath.$fileName;
-        endif;
+        }
 
         if (isset($requestData['is_instruction'])) {
             $requestData['is_instruction'] = 1;
@@ -150,8 +153,8 @@ class SolutionService {
 
     /**
      * Update a solution
-     * @param $id
-     * @param SolutionCreateRequest $request
+     *
+     * @param  SolutionCreateRequest  $request
      * @return bool
      */
     public function update($id, $request)
@@ -239,7 +242,7 @@ class SolutionService {
 
             endif;*/
 
-            if ($request->hasFile('image')) :
+            if ($request->hasFile('image')) {
                 $destinationPath = 'storage/solution-images/'; // upload path
                 $extension = $request->image->extension(); // getting image extension
                 $fileName = time().'.'.$extension; // renameing image
@@ -253,21 +256,23 @@ class SolutionService {
                     imagejpeg($image, $destinationPath.$fileName, 70);
                 endif;*/
                 $requestData['image'] = '/'.$destinationPath.$fileName;
-            endif;
+            }
 
             if (isset($requestData['is_instruction'])) {
                 $requestData['is_instruction'] = 1;
             } else {
                 $requestData['is_instruction'] = 0;
             }
+
             return $solution->update($requestData);
         }
+
         return false;
     }
 
     /**
      * Delete a solution
-     * @param $id
+     *
      * @return bool
      */
     public function destroy($id)
@@ -276,7 +281,7 @@ class SolutionService {
         if ($solution) {
             $solution->forceDelete();
         }
+
         return false;
     }
-    
 }
