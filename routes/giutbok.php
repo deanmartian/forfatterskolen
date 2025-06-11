@@ -8,15 +8,10 @@ if (config('app.app_site') == 'no') {
     $domain = 'giutbok.forfatterskolen.no';
 }
 
-Route::group([
-    'domain' => $domain,
-], function () {
+Route::domain($domain)->group(function () {
     Route::get('learner/generate-password', '\Backend\LearnerController@generatePassword');
 
-    Route::group([
-        'middleware' => ['giutbok', 'logActivity'],
-        'namespace' => 'Giutbok',
-    ], function () {
+    Route::middleware('giutbok', 'logActivity')->namespace('Giutbok')->group(function () {
         Route::get('/', 'PageController@dashboard')->name('g-admin.dashboard');
         Route::post('/change-password', 'PageController@changePassword')->name('editor.change-password');
 
@@ -24,9 +19,7 @@ Route::group([
             ->name('g-admin.book-format.add-feedback');
 
         Route::post('learner/register', 'LearnerController@registerLearner')->name('g-admin.learner.register');
-        Route::group([
-            'prefix' => 'learner',
-        ], function () {
+        Route::prefix('learner')->group(function () {
             Route::get('/', 'LearnerController@index')->name('g-admin.learner.index');
         });
 
@@ -43,10 +36,7 @@ Route::group([
             ->name('dropbox.download_file');
     });
 
-    Route::group([
-        'middleware' => 'giutbok',
-        'namespace' => 'Backend',
-    ], function () {
+    Route::middleware('giutbok')->namespace('Backend')->group(function () {
 
         Route::post('backend/change-password', 'PageController@changePassword')->name('giutbok.change-password');
 
@@ -59,14 +49,13 @@ Route::group([
         Route::delete('/self-publishing/delete-learner/{learner_id}', 'SelfPublishingController@deleteLearner')
             ->name('g-admin.self-publishing.delete-learner');
         Route::resource('/self-publishing', 'SelfPublishingController', [
-            'except' => ['create', 'edit', 'index'],
             'names' => [
                 'show' => 'g-admin.self-publishing.show',
                 'store' => 'g-admin.self-publishing.store',
                 'update' => 'g-admin.self-publishing.update',
                 'destroy' => 'g-admin.self-publishing.destroy',
             ],
-        ]);
+        ])->except('create', 'edit', 'index');
 
         Route::get('learner/generate-password', 'LearnerController@generatePassword');
         Route::post('learner/add_to_workshop', 'LearnerController@addToWorkshop')->name('g-admin.learner.add_to_workshop');
@@ -195,7 +184,6 @@ Route::group([
 
         Route::post('/invoice/create-new', 'InvoiceController@addInvoice')->name('g-admin.invoice.new');
         Route::resource('/invoice', 'InvoiceController', [
-            'except' => ['create', 'edit'],
             'names' => [
                 'index' => 'g-admin.invoice.index',
                 'show' => 'g-admin.invoice.show',
@@ -203,14 +191,11 @@ Route::group([
                 'update' => 'g-admin.invoice.update',
                 'destroy' => 'g-admin.invoice.destroy',
             ],
-        ]);
+        ])->except('create', 'edit');
     });
 
     // Authentication
-    Route::group([
-        'prefix' => 'auth',
-        'namespace' => 'Auth',
-    ], function () {
+    Route::prefix('auth')->namespace('Auth')->group(function () {
         Route::post('login', 'LoginController@giutbokLogin')->name('giutbok.login.store');
         Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@giutbokEmailLoginRedirect')
             ->name('giutbok.login.emailRedirect');

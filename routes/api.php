@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
     return $request->user();
 });*/
 
-Route::group(['prefix' => 'cross-domain'], function () {
+Route::prefix('cross-domain')->group(function () {
     Route::post('/get-token', 'Auth\LoginController@crossDomainToken');
     Route::post('/login', 'Auth\LoginController@crossDomainLogin');
 });

@@ -23,14 +23,9 @@ App::setLocale($locale);
  * Front End Routes
  */
 Route::view('/easywrite', 'frontend-easywrite.index');
-Route::group([
-    'domain' => $front,
-], function () {
+Route::domain($front)->group(function () {
 
-    Route::group([
-        'namespace' => 'Frontend',
-        'middleware' => 'logActivity',
-    ], function () {
+    Route::namespace('Frontend')->middleware('logActivity')->group(function () {
         Route::get('/', 'HomeController@index')->name('front.home'); // Homepage
         Route::post('/fb-leads', 'HomeController@fbLeads'); // Homepage
         Route::post('/agree-gdpr', 'HomeController@agreeGdpr')->name('front.agree-gdpr');
@@ -95,9 +90,7 @@ Route::group([
 
         Route::get('/power-office', 'HomeController@powerOffice');
 
-        Route::group([
-            'prefix' => 'coaching-time',
-        ], function () {
+        Route::prefix('coaching-time')->group(function () {
             Route::post('/calculate', 'HomeController@coachingTimeCalculate');
             Route::post('/validate-form', 'HomeController@coachingTimeValidate');
         });
@@ -148,9 +141,7 @@ Route::group([
         Route::post('/contract/{code}/sign', 'HomeController@contractSign')->name('front.contract.sign');
         Route::get('/generate-image', 'HomeController@generateImage');
 
-        Route::group([
-            'prefix' => 'shop-manuscript',
-        ], function () {
+        Route::prefix('shop-manuscript')->group(function () {
             Route::get('/{id}/checkout', 'ShopManuscriptController@checkout')->name('front.shop-manuscript.checkout'); // Checkout Shop Manuscript
             Route::post('/{id}/place_order', 'ShopManuscriptController@place_order')->name('front.shop-manuscript.place_order'); // Checkout Shop Manuscript
             Route::get('/{id}/cancelled-order', 'ShopManuscriptController@orderCancelled')->name('front.shop-manuscript.cancelled-order'); // Checkout
@@ -218,9 +209,7 @@ Route::group([
         Route::get('/current-user', 'LearnerController@currentUser');
         Route::post('/file/count-characters', 'LearnerController@countFileCharacters');
         // Course
-        Route::group([
-            'prefix' => 'course',
-        ], function () {
+        Route::prefix('course')->group(function () {
             Route::get('/', 'CourseController@index')->name('front.course.index'); // Course Listing
             Route::get('/{id}', 'CourseController@show')->name('front.course.show'); // Course Details
             Route::get('/{id}/checkout', 'ShopController@sveaCheckout')->name('front.course.checkout'); // Checkout
@@ -249,9 +238,7 @@ Route::group([
             Route::post('/share/{share_hash}/checkout', 'ShopController@shareCourseCheckout')->name('front.course.share.checkout');
         });
 
-        Route::group([
-            'prefix' => 'publishing-service',
-        ], function () {
+        Route::prefix('publishing-service')->group(function () {
             Route::get('/calculator', 'PublishingServiceController@serviceCalculator')->name('front.service-calculator');
             Route::get('/thank-you', 'PublishingServiceController@thankyou')->name('publishing-service.thank-you');
             Route::get('/{id}', 'PublishingServiceController@show');
@@ -259,21 +246,15 @@ Route::group([
         });
 
         // Workshop
-        Route::group([
-            'prefix' => 'workshop',
-        ], function () {
+        Route::prefix('workshop')->group(function () {
             Route::get('/', 'WorkshopController@index')->name('front.workshop.index'); // workshop Listing
             Route::get('/{id}', 'WorkshopController@show')->name('front.workshop.show'); // workshop Details
             Route::get('/{id}/checkout', 'WorkshopController@checkout')->name('front.workshop.checkout'); // Checkout
             Route::post('/{id}/checkout/place_order', 'WorkshopController@place_order')->name('front.workshop.place_order'); // Place Order
         });
 
-        Route::group([
-            'prefix' => 'gift',
-        ], function () {
-            Route::group([
-                'prefix' => 'course',
-            ], function () {
+        Route::prefix('gift')->group(function () {
+            Route::prefix('course')->group(function () {
                 Route::get('/', 'GiftController@course')->name('front.gift.course');
                 Route::get('/{id}', 'GiftController@courseShow')->name('front.gift.course.show');
                 Route::get('/{id}/checkout', 'GiftController@courseCheckout')->name('front.gift.course.checkout');
@@ -282,9 +263,7 @@ Route::group([
                 Route::get('/{id}/thankyou', 'GiftController@thankyou')->name('front.gift.course.thankyou');
             });
 
-            Route::group([
-                'prefix' => 'shop-manuscript',
-            ], function () {
+            Route::prefix('shop-manuscript')->group(function () {
                 Route::get('/', 'GiftController@shopManuscript')->name('front.gift.shop-manuscript');
                 Route::get('/{id}/checkout', 'GiftController@shopManuscriptCheckout')->name('front.gift.shop-manuscript.checkout'); // Checkout Shop Manuscript
                 Route::post('/{id}/checkout/validate-form', 'GiftController@validateCheckoutForm');
@@ -310,11 +289,7 @@ Route::group([
     });
 
     // Learner Dashboard
-    Route::group([
-        'middleware' => ['learner', 'logActivity'],
-        'namespace' => 'Frontend',
-        'prefix' => 'account',
-    ], function () {
+    Route::middleware('learner', 'logActivity')->namespace('Frontend')->prefix('account')->group(function () {
         Route::get('/dashboard', 'LearnerController@dashboard')->name('learner.dashboard'); // Dashboard Page
         Route::get('/course', 'LearnerController@course')->name('learner.course')->middleware('checkAutoRenewCourses'); // Courses Page
         Route::get('/course/{id}', 'LearnerController@courseShow')->name('learner.course.show'); // Single Course Page
@@ -402,9 +377,7 @@ Route::group([
         Route::post('/self-publishing/publishing/order/process', 'SelfPublishingController@processPublishingOrder')
             ->name('learner.self-publishing.publishing.order.process');
 
-        Route::group([
-            'prefix' => 'project/{id}',
-        ], function () {
+        Route::prefix('project/{id}')->group(function () {
             Route::get('/', 'LearnerController@showProject')->name('learner.project.show');
             Route::get('/service/{service_id}/order', 'LearnerController@orderService')->name('learner.service.order');
             Route::get('/graphic-work', 'LearnerController@projectGraphicWork')->name('learner.project.graphic-work');
@@ -593,7 +566,7 @@ Route::group([
 
         // Profile Email
 
-        Route::group(['prefix' => 'email'], function () {
+        Route::prefix('email')->group(function () {
             Route::get('list', 'LearnerController@listEmails');
             Route::post('primary/set', 'LearnerController@setPrimaryEmail');
             Route::post('destroy', 'LearnerController@removeSecondaryEmail');
@@ -605,11 +578,7 @@ Route::group([
     Route::get('/api/pilotleser/login', 'Frontend\LearnerController@pilotleserLogin');
 
     // Authentication
-    Route::group([
-        'prefix' => 'auth',
-        'namespace' => 'Auth',
-        'middleware' => 'guest',
-    ], function () {
+    Route::prefix('auth')->namespace('Auth')->middleware('guest')->group(function () {
         Route::get('login', 'LoginController@showFrontend')->name('auth.login.show');
         Route::get('login/self-publishing', 'LoginController@showSelfPublishing')->name('auth.login.self-publishing-show');
 
@@ -637,10 +606,7 @@ Route::group([
     });
 
     // without checking middleware
-    Route::group([
-        'prefix' => 'auth',
-        'namespace' => 'Auth',
-    ], function () {
+    Route::prefix('auth')->namespace('Auth')->group(function () {
         Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
         Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
             ->name('auth.login.emailRedirect');
@@ -685,14 +651,9 @@ Route::group([
 /**
  * Admin Routes
  */
-Route::group([
-    'domain' => $admin,
-], function () {
+Route::domain($admin)->group(function () {
 
-    Route::group([
-        'middleware' => ['admin', 'logActivity'],
-        'namespace' => 'Backend',
-    ], function () {
+    Route::middleware('admin', 'logActivity')->namespace('Backend')->group(function () {
 
         // Dashboard Page
         Route::get('/', 'PageController@dashboard')->name('backend.dashboard');
@@ -716,14 +677,13 @@ Route::group([
         Route::get('/worker-status', 'PageController@workerStatus');
 
         Route::resource('page_meta', 'PageMetaController', [
-            'except' => ['show', 'create', 'edit'],
             'names' => [
                 'index' => 'admin.page_meta.index',
                 'store' => 'admin.page_meta.store',
                 'update' => 'admin.page_meta.update',
                 'destroy' => 'admin.page_meta.delete',
             ],
-        ]);
+        ])->except('show', 'create', 'edit');
 
         // Learners Route
         Route::get('learner/list-notes', 'LearnerController@listNotes')->name('admin.learner.list_notes');
@@ -901,20 +861,18 @@ Route::group([
 
         Route::get('/shareable-course/get-package/{course_id}', 'ShareableCourseController@getCoursePackage');
         Route::resource('shareable-course', 'ShareableCourseController', [
-            'except' => ['crete', 'show', 'edit'],
             'names' => [
                 'index' => 'admin.shareable-course.index',
                 'store' => 'admin.shareable-course.store',
                 'update' => 'admin.shareable-course.update',
                 'destroy' => 'admin.shareable-course.destroy',
             ],
-        ]);
+        ])->except('crete', 'show', 'edit');
 
         // Email Out Route
         Route::post('/course/{course_id}/email-out/{email_out}/send-email', 'EmailOutController@sendEmailToLearners')
             ->name('admin.email-out.send-email');
         Route::resource('/course/{course_id}/email-out', 'EmailOutController', [
-            'except' => 'show',
             'names' => [
                 'create' => 'admin.email-out.create',
                 'store' => 'admin.email-out.store',
@@ -922,11 +880,10 @@ Route::group([
                 'update' => 'admin.email-out.update',
                 'destroy' => 'admin.email-out.destroy',
             ],
-        ]);
+        ])->except('show');
 
         // Course Reward Coupon Route
         Route::resource('/course/{course_id}/reward-coupons', 'CourseRewardCouponController', [
-            'except' => 'show',
             'names' => [
                 'create' => 'admin.reward-coupons.create',
                 'store' => 'admin.reward-coupons.store',
@@ -934,7 +891,7 @@ Route::group([
                 'update' => 'admin.reward-coupons.update',
                 'destroy' => 'admin.reward-coupons.destroy',
             ],
-        ]);
+        ])->except('show');
 
         Route::get('/course/{course_id}/package/{package_id}/certificate', 'CourseController@certificate')
             ->name('admin.package.certificate');
@@ -950,25 +907,23 @@ Route::group([
             ->name('admin.reward-coupons.export-to-text');
 
         Route::resource('course/{id}/discount', 'CourseDiscountController', [
-            'except' => ['show', 'create', 'edit'],
             'names' => [
                 'index' => 'admin.course-discount.index',
                 'store' => 'admin.course-discount.store',
                 'update' => 'admin.course-discount.update',
                 'destroy' => 'admin.course-discount.destroy',
             ],
-        ]);
+        ])->except('show', 'create', 'edit');
 
         // Free Courses Route
         Route::resource('free-course', 'FreeCourseController', [
-            'except' => ['show', 'create', 'edit'],
             'names' => [
                 'index' => 'admin.free-course.index',
                 'store' => 'admin.free-course.store',
                 'update' => 'admin.free-course.update',
                 'destroy' => 'admin.free-course.destroy',
             ],
-        ]);
+        ])->except('show', 'create', 'edit');
 
         Route::post('free-course/webinar', 'FreeCourseController@storeWebinar')->name('admin.free-webinar.store');
         Route::put('free-course/webinar/{id}/update', 'FreeCourseController@updateWebinar')->name('admin.free-webinar.update');
@@ -991,12 +946,11 @@ Route::group([
 
         // Package Course  Route
         Route::resource('package_course', 'PackageCourseController', [
-            'except' => ['show', 'index', 'edit', 'update', 'create'],
             'names' => [
                 'store' => 'admin.package_course.store',
                 'destroy' => 'admin.package_course.destroy',
             ],
-        ]);
+        ])->except('show', 'index', 'edit', 'update', 'create');
 
         // Workshop Route
         Route::resource('workshop', 'WorkshopController', [
@@ -1022,27 +976,24 @@ Route::group([
 
         // Workshop Presenter Route
         Route::resource('workshop/{workshop_id}/workshop-presenter', 'WorkshopPresenterController', [
-            'except' => ['index', 'show', 'create', 'edit'],
             'names' => [
                 'store' => 'admin.course.workshop-presenter.store',
                 'update' => 'admin.course.workshop-presenter.update',
                 'destroy' => 'admin.course.workshop-presenter.destroy',
             ],
-        ]);
+        ])->except('index', 'show', 'create', 'edit');
 
         // Workshop Menu Route
         Route::resource('workshop/{workshop_id}/workshop-menu', 'WorkshopMenuController', [
-            'except' => ['index', 'show', 'create', 'edit'],
             'names' => [
                 'store' => 'admin.course.workshop-menu.store',
                 'update' => 'admin.course.workshop-menu.update',
                 'destroy' => 'admin.course.workshop-menu.destroy',
             ],
-        ]);
+        ])->except('index', 'show', 'create', 'edit');
 
         // Lessons Route
         Route::resource('/course/{course_id}/lesson', 'LessonController', [
-            'except' => 'show',
             'names' => [
                 'create' => 'admin.lesson.create',
                 'store' => 'admin.lesson.store',
@@ -1050,7 +1001,7 @@ Route::group([
                 'update' => 'admin.lesson.update',
                 'destroy' => 'admin.lesson.destroy',
             ],
-        ]);
+        ])->except('show');
         Route::post('/lesson/save_order', 'LessonController@save_order')->name('admin.lesson.save_order'); // Save lesson order
         Route::get('/lesson/download-document/{id}', 'LessonController@downloadLessonDocument')->name('admin.lesson.download-lesson-document');
         Route::delete('/lesson/delete-document/{id}', 'LessonController@deleteLessonDocument')->name('admin.lesson.delete-lesson-document');
@@ -1066,7 +1017,6 @@ Route::group([
         Route::post('/admin/type-change', 'AdminController@adminTypeChange');
         Route::get('/admin/clear/cache', 'AdminController@clearCache')->name('admin.clear.cache');
         Route::resource('/admin', 'AdminController', [
-            'except' => ['create', 'edit'],
             'names' => [
                 'index' => 'admin.admin.index',
                 'show' => 'admin.admin.show',
@@ -1074,7 +1024,7 @@ Route::group([
                 'update' => 'admin.admin.update',
                 'destroy' => 'admin.admin.destroy',
             ],
-        ]);
+        ])->except('create', 'edit');
         Route::post('/save-staff/{id?}', 'AdminController@saveStaff')->name('admin.staff.save');
         Route::delete('/delete-staff/{id?}', 'AdminController@deleteStaff')->name('admin.staff.delete');
         Route::get('/fiken-redirect', 'AdminController@fikenRedirect')->name('admin.fiken.redirect');
@@ -1099,7 +1049,6 @@ Route::group([
         ]);
 
         Route::resource('/email', 'EmailController', [
-            'except' => ['create', 'edit'],
             'names' => [
                 'index' => 'admin.email.index',
                 'show' => 'admin.email.show',
@@ -1107,7 +1056,7 @@ Route::group([
                 'update' => 'admin.email.update',
                 'destroy' => 'admin.email.destroy',
             ],
-        ]);
+        ])->except('create', 'edit');
 
         Route::post('email/login', 'EmailController@login')->name('admin.email.login');
         Route::get('email/move/{id}', 'EmailController@move')->name('admin.email.move');
@@ -1126,13 +1075,12 @@ Route::group([
 
         // Webinar Route
         Route::resource('webinar', 'WebinarController', [
-            'except' => ['create', 'edit', 'show', 'index'],
             'names' => [
                 'store' => 'admin.webinar.store',
                 'update' => 'admin.webinar.update',
                 'destroy' => 'admin.webinar.destroy',
             ],
-        ]);
+        ])->except('create', 'edit', 'show', 'index');
         Route::post('webinar/{id}/delete', 'WebinarController@destroy')->name('admin.webinar.delete');
         Route::put('webinar/{id}/make-replay', 'WebinarController@makeReplay')->name('admin.webinar.make-replay');
         Route::post('webinar/{id}/set-schedule', 'WebinarController@setSchedule')->name('admin.webinar.schedule');
@@ -1146,13 +1094,12 @@ Route::group([
 
         // Webinar Presenter Route
         Route::resource('webinar/{webinar_id}/presenter', 'WebinarPresenterController', [
-            'except' => ['index', 'show', 'create', 'edit'],
             'names' => [
                 'store' => 'admin.webinar.webinar-presenter.store',
                 'update' => 'admin.webinar.webinar-presenter.update',
                 'destroy' => 'admin.webinar.webinar-presenter.destroy',
             ],
-        ]);
+        ])->except('index', 'show', 'create', 'edit');
 
         // Webinar Editor Route
         Route::post('storeWebinarEditor/{webinar_id}', 'WebinarEditorController@store')->name('admin.webinar.webinar-editor.store');
@@ -1161,11 +1108,10 @@ Route::group([
 
         // Assignments Route
         Route::resource('/assignment', 'AssignmentController', [
-            'except' => ['show', 'create', 'edit', 'store', 'update', 'destroy'],
             'names' => [
                 'index' => 'admin.assignment.index',
             ],
-        ]);
+        ])->except('show', 'create', 'edit', 'store', 'update', 'destroy');
 
         Route::get('/course/{course_id}/assignment/{assignment_id}/list-manuscripts-without-editor',
             'AssignmentController@listManuscriptsWithoutEditor');
@@ -1173,14 +1119,13 @@ Route::group([
             'AssignmentController@assignEditorToManuscripts')->name('admin.assignment.assign-editor-to-manuscripts');
 
         Route::resource('course/{course_id}/assignment', 'AssignmentController', [
-            'except' => ['index', 'create', 'edit'],
             'names' => [
                 'show' => 'admin.assignment.show',
                 'store' => 'admin.assignment.store',
                 'update' => 'admin.assignment.update',
                 'destroy' => 'admin.assignment.destroy',
             ],
-        ]);
+        ])->except('index', 'create', 'edit');
 
         Route::get('/power-office/self-publishing/{publishing_id}/add-to-po', 'PowerOfficeController@addSelfPublshingToPowerOffice')
             ->name('admin.power-office.self-publishing.add-to-po');
@@ -1333,14 +1278,13 @@ Route::group([
 
         // Assignment Groups Route
         Route::resource('course/{course_id}/assignment/{assignment_id}/group', 'AssignmentGroupController', [
-            'except' => ['index', 'create', 'edit'],
             'names' => [
                 'show' => 'admin.assignment-group.show',
                 'store' => 'admin.assignment-group.store',
                 'update' => 'admin.assignment-group.update',
                 'destroy' => 'admin.assignment-group.destroy',
             ],
-        ]);
+        ])->except('index', 'create', 'edit');
         Route::post('course/{course_id}/assignment/{assignment_id}/group/{id}/add_learner', 'AssignmentGroupController@add_learner')->name('assignment.group.add_learner');
         Route::post('course/{course_id}/assignment/{assignment_id}/group/{group_id}/remove_learner/{id}', 'AssignmentGroupController@remove_learner')->name('assignment.group.remove_learner');
         Route::get('course/{course_id}/assignment/{assignment_id}/group/{group_id}/download_all', 'AssignmentGroupController@downloadAll')->name('assignment.group.download_all');
@@ -1360,7 +1304,6 @@ Route::group([
 
         // Manuscripts Route
         Route::resource('/manuscript', 'ManuscriptController', [
-            'except' => ['edit', 'create'],
             'names' => [
                 'index' => 'admin.manuscript.index',
                 'store' => 'admin.manuscript.store',
@@ -1368,7 +1311,7 @@ Route::group([
                 'update' => 'admin.manuscript.update',
                 'destroy' => 'admin.manuscript.destroy',
             ],
-        ]);
+        ])->except('edit', 'create');
         Route::post('/manuscript/{id}', 'ManuscriptController@addFeedback')->name('admin.feedback.store'); // Store Feedback
         Route::post('/feedback/{id}/delete', 'ManuscriptController@destroyFeedback')->name('admin.feedback.destroy'); // Delete Feedback
         Route::post('/manuscript/{id}/email', 'ManuscriptController@sendEmail')->name('admin.manuscript.email'); // Send email
@@ -1377,9 +1320,7 @@ Route::group([
         Route::put('/email_template/edit_email_template/{id}', 'EmailTemplateController@editEmailTemplate')->name('admin.manuscript.edit_email_template'); // Update Email Template
         Route::post('/email_template/courseEditAdd/{course_id}', 'EmailTemplateController@courseEditAdd')->name('admin.email_template.courseEditAdd'); // Update Email Template
 
-        Route::group([
-            'prefix' => 'sale',
-        ], function () {
+        Route::prefix('sale')->group(function () {
 
             Route::get('/', 'SaleController@index')->name('admin.sales.index');
             Route::get('/load-tab-content', 'SaleController@loadTabContent');
@@ -1394,26 +1335,22 @@ Route::group([
 
         Route::get('/email-history', 'EmailHistoryController@index')->name('admin.email-history.index');
         Route::resource('/replays', 'ReplayController', [
-            'except' => ['show'],
             'names' => [
                 'index' => 'admin.replay.index',
                 'store' => 'admin.replay.store',
                 'update' => 'admin.replay.update',
                 'destroy' => 'admin.replay.delete',
             ],
-        ]);
+        ])->except('show');
 
         Route::get('/checkout-log', 'CheckoutLogController@index')->name('admin.checkout-log.index');
 
-        Route::group([
-            'prefix' => 'upcoming',
-        ], function () {
+        Route::prefix('upcoming')->group(function () {
             Route::get('/', 'UpcomingController@index')->name('admin.upcoming.index');
             Route::post('/{id}/save', 'UpcomingController@saveSection')->name('admin.upcoming.save');
         });
 
         Route::resource('/publishing', 'PublishingController', [
-            'except' => ['show'],
             'names' => [
                 'index' => 'admin.publishing.index',
                 'create' => 'admin.publishing.create',
@@ -1422,31 +1359,28 @@ Route::group([
                 'update' => 'admin.publishing.update',
                 'destroy' => 'admin.publishing.destroy',
             ],
-        ]);
+        ])->except('show');
 
         // FAQ Route
         Route::resource('/faq', 'FaqController', [
-            'only' => ['index', 'store', 'update', 'destroy'],
             'names' => [
                 'index' => 'admin.faq.index',
                 'store' => 'admin.faq.store',
                 'update' => 'admin.faq.update',
                 'destroy' => 'admin.faq.destroy',
             ],
-        ]);
+        ])->only('index', 'store', 'update', 'destroy');
 
         Route::resource('/competition', 'CompetitionController', [
-            'only' => ['index', 'store', 'update', 'destroy'],
             'names' => [
                 'index' => 'admin.competition.index',
                 'store' => 'admin.competition.store',
                 'update' => 'admin.competition.update',
                 'destroy' => 'admin.competition.destroy',
             ],
-        ]);
+        ])->only('index', 'store', 'update', 'destroy');
 
         Route::resource('/writing-group', 'WritingGroupController', [
-            'except' => ['show'],
             'names' => [
                 'index' => 'admin.writing-group.index',
                 'create' => 'admin.writing-group.create',
@@ -1455,10 +1389,9 @@ Route::group([
                 'update' => 'admin.writing-group.update',
                 'destroy' => 'admin.writing-group.destroy',
             ],
-        ]);
+        ])->except('show');
 
         Route::resource('/solution', 'SolutionController', [
-            'except' => ['show'],
             'names' => [
                 'index' => 'admin.solution.index',
                 'create' => 'admin.solution.create',
@@ -1467,10 +1400,9 @@ Route::group([
                 'update' => 'admin.solution.update',
                 'destroy' => 'admin.solution.destroy',
             ],
-        ]);
+        ])->except('show');
 
         Route::resource('/sos-children', 'SosChildrenController', [
-            'except' => ['show'],
             'names' => [
                 'index' => 'admin.sos-children.index',
                 'create' => 'admin.sos-children.create',
@@ -1479,7 +1411,7 @@ Route::group([
                 'update' => 'admin.sos-children.update',
                 'destroy' => 'admin.sos-children.destroy',
             ],
-        ]);
+        ])->except('show');
         Route::get('/sos-children/edit-main-description', 'SosChildrenController@getEditMainDescription')
             ->name('admin.sos-children.get-main-description');
         Route::post('/sos-children/edit-main-description', 'SosChildrenController@editMainDescription')
@@ -1488,7 +1420,6 @@ Route::group([
         Route::put('/blog/status-update/{id}', 'BlogController@statusUpdate')
             ->name('admin.sos-children.main-description');
         Route::resource('/blog', 'BlogController', [
-            'except' => ['show'],
             'names' => [
                 'index' => 'admin.blog.index',
                 'create' => 'admin.blog.create',
@@ -1497,10 +1428,9 @@ Route::group([
                 'update' => 'admin.blog.update',
                 'destroy' => 'admin.blog.destroy',
             ],
-        ]);
+        ])->except('show');
 
         Route::resource('/publisher-book', 'PublisherBookController', [
-            'except' => ['show'],
             'names' => [
                 'index' => 'admin.publisher-book.index',
                 'create' => 'admin.publisher-book.create',
@@ -1509,18 +1439,15 @@ Route::group([
                 'update' => 'admin.publisher-book.update',
                 'destroy' => 'admin.publisher-book.destroy',
             ],
-        ]);
+        ])->except('show');
 
-        Route::group([
-            'prefix' => '/publisher-book-library',
-        ], function () {
+        Route::prefix('/publisher-book-library')->group(function () {
             Route::post('/{book_id}/store', 'PublisherBookController@storeLibrary')->name('publisher-book-library.store');
             Route::put('/{id}/update', 'PublisherBookController@updateLibrary')->name('publisher-book-library.update');
             Route::delete('/{id}/delete', 'PublisherBookController@deleteLibrary')->name('publisher-book-library.delete');
         });
 
         Route::resource('/opt-in', 'OptInController', [
-            'except' => ['show'],
             'names' => [
                 'index' => 'admin.opt-in.index',
                 'create' => 'admin.opt-in.create',
@@ -1529,10 +1456,9 @@ Route::group([
                 'update' => 'admin.opt-in.update',
                 'destroy' => 'admin.opt-in.destroy',
             ],
-        ]);
+        ])->except('show');
 
         Route::resource('/poem', 'PoemController', [
-            'except' => ['show'],
             'names' => [
                 'index' => 'admin.poem.index',
                 'create' => 'admin.poem.create',
@@ -1541,10 +1467,9 @@ Route::group([
                 'update' => 'admin.poem.update',
                 'destroy' => 'admin.poem.destroy',
             ],
-        ]);
+        ])->except('show');
 
         Route::resource('/solution/{solution_id}/article', 'SolutionArticleController', [
-            'except' => ['show'],
             'names' => [
                 'index' => 'admin.solution-article.index',
                 'create' => 'admin.solution-article.create',
@@ -1553,7 +1478,7 @@ Route::group([
                 'update' => 'admin.solution-article.update',
                 'destroy' => 'admin.solution-article.destroy',
             ],
-        ]);
+        ])->except('show');
 
         Route::get('/free-manuscript', 'FreeManuscriptController@index')->name('admin.free-manuscript.index');
         Route::post('/free-manuscript/{id}/delete', 'FreeManuscriptController@deleteFreeManuscript')->name('admin.free-manuscript.delete');
@@ -1566,7 +1491,6 @@ Route::group([
         Route::post('/free-manuscript/{id}/approve_feedback', 'FreeManuscriptController@approveFeedback')->name('head_editor.free-manuscript.feedback_approve');
 
         Route::resource('/other-service', 'OtherServiceController', [
-            'except' => ['show'],
             'names' => [
                 'index' => 'admin.other-service.index',
                 'create' => 'admin.other-service.create',
@@ -1575,7 +1499,7 @@ Route::group([
                 'update' => 'admin.other-service.update',
                 'destroy' => 'admin.other-service.destroy',
             ],
-        ]);
+        ])->except('show');
 
         Route::post('/other-service/{id}/coaching-timer/approve_date', 'OtherServiceController@approveDate')->name('admin.other-service.coaching-timer.approve_date');
         Route::post('/other-service/{id}/coaching-timer/set-approve-date', 'OtherServiceController@setCoachingApproveDate')
@@ -1594,14 +1518,13 @@ Route::group([
 
         // Shop Manuscripts Route
         Route::resource('/shop-manuscript', 'ShopManuscriptController', [
-            'except' => ['edit', 'create', 'show'],
             'names' => [
                 'index' => 'admin.shop-manuscript.index',
                 'store' => 'admin.shop-manuscript.store',
                 'update' => 'admin.shop-manuscript.update',
                 'destroy' => 'admin.shop-manuscript.destroy',
             ],
-        ]);
+        ])->except('edit', 'create', 'show');
         Route::post('/shop-manuscript-taken/{id}/assign_editor', 'ShopManuscriptController@updateTaken')->name('admin.shop-manuscript-taken.update_taken'); // Assign editor
         Route::post('/shop-manuscript-taken/{id}/add-feedback', 'ShopManuscriptController@addFeedback')->name('admin.shop-manuscript-taken-feedback.store'); // Store Shop Manuscript Feedback
         Route::post('/shop-manuscript-taken/{id}/delete', 'ShopManuscriptController@destroyFeedback')->name('admin.shop-manuscript-taken-feedback.delete'); // Remove Shop Manuscript Feedback
@@ -1616,7 +1539,6 @@ Route::group([
         // Invoices Route
         Route::post('/invoice/create-new', 'InvoiceController@addInvoice')->name('admin.invoice.new');
         Route::resource('/invoice', 'InvoiceController', [
-            'except' => ['create', 'edit'],
             'names' => [
                 'index' => 'admin.invoice.index',
                 'show' => 'admin.invoice.show',
@@ -1624,7 +1546,7 @@ Route::group([
                 'update' => 'admin.invoice.update',
                 'destroy' => 'admin.invoice.destroy',
             ],
-        ]);
+        ])->except('create', 'edit');
         Route::post('/invoice/{id}', 'InvoiceController@addTransaction')->name('admin.transaction.store'); // Store Transaction
         Route::post('/invoice/{invoice_id}/transaction/{transaction_id}', 'InvoiceController@updateTransaction')->name('admin.transaction.update'); // Update Transaction
         Route::post('/invoice/{invoice_id}/transaction/{transaction_id}/delete', 'InvoiceController@destroyTransaction')->name('admin.transaction.destroy'); // Delete Transaction
@@ -1634,11 +1556,10 @@ Route::group([
 
         // Package shop manuscripts route
         Route::resource('package_shop_manuscript/{id}', 'PackageShopManuscriptController', [
-            'except' => ['index', 'show', 'edit', 'create', 'update', 'destroy'],
             'names' => [
                 'store' => 'admin.package_shop_manuscript.store',
             ],
-        ]);
+        ])->except('index', 'show', 'edit', 'create', 'update', 'destroy');
         Route::post('package_shop_manuscript/{id}/remove', 'PackageShopManuscriptController@delete')->name('admin.package_shop_manuscript.destroy');
 
         // Package workshops route
@@ -1647,7 +1568,6 @@ Route::group([
 
         // Editors route
         Route::resource('/editor', 'EditorController', [
-            'except' => 'show',
             'names' => [
                 'index' => 'admin.editor.index',
                 'create' => 'admin.editor.create',
@@ -1656,13 +1576,12 @@ Route::group([
                 'update' => 'admin.editor.update',
                 'destroy' => 'admin.editor.destroy',
             ],
-        ]);
+        ])->except('show');
 
         Route::view('cron-log', 'backend.support.cron-log')->name('admin.cron-log.index');
 
         // Goto-webinar route
         Route::resource('/goto-webinar', 'GotoWebinarController', [
-            'except' => 'show',
             'names' => [
                 'index' => 'admin.goto-webinar.index',
                 'create' => 'admin.goto-webinar.create',
@@ -1671,11 +1590,10 @@ Route::group([
                 'update' => 'admin.goto-webinar.update',
                 'destroy' => 'admin.goto-webinar.destroy',
             ],
-        ]);
+        ])->except('show');
 
         // testimonial routes
         Route::resource('/testimonial', 'TestimonialController', [
-            'except' => 'show',
             'names' => [
                 'index' => 'admin.testimonial.index',
                 'create' => 'admin.testimonial.create',
@@ -1684,22 +1602,20 @@ Route::group([
                 'update' => 'admin.testimonial.update',
                 'destroy' => 'admin.testimonial.destroy',
             ],
-        ]);
+        ])->except('show');
 
         // testimonial routes
         Route::resource('/file', 'FilesController', [
-            'except' => ['show', 'edit', 'create'],
             'names' => [
                 'index' => 'admin.file.index',
                 'store' => 'admin.file.store',
                 'update' => 'admin.file.update',
                 'destroy' => 'admin.file.destroy',
             ],
-        ]);
+        ])->except('show', 'edit', 'create');
 
         Route::get('/personal-trainer/export', 'PersonalTrainerController@export');
         Route::resource('/personal-trainer', 'PersonalTrainerController', [
-            'except' => ['edit'],
             'names' => [
                 'index' => 'admin.personal-trainer.index',
                 'show' => 'admin.personal-trainer.show',
@@ -1707,7 +1623,7 @@ Route::group([
                 'store' => 'admin.personal-trainer.store',
                 'destroy' => 'admin.personal-trainer.destroy',
             ],
-        ]);
+        ])->except('edit');
 
         Route::get('/single-competition', 'PageController@singleCompetition')
             ->name('admin.single-competition.index');
@@ -1724,7 +1640,6 @@ Route::group([
 
         // Calendar Notes
         Route::resource('/calendar-note', 'CalendarNoteController', [
-            'except' => 'show',
             'names' => [
                 'index' => 'admin.calendar-note.index',
                 'create' => 'admin.calendar-note.create',
@@ -1733,7 +1648,7 @@ Route::group([
                 'update' => 'admin.calendar-note.update',
                 'destroy' => 'admin.calendar-note.destroy',
             ],
-        ]);
+        ])->except('show');
 
         // Calendar Page
         Route::get('/calendar', 'PageController@calendar')->name('backend.calendar');
@@ -1761,7 +1676,6 @@ Route::group([
         Route::post('/news/save', 'SettingsController@saveNews')->name('admin.news.save');
 
         Route::resource('/genre', 'GenreController', [
-            'except' => ['create', 'edit'],
             'names' => [
                 'index' => 'admin.genre.index',
                 'show' => 'admin.genre.show',
@@ -1769,7 +1683,7 @@ Route::group([
                 'update' => 'admin.genre.update',
                 'destroy' => 'admin.genre.destroy',
             ],
-        ]);
+        ])->except('create', 'edit');
 
         Route::delete('/self-publishing/remove-learner/{id}', 'SelfPublishingController@removeLearnerFromPublishing')
             ->name('admin.learner.remove-self-publishing');
@@ -1784,7 +1698,6 @@ Route::group([
         Route::post('/self-publishing/{id}/update-status', 'SelfPublishingController@updateStatus')
             ->name('admin.self-publishing.update-status');
         Route::resource('/self-publishing', 'SelfPublishingController', [
-            'except' => ['create', 'edit'],
             'names' => [
                 'index' => 'admin.self-publishing.index',
                 'show' => 'admin.self-publishing.show',
@@ -1792,12 +1705,11 @@ Route::group([
                 'update' => 'admin.self-publishing.update',
                 'destroy' => 'admin.self-publishing.destroy',
             ],
-        ]);
+        ])->except('create', 'edit');
 
         Route::get('/book-publisher/calculator', 'BookPublisherController@calculator')->name('admin.book-publisher.calculator');
 
         Route::resource('/marketing-plan', 'MarketingPlanController', [
-            'except' => ['create', 'edit'],
             'names' => [
                 'index' => 'admin.marketing-plan.index',
                 'show' => 'admin.marketing-plan.show',
@@ -1805,7 +1717,7 @@ Route::group([
                 'update' => 'admin.marketing-plan.update',
                 'destroy' => 'admin.marketing-plan.destroy',
             ],
-        ]);
+        ])->except('create', 'edit');
 
         Route::post('/book-for-sale/{book_for_sale_id}/save-inventory', 'BookForSaleController@saveInventory')
             ->name('admin.book-for-sale.save-inventory');
@@ -1820,16 +1732,15 @@ Route::group([
             ->name('admin.book-for-sale.delete-distribution-cost');
 
         Route::resource('/book-for-sale', 'BookForSaleController', [
-            'except' => ['create', 'edit'],
             'names' => [
                 'index' => 'admin.book-for-sale.index',
                 'show' => 'admin.book-for-sale.show',
             ],
-        ]);
+        ])->except('create', 'edit');
 
         Route::get('/application', 'PageController@application')->name('admin.application');
 
-        Route::group(['prefix' => 'queue-jobs'], function () {
+        Route::prefix('queue-jobs')->group(function () {
             Route::get('/', 'QueueJobController@index')->name('admin.queue-jobs');
             Route::post('/jobs/run', 'QueueJobController@runJobs')->name('admin.queue-jobs.jobs.run');
             Route::post('/failed-jobs/retry-all', 'QueueJobController@retryAll')->name('admin.queue-jobs.failed-jobs.retry-all');
@@ -1862,7 +1773,6 @@ Route::group([
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');
 
         Route::resource('/pulse', 'PulseController', [
-            'except' => ['create', 'edit'],
             'names' => [
                 'index' => 'admin.pulse.index',
                 'show' => 'admin.pulse.show',
@@ -1870,12 +1780,11 @@ Route::group([
                 'update' => 'admin.pulse.update',
                 'destroy' => 'admin.pulse.destroy',
             ],
-        ]);
+        ])->except('create', 'edit');
         Route::post('/pulse/{id}/update-pulse-title', 'PulseController@updatePulseTitle')->name('admin.pulse.update-pulse-title'); // Assign User
         Route::post('/pulse/remove-subscriber', 'PulseController@removeSubscriber')->name('admin.pulse.remove-subscriber'); // Assign User
 
         Route::resource('/board', 'BoardController', [
-            'except' => ['create', 'edit'],
             'names' => [
                 'index' => 'admin.board.index',
                 'show' => 'admin.board.show',
@@ -1883,7 +1792,7 @@ Route::group([
                 'update' => 'admin.board.update',
                 'destroy' => 'admin.board.destroy',
             ],
-        ]);
+        ])->except('create', 'edit');
         Route::post('/board/{id}/assign-user', 'BoardController@assignUser')->name('admin.board.assign-user'); // Assign User
         Route::post('/board/{id}/add-pulse', 'BoardController@addPulse')->name('admin.board.add-pulse'); // Assign User
         Route::post('/board/{id}/update-group-title', 'BoardController@updateGroupTitle')->name('update-group-title'); // Assign User
@@ -1892,7 +1801,6 @@ Route::group([
 
         Route::put('/survey/{id}/update-date', 'SurveyController@updateDate')->name('admin.survey.update-date');
         Route::resource('/survey', 'SurveyController', [
-            'except' => ['create'],
             'names' => [
                 'index' => 'admin.survey.index',
                 'show' => 'admin.survey.show',
@@ -1901,13 +1809,12 @@ Route::group([
                 'update' => 'admin.survey.update',
                 'destroy' => 'admin.survey.destroy',
             ],
-        ]);
+        ])->except('create');
 
         Route::get('/survey/{id}/download-answers', 'SurveyController@downloadAnswers')->name('admin.survey.download-answers');
         Route::get('/survey/{id}/answers', 'SurveyController@answers')->name('admin.survey.answers');
 
         Route::resource('/survey/{survey_id}/question', 'SurveyQuestionController', [
-            'except' => ['create'],
             'names' => [
                 'index' => 'admin.survey.question.index',
                 'show' => 'admin.survey.question.show',
@@ -1916,7 +1823,7 @@ Route::group([
                 'update' => 'admin.survey.question.update',
                 'destroy' => 'admin.survey.question.destroy',
             ],
-        ]);
+        ])->except('create');
 
         Route::get('translations', 'PageController@translations');
 
@@ -1959,10 +1866,7 @@ Route::group([
     });
 
     // Authentication
-    Route::group([
-        'prefix' => 'auth',
-        'namespace' => 'Auth',
-    ], function () {
+    Route::prefix('auth')->namespace('Auth')->group(function () {
         Route::view('password/reset', 'backend.auth.forgot-password')->name('admin.password-reset');
         Route::post('password/email', 'ResetPasswordController@adminStore')->name('admin.password.email');
         Route::get('passwordreset/{token}', 'ResetPasswordController@adminResetForm')->name('admin.passwordreset.form');
@@ -1986,13 +1890,8 @@ Route::group([
 /**
  * Editor Routes
  */
-Route::group([
-    'domain' => $editor,
-], function () {
-    Route::group([
-        'middleware' => ['editor', 'logActivity'],
-        'namespace' => 'Editor',
-    ], function () {
+Route::domain($editor)->group(function () {
+    Route::middleware('editor', 'logActivity')->namespace('Editor')->group(function () {
 
         Route::get('/', 'PageController@dashboard')->name('editor.dashboard');
         Route::get('/upcoming-assignments', 'PageController@upcomingAssignments')->name('editor.upcoming-assignment');
@@ -2010,10 +1909,7 @@ Route::group([
         Route::post('/project/{id}/update-editor-hours', 'PageController@projectEditorHours')->name('editor.project.update-editor-hours');
     });
 
-    Route::group([
-        'middleware' => 'editor',
-        'namespace' => 'Backend',
-    ], function () {
+    Route::middleware('editor')->namespace('Backend')->group(function () {
 
         Route::post('backend/change-password', 'PageController@changePassword')->name('editor.change-password');
         Route::post('assignment_manuscript/{id}/learner/{learner_id}/feedback', 'AssignmentController@manuscriptFeedbackNoGroup')->name('editor.assignment.group.manuscript-feedback-no-group');
@@ -2045,10 +1941,7 @@ Route::group([
     });
 
     // Authentication
-    Route::group([
-        'prefix' => 'auth',
-        'namespace' => 'Auth',
-    ], function () {
+    Route::prefix('auth')->namespace('Auth')->group(function () {
         Route::view('password/reset', 'editor.auth.forgot-password')->name('editor.password-reset');
         Route::post('password/email', 'ResetPasswordController@editorStore')->name('editor.password.email');
         Route::get('passwordreset/{token}', 'ResetPasswordController@editorResetForm')->name('editor.passwordreset.form');
@@ -2182,10 +2075,8 @@ Route::get('/check-nearly-expired-course', 'HomeController@checkNearlyExpiredCou
 /**
  * Authentication Routes
  */
-Route::group([
-    'namespace' => 'Auth',
-], function () {
-    Route::group(['prefix' => 'auth'], function () {
+Route::namespace('Auth')->group(function () {
+    Route::prefix('auth')->group(function () {
         Route::get('logout', 'LoginController@logout')->name('auth.logout-get');
         Route::post('logout', 'LoginController@logout')->name('auth.logout');
         Route::post('password', 'PasswordController@updatePassword');
