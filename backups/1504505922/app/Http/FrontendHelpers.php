@@ -80,7 +80,7 @@ class FrontendHelpers
     {
         $access_lessons = $course_taken->access_lessons;
 
-        return  in_array($lesson->id, $access_lessons);
+        return in_array($lesson->id, $access_lessons);
     }
 
     public static function isCourseAvailable($course)

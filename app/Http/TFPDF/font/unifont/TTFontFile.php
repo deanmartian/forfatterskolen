@@ -996,16 +996,16 @@ class TTFontFile
                 $savepos = ftell($this->fh);
                 $this->getGlyphs($glyphIdx, $start, $glyphSet, $subsetglyphs);
                 $this->seek($savepos);
-                if ($flags&GF_WORDS) {
+                if ($flags & GF_WORDS) {
                     $this->skip(4);
                 } else {
                     $this->skip(2);
                 }
-                if ($flags&GF_SCALE) {
+                if ($flags & GF_SCALE) {
                     $this->skip(2);
-                } elseif ($flags&GF_XYSCALE) {
+                } elseif ($flags & GF_XYSCALE) {
                     $this->skip(4);
-                } elseif ($flags&GF_TWOBYTWO) {
+                } elseif ($flags & GF_TWOBYTWO) {
                     $this->skip(8);
                 }
             }
@@ -1226,8 +1226,8 @@ class TTFontFile
 
         $checksum = $this->calcChecksum($stm);
         $checksum = $this->sub32([0xB1B0, 0xAFBA], $checksum);
-        $chk = pack('nn', $checksum[0],$checksum[1]);
-        $stm = $this->splice($stm,($head_start + 8),$chk);
+        $chk = pack('nn', $checksum[0], $checksum[1]);
+        $stm = $this->splice($stm, ($head_start + 8), $chk);
 
         return $stm;
     }
