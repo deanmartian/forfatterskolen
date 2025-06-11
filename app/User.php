@@ -475,7 +475,8 @@ class User extends Authenticatable
     }
 
     public function getAssignedWithNoFeedbackAttribute() // not availble if currently assigned on manuscript assignment
-    {$query = \App\AssignmentManuscript::where('editor_id', $this->attributes['id'])->where('has_feedback', 0)->get();
+    {
+        $query = \App\AssignmentManuscript::where('editor_id', $this->attributes['id'])->where('has_feedback', 0)->get();
 
         return count($query);
     }
