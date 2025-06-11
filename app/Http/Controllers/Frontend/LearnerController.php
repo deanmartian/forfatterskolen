@@ -2175,7 +2175,7 @@ class LearnerController extends Controller
         $selectedQuarters = [1, 2, 3, 4];
 
         $projectBook = ProjectBook::where('project_id', $project_id)->first();
-        $bookName = optional($projectBook)->book_name;
+        $bookName = $projectBook?->book_name;
 
         // Fetch sales data
         $salesData = DB::table('project_books as books')

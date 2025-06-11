@@ -55,7 +55,7 @@
                                                 : $cover->format . ' mm' }}
                                         </td>
                                         <td>
-                                            {{ optional($cover->isbn)->value }}
+                                            {{ $cover->isbn?->value }}
                                         </td>
                                         <td>
                                             @if ($cover->backside_type == 'text')
@@ -109,7 +109,7 @@
                                                 {!! $bookFormatting->file_link !!}
                                             </td>
                                             <td>
-                                                {{ optional($bookFormatting->designer)->full_name }}
+                                                {{ $bookFormatting->designer?->full_name }}
                                             </td>
                                             <td>
                                                 @if ($bookFormatting->feedback_status === 'completed')

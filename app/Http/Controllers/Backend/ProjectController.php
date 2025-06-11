@@ -1438,7 +1438,7 @@ class ProjectController extends Controller
         $centralISBNs = ProjectRegistration::centralDistributions()->where('project_id', $projectId)
             ->where('in_storage', 0)->get()->map(function ($isbn) {
                 $record = ProjectRegistration::where('field', 'isbn')->where('value', $isbn['value'])->first();
-                $isbn['custom_type'] = optional($record)->isbn_type;
+                $isbn['custom_type'] = $record?->isbn_type;
 
                 return $isbn;
             });
@@ -1510,7 +1510,7 @@ class ProjectController extends Controller
 
         $centralISBNs = ProjectRegistration::centralDistributions()->where('project_id', $projectId)->get()->map(function ($isbn) {
             $record = ProjectRegistration::where('field', 'isbn')->where('value', $isbn['value'])->first();
-            $isbn['custom_type'] = optional($record)->isbn_type;
+            $isbn['custom_type'] = $record?->isbn_type;
 
             return $isbn;
         });
@@ -2042,7 +2042,7 @@ class ProjectController extends Controller
         $quarters = [1, 2, 3, 4];
 
         $projectBook = ProjectBook::where('project_id', $project_id)->first();
-        $bookName = optional($projectBook)->book_name;
+        $bookName = $projectBook?->book_name;
 
         // Process data
         $data = $this->exportStorageCostWithSales($project_id, $registration_id, $selectedYear);
@@ -2102,7 +2102,7 @@ class ProjectController extends Controller
         }
 
         $projectBook = ProjectBook::where('project_id', $project_id)->first();
-        $bookName = optional($projectBook)->book_name;
+        $bookName = $projectBook?->book_name;
 
         $data = $this->exportStorageCostWithSales($project_id, $registration_id, $selectedYear, $selectedQuarters);
 

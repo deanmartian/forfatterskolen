@@ -48,7 +48,7 @@
                     : $cover->format . ' mm' }}
             </td>
             <td>
-                {{ optional($cover->isbn)->value }}
+                {{ $cover->isbn?->value }}
             </td>
             <td>
                 @if ($cover->backside_type == 'text')

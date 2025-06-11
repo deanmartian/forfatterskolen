@@ -37,7 +37,7 @@
                             <div class="form-group">
                                 <label>ISBN</label>
                                 <p>
-                                    {{ optional($print)->isbn }}
+                                    {{ $print?->isbn }}
                                 </p>
                             </div>
                         </div>
@@ -46,13 +46,13 @@
                         <div class="col-sm-4 col-md-2 col-lg-2">
                             <div class="form-group">
                                 <label>Antall</label>
-                                <p>{{ optional($print)->number }}</p>
+                                <p>{{ $print?->number }}</p>
                             </div>
                         </div>
                         <div class="col-sm-4 col-md-2 col-lg-2">
                             <div class="form-group">
                                 <label>Sider</label>
-                                <p>{{ optional($print)->pages }}</p>
+                                <p>{{ $print?->pages }}</p>
                             </div>
                         </div>
                         <div class="col-sm-4 col-md-2 col-lg-2">
@@ -70,7 +70,7 @@
                             <div class="form-group">
                                 <label>Bredde (mm)</label>
                                 <p>
-                                    {{ optional($print)->width }}
+                                    {{ $print?->width }}
                                 </p>
                             </div>
                         </div>
@@ -78,7 +78,7 @@
                             <div class="form-group">
                                 <label>Høyde (mm)</label>
                                 <p>
-                                    {{ optional($print)->height }}
+                                    {{ $print?->height }}
                                 </p>
                             </div>
                         </div>
@@ -86,7 +86,7 @@
                             <div class="form-group">
                                 <label>Antall titler</label>
                                 <p>
-                                    {{ optional($print)->originals }}
+                                    {{ $print?->originals }}
                                 </p>
                             </div>
                         </div>
@@ -97,7 +97,7 @@
                             <div class="form-group">
                                 <label>Innbinding</label>
                                 <p>
-                                    {{ optional($print)->binding }}
+                                    {{ $print?->binding }}
                                 </p>
                             </div>
                         </div>
@@ -148,7 +148,7 @@
                             <div class="form-group">
                                 <label>Antall fargesider</label>
                                 <p>
-                                    {{ optional($print)->number_of_color_pages }}
+                                    {{ $print?->number_of_color_pages }}
                                 </p>
                             </div>
                         </div>

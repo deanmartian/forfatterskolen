@@ -1396,7 +1396,7 @@
 									@endif
 								</td>
 								<td>
-									{{ optional($correction->project)->name }}
+									{{ $correction->project?->name }}
 								</td>
 								<td>
 									{{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
@@ -1501,7 +1501,7 @@
 									@endif
 								</td>
 								<td>
-									{{ optional($copy_editing->project)->name }}
+									{{ $copy_editing->project?->name }}
 								</td>
 								<td>
 									{{ \App\Http\FrontendHelpers::formatDate($copy_editing->created_at) }}

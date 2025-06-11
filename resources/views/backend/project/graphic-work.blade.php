@@ -114,7 +114,7 @@
                             {!! $bookFormatting->file_link !!}
                         </td>
                         <td>
-                            {{ optional($bookFormatting->designer)->full_name }}
+                            {{ $bookFormatting->designer?->full_name }}
                         </td>
                         <td>
                             {!! $bookFormatting->feedback_file_link !!}
