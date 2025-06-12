@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use App\DelayedEmail;
 use App\EmailTemplate;
 use App\FreeManuscript;
@@ -16,8 +13,11 @@ use App\Mail\SubjectBodyEmail;
 use App\Manuscript;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
+use Illuminate\View\View;
 use Mail;
 
 class FreeManuscriptController extends Controller

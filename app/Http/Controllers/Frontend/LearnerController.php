@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Illuminate\Http\JsonResponse;
 use App\Address;
 use App\Assignment;
 use App\AssignmentAddon;
@@ -103,11 +99,15 @@ use Carbon\Carbon;
 use File;
 use Firebase\JWT\JWT;
 use Hash;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 

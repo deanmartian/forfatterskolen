@@ -2,12 +2,12 @@
 
 namespace App\Http\Middleware;
 
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Http\Request;
 use AdminHelpers;
 use Auth;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Learner
 {

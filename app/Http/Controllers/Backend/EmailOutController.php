@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\RedirectResponse;
 use App\Course;
 use App\CoursesTaken;
 use App\EmailAttachment;
@@ -13,6 +12,7 @@ use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 

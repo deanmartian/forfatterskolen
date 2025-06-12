@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use App\AccessToken;
 use App\Address;
 use App\Course;
@@ -18,8 +15,11 @@ use App\User;
 use App\UserEmail;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller

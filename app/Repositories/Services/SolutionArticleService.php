@@ -2,9 +2,9 @@
 
 namespace App\Repositories\Services;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Solution;
 use App\SolutionArticle;
+use Illuminate\Database\Eloquent\Model;
 
 class SolutionArticleService
 {

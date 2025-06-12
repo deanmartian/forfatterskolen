@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\Http\JsonResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Mail\DiscussionRepliesEmail;
 use App\PrivateGroupDiscussion;
 use App\PrivateGroupDiscussionReply;
 use App\Transformer\PrivateGroupDiscussionsRepliesTransFormer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use League\Fractal\Manager;

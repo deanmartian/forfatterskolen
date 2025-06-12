@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddCompetitionRequest;
 use App\Repositories\Services\CompetitionService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class CompetitionController extends Controller
 {

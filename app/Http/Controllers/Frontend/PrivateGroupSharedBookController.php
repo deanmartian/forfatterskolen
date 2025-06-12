@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\PilotReaderBook;
 use App\PilotReaderBookReading;
 use App\PrivateGroup;
 use App\PrivateGroupSharedBook;
 use App\Transformer\PrivateGroupSharedBooksTransFormer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use League\Fractal\Manager;

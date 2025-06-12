@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Editor;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Assignment;
 use App\AssignmentManuscript;
 use App\CopyEditingManuscript;
@@ -21,8 +19,10 @@ use App\Settings;
 use App\ShopManuscriptsTaken;
 use App\TimeRegister;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Webinar;
 use App\WebinarEditor;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class WebinarEditorController extends Controller

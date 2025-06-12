@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
 use App\CopyEditingManuscript;
@@ -16,8 +14,10 @@ use App\OtherServiceFeedback;
 use App\user;
 use Carbon\Carbon;
 use File;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;

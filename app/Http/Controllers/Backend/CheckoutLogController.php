@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
 use App\CheckoutLog;
+use Illuminate\View\View;
 
 class CheckoutLogController
 {

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
 use App\Blog;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BlogRequest;
 use App\Repositories\Services\BlogService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class BlogController extends Controller
 {

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
@@ -13,7 +11,9 @@ use App\SelfPublishingFeedback;
 use App\SelfPublishingLearner;
 use App\SelfPublishingOrder;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -174,7 +174,6 @@ class SelfPublishingController extends Controller
     }
 
     /**
-     *
      * @throws \Exception
      */
     public function destroy($id): RedirectResponse
@@ -189,7 +188,6 @@ class SelfPublishingController extends Controller
     }
 
     /**
-     *
      * @throws \Exception
      */
     public function removeLearnerFromPublishing($id): RedirectResponse
@@ -515,7 +513,6 @@ class SelfPublishingController extends Controller
     }
 
     /**
-     *
      * @throws \Exception
      */
     public function deleteLearner($learner_id): RedirectResponse

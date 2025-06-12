@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\View\View;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\Http\Controllers\Controller;
@@ -15,7 +13,9 @@ use App\SelfPublishingLearner;
 use App\SelfPublishingOrder;
 use App\Services\CourseService;
 use Auth;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class PublishingServiceController extends Controller
 {

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddWorkshopPresenterRequest;
 use App\Workshop;
 use App\WorkshopPresenter;
 use File;
+use Illuminate\Http\RedirectResponse;
 
 class WorkshopPresenterController extends Controller
 {

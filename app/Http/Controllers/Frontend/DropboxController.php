@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\View\View;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
 use GuzzleHttp\Client;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 

@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Database\Eloquent\Model;
 use App\Address;
 use App\Course;
 use App\CourseDiscount;
@@ -23,6 +21,8 @@ use App\PaymentPlan;
 use App\ShopManuscriptsTaken;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;

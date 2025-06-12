@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Mail\SubjectBodyEmail;
@@ -11,6 +10,7 @@ use App\PackageWorkshop;
 use App\User;
 use App\Workshop;
 use App\WorkshopsTaken;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PackageWorkshopController extends Controller

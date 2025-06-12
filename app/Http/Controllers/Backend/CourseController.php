@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
-use Illuminate\View\View;
 use App\Course;
 use App\CourseApplication;
 use App\CourseCertificate;
@@ -36,8 +32,12 @@ use App\WebinarRegistrant;
 use App\WebinarScheduledRegistration;
 use Carbon\Carbon;
 use File;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Maatwebsite\Excel\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CourseController extends Controller
 {

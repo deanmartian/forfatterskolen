@@ -2,10 +2,10 @@
 
 namespace App\Repositories\Services;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Http\Requests\SolutionCreateRequest;
 use App\Solution;
 use File;
+use Illuminate\Database\Eloquent\Model;
 
 class SolutionService
 {

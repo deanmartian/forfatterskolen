@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
 use App\Course;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Lesson;
 use App\LessonContent;
 use App\LessonDocuments;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class LessonController extends Controller
 {

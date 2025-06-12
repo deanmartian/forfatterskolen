@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use App\Course;
 use App\CourseApplication;
 use App\CoursesTaken;
@@ -20,10 +18,12 @@ use App\Order;
 use App\Services\CourseService;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class CourseController extends Controller
 {

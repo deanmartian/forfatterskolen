@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SurveyRequest;
@@ -11,7 +9,9 @@ use App\Repositories\Services\SurveyService;
 use App\Survey;
 use App\SurveyAnswer;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class SurveyController extends Controller
 {

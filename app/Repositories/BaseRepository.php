@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
-use Illuminate\Database\Eloquent\Builder;
 use DTApi\Exceptions\ValidationException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Validator;
@@ -54,7 +54,6 @@ class BaseRepository
     }
 
     /**
-     *
      * @throws ModelNotFoundException
      */
     public function findOrFail(int $id): Model
@@ -63,7 +62,6 @@ class BaseRepository
     }
 
     /**
-     *
      * @throws ModelNotFoundException
      */
     public function findBySlug(string $slug): Model
@@ -136,7 +134,6 @@ class BaseRepository
     }
 
     /**
-     *
      * @throws \Exception
      */
     public function delete(int $id): Model
@@ -148,7 +145,6 @@ class BaseRepository
     }
 
     /**
-     *
      * @throws ValidationException
      */
     protected function _validate(\Illuminate\Validation\Validator $validator): bool

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Giutbok;
 
-use Illuminate\View\View;
 use App\Http\Controllers\Controller;
 use App\SelfPublishing;
 use App\User;
+use Illuminate\View\View;
 
 class SelfPublishingController extends Controller
 {

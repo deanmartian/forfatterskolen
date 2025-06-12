@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\PilotReaderBook;
 use App\PilotReaderBookReading;
@@ -11,8 +9,10 @@ use App\PilotReaderReaderProfile;
 use App\PilotReaderReaderQuery;
 use App\PilotReaderReaderQueryDecision;
 use App\Transformer\ReaderQueriesTransformer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 

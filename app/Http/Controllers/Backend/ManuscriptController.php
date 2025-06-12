@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\CoursesTaken;
 use App\EmailTemplate;
 use App\Feedback;
@@ -14,9 +12,11 @@ use App\Mail\SubjectBodyEmail;
 use App\Manuscript;
 use App\User;
 use File;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';

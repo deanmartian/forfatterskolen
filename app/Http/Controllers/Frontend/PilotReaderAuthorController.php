@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
@@ -25,8 +22,11 @@ use App\Transformer\InvitationsTransformer;
 use App\Transformer\ReadersTransformer;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 

@@ -2,8 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Http\Request;
 use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
 use App\Mail\SubjectBodyEmail;
@@ -11,7 +9,9 @@ use App\Order;
 use App\Package;
 use Carbon\Carbon;
 use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class CheckAutoRenewCourses
 {

@@ -2,12 +2,12 @@
 
 namespace App\Repositories\Services;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\CoursesTaken;
 use App\EmailHistory;
 use App\Order;
 use App\ShopManuscriptsTaken;
 use DB;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class SaleService
 {

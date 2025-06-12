@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\RedirectResponse;
 use App\Course;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddPackageRequest;
 use App\Package;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PackageController extends Controller

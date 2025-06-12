@@ -2,9 +2,9 @@
 
 namespace App\Repositories\Services;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Publishing;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
 
 class PublishingService
 {

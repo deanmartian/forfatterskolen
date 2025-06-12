@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Package;
 use App\PackageShopManuscript;
 use App\ShopManuscript;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PackageShopManuscriptController extends Controller

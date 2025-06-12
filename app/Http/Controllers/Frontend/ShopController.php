@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 use App\Address;
 use App\CheckoutLog;
 use App\Course;
@@ -35,8 +32,11 @@ use App\Transaction;
 use App\User;
 use App\WorkshopsTaken;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 

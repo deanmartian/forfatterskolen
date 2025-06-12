@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Illuminate\Http\JsonResponse;
 use App\Address;
 use App\CourseDiscount;
 use App\CourseOrderAttachment;
@@ -15,6 +14,7 @@ use App\Package;
 use App\ShopManuscript;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use PhpOffice\PhpWord\SimpleType\DocProtect;
 

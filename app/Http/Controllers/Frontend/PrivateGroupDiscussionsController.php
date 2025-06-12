@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\Http\JsonResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
@@ -10,6 +9,7 @@ use App\Mail\DiscussionEmail;
 use App\PrivateGroup;
 use App\PrivateGroupDiscussion;
 use App\Transformer\PrivateGroupDiscussionsTransFormer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

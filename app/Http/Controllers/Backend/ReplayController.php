@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SaveReplayRequest;
 use App\Replay;
 use App\Services\ReplayService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class ReplayController extends Controller
 {

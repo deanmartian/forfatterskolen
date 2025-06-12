@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Assignment;
 use App\AssignmentManuscript;
 use App\AssignmentManuscriptEditorCanTake;
@@ -20,9 +18,11 @@ use App\ManuscriptEditorCanTake;
 use App\User;
 use Carbon\Carbon;
 use File;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class EditorController extends Controller
 {

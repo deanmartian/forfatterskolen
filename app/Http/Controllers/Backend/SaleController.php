@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\PowerOffice;
 use App\Jobs\AddMailToQueueJob;
 use App\PowerOfficeInvoice;
 use App\Repositories\Services\SaleService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class SaleController extends Controller
 {

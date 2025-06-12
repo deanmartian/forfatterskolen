@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\CalendarNote;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CalendarNoteCreateRequest;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class CalendarNoteController extends Controller
 {

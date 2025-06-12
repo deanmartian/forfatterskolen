@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use Illuminate\Http\JsonResponse;
 use App\Assignment;
 use App\AssignmentAddon;
 use App\Order;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AssignmentService

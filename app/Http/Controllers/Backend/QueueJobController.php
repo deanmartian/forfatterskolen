@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use Artisan;
 use DB;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class QueueJobController extends Controller
 {

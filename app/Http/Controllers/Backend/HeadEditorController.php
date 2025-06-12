@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\backend;
 
-use Illuminate\Http\RedirectResponse;
 use App\AssignmentManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -15,6 +14,7 @@ use App\SelfPublishing;
 use App\SelfPublishingFeedback;
 use App\ShopManuscriptsTaken;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class HeadEditorController extends Controller

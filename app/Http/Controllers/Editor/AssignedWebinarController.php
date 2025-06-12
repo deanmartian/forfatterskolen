@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Editor;
 
-use Illuminate\View\View;
 use App\Http\Controllers\Controller;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class AssignedWebinarController extends Controller
 {

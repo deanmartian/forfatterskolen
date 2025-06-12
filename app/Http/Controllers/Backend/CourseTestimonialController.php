@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\CourseTestimonial;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CourseTestimonialCreateRequest;
 use File;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class CourseTestimonialController extends Controller
 {

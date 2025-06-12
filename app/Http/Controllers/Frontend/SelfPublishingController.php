@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 use AdminHelpers;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -25,9 +22,12 @@ use App\Services\ShopManuscriptService;
 use App\ShopManuscript;
 use Auth;
 use FrontendHelpers;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;

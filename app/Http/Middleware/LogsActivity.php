@@ -2,12 +2,12 @@
 
 namespace App\Http\Middleware;
 
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Http\Request;
 use App\Helpers\BrowserDetection;
 use App\LearnerLogin;
 use App\LearnerLoginActivity;
 use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class LogsActivity
 {

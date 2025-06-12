@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Lesson;
 use App\Video;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class VideoController extends Controller

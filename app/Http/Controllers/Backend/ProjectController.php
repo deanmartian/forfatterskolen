@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use App\Contract;
 use App\ContractTemplate;
 use App\Exports\GenericExport;
@@ -54,8 +51,11 @@ use App\User;
 use App\UserBookForSale;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use PhpOffice\PhpWord\PhpWord;
 use Spatie\Dropbox\Client;
 use Storage;

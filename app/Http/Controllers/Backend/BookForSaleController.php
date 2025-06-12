@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 use AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\StorageDistributionCost;
@@ -12,7 +10,9 @@ use App\StorageSale;
 use App\User;
 use App\UserBookForSale;
 use App\UserBookSale;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class BookForSaleController extends Controller
 {

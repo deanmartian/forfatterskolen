@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Course;
 use App\Editor;
 use App\GiftPurchase;
@@ -17,9 +14,12 @@ use App\Services\GiftService;
 use App\ShopManuscript;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
 
 class GiftController extends Controller
 {

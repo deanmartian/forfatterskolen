@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
 use App\Course;
 use App\CoursesTaken;
 use App\EmailAttachment;
@@ -19,7 +16,10 @@ use App\Workshop;
 use App\WorkshopEmailLog;
 use App\WorkshopsTaken;
 use File;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class WorkshopController extends Controller
 {

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SolutionArticleCreateRequest;
 use App\Repositories\Services\SolutionArticleService;
 use App\Repositories\Services\SolutionService;
 use App\Solution;
 use App\SolutionArticle;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class SolutionArticleController extends Controller
 {

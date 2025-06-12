@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\FreeCourse;
 use App\FreeWebinar;
 use App\FreeWebinarPresenter;
@@ -13,7 +11,9 @@ use App\Http\Requests\AddWebinarRequest;
 use App\Http\Requests\FreeCourseCreateRequest;
 use App\Http\Requests\FreeCourseUpdateRequest;
 use File;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class FreeCourseController extends Controller
 {

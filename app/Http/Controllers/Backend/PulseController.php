@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Helpers\DapulseRepository;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class PulseController extends Controller
 {

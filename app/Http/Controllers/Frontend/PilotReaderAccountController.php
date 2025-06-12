@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\PilotReaderReaderProfile;
 use App\UserPreference;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class PilotReaderAccountController extends Controller
 {

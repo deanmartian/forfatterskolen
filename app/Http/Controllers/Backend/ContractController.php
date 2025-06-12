@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use App\Contract;
 use App\ContractTemplate;
 use App\Http\AdminHelpers;
@@ -12,7 +9,10 @@ use App\Http\Controllers\Controller;
 use App\Mail\SubjectBodyEmail;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ContractController extends Controller
 {

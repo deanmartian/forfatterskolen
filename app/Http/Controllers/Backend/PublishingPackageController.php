@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
 use App\Http\Controllers\Controller;
 use App\PublishingService;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class PublishingPackageController extends Controller
 {

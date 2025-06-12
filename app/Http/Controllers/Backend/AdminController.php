@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use App\AssignmentManuscript;
 use App\AssignmentManuscriptEditorCanTake;
 use App\CoursesTaken;
@@ -20,7 +17,10 @@ use App\ShopManuscriptsTaken;
 use App\Staff;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {

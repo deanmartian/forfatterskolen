@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
 use App\EmailHistory;
 use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
 class EmailHistoryController extends Controller
 {

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse;
 use App\Course;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
@@ -17,6 +15,8 @@ use App\WebinarEmailOut;
 use App\WebinarRegistrant;
 use App\WebinarScheduledRegistration;
 use File;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class WebinarController extends Controller

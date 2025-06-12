@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use AdminHelpers;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -18,7 +16,9 @@ use App\ProjectTypeSetting;
 use App\Services\ProjectService;
 use Auth;
 use FrontendHelpers;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ProgressPlanController extends Controller
 {

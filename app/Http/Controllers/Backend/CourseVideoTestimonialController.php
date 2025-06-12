@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\CourseTestimonial;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CourseTestimonialCreateRequest;
 use App\Repositories\CourseTestimonialRepository;
 use App\Repositories\Services\CourseVideoTestimonialService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class CourseVideoTestimonialController extends Controller
 {

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Giutbok;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Project;
@@ -13,7 +11,9 @@ use App\SelfPublishing;
 use App\SelfPublishingFeedback;
 use App\Services\ProjectService;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Log;
 use Spatie\Dropbox\Client as DropboxClient;
 use Symfony\Component\HttpFoundation\StreamedResponse;

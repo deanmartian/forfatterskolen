@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\View\View;
 use App\Http\Controllers\Controller;
 use App\ProjectRegistration;
 use DB;
+use Illuminate\View\View;
 
 class StorageBookController extends Controller
 {

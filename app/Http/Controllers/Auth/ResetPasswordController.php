@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangePasswordRequest;
@@ -11,8 +9,10 @@ use App\Mail\PasswordResetEmail;
 use App\Mail\SubjectBodyEmail;
 use App\PasswordReset;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Mail;
 use Validator;
 

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Invoice;
 use App\Paypal;
 use App\PayPalIPN;
 use App\Repositories\IPNRepository;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use PayPal\IPN\Event\IPNInvalid;
 use PayPal\IPN\Event\IPNVerificationFailure;
 use PayPal\IPN\Event\IPNVerified;
