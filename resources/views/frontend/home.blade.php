@@ -25,7 +25,7 @@
 
                     <div class="form-container">
 
-                        <form method="POST" action="{{ route('front.home') }}">
+                        <form method="POST" action="{{ route('front.home.submit') }}">
                             {{ csrf_field() }}
                             <h1 class="mb-0 text-center font-montserrat-regular">
                                 {{ trans('site.front.main-form.heading') }}

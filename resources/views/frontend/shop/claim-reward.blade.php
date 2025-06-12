@@ -62,7 +62,7 @@
                             </div>
                         @endif
 
-                        <form class="form-theme" method="POST" action="{{route('front.course.claim-reward', ['id' => $course->id])}}"
+                        <form class="form-theme" method="POST" action="{{route('front.course.claim-reward.submit', ['id' => $course->id])}}"
                               id="place_order_form">
                             {{csrf_field()}}
                             <h2>

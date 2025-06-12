@@ -263,7 +263,7 @@
                                         <h2>{{ trans('site.front.main-form.sub-heading') }}</h2>
                                         <hr>
 
-                                        <form method="POST" action="{{ route('front.home') }}">
+                                        <form method="POST" action="{{ route('front.home.submit') }}">
                                             {{ csrf_field() }}
 
                                             <div class="form-group">

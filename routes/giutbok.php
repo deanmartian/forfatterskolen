@@ -18,7 +18,7 @@ Route::domain($domain)->group(function () {
 
     Route::middleware('giutbok', 'logActivity')->group(function () {
         Route::get('/', [Giutbok\PageController::class, 'dashboard'])->name('g-admin.dashboard');
-        Route::post('/change-password', [Giutbok\PageController::class, 'changePassword'])->name('editor.change-password');
+        Route::post('/change-password', [Giutbok\PageController::class, 'changePassword'])->name('g-admin.change-password');
 
         Route::post('/project/book-formatting/{id}/feedback', [Giutbok\PageController::class, 'addBookFormatFeedback'])
             ->name('g-admin.book-format.add-feedback');
@@ -35,10 +35,10 @@ Route::domain($domain)->group(function () {
 
         Route::get('/dropbox/shared-link/{path}', [Giutbok\PageController::class, 'createSharedLink'])
             ->where('path', '.*')
-            ->name('dropbox.shared_link');
+            ->name('g-admin.dropbox.shared_link');
         Route::get('/dropbox/download/{path}', [Giutbok\PageController::class, 'downloadFile'])
             ->where('path', '.*')
-            ->name('dropbox.download_file');
+            ->name('g-admin.dropbox.download_file');
     });
 
     Route::middleware('giutbok')->group(function () {
@@ -156,7 +156,7 @@ Route::domain($domain)->group(function () {
         Route::post('/project/{id}/manual-invoice/save', [Backend\ProjectController::class, 'saveManualInvoice'])->name('g-admin.project.manual-invoice.save');
         Route::delete('/project/{id}/manual-invoice/{invoice_id}/delete', [Backend\ProjectController::class, 'deleteManualInvoice'])->name('g-admin.project.manual-invoice.delete');
         Route::get('/project/{id}/storage', [Backend\ProjectController::class, 'storage'])->name('g-admin.project.storage');
-        Route::post('/project/{id}/storage', [Backend\ProjectController::class, 'storage'])->name('g-admin.project.storage');
+        Route::post('/project/{id}/storage', [Backend\ProjectController::class, 'storage'])->name('g-admin.project.storage.submit');
         Route::post('/project/{id}/storage/save-book', [Backend\ProjectController::class, 'saveStorageBook'])->name('g-admin.project.storage.save-book');
         Route::delete('/project/{id}/storage/delete', [Backend\ProjectController::class, 'deleteStorageBook'])->name('g-admin.project.storage.delete-book');
         Route::post('/project/book/{id}/storage/save-details', [Backend\ProjectController::class, 'saveStorageBookDetails'])->name('g-admin.project.storage.save-details');

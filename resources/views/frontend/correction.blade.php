@@ -39,7 +39,7 @@
                             {{ trans('site.front.correction.description') }}
                         </p>
 
-                        <form method="POST" enctype="multipart/form-data" action="{{ route('front.correction') }}"
+                        <form method="POST" enctype="multipart/form-data" action="{{ route('front.correction.submit') }}"
                               id="manuscript">
                             {{ csrf_field() }}
                             <div class="input-group mb-3">

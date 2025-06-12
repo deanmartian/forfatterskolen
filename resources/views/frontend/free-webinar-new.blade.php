@@ -179,7 +179,7 @@
             <div class="subscribe-success">
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <form action="{{ route('front.free-webinar', $freeWebinar->id) }}" method="POST"
+                        <form action="{{ route('front.free-webinar.submit', $freeWebinar->id) }}" method="POST"
                               class="form-inline">
                             {{ csrf_field() }}
 

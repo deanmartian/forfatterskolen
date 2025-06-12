@@ -52,7 +52,7 @@ Route::domain($front)->group(function () {
         Route::get('/support/{id}/articles', [Frontend\HomeController::class, 'supportArticles'])->name('front.support-articles'); // Support Articles
         Route::get('/support/{id}/article/{article_id}', [Frontend\HomeController::class, 'supportArticle'])->name('front.support-article'); // Support Article
         Route::get('/free-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar'); // Support Article
-        Route::post('/free-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar'); // Support Article
+        Route::post('/free-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar.submit'); // Support Article
         Route::get('/free-webinar/{id}/thank-you', [Frontend\HomeController::class, 'freeWebinarThanks'])->name('front.free-webinar-thanks'); // Support Article
         Route::get('/webinartakk', [Frontend\HomeController::class, 'webinarThanks'])->name('front.webinar-thanks'); // Support Article
         Route::get('/children', [Frontend\HomeController::class, 'children'])->name('front.children');
@@ -65,8 +65,8 @@ Route::domain($front)->group(function () {
         Route::get('/konkurranse', [Frontend\HomeController::class, 'competition'])->name('front.competition'); // Forlag page
         Route::get('/coaching-timer', [Frontend\HomeController::class, 'coachingTimer'])->name('front.coaching-timer'); // Coaching Timer Page
         Route::get('/coaching-timer/checkout/{plan}', [Frontend\HomeController::class, 'coachingTimerCheckout'])->name('front.coaching-timer-checkout'); // Coaching Timer Page
-        Route::post('/coaching-timer/checkout/{plan}', [Frontend\HomeController::class, 'coachingTimerCheckout'])->name('front.coaching-timer-checkout'); // Coaching Timer Page
-        Route::post('/coaching-timer', [Frontend\HomeController::class, 'coachingTimer'])->name('front.coaching-timer'); // Coaching Timer Page
+        Route::post('/coaching-timer/checkout/{plan}', [Frontend\HomeController::class, 'coachingTimerCheckout'])->name('front.coaching-timer-checkout.submit'); // Coaching Timer Page
+        Route::post('/coaching-timer', [Frontend\HomeController::class, 'coachingTimer'])->name('front.coaching-timer.submit'); // Coaching Timer Page
         Route::post('coaching-timer/{plan}/place-order', [Frontend\HomeController::class, 'coachingTimerPlaceOrder'])->name('front.coaching-timer-place-order'); // Coaching Timer Page
         Route::get('/coaching-timer/export-single-bought', [Frontend\HomeController::class, 'exportSingleBoughtCoaching']);
         Route::get('/course/export-pay-later-with-active', [Frontend\HomeController::class, 'exportCoursePayLaterWithActive']);
@@ -104,14 +104,14 @@ Route::domain($front)->group(function () {
         });
 
         Route::get('/copy-editing', [Frontend\HomeController::class, 'copyEditing'])->name('front.copy-editing'); // Copy Editing Page
-        Route::post('/copy-editing', [Frontend\HomeController::class, 'copyEditing'])->name('front.copy-editing'); // Copy Editing Page
+        Route::post('/copy-editing', [Frontend\HomeController::class, 'copyEditing'])->name('front.copy-editing.submit'); // Copy Editing Page
         Route::get('/other-services', [Frontend\HomeController::class, 'otherServices'])->name('front.other-services-page');
         Route::get('/other-services/checkout/{plan}/{has_data}', [Frontend\HomeController::class, 'otherServiceCheckout'])->name('front.other-service-checkout');
-        Route::post('/other-services/checkout/{plan}/{has_data}', [Frontend\HomeController::class, 'otherServiceCheckout'])->name('front.other-service-checkout');
+        Route::post('/other-services/checkout/{plan}/{has_data}', [Frontend\HomeController::class, 'otherServiceCheckout'])->name('front.other-service-checkout.submit');
         Route::post('/other-services/place_order', [Frontend\HomeController::class, 'otherServiceOrder'])->name('front.other-service-place_order');
         Route::get('/thank-you', [Frontend\HomeController::class, 'thankyou'])->name('front.simple.thankyou'); // Thank You
         Route::get('/correction', [Frontend\HomeController::class, 'correction'])->name('front.correction'); // Correction Page
-        Route::post('/correction', [Frontend\HomeController::class, 'correction'])->name('front.correction'); // Correction Page
+        Route::post('/correction', [Frontend\HomeController::class, 'correction'])->name('front.correction.submit'); // Correction Page
         Route::get('/gratis-tekstvurdering', [Frontend\ShopManuscriptController::class, 'freeManuscriptShow'])->name('front.free-manuscript.index'); // Free Manuscript
         Route::get('/gratistekstvurdering', [Frontend\ShopManuscriptController::class, 'freeManuscriptShowOther']);
         Route::get('/gratis-tekstvurdering/success', [Frontend\ShopManuscriptController::class, 'freeManuscriptShowSuccess'])->name('front.free-manuscript.success'); // Free Manuscript
@@ -126,10 +126,10 @@ Route::domain($front)->group(function () {
         Route::post('/innlevering/send', [Frontend\HomeController::class, 'innleveringCompetitionSend'])->name('front.innlevering.send');
         Route::get('/takk', [Frontend\HomeController::class, 'innleveringCompetitionThanks'])->name('front.innlevering.thank-you');
 
-        Route::post('/', [Frontend\HomeController::class, 'homeOptIn'])->name('front.home'); // Homepage
+        Route::post('/', [Frontend\HomeController::class, 'homeOptIn'])->name('front.home.submit'); // Homepage
 
         Route::get('/opt-in/{slug?}', [Frontend\HomeController::class, 'optIn'])->name('front.opt-in'); // Opt-in page
-        Route::post('/opt-in/{slug?}', [Frontend\HomeController::class, 'optIn'])->name('front.opt-in'); // Opt-in page
+        Route::post('/opt-in/{slug?}', [Frontend\HomeController::class, 'optIn'])->name('front.opt-in.submit'); // Opt-in page
         Route::get('/opt-in/{slug?}/download', [Frontend\HomeController::class, 'downloadOptIn'])->name('front.opt-in.download'); // Download Opt-in file
 
         // opt in thank you pages
@@ -241,9 +241,9 @@ Route::domain($front)->group(function () {
             Route::get('/{id}/check_coupon_discount/{coupon}', [Frontend\ShopController::class, 'checkCouponDiscount'])->name('front.course.checkCouponDiscount'); // Check Coupon Discount
             Route::post('/{id}/get-free/', [Frontend\CourseController::class, 'getFreeCourse'])->name('front.course.getFreeCourse'); // Check Discount
             Route::get('/{id}/claim-reward', [Frontend\ShopController::class, 'claimReward'])->name('front.course.claim-reward'); // Claim Reward
-            Route::post('/{id}/claim-reward', [Frontend\ShopController::class, 'claimReward'])->name('front.course.claim-reward'); // Claim Reward
+            Route::post('/{id}/claim-reward', [Frontend\ShopController::class, 'claimReward'])->name('front.course.claim-reward.submit'); // Claim Reward
             Route::get('/share/{share_hash}/checkout', [Frontend\ShopController::class, 'shareCourseCheckout'])->name('front.course.share.checkout');
-            Route::post('/share/{share_hash}/checkout', [Frontend\ShopController::class, 'shareCourseCheckout'])->name('front.course.share.checkout');
+            Route::post('/share/{share_hash}/checkout', [Frontend\ShopController::class, 'shareCourseCheckout'])->name('front.course.share.checkout.submit');
         });
 
         Route::prefix('publishing-service')->group(function () {
@@ -416,10 +416,10 @@ Route::domain($front)->group(function () {
         Route::post('/coaching-timer/{id}/set-status', [Frontend\LearnerController::class, 'setCoachingStatus'])->name('learner.coaching-timer.set-status');
         Route::post('/course-taken/coaching-timer/add', [Frontend\LearnerController::class, 'addCoachingSession'])->name('learner.course-taken.coaching-timer.add');
         Route::get('/webinar', [Frontend\LearnerController::class, 'webinar'])->name('learner.webinar'); // Webinars Page
-        Route::post('/webinar', [Frontend\LearnerController::class, 'webinar'])->name('learner.webinar'); // Webinars Page
+        Route::post('/webinar', [Frontend\LearnerController::class, 'webinar'])->name('learner.webinar.submit'); // Webinars Page
         Route::get('/webinar/register/{webinar_key}/{webinar_id}', [Frontend\LearnerController::class, 'webinarRegister'])->name('learner.webinar.register'); // Webinars Page
         Route::get('/course-webinar', [Frontend\LearnerController::class, 'courseWebinar'])->name('learner.course-webinar'); // Course Webinars Page
-        Route::post('/course-webinar', [Frontend\LearnerController::class, 'courseWebinar'])->name('learner.course-webinar'); // Course Webinars Page
+        Route::post('/course-webinar', [Frontend\LearnerController::class, 'courseWebinar'])->name('learner.course-webinar.submit'); // Course Webinars Page
         Route::get('/assignment', [Frontend\LearnerController::class, 'assignment'])->name('learner.assignment'); // Assignments Page
         Route::post('assignment/{id}/replace_manuscript', [Frontend\LearnerController::class, 'replaceAssignmentManuscript'])->name('learner.assignment.replace_manuscript');
         Route::post('assignment/{id}/delete_manuscript', [Frontend\LearnerController::class, 'deleteAssignmentManuscript'])->name('learner.assignment.delete_manuscript');
@@ -432,9 +432,9 @@ Route::domain($front)->group(function () {
         Route::get('/assignment/feedback-no-group/{id}/download', [Frontend\LearnerController::class, 'downloadAssignmentNoGroupFeedback'])->name('learner.assignment.no-group-feedback.download'); // Download assignment feedback
         Route::get('/assignment/group/{id}/download-all-feedback', [Frontend\LearnerController::class, 'downloadAssignmentGroupAllFeedback'])->name('learner.assignment.group.feedback.download-all'); // Download all assignment group feedback
         Route::get('/word-written', [Frontend\LearnerController::class, 'wordWritten'])->name('learner.word-written'); // Word Written Page
-        Route::post('/word-written', [Frontend\LearnerController::class, 'wordWritten'])->name('learner.word-written'); // Word Written Page
+        Route::post('/word-written', [Frontend\LearnerController::class, 'wordWritten'])->name('learner.word-written.submit'); // Word Written Page
         Route::get('/word-written-goals', [Frontend\LearnerController::class, 'wordWrittenGoals'])->name('learner.word-written-goals'); // Word Written Goals Page
-        Route::post('/word-written-goals', [Frontend\LearnerController::class, 'wordWrittenGoals'])->name('learner.word-written-goals'); // Word Written Goals Page
+        Route::post('/word-written-goals', [Frontend\LearnerController::class, 'wordWrittenGoals'])->name('learner.word-written-goals.submit'); // Word Written Goals Page
         Route::put('/word-written-goals/{id}/update', [Frontend\LearnerController::class, 'wordWrittenGoalsUpdate'])->name('learner.word-written-goals-update'); // Word Written Goals Page
         Route::delete('/word-written-goals/{id}/delete', [Frontend\LearnerController::class, 'wordWrittenGoalsDelete'])->name('learner.word-written-goals-delete'); // Word Written Goals Page
         Route::get('/word-written-goal/{id}/statistic', [Frontend\LearnerController::class, 'goalStatistic'])->name('learner.goal-statistic');
@@ -483,7 +483,7 @@ Route::domain($front)->group(function () {
         // Pilot Reader
         Route::get('/book-author', [Frontend\PilotReaderAuthorController::class, 'bookAuthor'])->name('learner.book-author'); // Book Reader Author Page
         Route::get('/book-author/create', [Frontend\PilotReaderAuthorController::class, 'bookAuthorCreate'])->name('learner.book-author-create'); // Book Reader Author Create Page
-        Route::post('/book-author/create', [Frontend\PilotReaderAuthorController::class, 'bookAuthorCreate'])->name('learner.book-author-create'); // Book Reader Author Create Page
+        Route::post('/book-author/create', [Frontend\PilotReaderAuthorController::class, 'bookAuthorCreate'])->name('learner.book-author-create.submit'); // Book Reader Author Create Page
         Route::get('/book-author/book/{id}', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBook'])->name('learner.book-author-book-show'); // Book Reader Author Show Book Page
         Route::get('/book-author/book/{id}/invitation', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookInvitation'])->name('learner.book-author-book-invitation'); // Book Reader Author Show Invitation Page
         Route::post('/book-author/book/{id}/invitation', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookInvitationSend'])->name('learner.book-author-book-invitation-send'); // Book Reader Author Send Invitation Page
@@ -504,12 +504,12 @@ Route::domain($front)->group(function () {
         Route::get('/book/invitation/{id}/decline', [Frontend\PilotReaderAuthorController::class, 'bookInvitationDecline'])->name('learner.book-invitation-decline'); // Book Reader Author Show Invitation Page
         Route::put('/book-author/book/{id}/update', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookUpdate'])->name('learner.book-author-book-update'); // Book Reader Author Update Book Page
         Route::get('/book-author/book/{id}/chapter/new/{type}', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookCreateChapter'])->name('learner.book-author-book-create-chapter'); // Book Reader Author Book Chapter Create Page
-        Route::post('/book-author/book/{id}/chapter/new/{type}', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookCreateChapter'])->name('learner.book-author-book-create-chapter'); // Book Reader Author Book Chapter Create Page
+        Route::post('/book-author/book/{id}/chapter/new/{type}', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookCreateChapter'])->name('learner.book-author-book-create-chapter.create'); // Book Reader Author Book Chapter Create Page
         Route::post('/book-author/book/{id}/sort-chapter', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookSortChapter'])->name('learner.book-author-book-sort-chapter'); // Update the chapter sort
         Route::post('/book/chapter/{id}/update-field', [Frontend\PilotReaderAuthorController::class, 'bookChapterUpdateField'])->name('learner.book-chapter-update-field'); // Update the chapter by field
         Route::get('/book-author/book/{book_id}/chapter/{chapter_id}', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookViewChapter'])->name('learner.book-author-book-view-chapter'); // Book Reader Author Book Chapter View Page
         Route::get('/book-author/book/{book_id}/chapter/{chapter_id}/edit', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookUpdateChapter'])->name('learner.book-author-book-update-chapter'); // Book Reader Author Book Chapter Update Page
-        Route::put('/book-author/book/{book_id}/chapter/{chapter_id}/edit', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookUpdateChapter'])->name('learner.book-author-book-update-chapter'); // Book Reader Author Book Chapter Update Page
+        Route::put('/book-author/book/{book_id}/chapter/{chapter_id}/edit', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookUpdateChapter'])->name('learner.book-author-book-update-chapter.submit'); // Book Reader Author Book Chapter Update Page
         Route::delete('/book-author/book/{book_id}/chapter/{chapter_id}/delete', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookDeleteChapter'])->name('learner.book-author-book-delete-chapter'); // Book Reader Author Book Chapter Update Page
         Route::post('/book-author/book/destroy', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookDelete'])->name('learner.book-author-book-destroy'); // Book Reader Author Show Book Page
         Route::post('/chapter/feedback/create', [Frontend\PilotReaderAuthorController::class, 'authorChapterFeedbackCreate'])->name('learner.book-author-book-chapter-feedback-create'); // Book Reader Author Book Chapter Note Create
@@ -519,7 +519,7 @@ Route::domain($front)->group(function () {
         Route::post('/chapter/draft/delete', [Frontend\PilotReaderAuthorController::class, 'authorChapterDeleteDraft'])->name('learner.book-author-book-chapter-draft-delete'); // Book Reader Author Book Chapter Note Update
         Route::get('/chapter/{id}/note/list', [Frontend\PilotReaderAuthorController::class, 'authorChapterNoteList'])->name('learner.book-author-book-chapter-note-list'); // Book Reader Author Import Book Page
         Route::get('/book-author/book/{id}/import', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookImport'])->name('learner.book-author-book-import'); // Book Reader Author Import Book Page
-        Route::post('/book-author/book/{id}/import', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookImport'])->name('learner.book-author-book-import'); // Book Reader Author Import Book Page
+        Route::post('/book-author/book/{id}/import', [Frontend\PilotReaderAuthorController::class, 'bookAuthorBookImport'])->name('learner.book-author-book-import.submit'); // Book Reader Author Import Book Page
         Route::post('/book-author/chapter/bulk-import', [Frontend\PilotReaderAuthorController::class, 'saveBulkChapters'])->name('learner.bulk-import-chapter'); // Book Reader Author Import Book Page
         Route::post('/book-author/chapter/bookmark/set', [Frontend\PilotReaderAuthorController::class, 'setBookMark'])->name('learner.book.chapter.set-bookmark'); // Book Reader Author Import Book Page
         Route::get('/book-author/chapter/bookmark/get/{id}', [Frontend\PilotReaderAuthorController::class, 'getBookMark'])->name('learner.book.chapter.get-bookmark'); // Book Reader Author Import Book Page
@@ -1138,7 +1138,7 @@ Route::domain($admin)->group(function () {
         Route::get('/power-office/self-publishing/{publishing_id}/add-to-po', [Backend\PowerOfficeController::class, 'addSelfPublshingToPowerOffice'])
             ->name('admin.power-office.self-publishing.add-to-po');
         Route::post('/power-office/self-publishing/{publishing_id}/add-to-po', [Backend\PowerOfficeController::class, 'addSelfPublshingToPowerOffice'])
-            ->name('admin.power-office.self-publishing.add-to-po');
+            ->name('admin.power-office.self-publishing.add-to-po.submit');
         Route::get('/power-office/self-publishing/{publishing_id}/invoice/{invoice_id}/view',
             [Backend\PowerOfficeController::class, 'selfPublishingPowerOfficeInvoice'])
             ->name('admin.power-office.self-publishing.view-po-order');
@@ -1889,10 +1889,10 @@ Route::domain($admin)->group(function () {
 
     Route::get('/dropbox/shared-link/{path}', [Frontend\DropboxController::class, 'createSharedLink'])
         ->where('path', '.*')
-        ->name('dropbox.shared_link');
+        ->name('admin.dropbox.shared_link');
     Route::get('/dropbox/download/{path}', [Frontend\DropboxController::class, 'downloadFile'])
         ->where('path', '.*')
-        ->name('dropbox.download_file');
+        ->name('admin.dropbox.download_file');
 });
 
 /**
@@ -1942,7 +1942,7 @@ Route::domain($editor)->group(function () {
         Route::post('/free-manuscript/{id}/send_feedback', [Backend\FreeManuscriptController::class, 'sendFeedback'])->name('editor.free-manuscript.send_feedback');
         Route::get('/free-manuscript/{id}/download', [Backend\FreeManuscriptController::class, 'downloadContent'])->name('editor.free-manuscript.download');
         Route::post('/time-register/save', [Backend\TimeRegisterController::class, 'save'])->name('editor.time-register.save');
-        Route::delete('/time-register/{id}/delete', [Backend\TimeRegisterController::class, 'destroy'])->name('admin.time-register.delete');
+        //Route::delete('/time-register/{id}/delete', [Backend\TimeRegisterController::class, 'destroy'])->name('admin.time-register.delete');
         Route::get('/time-register/{id}/time-used-list', [Backend\TimeRegisterController::class, 'timeUsedList']);
         Route::post('/time-register/{id}/save-time-used', [Backend\TimeRegisterController::class, 'saveTimeUsed']);
         Route::delete('/time-register/time-used/{id}/delete', [Backend\TimeRegisterController::class, 'deleteTimeUsed']);

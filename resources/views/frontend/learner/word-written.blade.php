@@ -82,7 +82,7 @@
                     <h4 class="modal-title">Add Words Written Date</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{ route('learner.word-written') }}">
+                    <form method="POST" action="{{ route('learner.word-written.submit') }}">
                         {{ csrf_field() }}
 
                         <div class="form-group">
