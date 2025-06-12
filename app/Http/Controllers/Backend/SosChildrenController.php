@@ -43,8 +43,6 @@ class SosChildrenController extends Controller
 
     /**
      * For adding/editing the main description
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function editMainDescription(Request $request): RedirectResponse
     {
@@ -104,8 +102,6 @@ class SosChildrenController extends Controller
 
     /**
      * Create new document
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
@@ -140,8 +136,6 @@ class SosChildrenController extends Controller
 
     /**
      * Update the document
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request): RedirectResponse
     {
@@ -160,8 +154,6 @@ class SosChildrenController extends Controller
 
     /**
      * Delete document
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

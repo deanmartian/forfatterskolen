@@ -162,8 +162,6 @@ class FrontendHelpers
 
     /**
      * Check if course is active
-     *
-     * @return bool
      */
     public static function isCourseActive($course): bool
     {
@@ -272,8 +270,6 @@ class FrontendHelpers
 
     /**
      * List of front pages and the route name
-     *
-     * @return array
      */
     public static function frontPageList(): array
     {
@@ -384,7 +380,6 @@ class FrontendHelpers
      * Pilot reader navigation
      *
      * @param  null  $route
-     * @return array
      */
     public static function pilotReaderNav($route = null): array
     {
@@ -492,8 +487,6 @@ class FrontendHelpers
 
     /**
      * Check if user is member of the group
-     *
-     * @return int
      */
     public static function isPrivateGroupMember($group_id, $user_id): int
     {
@@ -521,8 +514,6 @@ class FrontendHelpers
 
     /**
      * Count the total reader for certain status
-     *
-     * @return int
      */
     public static function countReaderWithStatus($book_id, $status): int
     {
@@ -564,8 +555,6 @@ class FrontendHelpers
 
     /**
      * Check if the chapter with number already exists then iterate
-     *
-     * @return int
      */
     public function checkChapterNameByNumber($number): int
     {
@@ -601,7 +590,6 @@ class FrontendHelpers
      * Change the chapter name if it's empty
      *
      * @param  null  $chapter_title
-     * @return null|string
      */
     public static function changeChapterName($chapter_title, $chapter_key): ?string
     {
@@ -664,9 +652,6 @@ class FrontendHelpers
 
     /**
      * get the word count with margin
-     *
-     * @param  float  $margin
-     * @return int
      */
     public static function wordCountByMargin($word_count, float $margin = 0.03): int
     {
@@ -741,7 +726,6 @@ class FrontendHelpers
      * Manuscript type for assignment either whole, start, middle or last part of the manuscript
      *
      * @param  null  $id
-     * @return array
      */
     public static function manuscriptType($id = null): array
     {
@@ -767,7 +751,6 @@ class FrontendHelpers
      * Feedback marks
      *
      * @param  null  $setMark
-     * @return array
      */
     public static function feedbackMarks($setMark = null): array
     {
@@ -862,7 +845,6 @@ class FrontendHelpers
     /**
      * Payment modes check if vipps option should be included
      *
-     * @param  bool  $showVipps
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public static function paymentModes(bool $showVipps = false)
@@ -882,9 +864,6 @@ class FrontendHelpers
 
     /**
      * Generate unique code
-     *
-     * @param  int  $codeLength
-     * @return string
      */
     public static function generateUniqueCode(int $codeLength = 20): string
     {
@@ -989,8 +968,6 @@ class FrontendHelpers
 
     /**
      * Separate get content from doc file, the other is used for word count
-     *
-     * @return string
      */
     public static function getContentFromDocFile($filename): string
     {
@@ -1035,8 +1012,6 @@ class FrontendHelpers
 
     /**
      * Get the text between specified text
-     *
-     * @return string
      */
     public static function getTextBetween($content, $start, $end): string
     {

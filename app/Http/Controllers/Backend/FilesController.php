@@ -27,8 +27,6 @@ class FilesController extends Controller
 
     /**
      * Create new file record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
@@ -54,8 +52,6 @@ class FilesController extends Controller
 
     /**
      * Update file record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request): RedirectResponse
     {
@@ -90,8 +86,6 @@ class FilesController extends Controller
 
     /**
      * Delete file record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

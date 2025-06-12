@@ -31,7 +31,6 @@ class SettingsController extends Controller
      * Update different terms
      *
      * @param  Request  $request  terms_type Terms for certain page
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function updateOtherTerms(Request $request): RedirectResponse
     {
@@ -99,9 +98,6 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function headEditor(Request $request): RedirectResponse
     {
         // Settings::updateOrCreate(['setting_name' => 'head-editor'], ['setting_value' => $request->editor_id]);

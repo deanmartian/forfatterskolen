@@ -82,9 +82,6 @@ class ShopManuscriptService
         return $synopsis;
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function processCheckout(Request $request): JsonResponse
     {
 
@@ -183,9 +180,6 @@ class ShopManuscriptService
         ];
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function generateSveaCheckout(Request $request): JsonResponse
     {
         $orderRecord = $this->createOrder($request);
@@ -399,9 +393,6 @@ class ShopManuscriptService
         ]);
     }
 
-    /**
-     * @return ShopManuscriptsTaken
-     */
     public function addShopManuscriptToLearner($order): ShopManuscriptsTaken
     {
         $shopManuscriptOrder = $order->shopManuscriptOrder;

@@ -79,8 +79,6 @@ class GotoWebinarController extends Controller
 
     /**
      * Create new notification
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
@@ -123,8 +121,6 @@ class GotoWebinarController extends Controller
 
     /**
      * Update the notification
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request): RedirectResponse
     {

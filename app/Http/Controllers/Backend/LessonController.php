@@ -224,8 +224,6 @@ class LessonController extends Controller
 
     /**
      * Delete the lesson document
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function deleteLessonDocument($id): RedirectResponse
     {
@@ -257,8 +255,6 @@ class LessonController extends Controller
 
     /**
      * Get the lesson content of a lesson
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function getLessonContent($lesson_id): JsonResponse
     {
@@ -269,8 +265,6 @@ class LessonController extends Controller
 
     /**
      * Add a lesson content for a lesson
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function addContent($lesson_id, Request $request): RedirectResponse
     {
@@ -315,8 +309,6 @@ class LessonController extends Controller
 
     /**
      * Delete a lesson content
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function deleteLessonContent($content_id): JsonResponse
     {

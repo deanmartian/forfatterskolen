@@ -10,9 +10,6 @@ use Illuminate\Http\Request;
 
 class AssignmentService
 {
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function generateSveaCheckout(Request $request): JsonResponse
     {
         $assignment = Assignment::find($request->assignment_id);

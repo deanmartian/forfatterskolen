@@ -43,8 +43,6 @@ class SelfPublishing extends Model
 
     /**
      * Accessor field
-     *
-     * @return string
      */
     public function getFileLinkAttribute(): string
     {
@@ -66,8 +64,6 @@ class SelfPublishing extends Model
 
     /**
      * Accessor field
-     *
-     * @return string
      */
     public function getFileLinkWithDownloadAttribute(): string
     {

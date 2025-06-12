@@ -43,8 +43,6 @@ class PoemController extends Controller
 
     /**
      * Create new poem
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {

@@ -44,8 +44,6 @@ class SurveyController extends Controller
 
     /**
      * Create new survey
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(SurveyRequest $request): RedirectResponse
     {
@@ -78,8 +76,6 @@ class SurveyController extends Controller
 
     /**
      * Update survey
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, SurveyRequest $request): RedirectResponse
     {
@@ -107,8 +103,6 @@ class SurveyController extends Controller
 
     /**
      * Delete a survey
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

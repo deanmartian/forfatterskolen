@@ -140,8 +140,6 @@ class WorkshopController extends Controller
 
     /**
      * Update the email to be sent when approved for this workshop
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update_email($id, Request $request): RedirectResponse
     {
@@ -204,9 +202,6 @@ class WorkshopController extends Controller
         })->download('xlsx');*/
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function addLearnersToCourse($id, Request $request): RedirectResponse
     {
         $workshop = Workshop::findOrFail($id);
@@ -241,7 +236,6 @@ class WorkshopController extends Controller
      * Send email to the attendees of the workshop
      *
      * @param  $id  int workshop id
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function sendEmailToAttendees($id, Request $request): RedirectResponse
     {
@@ -326,8 +320,6 @@ class WorkshopController extends Controller
 
     /**
      * View the log of emails
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function viewEmailLogAttendees($log_id): JsonResponse
     {
@@ -343,8 +335,6 @@ class WorkshopController extends Controller
 
     /**
      * Update the status of the workshop
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function updateStatus(Request $request): JsonResponse
     {

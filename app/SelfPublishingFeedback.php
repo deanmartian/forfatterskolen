@@ -23,8 +23,6 @@ class SelfPublishingFeedback extends Model
 
     /**
      * Accessor field
-     *
-     * @return string
      */
     public function getFileLinkAttribute(): string
     {

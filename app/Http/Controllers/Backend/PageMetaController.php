@@ -26,8 +26,6 @@ class PageMetaController extends Controller
 
     /**
      * Create new page meta
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
@@ -68,8 +66,6 @@ class PageMetaController extends Controller
 
     /**
      * Update page meta
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request): RedirectResponse
     {
@@ -114,8 +110,6 @@ class PageMetaController extends Controller
 
     /**
      * Delete page meta
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

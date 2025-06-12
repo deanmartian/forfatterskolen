@@ -60,8 +60,6 @@ class PilotReaderDirectoryController extends Controller
 
     /**
      * List all reader profiles available
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function listReaderProfile(Request $request): JsonResponse
     {
@@ -109,8 +107,6 @@ class PilotReaderDirectoryController extends Controller
 
     /**
      * Add a query to reader
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function queryReader(Request $request): JsonResponse
     {
@@ -132,8 +128,6 @@ class PilotReaderDirectoryController extends Controller
 
     /**
      * List the queries
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function listQueries(Request $request): JsonResponse
     {
@@ -148,8 +142,6 @@ class PilotReaderDirectoryController extends Controller
 
     /**
      * Save the decision of the logged in user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function saveQueryDecision(Request $request): JsonResponse
     {

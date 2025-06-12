@@ -236,8 +236,6 @@ class Html2Text
 
     /**
      * Get the source HTML
-     *
-     * @return string
      */
     public function getHtml(): string
     {
@@ -269,8 +267,6 @@ class Html2Text
 
     /**
      * Returns the text, converted from HTML.
-     *
-     * @return string
      */
     public function getText(): string
     {
@@ -307,8 +303,6 @@ class Html2Text
 
     /**
      * Sets a base URL to handle relative links.
-     *
-     * @param  string  $baseurl
      */
     public function setBaseUrl(string $baseurl)
     {
@@ -381,7 +375,6 @@ class Html2Text
      * @param  string  $link  URL of the link
      * @param  string  $display  Part of the text to associate number with
      * @param  null  $linkOverride
-     * @return string
      */
     protected function buildlinkList(string $link, string $display, $linkOverride = null): string
     {
@@ -516,7 +509,6 @@ class Html2Text
      * Callback function for preg_replace_callback use.
      *
      * @param  array  $matches  PREG matches
-     * @return string
      */
     protected function pregCallback(array $matches): string
     {
@@ -557,7 +549,6 @@ class Html2Text
      * Callback function for preg_replace_callback use in PRE content handler.
      *
      * @param  array  $matches  PREG matches
-     * @return string
      */
     protected function pregPreCallback(/** @noinspection PhpUnusedParameterInspection */ array $matches): string
     {

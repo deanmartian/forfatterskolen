@@ -57,9 +57,6 @@ class ProjectService
         return $model->load('user');
     }
 
-    /**
-     * @return ProjectActivity
-     */
     public function saveActivity(Request $request): ProjectActivity
     {
         $model = $request->id ? ProjectActivity::find($request->id) : new ProjectActivity;
@@ -73,9 +70,6 @@ class ProjectService
         return $model;
     }
 
-    /**
-     * @return array
-     */
     public function saveBook(Request $request): array
     {
         $model = $request->id ? ProjectBook::find($request->id) : new ProjectBook;
@@ -222,9 +216,6 @@ class ProjectService
         $bookPicture->save();
     }
 
-    /**
-     * @return string
-     */
     public function saveOtherService($project_id, Request $request): string
     {
         $filePath = null;
@@ -258,9 +249,6 @@ class ProjectService
         return $manuType;
     }
 
-    /**
-     * @return string
-     */
     public function saveFile($project_id, Request $request): string
     {
         $extension = $request->manuscript->extension();
@@ -277,9 +265,6 @@ class ProjectService
         return $this->saveFileOrImageDropbox($destinationPath, 'manuscript');
     }
 
-    /**
-     * @return int
-     */
     public function calculateFileTextPrice($file, $is_copy_editing): int
     {
 
@@ -489,9 +474,6 @@ class ProjectService
         ], $data);
     }
 
-    /**
-     * @return null|string
-     */
     public function saveGraphicWorkFileOrImage(Request $request, $fieldName, $additionFolder = null, $isDescription = false): ?string
     {
         $filePath = null;
@@ -590,9 +572,6 @@ class ProjectService
         return $filePath;
     }
 
-    /**
-     * @return null|string
-     */
     public function saveMarketingFileOrImage(Request $request, $fieldName): ?string
     {
         $filePath = null;
@@ -615,7 +594,6 @@ class ProjectService
 
     /**
      * @param  $requestFile
-     * @return string
      */
     public function saveFileOrImage($destinationPath, $requestFilename): string
     {
@@ -649,7 +627,6 @@ class ProjectService
 
     /**
      * @param  $requestFile
-     * @return string
      */
     public function saveMultipleFileOrImage($destinationPath, $requestFilename): string
     {

@@ -26,7 +26,6 @@ class SolutionService
 
     /**
      * @param  null  $id
-     * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
     public function getRecord($id = null, int $page = 15)
@@ -40,9 +39,6 @@ class SolutionService
 
     /**
      * Create new solution
-     *
-     * @param  SolutionCreateRequest  $request
-     * @return \Illuminate\Database\Eloquent\Model
      */
     public function store(SolutionCreateRequest $request): Model
     {
@@ -154,9 +150,6 @@ class SolutionService
 
     /**
      * Update a solution
-     *
-     * @param  SolutionCreateRequest  $request
-     * @return bool
      */
     public function update($id, SolutionCreateRequest $request): bool
     {
@@ -273,8 +266,6 @@ class SolutionService
 
     /**
      * Delete a solution
-     *
-     * @return bool
      */
     public function destroy($id): bool
     {

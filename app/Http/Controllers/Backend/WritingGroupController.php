@@ -55,8 +55,6 @@ class WritingGroupController extends Controller
 
     /**
      * Insert writing group
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(AddWritingGroupRequest $request): RedirectResponse
     {
@@ -66,7 +64,6 @@ class WritingGroupController extends Controller
     }
 
     /**
-     * @param  int  $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function edit(int $id): View
@@ -81,7 +78,6 @@ class WritingGroupController extends Controller
      * Update writing group
      *
      * @param  $id  int
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, AddWritingGroupRequest $request): RedirectResponse
     {
@@ -94,7 +90,6 @@ class WritingGroupController extends Controller
      * Delete writing group
      *
      * @param  $id  int
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

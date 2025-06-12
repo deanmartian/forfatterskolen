@@ -14,8 +14,6 @@ class AssembleBookController extends Controller
 {
     /**
      * get all options
-     *
-     * @return json
      */
     public function getOptions(): JsonResponse
     {
@@ -34,8 +32,6 @@ class AssembleBookController extends Controller
 
     /**
      * save the cover or color
-     *
-     * @return json
      */
     public function saveCoverOrColor(Request $request): json
     {

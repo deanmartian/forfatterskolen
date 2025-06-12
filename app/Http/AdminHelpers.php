@@ -217,7 +217,6 @@ class AdminHelpers
      * Send email using Swift Mailer
      *
      * @param  string  $from_name  Not required field with default value
-     * @return bool
      */
     public static function send_email($subject, $from, $to, $content, string $from_name = 'Forfatterskolen', $attachment = null): bool
     {
@@ -459,7 +458,6 @@ class AdminHelpers
      * Get order details
      *
      * @param  $order  Order
-     * @return string
      */
     public static function getOrderDetails($order): string
     {
@@ -607,7 +605,6 @@ class AdminHelpers
      *
      * @param  $list_id  int
      * @param  $data  array
-     * @return bool
      */
     public static function addToActiveCampaignList($list_id, $data): bool
     {
@@ -1061,8 +1058,6 @@ class AdminHelpers
 
     /**
      * Allow duplicate filename and just add an increment to it
-     *
-     * @return string
      */
     public static function checkFileName($path, $filename, $extension): string
     {
@@ -1349,7 +1344,6 @@ class AdminHelpers
 
     /**
      * @param  null  $id
-     * @return array
      */
     public static function question_type($id = null): array
     {
@@ -1754,8 +1748,6 @@ class AdminHelpers
      * Get user information using their ip
      *
      * @param  null  $ip
-     * @param  string  $purpose
-     * @param  bool  $deep_detect
      * @return array|null|string
      */
     public static function ip_info($ip = null, string $purpose = 'location', bool $deep_detect = true)
@@ -1893,10 +1885,6 @@ class AdminHelpers
 
     /**
      * Curl for vipps
-     *
-     * @param  bool  $data
-     * @param  array  $header
-     * @return array
      */
     public static function vippsAPI($method, $loc_url, bool $data = false, array $header = []): array
     {

@@ -34,7 +34,6 @@ class SurveyQuestionController extends Controller
      * Create a question for the survey
      *
      * @param  $survey_id  Survey int
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store($survey_id, SurveyQuestionRequest $request): RedirectResponse
     {
@@ -71,7 +70,6 @@ class SurveyQuestionController extends Controller
      *
      * @param  $survey_id  Survey int
      * @param  $id  SurveyQuestion int
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($survey_id, $id, SurveyQuestionRequest $request): RedirectResponse
     {

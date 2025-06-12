@@ -106,9 +106,6 @@ class SaleController extends Controller
         }
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function sendEmail($id, $parent, Request $request): RedirectResponse
     {
         $record = [];

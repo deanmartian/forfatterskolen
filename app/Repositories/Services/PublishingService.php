@@ -41,8 +41,6 @@ class PublishingService
 
     /**
      * Get the fields
-     *
-     * @return array
      */
     public function fields(): array
     {
@@ -53,7 +51,6 @@ class PublishingService
      * Create new publisher house
      *
      * @param  array  $data  data to be inserted
-     * @return \Illuminate\Database\Eloquent\Model
      */
     public function store(array $data): Model
     {
@@ -64,9 +61,6 @@ class PublishingService
 
     /**
      * Update publishing house
-     *
-     * @param  int  $id
-     * @return bool
      */
     public function update(int $id, array $data): bool
     {
@@ -82,8 +76,6 @@ class PublishingService
 
     /**
      * Delete record
-     *
-     * @return bool|null
      */
     public function destroy($id): ?bool
     {
@@ -97,8 +89,6 @@ class PublishingService
 
     /**
      * Find publishing house
-     *
-     * @return \App\Publishing
      */
     public function find($id): Publishing
     {
@@ -109,7 +99,6 @@ class PublishingService
      * Set the pagination for this model
      *
      * @param  int  $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = 15): LengthAwarePaginator
     {

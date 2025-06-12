@@ -71,8 +71,6 @@ class TestimonialRepository extends BaseRepository
 
     /**
      * Delete testimonial
-     *
-     * @return bool
      */
     public function destroy($id): bool
     {

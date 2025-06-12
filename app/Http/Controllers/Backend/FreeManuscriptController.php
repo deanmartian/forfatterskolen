@@ -58,8 +58,6 @@ class FreeManuscriptController extends Controller
 
     /**
      * Delete Free Manuscript
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function deleteFreeManuscript($id): RedirectResponse
     {
@@ -71,8 +69,6 @@ class FreeManuscriptController extends Controller
 
     /**
      * Edit the content from New tab
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function editContent($id, Request $request): RedirectResponse
     {
@@ -91,8 +87,6 @@ class FreeManuscriptController extends Controller
 
     /**
      * Assign Editor
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function assignEditor($id, Request $request): RedirectResponse
     {
@@ -118,8 +112,6 @@ class FreeManuscriptController extends Controller
 
     /**
      * Display the feedback history
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function feedbackHistory($id): JsonResponse
     {
@@ -142,8 +134,6 @@ class FreeManuscriptController extends Controller
 
     /**
      * Resend feedback
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function resendFeedback($id): RedirectResponse
     {
@@ -194,8 +184,6 @@ class FreeManuscriptController extends Controller
 
     /**
      * This would move the feedback to be approved by head editor
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function sendFeedback($id, Request $requests): RedirectResponse
     {

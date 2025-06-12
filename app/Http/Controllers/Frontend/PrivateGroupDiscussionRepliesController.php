@@ -18,8 +18,6 @@ class PrivateGroupDiscussionRepliesController extends Controller
 {
     /**
      * Get the replies for a certain discussion
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function getDiscussionReplies($discussion_id): JsonResponse
     {
@@ -33,8 +31,6 @@ class PrivateGroupDiscussionRepliesController extends Controller
 
     /**
      * Create a reply for a discussion
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function createReply(Request $request): JsonResponse
     {
@@ -104,8 +100,6 @@ class PrivateGroupDiscussionRepliesController extends Controller
 
     /**
      * Update a reply from discussion
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function updateReply(Request $request): JsonResponse
     {

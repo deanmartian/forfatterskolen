@@ -73,8 +73,6 @@ class CalendarNoteController extends Controller
 
     /**
      * Update the note
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, CalendarNoteCreateRequest $request): RedirectResponse
     {
@@ -92,8 +90,6 @@ class CalendarNoteController extends Controller
 
     /**
      * Delete a note
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

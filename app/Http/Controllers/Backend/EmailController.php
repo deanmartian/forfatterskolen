@@ -71,8 +71,6 @@ class EmailController extends Controller
 
     /**
      * Login the user to the web server
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function login(Request $request): RedirectResponse
     {
@@ -98,7 +96,6 @@ class EmailController extends Controller
      * Move the selected email from inbox to the learners
      *
      * @param  int  $id  email id
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function move(int $id): RedirectResponse
     {
@@ -197,8 +194,6 @@ class EmailController extends Controller
 
     /**
      * Reply to particular email
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function reply(Request $request): RedirectResponse
     {
@@ -338,8 +333,6 @@ class EmailController extends Controller
      * @param  $imap  resource imap connection
      * @param  $uid  int message id
      * @param  $mimetype  string
-     * @param  bool  $structure
-     * @param  bool  $partNumber
      * @return bool|string
      */
     public function get_part($imap, $uid, $mimetype, bool $structure = false, bool $partNumber = false)

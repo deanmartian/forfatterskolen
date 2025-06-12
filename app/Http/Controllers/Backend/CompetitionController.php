@@ -41,8 +41,6 @@ class CompetitionController extends Controller
 
     /**
      * Create new competition
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(AddCompetitionRequest $request): RedirectResponse
     {
@@ -53,8 +51,6 @@ class CompetitionController extends Controller
 
     /**
      * Update a competition
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, AddCompetitionRequest $request): RedirectResponse
     {
@@ -65,8 +61,6 @@ class CompetitionController extends Controller
 
     /**
      * Delete a competition
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

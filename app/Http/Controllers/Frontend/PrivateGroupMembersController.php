@@ -45,8 +45,6 @@ class PrivateGroupMembersController extends Controller
 
     /**
      * Get the sharable invitation link
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function getInvitationLink(Request $request): JsonResponse
     {
@@ -108,8 +106,6 @@ class PrivateGroupMembersController extends Controller
 
     /**
      * For unauthenticated user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function unauthenticatedSendInvitation(Request $request): JsonResponse
     {
@@ -118,8 +114,6 @@ class PrivateGroupMembersController extends Controller
 
     /**
      * For authenticated user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function authenticatedSendInvitation(Request $request): JsonResponse
     {
@@ -128,8 +122,6 @@ class PrivateGroupMembersController extends Controller
 
     /**
      * For authenticated user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function authenticatedEmailValidation(Request $request): JsonResponse
     {
@@ -138,8 +130,6 @@ class PrivateGroupMembersController extends Controller
 
     /**
      * Email validation for unauthenticated user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function unauthenticatedEmailValidation(Request $request): JsonResponse
     {
@@ -169,8 +159,6 @@ class PrivateGroupMembersController extends Controller
 
     /**
      * Validate the email
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     private function validateEmail(Request $request): JsonResponse
     {
@@ -185,8 +173,6 @@ class PrivateGroupMembersController extends Controller
 
     /**
      * Send the invitation
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     private function sendInvitations(Request $request): JsonResponse
     {
@@ -342,8 +328,6 @@ class PrivateGroupMembersController extends Controller
 
     /**
      * List group invitations based on status
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function listInvitations($id, $status): JsonResponse
     {
@@ -359,8 +343,6 @@ class PrivateGroupMembersController extends Controller
 
     /**
      * Cancel an invitation
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function cancelInvitation(Request $request): JsonResponse
     {
@@ -375,8 +357,6 @@ class PrivateGroupMembersController extends Controller
 
     /**
      * Remove a member from the group
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function removeMember(Request $request): JsonResponse
     {

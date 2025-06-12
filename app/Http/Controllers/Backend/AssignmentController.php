@@ -322,8 +322,6 @@ class AssignmentController extends Controller
 
     /**
      * Move an assignment to another assignment
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function moveManuscript($manuscript_id, Request $request): RedirectResponse
     {
@@ -395,8 +393,6 @@ class AssignmentController extends Controller
 
     /**
      * Add assignment add-on for learner
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function addOnForLearner($assignment_id, Request $request): RedirectResponse
     {
@@ -487,8 +483,6 @@ class AssignmentController extends Controller
 
     /**
      * Update the lock status of assignment manuscript
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function updateLockStatus(Request $request): JsonResponse
     {
@@ -604,8 +598,6 @@ class AssignmentController extends Controller
 
     /**
      * Export list of emails
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function exportEmailList($id): RedirectResponse
     {
@@ -640,8 +632,6 @@ class AssignmentController extends Controller
     /**
      * Download learners with the assignment even if they don't submit assignment manuscript yet
      * include the users that have the assignment as add-on
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function exportLearnersIncludeAddOnLearners($assignment_id): RedirectResponse
     {
@@ -694,8 +684,6 @@ class AssignmentController extends Controller
 
     /**
      * Send email to the learners that sent assignment
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function sendEmailToList($id, Request $request): RedirectResponse
     {
@@ -720,9 +708,6 @@ class AssignmentController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function emailManuscriptUser($id, Request $request): RedirectResponse
     {
         $manuscript = AssignmentManuscript::find($id);
@@ -736,8 +721,6 @@ class AssignmentController extends Controller
 
     /**
      * Auto-generate a document from 10 student and put it to one file before downloading
-     *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function generateDoc($assignmentId): BinaryFileResponse
     {
@@ -864,8 +847,6 @@ class AssignmentController extends Controller
 
     /**
      * Update assignment type
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function updateTypes($id, Request $request): RedirectResponse
     {
@@ -888,8 +869,6 @@ class AssignmentController extends Controller
 
     /**
      * Assign Editor for the manuscript
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function assignManuscriptEditor($id, Request $request): RedirectResponse
     {
@@ -1053,8 +1032,6 @@ class AssignmentController extends Controller
 
     /**
      * Download assignment manuscript details
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function downloadExcelSheet($assignmentId): RedirectResponse
     {
@@ -1088,8 +1065,6 @@ class AssignmentController extends Controller
 
     /**
      * Add feedback to assignments that don't have a group
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function manuscriptFeedbackNoGroup($manuscript_id, $learner_id, Request $request): RedirectResponse
     {
@@ -1319,8 +1294,6 @@ class AssignmentController extends Controller
 
     /**
      * Update availability of feedback with no group
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function manuscriptFeedbackNoGroupUpdateAvailability($feedback_id, Request $request): RedirectResponse
     {
@@ -1339,8 +1312,6 @@ class AssignmentController extends Controller
 
     /**
      * Update the join group field
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function updateJoinGroup($manuscript_id, Request $request): RedirectResponse
     {
@@ -1358,7 +1329,6 @@ class AssignmentController extends Controller
 
     /**
      * @param  null  $id
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function saveAssignmentTemplate($id, Request $request): RedirectResponse
     {
@@ -1380,9 +1350,6 @@ class AssignmentController extends Controller
             'alert_type' => 'success']);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function deleteAssignmentTemplate($id): RedirectResponse
     {
         AssignmentTemplate::find($id)->delete();
@@ -1393,7 +1360,6 @@ class AssignmentController extends Controller
 
     /**
      * @param  null  $id
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function learnerAssignment($id, Request $request): RedirectResponse
     {
@@ -1485,9 +1451,6 @@ class AssignmentController extends Controller
             'alert_type' => 'success']);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function deleteLearnerAssignment($assignment_id): RedirectResponse
     {
         Assignment::find($assignment_id)->delete();

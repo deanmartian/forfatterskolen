@@ -246,9 +246,6 @@ class WebinarController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function updateField($id, Request $request): RedirectResponse
     {
         $field = $request->field;
@@ -306,8 +303,6 @@ class WebinarController extends Controller
 
     /**
      * Save email out for webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function webinarEmailOut($webinar_id, $course_id, Request $request): RedirectResponse
     {

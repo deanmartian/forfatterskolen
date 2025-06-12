@@ -59,8 +59,6 @@ class AssignmentManuscript extends Model
 
     /**
      * Accessor field
-     *
-     * @return string
      */
     public function getFileLinkAttribute(): string
     {
@@ -80,8 +78,6 @@ class AssignmentManuscript extends Model
 
     /**
      * Accessor field
-     *
-     * @return string
      */
     public function getFileLinkWithDownloadAttribute(): string
     {

@@ -25,17 +25,11 @@ class BaseRepository
         $this->model = $model;
     }
 
-    /**
-     * @return array
-     */
     public function validatorAttributeNames(): array
     {
         return [];
     }
 
-    /**
-     * @return Model
-     */
     public function getModel(): Model
     {
         return $this->model;
@@ -49,10 +43,6 @@ class BaseRepository
         return $this->model->all();
     }
 
-    /**
-     * @param  int  $id
-     * @return Model|null
-     */
     public function find(int $id): ?Model
     {
         return $this->model->find($id);
@@ -64,8 +54,6 @@ class BaseRepository
     }
 
     /**
-     * @param  int  $id
-     * @return Model
      *
      * @throws ModelNotFoundException
      */
@@ -75,8 +63,6 @@ class BaseRepository
     }
 
     /**
-     * @param  string  $slug
-     * @return Model
      *
      * @throws ModelNotFoundException
      */
@@ -87,17 +73,11 @@ class BaseRepository
 
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
     public function query(): Builder
     {
         return $this->model->query();
     }
 
-    /**
-     * @return Model
-     */
     public function instance(array $attributes = []): Model
     {
         $model = $this->model;
@@ -106,7 +86,6 @@ class BaseRepository
     }
 
     /**
-     * @param  int|null  $perPage
      * @return mixed
      */
     public function paginate(?int $perPage = null)
@@ -121,7 +100,6 @@ class BaseRepository
 
     /**
      * @param  null  $rules
-     * @return \Illuminate\Validation\Validator
      */
     public function validator(array $data = [], $rules = null, array $messages = [], array $customAttributes = []): \Illuminate\Validation\Validator
     {
@@ -134,7 +112,6 @@ class BaseRepository
 
     /**
      * @param  null  $rules
-     * @return bool
      *
      * @throws ValidationException
      */
@@ -145,18 +122,11 @@ class BaseRepository
         return $this->_validate($validator);
     }
 
-    /**
-     * @return Model
-     */
     public function create(array $data = []): Model
     {
         return $this->model->create($data);
     }
 
-    /**
-     * @param  int  $id
-     * @return Model
-     */
     public function update(int $id, array $data = []): Model
     {
         $instance = $this->findOrFail($id);
@@ -166,8 +136,6 @@ class BaseRepository
     }
 
     /**
-     * @param  int  $id
-     * @return Model
      *
      * @throws \Exception
      */
@@ -180,7 +148,6 @@ class BaseRepository
     }
 
     /**
-     * @return bool
      *
      * @throws ValidationException
      */

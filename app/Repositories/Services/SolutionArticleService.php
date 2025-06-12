@@ -36,8 +36,6 @@ class SolutionArticleService
 
     /**
      * Table fields
-     *
-     * @return array
      */
     public function fields(): array
     {
@@ -46,7 +44,6 @@ class SolutionArticleService
 
     /**
      * @param  null  $id
-     * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null
      */
     public function getRecord($id = null, int $page = 15)
@@ -60,8 +57,6 @@ class SolutionArticleService
 
     /**
      * Create new article
-     *
-     * @return \Illuminate\Database\Eloquent\Model
      */
     public function store($solution_id, array $data): Model
     {
@@ -72,8 +67,6 @@ class SolutionArticleService
 
     /**
      * Update article
-     *
-     * @return bool
      */
     public function update($id, array $data): bool
     {
@@ -87,9 +80,6 @@ class SolutionArticleService
 
     /**
      * Delete the article
-     *
-     * @param  SolutionArticle  $id
-     * @return bool
      */
     public function destroy(SolutionArticle $id): bool
     {

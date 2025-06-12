@@ -115,9 +115,6 @@ class GiftController extends Controller
             'hasPaidCourse', 'user', 'startIndex', 'giftCard', 'giftCards'));
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function validateCheckoutForm($course_id, Request $request, CourseService $courseService, GiftService $giftService): JsonResponse
     {
         $validator = $this->getValidator($request);

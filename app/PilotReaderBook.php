@@ -30,8 +30,6 @@ class PilotReaderBook extends Model
 
     /**
      * Get chapters and display by display order field where 0 is on the last
-     *
-     * @return HasMany
      */
     public function chapters(): HasMany
     {

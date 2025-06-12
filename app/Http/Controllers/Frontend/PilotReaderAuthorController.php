@@ -175,8 +175,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * List Invitaitons
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function listInvitations($id, $status): JsonResponse
     {
@@ -213,8 +211,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Cancel invitation from book
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function cancelInvitation(Request $request): JsonResponse
     {
@@ -228,8 +224,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Restore or remove a reader from a book
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function restoreOrRemoveReader(Request $request): JsonResponse
     {
@@ -244,8 +238,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Send invitation for a book
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function bookAuthorBookInvitationSend($book_id, Request $request): JsonResponse
     {
@@ -396,8 +388,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Validate the email address that the author wants to invite
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function bookAuthorBookInvitationValidateEmail($book_id, Request $request): JsonResponse
     {
@@ -413,8 +403,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Update the invitation status based on the action selected
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function bookInvitationAction($_token, $action): RedirectResponse
     {
@@ -577,7 +565,6 @@ class PilotReaderAuthorController extends Controller
      * Update the sort of chapters based on the book id
      *
      * @param  $book_id  PilotReaderBook
-     * @return \Illuminate\Http\JsonResponse
      */
     public function bookAuthorBookSortChapter($book_id, Request $request): JsonResponse
     {
@@ -611,7 +598,6 @@ class PilotReaderAuthorController extends Controller
      * Update a chapter field
      *
      * @param  $chapter_id  PilotReaderBookChapter
-     * @return \Illuminate\Http\JsonResponse
      */
     public function bookChapterUpdateField($chapter_id, Request $request): JsonResponse
     {
@@ -741,7 +727,6 @@ class PilotReaderAuthorController extends Controller
      *
      * @param  $book_id  PilotReaderBook
      * @param  $chapter_id  PilotReaderBookChapter
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function bookAuthorBookDeleteChapter($book_id, $chapter_id): RedirectResponse
     {
@@ -758,8 +743,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Create new note for the chapter
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function authorChapterNoteCreate(Request $request): JsonResponse
     {
@@ -867,8 +850,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Update the chapter note
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function authorChapterNoteUpdate(Request $request): JsonResponse
     {
@@ -882,8 +863,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Update the chapter note
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function authorChapterFeedbackUpdate(Request $request): JsonResponse
     {
@@ -900,8 +879,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Delete the draft
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function authorChapterDeleteDraft(Request $request): JsonResponse
     {
@@ -914,8 +891,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * List the chapter notes
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function authorChapterNoteList($chapter_id): JsonResponse
     {
@@ -1018,8 +993,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Set a bookmark
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function setBookMark(Request $request): JsonResponse
     {
@@ -1054,8 +1027,6 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Delete the book
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function bookAuthorBookDelete(Request $request): JsonResponse
     {

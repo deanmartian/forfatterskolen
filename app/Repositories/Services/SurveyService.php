@@ -24,7 +24,6 @@ class SurveyService
 
     /**
      * @param  null  $id
-     * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
     public function getRecord($id = null, int $page = 15)
@@ -51,8 +50,6 @@ class SurveyService
 
     /**
      * Update a survey
-     *
-     * @return bool
      */
     public function update($id, $request): bool
     {
@@ -64,8 +61,6 @@ class SurveyService
 
     /**
      * Delete a survey
-     *
-     * @return bool
      */
     public function destroy($id): bool
     {

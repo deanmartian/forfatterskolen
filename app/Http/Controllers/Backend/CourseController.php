@@ -453,8 +453,6 @@ class CourseController extends Controller
 
     /**
      * Update is free field
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function updateIsFreeStatus(Request $request): JsonResponse
     {
@@ -589,8 +587,6 @@ class CourseController extends Controller
 
     /**
      * Send email to the learners that haven't started the free course yet
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function notStartedCourseReminder($course_id, Request $request): RedirectResponse
     {
@@ -698,8 +694,6 @@ class CourseController extends Controller
 
     /**
      * Export the learners to excel
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function learnerListExcel($course_id, $type = 'email'): RedirectResponse
     {
@@ -747,8 +741,6 @@ class CourseController extends Controller
 
     /**
      * Course with learners from included package
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function learnerActiveListExcel($course_id): RedirectResponse
     {
@@ -791,8 +783,6 @@ class CourseController extends Controller
 
     /**
      * Save expiration email reminder
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function expirationReminder($course_id, Request $request): RedirectResponse
     {
@@ -822,8 +812,6 @@ class CourseController extends Controller
 
     /**
      * Add all learners to all webinars
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function addLearnersToWebinars($course_id, Request $request): RedirectResponse
     {
@@ -926,9 +914,6 @@ class CourseController extends Controller
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function updateCertificateDates($course_id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
@@ -940,9 +925,6 @@ class CourseController extends Controller
             'alert_type' => 'success']);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function saveCertificateTemplate($course_id, Request $request): RedirectResponse
     {
 
@@ -1156,9 +1138,6 @@ class CourseController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function certificate($course_id, $package_id): JsonResponse
     {
         $course = Course::find($course_id);

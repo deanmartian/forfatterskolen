@@ -54,8 +54,6 @@ class OptInController extends Controller
 
     /**
      * Create record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
@@ -85,8 +83,6 @@ class OptInController extends Controller
 
     /**
      * Update record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request): RedirectResponse
     {
@@ -104,8 +100,6 @@ class OptInController extends Controller
 
     /**
      * Delete record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

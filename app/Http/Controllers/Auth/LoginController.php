@@ -261,7 +261,6 @@ class LoginController extends Controller
     }
 
     /** login using encrypted email
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function emailLogin($email, Request $request): RedirectResponse
     {
@@ -302,8 +301,6 @@ class LoginController extends Controller
 
     /**
      * Email login with redirect link
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function emailLoginRedirect($email, $redirect_link): RedirectResponse
     {
@@ -343,8 +340,6 @@ class LoginController extends Controller
 
     /**
      * Create a redirect method to facebook api.
-     *
-     * @return \Response
      */
     public function redirectToFacebook(): Response
     {
@@ -396,8 +391,6 @@ class LoginController extends Controller
 
     /**
      * Create a redirect method to google api.
-     *
-     * @return \Response
      */
     public function redirectToGoogle(): Response
     {
@@ -449,8 +442,6 @@ class LoginController extends Controller
 
     /**
      * Generate a token for checking before the actual login
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function crossDomainToken(Request $request): JsonResponse
     {
@@ -483,8 +474,6 @@ class LoginController extends Controller
 
     /**
      * Login from other domain
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function crossDomainLogin(Request $request): JsonResponse
     {
@@ -596,8 +585,6 @@ class LoginController extends Controller
 
     /**
      * Get the user info from vipps
-     *
-     * @return $this
      */
     public function vippsUserInfo($access_token, $state): RedirectResponse
     {

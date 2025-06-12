@@ -50,8 +50,6 @@ class CompetitionService
 
     /**
      * Insert the data passed
-     *
-     * @param  AddCompetitionRequest  $request
      */
     public function store(AddCompetitionRequest $request)
     {
@@ -79,8 +77,6 @@ class CompetitionService
      * Update the competition
      *
      * @param  int  $id  competition id
-     * @param  AddCompetitionRequest  $request
-     * @return bool
      */
     public function update(int $id, AddCompetitionRequest $request): bool
     {
@@ -110,8 +106,6 @@ class CompetitionService
 
     /**
      * Delete a competition
-     *
-     * @return bool
      */
     public function destroy($id): bool
     {

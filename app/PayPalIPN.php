@@ -40,25 +40,16 @@ class PayPalIPN extends Model
      */
     protected $table = 'paypal_ipn_records';
 
-    /**
-     * @return bool
-     */
     public function isCompleted(): bool
     {
         return in_array($this->payment_status, [self::COMPLETED]);
     }
 
-    /**
-     * @return bool
-     */
     public function isVerified(): bool
     {
         return in_array($this->verified, [self::IPN_VERIFIED]);
     }
 
-    /**
-     * @return mixed
-     */
     public function invoices(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);

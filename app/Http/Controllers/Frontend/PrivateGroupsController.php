@@ -31,8 +31,6 @@ class PrivateGroupsController extends Controller
 
     /**
      * Create a new group
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function createGroup(Request $request): JsonResponse
     {
@@ -63,8 +61,6 @@ class PrivateGroupsController extends Controller
 
     /**
      * Add a group member
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     private function addGroupMember($data): JsonResponse
     {
@@ -100,8 +96,6 @@ class PrivateGroupsController extends Controller
 
     /**
      * Get private group details
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function getGroupData($id): JsonResponse
     {
@@ -137,8 +131,6 @@ class PrivateGroupsController extends Controller
 
     /**
      * Update the private group
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function updateGroup(Request $request): JsonResponse
     {
@@ -193,8 +185,6 @@ class PrivateGroupsController extends Controller
 
     /**
      * Set the preference
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function setPreference(Request $request): JsonResponse
     {

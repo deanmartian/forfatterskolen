@@ -47,9 +47,6 @@ class CourseVideoTestimonialController extends Controller
     /**
      * Create new video testimonial
      * use CourseVideoTestimonialService for logic
-     *
-     * @param  CourseTestimonialCreateRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
@@ -82,8 +79,6 @@ class CourseVideoTestimonialController extends Controller
     /**
      * Update testimonial
      * use CourseVideoTestimonialService for logic
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request): RedirectResponse
     {

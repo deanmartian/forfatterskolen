@@ -13,8 +13,6 @@ class CourseRewardCouponController extends Controller
 {
     /**
      * Create reward coupon
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store($course_id, Request $request): RedirectResponse
     {
@@ -35,8 +33,6 @@ class CourseRewardCouponController extends Controller
 
     /**
      * update reward coupon
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($course_id, $id, Request $request): RedirectResponse
     {
@@ -58,8 +54,6 @@ class CourseRewardCouponController extends Controller
 
     /**
      * Delete reward coupon
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($course_id, $id): RedirectResponse
     {
@@ -79,8 +73,6 @@ class CourseRewardCouponController extends Controller
 
     /**
      * Create multiple reward coupon
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function multipleStore($course_id, Request $request): RedirectResponse
     {
@@ -101,8 +93,6 @@ class CourseRewardCouponController extends Controller
 
     /**
      * Export the coupon codes to a text file
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function exportToText($course_id): RedirectResponse
     {

@@ -57,8 +57,6 @@ class Contract extends Model
 
     /**
      * Accessor field
-     *
-     * @return string
      */
     public function getSentFileLinkAttribute(): string
     {
@@ -78,8 +76,6 @@ class Contract extends Model
 
     /**
      * Accessor field
-     *
-     * @return string
      */
     public function getSignedFileLinkAttribute(): string
     {

@@ -194,8 +194,6 @@ class PageController extends Controller
 
     /**
      * Finish an assignment
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function finishAssignment($assignment_id): RedirectResponse
     {
@@ -398,8 +396,6 @@ class PageController extends Controller
 
     /**
      * Add learner to competition
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function singleCompetitionStore(Request $request): RedirectResponse
     {

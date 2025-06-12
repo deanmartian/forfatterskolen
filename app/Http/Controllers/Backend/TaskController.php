@@ -27,8 +27,6 @@ class TaskController extends Controller
 
     /**
      * Create new task
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
@@ -42,8 +40,6 @@ class TaskController extends Controller
 
     /**
      * Finish the task
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function finishTask($task_id): RedirectResponse
     {
@@ -62,8 +58,6 @@ class TaskController extends Controller
 
     /**
      * Update a task
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($task_id, Request $request): RedirectResponse
     {
@@ -82,8 +76,6 @@ class TaskController extends Controller
 
     /**
      * Delete a task
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($task_id): RedirectResponse
     {

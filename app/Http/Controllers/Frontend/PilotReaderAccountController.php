@@ -29,8 +29,6 @@ class PilotReaderAccountController extends Controller
 
     /**
      * Set preference for a user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function setUserPreferences(Request $request): JsonResponse
     {

@@ -381,8 +381,6 @@ class AssignmentGroupController extends Controller
 
     /**
      * Approve the feedback
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function approve($id): RedirectResponse
     {
@@ -395,8 +393,6 @@ class AssignmentGroupController extends Controller
 
     /**
      * Update the feedback lock status
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function updateFeedbackLockStatus(Request $request): JsonResponse
     {
@@ -559,8 +555,6 @@ class AssignmentGroupController extends Controller
 
     /**
      * Set the group feedback availability
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function setGroupFeedbackAvailability($course_id, $assignment_id, $id, Request $request): RedirectResponse
     {

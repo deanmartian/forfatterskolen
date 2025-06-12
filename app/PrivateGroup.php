@@ -34,8 +34,6 @@ class PrivateGroup extends Model
 
     /**
      * Get the manager of the group
-     *
-     * @return Relation
      */
     public function manager(): HasOne
     {

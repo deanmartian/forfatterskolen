@@ -12,8 +12,6 @@ class AdvisoryController extends Controller
 {
     /**
      * Update the advisory details
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request): RedirectResponse
     {

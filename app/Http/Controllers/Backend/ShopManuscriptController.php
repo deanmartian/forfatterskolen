@@ -457,8 +457,6 @@ class ShopManuscriptController extends Controller
 
     /**
      * Update the genre of the shop manuscript taken
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function updateGenre($shopManuscriptTakenID, Request $request): RedirectResponse
     {

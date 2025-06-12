@@ -41,8 +41,6 @@ class PrivateGroupDiscussionsController extends Controller
 
     /**
      * Display all the discussions for a particular group
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function listDiscussion($group_id): JsonResponse
     {
@@ -56,8 +54,6 @@ class PrivateGroupDiscussionsController extends Controller
 
     /**
      * Create discussion for a particular group
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function create(Request $request): JsonResponse
     {
@@ -148,8 +144,6 @@ class PrivateGroupDiscussionsController extends Controller
 
     /**
      * Update the discussion details
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request): JsonResponse
     {

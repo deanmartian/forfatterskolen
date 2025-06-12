@@ -286,8 +286,6 @@ class InvoiceController extends Controller
 
     /**
      * Create invoice
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function addInvoice(Request $request): RedirectResponse
     {

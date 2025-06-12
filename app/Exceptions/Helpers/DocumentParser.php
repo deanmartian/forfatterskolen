@@ -64,7 +64,6 @@ class DocumentParser
      * @param  string  $filename  The path to the document
      * @param  string  $datafile  .odt and .docx documents are just zipped folders with an XML file. This variable is the path to the main
      *                            xml file which holds the text for the document
-     * @return html
      *
      * @throws Exception
      */
@@ -203,7 +202,6 @@ class DocumentParser
      *
      * @param  \DOMElement  $tag  The tag to rename
      * @param  string  $newtagname  The name of the new tag
-     * @return \DOMElement
      */
     private static function renameTag(\DOMElement $tag, string $newtagname): DOMElement
     {
@@ -246,7 +244,6 @@ class DocumentParser
      * Parse a .doc file (adapted from http://goo.gl/Wm29Aj)
      *
      * @param  string  $filename  The path to the word document
-     * @return html
      */
     private static function parseDoc(string $filename): html
     {

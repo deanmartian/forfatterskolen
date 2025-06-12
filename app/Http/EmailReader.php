@@ -103,8 +103,6 @@ class EmailReader
      * 1.1 - TEXT/PLAIN
      * 1.2 - TEXT/HTML
      * 2 - file.ext
-     *
-     * @return array
      */
     public function inbox(): array
     {

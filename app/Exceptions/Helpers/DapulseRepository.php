@@ -8,8 +8,6 @@ class DapulseRepository
 {
     /**
      * Get all the users
-     *
-     * @return ApiException
      */
     public static function getUsers(): ApiException
     {
@@ -34,8 +32,6 @@ class DapulseRepository
 
     /**
      * Get all boards
-     *
-     * @return ApiException
      */
     public function getBoards(): ApiException
     {
@@ -59,8 +55,6 @@ class DapulseRepository
 
     /**
      * Get specific board
-     *
-     * @return ApiException
      */
     public function getBoard($board_id): ApiException
     {
@@ -84,8 +78,6 @@ class DapulseRepository
 
     /**
      * Get board pulses
-     *
-     * @return ApiException
      */
     public static function getBoardPulses($board_id): ApiException
     {
@@ -109,8 +101,6 @@ class DapulseRepository
 
     /**
      * Add user to pulse
-     *
-     * @return ApiException
      */
     public function addUserToPulse($pulse_id): ApiException
     {
@@ -138,8 +128,6 @@ class DapulseRepository
 
     /**
      * Get board columns
-     *
-     * @return ApiException
      */
     public function getBoardColumns(): ApiException
     {
@@ -163,8 +151,6 @@ class DapulseRepository
 
     /**
      * Assign owner to a pulse
-     *
-     * @return ApiException
      */
     public function assignUserToPulse($board_id, $pulse_id, $user_id): ApiException
     {
@@ -192,7 +178,6 @@ class DapulseRepository
      * Add new board
      *
      * @param  $data  object passed by controller
-     * @return ApiException
      */
     public function addBoard($data): ApiException
     {
@@ -222,7 +207,6 @@ class DapulseRepository
      *
      * @param  $board_id  int id of the board
      * @param  $data  object passed by controller
-     * @return ApiException
      */
     public function addPulseToBoard($board_id, $data): ApiException
     {
@@ -249,8 +233,6 @@ class DapulseRepository
 
     /**
      * Update board group title
-     *
-     * @return ApiException
      */
     public function updateGroupTitle($board_id, $data): ApiException
     {
@@ -276,8 +258,6 @@ class DapulseRepository
 
     /**
      * Update title of a pulse
-     *
-     * @return ApiException
      */
     public function updatePulseTitle($pulse_id, $data): ApiException
     {
@@ -322,8 +302,6 @@ class DapulseRepository
 
     /**
      * Set pulse status
-     *
-     * @return ApiException
      */
     public function setPulseStatus($board_id, $pulse_id, $phase): ApiException
     {
@@ -349,8 +327,6 @@ class DapulseRepository
 
     /**
      * Set pulse timeline
-     *
-     * @return ApiException
      */
     public function setTimeline($board_id, $pulse_id, $from, $to): ApiException
     {

@@ -45,8 +45,6 @@ class CourseService
 
     /**
      * Check if the coupon is valid and show discount
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function checkCouponDiscount($course_id, $coupon): JsonResponse
     {
@@ -166,8 +164,6 @@ class CourseService
 
     /**
      * Generate checkout from Svea
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function generateSveaCheckout(Request $request): JsonResponse
     {
@@ -278,8 +274,6 @@ class CourseService
 
     /**
      * Calculate the price with the coupon
-     *
-     * @return int
      */
     public function calculatePrice($course, $package, Request $request): int
     {
@@ -426,8 +420,6 @@ class CourseService
     /**
      * Add the course taken to learner including the shop-manuscript or included courses if there's any
      * The function is get from Frontend\ShopController\place_order()
-     *
-     * @return \Illuminate\Database\Eloquent\Model
      */
     public function addCourseToLearner($user_id, $package_id, $start_course = false): Model
     {
@@ -741,8 +733,6 @@ class CourseService
 
     /**
      * Generate docx attached to the email with user and order info
-     *
-     * @return string
      */
     public function generateDocx($user_id, $package_id): string
     {

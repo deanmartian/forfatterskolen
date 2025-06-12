@@ -156,9 +156,6 @@ class ShopManuscriptController extends Controller
         return $request->all();
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function validateForm($shop_manuscript_id, Request $request, CourseService $courseService,
         ShopManuscriptService $shopManuscriptService): JsonResponse
     {
@@ -560,8 +557,6 @@ class ShopManuscriptController extends Controller
 
     /**
      * Paypal payment
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function paypalPayment($invoice_id): RedirectResponse
     {
@@ -718,8 +713,6 @@ class ShopManuscriptController extends Controller
 
     /**
      * Upload synopsis
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function upload_synopsis($id, Request $request): RedirectResponse
     {
@@ -752,8 +745,6 @@ class ShopManuscriptController extends Controller
 
     /**
      * Update the manuscript uploaded by the learner
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function updateUploadedManuscript($id, Request $request): RedirectResponse
     {

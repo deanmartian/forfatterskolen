@@ -202,8 +202,6 @@ class AdminController extends Controller
 
     /**
      * Insert/Update page access for the admin
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function pageAccess($admin_id, Request $request, PageAccessService $pageAccessService): RedirectResponse
     {
@@ -214,8 +212,6 @@ class AdminController extends Controller
 
     /**
      * Activate/De-activate user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function adminStatus(Request $request): JsonResponse
     {

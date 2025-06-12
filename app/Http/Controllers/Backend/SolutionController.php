@@ -39,8 +39,6 @@ class SolutionController extends Controller
 
     /**
      * Create new solution
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(SolutionCreateRequest $request): RedirectResponse
     {
@@ -53,9 +51,6 @@ class SolutionController extends Controller
 
     /**
      * Update a solution
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(int $id, SolutionCreateRequest $request): RedirectResponse
     {
@@ -68,8 +63,6 @@ class SolutionController extends Controller
 
     /**
      * Delete a solution
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

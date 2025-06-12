@@ -16,8 +16,6 @@ class CourseVideoTestimonialService
 
     /**
      * Insert testimonial
-     *
-     * @return bool
      */
     public function store($request): bool
     {
@@ -53,8 +51,6 @@ class CourseVideoTestimonialService
 
     /**
      * Update testimonial
-     *
-     * @return bool
      */
     public function update($request, $id): bool
     {

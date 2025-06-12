@@ -61,8 +61,6 @@ class Invoice extends Model
 
     /**
      * Payment completed.
-     *
-     * @return bool
      */
     public function paid(): bool
     {
@@ -71,8 +69,6 @@ class Invoice extends Model
 
     /**
      * Payment is still pending.
-     *
-     * @return bool
      */
     public function unpaid(): bool
     {

@@ -38,8 +38,6 @@ class WritingGroupService
 
     /**
      * Get the table fields
-     *
-     * @return array
      */
     public function fields(): array
     {
@@ -64,8 +62,6 @@ class WritingGroupService
 
     /**
      * Insert writing group
-     *
-     * @param  AddWritingGroupRequest  $data
      */
     public function store(AddWritingGroupRequest $data)
     {
@@ -93,7 +89,6 @@ class WritingGroupService
      * Update writing group
      *
      * @param  $id  int
-     * @param  AddWritingGroupRequest  $data
      */
     public function update($id, AddWritingGroupRequest $data)
     {
@@ -123,7 +118,6 @@ class WritingGroupService
      * Delete a writing group
      *
      * @param  $id  int
-     * @return bool
      */
     public function destroy($id): bool
     {

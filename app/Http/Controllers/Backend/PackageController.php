@@ -200,8 +200,6 @@ class PackageController extends Controller
 
     /**
      * Update the package if the admin wants to include/remove coaching session
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function includeCoaching($course_id, $id, Request $request): RedirectResponse
     {

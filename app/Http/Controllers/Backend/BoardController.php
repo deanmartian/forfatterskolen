@@ -32,8 +32,6 @@ class BoardController extends Controller
 
     /**
      * Assign user to a pulse
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function assignUser($board_id, Request $request, DapulseRepository $repository): RedirectResponse
     {
@@ -70,8 +68,6 @@ class BoardController extends Controller
 
     /**
      * Add pulse to board
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function addPulse($board_id, Request $request, DapulseRepository $repository): RedirectResponse
     {
@@ -86,8 +82,6 @@ class BoardController extends Controller
 
     /**
      * Update the group title inside board
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function updateGroupTitle($board_id, Request $request, DapulseRepository $repository): JsonResponse
     {
@@ -102,8 +96,6 @@ class BoardController extends Controller
 
     /**
      * Set pulse status
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function setStatus($board_id, Request $request, DapulseRepository $repository): RedirectResponse
     {

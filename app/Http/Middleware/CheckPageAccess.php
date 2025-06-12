@@ -28,10 +28,6 @@ class CheckPageAccess
 
     /**
      * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $page_id
-     * @return mixed
      */
     public function handle(Request $request, Closure $next, int $page_id): Response
     {

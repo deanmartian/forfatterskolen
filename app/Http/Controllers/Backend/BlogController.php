@@ -65,9 +65,6 @@ class BlogController extends Controller
         return view('backend.blog.create', compact('blog'));
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function store(BlogRequest $request): RedirectResponse
     {
         if ($this->blogService->store($request)) {
@@ -98,8 +95,6 @@ class BlogController extends Controller
 
     /**
      * Update blog
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, BlogRequest $request): RedirectResponse
     {
@@ -117,8 +112,6 @@ class BlogController extends Controller
 
     /**
      * Delete a survey
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {
@@ -136,8 +129,6 @@ class BlogController extends Controller
 
     /**
      * Update blog status
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function statusUpdate($id, Request $request): JsonResponse
     {

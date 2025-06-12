@@ -27,8 +27,6 @@ class ShareableCourseController extends Controller
 
     /**
      * Get the packages of the given course
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function getCoursePackage($course_id): JsonResponse
     {
@@ -40,8 +38,6 @@ class ShareableCourseController extends Controller
 
     /**
      * Insert new data
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
@@ -56,8 +52,6 @@ class ShareableCourseController extends Controller
 
     /**
      * Update the shared course
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request): RedirectResponse
     {
@@ -78,8 +72,6 @@ class ShareableCourseController extends Controller
 
     /**
      * Delete the shared course
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

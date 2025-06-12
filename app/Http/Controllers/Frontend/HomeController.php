@@ -1119,7 +1119,6 @@ class HomeController extends Controller
     /**
      * Display the articles of the selected solution
      *
-     * @param  Solution  $support_id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function supportArticles(Solution $support_id)
@@ -1516,8 +1515,6 @@ class HomeController extends Controller
 
     /**
      * Opt in form in home page
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function homeOptIn(Request $request): JsonResponse
     {
@@ -1723,8 +1720,6 @@ class HomeController extends Controller
 
     /**
      * Download an email attachment based on token
-     *
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function emailAttachment($token): BinaryFileResponse
     {
@@ -1819,8 +1814,6 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
     /**
      * Register user to bigmarker when they click the link from their email
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function gotoWebinarEmailRegistration($webinar_key, $email): RedirectResponse
     {
@@ -1874,8 +1867,6 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
     /**
      * Register the user to gotowebinar using the email and the webinar key sent
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function gotoWebinarEmailRegistrationOrig($webinar_key, $email): RedirectResponse
     {
@@ -2052,8 +2043,6 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
     /**
      * Check if the file is saved
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function checkFileFromDB($hash): RedirectResponse
     {
@@ -2097,8 +2086,6 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
     /**
      * Payment is complete
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function bamboraAccept(Request $request): RedirectResponse
     {

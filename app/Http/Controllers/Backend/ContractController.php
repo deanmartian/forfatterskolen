@@ -308,9 +308,6 @@ class ContractController extends Controller
                 'alert_type' => 'success']);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function signContract($id, Request $request): RedirectResponse
     {
         $contract = Contract::findOrFail($id);

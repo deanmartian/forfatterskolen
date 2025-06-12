@@ -61,8 +61,6 @@ class PublishingController extends Controller
 
     /**
      * Create new publishing house
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(CreatePublishingRequest $request): RedirectResponse
     {
@@ -92,8 +90,6 @@ class PublishingController extends Controller
 
     /**
      * Update publishing house
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, CreatePublishingRequest $request): RedirectResponse
     {
@@ -106,8 +102,6 @@ class PublishingController extends Controller
 
     /**
      * Delete a publishing house
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

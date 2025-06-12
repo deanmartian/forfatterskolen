@@ -27,8 +27,6 @@ class PaypalIPN
     /**
      * Sets the IPN verification to sandbox mode (for use when testing,
      * should not be enabled in production).
-     *
-     * @return void
      */
     public function useSandbox(): void
     {
@@ -38,8 +36,6 @@ class PaypalIPN
     /**
      * Sets curl to use php curl's built in certs (may be required in some
      * environments).
-     *
-     * @return void
      */
     public function usePHPCerts(): void
     {
@@ -48,8 +44,6 @@ class PaypalIPN
 
     /**
      * Determine endpoint to post the verification data to.
-     *
-     * @return string
      */
     public function getPaypalUri(): string
     {
@@ -64,7 +58,6 @@ class PaypalIPN
      * Verification Function
      * Sends the incoming post data back to PayPal using the cURL library.
      *
-     * @return bool
      *
      * @throws Exception
      */

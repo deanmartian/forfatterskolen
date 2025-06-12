@@ -30,10 +30,6 @@ class SaleService
         $this->order = $order;
     }
 
-    /**
-     * @param  int  $is_archive
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
     public function queryCoursesTaken(int $is_archive = 0): LengthAwarePaginator
     {
         return $this->coursesTaken->whereHas('user') // , 'receivedWelcomeEmail', 'receivedFollowUpEmail'
@@ -69,10 +65,6 @@ class SaleService
         ]);
     }
 
-    /**
-     * @param  int  $is_archive
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
     public function queryShopManuscriptsTaken(int $is_archive = 0): LengthAwarePaginator
     {
 

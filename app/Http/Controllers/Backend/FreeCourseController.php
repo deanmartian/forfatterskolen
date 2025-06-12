@@ -106,8 +106,6 @@ class FreeCourseController extends Controller
 
     /**
      * Create free webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function storeWebinar(AddWebinarRequest $request): RedirectResponse
     {
@@ -208,7 +206,6 @@ class FreeCourseController extends Controller
      * Update the webinar
      *
      * @param  $id  int FreeWebinar id
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function updateWebinar($id, AddWebinarRequest $request): RedirectResponse
     {
@@ -307,7 +304,6 @@ class FreeCourseController extends Controller
      * Delete the free webinar
      *
      * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function deleteWebinar($id): RedirectResponse
     {
@@ -319,8 +315,6 @@ class FreeCourseController extends Controller
 
     /**
      * Create webinar presenter
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function storeWebinarPresenter($webinar_id, Request $request): RedirectResponse
     {
@@ -354,8 +348,6 @@ class FreeCourseController extends Controller
 
     /**
      * Update webinar presenter
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function updateWebinarPresenter($webinar_id, $id, Request $request): RedirectResponse
     {
@@ -391,8 +383,6 @@ class FreeCourseController extends Controller
 
     /**
      * Delete webinar presenter
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function deleteWebinarPresenter($webinar_id, $id): RedirectResponse
     {

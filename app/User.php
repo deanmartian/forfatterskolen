@@ -121,8 +121,6 @@ class User extends Authenticatable
 
     /**
      * function is moved to AdminHelpers::isWebinarPakkeActive()
-     *
-     * @return bool
      */
     public function getIsWebinarPakkeActiveAttribute(): bool
     {

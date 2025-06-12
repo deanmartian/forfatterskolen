@@ -64,9 +64,6 @@ class SolutionArticleController extends Controller
 
     /**
      * Create new article
-     *
-     * @param  Solution  $solution_id
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Solution $solution_id, SolutionArticleCreateRequest $request): RedirectResponse
     {
@@ -83,8 +80,6 @@ class SolutionArticleController extends Controller
     /**
      * Display edit article page
      *
-     * @param  Solution  $solution_id
-     * @param  SolutionArticle  $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function edit(Solution $solution_id, SolutionArticle $id)
@@ -102,10 +97,6 @@ class SolutionArticleController extends Controller
 
     /**
      * Update the article
-     *
-     * @param  Solution  $solution_id
-     * @param  SolutionArticle  $id
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Solution $solution_id, SolutionArticle $id, SolutionArticleCreateRequest $request): RedirectResponse
     {
@@ -123,10 +114,6 @@ class SolutionArticleController extends Controller
 
     /**
      * Delete the solution article
-     *
-     * @param  Solution  $solution_id
-     * @param  SolutionArticle  $id
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Solution $solution_id, SolutionArticle $id): RedirectResponse
     {

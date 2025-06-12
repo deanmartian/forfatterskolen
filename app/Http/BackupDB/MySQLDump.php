@@ -53,7 +53,6 @@ class MySQLDump
      * Saves dump to the file.
      *
      * @param  string filename
-     * @return void
      */
     public function save($file): void
     {
@@ -68,7 +67,6 @@ class MySQLDump
      * Writes dump to logical file.
      *
      * @param  resource
-     * @return void
      */
     public function write($handle = null): void
     {
@@ -118,7 +116,6 @@ class MySQLDump
      * Dumps table to logical file.
      *
      * @param  resource
-     * @return void
      */
     public function dumpTable($handle, $table): void
     {

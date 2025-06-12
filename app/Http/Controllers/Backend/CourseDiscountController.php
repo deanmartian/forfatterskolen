@@ -34,8 +34,6 @@ class CourseDiscountController extends Controller
 
     /**
      * Create new course discount
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store($course_id, Request $request): RedirectResponse
     {
@@ -82,8 +80,6 @@ class CourseDiscountController extends Controller
 
     /**
      * Delete the course discount
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($course_id, $discount_id): RedirectResponse
     {

@@ -57,8 +57,6 @@ class PublisherBookController extends Controller
 
     /**
      * Create publisher book
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(PublisherBookCreateRequest $request): RedirectResponse
     {
@@ -110,8 +108,6 @@ class PublisherBookController extends Controller
 
     /**
      * Update a publisher book
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, PublisherBookUpdateRequest $request): RedirectResponse
     {
@@ -157,8 +153,6 @@ class PublisherBookController extends Controller
 
     /**
      * Delete the publisher book
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

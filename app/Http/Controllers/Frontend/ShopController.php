@@ -552,8 +552,6 @@ class ShopController extends Controller
 
     /**
      * Check if user has paid course
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function hasPaidCourse(): JsonResponse
     {
@@ -573,9 +571,6 @@ class ShopController extends Controller
         return response()->json($hasPaidCourse);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function validateCheckoutForm($course_id, Request $request): JsonResponse
     {
         /*$this->validate($request, [
@@ -899,8 +894,6 @@ class ShopController extends Controller
 
     /**
      * Check the discount for the course
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function checkDiscount($course_id, Request $request): JsonResponse
     {
@@ -1051,9 +1044,6 @@ class ShopController extends Controller
         return response()->json('', 404);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function checkCouponDiscount($course_id, $coupon, CourseService $courseService): JsonResponse
     {
         $course = Course::find($course_id);
@@ -2032,8 +2022,6 @@ class ShopController extends Controller
 
     /**
      * Get the payment plan options to display in plan section
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function getPaymentPlanOptions($id): JsonResponse
     {

@@ -396,9 +396,6 @@ class ProjectController extends Controller
         $book->save();
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function deleteWholeBook($whole_book_id): JsonResponse
     {
         ProjectWholeBook::find($whole_book_id)->delete();
@@ -574,9 +571,6 @@ class ProjectController extends Controller
 
     /**
      * Add to correction or copy editing
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function addOtherService($project_id, ProjectCopyEditingRequest $request, ProjectService $projectService): RedirectResponse
     {

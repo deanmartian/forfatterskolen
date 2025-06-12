@@ -37,9 +37,6 @@ class SelfPublishingController extends Controller
         return view('backend.self-publishing.index', compact('publishingList', 'editors', 'learners', 'projects'));
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function store(Request $request): RedirectResponse
     {
         $this->saveData($request);
@@ -50,9 +47,6 @@ class SelfPublishingController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function update($id, Request $request): RedirectResponse
     {
         $this->saveData($request, $id);
@@ -180,7 +174,6 @@ class SelfPublishingController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
      *
      * @throws \Exception
      */
@@ -196,7 +189,6 @@ class SelfPublishingController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
      *
      * @throws \Exception
      */
@@ -234,9 +226,6 @@ class SelfPublishingController extends Controller
             'layout', 'selfPublishingIndexRoute'));
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function addLearners($id, Request $request): RedirectResponse
     {
         foreach ($request->learners as $learner_id) {
@@ -526,7 +515,6 @@ class SelfPublishingController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
      *
      * @throws \Exception
      */

@@ -54,8 +54,6 @@ class TestimonialController extends Controller
 
     /**
      * Create testimonial
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
@@ -90,8 +88,6 @@ class TestimonialController extends Controller
 
     /**
      * Update record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, Request $request): RedirectResponse
     {
@@ -112,8 +108,6 @@ class TestimonialController extends Controller
 
     /**
      * Delete record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id): RedirectResponse
     {

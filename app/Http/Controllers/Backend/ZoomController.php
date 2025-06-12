@@ -74,8 +74,6 @@ class ZoomController extends Controller
 
     /**
      * Create new webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function storeWebinar($user_id, Request $request): RedirectResponse
     {
@@ -167,8 +165,6 @@ class ZoomController extends Controller
 
     /**
      * Update the webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function updateWebinar($webinar_id, Request $request): RedirectResponse
     {
@@ -207,8 +203,6 @@ class ZoomController extends Controller
 
     /**
      * Delete the webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function deleteWebinar($webinar_id): RedirectResponse
     {
@@ -225,8 +219,6 @@ class ZoomController extends Controller
 
     /**
      * Create new panelist for particular webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function storePanelist($webinar_id, Request $request): RedirectResponse
     {
@@ -250,8 +242,6 @@ class ZoomController extends Controller
 
     /**
      * Delete a panelist for certain webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function deletePanelist($webinar_id, $panelist_id): RedirectResponse
     {

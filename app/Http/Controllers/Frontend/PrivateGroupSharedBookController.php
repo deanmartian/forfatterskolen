@@ -18,8 +18,6 @@ class PrivateGroupSharedBookController extends Controller
 {
     /**
      * List shared books on a group
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function listSharedBook($group_id): JsonResponse
     {
@@ -39,8 +37,6 @@ class PrivateGroupSharedBookController extends Controller
 
     /**
      * Share a book
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function shareBook(Request $request): JsonResponse
     {
@@ -60,8 +56,6 @@ class PrivateGroupSharedBookController extends Controller
 
     /**
      * Update the shared book
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function updateSharedBook(Request $request): JsonResponse
     {
@@ -83,8 +77,6 @@ class PrivateGroupSharedBookController extends Controller
 
     /**
      * Delete the shared book
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function destroySharedBook(Request $request): JsonResponse
     {
@@ -97,8 +89,6 @@ class PrivateGroupSharedBookController extends Controller
 
     /**
      * Get the book details
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function getBookDetail($book_id): JsonResponse
     {
@@ -112,8 +102,6 @@ class PrivateGroupSharedBookController extends Controller
 
     /**
      * Pluralize a word
-     *
-     * @return string
      */
     protected function pluralize($count, $substr): string
     {
@@ -137,8 +125,6 @@ class PrivateGroupSharedBookController extends Controller
 
     /**
      * Set a user to become a reader of a book
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function becomeReader(Request $request): JsonResponse
     {

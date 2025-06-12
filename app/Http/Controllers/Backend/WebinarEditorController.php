@@ -12,8 +12,6 @@ class WebinarEditorController extends Controller
 {
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store($webinar_id, Request $request): RedirectResponse
     {
@@ -31,9 +29,6 @@ class WebinarEditorController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function update(int $id, Request $request): RedirectResponse
     {
@@ -48,9 +43,6 @@ class WebinarEditorController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function deleteEditor(int $id): RedirectResponse
     {

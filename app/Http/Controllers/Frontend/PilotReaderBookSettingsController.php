@@ -22,8 +22,6 @@ class PilotReaderBookSettingsController extends Controller
 {
     /**
      * Get the invitation link
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function getInvitationLink(Request $request): JsonResponse
     {
@@ -81,8 +79,6 @@ class PilotReaderBookSettingsController extends Controller
 
     /**
      * Send Invitation to user that is not logged in
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function unauthenticatedSendInvitation(Request $request): JsonResponse
     {
@@ -91,8 +87,6 @@ class PilotReaderBookSettingsController extends Controller
 
     /**
      * Send Invitation to logged in user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function authenticatedSendInvitation(Request $request): JsonResponse
     {
@@ -101,8 +95,6 @@ class PilotReaderBookSettingsController extends Controller
 
     /**
      * Validate the user email
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function unauthenticatedEmailValidation(Request $request): JsonResponse
     {
@@ -111,8 +103,6 @@ class PilotReaderBookSettingsController extends Controller
 
     /**
      * Send Invitation to readers
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     private function sendInvitations(Request $request): JsonResponse
     {
@@ -172,8 +162,6 @@ class PilotReaderBookSettingsController extends Controller
 
     /**
      * Validate the email sent by user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     private function validateEmail(Request $request): JsonResponse
     {
@@ -219,8 +207,6 @@ class PilotReaderBookSettingsController extends Controller
 
     /**
      * Set the status for the book read by user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function setReadingStatus(Request $request): JsonResponse
     {
@@ -252,8 +238,6 @@ class PilotReaderBookSettingsController extends Controller
 
     /**
      * Set the role of the reader
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function setReaderRole(Request $request): JsonResponse
     {

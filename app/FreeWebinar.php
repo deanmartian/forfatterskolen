@@ -23,8 +23,6 @@ class FreeWebinar extends Model
 
     /**
      * Get the webinar presenters
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function webinar_presenters(): HasMany
     {

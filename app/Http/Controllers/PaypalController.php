@@ -63,7 +63,6 @@ class PaypalController extends Controller
     /**
      * @param  $invoice_id
      *                     $param $page
-     * @return mixed
      */
     public function completed($invoice_id, $page, Request $request): RedirectResponse
     {

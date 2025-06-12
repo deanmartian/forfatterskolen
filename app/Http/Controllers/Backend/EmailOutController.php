@@ -20,8 +20,6 @@ class EmailOutController extends Controller
 {
     /**
      * Create new email out
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store($course_id, Request $request): RedirectResponse
     {
@@ -164,8 +162,6 @@ class EmailOutController extends Controller
 
     /**
      * Update email out record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update($course_id, $id, Request $request): RedirectResponse
     {
@@ -313,8 +309,6 @@ class EmailOutController extends Controller
 
     /**
      * Delete email out record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($course_id, $id): RedirectResponse
     {

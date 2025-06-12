@@ -27,7 +27,6 @@ class SurveyQuestionService
 
     /**
      * @param  null  $id
-     * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
     public function getRecord($id = null, int $page = 15)
@@ -72,7 +71,6 @@ class SurveyQuestionService
      * For displaying edit page
      *
      * @param  $survey_id  Survey
-     * @return bool
      */
     public function edit($survey_id, $id): bool
     {
@@ -86,7 +84,6 @@ class SurveyQuestionService
     /**
      * @param  $id  SurveyQuestion int
      * @param  $request  SurveyQuestionRequest
-     * @return bool
      */
     public function update($id, $request): bool
     {
@@ -101,8 +98,6 @@ class SurveyQuestionService
 
     /**
      * Delete a survey question
-     *
-     * @return bool
      */
     public function destroy($id): bool
     {

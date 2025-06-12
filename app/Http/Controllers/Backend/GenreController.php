@@ -21,9 +21,6 @@ class GenreController extends Controller
         return view('backend.genre.index', compact('genres'));
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function store(Request $request): RedirectResponse
     {
         Genre::create($request->except('_token'));
@@ -34,9 +31,6 @@ class GenreController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function update($id, Request $request): RedirectResponse
     {
         $genre = Genre::find($id);

@@ -452,8 +452,6 @@ class LearnerController extends Controller
 
     /**
      * Approve the coaching date set by admin
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function approveCoachingDate($id, Request $request): RedirectResponse
     {
@@ -470,8 +468,6 @@ class LearnerController extends Controller
 
     /**
      * Suggest coaching date
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function suggestCoachingDate($id, Request $request): RedirectResponse
     {
@@ -610,8 +606,6 @@ class LearnerController extends Controller
 
     /**
      * Register the user to the webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function webinarRegister($webinar_key, $webinar_id): RedirectResponse
     {
@@ -656,8 +650,6 @@ class LearnerController extends Controller
 
     /**
      * Add the user as registrant on the webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function webinarRegisterOrig($webinar_key, $webinar_id): RedirectResponse
     {
@@ -1603,8 +1595,6 @@ class LearnerController extends Controller
 
     /**
      * Redeem purchased gift
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function redeemGift(Request $request): RedirectResponse
     {
@@ -1763,8 +1753,6 @@ class LearnerController extends Controller
 
     /**
      * Set the phone number that would be use for sending vipss-efaktura
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function setVippsEFaktura(Request $request): RedirectResponse
     {
@@ -2928,8 +2916,6 @@ class LearnerController extends Controller
 
     /**
      * Update the profile image of user
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function profileUpdatePhoto(Request $request): RedirectResponse
     {
@@ -3375,8 +3361,6 @@ class LearnerController extends Controller
 
     /**
      * Set value of auto renew courses field
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function setAutoRenewCourses(Request $request): RedirectResponse
     {
@@ -3672,9 +3656,6 @@ class LearnerController extends Controller
         return view('frontend.learner.upgrade-course', compact('courseTaken', 'currentPackage', 'package_id', 'currentUser'));
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function validateUpgradeCourseForm($courseTakenId, Request $request, CourseService $courseService): JsonResponse
     {
         $validation = [
@@ -4271,9 +4252,6 @@ class LearnerController extends Controller
         return redirect()->route('learner.upgrade');
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function validateUpgradeAssignmentForm($assignment_id, Request $request, AssignmentService $assignmentService): JsonResponse
     {
         $validation = [
@@ -4379,7 +4357,6 @@ class LearnerController extends Controller
      * Replace the manuscript from particular assignment
      *
      * @param  $id  int assignment id
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function replaceAssignmentManuscript($id, Request $request): RedirectResponse
     {
@@ -4499,7 +4476,6 @@ class LearnerController extends Controller
      * Delete the manuscript from particular assignment
      *
      * @param  $id  int assignment id
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function deleteAssignmentManuscript($id): RedirectResponse
     {
@@ -4518,8 +4494,6 @@ class LearnerController extends Controller
 
     /**
      * Replace the feedback
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function replaceFeedback($id, Request $request): RedirectResponse
     {
@@ -4858,8 +4832,6 @@ class LearnerController extends Controller
 
     /**
      * Edit the goal
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function wordWrittenGoalsUpdate($id, Request $request): RedirectResponse
     {
@@ -4875,8 +4847,6 @@ class LearnerController extends Controller
 
     /**
      * Delete a goal
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function wordWrittenGoalsDelete($id): RedirectResponse
     {
@@ -4891,8 +4861,6 @@ class LearnerController extends Controller
 
     /**
      * Get the statistics
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function goalStatistic($goal_id): JsonResponse
     {
@@ -4943,8 +4911,6 @@ class LearnerController extends Controller
 
     /**
      * Mark notification as read
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function markNotificationAsRead($id): JsonResponse
     {
@@ -4960,8 +4926,6 @@ class LearnerController extends Controller
 
     /**
      * Delete a notification
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function deleteNotification($id): JsonResponse
     {
@@ -5112,8 +5076,6 @@ class LearnerController extends Controller
 
     /**
      * Update the help with field of coaching timer
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function updateHelpWith($id, Request $request): RedirectResponse
     {
@@ -5128,9 +5090,6 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function setCoachingStatus($id, Request $request): RedirectResponse
     {
         if ($coachingTimer = CoachingTimerManuscript::find($id)) {
@@ -5143,8 +5102,6 @@ class LearnerController extends Controller
 
     /**
      * List all user emails
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function listEmails(): JsonResponse
     {
@@ -5157,8 +5114,6 @@ class LearnerController extends Controller
 
     /**
      * Send email confirmation to check if user owns the inputted email
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function sendEmailConfirmation(Request $request): JsonResponse
     {
@@ -5210,8 +5165,6 @@ class LearnerController extends Controller
 
     /**
      * Set Primary Email
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function setPrimaryEmail(Request $request): JsonResponse
     {
@@ -5251,8 +5204,6 @@ class LearnerController extends Controller
 
     /**
      * Remove a secondary email
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function removeSecondaryEmail(Request $request): JsonResponse
     {
@@ -5439,8 +5390,6 @@ class LearnerController extends Controller
 
     /**
      * Get the invoice pdf from the url with login credentials
-     *
-     * @return mixed
      */
     public function downloadInvoiceV1($url): BinaryFileResponse
     {
@@ -5538,8 +5487,6 @@ class LearnerController extends Controller
 
     /**
      * Redirect to forum page
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function forum(): JsonResponse
     {
@@ -5588,8 +5535,6 @@ class LearnerController extends Controller
 
     /**
      * Login to pilotleser
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function pilotleserLogin(): JsonResponse
     {

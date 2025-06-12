@@ -27,8 +27,6 @@ class PulseController extends Controller
 
     /**
      * Update title of specific pulse
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function updatePulseTitle($pulse_id, Request $request, DapulseRepository $repository): JsonResponse
     {
