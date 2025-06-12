@@ -42,7 +42,7 @@ class WebinarRegistrantToLearner extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $access_token = AdminHelpers::generateWebinarGTAccessToken();
         $base_url = 'https://api.getgo.com/G2W/rest/v2';

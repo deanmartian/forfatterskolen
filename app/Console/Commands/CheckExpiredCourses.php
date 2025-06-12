@@ -39,7 +39,7 @@ class CheckExpiredCourses extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         CronLog::create(['activity' => 'CheckExpiredCourse CRON running.']);
         $date2monthsAgo = Carbon::today()->subMonth(2)->format('Y-m-d');

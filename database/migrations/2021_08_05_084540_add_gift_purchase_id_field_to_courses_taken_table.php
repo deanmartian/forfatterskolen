@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('courses_taken', function (Blueprint $table) {
             $table->unsignedInteger('gift_purchase_id')->nullable()->after('package_id');
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('courses_taken', function (Blueprint $table) {
             $table->dropColumn('gift_purchase_id');

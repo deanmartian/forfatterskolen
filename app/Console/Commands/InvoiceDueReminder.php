@@ -43,7 +43,7 @@ class InvoiceDueReminder extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         CronLog::create(['activity' => 'InvoiceDueReminder CRON running.']);
 

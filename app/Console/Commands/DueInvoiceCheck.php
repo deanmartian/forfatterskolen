@@ -42,7 +42,7 @@ class DueInvoiceCheck extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         CronLog::create(['activity' => 'DueInvoiceCheck CRON running.']);
         $dueTomorrow = Carbon::today()->addDay(1)->format('Y-m-d');

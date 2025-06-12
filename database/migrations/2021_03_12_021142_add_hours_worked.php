@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('assignment_feedbacks', function (Blueprint $table) {
             $table->decimal('hours_worked', 11)->after('locked')->default(0)->nullable();
@@ -35,7 +35,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('assignment_feedbacks', function ($table) {
             $table->dropColumn('hours_worked');

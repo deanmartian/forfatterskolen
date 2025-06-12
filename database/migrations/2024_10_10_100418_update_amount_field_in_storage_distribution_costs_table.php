@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('storage_distribution_costs', function (Blueprint $table) {
             $table->decimal('amount', 10, 2)->change();
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('storage_distribution_costs', function (Blueprint $table) {
             $table->integer('amount')->change();

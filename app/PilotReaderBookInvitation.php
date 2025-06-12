@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class PilotReaderBookInvitation extends Model
@@ -20,7 +21,7 @@ class PilotReaderBookInvitation extends Model
      */
     protected $fillable = ['book_id', 'email', 'status', '_token'];
 
-    public function book()
+    public function book(): BelongsTo
     {
         return $this->belongsTo(\App\PilotReaderBook::class);
     }

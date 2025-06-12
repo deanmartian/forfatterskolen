@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class EmailOutLog extends Model
@@ -20,7 +21,7 @@ class EmailOutLog extends Model
      */
     protected $fillable = ['course_id', 'subject', 'message', 'learners', 'from_name', 'from_email', 'attachment'];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }

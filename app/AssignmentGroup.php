@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,12 +19,12 @@ class AssignmentGroup extends Model
         'submission_date_time_text',
     ];
 
-    public function assignment()
+    public function assignment(): BelongsTo
     {
         return $this->belongsTo(\App\Assignment::class);
     }
 
-    public function learners()
+    public function learners(): HasMany
     {
         return $this->hasMany(\App\AssignmentGroupLearner::class)->orderBy('created_at', 'desc');
     }

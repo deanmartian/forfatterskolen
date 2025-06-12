@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('project_book_sales', function (Blueprint $table) {
             $table->string('invoice_number')->after('project_book_id')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('project_book_sales', function (Blueprint $table) {
             $table->dropColumn('invoice_number');

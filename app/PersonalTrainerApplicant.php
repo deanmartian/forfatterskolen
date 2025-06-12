@@ -9,6 +9,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class PersonalTrainerApplicant extends Model
@@ -16,7 +17,7 @@ class PersonalTrainerApplicant extends Model
     protected $fillable = ['user_id', 'age', 'optional_words', 'reason_for_applying', 'need_in_course', 'expectations',
         'how_ready'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
 use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
 use App\Mail\SubjectBodyEmail;
@@ -19,7 +21,7 @@ class CheckAutoRenewCourses
      * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
             foreach (Auth::user()->coursesTaken as $courseTaken) {

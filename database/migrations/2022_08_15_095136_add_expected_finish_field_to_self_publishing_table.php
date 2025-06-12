@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('self_publishing', function (Blueprint $table) {
             $table->date('expected_finish')->after('editor_share')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('self_publishing', function (Blueprint $table) {
             $table->dropColumn('expected_finish');

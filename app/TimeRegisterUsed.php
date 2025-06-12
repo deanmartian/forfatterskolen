@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class TimeRegisterUsed extends Model
@@ -10,7 +11,7 @@ class TimeRegisterUsed extends Model
 
     protected $fillable = ['time_register_id', 'date', 'time', 'description'];
 
-    public function timeRegister()
+    public function timeRegister(): BelongsTo
     {
         return $this->belongsTo(\App\TimeRegister::class);
     }

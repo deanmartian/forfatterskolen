@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class WordWritten extends Model
@@ -20,7 +21,7 @@ class WordWritten extends Model
      */
     protected $fillable = ['user_id', 'date', 'words'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

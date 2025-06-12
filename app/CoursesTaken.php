@@ -2,6 +2,9 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,17 +27,17 @@ class CoursesTaken extends Model
 
     protected $appends = ['order'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function package()
+    public function package(): BelongsTo
     {
         return $this->belongsTo(\App\Package::class);
     }
 
-    public function manuscripts()
+    public function manuscripts(): HasMany
     {
         return $this->hasMany(\App\Manuscript::class, 'coursetaken_id')->orderBy('created_at', 'desc');
     }
@@ -137,13 +140,13 @@ class CoursesTaken extends Model
         return json_decode($value);
     }
 
-    public function receivedWelcomeEmail()
+    public function receivedWelcomeEmail(): HasOne
     {
         return $this->hasOne(\App\EmailHistory::class, 'parent_id', 'id')
             ->where('parent', 'courses-taken-welcome')->latest();
     }
 
-    public function receivedFollowUpEmail()
+    public function receivedFollowUpEmail(): HasOne
     {
         return $this->hasOne(\App\EmailHistory::class, 'parent_id', 'id')
             ->where('parent', 'courses-taken-follow-up')->latest();

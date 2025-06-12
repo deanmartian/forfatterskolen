@@ -44,7 +44,7 @@ class CourseEmailOut extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): int
     {
         $today = Carbon::today()->format('Y-m-d');
         CronLog::create(['activity' => 'CourseEmailOut CRON running.']);

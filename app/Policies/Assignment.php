@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class Assignment extends Model
@@ -10,12 +12,12 @@ class Assignment extends Model
 
     protected $fillable = ['course_id', 'title', 'description'];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }
 
-    public function learners()
+    public function learners(): HasMany
     {
         return $this->hasMany(\App\AssignmentLearner::class)->orderBy('created_at', 'desc');
     }

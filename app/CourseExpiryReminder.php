@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class CourseExpiryReminder extends Model
@@ -21,7 +22,7 @@ class CourseExpiryReminder extends Model
     protected $fillable = ['course_id', 'subject_28_days', 'message_28_days', 'subject_1_week', 'message_1_week',
         'subject_1_day', 'message_1_day'];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }

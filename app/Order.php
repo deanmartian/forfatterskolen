@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Http\FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,37 +39,37 @@ class Order extends Model
 
     protected $with = ['paymentPlan', 'paymentMode', 'company'];
 
-    public function paymentPlan()
+    public function paymentPlan(): BelongsTo
     {
         return $this->belongsTo(\App\PaymentPlan::class, 'plan_id', 'id');
     }
 
-    public function package()
+    public function package(): BelongsTo
     {
         return $this->belongsTo(\App\Package::class);
     }
 
-    public function shopManuscriptOrder()
+    public function shopManuscriptOrder(): HasOne
     {
         return $this->hasOne(\App\OrderShopManuscript::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function upgrade()
+    public function upgrade(): HasOne
     {
         return $this->hasOne(\App\OrderUpgrade::class);
     }
 
-    public function coachingTime()
+    public function coachingTime(): HasOne
     {
         return $this->hasOne(\App\OrderCoachingTime::class);
     }
 
-    public function paymentMode()
+    public function paymentMode(): HasOne
     {
         return $this->hasOne(\App\PaymentMode::class, 'id', 'payment_mode_id');
     }
@@ -173,7 +175,7 @@ class Order extends Model
         return $total;
     }
 
-    public function company()
+    public function company(): HasOne
     {
         return $this->hasOne(\App\OrderCompany::class);
     }

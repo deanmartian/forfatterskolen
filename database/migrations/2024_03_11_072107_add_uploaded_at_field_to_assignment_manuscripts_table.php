@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('assignment_manuscripts', function (Blueprint $table) {
             $table->timestamp('uploaded_at')->after('manuscript_status')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('assignment_manuscripts', function (Blueprint $table) {
             $table->dropColumn('uploaded_at');

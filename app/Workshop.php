@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class Workshop extends Model
@@ -11,32 +13,32 @@ class Workshop extends Model
     protected $fillable = ['course_id', 'title', 'description', 'price', 'image', 'date', 'faktura_date', 'duration', 'seats',
         'location', 'gmap', 'fiken_product', 'email_title', 'email_body'];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }
 
-    public function presenters()
+    public function presenters(): HasMany
     {
         return $this->hasMany(\App\WorkshopPresenter::class)->orderBy('created_at', 'desc');
     }
 
-    public function taken()
+    public function taken(): HasMany
     {
         return $this->hasMany(\App\WorkshopsTaken::class)->orderBy('created_at', 'desc');
     }
 
-    public function menus()
+    public function menus(): HasMany
     {
         return $this->hasMany(\App\WorkshopMenu::class)->orderBy('created_at', 'desc');
     }
 
-    public function attendees()
+    public function attendees(): HasMany
     {
         return $this->hasMany(\App\WorkshopsTaken::class)->orderBy('created_at', 'desc');
     }
 
-    public function emailLog()
+    public function emailLog(): HasMany
     {
         return $this->hasMany(\App\WorkshopEmailLog::class)->orderBy('created_at', 'desc');
     }

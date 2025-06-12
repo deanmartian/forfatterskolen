@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Http\AdminHelpers;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
@@ -49,7 +50,7 @@ class Contract extends Model
         return $query->where('status', 1);
     }
 
-    public function project()
+    public function project(): BelongsTo
     {
         return $this->belongsTo(\App\Project::class);
     }

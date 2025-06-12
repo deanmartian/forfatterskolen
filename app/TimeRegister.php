@@ -2,6 +2,9 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,22 +16,22 @@ class TimeRegister extends Model
 
     protected $appends = ['file_link', 'notes_formatted'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function project()
+    public function project(): HasOne
     {
         return $this->hasOne(\App\Project::class, 'id', 'project_id');
     }
 
-    public function usedTimes()
+    public function usedTimes(): HasMany
     {
         return $this->hasMany(\App\TimeRegisterUsed::class);
     }
 
-    public function usedTimesDurationSum()
+    public function usedTimesDurationSum(): HasMany
     {
         return $this->hasMany(\App\TimeRegisterUsed::class)->selectRaw('SUM(time_used) as total_duration')
             ->groupBy('time_register_id');

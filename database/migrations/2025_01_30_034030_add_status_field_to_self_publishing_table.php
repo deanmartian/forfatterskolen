@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('self_publishing', function (Blueprint $table) {
             $table->enum('status', ['pending', 'started', 'finished'])->after('expected_finish')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('self_publishing', function (Blueprint $table) {
             $table->dropColumn('status');

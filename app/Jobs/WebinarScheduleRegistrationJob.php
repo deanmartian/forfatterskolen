@@ -33,7 +33,7 @@ class WebinarScheduleRegistrationJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $schedule = $this->schedule;
         $webinar = $schedule->webinar;

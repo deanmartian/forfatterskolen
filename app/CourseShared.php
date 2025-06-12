@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class CourseShared extends Model
@@ -20,12 +21,12 @@ class CourseShared extends Model
      */
     protected $fillable = ['course_id', 'package_id', 'hash'];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }
 
-    public function package()
+    public function package(): BelongsTo
     {
         return $this->belongsTo(\App\Package::class);
     }

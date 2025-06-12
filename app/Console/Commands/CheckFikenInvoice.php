@@ -39,7 +39,7 @@ class CheckFikenInvoice extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): int
     {
         CronLog::create(['activity' => 'CheckFikenInvoice CRON running.']);
         Log::info('checkfikeninvoice:command running');

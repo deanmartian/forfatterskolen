@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('courses_email_out', function (Blueprint $table) {
             $table->tinyInteger('send_immediately')->default(0)->after('for_free_course');
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('courses_email_out', function (Blueprint $table) {
             $table->dropColumn('send_immediately');

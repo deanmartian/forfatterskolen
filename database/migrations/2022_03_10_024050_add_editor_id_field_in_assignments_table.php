@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('assignments', function (Blueprint $table) {
             $table->integer('editor_id')->default(0)->after('for_editor');
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('assignments', function (Blueprint $table) {
             $table->dropColumn('editor_id');

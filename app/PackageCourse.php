@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,12 +16,12 @@ class PackageCourse extends Model
 
     protected $appends = ['included_package_course_title', 'included_package_variation'];
 
-    public function package()
+    public function package(): BelongsTo
     {
         return $this->belongsTo(\App\Package::class, 'package_id');
     }
 
-    public function included_package()
+    public function included_package(): BelongsTo
     {
         return $this->belongsTo(\App\Package::class, 'included_package_id');
     }

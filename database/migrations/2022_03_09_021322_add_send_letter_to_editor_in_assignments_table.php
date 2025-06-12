@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('assignments', function (Blueprint $table) {
             $table->boolean('send_letter_to_editor')->default(0)->after('show_join_group_question');
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('assignments', function (Blueprint $table) {
             $table->dropColumn('send_letter_to_editor');

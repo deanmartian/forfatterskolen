@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class LearnerEmail extends Model
@@ -20,7 +21,7 @@ class LearnerEmail extends Model
      */
     protected $fillable = ['user_id', 'subject', 'email', 'attachment', 'from_name', 'from_email'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

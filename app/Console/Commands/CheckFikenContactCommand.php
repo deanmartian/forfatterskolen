@@ -36,7 +36,7 @@ class CheckFikenContactCommand extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $users = User::whereNull('fiken_contact_id')->get();
         $company = 'forfatterskolen-as';

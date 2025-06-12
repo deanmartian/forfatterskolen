@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('self_publishing', function (Blueprint $table) {
             $table->unsignedInteger('editor_id')->nullable()->after('word_count');
@@ -25,7 +25,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('self_publishing', function (Blueprint $table) {
             $table->dropColumn('editor_id');

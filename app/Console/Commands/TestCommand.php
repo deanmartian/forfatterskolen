@@ -35,7 +35,7 @@ class TestCommand extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         return 'this is test command';
     }

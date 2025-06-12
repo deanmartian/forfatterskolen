@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class PilotReaderBookReadingChapter extends Model
@@ -20,12 +21,12 @@ class PilotReaderBookReadingChapter extends Model
      */
     protected $fillable = ['user_id', 'chapter_id'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'user_id', 'id');
     }
 
-    public function chapter()
+    public function chapter(): BelongsTo
     {
         return $this->belongsTo(\App\PilotReaderBookChapter::class);
     }

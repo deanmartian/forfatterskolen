@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,7 +17,7 @@ class CourseDiscount extends Model
         1 => 'Total',
     ];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }

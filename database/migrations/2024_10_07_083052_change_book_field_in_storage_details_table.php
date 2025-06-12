@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('storage_details', function (Blueprint $table) {
             $table->dropForeign(['user_book_for_sale_id']);
@@ -25,7 +25,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('storage_details', function (Blueprint $table) {
             $table->unsignedInteger('user_book_for_sale_id');

@@ -2,6 +2,9 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,17 +27,17 @@ class Webinar extends Model
         });
     }
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }
 
-    public function registrants()
+    public function registrants(): HasMany
     {
         return $this->hasMany(\App\WebinarRegistrant::class);
     }
 
-    public function webinar_presenters()
+    public function webinar_presenters(): HasMany
     {
         return $this->hasMany(\App\WebinarPresenter::class);
     }
@@ -49,12 +52,12 @@ class Webinar extends Model
         return $query->where('set_as_replay', '=', 0);
     }
 
-    public function schedule()
+    public function schedule(): HasOne
     {
         return $this->hasOne(\App\WebinarScheduledRegistration::class);
     }
 
-    public function webinar_editors()
+    public function webinar_editors(): HasMany
     {
         return $this->hasMany(\App\WebinarEditor::class);
     }

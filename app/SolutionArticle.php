@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class SolutionArticle extends Model
@@ -20,7 +21,7 @@ class SolutionArticle extends Model
      */
     protected $fillable = ['solution_id', 'title', 'details'];
 
-    public function solution()
+    public function solution(): BelongsTo
     {
         return $this->belongsTo(\App\Solution::class);
     }

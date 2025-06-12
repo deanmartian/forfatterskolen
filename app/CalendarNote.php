@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class CalendarNote extends Model
@@ -15,7 +16,7 @@ class CalendarNote extends Model
         return $value ? date_format(date_create($value), 'M d, Y') : null;
     }
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }

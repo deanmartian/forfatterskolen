@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('manuscript_editor_can_takes', function (Blueprint $table) {
             $table->string('note', 1000)->after('how_many_hours')->default('');
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('manuscript_editor_can_takes', function ($table) {
             $table->dropColumn('note');

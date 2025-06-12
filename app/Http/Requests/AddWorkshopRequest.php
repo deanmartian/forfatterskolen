@@ -12,7 +12,7 @@ class AddWorkshopRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -22,7 +22,7 @@ class AddWorkshopRequest extends FormRequest
      *
      * @return array
      */
-    public function rules(Request $request)
+    public function rules(Request $request): array
     {
         // check if the workshop is free and use this rule
         if ($request->is_free) {

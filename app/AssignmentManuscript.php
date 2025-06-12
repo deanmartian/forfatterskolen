@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Http\AdminHelpers;
 use App\Traits\Loggable;
 use FrontendHelpers;
@@ -30,12 +32,12 @@ class AssignmentManuscript extends Model
 
     const FINISHED_STATUS = 2; // finished status
 
-    public function assignment()
+    public function assignment(): BelongsTo
     {
         return $this->belongsTo(\App\Assignment::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
@@ -45,12 +47,12 @@ class AssignmentManuscript extends Model
         return $this->hasMany(\App\AssignmentFeedback::class);
     }
 
-    public function noGroupFeedbacks()
+    public function noGroupFeedbacks(): HasMany
     {
         return $this->hasMany(\App\AssignmentFeedbackNoGroup::class);
     }
 
-    public function editor()
+    public function editor(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }

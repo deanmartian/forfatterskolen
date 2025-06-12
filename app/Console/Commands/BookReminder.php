@@ -39,7 +39,7 @@ class BookReminder extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $settings = PilotReaderBookSettings::where('is_reading_reminder_on', 1)->get();
         foreach ($settings as $setting) {

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectBookFormatting extends Model
@@ -12,7 +13,7 @@ class ProjectBookFormatting extends Model
 
     protected $appends = ['file_link', 'feedback_file_link', 'corporate_page_link', 'format_image_link'];
 
-    public function designer()
+    public function designer(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'designer_id', 'id');
     }

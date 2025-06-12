@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
 use AdminHelpers;
 use Auth;
 use Closure;
@@ -32,7 +34,7 @@ class Learner
      * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         if ($this->auth->guest()) {
             if ($request->ajax()) {

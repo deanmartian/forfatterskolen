@@ -36,7 +36,7 @@ class LockFinishedManuscript extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $manuscriptsTakenList = ShopManuscriptsTaken::whereNotNull('file')->get();
         foreach ($manuscriptsTakenList as $manuscriptTaken) {

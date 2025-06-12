@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,7 +22,7 @@ class ActivityLog extends Model
 
     protected $appends = ['dateHumanize', 'json_data', 'formatted_date'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

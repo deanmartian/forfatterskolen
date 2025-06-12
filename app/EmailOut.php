@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,12 +28,12 @@ class EmailOut extends Model
 
     protected $appends = ['send_immediately_text'];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }
 
-    public function recipients()
+    public function recipients(): HasMany
     {
         return $this->hasMany(\App\EmailOutRecipient::class);
     }

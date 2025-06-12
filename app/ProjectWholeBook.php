@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,7 +13,7 @@ class ProjectWholeBook extends Model
 
     protected $appends = ['file_link', 'filename', 'date_uploaded'];
 
-    public function designer()
+    public function designer(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'designer_id', 'id');
     }

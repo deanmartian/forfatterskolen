@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class AssignmentLearner extends Model
@@ -10,17 +12,17 @@ class AssignmentLearner extends Model
 
     protected $fillable = ['assignment_id', 'user_id', 'filename'];
 
-    public function assignment()
+    public function assignment(): BelongsTo
     {
         return $this->belongsTo(\App\Assignment::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function feedbacks()
+    public function feedbacks(): HasMany
     {
         return $this->hasMany(\App\AssignmentFeedback::class);
     }

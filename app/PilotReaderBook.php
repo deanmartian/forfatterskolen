@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -21,7 +23,7 @@ class PilotReaderBook extends Model
      */
     protected $fillable = ['user_id', 'title', 'display_name', 'about_book', 'critique_guidance'];
 
-    public function author()
+    public function author(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'user_id', 'id');
     }
@@ -31,14 +33,14 @@ class PilotReaderBook extends Model
      *
      * @return HasMany
      */
-    public function chapters()
+    public function chapters(): HasMany
     {
         return $this->hasMany(\App\PilotReaderBookChapter::class)
             ->select(['*', \DB::raw('IF(display_order > 0, display_order, 1000000) display_order')])
             ->orderBy('display_order', 'asc');
     }
 
-    public function chaptersOnly()
+    public function chaptersOnly(): HasMany
     {
         return $this->hasMany(\App\PilotReaderBookChapter::class)
             ->select(['*', \DB::raw('IF(display_order > 0, display_order, 1000000) display_order')])
@@ -46,7 +48,7 @@ class PilotReaderBook extends Model
             ->orderBy('display_order', 'asc');
     }
 
-    public function chapterQuestionnaire()
+    public function chapterQuestionnaire(): HasMany
     {
         return $this->hasMany(\App\PilotReaderBookChapter::class)
             ->select(['*', \DB::raw('IF(display_order > 0, display_order, 1000000) display_order')])
@@ -54,22 +56,22 @@ class PilotReaderBook extends Model
             ->orderBy('display_order', 'asc');
     }
 
-    public function chapterWordSum()
+    public function chapterWordSum(): HasMany
     {
         return $this->hasMany(\App\PilotReaderBookChapter::class)->sum('word_count');
     }
 
-    public function invitations()
+    public function invitations(): HasMany
     {
         return $this->hasMany(\App\PilotReaderBookInvitation::class, 'book_id', 'id');
     }
 
-    public function readers()
+    public function readers(): HasMany
     {
         return $this->hasMany(\App\PilotReaderBookReading::class, 'book_id', 'id');
     }
 
-    public function settings()
+    public function settings(): HasOne
     {
         return $this->hasOne(\App\PilotReaderBookSettings::class, 'book_id', 'id');
     }

@@ -9,7 +9,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         $editor_total_worked_personal_assignment = "CREATE PROCEDURE `editor_total_worked_personal_assignment`(
             IN `var_editor_id` INT,
@@ -262,7 +262,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         DB::unprepared('DROP PROCEDURE IF EXISTS editor_total_worked_personal_assignment;');
         DB::unprepared('DROP PROCEDURE IF EXISTS editor_total_worked_shop_manuscript;');

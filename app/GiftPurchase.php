@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class GiftPurchase extends Model
@@ -11,17 +12,17 @@ class GiftPurchase extends Model
     // user_id is the buyer id
     protected $fillable = ['user_id', 'parent', 'parent_id', 'redeem_code', 'is_redeemed', 'expired_at'];
 
-    public function buyer()
+    public function buyer(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'user_id', 'id');
     }
 
-    public function coursePackage()
+    public function coursePackage(): BelongsTo
     {
         return $this->belongsTo(\App\Package::class, 'parent_id', 'id');
     }
 
-    public function shopManuscript()
+    public function shopManuscript(): BelongsTo
     {
         return $this->belongsTo(\App\ShopManuscript::class, 'parent_id', 'id');
     }

@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Http\FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,23 +29,23 @@ class CorrectionManuscript extends Model
      */
     protected $fillable = ['user_id', 'project_id', 'file', 'payment_price', 'editor_id', 'status', 'expected_finish'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function editor()
+    public function editor(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 
-    public function feedback()
+    public function feedback(): HasOne
     {
         return $this->hasOne(\App\OtherServiceFeedback::class, 'service_id', 'id')
             ->where('service_type', '=', 2);
     }
 
-    public function project()
+    public function project(): BelongsTo
     {
         return $this->belongsTo(\App\Project::class, 'project_id', 'id');
     }

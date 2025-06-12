@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class UserAutoRegisterToCourseWebinar extends Model
@@ -10,7 +11,7 @@ class UserAutoRegisterToCourseWebinar extends Model
 
     protected $fillable = ['user_id', 'course_id'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

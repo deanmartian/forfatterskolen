@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('assignments', function (Blueprint $table) {
             $table->integer('assigned_editor')->nullable()->after('check_max_words');
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('assignments', function (Blueprint $table) {
             $table->dropColumn('assigned_editor');

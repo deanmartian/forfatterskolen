@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,12 +14,12 @@ class PackageShopManuscript extends Model
 
     protected $fillable = ['package_id', 'shop_manuscript_id'];
 
-    public function package()
+    public function package(): BelongsTo
     {
         return $this->belongsTo(\App\Package::class);
     }
 
-    public function shop_manuscript()
+    public function shop_manuscript(): BelongsTo
     {
         return $this->belongsTo(\App\ShopManuscript::class);
     }

@@ -11,7 +11,7 @@ class UpcomingSectionSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         \App\UpcomingSection::create([
             'name' => 'Reprise webinar',

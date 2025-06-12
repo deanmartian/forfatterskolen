@@ -32,7 +32,7 @@ class UpdateDropboxLink implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $dropboxClient = new Client(config('filesystems.disks.dropbox.authorization_token'));
         try {

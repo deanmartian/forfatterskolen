@@ -41,7 +41,7 @@ class AutoRenewReminderCommand extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
 
         CronLog::create(['activity' => 'AutoRenewReminder CRON running.']);

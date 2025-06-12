@@ -35,7 +35,7 @@ class UpdateFikenContactDetailsJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $address = $this->learner->address;
         Log::info('------------------------- Update fiken contact details job here -------------------------');

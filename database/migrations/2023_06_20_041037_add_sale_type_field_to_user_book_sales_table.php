@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('user_book_sales', function (Blueprint $table) {
             $table->enum('sale_type', ['physical', 'ebook', 'sound_book'])->default('physical')->after('user_book_for_sale_id');
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('user_book_sales', function (Blueprint $table) {
             $table->dropColumn('sale_type');

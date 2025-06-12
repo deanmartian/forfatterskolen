@@ -43,7 +43,7 @@ class WebinarPakkeExpiresInAWeek extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         CronLog::create(['activity' => 'WebinarPakkeExpiresInAWeek CRON running.']);
         $dateAddDays = Carbon::now()->addDays(7);

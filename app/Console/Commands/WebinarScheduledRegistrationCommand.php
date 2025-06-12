@@ -40,7 +40,7 @@ class WebinarScheduledRegistrationCommand extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         CronLog::create(['activity' => 'WebinarScheduledRegistration CRON running.']);
 

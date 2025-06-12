@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('project_marketing', function (Blueprint $table) {
             $table->date('date')->nullable()->after('value');
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('project_marketing', function (Blueprint $table) {
             $table->dropColumn('date');

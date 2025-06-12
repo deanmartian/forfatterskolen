@@ -40,7 +40,7 @@ class FreeCourseDelayedEmailCommand extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $from = Carbon::now()->format('Y-m-d H:i:00');
         $to = Carbon::now()->format('Y-m-d H:i:59');

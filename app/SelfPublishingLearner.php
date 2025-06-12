@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,12 +12,12 @@ class SelfPublishingLearner extends Model
 
     protected $fillable = ['user_id', 'self_publishing_id'];
 
-    public function selfPublishing()
+    public function selfPublishing(): BelongsTo
     {
         return $this->belongsTo(\App\SelfPublishing::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

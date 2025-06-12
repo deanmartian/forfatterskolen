@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class EmailOutRecipient extends Model
@@ -20,7 +21,7 @@ class EmailOutRecipient extends Model
      */
     protected $fillable = ['email_out_id', 'user_id'];
 
-    public function emailOut()
+    public function emailOut(): BelongsTo
     {
         return $this->belongsTo(\App\EmailOut::class);
     }

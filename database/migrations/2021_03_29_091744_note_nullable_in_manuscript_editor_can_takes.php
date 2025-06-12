@@ -9,7 +9,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         DB::statement('ALTER TABLE `manuscript_editor_can_takes` MODIFY `note` VARCHAR(1000) NULL');
     }
@@ -19,7 +19,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         DB::statement('ALTER TABLE `manuscript_editor_can_takes` MODIFY `note` VARCHAR(1000) NOT NULL');
     }

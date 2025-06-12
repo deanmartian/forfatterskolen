@@ -2,6 +2,9 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -12,47 +15,47 @@ class Project extends Model
 
     protected $appends = ['short_notes', 'notes_formatted', 'book_name'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function userBookForSale()
+    public function userBookForSale(): HasOne
     {
         return $this->hasOne(\App\UserBookForSale::class);
     }
 
-    public function books()
+    public function books(): HasMany
     {
         return $this->hasMany(\App\ProjectBook::class);
     }
 
-    public function book()
+    public function book(): HasOne
     {
         return $this->hasOne(\App\ProjectBook::class);
     }
 
-    public function selfPublishingList()
+    public function selfPublishingList(): HasMany
     {
         return $this->hasMany(\App\SelfPublishing::class);
     }
 
-    public function copyEditings()
+    public function copyEditings(): HasMany
     {
         return $this->hasMany(\App\CopyEditingManuscript::class)->orderBy('created_at', 'desc');
     }
 
-    public function corrections()
+    public function corrections(): HasMany
     {
         return $this->hasMany(\App\CorrectionManuscript::class)->orderBy('created_at', 'desc');
     }
 
-    public function registrations()
+    public function registrations(): HasMany
     {
         return $this->hasMany(\App\ProjectRegistration::class);
     }
 
-    public function print()
+    public function print(): HasOne
     {
         return $this->hasOne(\App\ProjectPrint::class);
     }

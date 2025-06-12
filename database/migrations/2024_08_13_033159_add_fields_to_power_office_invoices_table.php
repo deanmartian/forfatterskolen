@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('power_office_invoices', function (Blueprint $table) {
             $table->string('sales_order_no')->nullable()->after('order_id');
@@ -24,7 +24,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('power_office_invoices', function (Blueprint $table) {
             $table->dropColumn('sales_order_no');

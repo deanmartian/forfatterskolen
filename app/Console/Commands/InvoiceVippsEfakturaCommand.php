@@ -39,7 +39,7 @@ class InvoiceVippsEfakturaCommand extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         CronLog::create(['activity' => 'InvoiceVippsEfaktura CRON running.']);
 

@@ -2,23 +2,25 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class PrivateGroupDiscussion extends Model
 {
     protected $fillable = ['private_group_id', 'user_id', 'subject', 'message', 'is_announcement'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function replies()
+    public function replies(): HasMany
     {
         return $this->hasMany(\App\PrivateGroupDiscussionReply::class, 'disc_id');
     }
 
-    public function group()
+    public function group(): BelongsTo
     {
         return $this->belongsTo(\App\PrivateGroup::class, 'private_group_id');
     }

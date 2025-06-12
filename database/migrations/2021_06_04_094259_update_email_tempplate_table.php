@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('email_template', function (Blueprint $table) {
             $table->unsignedInteger('course_id')->nullable()->after('email_content');
@@ -26,7 +26,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('email_template', function (Blueprint $table) {
             $table->dropColumn('course_id');

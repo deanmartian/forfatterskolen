@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,7 +24,7 @@ class Address extends Model
      */
     protected $fillable = ['user_id', 'phone', 'street', 'city', 'country', 'zip', 'vipps_phone_number'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

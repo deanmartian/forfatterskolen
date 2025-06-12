@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -58,7 +59,7 @@ class PayPalIPN extends Model
     /**
      * @return mixed
      */
-    public function invoices()
+    public function invoices(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
     }

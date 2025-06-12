@@ -10,7 +10,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('free_manuscript_feedbacks_history', function (Blueprint $table) {
             $table->foreign('free_manuscript_id', 'Table: free_manuscript_feedbacks_history_free_manuscript_id')->references('id')->on('free_manuscripts')->onUpdate('CASCADE')->onDelete('CASCADE');
@@ -22,7 +22,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('free_manuscript_feedbacks_history', function (Blueprint $table) {
             $table->dropForeign('Table: free_manuscript_feedbacks_history_free_manuscript_id');

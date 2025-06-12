@@ -10,7 +10,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('pilot_reader_book_invitation', function (Blueprint $table) {
             $table->foreign('book_id', 'book_id')->references('id')->on('pilot_reader_books')->onUpdate('CASCADE')->onDelete('CASCADE');
@@ -22,7 +22,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('pilot_reader_book_invitation', function (Blueprint $table) {
             $table->dropForeign('book_id');

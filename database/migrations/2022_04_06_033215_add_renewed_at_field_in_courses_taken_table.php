@@ -11,7 +11,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('courses_taken', function (Blueprint $table) {
             $table->timestamp('renewed_at')->nullable()->after('can_receive_email');
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('courses_taken', function (Blueprint $table) {
             $table->removeColumn('renewed_at');

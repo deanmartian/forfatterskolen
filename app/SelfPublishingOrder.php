@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class SelfPublishingOrder extends Model
@@ -37,12 +38,12 @@ class SelfPublishingOrder extends Model
         $query->where('status', 'quote');
     }
 
-    public function service()
+    public function service(): BelongsTo
     {
         return $this->belongsTo(\App\PublishingService::class, 'parent_id', 'id');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

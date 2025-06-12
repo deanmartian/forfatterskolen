@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Http\FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,12 +30,12 @@ class UserBookSale extends Model
         'sound_book' => 'Sound Book',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function book()
+    public function book(): BelongsTo
     {
         return $this->belongsTo(\App\UserBookForSale::class, 'user_book_for_sale_id', 'id');
     }

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class WebinarEmailOut extends Model
@@ -10,12 +11,12 @@ class WebinarEmailOut extends Model
 
     protected $fillable = ['webinar_id', 'course_id', 'subject', 'send_date', 'message'];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }
 
-    public function webinar()
+    public function webinar(): BelongsTo
     {
         return $this->belongsTo(\App\Webinar::class);
     }

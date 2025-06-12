@@ -10,7 +10,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('course_discounts', function (Blueprint $table) {
             $table->foreign('course_id', 'FK_course_discounts_courses')->references('id')->on('courses')->onUpdate('RESTRICT')->onDelete('RESTRICT');
@@ -22,7 +22,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('course_discounts', function (Blueprint $table) {
             $table->dropForeign('FK_course_discounts_courses');

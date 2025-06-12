@@ -2,6 +2,9 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,22 +21,22 @@ class ShopManuscriptsTaken extends Model
     protected $with = ['shop_manuscript', 'user', 'receivedWelcomeEmail', 'receivedExpectedFinishEmail',
         'receivedAdminFeedbackEmail', 'receivedFollowUpEmail'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function feedbacks()
+    public function feedbacks(): HasMany
     {
         return $this->hasMany(\App\ShopManuscriptTakenFeedback::class, 'shop_manuscript_taken_id')->orderBy('created_at', 'desc');
     }
 
-    public function shop_manuscript()
+    public function shop_manuscript(): BelongsTo
     {
         return $this->belongsTo(\App\ShopManuscript::class);
     }
 
-    public function comments()
+    public function comments(): HasMany
     {
         return $this->hasMany(\App\ShopManuscriptComment::class, 'shop_manuscript_taken_id')->orderBy('created_at', 'desc');
     }
@@ -79,36 +82,36 @@ class ShopManuscriptsTaken extends Model
         return $value ? date_format(date_create($value), 'd.m.Y') : null;
     }
 
-    public function admin()
+    public function admin(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'feedback_user_id');
     }
 
-    public function receivedWelcomeEmail()
+    public function receivedWelcomeEmail(): HasOne
     {
         return $this->hasOne(\App\EmailHistory::class, 'parent_id', 'id')
             ->where('parent', 'shop-manuscripts-taken-welcome')->latest();
     }
 
-    public function receivedExpectedFinishEmail()
+    public function receivedExpectedFinishEmail(): HasOne
     {
         return $this->hasOne(\App\EmailHistory::class, 'parent_id', 'id')
             ->where('parent', 'shop-manuscripts-taken-expected-finish')->latest();
     }
 
-    public function receivedAdminFeedbackEmail()
+    public function receivedAdminFeedbackEmail(): HasOne
     {
         return $this->hasOne(\App\EmailHistory::class, 'parent_id', 'id')
             ->where('parent', 'shop-manuscripts-taken-admin-feedback')->latest();
     }
 
-    public function receivedFollowUpEmail()
+    public function receivedFollowUpEmail(): HasOne
     {
         return $this->hasOne(\App\EmailHistory::class, 'parent_id', 'id')
             ->where('parent', 'shop-manuscripts-taken-follow-up')->latest();
     }
 
-    public function requests()
+    public function requests(): HasMany
     {
         return $this->hasMany(\App\RequestToEditor::class, 'manuscript_id', 'id')
             ->whereHas('editor')

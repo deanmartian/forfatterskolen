@@ -10,7 +10,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('private_group_member_preferences', function (Blueprint $table) {
             $table->foreign('user_id', 'private_group_member_preferences_author_id_foreign')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
@@ -23,7 +23,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('private_group_member_preferences', function (Blueprint $table) {
             $table->dropForeign('private_group_member_preferences_author_id_foreign');
