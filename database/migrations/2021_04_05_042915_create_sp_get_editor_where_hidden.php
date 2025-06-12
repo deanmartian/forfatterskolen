@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSpGetEditorWhereHidden extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -38,4 +38,4 @@ class CreateSpGetEditorWhereHidden extends Migration
     {
         DB::unprepared('DROP PROCEDURE IF EXISTS getIDWhereHidden;');
     }
-}
+};

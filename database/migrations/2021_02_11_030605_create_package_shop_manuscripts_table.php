@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreatePackageShopManuscriptsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class CreatePackageShopManuscriptsTable extends Migration
     {
         Schema::drop('package_shop_manuscripts');
     }
-}
+};

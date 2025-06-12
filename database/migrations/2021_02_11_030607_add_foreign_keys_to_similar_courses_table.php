@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToSimilarCoursesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class AddForeignKeysToSimilarCoursesTable extends Migration
             $table->dropForeign('similar_courses_ibfk_2');
         });
     }
-}
+};

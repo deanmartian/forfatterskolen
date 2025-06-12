@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToCourseTestimonialsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AddForeignKeysToCourseTestimonialsTable extends Migration
             $table->dropForeign('FK_course_testimonials_courses');
         });
     }
-}
+};

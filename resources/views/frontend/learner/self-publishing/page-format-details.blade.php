@@ -63,7 +63,7 @@
                                     {!! $bookFormatting->description !!}
                                 </td>
                                 <td>
-                                    {{ optional($bookFormatting->designer)->full_name }}
+                                    {{ $bookFormatting->designer?->full_name }}
                                 </td>
                             </tr>
                         </tbody>

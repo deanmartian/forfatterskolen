@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToPackageShopManuscriptsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class AddForeignKeysToPackageShopManuscriptsTable extends Migration
             $table->dropForeign('package_shop_manuscripts_ibfk_2');
         });
     }
-}
+};

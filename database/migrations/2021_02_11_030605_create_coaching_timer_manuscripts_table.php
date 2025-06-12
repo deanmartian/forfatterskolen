@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateCoachingTimerManuscriptsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -41,4 +41,4 @@ class CreateCoachingTimerManuscriptsTable extends Migration
     {
         Schema::drop('coaching_timer_manuscripts');
     }
-}
+};

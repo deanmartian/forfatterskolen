@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddFieldsInProjectGraphicWorksTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -32,4 +32,4 @@ class AddFieldsInProjectGraphicWorksTable extends Migration
             $table->dropColumn('is_checked');
         });
     }
-}
+};

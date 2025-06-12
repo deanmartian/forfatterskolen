@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToWorkshopsTakenTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -32,4 +32,4 @@ class AddForeignKeysToWorkshopsTakenTable extends Migration
             $table->dropForeign('workshops_taken_ibfk_3');
         });
     }
-}
+};

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCoursesEmailOutRecipientsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -33,4 +33,4 @@ class CreateCoursesEmailOutRecipientsTable extends Migration
     {
         Schema::dropIfExists('courses_email_out_recipients');
     }
-}
+};

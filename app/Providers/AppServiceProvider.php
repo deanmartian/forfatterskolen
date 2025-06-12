@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         \Illuminate\Pagination\Paginator::useBootstrap();
-        
+
         //
         Validator::extend('alpha_num_spaces', function ($attribute, $value) {
             // This will only accept alpha and spaces.

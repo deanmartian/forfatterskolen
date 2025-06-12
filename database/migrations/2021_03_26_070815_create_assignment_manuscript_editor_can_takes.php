@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAssignmentManuscriptEditorCanTakes extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -34,4 +34,4 @@ class CreateAssignmentManuscriptEditorCanTakes extends Migration
     {
         Schema::dropIfExists('assignment_manuscript_editor_can_takes');
     }
-}
+};

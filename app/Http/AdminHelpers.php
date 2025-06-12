@@ -27,7 +27,7 @@ use Log;
 use Spatie\Dropbox\Client;
 use Storage;
 use Swift_Mailer;
-use Swift_Message;
+use Symfony\Component\Mime\Email;
 
 if (! app()->runningInConsole()) {
     include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
@@ -233,7 +233,7 @@ class AdminHelpers
         $transport->setPassword($email_pass);
 
         // set message
-        $message = Swift_Message::newInstance();
+        $message = Email::newInstance();
         $message->setSubject($subject);
         $message->setFrom($from, $from_name);
         $message->setTo($to);

@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToFreeManuscriptFeedbacksHistoryTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AddForeignKeysToFreeManuscriptFeedbacksHistoryTable extends Migration
             $table->dropForeign('Table: free_manuscript_feedbacks_history_free_manuscript_id');
         });
     }
-}
+};

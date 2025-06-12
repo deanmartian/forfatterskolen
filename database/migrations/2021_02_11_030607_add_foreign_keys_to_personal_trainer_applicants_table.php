@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToPersonalTrainerApplicantsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AddForeignKeysToPersonalTrainerApplicantsTable extends Migration
             $table->dropForeign('pt_applicants_user_id_foreign');
         });
     }
-}
+};

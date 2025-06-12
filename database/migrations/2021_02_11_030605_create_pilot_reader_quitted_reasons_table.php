@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreatePilotReaderQuittedReasonsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class CreatePilotReaderQuittedReasonsTable extends Migration
     {
         Schema::drop('pilot_reader_quitted_reasons');
     }
-}
+};

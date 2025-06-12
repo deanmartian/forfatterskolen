@@ -114,7 +114,7 @@
                 </div>
 
                 <div class="form-container w-100">
-                    <form action="{{ route('front.free-webinar', $freeWebinar->id) }}" method="POST" onsubmit="disableSubmit(this)">
+                    <form action="{{ route('front.free-webinar.submit', $freeWebinar->id) }}" method="POST" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
 
                         <div class="input-group">

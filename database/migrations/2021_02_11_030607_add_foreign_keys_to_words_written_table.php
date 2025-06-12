@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToWordsWrittenTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AddForeignKeysToWordsWrittenTable extends Migration
             $table->dropForeign('words_written_user_id_ibfk_1');
         });
     }
-}
+};

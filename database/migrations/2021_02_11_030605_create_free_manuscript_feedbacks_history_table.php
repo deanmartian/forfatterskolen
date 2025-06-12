@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateFreeManuscriptFeedbacksHistoryTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class CreateFreeManuscriptFeedbacksHistoryTable extends Migration
     {
         Schema::drop('free_manuscript_feedbacks_history');
     }
-}
+};

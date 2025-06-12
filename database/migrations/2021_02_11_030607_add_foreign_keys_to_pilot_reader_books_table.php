@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToPilotReaderBooksTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AddForeignKeysToPilotReaderBooksTable extends Migration
             $table->dropForeign('pilot_reader_books_user_id');
         });
     }
-}
+};

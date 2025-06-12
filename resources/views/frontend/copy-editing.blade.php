@@ -38,7 +38,7 @@
                             {{ trans('site.front.copy-editing.description') }}
                         </p>
 
-                        <form method="POST" enctype="multipart/form-data" action="{{ route('front.copy-editing') }}"
+                        <form method="POST" enctype="multipart/form-data" action="{{ route('front.copy-editing.submit') }}"
                               id="manuscript">
                             {{ csrf_field() }}
                             <div class="input-group mb-3">

@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateLearnerLoginActivitiesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -29,4 +29,4 @@ class CreateLearnerLoginActivitiesTable extends Migration
     {
         Schema::drop('learner_login_activities');
     }
-}
+};

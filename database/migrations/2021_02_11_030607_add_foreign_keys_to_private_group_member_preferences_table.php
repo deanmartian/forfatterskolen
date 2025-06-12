@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToPrivateGroupMemberPreferencesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class AddForeignKeysToPrivateGroupMemberPreferencesTable extends Migration
             $table->dropForeign('private_group_member_preferences_private_group_id_foreign');
         });
     }
-}
+};

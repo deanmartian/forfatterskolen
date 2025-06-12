@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToCoursesSharedUsersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -30,4 +30,4 @@ class AddForeignKeysToCoursesSharedUsersTable extends Migration
             $table->dropForeign('shared_users_shared_id');
         });
     }
-}
+};

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTimeRegisterUsedTimesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -34,4 +34,4 @@ class CreateTimeRegisterUsedTimesTable extends Migration
     {
         Schema::dropIfExists('time_register_used_times');
     }
-}
+};

@@ -108,7 +108,7 @@
                     <h4 class="modal-title">Add Goal</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{ route('learner.word-written-goals') }}">
+                    <form method="POST" action="{{ route('learner.word-written-goals.submit') }}">
                         {{ csrf_field() }}
 
                         <div class="form-group">

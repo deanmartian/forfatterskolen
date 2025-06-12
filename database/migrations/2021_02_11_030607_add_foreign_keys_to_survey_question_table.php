@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddForeignKeysToSurveyQuestionTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -28,4 +28,4 @@ class AddForeignKeysToSurveyQuestionTable extends Migration
             $table->dropForeign('survey_id_ibfk_1');
         });
     }
-}
+};

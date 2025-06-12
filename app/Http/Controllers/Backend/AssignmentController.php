@@ -1513,7 +1513,7 @@ class AssignmentController extends Controller
 
         filter_var($request->isChecked, FILTER_VALIDATE_BOOLEAN)
             ? AssignmentDisabledLearner::create(['assignment_id' => $assignmentId, 'user_id' => $request->user_id])
-            : optional($disabledLearner)->delete();
+            : $disabledLearner?->delete();
 
         return $request->all();
     }

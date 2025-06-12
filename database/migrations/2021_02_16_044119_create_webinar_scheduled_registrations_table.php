@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateWebinarScheduledRegistrationsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -32,4 +32,4 @@ class CreateWebinarScheduledRegistrationsTable extends Migration
     {
         Schema::dropIfExists('webinar_scheduled_registrations');
     }
-}
+};
