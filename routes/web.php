@@ -1942,7 +1942,7 @@ Route::domain($editor)->group(function () {
         Route::post('/free-manuscript/{id}/send_feedback', [Backend\FreeManuscriptController::class, 'sendFeedback'])->name('editor.free-manuscript.send_feedback');
         Route::get('/free-manuscript/{id}/download', [Backend\FreeManuscriptController::class, 'downloadContent'])->name('editor.free-manuscript.download');
         Route::post('/time-register/save', [Backend\TimeRegisterController::class, 'save'])->name('editor.time-register.save');
-        //Route::delete('/time-register/{id}/delete', [Backend\TimeRegisterController::class, 'destroy'])->name('admin.time-register.delete');
+        // Route::delete('/time-register/{id}/delete', [Backend\TimeRegisterController::class, 'destroy'])->name('admin.time-register.delete');
         Route::get('/time-register/{id}/time-used-list', [Backend\TimeRegisterController::class, 'timeUsedList']);
         Route::post('/time-register/{id}/save-time-used', [Backend\TimeRegisterController::class, 'saveTimeUsed']);
         Route::delete('/time-register/time-used/{id}/delete', [Backend\TimeRegisterController::class, 'deleteTimeUsed']);
