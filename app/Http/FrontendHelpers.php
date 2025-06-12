@@ -165,7 +165,7 @@ class FrontendHelpers
      *
      * @return bool
      */
-    public static function isCourseActive($course)
+    public static function isCourseActive($course): bool
     {
 
         if (! $course->status) {
@@ -275,7 +275,7 @@ class FrontendHelpers
      *
      * @return array
      */
-    public static function frontPageList()
+    public static function frontPageList(): array
     {
         return [
             ['page_name' => 'Front Page', 'page_route' => 'front.home'],
@@ -386,7 +386,7 @@ class FrontendHelpers
      * @param  null  $route
      * @return array
      */
-    public static function pilotReaderNav($route = null)
+    public static function pilotReaderNav($route = null): array
     {
         $navs = [
             ['route_name' => 'learner.book-author-book-show', 'label' => 'Contents'],
@@ -495,7 +495,7 @@ class FrontendHelpers
      *
      * @return int
      */
-    public static function isPrivateGroupMember($group_id, $user_id)
+    public static function isPrivateGroupMember($group_id, $user_id): int
     {
         $isMember = 0;
         $groupMember = PrivateGroupMember::where(['private_group_id' => $group_id, 'user_id' => $user_id])->first();
@@ -524,7 +524,7 @@ class FrontendHelpers
      *
      * @return int
      */
-    public static function countReaderWithStatus($book_id, $status)
+    public static function countReaderWithStatus($book_id, $status): int
     {
         return PilotReaderBookReading::withTrashed()->where(['book_id' => $book_id, 'status' => $status])->get()->count();
     }
@@ -567,7 +567,7 @@ class FrontendHelpers
      *
      * @return int
      */
-    public function checkChapterNameByNumber($number)
+    public function checkChapterNameByNumber($number): int
     {
 
         $checkChapterName = PilotReaderBookChapter::where('title', '=', 'Chapter '.$number)->first();
@@ -603,7 +603,7 @@ class FrontendHelpers
      * @param  null  $chapter_title
      * @return null|string
      */
-    public static function changeChapterName($chapter_title, $chapter_key)
+    public static function changeChapterName($chapter_title, $chapter_key): ?string
     {
         $chapter_name = $chapter_title;
         if (! $chapter_title) {
@@ -668,7 +668,7 @@ class FrontendHelpers
      * @param  float  $margin
      * @return int
      */
-    public static function wordCountByMargin($word_count, $margin = 0.03)
+    public static function wordCountByMargin($word_count, float $margin = 0.03): int
     {
         $calculatedWords = ceil($word_count * $margin);
         $newWordCount = $word_count - $calculatedWords;
@@ -743,7 +743,7 @@ class FrontendHelpers
      * @param  null  $id
      * @return array
      */
-    public static function manuscriptType($id = null)
+    public static function manuscriptType($id = null): array
     {
         $types = [
             ['id' => 1, 'option' => 'Hele manuset'],
@@ -769,7 +769,7 @@ class FrontendHelpers
      * @param  null  $setMark
      * @return array
      */
-    public static function feedbackMarks($setMark = null)
+    public static function feedbackMarks($setMark = null): array
     {
         $marks = [
             ['option' => 'unmarked', 'label' => 'Unmarked'],
@@ -865,7 +865,7 @@ class FrontendHelpers
      * @param  bool  $showVipps
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public static function paymentModes($showVipps = false)
+    public static function paymentModes(bool $showVipps = false)
     {
         $mode = PaymentMode::query();
         if (! $showVipps) {
@@ -886,7 +886,7 @@ class FrontendHelpers
      * @param  int  $codeLength
      * @return string
      */
-    public static function generateUniqueCode($codeLength = 20)
+    public static function generateUniqueCode(int $codeLength = 20): string
     {
 
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -992,7 +992,7 @@ class FrontendHelpers
      *
      * @return string
      */
-    public static function getContentFromDocFile($filename)
+    public static function getContentFromDocFile($filename): string
     {
         if (file_exists($filename)) {
             if (($fh = fopen($filename, 'r')) !== false) {
@@ -1038,7 +1038,7 @@ class FrontendHelpers
      *
      * @return string
      */
-    public static function getTextBetween($content, $start, $end)
+    public static function getTextBetween($content, $start, $end): string
     {
         $r = explode($start, $content);
         if (isset($r[1])) {

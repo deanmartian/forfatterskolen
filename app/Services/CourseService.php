@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\Database\Eloquent\Model;
 use App\Address;
 use App\Course;
 use App\CourseDiscount;
@@ -46,7 +48,7 @@ class CourseService
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function checkCouponDiscount($course_id, $coupon)
+    public function checkCouponDiscount($course_id, $coupon): JsonResponse
     {
         $course = $this->course->find($course_id);
         $discountCoupon = $course->discounts()->where('coupon', $coupon)->first();
@@ -167,7 +169,7 @@ class CourseService
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function generateSveaCheckout(Request $request)
+    public function generateSveaCheckout(Request $request): JsonResponse
     {
         $package = Package::find($request->package_id);
         $course = $package->course;
@@ -279,7 +281,7 @@ class CourseService
      *
      * @return int
      */
-    public function calculatePrice($course, $package, Request $request)
+    public function calculatePrice($course, $package, Request $request): int
     {
         $hasPaidCourse = false;
 
@@ -427,7 +429,7 @@ class CourseService
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function addCourseToLearner($user_id, $package_id, $start_course = false)
+    public function addCourseToLearner($user_id, $package_id, $start_course = false): Model
     {
         Log::info('inside addCourseToLearner user = '.$user_id.', package_id = '.$package_id);
         $course_status = 1;
@@ -742,7 +744,7 @@ class CourseService
      *
      * @return string
      */
-    public function generateDocx($user_id, $package_id)
+    public function generateDocx($user_id, $package_id): string
     {
         $user = User::find($user_id);
         $address = $user->address;

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Services;
 
+use Illuminate\Database\Eloquent\Model;
 use App\Solution;
 use App\SolutionArticle;
 
@@ -38,7 +39,7 @@ class SolutionArticleService
      *
      * @return array
      */
-    public function fields()
+    public function fields(): array
     {
         return $this->fields;
     }
@@ -48,7 +49,7 @@ class SolutionArticleService
      * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null
      */
-    public function getRecord($id = null, $page = 15)
+    public function getRecord($id = null, int $page = 15)
     {
         if ($id) {
             return $this->solutionArticle->find($id);
@@ -62,7 +63,7 @@ class SolutionArticleService
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function store($solution_id, array $data)
+    public function store($solution_id, array $data): Model
     {
         $data['solution_id'] = $solution_id;
 
@@ -74,7 +75,7 @@ class SolutionArticleService
      *
      * @return bool
      */
-    public function update($id, array $data)
+    public function update($id, array $data): bool
     {
         $solutionArticle = $this->getRecord($id);
         if ($solutionArticle) {
@@ -90,7 +91,7 @@ class SolutionArticleService
      * @param  SolutionArticle  $id
      * @return bool
      */
-    public function destroy($id)
+    public function destroy(SolutionArticle $id): bool
     {
         $solutionArticle = $this->getRecord($id);
         if ($solutionArticle) {

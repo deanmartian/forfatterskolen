@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Services;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Publishing;
 
 class PublishingService
@@ -42,7 +44,7 @@ class PublishingService
      *
      * @return array
      */
-    public function fields()
+    public function fields(): array
     {
         return $this->fields;
     }
@@ -53,7 +55,7 @@ class PublishingService
      * @param  array  $data  data to be inserted
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function store(array $data)
+    public function store(array $data): Model
     {
         $data['genre'] = implode(', ', $data['genre']);
 
@@ -66,7 +68,7 @@ class PublishingService
      * @param  int  $id
      * @return bool
      */
-    public function update($id, array $data)
+    public function update(int $id, array $data): bool
     {
         $publishingHouse = $this->find($id);
         if ($publishingHouse) {
@@ -83,7 +85,7 @@ class PublishingService
      *
      * @return bool|null
      */
-    public function destroy($id)
+    public function destroy($id): ?bool
     {
         $publishingHouse = $this->find($id);
         if ($publishingHouse) {
@@ -98,7 +100,7 @@ class PublishingService
      *
      * @return \App\Publishing
      */
-    public function find($id)
+    public function find($id): Publishing
     {
         return $this->publishing->find($id);
     }
@@ -109,7 +111,7 @@ class PublishingService
      * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function paginate($perPage = 15)
+    public function paginate($perPage = 15): LengthAwarePaginator
     {
         return $this->publishing->orderBy('publishing', 'ASC')->paginate($perPage);
     }

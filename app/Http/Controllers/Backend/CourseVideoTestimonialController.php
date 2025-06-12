@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\CourseTestimonial;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CourseTestimonialCreateRequest;
@@ -30,7 +32,7 @@ class CourseVideoTestimonialController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $testimonial = [
             'name' => '',
@@ -49,7 +51,7 @@ class CourseVideoTestimonialController extends Controller
      * @param  CourseTestimonialCreateRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // call the service for testimonial
         $courseTestimonialService = new CourseVideoTestimonialService($this->courseTestimonial);
@@ -83,7 +85,7 @@ class CourseVideoTestimonialController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         // call the service for testimonial
         $courseTestimonialService = new CourseVideoTestimonialService($this->courseTestimonial);

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Invoice;
 use App\Paypal;
@@ -26,7 +28,7 @@ class PaypalController extends Controller
         $this->repository = $repository;
     }
 
-    public function form(Request $request, $invoice_id = null)
+    public function form(Request $request, $invoice_id = null): View
     {
         $invoice_id = $invoice_id ?: encrypt(1);
 
@@ -35,7 +37,7 @@ class PaypalController extends Controller
         return view('form', compact('order'));
     }
 
-    public function checkout($invoice_id, Request $request)
+    public function checkout($invoice_id, Request $request): RedirectResponse
     {
         $invoice = Invoice::findOrFail(decrypt($invoice_id));
 
@@ -63,7 +65,7 @@ class PaypalController extends Controller
      *                     $param $page
      * @return mixed
      */
-    public function completed($invoice_id, $page, Request $request)
+    public function completed($invoice_id, $page, Request $request): RedirectResponse
     {
         $invoice = Invoice::findOrFail($invoice_id);
 
@@ -87,7 +89,7 @@ class PaypalController extends Controller
         ]);
     }
 
-    public function cancelled($invoice_id)
+    public function cancelled($invoice_id): RedirectResponse
     {
         $order = Invoice::findOrFail($invoice_id);
 

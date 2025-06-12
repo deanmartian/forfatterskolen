@@ -60,7 +60,7 @@ class Contract extends Model
      *
      * @return string
      */
-    public function getSentFileLinkAttribute()
+    public function getSentFileLinkAttribute(): string
     {
         $fileLink = '';
         $filename = isset($this->attributes['sent_file']) ? $this->attributes['sent_file'] : null;
@@ -81,7 +81,7 @@ class Contract extends Model
      *
      * @return string
      */
-    public function getSignedFileLinkAttribute()
+    public function getSignedFileLinkAttribute(): string
     {
         $fileLink = '';
         if (isset($this->attributes['signed_file'])) {

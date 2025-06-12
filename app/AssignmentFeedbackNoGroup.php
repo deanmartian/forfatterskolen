@@ -41,7 +41,7 @@ class AssignmentFeedbackNoGroup extends Model
      *
      * @return string
      */
-    public function getFileLinkAttribute()
+    public function getFileLinkAttribute(): string
     {
         $fileLink = '';
         $filename = $this->attributes['filename'];

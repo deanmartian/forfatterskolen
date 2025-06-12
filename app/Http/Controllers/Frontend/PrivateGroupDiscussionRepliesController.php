@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\Http\JsonResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Mail\DiscussionRepliesEmail;
@@ -20,7 +21,7 @@ class PrivateGroupDiscussionRepliesController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDiscussionReplies($discussion_id)
+    public function getDiscussionReplies($discussion_id): JsonResponse
     {
         $fractal = new Manager;
         $query = PrivateGroupDiscussion::where('id', $discussion_id)->get();
@@ -35,7 +36,7 @@ class PrivateGroupDiscussionRepliesController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createReply(Request $request)
+    public function createReply(Request $request): JsonResponse
     {
         $data = $request->all();
         $author = \Auth::user();
@@ -106,7 +107,7 @@ class PrivateGroupDiscussionRepliesController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function updateReply(Request $request)
+    public function updateReply(Request $request): JsonResponse
     {
         $data = $request->except('id');
         $model = PrivateGroupDiscussionReply::find($request->id);

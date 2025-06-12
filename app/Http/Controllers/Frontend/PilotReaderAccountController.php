@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\PilotReaderReaderProfile;
 use App\UserPreference;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PilotReaderAccountController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         return view('frontend.learner.pilot-reader.account.index');
     }
@@ -30,7 +32,7 @@ class PilotReaderAccountController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function setUserPreferences(Request $request)
+    public function setUserPreferences(Request $request): JsonResponse
     {
         $data = $request->all();
         $user = Auth::user();
@@ -54,7 +56,7 @@ class PilotReaderAccountController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function readerProfile()
+    public function readerProfile(): View
     {
         return view('frontend.learner.pilot-reader.account.reader-profile');
     }
@@ -69,7 +71,7 @@ class PilotReaderAccountController extends Controller
         return PilotReaderReaderProfile::where('user_id', Auth::user()->id)->first();
     }
 
-    public function setReaderProfile(Request $request)
+    public function setReaderProfile(Request $request): JsonResponse
     {
         $data = $request->all();
         $author = Auth::user();

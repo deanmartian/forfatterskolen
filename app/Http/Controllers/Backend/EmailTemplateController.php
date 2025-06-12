@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\RedirectResponse;
 use App\Course;
 use App\EmailTemplate;
 use App\Http\AdminHelpers;
@@ -26,7 +27,7 @@ class EmailTemplateController extends Controller
         return view('backend.email-template.index', compact('templates', 'courses'));
     }
 
-    public function addEmailTemplate(Request $request)
+    public function addEmailTemplate(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'email_content' => 'required',
@@ -80,7 +81,7 @@ class EmailTemplateController extends Controller
         ]);
     }
 
-    public function editEmailTemplate($id, Request $request)
+    public function editEmailTemplate($id, Request $request): RedirectResponse
     {
         $emailtemplate = EmailTemplate::find($id);
         if ($emailtemplate) {
@@ -98,7 +99,7 @@ class EmailTemplateController extends Controller
         ]);
     }
 
-    public function courseEditAdd($courseId, Request $request)
+    public function courseEditAdd($courseId, Request $request): RedirectResponse
     {
         $course = Course::find($courseId);
         $emailtemplate = null;

@@ -13,7 +13,7 @@ class DocumentParser
      *
      * @throws Exception
      */
-    public static function parseFromString($string, $mimetype = 'text/plain')
+    public static function parseFromString($string, string $mimetype = 'text/plain')
     {
         if (preg_match("/^text\/*/", $mimetype)) {
             return $string;
@@ -35,7 +35,7 @@ class DocumentParser
      *
      * @throws Exception
      */
-    public static function parseFromFile($filename, $mimetype = null)
+    public static function parseFromFile(string $filename, string $mimetype = null)
     {
         if (! is_readable($filename)) {
             throw new \Exception('Failed to read file: cannot read file %s', $filename);
@@ -68,7 +68,7 @@ class DocumentParser
      *
      * @throws Exception
      */
-    private static function parseZipped($filename, $datafile)
+    private static function parseZipped(string $filename, string $datafile): html
     {
         // Zip function requires a read from a file
         $zip = new \ZipArchive;
@@ -170,7 +170,7 @@ class DocumentParser
      * @param  \DOMDocument  $xmldoc  The document to look in
      * @param  string  $tagname  The name of the tag to test for emptiness
      */
-    private static function removeEmptyTag(\DOMDocument $xmldoc, $tagname)
+    private static function removeEmptyTag(\DOMDocument $xmldoc, string $tagname)
     {
         $xpath = new \DOMXPath($xmldoc);
         foreach ($xpath->query("//$tagname") as $node) {
@@ -188,7 +188,7 @@ class DocumentParser
      * @param  \DOMDocument  $xmldoc  The document to process
      * @param  string  $namespace  The namespace to remove
      */
-    private static function removeDomNamespace(\DOMDocument $xmldoc, $namespace)
+    private static function removeDomNamespace(\DOMDocument $xmldoc, string $namespace)
     {
         $xpath = new \DOMXPath($xmldoc);
         $nodes = $xpath->query("//*[namespace::{$namespace} and not(../namespace::{$namespace})]");
@@ -205,7 +205,7 @@ class DocumentParser
      * @param  string  $newtagname  The name of the new tag
      * @return \DOMElement
      */
-    private static function renameTag(\DOMElement $tag, $newtagname)
+    private static function renameTag(\DOMElement $tag, string $newtagname): DOMElement
     {
         $document = $tag->ownerDocument;
         $newtag = $document->createElement($newtagname);
@@ -248,7 +248,7 @@ class DocumentParser
      * @param  string  $filename  The path to the word document
      * @return html
      */
-    private static function parseDoc($filename)
+    private static function parseDoc(string $filename): html
     {
         if (shell_exec('which antiword')) {
             // The antiword programme is installed
@@ -279,7 +279,7 @@ class DocumentParser
      * @param  string  $contents  The contents of the word document
      * @return html Simplified HTML with just p, em and strong tags
      */
-    private static function parseDocAntiword($contents)
+    private static function parseDocAntiword(string $contents): html
     {
         $xml = new \DOMDocument;
         $xml->preserveWhiteSpace = false;
@@ -314,7 +314,7 @@ class DocumentParser
      * @param  string  $string  The string to parse
      * @return bool True if the rtf string is plain text
      */
-    private static function rtfIsPlainText($string)
+    private static function rtfIsPlainText(string $string): bool
     {
         $arrfailat = ['*', 'fonttbl', 'colortbl', 'datastore', 'themedata'];
         for ($i = 0; $i < count($arrfailat); $i++) {
@@ -334,7 +334,7 @@ class DocumentParser
      * @param  string  $filename  The path to the .rtf file
      * @return string The plain text .rtf contents
      */
-    private static function parseRtf($filename)
+    private static function parseRtf(string $filename): string
     {
         // Read the data from the input file.
         $text = file_get_contents($filename);

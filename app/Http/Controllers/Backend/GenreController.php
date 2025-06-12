@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Genre;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
@@ -12,7 +14,7 @@ class GenreController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $genres = Genre::all();
 
@@ -22,7 +24,7 @@ class GenreController extends Controller
     /**
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         Genre::create($request->except('_token'));
 
@@ -35,7 +37,7 @@ class GenreController extends Controller
     /**
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $genre = Genre::find($id);
         $genre->update($request->except('_token'));
@@ -47,7 +49,7 @@ class GenreController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $genre = Genre::find($id);
         $genre->delete();

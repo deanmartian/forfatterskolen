@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Giutbok;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\AssignmentTemplate;
 use App\EmailHistory;
 use App\Http\AdminHelpers;
@@ -13,7 +15,7 @@ use Illuminate\Http\Request;
 
 class LearnerController extends Controller
 {
-    public function index(Request $request, User $user)
+    public function index(Request $request, User $user): View
     {
         $learners = $user->newQuery();
         if ($request->sid || $request->sfname || $request->slname || $request->semail) {
@@ -141,7 +143,7 @@ class LearnerController extends Controller
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList'));
     }
 
-    public function registerLearner(Request $request, LearnerService $learnerService)
+    public function registerLearner(Request $request, LearnerService $learnerService): RedirectResponse
     {
         $this->validate($request, [
             'first_name' => 'required|string|max:255',

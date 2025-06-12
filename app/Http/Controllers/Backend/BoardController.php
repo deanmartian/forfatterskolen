@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Helpers\DapulseRepository;
@@ -15,7 +18,7 @@ class BoardController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function show($id, DapulseRepository $repository)
+    public function show($id, DapulseRepository $repository): View
     {
         $result = $repository->getBoard($id);
 
@@ -32,7 +35,7 @@ class BoardController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function assignUser($board_id, Request $request, DapulseRepository $repository)
+    public function assignUser($board_id, Request $request, DapulseRepository $repository): RedirectResponse
     {
 
         $result = $repository->assignUserToPulse($board_id, $request->pulse_id, $request->user_id);
@@ -49,7 +52,7 @@ class BoardController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function store(Request $request, DapulseRepository $repository)
+    public function store(Request $request, DapulseRepository $repository): RedirectResponse
     {
         $result = $repository->addBoard($request);
         if ($result instanceof ApiException) {
@@ -70,7 +73,7 @@ class BoardController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addPulse($board_id, Request $request, DapulseRepository $repository)
+    public function addPulse($board_id, Request $request, DapulseRepository $repository): RedirectResponse
     {
         $result = $repository->addPulseToBoard($board_id, $request);
 
@@ -86,7 +89,7 @@ class BoardController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function updateGroupTitle($board_id, Request $request, DapulseRepository $repository)
+    public function updateGroupTitle($board_id, Request $request, DapulseRepository $repository): JsonResponse
     {
         $result = $repository->updateGroupTitle($board_id, $request);
 
@@ -102,7 +105,7 @@ class BoardController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function setStatus($board_id, Request $request, DapulseRepository $repository)
+    public function setStatus($board_id, Request $request, DapulseRepository $repository): RedirectResponse
     {
 
         $result = $repository->setPulseStatus($board_id, $request->pulse_id, $request->phase);
@@ -117,7 +120,7 @@ class BoardController extends Controller
         return redirect()->back();
     }
 
-    public function setTimeline($board_id, Request $request, DapulseRepository $repository)
+    public function setTimeline($board_id, Request $request, DapulseRepository $repository): RedirectResponse
     {
 
         $timeline = explode('-', $request->timeline);

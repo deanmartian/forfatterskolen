@@ -46,7 +46,7 @@ class SelfPublishing extends Model
      *
      * @return string
      */
-    public function getFileLinkAttribute()
+    public function getFileLinkAttribute(): string
     {
         $fileLink = '';
         $files = explode(',', $this->attributes['manuscript']);
@@ -69,7 +69,7 @@ class SelfPublishing extends Model
      *
      * @return string
      */
-    public function getFileLinkWithDownloadAttribute()
+    public function getFileLinkWithDownloadAttribute(): string
     {
         $fileLink = '';
         $files = explode(',', $this->attributes['manuscript']);

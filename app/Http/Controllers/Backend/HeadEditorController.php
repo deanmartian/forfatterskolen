@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\backend;
 
+use Illuminate\Http\RedirectResponse;
 use App\AssignmentManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -54,7 +55,7 @@ class HeadEditorController extends Controller
             'assignmentFeedbackEmailTemplates'));
     }
 
-    public function sendEmail($editor_id, $type, $title, $learner, Request $request)
+    public function sendEmail($editor_id, $type, $title, $learner, Request $request): RedirectResponse
     {
         // send email
         $to = User::find($editor_id);
@@ -74,7 +75,7 @@ class HeadEditorController extends Controller
 
     }
 
-    public function approveSelfPublishingFeedback($feedback_id, Request $request)
+    public function approveSelfPublishingFeedback($feedback_id, Request $request): RedirectResponse
     {
         $feedback = SelfPublishingFeedback::find($feedback_id);
         $feedback->is_approved = 1;

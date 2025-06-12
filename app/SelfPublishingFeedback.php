@@ -26,7 +26,7 @@ class SelfPublishingFeedback extends Model
      *
      * @return string
      */
-    public function getFileLinkAttribute()
+    public function getFileLinkAttribute(): string
     {
         $fileLink = '';
         $files = explode(',', $this->attributes['manuscript']);

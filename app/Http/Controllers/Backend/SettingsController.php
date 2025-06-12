@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Settings;
@@ -10,14 +12,14 @@ use Illuminate\Http\Request;
 
 class SettingsController extends Controller
 {
-    public function updateEmail(Request $request)
+    public function updateEmail(Request $request): RedirectResponse
     {
         Settings::updateOrCreate(['setting_name' => 'welcome_email'], ['setting_value' => $request->welcome_email]);
 
         return redirect()->back();
     }
 
-    public function updateTerms(Request $request)
+    public function updateTerms(Request $request): RedirectResponse
     {
         Settings::updateOrCreate(['setting_name' => 'terms'], ['setting_value' => $request->terms]);
 
@@ -31,7 +33,7 @@ class SettingsController extends Controller
      * @param  Request  $request  terms_type Terms for certain page
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateOtherTerms(Request $request)
+    public function updateOtherTerms(Request $request): RedirectResponse
     {
         Settings::updateOrCreate(['setting_name' => $request->terms_type.'-terms'], ['setting_value' => $request->terms]);
 
@@ -40,7 +42,7 @@ class SettingsController extends Controller
             'terms_tab' => $request->terms_type]);
     }
 
-    public function updateOptInTerms(Request $request)
+    public function updateOptInTerms(Request $request): RedirectResponse
     {
         Settings::updateOrCreate(['setting_name' => 'opt_in_terms'], ['setting_value' => $request->opt_in_terms]);
 
@@ -48,7 +50,7 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function updateOptInDescription(Request $request)
+    public function updateOptInDescription(Request $request): RedirectResponse
     {
         Settings::updateOrCreate(['setting_name' => 'opt_in_description'], ['setting_value' => $request->opt_in_description]);
 
@@ -56,7 +58,7 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function updateOptInRektorDescription(Request $request)
+    public function updateOptInRektorDescription(Request $request): RedirectResponse
     {
         Settings::updateOrCreate(['setting_name' => 'opt_in_rektor_description'], ['setting_value' => $request->opt_in_description]);
 
@@ -64,7 +66,7 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function gtConfirmationEmail(Request $request)
+    public function gtConfirmationEmail(Request $request): RedirectResponse
     {
         Settings::updateOrCreate(['setting_name' => 'gt_confirmation_email'], ['setting_value' => $request->gt_confirmation_email]);
 
@@ -72,7 +74,7 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function webinarEmailTemplate(Request $request)
+    public function webinarEmailTemplate(Request $request): RedirectResponse
     {
         Settings::updateOrCreate(['setting_name' => 'webinar_email_template'], ['setting_value' => $request->webinar_email_template]);
 
@@ -80,7 +82,7 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function gtReminderEmail(Request $request)
+    public function gtReminderEmail(Request $request): RedirectResponse
     {
         Settings::updateOrCreate(['setting_name' => 'gt_reminder_email_template'], ['setting_value' => $request->gt_reminder_email_template]);
 
@@ -88,7 +90,7 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function courseNotStartedReminder(Request $request)
+    public function courseNotStartedReminder(Request $request): RedirectResponse
     {
         Settings::updateOrCreate(['setting_name' => 'course_not_started_reminder_subject'], ['setting_value' => $request->subject]);
         Settings::updateOrCreate(['setting_name' => 'course_not_started_reminder'], ['setting_value' => $request->email_content]);
@@ -100,7 +102,7 @@ class SettingsController extends Controller
     /**
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function headEditor(Request $request)
+    public function headEditor(Request $request): RedirectResponse
     {
         // Settings::updateOrCreate(['setting_name' => 'head-editor'], ['setting_value' => $request->editor_id]);
 
@@ -111,7 +113,7 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function updateEditorsNote(Request $request)
+    public function updateEditorsNote(Request $request): RedirectResponse
     {
         Settings::updateOrCreate(['setting_name' => 'editors-note'], ['setting_value' => $request->editors_note]);
 
@@ -131,14 +133,14 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function news()
+    public function news(): View
     {
         $model = Settings::where('setting_name', 'news')->first();
 
         return view('backend.news.index', compact('model'));
     }
 
-    public function saveNews(Request $request)
+    public function saveNews(Request $request): RedirectResponse
     {
         $model = Settings::firstOrNew([
             'setting_name' => 'news',
@@ -152,7 +154,7 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function updateRecord(Request $request)
+    public function updateRecord(Request $request): RedirectResponse
     {
         Settings::updateOrCreate(['setting_name' => $request->setting_name], ['setting_value' => $request->setting_value]);
 

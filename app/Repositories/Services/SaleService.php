@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Services;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\CoursesTaken;
 use App\EmailHistory;
 use App\Order;
@@ -33,7 +34,7 @@ class SaleService
      * @param  int  $is_archive
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function queryCoursesTaken($is_archive = 0)
+    public function queryCoursesTaken(int $is_archive = 0): LengthAwarePaginator
     {
         return $this->coursesTaken->whereHas('user') // , 'receivedWelcomeEmail', 'receivedFollowUpEmail'
             ->whereHas('package.course', function ($query) {
@@ -72,7 +73,7 @@ class SaleService
      * @param  int  $is_archive
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function queryShopManuscriptsTaken($is_archive = 0)
+    public function queryShopManuscriptsTaken(int $is_archive = 0): LengthAwarePaginator
     {
 
         $query = DB::table('shop_manuscripts_taken')

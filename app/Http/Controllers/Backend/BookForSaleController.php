@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 use AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\StorageDistributionCost;
@@ -14,7 +16,7 @@ use Illuminate\Http\Request;
 
 class BookForSaleController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $books = UserBookForSale::paginate(25);
         $learners = User::where('role', 2)->with(['projects.registrations' => function ($query) {
@@ -24,7 +26,7 @@ class BookForSaleController extends Controller
         return view('backend.book-for-sale.index', compact('books', 'learners'));
     }
 
-    public function show($id)
+    public function show($id): View
     {
         $book = UserBookForSale::find($id);
         $totalBookSold = $book->sales()->sum('quantity');
@@ -73,7 +75,7 @@ class BookForSaleController extends Controller
         ]);
     }
 
-    public function saleDetails($book_for_sale_id, Request $request)
+    public function saleDetails($book_for_sale_id, Request $request): JsonResponse
     {
         $details = StorageSale::where('user_book_for_sale_id', $book_for_sale_id)
             ->where('type', $request->type)

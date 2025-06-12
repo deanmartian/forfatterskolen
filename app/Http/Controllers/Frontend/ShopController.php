@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 use App\Address;
 use App\CheckoutLog;
 use App\Course;
@@ -552,7 +555,7 @@ class ShopController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function hasPaidCourse()
+    public function hasPaidCourse(): JsonResponse
     {
         $hasPaidCourse = false;
 
@@ -573,7 +576,7 @@ class ShopController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function validateCheckoutForm($course_id, Request $request)
+    public function validateCheckoutForm($course_id, Request $request): JsonResponse
     {
         /*$this->validate($request, [
             'email'         => 'required',
@@ -632,7 +635,7 @@ class ShopController extends Controller
         return response()->json($this->courseService->processCheckout($request));
     }
 
-    public function vippsCheckout($course_id, Request $request, CourseService $courseService, LoginController $loginController)
+    public function vippsCheckout($course_id, Request $request, CourseService $courseService, LoginController $loginController): JsonResponse
     {
         $package = Package::find($request->package_id);
         $course = $package->course;
@@ -652,7 +655,7 @@ class ShopController extends Controller
         return response()->json(['redirect_link' => route('front.course.checkout.process-vipps',$vipps['course_id'])]);*/
     }
 
-    public function processVipps(CourseService $courseService)
+    public function processVipps(CourseService $courseService): RedirectResponse
     {
         $vippsCheckout = \Session::get('vipps_checkout');
         $package = Package::find($vippsCheckout['package_id']);
@@ -723,7 +726,7 @@ class ShopController extends Controller
         return redirect()->to($this->vippsInitiatePayment($vippsData));
     }
 
-    public function orderCancelled($course_id)
+    public function orderCancelled($course_id): View
     {
         return view('frontend.shop.cancelled-order', compact('course_id'));
     }
@@ -899,7 +902,7 @@ class ShopController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function checkDiscount($course_id, Request $request)
+    public function checkDiscount($course_id, Request $request): JsonResponse
     {
 
         if (Auth::guest()) {
@@ -1051,7 +1054,7 @@ class ShopController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function checkCouponDiscount($course_id, $coupon, CourseService $courseService)
+    public function checkCouponDiscount($course_id, $coupon, CourseService $courseService): JsonResponse
     {
         $course = Course::find($course_id);
         if (! $course) {
@@ -1535,7 +1538,7 @@ class ShopController extends Controller
 
     }
 
-    public function place_order_test($course_id, OrderCreateRequest $request)
+    public function place_order_test($course_id, OrderCreateRequest $request): RedirectResponse
     {
         if (Auth::guest()) {
             $user = User::where('email', $request->email)->first();
@@ -1897,7 +1900,7 @@ class ShopController extends Controller
 
     }
 
-    public function thankyou(Request $request, CourseService $courseService)
+    public function thankyou(Request $request, CourseService $courseService): View
     {
 
         // check if from svea payment
@@ -2032,7 +2035,7 @@ class ShopController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getPaymentPlanOptions($id)
+    public function getPaymentPlanOptions($id): JsonResponse
     {
         $package = Package::find($id);
         $allowedPaymentMonth = [1];
@@ -2056,7 +2059,7 @@ class ShopController extends Controller
         return response()->json($paymentPlan);
     }
 
-    public function getPaymentModeOptions()
+    public function getPaymentModeOptions(): JsonResponse
     {
         return response()->json(\App\Http\FrontendHelpers::paymentModes(true));
     }
@@ -2097,7 +2100,7 @@ class ShopController extends Controller
         return header('HTTP/1.1 200 OK');
     }
 
-    public function proceedCheckout($course_id, Course $course, Request $request)
+    public function proceedCheckout($course_id, Course $course, Request $request): JsonResponse
     {
         $apiKey = app('Bambora')->credentials;
         $course = $course->find($course_id);

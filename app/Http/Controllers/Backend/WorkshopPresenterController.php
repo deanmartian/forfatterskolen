@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddWorkshopPresenterRequest;
 use App\Workshop;
@@ -10,7 +11,7 @@ use File;
 
 class WorkshopPresenterController extends Controller
 {
-    public function store($workshop_id, AddWorkshopPresenterRequest $request)
+    public function store($workshop_id, AddWorkshopPresenterRequest $request): RedirectResponse
     {
         $workshop = Workshop::findOrFail($workshop_id);
 
@@ -41,7 +42,7 @@ class WorkshopPresenterController extends Controller
         return redirect()->back();
     }
 
-    public function update($workshop_id, $presenter_id, AddWorkshopPresenterRequest $request)
+    public function update($workshop_id, $presenter_id, AddWorkshopPresenterRequest $request): RedirectResponse
     {
         $workshop = Workshop::findOrFail($workshop_id);
 
@@ -75,7 +76,7 @@ class WorkshopPresenterController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($workshop_id, $presenter_id)
+    public function destroy($workshop_id, $presenter_id): RedirectResponse
     {
         $workshop = Workshop::findOrFail($workshop_id);
         $workshopPresenter = WorkshopPresenter::findOrFail($presenter_id);

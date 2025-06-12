@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\RedirectResponse;
 use App\Course;
 use App\CoursesTaken;
 use App\EmailAttachment;
@@ -22,7 +23,7 @@ class EmailOutController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store($course_id, Request $request)
+    public function store($course_id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
 
@@ -166,7 +167,7 @@ class EmailOutController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($course_id, $id, Request $request)
+    public function update($course_id, $id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
         $email_out = EmailOut::find($id);
@@ -315,7 +316,7 @@ class EmailOutController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($course_id, $id)
+    public function destroy($course_id, $id): RedirectResponse
     {
         $course = Course::find($course_id);
         $email_out = EmailOut::find($id);
@@ -332,7 +333,7 @@ class EmailOutController extends Controller
         ]);
     }
 
-    public function sendEmailToLearners($course_id, $id)
+    public function sendEmailToLearners($course_id, $id): RedirectResponse
     {
         $emailOut = EmailOut::find($id);
         $packages = $emailOut->allowed_package ? json_decode($emailOut->allowed_package) :

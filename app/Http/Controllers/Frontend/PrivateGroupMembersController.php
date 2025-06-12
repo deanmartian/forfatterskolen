@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
@@ -46,7 +48,7 @@ class PrivateGroupMembersController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getInvitationLink(Request $request)
+    public function getInvitationLink(Request $request): JsonResponse
     {
         $invitation_link = PrivateGroupInvitationLink::where('private_group_id', $request->private_group_id)->first();
         if ($request->exists('enabled')) {
@@ -77,7 +79,7 @@ class PrivateGroupMembersController extends Controller
      *
      * @return $this|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function openInvitationLink($link_token)
+    public function openInvitationLink($link_token): View
     {
         $invitation_link = PrivateGroupInvitationLink::where('link_token', $link_token)->first();
         if (! $invitation_link) {
@@ -109,7 +111,7 @@ class PrivateGroupMembersController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function unauthenticatedSendInvitation(Request $request)
+    public function unauthenticatedSendInvitation(Request $request): JsonResponse
     {
         return $this->sendInvitations($request);
     }
@@ -119,7 +121,7 @@ class PrivateGroupMembersController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function authenticatedSendInvitation(Request $request)
+    public function authenticatedSendInvitation(Request $request): JsonResponse
     {
         return $this->sendInvitations($request);
     }
@@ -129,7 +131,7 @@ class PrivateGroupMembersController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function authenticatedEmailValidation(Request $request)
+    public function authenticatedEmailValidation(Request $request): JsonResponse
     {
         return $this->validateEmail($request);
     }
@@ -139,7 +141,7 @@ class PrivateGroupMembersController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function unauthenticatedEmailValidation(Request $request)
+    public function unauthenticatedEmailValidation(Request $request): JsonResponse
     {
         $response = $this->validateEmail($request);
         $data = $response->getData();
@@ -170,7 +172,7 @@ class PrivateGroupMembersController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    private function validateEmail(Request $request)
+    private function validateEmail(Request $request): JsonResponse
     {
         $this->validate($request, ['email' => 'required|email']);
         $invitations = PrivateGroupMemberInvitation::where(['email' => $request->email, 'private_group_id' => $request->private_group_id])->where('status', '<>', 3);
@@ -186,7 +188,7 @@ class PrivateGroupMembersController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    private function sendInvitations(Request $request)
+    private function sendInvitations(Request $request): JsonResponse
     {
         $all = $request->all();
         DB::beginTransaction();
@@ -343,7 +345,7 @@ class PrivateGroupMembersController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function listInvitations($id, $status)
+    public function listInvitations($id, $status): JsonResponse
     {
         $fractal = new Manager;
         $group = PrivateGroup::find($id);
@@ -360,7 +362,7 @@ class PrivateGroupMembersController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function cancelInvitation(Request $request)
+    public function cancelInvitation(Request $request): JsonResponse
     {
         $invitation = PrivateGroupMemberInvitation::find($request->id);
         if (! $invitation->update(['status' => 3])) {
@@ -376,7 +378,7 @@ class PrivateGroupMembersController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function removeMember(Request $request)
+    public function removeMember(Request $request): JsonResponse
     {
         if (! PrivateGroupMember::destroy($request->id)) {
             return response()->json(['error' => 'Opss. Something went wrong'], 500);

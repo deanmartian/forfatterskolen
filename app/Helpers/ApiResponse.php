@@ -31,7 +31,7 @@ class ApiResponse
      * @param  array  $headers
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public static function success($responseMsg = '', $data = [], $httpCode = 200, $headers = [])
+    public static function success(string $responseMsg = '', array $data = [], int $httpCode = 200, array $headers = [])
     {
         $response = self::prepareResponse($httpCode, $responseMsg, $data);
 
@@ -43,7 +43,7 @@ class ApiResponse
      *
      * @return array
      */
-    public static function prepareResponse($httpCode, $responseMsg, $data)
+    public static function prepareResponse($httpCode, $responseMsg, $data): array
     {
         return [
             'http_code' => $httpCode,
@@ -62,7 +62,7 @@ class ApiResponse
      * @param  array  $headers
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public static function error($responseMsg = '', $data = [], $httpCode = 400, $headers = [])
+    public static function error(string $responseMsg = '', array $data = [], int $httpCode = 400, array $headers = [])
     {
         $response = self::prepareResponse($httpCode, $responseMsg, $data);
 
@@ -75,7 +75,7 @@ class ApiResponse
      * @param  array  $data
      * @return string
      */
-    public static function getError($data)
+    public static function getError(array $data): string
     {
         $errorMessage = '';
 

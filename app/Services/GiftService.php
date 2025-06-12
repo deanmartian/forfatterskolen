@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\JsonResponse;
 use App\Address;
 use App\CourseDiscount;
 use App\CourseOrderAttachment;
@@ -23,7 +24,7 @@ class GiftService
      * @param  string  $type
      * @return \Illuminate\Http\JsonResponse
      */
-    public function processCheckout(Request $request, $type = 'course')
+    public function processCheckout(Request $request, string $type = 'course'): JsonResponse
     {
         // update address
         Address::updateOrCreate(
@@ -38,7 +39,7 @@ class GiftService
      * @param  string  $type
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sveaCheckout(Request $request, $type = 'course')
+    public function sveaCheckout(Request $request, string $type = 'course'): JsonResponse
     {
         $discountedPrice = floatval($request->price);
         $merchantDataTitle = '';
@@ -212,7 +213,7 @@ class GiftService
     /**
      * @return int
      */
-    public function calculateCourseDiscountedPrice($course, $package, Request $request)
+    public function calculateCourseDiscountedPrice($course, $package, Request $request): int
     {
 
         $hasPaidCourse = false;
@@ -304,7 +305,7 @@ class GiftService
      * @param  string  $parent
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
-    public function createOrder(Request $request, $parent = 'course')
+    public function createOrder(Request $request, string $parent = 'course')
     {
         $plan_id = $request->payment_plan_id;
         $totalPrice = $request->price;
@@ -433,7 +434,7 @@ class GiftService
      *
      * @return string
      */
-    public function generateRegretForm($user_id, $package_id)
+    public function generateRegretForm($user_id, $package_id): string
     {
         $user = User::find($user_id);
         $address = $user->address;

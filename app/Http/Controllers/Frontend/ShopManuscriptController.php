@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use App\Address;
 use App\CheckoutLog;
 use App\Editor;
@@ -44,7 +47,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class ShopManuscriptController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $shopManuscripts = ShopManuscript::orderBy('full_payment_price', 'asc')->get();
         $editors = Editor::orderBy('id', 'ASC')->get();
@@ -53,7 +56,7 @@ class ShopManuscriptController extends Controller
         return view('frontend.shop-manuscript.index', compact('shopManuscripts', 'editors', 'checkoutRoute'));
     }
 
-    public function checkout($id)
+    public function checkout($id): View
     {
         $shopManuscript = ShopManuscript::findOrFail($id);
         $user = \Auth::user();
@@ -157,7 +160,7 @@ class ShopManuscriptController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function validateForm($shop_manuscript_id, Request $request, CourseService $courseService,
-        ShopManuscriptService $shopManuscriptService)
+        ShopManuscriptService $shopManuscriptService): JsonResponse
     {
         $validation = [
             'email' => 'required|email',
@@ -224,7 +227,7 @@ class ShopManuscriptController extends Controller
         return $validatedOrder;
     }
 
-    public function processVipps(ShopManuscriptService $shopManuscriptService)
+    public function processVipps(ShopManuscriptService $shopManuscriptService): RedirectResponse
     {
         $vippsCheckout = \Session::get('vipps_checkout');
         $request = new \Illuminate\Http\Request;
@@ -264,7 +267,7 @@ class ShopManuscriptController extends Controller
 
     }
 
-    public function orderCancelled($manuscript_id)
+    public function orderCancelled($manuscript_id): View
     {
         return view('frontend.shop-manuscript.cancelled-order', compact('manuscript_id'));
     }
@@ -272,7 +275,7 @@ class ShopManuscriptController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function thankyou($id, Request $request, ShopManuscriptService $shopManuscriptService)
+    public function thankyou($id, Request $request, ShopManuscriptService $shopManuscriptService): View
     {
         // check if from svea payment
         if ($request->has('svea_ord') || $request->has('pl_ord')) {
@@ -560,7 +563,7 @@ class ShopManuscriptController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function paypalPayment($invoice_id)
+    public function paypalPayment($invoice_id): RedirectResponse
     {
         $invoice = Invoice::find(decrypt($invoice_id));
 
@@ -585,7 +588,7 @@ class ShopManuscriptController extends Controller
         return redirect()->route('front.shop-manuscript.index');
     }
 
-    public function upload_manuscript($id, Request $request)
+    public function upload_manuscript($id, Request $request): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->firstOrFail();
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
@@ -718,7 +721,7 @@ class ShopManuscriptController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function upload_synopsis($id, Request $request)
+    public function upload_synopsis($id, Request $request): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)
             ->where('user_id', Auth::user()->id)->firstOrFail();
@@ -752,7 +755,7 @@ class ShopManuscriptController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateUploadedManuscript($id, Request $request)
+    public function updateUploadedManuscript($id, Request $request): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->first();
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
@@ -871,7 +874,7 @@ class ShopManuscriptController extends Controller
         }
     }
 
-    public function deleteUploadedManuscript($id)
+    public function deleteUploadedManuscript($id): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->first();
         $shopManuscriptTaken->file = null;
@@ -886,7 +889,7 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function test_manuscript(Request $request)
+    public function test_manuscript(Request $request): RedirectResponse
     {
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
         $word_count = 0;
@@ -1005,21 +1008,21 @@ class ShopManuscriptController extends Controller
         ]);
     }
 
-    public function freeManuscriptShow()
+    public function freeManuscriptShow(): View
     {
         $action = 'front.free-manuscript.send'; // default
 
         return view('frontend.shop-manuscript.free-manuscript', compact('action'));
     }
 
-    public function freeManuscriptShowOther()
+    public function freeManuscriptShowOther(): View
     {
         $action = 'front.free-manuscript.send-other'; // from other site
 
         return view('frontend.shop-manuscript.free-manuscript', compact('action'));
     }
 
-    public function freeManuscriptShowSuccess()
+    public function freeManuscriptShowSuccess(): View
     {
         return view('frontend.shop-manuscript.free-manuscript-success');
     }
@@ -1029,7 +1032,7 @@ class ShopManuscriptController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function checkoutUpgradeManuscript($id)
+    public function checkoutUpgradeManuscript($id): View
     {
         $shopManuscript = ShopManuscript::findOrFail($id);
         $shopManuscriptTaken = Auth::user()->shopManuscriptsTaken;
@@ -1039,7 +1042,7 @@ class ShopManuscriptController extends Controller
         return view('frontend.shop-manuscript.upgrade', compact('shopManuscript', 'upgradeManuscript'));
     }
 
-    public function upgradeManuscript($id, Request $request)
+    public function upgradeManuscript($id, Request $request): RedirectResponse
     {
         $validator = $this->upgradeValidator($request->all());
         if ($validator->fails()) {
@@ -1183,7 +1186,7 @@ class ShopManuscriptController extends Controller
         return redirect(route('front.shop.thankyou'));
     }
 
-    public function freeManuscriptWordCount(Request $request)
+    public function freeManuscriptWordCount(Request $request): JsonResponse
     {
         \Session::put('wordcount', $request->wordcount);
 
@@ -1210,7 +1213,7 @@ class ShopManuscriptController extends Controller
         return $this->processFreeManuscript($request);
     }
 
-    public function processFreeManuscript(Request $request)
+    public function processFreeManuscript(Request $request): RedirectResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|alpha_spaces',

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Workshop;
 use App\WorkshopMenu;
@@ -11,7 +12,7 @@ use Validator;
 
 class WorkshopMenuController extends Controller
 {
-    public function store($workshop_id, Request $request)
+    public function store($workshop_id, Request $request): RedirectResponse
     {
         $validator = $this->validator($request->all());
         if ($validator->fails()) {
@@ -46,7 +47,7 @@ class WorkshopMenuController extends Controller
         return redirect()->back();
     }
 
-    public function update($workshop_id, $presenter_id, Request $request)
+    public function update($workshop_id, $presenter_id, Request $request): RedirectResponse
     {
         $validator = $this->validator($request->all());
         if ($validator->fails()) {
@@ -84,7 +85,7 @@ class WorkshopMenuController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($workshop_id, $presenter_id)
+    public function destroy($workshop_id, $presenter_id): RedirectResponse
     {
         $workshop = Workshop::findOrFail($workshop_id);
         $workshopMenu = WorkshopMenu::findOrFail($presenter_id);

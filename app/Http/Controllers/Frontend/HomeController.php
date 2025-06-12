@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 use App\Address;
 use App\Advisory;
 use App\Application;
@@ -80,7 +84,7 @@ class HomeController extends Controller
         $this->sosChildren = $sosChildren;
     }
 
-    public function index()
+    public function index(): View
     {
         $popular_courses = Course::where('display_order', '>', 0)->orderBy('display_order', 'asc')->limit(3)->get();
         $free_courses = FreeCourse::orderBy('created_at', 'desc')->get();
@@ -227,7 +231,7 @@ class HomeController extends Controller
         return view('frontend.contact-us', compact('hasAdvisory', 'advisory'));
     }
 
-    public function giftCards()
+    public function giftCards(): View
     {
         Session::remove('gift-card');
 
@@ -241,7 +245,7 @@ class HomeController extends Controller
         return Session::all();
     }
 
-    public function faq()
+    public function faq(): View
     {
         $faqs = Faq::orderBy('created_at', 'asc')->get();
 
@@ -253,7 +257,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function support()
+    public function support(): View
     {
         $solutions = Solution::where('is_instruction', 0)->get();
         $instructions = Solution::where('is_instruction', 1)->get();
@@ -261,7 +265,7 @@ class HomeController extends Controller
         return view('frontend.solution', compact('solutions', 'instructions'));
     }
 
-    public function children()
+    public function children(): View
     {
         $primaryVideo = $this->sosChildren->getPrimaryVideo();
         $videoRecords = $this->sosChildren->getVideoRecords();
@@ -275,7 +279,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function publishing()
+    public function publishing(): View
     {
         $books = PublisherBook::with('libraries')
             ->select(['*', \DB::raw('IF(display_order > 0, display_order, 1000000) display_order')])
@@ -285,7 +289,7 @@ class HomeController extends Controller
         // return view('frontend.publishing', compact('books'));
     }
 
-    public function competition()
+    public function competition(): View
     {
         return view('frontend.competition');
     }
@@ -390,7 +394,7 @@ class HomeController extends Controller
         return view('frontend.copy-editing');
     }
 
-    public function otherServices()
+    public function otherServices(): View
     {
         return view('frontend.other-services');
     }
@@ -466,7 +470,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|mixed
      */
-    public function otherServiceOrder(Request $request)
+    public function otherServiceOrder(Request $request): RedirectResponse
     {
         $data = $request->except('_token');
         $file = explode('/', $data['file_location']);
@@ -610,7 +614,7 @@ class HomeController extends Controller
 
     }
 
-    public function thankyou(Request $request, CoachingTimeService $coachingTimeService)
+    public function thankyou(Request $request, CoachingTimeService $coachingTimeService): View
     {
         // check if from svea payment
         if ($request->has('svea_ord') || $request->has('pl_ord')) {
@@ -641,7 +645,7 @@ class HomeController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function assignmentThankyou(Request $request, AssignmentService $assignmentService)
+    public function assignmentThankyou(Request $request, AssignmentService $assignmentService): View
     {
         // check if from svea payment
         if ($request->has('svea_ord')) {
@@ -844,7 +848,7 @@ class HomeController extends Controller
         return view('frontend.coaching-timer');
     }
 
-    public function coachingTimeCalculate(Request $request)
+    public function coachingTimeCalculate(Request $request): JsonResponse
     {
         /* $this->validate($request, [
             'manuscript' => 'mimes:docx'
@@ -942,7 +946,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|mixed
      */
-    public function coachingTimerPlaceOrder($plan, Request $request)
+    public function coachingTimerPlaceOrder($plan, Request $request): RedirectResponse
     {
         $data = $request->except('_token');
         $suggested_dates = []; // $data['suggested_date'];
@@ -1118,7 +1122,7 @@ class HomeController extends Controller
      * @param  Solution  $support_id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function supportArticles($support_id)
+    public function supportArticles(Solution $support_id)
     {
         $solution = Solution::find($support_id);
         if ($solution) {
@@ -1263,14 +1267,14 @@ class HomeController extends Controller
         return view('frontend.free-webinar', compact('freeWebinar'));
     }
 
-    public function freeWebinarThanks($id)
+    public function freeWebinarThanks($id): View
     {
         $freeWebinar = FreeWebinar::find($id);
 
         return view('frontend.free-webinar-success', compact('freeWebinar'));
     }
 
-    public function webinarThanks()
+    public function webinarThanks(): View
     {
         return view('frontend.webinar-thanks');
     }
@@ -1491,7 +1495,7 @@ class HomeController extends Controller
         return view('frontend.opt-in-rektor');
     }
 
-    public function optInTerms()
+    public function optInTerms(): View
     {
         return view('frontend.opt-in-terms');
     }
@@ -1515,7 +1519,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function homeOptIn(Request $request)
+    public function homeOptIn(Request $request): JsonResponse
     {
         if ($request->isMethod('post')) {
             $validates = [
@@ -1688,29 +1692,29 @@ class HomeController extends Controller
 
     }
 
-    public function webinarPakkeRef()
+    public function webinarPakkeRef(): View
     {
         return view('frontend.upviral-campaign.webinar-pakke');
     }
 
-    public function henrikPage()
+    public function henrikPage(): View
     {
         abort(404);
 
         return view('frontend.henrik-langeland');
     }
 
-    public function skrive2020()
+    public function skrive2020(): View
     {
         return view('frontend.skrive2020');
     }
 
-    public function grodahlePage()
+    public function grodahlePage(): View
     {
         return view('frontend.gro-dahle');
     }
 
-    public function poems()
+    public function poems(): View
     {
         $poems = Poem::orderBy('created_at', 'desc')->get();
 
@@ -1722,7 +1726,7 @@ class HomeController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function emailAttachment($token)
+    public function emailAttachment($token): BinaryFileResponse
     {
         $emailAttachment = EmailAttachment::where('hash', '=', $token)->first();
         if ($emailAttachment) {
@@ -1732,7 +1736,7 @@ class HomeController extends Controller
         return abort(404);
     }
 
-    public function emailTracking($code)
+    public function emailTracking($code): View
     {
         $code = str_replace('.png', '', $code);
         $email = EmailHistory::where('track_code', '=', $code)
@@ -1818,7 +1822,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function gotoWebinarEmailRegistration($webinar_key, $email)
+    public function gotoWebinarEmailRegistration($webinar_key, $email): RedirectResponse
     {
         FacadesLog::info('---------------- inside gotowebinaremail registration --------------');
         FacadesLog::info($webinar_key);
@@ -1873,7 +1877,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function gotoWebinarEmailRegistrationOrig($webinar_key, $email)
+    public function gotoWebinarEmailRegistrationOrig($webinar_key, $email): RedirectResponse
     {
         $webinar_key = decrypt($webinar_key);
         $email = decrypt($email);
@@ -1997,7 +2001,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         }
     }
 
-    public function testCampaign()
+    public function testCampaign(): View
     {
         return view('frontend.upviral-campaign.test');
     }
@@ -2024,7 +2028,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         $vippsRepository->paymentCallback($orderId, $request);
     }
 
-    public function vippsFallback(Request $request)
+    public function vippsFallback(Request $request): RedirectResponse
     {
         $expOrder = explode('-', $request->t);
         $vippsOrder = $this->checkVippsOrderStatus($request->t);
@@ -2051,7 +2055,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function checkFileFromDB($hash)
+    public function checkFileFromDB($hash): RedirectResponse
     {
         $file = FileUploaded::where('hash', $hash)->first();
 
@@ -2096,7 +2100,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function bamboraAccept(Request $request)
+    public function bamboraAccept(Request $request): RedirectResponse
     {
         \Illuminate\Support\Facades\Log::info(json_encode($request->all()));
 
@@ -2157,12 +2161,12 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
     }
 
-    public function personalTrainer()
+    public function personalTrainer(): View
     {
         return view('frontend.personal-trainer.checkout');
     }
 
-    public function personalTrainerSend(Request $request)
+    public function personalTrainerSend(Request $request): RedirectResponse
     {
         $messages = [
             'reason_for_applying.required' => 'Hva er årsaken til at du søker dette kurset (kort begrunnelse) field is required.',
@@ -2215,17 +2219,17 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         return redirect()->route('front.personal-trainer.thank-you');
     }
 
-    public function personalTrainerThanks()
+    public function personalTrainerThanks(): View
     {
         return view('frontend.personal-trainer.thank-you');
     }
 
-    public function innleveringCompetition()
+    public function innleveringCompetition(): View
     {
         return view('frontend.competition.innlevering');
     }
 
-    public function innleveringCompetitionSend(Request $request)
+    public function innleveringCompetitionSend(Request $request): RedirectResponse
     {
 
         abort(404);
@@ -2283,7 +2287,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         return redirect()->back();
     }
 
-    public function innleveringCompetitionThanks()
+    public function innleveringCompetitionThanks(): View
     {
         return view('frontend.competition.thank-you');
     }
@@ -2293,24 +2297,24 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function replay()
+    public function replay(): View
     {
         $replays = Replay::latest()->get();
 
         return view('frontend.replay', compact('replays'));
     }
 
-    public function barn()
+    public function barn(): View
     {
         return view('frontend.barn');
     }
 
-    public function skrivdittliv()
+    public function skrivdittliv(): View
     {
         return view('frontend.skrivdittliv');
     }
 
-    public function hereIam()
+    public function hereIam(): View
     {
         $replays = Replay::latest()->get();
 
@@ -2320,7 +2324,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function contract($code)
+    public function contract($code): View
     {
         $contract = Contract::where('code', $code)->firstOrFail();
 
@@ -2397,7 +2401,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
     }
 
-    public function formatMoney($number)
+    public function formatMoney($number): JsonResponse
     {
         return response()->json(\App\Http\FrontendHelpers::currencyFormat($number));
     }
@@ -2450,7 +2454,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         }
     }
 
-    public function importWebinarRegistrants()
+    public function importWebinarRegistrants(): View
     {
         return view('frontend.import-webinar-registrant');
     }

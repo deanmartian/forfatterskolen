@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\SosChildren;
@@ -29,7 +31,7 @@ class SosChildrenController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $hasMainDescription = $this->sosChildren->getMainDescription();
         $primaryVideo = $this->sosChildren->getPrimaryVideo();
@@ -44,7 +46,7 @@ class SosChildrenController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function editMainDescription(Request $request)
+    public function editMainDescription(Request $request): RedirectResponse
     {
         $data = $request->except('_token');
 
@@ -86,7 +88,7 @@ class SosChildrenController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $document = [
             'id' => '',
@@ -105,7 +107,7 @@ class SosChildrenController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->except('_token');
         $data['is_primary'] = isset($data['is_primary']) ? 1 : 0;
@@ -141,7 +143,7 @@ class SosChildrenController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $sosChildren = $this->sosChildren->find($id);
         if ($sosChildren) {
@@ -161,7 +163,7 @@ class SosChildrenController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $sosChildren = $this->sosChildren->find($id);
         if ($sosChildren) {
@@ -179,7 +181,7 @@ class SosChildrenController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getEditMainDescription()
+    public function getEditMainDescription(): View
     {
         $hasMainDescription = $this->sosChildren->getMainDescription();
 

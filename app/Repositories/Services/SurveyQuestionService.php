@@ -30,7 +30,7 @@ class SurveyQuestionService
      * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getRecord($id = null, $page = 15)
+    public function getRecord($id = null, int $page = 15)
     {
         if ($id) {
             return $this->surveyQuestion->find($id);
@@ -74,7 +74,7 @@ class SurveyQuestionService
      * @param  $survey_id  Survey
      * @return bool
      */
-    public function edit($survey_id, $id)
+    public function edit($survey_id, $id): bool
     {
         if ($this->findSurvey($survey_id) && $this->getRecord($id)) {
             return true;
@@ -88,7 +88,7 @@ class SurveyQuestionService
      * @param  $request  SurveyQuestionRequest
      * @return bool
      */
-    public function update($id, $request)
+    public function update($id, $request): bool
     {
         $requestData = $request->except('_token', '_method');
         $requestData['option_name'] = isset($requestData['option_name']) ?
@@ -104,7 +104,7 @@ class SurveyQuestionService
      *
      * @return bool
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         $surveyQuestion = $this->getRecord($id);
         if ($surveyQuestion) {

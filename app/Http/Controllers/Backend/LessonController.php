@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use App\Course;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
@@ -14,7 +17,7 @@ use Illuminate\Validation\ValidationException;
 
 class LessonController extends Controller
 {
-    public function index($course_id)
+    public function index($course_id): View
     {
         $course = Course::findOrFail($course_id);
         $section = null;
@@ -22,7 +25,7 @@ class LessonController extends Controller
         return view('backend.lesson.index', compact('course', 'section'));
     }
 
-    public function edit($course_id, $id)
+    public function edit($course_id, $id): View
     {
         $course = Course::findOrFail($course_id);
         $lesson = Lesson::findOrFail($id)->toArray();
@@ -33,7 +36,7 @@ class LessonController extends Controller
         return view('backend.lesson.edit', compact('course', 'lesson', 'videos', 'section', 'documents'));
     }
 
-    public function create($id)
+    public function create($id): View
     {
         $course = Course::findOrFail($id);
         $section = null;
@@ -50,7 +53,7 @@ class LessonController extends Controller
         return view('backend.lesson.create', compact('course', 'lesson', 'section', 'documents'));
     }
 
-    public function store($course_id, Request $request)
+    public function store($course_id, Request $request): RedirectResponse
     {
 
         $otherCourseReqFields = [
@@ -112,7 +115,7 @@ class LessonController extends Controller
         return redirect(route('admin.lesson.edit', ['course_id' => $course->id, 'lesson' => $lesson->id]));
     }
 
-    public function update($course_id, $id, Request $request)
+    public function update($course_id, $id, Request $request): RedirectResponse
     {
 
         $otherCourseReqFields = [
@@ -174,7 +177,7 @@ class LessonController extends Controller
         return redirect(route('admin.lesson.edit', ['course_id' => $course->id, 'lesson' => $lesson->id]));
     }
 
-    public function destroy($course_id, $id)
+    public function destroy($course_id, $id): RedirectResponse
     {
         $course = Course::findOrFail($course_id);
         $lesson = Lesson::findOrFail($id);
@@ -183,7 +186,7 @@ class LessonController extends Controller
         return redirect(route('admin.course.show', $course->id).'?section=lessons');
     }
 
-    public function save_order(Request $request)
+    public function save_order(Request $request): RedirectResponse
     {
         $counter = $request->page - 1;
         $multiplier = 25;
@@ -224,7 +227,7 @@ class LessonController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteLessonDocument($id)
+    public function deleteLessonDocument($id): RedirectResponse
     {
         $document = LessonDocuments::find($id);
         if ($document) {
@@ -234,7 +237,7 @@ class LessonController extends Controller
         return redirect()->back();
     }
 
-    public function deleteLessonFile($lessonId)
+    public function deleteLessonFile($lessonId): RedirectResponse
     {
         $lesson = Lesson::find($lessonId);
 
@@ -257,7 +260,7 @@ class LessonController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getLessonContent($lesson_id)
+    public function getLessonContent($lesson_id): JsonResponse
     {
         $lessonContent = LessonContent::where('lesson_id', $lesson_id)->get();
 
@@ -269,7 +272,7 @@ class LessonController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addContent($lesson_id, Request $request)
+    public function addContent($lesson_id, Request $request): RedirectResponse
     {
         if ($lesson = Lesson::find($lesson_id)) {
             $titles = $request->title;
@@ -315,7 +318,7 @@ class LessonController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteLessonContent($content_id)
+    public function deleteLessonContent($content_id): JsonResponse
     {
         if ($lesson_content = LessonContent::find($content_id)) {
             $lesson_content->delete();

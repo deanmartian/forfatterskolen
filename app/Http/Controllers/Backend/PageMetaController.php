@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\PageMeta;
@@ -15,7 +17,7 @@ class PageMetaController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $pageMetas = PageMeta::all();
 
@@ -27,7 +29,7 @@ class PageMetaController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'url' => 'required|regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/',
@@ -69,7 +71,7 @@ class PageMetaController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $pageMeta = PageMeta::find($id);
 
@@ -115,7 +117,7 @@ class PageMetaController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $pageMeta = PageMeta::where('id', $id)->firstOrFail();
         $image = substr($pageMeta->meta_image, 1);

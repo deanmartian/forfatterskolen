@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\PilotReaderBook;
 use App\PilotReaderBookReading;
@@ -21,7 +23,7 @@ class PilotReaderDirectoryController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         return view('frontend.learner.pilot-reader.reader-directory.index');
     }
@@ -31,7 +33,7 @@ class PilotReaderDirectoryController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function about()
+    public function about(): View
     {
         return view('frontend.learner.pilot-reader.reader-directory.about');
     }
@@ -41,7 +43,7 @@ class PilotReaderDirectoryController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function queryReaderSentList()
+    public function queryReaderSentList(): View
     {
         return view('frontend.learner.pilot-reader.reader-directory.sent-query');
     }
@@ -51,7 +53,7 @@ class PilotReaderDirectoryController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function queryReaderReceivedList()
+    public function queryReaderReceivedList(): View
     {
         return view('frontend.learner.pilot-reader.reader-directory.received-query');
     }
@@ -61,7 +63,7 @@ class PilotReaderDirectoryController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function listReaderProfile(Request $request)
+    public function listReaderProfile(Request $request): JsonResponse
     {
         $readers = PilotReaderReaderProfile::where([['availability', '=', 1], ['user_id', '<>', Auth::user()->id]]);
         if (count($request->all())) {
@@ -110,7 +112,7 @@ class PilotReaderDirectoryController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function queryReader(Request $request)
+    public function queryReader(Request $request): JsonResponse
     {
         $this->validate($request, [
             'book_id' => 'required',
@@ -133,7 +135,7 @@ class PilotReaderDirectoryController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function listQueries(Request $request)
+    public function listQueries(Request $request): JsonResponse
     {
         $fractal = new Manager;
         $col = $request->list === 'sent' ? 'from' : 'to';
@@ -149,7 +151,7 @@ class PilotReaderDirectoryController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function saveQueryDecision(Request $request)
+    public function saveQueryDecision(Request $request): JsonResponse
     {
         $decision_data = $request->except('want_to_read', 'book_id');
         \DB::beginTransaction();

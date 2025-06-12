@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddCompetitionRequest;
 use App\Repositories\Services\CompetitionService;
@@ -30,7 +32,7 @@ class CompetitionController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $competitions = $this->competitionService->getRecord();
 
@@ -42,7 +44,7 @@ class CompetitionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(AddCompetitionRequest $request)
+    public function store(AddCompetitionRequest $request): RedirectResponse
     {
         $this->competitionService->store($request);
 
@@ -54,7 +56,7 @@ class CompetitionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, AddCompetitionRequest $request)
+    public function update($id, AddCompetitionRequest $request): RedirectResponse
     {
         $this->competitionService->update($id, $request);
 
@@ -66,7 +68,7 @@ class CompetitionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $this->competitionService->destroy($id);
 

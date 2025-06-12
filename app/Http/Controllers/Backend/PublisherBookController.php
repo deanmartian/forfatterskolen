@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PublisherBookCreateRequest;
@@ -24,7 +26,7 @@ class PublisherBookController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $books = $this->publisherBook->orderBy('id', 'DESC')->get();
 
@@ -36,7 +38,7 @@ class PublisherBookController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $lastOrderedBook = $this->publisherBook->orderBy('display_order', 'DESC')->first();
         $book = [
@@ -58,7 +60,7 @@ class PublisherBookController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(PublisherBookCreateRequest $request)
+    public function store(PublisherBookCreateRequest $request): RedirectResponse
     {
         $requestData = $request->toArray();
 
@@ -111,7 +113,7 @@ class PublisherBookController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, PublisherBookUpdateRequest $request)
+    public function update($id, PublisherBookUpdateRequest $request): RedirectResponse
     {
         if ($book = $this->publisherBook->find($id)) {
             $requestData = $request->toArray();
@@ -158,7 +160,7 @@ class PublisherBookController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         if ($book = $this->publisherBook->find($id)) {
             $author_image = public_path($book->author_image);
@@ -181,7 +183,7 @@ class PublisherBookController extends Controller
         return redirect()->route('admin.publisher-book.index');
     }
 
-    public function storeLibrary($id, Request $request)
+    public function storeLibrary($id, Request $request): RedirectResponse
     {
         $requestData = $request->toArray();
 
@@ -203,7 +205,7 @@ class PublisherBookController extends Controller
         ]);
     }
 
-    public function updateLibrary($id, Request $request)
+    public function updateLibrary($id, Request $request): RedirectResponse
     {
         $book = PublisherBookLibrary::find($id);
         $requestData = $request->toArray();
@@ -227,7 +229,7 @@ class PublisherBookController extends Controller
         ]);
     }
 
-    public function deleteLibrary($id)
+    public function deleteLibrary($id): RedirectResponse
     {
         if ($book = PublisherBookLibrary::find($id)) {
             $book_image = public_path($book->book_image);

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SurveyRequest;
@@ -33,7 +35,7 @@ class SurveyController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $surveys = $this->surveyService->getRecord();
 
@@ -45,7 +47,7 @@ class SurveyController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(SurveyRequest $request)
+    public function store(SurveyRequest $request): RedirectResponse
     {
         if ($this->surveyService->store($request)) {
             return redirect()->back()->with([
@@ -79,7 +81,7 @@ class SurveyController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, SurveyRequest $request)
+    public function update($id, SurveyRequest $request): RedirectResponse
     {
         if ($this->surveyService->getRecord($id)) {
             $this->surveyService->update($id, $request);
@@ -91,7 +93,7 @@ class SurveyController extends Controller
         ]);
     }
 
-    public function updateDate($id, Request $request)
+    public function updateDate($id, Request $request): RedirectResponse
     {
         if ($this->surveyService->getRecord($id)) {
             $this->surveyService->update($id, $request);
@@ -108,7 +110,7 @@ class SurveyController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         if ($this->surveyService->getRecord($id)) {
             $this->surveyService->destroy($id);

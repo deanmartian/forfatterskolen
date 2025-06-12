@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Services;
 
+use Illuminate\Database\Eloquent\Model;
 use App\Http\Requests\SolutionCreateRequest;
 use App\Solution;
 use File;
@@ -28,7 +29,7 @@ class SolutionService
      * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getRecord($id = null, $page = 15)
+    public function getRecord($id = null, int $page = 15)
     {
         if ($id) {
             return $this->solution->find($id);
@@ -43,7 +44,7 @@ class SolutionService
      * @param  SolutionCreateRequest  $request
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function store($request)
+    public function store(SolutionCreateRequest $request): Model
     {
         $requestData = $request->toArray();
 
@@ -157,7 +158,7 @@ class SolutionService
      * @param  SolutionCreateRequest  $request
      * @return bool
      */
-    public function update($id, $request)
+    public function update($id, SolutionCreateRequest $request): bool
     {
         $solution = $this->getRecord($id);
         $requestData = $request->toArray();
@@ -275,7 +276,7 @@ class SolutionService
      *
      * @return bool
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         $solution = $this->getRecord($id);
         if ($solution) {

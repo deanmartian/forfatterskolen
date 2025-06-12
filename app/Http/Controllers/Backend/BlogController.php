@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use App\Blog;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
@@ -33,7 +36,7 @@ class BlogController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $blogList = $this->blogService->getRecord();
 
@@ -45,7 +48,7 @@ class BlogController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $blog = [
             'id' => '',
@@ -65,7 +68,7 @@ class BlogController extends Controller
     /**
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(BlogRequest $request)
+    public function store(BlogRequest $request): RedirectResponse
     {
         if ($this->blogService->store($request)) {
             return redirect()->route('admin.blog.index')->with([
@@ -98,7 +101,7 @@ class BlogController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, BlogRequest $request)
+    public function update($id, BlogRequest $request): RedirectResponse
     {
         if ($this->blogService->getRecord($id)) {
             $this->blogService->update($id, $request);
@@ -117,7 +120,7 @@ class BlogController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         if ($this->blogService->getRecord($id)) {
             $this->blogService->destroy($id);
@@ -136,7 +139,7 @@ class BlogController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function statusUpdate($id, Request $request)
+    public function statusUpdate($id, Request $request): JsonResponse
     {
         if (! $this->blogService->getRecord($id)) {
             $response = AdminHelpers::createMessageBag('Invalid blog.');

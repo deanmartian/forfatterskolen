@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\Http\JsonResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
@@ -43,7 +44,7 @@ class PrivateGroupDiscussionsController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function listDiscussion($group_id)
+    public function listDiscussion($group_id): JsonResponse
     {
         $fractal = new Manager;
         $query = PrivateGroupDiscussion::where('private_group_id', $group_id)->get();
@@ -58,7 +59,7 @@ class PrivateGroupDiscussionsController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function create(Request $request)
+    public function create(Request $request): JsonResponse
     {
         $this->validate($request, [
             'subject' => 'required',
@@ -150,7 +151,7 @@ class PrivateGroupDiscussionsController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request)
+    public function update(Request $request): JsonResponse
     {
         $data = $request->except('id');
         $model = PrivateGroupDiscussion::find($request->id);

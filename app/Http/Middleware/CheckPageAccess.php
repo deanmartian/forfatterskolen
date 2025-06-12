@@ -33,7 +33,7 @@ class CheckPageAccess
      * @param  int  $page_id
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, $page_id): Response
+    public function handle(Request $request, Closure $next, int $page_id): Response
     {
         // check if the admin have set page access and if no access to the page id passed
         if (\Auth::user()->pageAccess->count() && ! in_array($page_id, \Auth::user()->pageAccess->pluck('page_id')->toArray())) {

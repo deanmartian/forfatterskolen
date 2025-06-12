@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\PublishingMarketingHelp;
 use App\PublishingPrintColor;
@@ -16,7 +17,7 @@ class AssembleBookController extends Controller
      *
      * @return json
      */
-    public function getOptions()
+    public function getOptions(): JsonResponse
     {
         $printColors = PublishingPrintColor::all();
         $printCounts = PublishingPrintCount::all();
@@ -36,7 +37,7 @@ class AssembleBookController extends Controller
      *
      * @return json
      */
-    public function saveCoverOrColor(Request $request)
+    public function saveCoverOrColor(Request $request): json
     {
         $this->validate($request, [
             'name' => 'required',

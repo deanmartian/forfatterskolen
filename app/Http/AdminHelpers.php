@@ -219,7 +219,7 @@ class AdminHelpers
      * @param  string  $from_name  Not required field with default value
      * @return bool
      */
-    public static function send_email($subject, $from, $to, $content, $from_name = 'Forfatterskolen', $attachment = null)
+    public static function send_email($subject, $from, $to, $content, string $from_name = 'Forfatterskolen', $attachment = null): bool
     {
         $from = $from ?: 'postmail@forfatterskolen.no';
         $host = env('MAIL_HOST_SITE');
@@ -461,7 +461,7 @@ class AdminHelpers
      * @param  $order  Order
      * @return string
      */
-    public static function getOrderDetails($order)
+    public static function getOrderDetails($order): string
     {
         $orderDetails = '';
 
@@ -609,7 +609,7 @@ class AdminHelpers
      * @param  $data  array
      * @return bool
      */
-    public static function addToActiveCampaignList($list_id, $data)
+    public static function addToActiveCampaignList($list_id, $data): bool
     {
         $url = 'https://forfatterskolen.api-us1.com';
 
@@ -1064,7 +1064,7 @@ class AdminHelpers
      *
      * @return string
      */
-    public static function checkFileName($path, $filename, $extension)
+    public static function checkFileName($path, $filename, $extension): string
     {
         $i = 1;
 
@@ -1351,7 +1351,7 @@ class AdminHelpers
      * @param  null  $id
      * @return array
      */
-    public static function question_type($id = null)
+    public static function question_type($id = null): array
     {
         $types = [
             ['id' => 'text', 'option' => 'Text'],
@@ -1758,7 +1758,7 @@ class AdminHelpers
      * @param  bool  $deep_detect
      * @return array|null|string
      */
-    public static function ip_info($ip = null, $purpose = 'location', $deep_detect = true)
+    public static function ip_info($ip = null, string $purpose = 'location', bool $deep_detect = true)
     {
         $output = null;
         if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
@@ -1898,7 +1898,7 @@ class AdminHelpers
      * @param  array  $header
      * @return array
      */
-    public static function vippsAPI($method, $loc_url, $data = false, $header = [])
+    public static function vippsAPI($method, $loc_url, bool $data = false, array $header = []): array
     {
         $curl = curl_init();
         $url = env('VIPPS_URL').$loc_url;

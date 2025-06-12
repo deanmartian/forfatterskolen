@@ -106,7 +106,7 @@ class EmailReader
      *
      * @return array
      */
-    public function inbox()
+    public function inbox(): array
     {
         ini_set('memory_limit', '160M');
         if ($this->connect()) {

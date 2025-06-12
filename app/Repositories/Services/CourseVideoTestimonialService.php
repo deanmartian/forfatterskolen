@@ -19,7 +19,7 @@ class CourseVideoTestimonialService
      *
      * @return bool
      */
-    public function store($request)
+    public function store($request): bool
     {
         $createData = [
             'name' => $request->name,
@@ -56,7 +56,7 @@ class CourseVideoTestimonialService
      *
      * @return bool
      */
-    public function update($request, $id)
+    public function update($request, $id): bool
     {
         $updateData = [
             'name' => $request->name,

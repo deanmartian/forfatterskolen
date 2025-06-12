@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use App\Course;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
@@ -19,7 +21,7 @@ use Illuminate\Http\Request;
 
 class WebinarController extends Controller
 {
-    public function store(AddWebinarRequest $request)
+    public function store(AddWebinarRequest $request): RedirectResponse
     {
         $course = Course::findOrFail($request->course_id);
         Course::where('', '');
@@ -131,7 +133,7 @@ class WebinarController extends Controller
         return redirect()->back();
     }
 
-    public function update($id, AddWebinarRequest $request)
+    public function update($id, AddWebinarRequest $request): RedirectResponse
     {
         $webinar = Webinar::findOrFail($id);
         $webinar->title = $request->title;
@@ -247,7 +249,7 @@ class WebinarController extends Controller
     /**
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateField($id, Request $request)
+    public function updateField($id, Request $request): RedirectResponse
     {
         $field = $request->field;
         $value = $request->value;
@@ -261,7 +263,7 @@ class WebinarController extends Controller
         ]);
     }
 
-    public function destroy($id, Request $request)
+    public function destroy($id, Request $request): RedirectResponse
     {
         $webinar = Webinar::findOrFail($id);
         $webinar->forceDelete();
@@ -269,7 +271,7 @@ class WebinarController extends Controller
         return redirect()->back();
     }
 
-    public function makeReplay($webinar_id, Request $request)
+    public function makeReplay($webinar_id, Request $request): RedirectResponse
     {
         $webinar = Webinar::find($webinar_id);
         if ($webinar) {
@@ -282,7 +284,7 @@ class WebinarController extends Controller
         return redirect()->route('admin.course.index');
     }
 
-    public function setSchedule($webinar_id, Request $request)
+    public function setSchedule($webinar_id, Request $request): RedirectResponse
     {
 
         $scheduledRegistration = WebinarScheduledRegistration::firstOrCreate([
@@ -307,7 +309,7 @@ class WebinarController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function webinarEmailOut($webinar_id, $course_id, Request $request)
+    public function webinarEmailOut($webinar_id, $course_id, Request $request): RedirectResponse
     {
         $webinar = Webinar::where('course_id', $course_id)->where('id', $webinar_id)->first();
 
@@ -369,7 +371,7 @@ class WebinarController extends Controller
         ]);
     }
 
-    public function autoRegisterLearnersToWebinar($webinar_id, $course_id, Request $request)
+    public function autoRegisterLearnersToWebinar($webinar_id, $course_id, Request $request): RedirectResponse
     {
         $webinar = Webinar::find($webinar_id);
         $autoRegisterLearners = UserAutoRegisterToCourseWebinar::where('course_id', $course_id)->get();
@@ -421,7 +423,7 @@ class WebinarController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function registrantList($webinar_id)
+    public function registrantList($webinar_id): JsonResponse
     {
         $registrants = WebinarRegistrant::where('webinar_id', $webinar_id)->get();
 

@@ -64,7 +64,7 @@ class Invoice extends Model
      *
      * @return bool
      */
-    public function paid()
+    public function paid(): bool
     {
         return in_array($this->fiken_is_paid, [self::COMPLETED]);
     }
@@ -74,7 +74,7 @@ class Invoice extends Model
      *
      * @return bool
      */
-    public function unpaid()
+    public function unpaid(): bool
     {
         return in_array($this->fiken_is_paid, [self::PENDING]);
     }

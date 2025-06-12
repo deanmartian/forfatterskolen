@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
 class TinymceController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'file' => 'required|image|mimes:jpeg,png,jpg,gif',
@@ -41,7 +43,7 @@ class TinymceController extends Controller
         ]);
     }
 
-    public function images()
+    public function images(): View
     {
         $folderPath = public_path('photos'); // Change to your folder path
         $files = File::allFiles($folderPath);

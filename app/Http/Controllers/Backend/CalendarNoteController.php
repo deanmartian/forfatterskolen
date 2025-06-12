@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\CalendarNote;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CalendarNoteCreateRequest;
@@ -11,7 +13,7 @@ class CalendarNoteController extends Controller
     /**
      * Display all calendar notes
      */
-    public function index()
+    public function index(): View
     {
         $calendar = CalendarNote::with('course')->get();
 
@@ -23,7 +25,7 @@ class CalendarNoteController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $calendar = [
             'note' => '',
@@ -40,7 +42,7 @@ class CalendarNoteController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function store(CalendarNoteCreateRequest $request)
+    public function store(CalendarNoteCreateRequest $request): RedirectResponse
     {
         $calendar = new CalendarNote;
         $calendar->note = $request->note;
@@ -74,7 +76,7 @@ class CalendarNoteController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, CalendarNoteCreateRequest $request)
+    public function update($id, CalendarNoteCreateRequest $request): RedirectResponse
     {
         $calendar = CalendarNote::find($id);
         if ($calendar) {
@@ -93,7 +95,7 @@ class CalendarNoteController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $calendar = CalendarNote::find($id);
         if ($calendar) {

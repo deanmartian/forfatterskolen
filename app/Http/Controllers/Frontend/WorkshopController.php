@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\View\View;
 use App\Address;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
@@ -23,14 +24,14 @@ use App\Http\FikenInvoice;
 
 class WorkshopController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $workshops = Workshop::orderBy('faktura_date', 'ASC')->get();
 
         return view('frontend.workshop.index', compact('workshops'));
     }
 
-    public function show($id)
+    public function show($id): View
     {
         abort(404);
         $workshop = Workshop::findOrFail($id);

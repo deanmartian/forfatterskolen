@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\JsonResponse;
 use App\Assignment;
 use App\AssignmentAddon;
 use App\Order;
@@ -12,7 +13,7 @@ class AssignmentService
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function generateSveaCheckout(Request $request)
+    public function generateSveaCheckout(Request $request): JsonResponse
     {
         $assignment = Assignment::find($request->assignment_id);
         $price = (int) $request->price;

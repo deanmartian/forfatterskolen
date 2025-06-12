@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\RedirectResponse;
 use App\Advisory;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
@@ -14,7 +15,7 @@ class AdvisoryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $advisory = Advisory::find($id);
         $this->validate($request, [

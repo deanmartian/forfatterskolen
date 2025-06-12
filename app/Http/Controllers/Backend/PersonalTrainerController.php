@@ -9,6 +9,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Address;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
@@ -18,26 +20,26 @@ use Illuminate\Http\Request;
 
 class PersonalTrainerController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $applicants = PersonalTrainerApplicant::paginate(25);
 
         return view('backend.personal-trainer.index', compact('applicants'));
     }
 
-    public function show($id)
+    public function show($id): View
     {
         $applicant = PersonalTrainerApplicant::find($id);
 
         return view('backend.personal-trainer.show', compact('applicant'));
     }
 
-    public function create()
+    public function create(): View
     {
         return view('backend.personal-trainer.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $messages = [
             'reason_for_applying.required' => 'Hva er årsaken til at du søker dette kurset (kort begrunnelse) field is required.',

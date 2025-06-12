@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         return view('frontend.chat.index');
     }
 
-    public function sendMessage(Request $request)
+    public function sendMessage(Request $request): JsonResponse
     {
 
         // Get the user's message from the request

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\EmailReader;
@@ -25,7 +27,7 @@ class EmailController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         // check first if the user is already logged in to their email
         if (\Session::has('email_logged_in')) {
@@ -59,7 +61,7 @@ class EmailController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         session()->flash('message.level', 'success');
         session()->flash('message.content', 'Email sent successfully.');
@@ -72,7 +74,7 @@ class EmailController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
         $user = $request->email;
         $pass = $request->password;
@@ -98,7 +100,7 @@ class EmailController extends Controller
      * @param  int  $id  email id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function move($id)
+    public function move(int $id): RedirectResponse
     {
         $user = \Session::get('email_user');
         $pass = \Session::get('email_pass');
@@ -173,7 +175,7 @@ class EmailController extends Controller
         return redirect()->back();
     }
 
-    public function delete($id)
+    public function delete($id): RedirectResponse
     {
         $user = \Session::get('email_user');
         $pass = \Session::get('email_pass');
@@ -198,7 +200,7 @@ class EmailController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function reply(Request $request)
+    public function reply(Request $request): RedirectResponse
     {
 
         $from = \Session::get('reply_from_email');
@@ -223,7 +225,7 @@ class EmailController extends Controller
         return redirect()->back();
     }
 
-    public function forward($id, Request $request)
+    public function forward($id, Request $request): RedirectResponse
     {
         $user = \Session::get('email_user');
         $pass = \Session::get('email_pass');
@@ -340,7 +342,7 @@ class EmailController extends Controller
      * @param  bool  $partNumber
      * @return bool|string
      */
-    public function get_part($imap, $uid, $mimetype, $structure = false, $partNumber = false)
+    public function get_part($imap, $uid, $mimetype, bool $structure = false, bool $partNumber = false)
     {
         if (! $structure) {
             $structure = imap_fetchstructure($imap, $uid);

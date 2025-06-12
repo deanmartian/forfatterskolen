@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\FreeCourse;
 use App\FreeWebinar;
 use App\FreeWebinarPresenter;
@@ -24,7 +26,7 @@ class FreeCourseController extends Controller
         $this->middleware('checkPageAccess:2');
     }
 
-    public function index()
+    public function index(): View
     {
         $freeCourses = FreeCourse::orderBy('created_at', 'desc')->get();
         $freeWebinars = FreeWebinar::orderBy('created_at', 'desc')->get();
@@ -32,7 +34,7 @@ class FreeCourseController extends Controller
         return view('backend.free-course.index', compact('freeCourses', 'freeWebinars'));
     }
 
-    public function store(FreeCourseCreateRequest $request)
+    public function store(FreeCourseCreateRequest $request): RedirectResponse
     {
         $freeCourse = new FreeCourse;
         $freeCourse->title = $request->title;
@@ -59,7 +61,7 @@ class FreeCourseController extends Controller
         return redirect()->back();
     }
 
-    public function update($id, FreeCourseUpdateRequest $request)
+    public function update($id, FreeCourseUpdateRequest $request): RedirectResponse
     {
         $freeCourse = FreeCourse::findOrFail($id);
         $freeCourse->title = $request->title;
@@ -90,7 +92,7 @@ class FreeCourseController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $freeCourse = FreeCourse::findOrFail($id);
         $image = substr($freeCourse->course_image, 1);
@@ -107,7 +109,7 @@ class FreeCourseController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function storeWebinar(AddWebinarRequest $request)
+    public function storeWebinar(AddWebinarRequest $request): RedirectResponse
     {
         $webinar = new FreeWebinar;
         $webinar->title = $request->title;
@@ -208,7 +210,7 @@ class FreeCourseController extends Controller
      * @param  $id  int FreeWebinar id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateWebinar($id, AddWebinarRequest $request)
+    public function updateWebinar($id, AddWebinarRequest $request): RedirectResponse
     {
         $webinar = FreeWebinar::findOrFail($id);
         $webinar->title = $request->title;
@@ -307,7 +309,7 @@ class FreeCourseController extends Controller
      * @param  Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteWebinar($id)
+    public function deleteWebinar($id): RedirectResponse
     {
         $webinar = FreeWebinar::findOrFail($id);
         $webinar->forceDelete();
@@ -320,7 +322,7 @@ class FreeCourseController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function storeWebinarPresenter($webinar_id, Request $request)
+    public function storeWebinarPresenter($webinar_id, Request $request): RedirectResponse
     {
         $webinar = FreeWebinar::findOrFail($webinar_id);
         $webinarPresenter = new FreeWebinarPresenter;
@@ -355,7 +357,7 @@ class FreeCourseController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateWebinarPresenter($webinar_id, $id, Request $request)
+    public function updateWebinarPresenter($webinar_id, $id, Request $request): RedirectResponse
     {
         $webinarPresenter = FreeWebinarPresenter::findOrFail($id);
         $webinarPresenter->first_name = $request->first_name;
@@ -392,7 +394,7 @@ class FreeCourseController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteWebinarPresenter($webinar_id, $id)
+    public function deleteWebinarPresenter($webinar_id, $id): RedirectResponse
     {
         $webinarPresenter = FreeWebinarPresenter::findOrFail($id);
         $webinarPresenter->forceDelete();

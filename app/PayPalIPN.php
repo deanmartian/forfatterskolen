@@ -43,7 +43,7 @@ class PayPalIPN extends Model
     /**
      * @return bool
      */
-    public function isCompleted()
+    public function isCompleted(): bool
     {
         return in_array($this->payment_status, [self::COMPLETED]);
     }
@@ -51,7 +51,7 @@ class PayPalIPN extends Model
     /**
      * @return bool
      */
-    public function isVerified()
+    public function isVerified(): bool
     {
         return in_array($this->verified, [self::IPN_VERIFIED]);
     }

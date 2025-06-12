@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\JsonResponse;
 use App\Address;
 use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
@@ -84,7 +85,7 @@ class ShopManuscriptService
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function processCheckout(Request $request)
+    public function processCheckout(Request $request): JsonResponse
     {
 
         // this is for not logged in user
@@ -185,7 +186,7 @@ class ShopManuscriptService
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function generateSveaCheckout(Request $request)
+    public function generateSveaCheckout(Request $request): JsonResponse
     {
         $orderRecord = $this->createOrder($request);
         $userHasPaidCourse = FrontendHelpers::userHasPaidCourse();
@@ -401,7 +402,7 @@ class ShopManuscriptService
     /**
      * @return ShopManuscriptsTaken
      */
-    public function addShopManuscriptToLearner($order)
+    public function addShopManuscriptToLearner($order): ShopManuscriptsTaken
     {
         $shopManuscriptOrder = $order->shopManuscriptOrder;
         $file = $shopManuscriptOrder->file;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\PilotReaderBook;
 use App\PilotReaderBookReading;
@@ -20,7 +21,7 @@ class PrivateGroupSharedBookController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function listSharedBook($group_id)
+    public function listSharedBook($group_id): JsonResponse
     {
         $fractal = new Manager;
         $group = PrivateGroup::find($group_id);
@@ -41,7 +42,7 @@ class PrivateGroupSharedBookController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function shareBook(Request $request)
+    public function shareBook(Request $request): JsonResponse
     {
         $this->validate($request, [
             'book_id' => 'required',
@@ -62,7 +63,7 @@ class PrivateGroupSharedBookController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function updateSharedBook(Request $request)
+    public function updateSharedBook(Request $request): JsonResponse
     {
         $data = $request->except('id');
         $model = PrivateGroupSharedBook::find($request->id);
@@ -85,7 +86,7 @@ class PrivateGroupSharedBookController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroySharedBook(Request $request)
+    public function destroySharedBook(Request $request): JsonResponse
     {
         if (! PrivateGroupSharedBook::destroy($request->id)) {
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
@@ -99,7 +100,7 @@ class PrivateGroupSharedBookController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getBookDetail($book_id)
+    public function getBookDetail($book_id): JsonResponse
     {
         $book = PilotReaderBook::find($book_id);
         $book['word_counts'] = $this->getWordCounts($book->chapters);
@@ -114,7 +115,7 @@ class PrivateGroupSharedBookController extends Controller
      *
      * @return string
      */
-    protected function pluralize($count, $substr)
+    protected function pluralize($count, $substr): string
     {
         return $count.' '.$substr.($count > 0 ? 's' : '');
     }
@@ -139,7 +140,7 @@ class PrivateGroupSharedBookController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function becomeReader(Request $request)
+    public function becomeReader(Request $request): JsonResponse
     {
         $data = $request->all();
         $data['user_id'] = Auth::user()->id;

@@ -11,7 +11,7 @@ class LearnerService
     /**
      * @return User
      */
-    public function registerLearner(Request $request, $is_self_publishing = false)
+    public function registerLearner(Request $request, $is_self_publishing = false): User
     {
         $user = new User;
         $user->first_name = $request->first_name;

@@ -11,7 +11,7 @@ class DapulseRepository
      *
      * @return ApiException
      */
-    public static function getUsers()
+    public static function getUsers(): ApiException
     {
         $method = 'GET';
         $url = 'https://api.dapulse.com:443/v1/users.json';
@@ -37,7 +37,7 @@ class DapulseRepository
      *
      * @return ApiException
      */
-    public function getBoards()
+    public function getBoards(): ApiException
     {
         $method = 'GET';
         $url = 'https://api.dapulse.com:443/v1/boards.json';
@@ -62,7 +62,7 @@ class DapulseRepository
      *
      * @return ApiException
      */
-    public function getBoard($board_id)
+    public function getBoard($board_id): ApiException
     {
         $method = 'GET';
         $url = 'https://api.dapulse.com:443/v1/boards/'.$board_id.'.json';
@@ -87,7 +87,7 @@ class DapulseRepository
      *
      * @return ApiException
      */
-    public static function getBoardPulses($board_id)
+    public static function getBoardPulses($board_id): ApiException
     {
         $method = 'GET';
         $url = 'https://api.dapulse.com:443/v1/boards/'.$board_id.'/pulses.json';
@@ -112,7 +112,7 @@ class DapulseRepository
      *
      * @return ApiException
      */
-    public function addUserToPulse($pulse_id)
+    public function addUserToPulse($pulse_id): ApiException
     {
         if ($pulse_id) {
             $method = 'PUT';
@@ -141,7 +141,7 @@ class DapulseRepository
      *
      * @return ApiException
      */
-    public function getBoardColumns()
+    public function getBoardColumns(): ApiException
     {
         $method = 'GET';
         $url = 'https://api.dapulse.com:443/v1/boards/68370805/columns.json';
@@ -166,7 +166,7 @@ class DapulseRepository
      *
      * @return ApiException
      */
-    public function assignUserToPulse($board_id, $pulse_id, $user_id)
+    public function assignUserToPulse($board_id, $pulse_id, $user_id): ApiException
     {
         $method = 'PUT';
         $url = 'https://api.dapulse.com:443/v1/boards/'.$board_id.'/columns/person/person.json';
@@ -194,7 +194,7 @@ class DapulseRepository
      * @param  $data  object passed by controller
      * @return ApiException
      */
-    public function addBoard($data)
+    public function addBoard($data): ApiException
     {
         $method = 'POST';
         $url = 'https://api.dapulse.com:443/v1/boards.json';
@@ -224,7 +224,7 @@ class DapulseRepository
      * @param  $data  object passed by controller
      * @return ApiException
      */
-    public function addPulseToBoard($board_id, $data)
+    public function addPulseToBoard($board_id, $data): ApiException
     {
         $method = 'POST';
         $url = 'https://api.dapulse.com:443/v1/boards/'.$board_id.'/pulses.json';
@@ -252,7 +252,7 @@ class DapulseRepository
      *
      * @return ApiException
      */
-    public function updateGroupTitle($board_id, $data)
+    public function updateGroupTitle($board_id, $data): ApiException
     {
         $method = 'PUT';
         $url = 'https://api.dapulse.com:443/v1/boards/'.$board_id.'/groups.json';
@@ -279,7 +279,7 @@ class DapulseRepository
      *
      * @return ApiException
      */
-    public function updatePulseTitle($pulse_id, $data)
+    public function updatePulseTitle($pulse_id, $data): ApiException
     {
         $method = 'PUT';
         $url = 'https://api.dapulse.com:443/v1/pulses/'.$pulse_id.'.json';
@@ -325,7 +325,7 @@ class DapulseRepository
      *
      * @return ApiException
      */
-    public function setPulseStatus($board_id, $pulse_id, $phase)
+    public function setPulseStatus($board_id, $pulse_id, $phase): ApiException
     {
         $method = 'PUT';
         $url = 'https://api.dapulse.com:443/v1/boards/'.$board_id.'/columns/status/status.json';
@@ -352,7 +352,7 @@ class DapulseRepository
      *
      * @return ApiException
      */
-    public function setTimeline($board_id, $pulse_id, $from, $to)
+    public function setTimeline($board_id, $pulse_id, $from, $to): ApiException
     {
         $method = 'PUT';
         $url = 'https://api.dapulse.com:443/v1/boards/'.$board_id.'/columns/timeline/timeline.json';

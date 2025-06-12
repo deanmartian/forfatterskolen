@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
@@ -55,7 +57,7 @@ class DropboxController extends Controller
         return $accessToken;
     }
 
-    public function refreshDropboxAccessToken()
+    public function refreshDropboxAccessToken(): JsonResponse
     {
         $appKey = config('filesystems.disks.dropbox.key');
         $appSecret = config('filesystems.disks.dropbox.secret');
@@ -93,7 +95,7 @@ class DropboxController extends Controller
         }
     }
 
-    public function dropboxUpload()
+    public function dropboxUpload(): View
     {
         return view('frontend.test');
     }

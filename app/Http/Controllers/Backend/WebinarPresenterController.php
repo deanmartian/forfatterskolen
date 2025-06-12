@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Webinar;
 use App\WebinarPresenter;
@@ -10,7 +11,7 @@ use Illuminate\Http\Request;
 
 class WebinarPresenterController extends Controller
 {
-    public function store($webinar_id, Request $request)
+    public function store($webinar_id, Request $request): RedirectResponse
     {
         $webinar = Webinar::findOrFail($webinar_id);
 
@@ -41,7 +42,7 @@ class WebinarPresenterController extends Controller
         return redirect()->back();
     }
 
-    public function update($webinar_id, $id, Request $request)
+    public function update($webinar_id, $id, Request $request): RedirectResponse
     {
 
         $webinarPresenter = WebinarPresenter::findOrFail($id);
@@ -74,7 +75,7 @@ class WebinarPresenterController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($webinar_id, $id)
+    public function destroy($webinar_id, $id): RedirectResponse
     {
         $webinarPresenter = WebinarPresenter::findOrFail($id);
         $webinarPresenter->forceDelete();

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 use AdminHelpers;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -35,7 +38,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class SelfPublishingController extends Controller
 {
-    public function selfPublishingOrder()
+    public function selfPublishingOrder(): View
     {
         $currentOrderQuery = SelfPublishingOrder::active()->where('user_id', Auth::id());
         $currentOrders = $currentOrderQuery->get();
@@ -113,12 +116,12 @@ class SelfPublishingController extends Controller
         ]);
     }
 
-    public function checkoutOrder()
+    public function checkoutOrder(): View
     {
         return view('frontend.learner.self-publishing.order.checkout');
     }
 
-    public function processCheckoutOrder()
+    public function processCheckoutOrder(): RedirectResponse
     {
         $currentOrderQuery = SelfPublishingOrder::active()->where('user_id', Auth::id());
         $currentOrders = $currentOrderQuery->get();
@@ -185,7 +188,7 @@ class SelfPublishingController extends Controller
         ]);
     }
 
-    public function listSelfPublishing()
+    public function listSelfPublishing(): View
     {
         /* $selfPublishingList = SelfPublishing::join('self_publishing_learners',
         'self_publishing.id', '=', 'self_publishing_learners.self_publishing_id')
@@ -209,7 +212,7 @@ class SelfPublishingController extends Controller
         return view('frontend.learner.self-publishing.self-publishing-list', compact('selfPublishingList'));
     }
 
-    public function copyEditing()
+    public function copyEditing(): View
     {
         // $copyEditings = Auth::user()->copyEditings()->whereNull('project_id')->get();
         $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
@@ -226,7 +229,7 @@ class SelfPublishingController extends Controller
         return view('frontend.learner.self-publishing.copy-editing', compact('copyEditings'));
     }
 
-    public function correction()
+    public function correction(): View
     {
         // $corrections = Auth::user()->corrections()->whereNull('project_id')->get();
         $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
@@ -243,7 +246,7 @@ class SelfPublishingController extends Controller
         return view('frontend.learner.self-publishing.correction', compact('corrections'));
     }
 
-    public function cover()
+    public function cover(): View
     {
         $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
 
@@ -260,7 +263,7 @@ class SelfPublishingController extends Controller
         return view('frontend.learner.self-publishing.cover', $data);
     }
 
-    public function coverDetails($cover_id)
+    public function coverDetails($cover_id): View
     {
         $cover = ProjectGraphicWork::find($cover_id);
         $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
@@ -269,7 +272,7 @@ class SelfPublishingController extends Controller
         return view('frontend.learner.self-publishing.cover-details', compact('cover', 'isbns'));
     }
 
-    public function saveCover($project_id, Request $request, ProjectService $projectService)
+    public function saveCover($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         $this->validate($request, [
             'cover.*' => 'required|mimes:jpeg,jpg,png,gif',
@@ -289,7 +292,7 @@ class SelfPublishingController extends Controller
             ]);
     }
 
-    public function pageFormat()
+    public function pageFormat(): View
     {
         $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
         $bookFormattingList = $standardProject ? ProjectBookFormatting::where('project_id', $standardProject->id)->get() : [];
@@ -297,7 +300,7 @@ class SelfPublishingController extends Controller
         return view('frontend.learner.self-publishing.page-format', compact('bookFormattingList'));
     }
 
-    public function savePageFormat($project_id, Request $request, ProjectService $projectService)
+    public function savePageFormat($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         if (! $request->id) {
             $this->validate($request, ['file.*' => 'required|mimes:doc,docx']);
@@ -312,14 +315,14 @@ class SelfPublishingController extends Controller
         ]);
     }
 
-    public function pageFormatDetails($format_id)
+    public function pageFormatDetails($format_id): View
     {
         $bookFormatting = ProjectBookFormatting::find($format_id);
 
         return view('frontend.learner.self-publishing.page-format-details', compact('bookFormatting'));
     }
 
-    public function publishingOrder()
+    public function publishingOrder(): View
     {
         $shopManuscript = ShopManuscript::find(3); // manusutvikling 1
 
@@ -368,7 +371,7 @@ class SelfPublishingController extends Controller
         return $request->all();
     }
 
-    public function processPublishingOrder(Request $request, PowerOffice $powerOffice)
+    public function processPublishingOrder(Request $request, PowerOffice $powerOffice): JsonResponse
     {
         $validation = [
             'email' => 'required|email',

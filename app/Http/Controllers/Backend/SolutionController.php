@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SolutionCreateRequest;
 use App\Repositories\Services\SolutionService;
@@ -28,7 +30,7 @@ class SolutionController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $solutions = $this->solutionService->getRecord();
 
@@ -40,7 +42,7 @@ class SolutionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(SolutionCreateRequest $request)
+    public function store(SolutionCreateRequest $request): RedirectResponse
     {
         if ($this->solutionService->store($request)) {
             return redirect()->route('admin.solution.index');
@@ -55,7 +57,7 @@ class SolutionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, SolutionCreateRequest $request)
+    public function update(int $id, SolutionCreateRequest $request): RedirectResponse
     {
         if ($this->solutionService->getRecord($id)) {
             $this->solutionService->update($id, $request);
@@ -69,7 +71,7 @@ class SolutionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $this->solutionService->destroy($id);
 

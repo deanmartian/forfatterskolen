@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
 use App\PrivateGroup;
@@ -20,7 +22,7 @@ class PrivateGroupsController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $members = PrivateGroupMember::with('private_group')->where('user_id', \Auth::user()->id)->get();
 
@@ -32,7 +34,7 @@ class PrivateGroupsController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createGroup(Request $request)
+    public function createGroup(Request $request): JsonResponse
     {
         $this->validate($request, [
             'name' => 'required|alpha_num_spaces|unique:private_groups|max:50',
@@ -64,7 +66,7 @@ class PrivateGroupsController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    private function addGroupMember($data)
+    private function addGroupMember($data): JsonResponse
     {
         if (! PrivateGroupMember::create($data)) {
             \DB::rollback();
@@ -101,7 +103,7 @@ class PrivateGroupsController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getGroupData($id)
+    public function getGroupData($id): JsonResponse
     {
         if ($privateGroup = PrivateGroup::find($id)) {
             return response()->json(['data' => $privateGroup], 200);
@@ -138,7 +140,7 @@ class PrivateGroupsController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function updateGroup(Request $request)
+    public function updateGroup(Request $request): JsonResponse
     {
         $data = $request->except('id');
         $model = PrivateGroup::find($request->id);
@@ -194,7 +196,7 @@ class PrivateGroupsController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function setPreference(Request $request)
+    public function setPreference(Request $request): JsonResponse
     {
         $preference = $this->viewPreference($request->private_group_id);
         $data = $request->all();

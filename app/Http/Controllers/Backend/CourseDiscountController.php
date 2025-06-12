@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Course;
 use App\CourseDiscount;
 use App\Http\AdminHelpers;
@@ -15,7 +17,7 @@ class CourseDiscountController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index($course_id)
+    public function index($course_id): View
     {
         $course = Course::find($course_id);
 
@@ -35,7 +37,7 @@ class CourseDiscountController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store($course_id, Request $request)
+    public function store($course_id, Request $request): RedirectResponse
     {
 
         if ($request->valid_from && ! $request->valid_to) {
@@ -56,7 +58,7 @@ class CourseDiscountController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function update($course_id, $discount_id, Request $request)
+    public function update($course_id, $discount_id, Request $request): RedirectResponse
     {
         $discount = CourseDiscount::find($discount_id);
 
@@ -83,7 +85,7 @@ class CourseDiscountController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($course_id, $discount_id)
+    public function destroy($course_id, $discount_id): RedirectResponse
     {
         $discount = CourseDiscount::findOrFail($discount_id);
         $discount->forceDelete();

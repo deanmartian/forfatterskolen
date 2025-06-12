@@ -30,7 +30,7 @@ class PaypalIPN
      *
      * @return void
      */
-    public function useSandbox()
+    public function useSandbox(): void
     {
         $this->use_sandbox = true;
     }
@@ -41,7 +41,7 @@ class PaypalIPN
      *
      * @return void
      */
-    public function usePHPCerts()
+    public function usePHPCerts(): void
     {
         $this->use_local_certs = false;
     }
@@ -51,7 +51,7 @@ class PaypalIPN
      *
      * @return string
      */
-    public function getPaypalUri()
+    public function getPaypalUri(): string
     {
         if ($this->use_sandbox) {
             return self::SANDBOX_VERIFY_URI;
@@ -68,7 +68,7 @@ class PaypalIPN
      *
      * @throws Exception
      */
-    public function verifyIPN()
+    public function verifyIPN(): bool
     {
         if (! count($_POST)) {
             throw new Exception('Missing POST Data');

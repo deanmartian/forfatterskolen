@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\RedirectResponse;
 use App\Course;
 use App\CourseRewardCoupon;
 use App\Http\AdminHelpers;
@@ -15,7 +16,7 @@ class CourseRewardCouponController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store($course_id, Request $request)
+    public function store($course_id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
         if ($course) {
@@ -37,7 +38,7 @@ class CourseRewardCouponController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($course_id, $id, Request $request)
+    public function update($course_id, $id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
         $reward = CourseRewardCoupon::find($id);
@@ -60,7 +61,7 @@ class CourseRewardCouponController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($course_id, $id)
+    public function destroy($course_id, $id): RedirectResponse
     {
         $course = Course::find($course_id);
         $reward = CourseRewardCoupon::find($id);
@@ -81,7 +82,7 @@ class CourseRewardCouponController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function multipleStore($course_id, Request $request)
+    public function multipleStore($course_id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
 
@@ -103,7 +104,7 @@ class CourseRewardCouponController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function exportToText($course_id)
+    public function exportToText($course_id): RedirectResponse
     {
         $course = Course::find($course_id);
         if ($course) {

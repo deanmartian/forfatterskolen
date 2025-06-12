@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\TimeRegister;
@@ -68,7 +70,7 @@ class TimeRegisterController extends Controller
         /* return response()->json(); */
     }
 
-    public function timeUsedList($time_register_id)
+    public function timeUsedList($time_register_id): JsonResponse
     {
         $timeUsed = TimeRegisterUsed::where('time_register_id', $time_register_id)->get();
 
@@ -93,7 +95,7 @@ class TimeRegisterController extends Controller
         return $this->timeUsedList($time_register_id);
     }
 
-    public function deleteTimeUsed($time_used_id, Request $request)
+    public function deleteTimeUsed($time_used_id, Request $request): RedirectResponse
     {
         $timeUsed = TimeRegisterUsed::find($time_used_id)->delete();
         if (! $request->ajax()) {

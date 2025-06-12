@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Repositories\Services\OptInService;
@@ -27,7 +29,7 @@ class OptInController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $optInList = $this->optInService->getRecord();
 
@@ -39,7 +41,7 @@ class OptInController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $optIn = [
             'id' => '',
@@ -55,7 +57,7 @@ class OptInController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         if ($this->optInService->store($request)) {
             return redirect()->route('admin.opt-in.index')->with([
@@ -86,7 +88,7 @@ class OptInController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         if ($optIn = $this->optInService->getRecord($id)) {
             $this->optInService->update($optIn, $request);
@@ -105,7 +107,7 @@ class OptInController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         if ($optIn = $this->optInService->getRecord($id)) {
             $this->optInService->destroy($optIn);

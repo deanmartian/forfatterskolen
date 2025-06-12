@@ -62,7 +62,7 @@ class AssignmentManuscript extends Model
      *
      * @return string
      */
-    public function getFileLinkAttribute()
+    public function getFileLinkAttribute(): string
     {
         $fileLink = '';
         $filename = $this->attributes['filename'];
@@ -83,7 +83,7 @@ class AssignmentManuscript extends Model
      *
      * @return string
      */
-    public function getFileLinkWithDownloadAttribute()
+    public function getFileLinkWithDownloadAttribute(): string
     {
         $fileLink = '';
         $files = explode(',', $this->attributes['filename']);

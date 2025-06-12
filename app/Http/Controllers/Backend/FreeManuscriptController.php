@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use App\DelayedEmail;
 use App\EmailTemplate;
 use App\FreeManuscript;
@@ -28,7 +31,7 @@ class FreeManuscriptController extends Controller
         $this->middleware('checkPageAccess:7');
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $freeManuscripts = FreeManuscript::where('is_feedback_sent', '=', 0)->orderBy('created_at', 'desc')->get();
         $archiveManuscripts = FreeManuscript::with('latestFeedbackHistory')
@@ -58,7 +61,7 @@ class FreeManuscriptController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteFreeManuscript($id)
+    public function deleteFreeManuscript($id): RedirectResponse
     {
         $freeManuscripts = FreeManuscript::findOrFail($id);
         $freeManuscripts->forceDelete();
@@ -71,7 +74,7 @@ class FreeManuscriptController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function editContent($id, Request $request)
+    public function editContent($id, Request $request): RedirectResponse
     {
         $freeManuscript = FreeManuscript::find($id);
         if ($freeManuscript) {
@@ -91,7 +94,7 @@ class FreeManuscriptController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function assignEditor($id, Request $request)
+    public function assignEditor($id, Request $request): RedirectResponse
     {
         $freeManuscripts = FreeManuscript::findOrFail($id);
         $freeManuscripts->editor_id = $request->editor_id;
@@ -118,7 +121,7 @@ class FreeManuscriptController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function feedbackHistory($id)
+    public function feedbackHistory($id): JsonResponse
     {
         $freeManuscriptFeedbackHistory = FreeManuscriptFeedbackHistory::where('free_manuscript_id', $id)->get();
         if (! $freeManuscriptFeedbackHistory->count()) {
@@ -142,7 +145,7 @@ class FreeManuscriptController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function resendFeedback($id)
+    public function resendFeedback($id): RedirectResponse
     {
         $freeManuscripts = FreeManuscript::find($id);
         if ($freeManuscripts) {
@@ -194,7 +197,7 @@ class FreeManuscriptController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function sendFeedback($id, Request $requests)
+    public function sendFeedback($id, Request $requests): RedirectResponse
     {
         $url = 'https://forfatterskolen.api-us1.com';
 
@@ -207,7 +210,7 @@ class FreeManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function approveFeedback($id, Request $requests)
+    public function approveFeedback($id, Request $requests): RedirectResponse
     {
         $url = 'https://forfatterskolen.api-us1.com';
 

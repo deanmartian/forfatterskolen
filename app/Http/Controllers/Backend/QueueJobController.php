@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use Artisan;
@@ -9,7 +11,7 @@ use DB;
 
 class QueueJobController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $isQueueRunning = false;
         if ($this->isQueueWorkerRunning()) {
@@ -41,7 +43,7 @@ class QueueJobController extends Controller
         return view('backend.queue-jobs.index', compact('isQueueRunning', 'failedJobs', 'jobs'));
     }
 
-    public function runJobs()
+    public function runJobs(): RedirectResponse
     {
         // Run the queue worker using the Artisan command
         // stop when the jobs table is empty
@@ -53,7 +55,7 @@ class QueueJobController extends Controller
         ]);
     }
 
-    public function retryAll()
+    public function retryAll(): RedirectResponse
     {
         Artisan::call('queue:retry', ['id' => 'all']);
 
@@ -63,7 +65,7 @@ class QueueJobController extends Controller
         ]);
     }
 
-    public function retry($id)
+    public function retry($id): RedirectResponse
     {
         // Retry the failed job using the queue:retry command
         Artisan::call('queue:retry', ['id' => $id]);
@@ -75,7 +77,7 @@ class QueueJobController extends Controller
 
     }
 
-    public function deleteFailedJob($id)
+    public function deleteFailedJob($id): RedirectResponse
     {
         DB::table('failed_jobs')->where('id', $id)->delete();
 

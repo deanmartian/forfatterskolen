@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use App\Webinar;
 use App\WebinarEditor;
@@ -14,7 +15,7 @@ class WebinarEditorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store($webinar_id, Request $request)
+    public function store($webinar_id, Request $request): RedirectResponse
     {
         $webinar = Webinar::findOrFail($webinar_id);
 
@@ -34,7 +35,7 @@ class WebinarEditorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update($id, Request $request)
+    public function update(int $id, Request $request): RedirectResponse
     {
         $webinarEditor = WebinarEditor::findOrFail($id);
         $webinarEditor->presenter_url = $request->presenter_url;
@@ -51,7 +52,7 @@ class WebinarEditorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function deleteEditor($id)
+    public function deleteEditor(int $id): RedirectResponse
     {
         $webinarEditor = webinarEditor::findOrFail($id);
         $webinarEditor->forceDelete();

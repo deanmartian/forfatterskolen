@@ -124,7 +124,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function getIsWebinarPakkeActiveAttribute()
+    public function getIsWebinarPakkeActiveAttribute(): bool
     {
         $courseTaken = $this->coursesTaken->where('package_id', 29)->first();
         if ($courseTaken) {

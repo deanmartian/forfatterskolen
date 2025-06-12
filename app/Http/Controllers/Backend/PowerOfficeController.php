@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Http\RedirectResponse;
 use AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\PowerOffice;
@@ -12,7 +13,7 @@ use Illuminate\Http\Request;
 
 class PowerOfficeController extends Controller
 {
-    public function addSelfPublshingToPowerOffice($publishing_id, Request $request, PowerOffice $powerOffice)
+    public function addSelfPublshingToPowerOffice($publishing_id, Request $request, PowerOffice $powerOffice): RedirectResponse
     {
         $selfPublishing = SelfPublishing::findOrFail($publishing_id);
         $user = $selfPublishing->project->user;

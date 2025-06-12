@@ -53,7 +53,7 @@ class CompetitionService
      *
      * @param  AddCompetitionRequest  $request
      */
-    public function store($request)
+    public function store(AddCompetitionRequest $request)
     {
         $storeRequest = $request->all();
         if ($request->hasFile('image')) {
@@ -82,7 +82,7 @@ class CompetitionService
      * @param  AddCompetitionRequest  $request
      * @return bool
      */
-    public function update($id, $request)
+    public function update(int $id, AddCompetitionRequest $request): bool
     {
         $competition = $this->getRecord($id);
         if ($competition) {
@@ -113,7 +113,7 @@ class CompetitionService
      *
      * @return bool
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         $competition = $this->getRecord($id);
         if ($competition) {

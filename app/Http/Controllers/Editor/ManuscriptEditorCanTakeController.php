@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Editor;
 
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\ManuscriptEditorCanTake;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ManuscriptEditorCanTakeController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $manuscriptEditorCanTake = ManuscriptEditorCanTake::where('editor_id', Auth::user()->id)
             ->orderBy('date_from', 'asc')
@@ -19,7 +21,7 @@ class ManuscriptEditorCanTakeController extends Controller
         return view('editor.how-many-manuscript-you-can-take', compact('manuscriptEditorCanTake'));
     }
 
-    public function save(Request $request)
+    public function save(Request $request): RedirectResponse
     {
         $data = $request->except('_token');
         $message = '';
@@ -42,7 +44,7 @@ class ManuscriptEditorCanTakeController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function delete($id)
+    public function delete($id): RedirectResponse
     {
         $manuscriptEditorCanTake = ManuscriptEditorCanTake::find($id);
         $manuscriptEditorCanTake->delete();
