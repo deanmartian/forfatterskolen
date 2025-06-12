@@ -17,3 +17,5 @@ npm-debug.log
 .env-local
 service-worker.js
 node_modules
+
+/.phpunit.cache
