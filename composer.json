@@ -8,19 +8,19 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": "^8.0",
-        "anhskohbo/no-captcha": "^3.4",
-        "barryvdh/laravel-dompdf": "^1.0",
+        "php": "^8.1",
+        "anhskohbo/no-captcha": "^3.5",
+        "barryvdh/laravel-dompdf": "^2.0",
         "barryvdh/laravel-ide-helper": "*",
         "barryvdh/laravel-translation-manager": "^0.6",
         "firebase/php-jwt": "^5.0",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "2.7",
-        "laravel/framework": "^9.52",
-        "laravel/helpers": "^1.5",
-        "laravel/socialite": "^5.3",
-        "laravel/tinker": "^2.7",
-        "laravel/ui": "^3.3",
+        "laravel/framework": "^10.48",
+        "laravel/helpers": "^1.6",
+        "laravel/socialite": "^5.6",
+        "laravel/tinker": "^2.8",
+        "laravel/ui": "^4.2",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/fractal": "^0.17.0",
         "league/omnipay": "^3.2",
@@ -29,10 +29,10 @@
         "phpoffice/phpword": "^0.18",
         "spatie/flysystem-dropbox": "*",
         "sveaekonomi/webpay": "^3.15",
-        "symfony/event-dispatcher": "^6.0",
+        "symfony/event-dispatcher": "^6.2",
         "symfony/polyfill-iconv": "^1.8",
         "teodortalov/citrix": "^1.2",
-        "unisharp/laravel-filemanager": "^2.4",
+        "unisharp/laravel-filemanager": "^2.6",
         "van-ons/laraberg": "^1.1"
     },
     "require-dev": {
@@ -41,7 +41,7 @@
         "filp/whoops": "^2.8",
         "fakerphp/faker": "^1.9.1",
         "nunomaduro/collision": "^6.3",
-        "spatie/laravel-ignition": "^1.4"
+        "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
         "classmap": [
@@ -87,5 +87,7 @@
         "allow-plugins": {
             "php-http/discovery": true
         }
-    }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
