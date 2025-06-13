@@ -7,10 +7,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('pilot_reader_reader_query_decisions', function (Blueprint $table) {
             $table->foreign('query_id', 'reader_query_decisions_query_id_foreign')->references('id')->on('pilot_reader_reader_queries')->onUpdate('CASCADE')->onDelete('CASCADE');
@@ -19,10 +17,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('pilot_reader_reader_query_decisions', function (Blueprint $table) {
             $table->dropForeign('reader_query_decisions_query_id_foreign');

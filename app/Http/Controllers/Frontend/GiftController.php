@@ -14,9 +14,12 @@ use App\Services\GiftService;
 use App\ShopManuscript;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
 
 class GiftController extends Controller
 {
@@ -112,10 +115,7 @@ class GiftController extends Controller
             'hasPaidCourse', 'user', 'startIndex', 'giftCard', 'giftCards'));
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function validateCheckoutForm($course_id, Request $request, CourseService $courseService, GiftService $giftService)
+    public function validateCheckoutForm($course_id, Request $request, CourseService $courseService, GiftService $giftService): JsonResponse
     {
         $validator = $this->getValidator($request);
 
@@ -163,7 +163,7 @@ class GiftController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function thankyou($item_id, Request $request, GiftService $giftService)
+    public function thankyou($item_id, Request $request, GiftService $giftService): View
     {
 
         // check if from svea payment
@@ -208,7 +208,7 @@ class GiftController extends Controller
         return view('frontend.gift.thankyou', ['page' => 'gift-course']);
     }
 
-    public function shopManuscript()
+    public function shopManuscript(): View
     {
         $shopManuscripts = ShopManuscript::orderBy('full_payment_price', 'asc')->get();
         $editors = Editor::orderBy('id', 'ASC')->get();
@@ -217,7 +217,7 @@ class GiftController extends Controller
         return view('frontend.shop-manuscript.index', compact('shopManuscripts', 'editors', 'checkoutRoute'));
     }
 
-    public function shopManuscriptCheckout($manuscript_id)
+    public function shopManuscriptCheckout($manuscript_id): View
     {
         $shopManuscript = ShopManuscript::findOrFail($manuscript_id);
 
@@ -233,12 +233,12 @@ class GiftController extends Controller
             'giftCard'));
     }
 
-    public function showRedeem()
+    public function showRedeem(): View
     {
         return view('frontend.gift.redeem');
     }
 
-    public function redeemGift(Request $request, LearnerController $learnerController)
+    public function redeemGift(Request $request, LearnerController $learnerController): RedirectResponse
     {
         $giftPurchase = GiftPurchase::where('redeem_code', $request->redeem_code)->first();
 

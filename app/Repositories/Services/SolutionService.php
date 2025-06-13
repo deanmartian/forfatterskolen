@@ -5,6 +5,7 @@ namespace App\Repositories\Services;
 use App\Http\Requests\SolutionCreateRequest;
 use App\Solution;
 use File;
+use Illuminate\Database\Eloquent\Model;
 
 class SolutionService
 {
@@ -25,10 +26,9 @@ class SolutionService
 
     /**
      * @param  null  $id
-     * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getRecord($id = null, $page = 15)
+    public function getRecord($id = null, int $page = 15)
     {
         if ($id) {
             return $this->solution->find($id);
@@ -39,11 +39,8 @@ class SolutionService
 
     /**
      * Create new solution
-     *
-     * @param  SolutionCreateRequest  $request
-     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function store($request)
+    public function store(SolutionCreateRequest $request): Model
     {
         $requestData = $request->toArray();
 
@@ -153,11 +150,8 @@ class SolutionService
 
     /**
      * Update a solution
-     *
-     * @param  SolutionCreateRequest  $request
-     * @return bool
      */
-    public function update($id, $request)
+    public function update($id, SolutionCreateRequest $request): bool
     {
         $solution = $this->getRecord($id);
         $requestData = $request->toArray();
@@ -272,10 +266,8 @@ class SolutionService
 
     /**
      * Delete a solution
-     *
-     * @return bool
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         $solution = $this->getRecord($id);
         if ($solution) {

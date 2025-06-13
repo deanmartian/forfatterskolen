@@ -21,6 +21,8 @@ use App\PaymentPlan;
 use App\ShopManuscriptsTaken;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -43,10 +45,8 @@ class CourseService
 
     /**
      * Check if the coupon is valid and show discount
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function checkCouponDiscount($course_id, $coupon)
+    public function checkCouponDiscount($course_id, $coupon): JsonResponse
     {
         $course = $this->course->find($course_id);
         $discountCoupon = $course->discounts()->where('coupon', $coupon)->first();
@@ -164,8 +164,6 @@ class CourseService
 
     /**
      * Generate checkout from Svea
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
     public function generateSveaCheckout(Request $request)
     {
@@ -276,10 +274,8 @@ class CourseService
 
     /**
      * Calculate the price with the coupon
-     *
-     * @return int
      */
-    public function calculatePrice($course, $package, Request $request)
+    public function calculatePrice($course, $package, Request $request): int
     {
         $hasPaidCourse = false;
 
@@ -424,10 +420,8 @@ class CourseService
     /**
      * Add the course taken to learner including the shop-manuscript or included courses if there's any
      * The function is get from Frontend\ShopController\place_order()
-     *
-     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function addCourseToLearner($user_id, $package_id, $start_course = false)
+    public function addCourseToLearner($user_id, $package_id, $start_course = false): Model
     {
         Log::info('inside addCourseToLearner user = '.$user_id.', package_id = '.$package_id);
         $course_status = 1;
@@ -739,10 +733,8 @@ class CourseService
 
     /**
      * Generate docx attached to the email with user and order info
-     *
-     * @return string
      */
-    public function generateDocx($user_id, $package_id)
+    public function generateDocx($user_id, $package_id): string
     {
         $user = User::find($user_id);
         $address = $user->address;

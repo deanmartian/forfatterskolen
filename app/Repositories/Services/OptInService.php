@@ -25,10 +25,9 @@ class OptInService
 
     /**
      * @param  null  $id
-     * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getRecord($id = null, $page = 15)
+    public function getRecord($id = null, int $page = 15)
     {
         if ($id) {
             return $this->optIn->find($id);
@@ -70,9 +69,8 @@ class OptInService
      *
      * @param  $optIn  \Illuminate\Database\Eloquent\Model
      * @param  $request  Request
-     * @return bool
      */
-    public function update($optIn, $request)
+    public function update($optIn, $request): bool
     {
         $data = $request->toArray();
 
@@ -98,9 +96,8 @@ class OptInService
      * Delete record
      *
      * @param  $optIn  \Illuminate\Database\Eloquent\Model
-     * @return bool
      */
-    public function destroy($optIn)
+    public function destroy($optIn): bool
     {
         if ($optIn->forceDelete()) {
             return true;

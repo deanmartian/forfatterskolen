@@ -35,10 +35,8 @@ class RefreshDropboxToken extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $client = new Client;
         $response = $client->post('https://api.dropboxapi.com/oauth2/token', [

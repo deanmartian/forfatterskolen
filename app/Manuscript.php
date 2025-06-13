@@ -4,6 +4,8 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Manuscript extends Model
 {
@@ -23,7 +25,7 @@ class Manuscript extends Model
      */
     protected $fillable = ['coursetaken_id', 'filename', 'word_count', 'grade', 'feedback_user_id', 'expected_finish'];
 
-    public function courseTaken()
+    public function courseTaken(): BelongsTo
     {
         return $this->belongsTo(\App\CoursesTaken::class, 'coursetaken_id');
     }
@@ -35,7 +37,7 @@ class Manuscript extends Model
         return $courseTaken->user;
     }
 
-    public function feedbacks()
+    public function feedbacks(): HasMany
     {
         return $this->hasMany(\App\Feedback::class)->orderBy('created_at', 'desc');
     }
@@ -50,7 +52,7 @@ class Manuscript extends Model
         return number_format($value);
     }
 
-    public function admin()
+    public function admin(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'feedback_user_id');
     }

@@ -14,6 +14,7 @@ use App\ShopManuscript;
 use App\ShopManuscriptsTaken;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -81,10 +82,7 @@ class ShopManuscriptService
         return $synopsis;
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function processCheckout(Request $request)
+    public function processCheckout(Request $request): JsonResponse
     {
 
         // this is for not logged in user
@@ -182,10 +180,7 @@ class ShopManuscriptService
         ];
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function generateSveaCheckout(Request $request)
+    public function generateSveaCheckout(Request $request): JsonResponse
     {
         $orderRecord = $this->createOrder($request);
         $userHasPaidCourse = FrontendHelpers::userHasPaidCourse();
@@ -398,10 +393,7 @@ class ShopManuscriptService
         ]);
     }
 
-    /**
-     * @return ShopManuscriptsTaken
-     */
-    public function addShopManuscriptToLearner($order)
+    public function addShopManuscriptToLearner($order): ShopManuscriptsTaken
     {
         $shopManuscriptOrder = $order->shopManuscriptOrder;
         $file = $shopManuscriptOrder->file;

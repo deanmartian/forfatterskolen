@@ -50,10 +50,8 @@ class CompetitionService
 
     /**
      * Insert the data passed
-     *
-     * @param  AddCompetitionRequest  $request
      */
-    public function store($request)
+    public function store(AddCompetitionRequest $request)
     {
         $storeRequest = $request->all();
         if ($request->hasFile('image')) {
@@ -79,10 +77,8 @@ class CompetitionService
      * Update the competition
      *
      * @param  int  $id  competition id
-     * @param  AddCompetitionRequest  $request
-     * @return bool
      */
-    public function update($id, $request)
+    public function update(int $id, AddCompetitionRequest $request): bool
     {
         $competition = $this->getRecord($id);
         if ($competition) {
@@ -110,10 +106,8 @@ class CompetitionService
 
     /**
      * Delete a competition
-     *
-     * @return bool
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         $competition = $this->getRecord($id);
         if ($competition) {

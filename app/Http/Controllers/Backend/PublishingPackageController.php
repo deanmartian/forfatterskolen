@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\PublishingService;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class PublishingPackageController extends Controller
 {
-    public function services()
+    public function services(): View
     {
         return view('backend.publishing-package.services');
     }

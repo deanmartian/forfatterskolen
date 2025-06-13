@@ -42,10 +42,8 @@ class CourseExpirationReminder extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         CronLog::create(['activity' => 'CourseExpirationReminder CRON running.']);
         $days_28 = Carbon::now()->addDays(28)->format('Y-m-d');

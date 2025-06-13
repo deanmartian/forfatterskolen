@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserSocial extends Model
 {
@@ -20,7 +21,7 @@ class UserSocial extends Model
      */
     protected $fillable = ['user_id', 'facebook', 'instagram'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PowerOfficeInvoice extends Model
 {
@@ -14,12 +15,12 @@ class PowerOfficeInvoice extends Model
         'parent_id',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function selfPublishing()
+    public function selfPublishing(): BelongsTo
     {
         return $this->belongsTo(\App\SelfPublishing::class, 'parent_id', 'id');
     }

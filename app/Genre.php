@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Genre extends Model
 {
@@ -22,7 +23,7 @@ class Genre extends Model
 
     public $timestamps = false; // disable the update of created/updated since field does not exist
 
-    public function editorGenrePreferences()
+    public function editorGenrePreferences(): HasMany
     {
         return $this->hasMany('App\Models\EditorGenrePreferences', 'genre_id', 'id');
     }

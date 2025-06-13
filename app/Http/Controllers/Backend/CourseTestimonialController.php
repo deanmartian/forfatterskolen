@@ -7,6 +7,8 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CourseTestimonialCreateRequest;
 use File;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class CourseTestimonialController extends Controller
 {
@@ -15,7 +17,7 @@ class CourseTestimonialController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $testimonials = CourseTestimonial::paginate(15);
 
@@ -27,7 +29,7 @@ class CourseTestimonialController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $testimonial = [
             'name' => '',
@@ -41,10 +43,8 @@ class CourseTestimonialController extends Controller
 
     /**
      * Create new testimonial
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CourseTestimonialCreateRequest $request)
+    public function store(CourseTestimonialCreateRequest $request): RedirectResponse
     {
         $testimonial = new CourseTestimonial;
         $testimonial->name = $request->name;
@@ -85,7 +85,7 @@ class CourseTestimonialController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit($id)
+    public function edit($id): View
     {
         $testimonial = CourseTestimonial::findOrFail($id)->toArray();
 
@@ -94,10 +94,8 @@ class CourseTestimonialController extends Controller
 
     /**
      * Update a testimonial
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, CourseTestimonialCreateRequest $request)
+    public function update($id, CourseTestimonialCreateRequest $request): RedirectResponse
     {
         $testimonial = CourseTestimonial::find($id);
         if ($testimonial) {
@@ -137,10 +135,8 @@ class CourseTestimonialController extends Controller
 
     /**
      * Delete testimonial
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $testimonial = CourseTestimonial::find($id);
         if ($testimonial) {
@@ -156,10 +152,8 @@ class CourseTestimonialController extends Controller
 
     /**
      * Clone a testimony
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function cloneRecord($id)
+    public function cloneRecord($id): RedirectResponse
     {
         $testimonial = CourseTestimonial::find($id);
         if ($testimonial) {

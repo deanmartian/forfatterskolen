@@ -19,9 +19,11 @@ use App\ShopManuscriptTakenFeedback;
 use App\ShopManuscriptUpgrade;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Mail;
 use Validator;
 
@@ -39,7 +41,7 @@ class ShopManuscriptController extends Controller
         $this->saleService = $saleService;
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         if ($request->tab == 'sold') {
             $shopManuscripts = ShopManuscriptsTaken::orderBy('created_at', 'desc')->paginate(15);
@@ -82,7 +84,7 @@ class ShopManuscriptController extends Controller
             'excessPerWordAmount'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validator = $this->validator($request->all());
         if ($validator->fails()) {
@@ -114,7 +116,7 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $validator = $this->validator($request->all());
         if ($validator->fails()) {
@@ -150,7 +152,7 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $shopManuscript = ShopManuscript::findOrFail($id);
         $shopManuscript->forceDelete();
@@ -192,7 +194,7 @@ class ShopManuscriptController extends Controller
         return $files;
     }
 
-    public function addFeedback($shopManuscriptTakenID, Request $request)
+    public function addFeedback($shopManuscriptTakenID, Request $request): RedirectResponse
     {
         $files = $this->getFiles($request);
 
@@ -250,7 +252,7 @@ class ShopManuscriptController extends Controller
 
     }
 
-    public function approveFeedback($id, $learner_id, $feedback_id, Request $request)
+    public function approveFeedback($id, $learner_id, $feedback_id, Request $request): RedirectResponse
     {
         $files = $this->getFiles($request);
         // update feedback
@@ -314,7 +316,7 @@ class ShopManuscriptController extends Controller
 
     }
 
-    public function destroyFeedback($id)
+    public function destroyFeedback($id): RedirectResponse
     {
         $feedback = ShopManuscriptTakenFeedback::findOrFail($id);
         $feedback->forceDelete();
@@ -324,7 +326,7 @@ class ShopManuscriptController extends Controller
 
     // made a fix here
     // search me to update
-    public function updateTaken($shopManuscriptTakenID, Request $request)
+    public function updateTaken($shopManuscriptTakenID, Request $request): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
         $shopManuscriptTaken->feedback_user_id = $request->feedback_user_id;
@@ -371,7 +373,7 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function editorAcceptRequest($taken_id, $accepted, $request_id)
+    public function editorAcceptRequest($taken_id, $accepted, $request_id): RedirectResponse
     {
         if ($accepted) {
 
@@ -418,7 +420,7 @@ class ShopManuscriptController extends Controller
         }
     }
 
-    public function freeManuscriptIndex()
+    public function freeManuscriptIndex(): View
     {
         $freeManuscripts = FreeManuscript::where('is_feedback_sent', '=', 0)->orderBy('created_at', 'desc')->get();
         $archiveManuscripts = FreeManuscript::where('is_feedback_sent', '=', 1)->orderBy('created_at', 'desc')->get();
@@ -436,7 +438,7 @@ class ShopManuscriptController extends Controller
         );
     }
 
-    public function deleteFreeManuscript($id)
+    public function deleteFreeManuscript($id): RedirectResponse
     {
         $freeManuscripts = FreeManuscript::findOrFail($id);
         $freeManuscripts->forceDelete();
@@ -444,7 +446,7 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function assignEditor($id, Request $request)
+    public function assignEditor($id, Request $request): RedirectResponse
     {
         $freeManuscripts = FreeManuscript::findOrFail($id);
         $freeManuscripts->editor_id = $request->editor_id;
@@ -455,10 +457,8 @@ class ShopManuscriptController extends Controller
 
     /**
      * Update the genre of the shop manuscript taken
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateGenre($shopManuscriptTakenID, Request $request)
+    public function updateGenre($shopManuscriptTakenID, Request $request): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
         if ($shopManuscriptTaken) {
@@ -469,7 +469,7 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function updateCoachingTimeLater($shopManuscriptTakenID, Request $request)
+    public function updateCoachingTimeLater($shopManuscriptTakenID, Request $request): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
         if ($shopManuscriptTaken) {
@@ -480,7 +480,7 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function updateDescription($shopManuscriptTakenID, Request $request)
+    public function updateDescription($shopManuscriptTakenID, Request $request): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
         if ($shopManuscriptTaken) {
@@ -491,7 +491,7 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function sendFeedback($id, Request $requests)
+    public function sendFeedback($id, Request $requests): RedirectResponse
     {
         $url = 'https://forfatterskolen.api-us1.com';
 

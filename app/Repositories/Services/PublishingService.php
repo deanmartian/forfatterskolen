@@ -3,6 +3,8 @@
 namespace App\Repositories\Services;
 
 use App\Publishing;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
 
 class PublishingService
 {
@@ -39,10 +41,8 @@ class PublishingService
 
     /**
      * Get the fields
-     *
-     * @return array
      */
-    public function fields()
+    public function fields(): array
     {
         return $this->fields;
     }
@@ -51,9 +51,8 @@ class PublishingService
      * Create new publisher house
      *
      * @param  array  $data  data to be inserted
-     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function store(array $data)
+    public function store(array $data): Model
     {
         $data['genre'] = implode(', ', $data['genre']);
 
@@ -62,11 +61,8 @@ class PublishingService
 
     /**
      * Update publishing house
-     *
-     * @param  int  $id
-     * @return bool
      */
-    public function update($id, array $data)
+    public function update(int $id, array $data): bool
     {
         $publishingHouse = $this->find($id);
         if ($publishingHouse) {
@@ -80,10 +76,8 @@ class PublishingService
 
     /**
      * Delete record
-     *
-     * @return bool|null
      */
-    public function destroy($id)
+    public function destroy($id): ?bool
     {
         $publishingHouse = $this->find($id);
         if ($publishingHouse) {
@@ -95,10 +89,8 @@ class PublishingService
 
     /**
      * Find publishing house
-     *
-     * @return \App\Publishing
      */
-    public function find($id)
+    public function find($id): Publishing
     {
         return $this->publishing->find($id);
     }
@@ -107,9 +99,8 @@ class PublishingService
      * Set the pagination for this model
      *
      * @param  int  $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function paginate($perPage = 15)
+    public function paginate($perPage = 15): LengthAwarePaginator
     {
         return $this->publishing->orderBy('publishing', 'ASC')->paginate($perPage);
     }

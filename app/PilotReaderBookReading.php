@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PilotReaderBookReading extends Model
@@ -23,12 +25,12 @@ class PilotReaderBookReading extends Model
      */
     protected $fillable = ['user_id', 'book_id', 'role', 'started_at', 'last_seen', 'status', 'status_date'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'user_id', 'id');
     }
 
-    public function book()
+    public function book(): BelongsTo
     {
         return $this->belongsTo(\App\PilotReaderBook::class);
     }
@@ -43,7 +45,7 @@ class PilotReaderBookReading extends Model
         return $value ? date_format(date_create($value), 'M d, H:i a') : null;
     }
 
-    public function reason()
+    public function reason(): HasOne
     {
         return $this->hasOne(\App\PilotReaderQuittedReason::class, 'book_reader_id', 'id');
     }

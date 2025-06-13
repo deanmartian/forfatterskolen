@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Blog extends Model
 {
@@ -22,7 +23,7 @@ class Blog extends Model
     protected $fillable = ['title', 'description', 'user_id', 'image', 'author_name', 'author_image', 'status',
         'schedule'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

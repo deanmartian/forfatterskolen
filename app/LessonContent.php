@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LessonContent extends Model
 {
@@ -20,7 +21,7 @@ class LessonContent extends Model
      */
     protected $fillable = ['lesson_id', 'title', 'lesson_content', 'tags', 'date', 'description'];
 
-    public function lesson()
+    public function lesson(): BelongsTo
     {
         return $this->belongsTo('App\lesson');
     }

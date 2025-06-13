@@ -14,6 +14,8 @@ use App\Http\Controllers\Controller;
 use App\Jobs\AddMailToQueueJob;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,7 +34,7 @@ class AssignmentGroupController extends Controller
         return abort('404');
     }
 
-    public function store($course_id, $assignment_id, Request $request)
+    public function store($course_id, $assignment_id, Request $request): RedirectResponse
     {
         $course = Course::findOrFail($course_id);
         $assignment = Assignment::findOrFail($assignment_id);
@@ -48,7 +50,7 @@ class AssignmentGroupController extends Controller
         return redirect()->back();
     }
 
-    public function update($course_id, $assignment_id, $id, Request $request)
+    public function update($course_id, $assignment_id, $id, Request $request): RedirectResponse
     {
         $course = Course::findOrFail($course_id);
         $assignment = Assignment::findOrFail($assignment_id);
@@ -64,7 +66,7 @@ class AssignmentGroupController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($course_id, $assignment_id, $id, Request $request)
+    public function destroy($course_id, $assignment_id, $id, Request $request): RedirectResponse
     {
         $course = Course::findOrFail($course_id);
         $assignment = Assignment::findOrFail($assignment_id);
@@ -77,7 +79,7 @@ class AssignmentGroupController extends Controller
         return redirect(route('admin.assignment.show', ['course_id' => $course->id, 'assignment' => $assignment->id]));
     }
 
-    public function add_learner($course_id, $assignment_id, $id, Request $request)
+    public function add_learner($course_id, $assignment_id, $id, Request $request): RedirectResponse
     {
         $course = Course::findOrFail($course_id);
         $assignment = Assignment::findOrFail($assignment_id);
@@ -96,7 +98,7 @@ class AssignmentGroupController extends Controller
         return redirect()->back();
     }
 
-    public function remove_learner($course_id, $assignment_id, $group_id, $id, Request $request)
+    public function remove_learner($course_id, $assignment_id, $group_id, $id, Request $request): RedirectResponse
     {
         $course = Course::findOrFail($course_id);
         $assignment = Assignment::findOrFail($assignment_id);
@@ -133,7 +135,7 @@ class AssignmentGroupController extends Controller
         }
     }
 
-    public function submit_feedback($group_id, $id, Request $request)
+    public function submit_feedback($group_id, $id, Request $request): RedirectResponse
     {
         $learner_id = AssignmentGroupLearner::find($id)->user_id;
         $filesWithPath = $this->getFiles($request, $learner_id);
@@ -205,7 +207,7 @@ class AssignmentGroupController extends Controller
 
     }
 
-    public function approveFeedbackCourse($manuscript_id, $learner_id, $feedback_id, Request $request)
+    public function approveFeedbackCourse($manuscript_id, $learner_id, $feedback_id, Request $request): RedirectResponse
     {
         $filesWithPath = $this->getFiles($request, $learner_id);
 
@@ -276,7 +278,7 @@ class AssignmentGroupController extends Controller
             'assignment-manuscripts', $manuscript_id));
     }
 
-    public function submit_feedback_learner($group_id, $id, Request $request)
+    public function submit_feedback_learner($group_id, $id, Request $request): RedirectResponse
     {
         $group = AssignmentGroup::where('id', $group_id)->whereHas('learners', function ($query) use ($id) {
             $query->where('id', $id);
@@ -311,7 +313,7 @@ class AssignmentGroupController extends Controller
         }
     }
 
-    public function remove_feedback($id)
+    public function remove_feedback($id): RedirectResponse
     {
         $feedback = AssignmentFeedback::findOrFail($id);
 
@@ -329,7 +331,7 @@ class AssignmentGroupController extends Controller
         return redirect()->back();
     }
 
-    public function update_feedback($id, Request $request)
+    public function update_feedback($id, Request $request): RedirectResponse
     {
         $feedback = AssignmentFeedback::findOrFail($id);
         if ($request->hasFile('filename') &&
@@ -353,7 +355,7 @@ class AssignmentGroupController extends Controller
         return redirect()->back();
     }
 
-    public function update_feedback_admin($id, Request $request)
+    public function update_feedback_admin($id, Request $request): RedirectResponse
     {
         $feedback = AssignmentFeedback::findOrFail($id);
         $feedback->availability = $request->availability;
@@ -379,10 +381,8 @@ class AssignmentGroupController extends Controller
 
     /**
      * Approve the feedback
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function approve($id)
+    public function approve($id): RedirectResponse
     {
         $feedback = AssignmentFeedback::findOrFail($id);
         $feedback->is_active = true;
@@ -393,10 +393,8 @@ class AssignmentGroupController extends Controller
 
     /**
      * Update the feedback lock status
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function updateFeedbackLockStatus(Request $request)
+    public function updateFeedbackLockStatus(Request $request): JsonResponse
     {
         $feedback = AssignmentFeedback::find($request->feedback_id);
         $success = false;
@@ -461,7 +459,7 @@ class AssignmentGroupController extends Controller
         return redirect()->back();
     }
 
-    public function setFeedbackToOtherLearner($group_id, $group_learner_id, Request $request)
+    public function setFeedbackToOtherLearner($group_id, $group_learner_id, Request $request): RedirectResponse
     {
         $groupLearner = AssignmentGroupLearner::find($group_learner_id);
         $groupLearner->could_send_feedback_to = implode(', ', $request->learners);
@@ -557,10 +555,8 @@ class AssignmentGroupController extends Controller
 
     /**
      * Set the group feedback availability
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function setGroupFeedbackAvailability($course_id, $assignment_id, $id, Request $request)
+    public function setGroupFeedbackAvailability($course_id, $assignment_id, $id, Request $request): RedirectResponse
     {
         $course = Course::findOrFail($course_id);
         $assignment = Assignment::findOrFail($assignment_id);

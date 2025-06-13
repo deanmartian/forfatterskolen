@@ -13,11 +13,13 @@ use App\SelfPublishingLearner;
 use App\SelfPublishingOrder;
 use App\Services\CourseService;
 use Auth;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class PublishingServiceController extends Controller
 {
-    public function show($id)
+    public function show($id): View
     {
         $service = PublishingService::findOrFail($id);
         abort(404);
@@ -25,7 +27,7 @@ class PublishingServiceController extends Controller
         return view('frontend.publising-service.checkout', compact('service'));
     }
 
-    public function validateForm(Request $request, CourseService $courseService)
+    public function validateForm(Request $request, CourseService $courseService): JsonResponse
     {
         $validation = [
             'email' => 'required|email',
@@ -69,7 +71,7 @@ class PublishingServiceController extends Controller
         $this->processCheckoutOrder();
     }
 
-    public function thankyou()
+    public function thankyou(): View
     {
         return view('frontend.publising-service.thankyou');
     }
@@ -167,7 +169,7 @@ class PublishingServiceController extends Controller
         }
     }
 
-    public function serviceCalculator()
+    public function serviceCalculator(): View
     {
         $serviceList = PublishingService::where('is_active', 1)->orderBy('service_type', 'ASC')->get();
 

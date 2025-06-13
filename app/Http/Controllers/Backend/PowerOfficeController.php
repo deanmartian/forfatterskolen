@@ -8,11 +8,12 @@ use App\Http\PowerOffice;
 use App\PowerOfficeInvoice;
 use App\SelfPublishing;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PowerOfficeController extends Controller
 {
-    public function addSelfPublshingToPowerOffice($publishing_id, Request $request, PowerOffice $powerOffice)
+    public function addSelfPublshingToPowerOffice($publishing_id, Request $request, PowerOffice $powerOffice): RedirectResponse
     {
         $selfPublishing = SelfPublishing::findOrFail($publishing_id);
         $user = $selfPublishing->project->user;

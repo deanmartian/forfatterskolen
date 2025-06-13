@@ -18,10 +18,12 @@ use App\Order;
 use App\Services\CourseService;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class CourseController extends Controller
 {
@@ -169,7 +171,7 @@ class CourseController extends Controller
         return redirect()->route('front.course.application.thank-you', $course_id);
     }
 
-    public function applicationThankyou($course_id)
+    public function applicationThankyou($course_id): View
     {
         return view('frontend.course.application-thankyou');
     }
@@ -179,7 +181,7 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function getFreeCourse($course_id, Request $request)
+    public function getFreeCourse($course_id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
         if ($course && $course->is_free && $course->status) {
@@ -291,7 +293,7 @@ class CourseController extends Controller
         return redirect()->back();
     }
 
-    public function thankyou($course_id, Request $request, CourseService $courseService)
+    public function thankyou($course_id, Request $request, CourseService $courseService): View
     {
         // check if from svea payment
         if ($request->has('svea_ord')) {

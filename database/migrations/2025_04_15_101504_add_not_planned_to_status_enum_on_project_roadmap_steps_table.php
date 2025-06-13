@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         DB::statement("
             ALTER TABLE project_roadmap_steps 
@@ -13,7 +13,7 @@ return new class extends Migration
         ");
     }
 
-    public function down()
+    public function down(): void
     {
         DB::statement("
             ALTER TABLE project_roadmap_steps 

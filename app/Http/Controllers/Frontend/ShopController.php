@@ -32,12 +32,16 @@ use App\Transaction;
 use App\User;
 use App\WorkshopsTaken;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
 use Carbon\Carbon;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use PaypalIPN;
 use PhpOffice\PhpWord\SimpleType\DocProtect;
@@ -549,10 +553,8 @@ class ShopController extends Controller
 
     /**
      * Check if user has paid course
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function hasPaidCourse()
+    public function hasPaidCourse(): JsonResponse
     {
         $hasPaidCourse = false;
 
@@ -570,10 +572,7 @@ class ShopController extends Controller
         return response()->json($hasPaidCourse);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function validateCheckoutForm($course_id, Request $request)
+    public function validateCheckoutForm($course_id, Request $request): JsonResponse
     {
         /*$this->validate($request, [
             'email'         => 'required',
@@ -632,7 +631,7 @@ class ShopController extends Controller
         return response()->json($this->courseService->processCheckout($request));
     }
 
-    public function vippsCheckout($course_id, Request $request, CourseService $courseService, LoginController $loginController)
+    public function vippsCheckout($course_id, Request $request, CourseService $courseService, LoginController $loginController): JsonResponse
     {
         $package = Package::find($request->package_id);
         $course = $package->course;
@@ -652,7 +651,7 @@ class ShopController extends Controller
         return response()->json(['redirect_link' => route('front.course.checkout.process-vipps',$vipps['course_id'])]);*/
     }
 
-    public function processVipps(CourseService $courseService)
+    public function processVipps(CourseService $courseService): RedirectResponse
     {
         $vippsCheckout = \Session::get('vipps_checkout');
         $package = Package::find($vippsCheckout['package_id']);
@@ -723,7 +722,7 @@ class ShopController extends Controller
         return redirect()->to($this->vippsInitiatePayment($vippsData));
     }
 
-    public function orderCancelled($course_id)
+    public function orderCancelled($course_id): View
     {
         return view('frontend.shop.cancelled-order', compact('course_id'));
     }
@@ -896,10 +895,8 @@ class ShopController extends Controller
 
     /**
      * Check the discount for the course
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function checkDiscount($course_id, Request $request)
+    public function checkDiscount($course_id, Request $request): JsonResponse
     {
 
         if (Auth::guest()) {
@@ -1048,10 +1045,7 @@ class ShopController extends Controller
         return response()->json('', 404);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function checkCouponDiscount($course_id, $coupon, CourseService $courseService)
+    public function checkCouponDiscount($course_id, $coupon, CourseService $courseService): JsonResponse
     {
         $course = Course::find($course_id);
         if (! $course) {
@@ -1878,26 +1872,26 @@ class ShopController extends Controller
             view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));*/
 
         if ($paymentMode->mode == 'Paypal') {
-            echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
-                <input type="hidden" name="cmd" value="_xclick">
-                <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
-                <input type="hidden" name="currency_code" value="NOK">
-                <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
-                <input type="hidden" name="item_name" value="Course Order Invoice">
-                <input type="hidden" name="amount" value="'.($price / 100).'">
-                <input type="hidden" name="return" value="'.route('front.shop.thankyou').'?gateway=Paypal">
-                <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
-            </form>';
-            echo '<script>document.getElementById("paypal_form").submit();</script>';
+            $paypalForm = '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_xclick">
+            <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
+            <input type="hidden" name="currency_code" value="NOK">
+            <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
+            <input type="hidden" name="item_name" value="Course Order Invoice">
+            <input type="hidden" name="amount" value="'.($price / 100).'">
+            <input type="hidden" name="return" value="'.route('front.shop.thankyou').'">
+            <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
+        </form>
+        <script>document.getElementById("paypal_form").submit();</script>';
 
-            return;
+        return new Response($paypalForm);
         }
 
         // return redirect(route('front.shop.thankyou'));
 
     }
 
-    public function thankyou(Request $request, CourseService $courseService)
+    public function thankyou(Request $request, CourseService $courseService): View
     {
 
         // check if from svea payment
@@ -2029,10 +2023,8 @@ class ShopController extends Controller
 
     /**
      * Get the payment plan options to display in plan section
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function getPaymentPlanOptions($id)
+    public function getPaymentPlanOptions($id): JsonResponse
     {
         $package = Package::find($id);
         $allowedPaymentMonth = [1];
@@ -2056,7 +2048,7 @@ class ShopController extends Controller
         return response()->json($paymentPlan);
     }
 
-    public function getPaymentModeOptions()
+    public function getPaymentModeOptions(): JsonResponse
     {
         return response()->json(\App\Http\FrontendHelpers::paymentModes(true));
     }
@@ -2097,7 +2089,7 @@ class ShopController extends Controller
         return header('HTTP/1.1 200 OK');
     }
 
-    public function proceedCheckout($course_id, Course $course, Request $request)
+    public function proceedCheckout($course_id, Course $course, Request $request): JsonResponse
     {
         $apiKey = app('Bambora')->credentials;
         $course = $course->find($course_id);

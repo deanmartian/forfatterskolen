@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MarketingPlanQuestion extends Model
 {
@@ -15,7 +16,7 @@ class MarketingPlanQuestion extends Model
         return json_decode($this->attributes['sub_question']);
     }
 
-    public function answers()
+    public function answers(): HasMany
     {
         return $this->hasMany(\App\MarketingPlanQuestionAnswer::class, 'question_id');
     }

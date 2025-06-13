@@ -4,6 +4,7 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AssignmentFeedbackNoGroup extends Model
 {
@@ -15,32 +16,30 @@ class AssignmentFeedbackNoGroup extends Model
 
     protected $with = ['manuscript'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function manuscript()
+    public function manuscript(): BelongsTo
     {
         return $this->belongsTo(\App\AssignmentManuscript::class, 'assignment_manuscript_id', 'id');
     }
 
-    public function feedbackUser()
+    public function feedbackUser(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'feedback_user_id', 'id');
     }
 
-    public function learner()
+    public function learner(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'learner_id', 'id');
     }
 
     /**
      * Accessor field
-     *
-     * @return string
      */
-    public function getFileLinkAttribute()
+    public function getFileLinkAttribute(): string
     {
         $fileLink = '';
         $filename = $this->attributes['filename'];

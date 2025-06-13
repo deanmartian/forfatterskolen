@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Video extends Model
 {
@@ -20,7 +21,7 @@ class Video extends Model
      */
     protected $fillable = ['lesson_id', 'embed_code'];
 
-    public function lesson()
+    public function lesson(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }

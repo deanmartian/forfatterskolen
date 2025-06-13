@@ -4,6 +4,7 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WebinarScheduledRegistration extends Model
 {
@@ -11,7 +12,7 @@ class WebinarScheduledRegistration extends Model
 
     protected $fillable = ['webinar_id', 'date'];
 
-    public function webinar()
+    public function webinar(): BelongsTo
     {
         return $this->belongsTo(\App\Webinar::class);
     }

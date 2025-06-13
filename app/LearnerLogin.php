@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LearnerLogin extends Model
 {
@@ -20,12 +22,12 @@ class LearnerLogin extends Model
      */
     protected $fillable = ['user_id', 'ip', 'country', 'country_code', 'provider', 'platform'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function loginActivity()
+    public function loginActivity(): HasMany
     {
         return $this->hasMany(\App\LearnerLoginActivity::class);
     }

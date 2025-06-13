@@ -5,6 +5,7 @@ namespace App;
 use App\Http\AdminHelpers;
 use FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PublisherBookLibrary extends Model
 {
@@ -17,7 +18,7 @@ class PublisherBookLibrary extends Model
         'book_image_jpg',
     ];
 
-    public function publisher()
+    public function publisher(): BelongsTo
     {
         return $this->belongsTo(\App\PublisherBook::class);
     }

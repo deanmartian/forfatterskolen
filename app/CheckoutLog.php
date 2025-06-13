@@ -4,6 +4,7 @@ namespace App;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CheckoutLog extends Model
 {
@@ -16,12 +17,12 @@ class CheckoutLog extends Model
 
     protected $appends = ['item_link', 'is_ordered_text', 'order_date'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class, 'parent_id', 'id');
     }

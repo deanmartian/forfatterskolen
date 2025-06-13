@@ -13,10 +13,8 @@ class AppServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         \Illuminate\Pagination\Paginator::useBootstrap();
 
@@ -63,10 +61,8 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Register any application services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         // allow on dev only
         if ($this->app->environment() !== 'production') {

@@ -7,8 +7,10 @@ use App\Invoice;
 use App\Paypal;
 use App\PayPalIPN;
 use App\Repositories\IPNRepository;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use PayPal\IPN\Event\IPNInvalid;
 use PayPal\IPN\Event\IPNVerificationFailure;
 use PayPal\IPN\Event\IPNVerified;
@@ -26,7 +28,7 @@ class PaypalController extends Controller
         $this->repository = $repository;
     }
 
-    public function form(Request $request, $invoice_id = null)
+    public function form(Request $request, $invoice_id = null): View
     {
         $invoice_id = $invoice_id ?: encrypt(1);
 
@@ -35,7 +37,7 @@ class PaypalController extends Controller
         return view('form', compact('order'));
     }
 
-    public function checkout($invoice_id, Request $request)
+    public function checkout($invoice_id, Request $request): RedirectResponse
     {
         $invoice = Invoice::findOrFail(decrypt($invoice_id));
 
@@ -61,9 +63,8 @@ class PaypalController extends Controller
     /**
      * @param  $invoice_id
      *                     $param $page
-     * @return mixed
      */
-    public function completed($invoice_id, $page, Request $request)
+    public function completed($invoice_id, $page, Request $request): RedirectResponse
     {
         $invoice = Invoice::findOrFail($invoice_id);
 
@@ -87,7 +88,7 @@ class PaypalController extends Controller
         ]);
     }
 
-    public function cancelled($invoice_id)
+    public function cancelled($invoice_id): RedirectResponse
     {
         $order = Invoice::findOrFail($invoice_id);
 

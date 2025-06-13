@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Backend;
 use App\Faq;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class FaqController extends Controller
 {
@@ -18,14 +20,14 @@ class FaqController extends Controller
         $this->middleware('checkPageAccess:10');
     }
 
-    public function index()
+    public function index(): View
     {
         $faqs = Faq::orderBy('created_at', 'asc')->get();
 
         return view('backend.faq.index', compact('faqs'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'title' => 'required|max:255',
@@ -43,7 +45,7 @@ class FaqController extends Controller
         ]);
     }
 
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $this->validate($request, [
             'title' => 'required|max:255',
@@ -61,7 +63,7 @@ class FaqController extends Controller
         ]);
     }
 
-    public function destroy($id, Request $request)
+    public function destroy($id, Request $request): RedirectResponse
     {
         $faq = Faq::findOrFail($id);
         $faq->forceDelete();

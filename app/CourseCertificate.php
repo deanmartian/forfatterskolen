@@ -4,6 +4,7 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CourseCertificate extends Model
 {
@@ -23,7 +24,7 @@ class CourseCertificate extends Model
      */
     protected $fillable = ['course_id', 'package_id', 'template'];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }

@@ -22,8 +22,11 @@ use App\Transformer\InvitationsTransformer;
 use App\Transformer\ReadersTransformer;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 
@@ -45,7 +48,7 @@ class PilotReaderAuthorController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function bookAuthor()
+    public function bookAuthor(): View
     {
         $invitations = PilotReaderBookInvitation::where([
             'email' => Auth::user()->email,
@@ -172,10 +175,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * List Invitaitons
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function listInvitations($id, $status)
+    public function listInvitations($id, $status): JsonResponse
     {
         $fractal = new Manager;
         $book = PilotReaderBook::find($id);
@@ -210,10 +211,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Cancel invitation from book
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function cancelInvitation(Request $request)
+    public function cancelInvitation(Request $request): JsonResponse
     {
         $invitation = PilotReaderBookInvitation::find($request->id);
         if (! $invitation->update(['status' => 3])) {
@@ -225,10 +224,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Restore or remove a reader from a book
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function restoreOrRemoveReader(Request $request)
+    public function restoreOrRemoveReader(Request $request): JsonResponse
     {
         $book_reader = PilotReaderBookReading::withTrashed()->find($request->id);
         $query = $request->action === 'restore' ? $book_reader->restore() : $book_reader->delete();
@@ -241,10 +238,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Send invitation for a book
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function bookAuthorBookInvitationSend($book_id, Request $request)
+    public function bookAuthorBookInvitationSend($book_id, Request $request): JsonResponse
     {
         if ($request->ajax() && $request->isMethod('post')) {
             $emails = $request->emails;
@@ -393,10 +388,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Validate the email address that the author wants to invite
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function bookAuthorBookInvitationValidateEmail($book_id, Request $request)
+    public function bookAuthorBookInvitationValidateEmail($book_id, Request $request): JsonResponse
     {
         $invitation = PilotReaderBookInvitation::where(['email' => $request->email, 'book_id' => $book_id])
             ->where('status', '<>', 3);
@@ -410,10 +403,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Update the invitation status based on the action selected
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function bookInvitationAction($_token, $action)
+    public function bookInvitationAction($_token, $action): RedirectResponse
     {
         $invitation = PilotReaderBookInvitation::where('_token', $_token)->first();
         $book = PilotReaderBook::find($invitation->book_id);
@@ -501,7 +492,7 @@ class PilotReaderAuthorController extends Controller
      *
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function bookAuthorBookUpdate($id, Request $request)
+    public function bookAuthorBookUpdate($id, Request $request): RedirectResponse
     {
         if ($book = PilotReaderBook::find($id)) {
             if ($request->has('title')) {
@@ -574,9 +565,8 @@ class PilotReaderAuthorController extends Controller
      * Update the sort of chapters based on the book id
      *
      * @param  $book_id  PilotReaderBook
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function bookAuthorBookSortChapter($book_id, Request $request)
+    public function bookAuthorBookSortChapter($book_id, Request $request): JsonResponse
     {
         $book = PilotReaderBook::find($book_id);
         $success = 0;
@@ -608,9 +598,8 @@ class PilotReaderAuthorController extends Controller
      * Update a chapter field
      *
      * @param  $chapter_id  PilotReaderBookChapter
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function bookChapterUpdateField($chapter_id, Request $request)
+    public function bookChapterUpdateField($chapter_id, Request $request): JsonResponse
     {
         $success = 0;
         if ($request->ajax()) {
@@ -738,9 +727,8 @@ class PilotReaderAuthorController extends Controller
      *
      * @param  $book_id  PilotReaderBook
      * @param  $chapter_id  PilotReaderBookChapter
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function bookAuthorBookDeleteChapter($book_id, $chapter_id)
+    public function bookAuthorBookDeleteChapter($book_id, $chapter_id): RedirectResponse
     {
         $book = PilotReaderBook::find($book_id);
         $chapter = PilotReaderBookChapter::find($chapter_id);
@@ -755,10 +743,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Create new note for the chapter
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function authorChapterNoteCreate(Request $request)
+    public function authorChapterNoteCreate(Request $request): JsonResponse
     {
         $data = $request->all();
         if ($request->ajax()) {
@@ -864,10 +850,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Update the chapter note
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function authorChapterNoteUpdate(Request $request)
+    public function authorChapterNoteUpdate(Request $request): JsonResponse
     {
         $data = $request->except('id', 'chapter_id');
         if (! PilotReaderChapterNote::find($request->id)->update($data)) {
@@ -879,10 +863,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Update the chapter note
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function authorChapterFeedbackUpdate(Request $request)
+    public function authorChapterFeedbackUpdate(Request $request): JsonResponse
     {
         $data = $request->except('id', 'chapter_id');
         if ($message = PilotReaderChapterFeedbackMessage::find($request->id)) {
@@ -897,10 +879,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Delete the draft
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function authorChapterDeleteDraft(Request $request)
+    public function authorChapterDeleteDraft(Request $request): JsonResponse
     {
         if (! PilotReaderChapterFeedbackMessage::destroy($request->id)) {
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
@@ -911,10 +891,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * List the chapter notes
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function authorChapterNoteList($chapter_id)
+    public function authorChapterNoteList($chapter_id): JsonResponse
     {
         $notes = PilotReaderBookChapter::find($chapter_id)->notes()->orderBy('created_at', 'asc')->get();
 
@@ -996,7 +974,7 @@ class PilotReaderAuthorController extends Controller
         return redirect()->route('learner.book-author');
     }
 
-    public function saveBulkChapters(Request $request)
+    public function saveBulkChapters(Request $request): JsonResponse
     {
         $chapters = $request->chapters;
         foreach ($chapters as $key => $chapter) {
@@ -1015,10 +993,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Set a bookmark
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function setBookMark(Request $request)
+    public function setBookMark(Request $request): JsonResponse
     {
         $bookmarker = Auth::user();
         $book = PilotReaderBookBookmark::where(['book_id' => $request->book_id, 'bookmarker_id' => $bookmarker->id]);
@@ -1051,10 +1027,8 @@ class PilotReaderAuthorController extends Controller
 
     /**
      * Delete the book
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function bookAuthorBookDelete(Request $request)
+    public function bookAuthorBookDelete(Request $request): JsonResponse
     {
         if (! PilotReaderBook::destroy($request->id)) {
             return response()->json(['error' => 'Opss. Something went wrong'], 500);

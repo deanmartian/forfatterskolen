@@ -4,6 +4,7 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class UserEmail extends Model
 {
@@ -16,7 +17,7 @@ class UserEmail extends Model
      */
     protected $fillable = ['user_id', 'email'];
 
-    public function users()
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(\App\User::class, 'user_emails', 'id');
     }

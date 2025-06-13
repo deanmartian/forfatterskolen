@@ -32,8 +32,12 @@ use App\WebinarRegistrant;
 use App\WebinarScheduledRegistration;
 use Carbon\Carbon;
 use File;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Maatwebsite\Excel\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class CourseController extends Controller
 {
@@ -46,7 +50,7 @@ class CourseController extends Controller
         $this->middleware('checkPageAccess:1');
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         if ($request->search && ! empty($request->search)) {
             $courses = Course::where('title', 'LIKE', '%'.$request->search.'%')->orderBy('created_at', 'desc')->paginate(25);
@@ -68,12 +72,12 @@ class CourseController extends Controller
         return $this->showSection($section, $course);
     }
 
-    public function showSection($section, $course)
+    public function showSection($section, $course): View
     {
         return view('backend.course.'.$section, compact('course', 'section'));
     }
 
-    public function create()
+    public function create(): View
     {
         $course = [
             'title' => old('title'),
@@ -101,7 +105,7 @@ class CourseController extends Controller
         return view('backend.course.create', compact('course'));
     }
 
-    public function store(CourseCreateRequest $request)
+    public function store(CourseCreateRequest $request): RedirectResponse
     {
         $free_for_days = $request->is_free ? $request->free_for_days : 0;
         $requestData = $request->toArray();
@@ -167,14 +171,14 @@ class CourseController extends Controller
         return redirect(route('admin.course.show', $course->id));
     }
 
-    public function edit($id)
+    public function edit($id): View
     {
         $course = Course::findOrFail($id)->toArray();
 
         return view('backend.course.edit', compact('course'));
     }
 
-    public function update($id, CourseUpdateRequest $request)
+    public function update($id, CourseUpdateRequest $request): RedirectResponse
     {
 
         $free_for_days = $request->is_free ? $request->free_for_days : 0;
@@ -269,7 +273,7 @@ class CourseController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $course = Course::findOrFail($id);
         $image = substr($course->course_image, 1);
@@ -281,7 +285,7 @@ class CourseController extends Controller
         return redirect(route('admin.course.index'));
     }
 
-    public function update_email($id, Request $request)
+    public function update_email($id, Request $request): RedirectResponse
     {
         $course = Course::findOrFail($id);
         $course->email = $request->email;
@@ -290,7 +294,7 @@ class CourseController extends Controller
         return redirect()->back();
     }
 
-    public function sendWelcomeEmail($id, Request $request)
+    public function sendWelcomeEmail($id, Request $request): RedirectResponse
     {
         $course = Course::find($id);
 
@@ -314,7 +318,7 @@ class CourseController extends Controller
         ]);
     }
 
-    public function clone_course($id, Request $request)
+    public function clone_course($id, Request $request): RedirectResponse
     {
         $course = Course::findOrFail($id);
         $clone_course = $course->replicate();
@@ -389,7 +393,7 @@ class CourseController extends Controller
         return redirect(route('admin.course.show', $clone_course->id));
     }
 
-    public function add_similar_course($id, Request $request)
+    public function add_similar_course($id, Request $request): RedirectResponse
     {
         $course = Course::findOrFail($id);
         $similar_course_id = Course::findOrFail($request->similar_course_id);
@@ -402,7 +406,7 @@ class CourseController extends Controller
         return redirect()->back();
     }
 
-    public function remove_similar_course($similar_course_id)
+    public function remove_similar_course($similar_course_id): RedirectResponse
     {
         $similar_course = SimilarCourse::findOrFail($similar_course_id);
         $similar_course->forceDelete();
@@ -410,7 +414,7 @@ class CourseController extends Controller
         return redirect()->back();
     }
 
-    public function updateStatus(Request $request)
+    public function updateStatus(Request $request): JsonResponse
     {
 
         $course = Course::find($request->course_id);
@@ -429,7 +433,7 @@ class CourseController extends Controller
         ]);
     }
 
-    public function updateForSaleStatus(Request $request)
+    public function updateForSaleStatus(Request $request): JsonResponse
     {
         $course = Course::find($request->course_id);
         $success = false;
@@ -449,10 +453,8 @@ class CourseController extends Controller
 
     /**
      * Update is free field
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function updateIsFreeStatus(Request $request)
+    public function updateIsFreeStatus(Request $request): JsonResponse
     {
         $course = Course::find($request->course_id);
         $success = false;
@@ -470,7 +472,7 @@ class CourseController extends Controller
         ]);
     }
 
-    public function sendEmailToLearners($id, Request $request)
+    public function sendEmailToLearners($id, Request $request): RedirectResponse
     {
         $course = Course::find($id);
         if ($course) {
@@ -585,10 +587,8 @@ class CourseController extends Controller
 
     /**
      * Send email to the learners that haven't started the free course yet
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function notStartedCourseReminder($course_id, Request $request)
+    public function notStartedCourseReminder($course_id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
         if ($course) {
@@ -682,7 +682,7 @@ class CourseController extends Controller
         return redirect()->back();
     }
 
-    public function setCourseTakenEndDate($courseId, Request $request)
+    public function setCourseTakenEndDate($courseId, Request $request): RedirectResponse
     {
         $learners = Course::find($courseId)->learners;
         $learners->update([
@@ -694,10 +694,8 @@ class CourseController extends Controller
 
     /**
      * Export the learners to excel
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function learnerListExcel($course_id, $type = 'email')
+    public function learnerListExcel($course_id, $type = 'email'): RedirectResponse
     {
         $course = Course::find($course_id);
         if ($course) {
@@ -743,10 +741,8 @@ class CourseController extends Controller
 
     /**
      * Course with learners from included package
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function learnerActiveListExcel($course_id)
+    public function learnerActiveListExcel($course_id): RedirectResponse
     {
         $course = Course::find($course_id);
         if ($course) {
@@ -787,10 +783,8 @@ class CourseController extends Controller
 
     /**
      * Save expiration email reminder
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function expirationReminder($course_id, Request $request)
+    public function expirationReminder($course_id, Request $request): RedirectResponse
     {
         $this->validate($request, [
             'subject_28_days' => 'required',
@@ -818,10 +812,8 @@ class CourseController extends Controller
 
     /**
      * Add all learners to all webinars
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function addLearnersToWebinars($course_id, Request $request)
+    public function addLearnersToWebinars($course_id, Request $request): RedirectResponse
     {
         if (! $request->webinar_id) {
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Webinar id is required.'),
@@ -922,10 +914,7 @@ class CourseController extends Controller
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function updateCertificateDates($course_id, Request $request)
+    public function updateCertificateDates($course_id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
         $course->completed_date = $request->completed_date ?: null;
@@ -936,10 +925,7 @@ class CourseController extends Controller
             'alert_type' => 'success']);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function saveCertificateTemplate($course_id, Request $request)
+    public function saveCertificateTemplate($course_id, Request $request): RedirectResponse
     {
 
         CourseCertificate::updateOrCreate([
@@ -953,7 +939,7 @@ class CourseController extends Controller
 
     }
 
-    public function savePackageCertificateTemplate($course_id, $package_id, Request $request)
+    public function savePackageCertificateTemplate($course_id, $package_id, Request $request): RedirectResponse
     {
 
         CourseCertificate::updateOrCreate([
@@ -1023,14 +1009,14 @@ class CourseController extends Controller
         return $excel->download(new GenericExport($learners, $headers), 'Current Learners.xlsx');
     }
 
-    public function applicationDetails($application_id)
+    public function applicationDetails($application_id): View
     {
         $application = CourseApplication::find($application_id);
 
         return view('backend.course.partials._application-details', compact('application'));
     }
 
-    public function applicationDownload($application_id)
+    public function applicationDownload($application_id): BinaryFileResponse
     {
         $application = CourseApplication::find($application_id);
 
@@ -1071,7 +1057,7 @@ class CourseController extends Controller
         return response()->download($fileToPath)->deleteFileAfterSend(true);
     }
 
-    public function applicationApprove($application_id, CourseService $courseService)
+    public function applicationApprove($application_id, CourseService $courseService): RedirectResponse
     {
         $application = CourseApplication::find($application_id);
         $courseTaken = $courseService->addCourseToLearner($application->user_id, $application->package_id);
@@ -1088,7 +1074,7 @@ class CourseController extends Controller
         ]);
     }
 
-    public function applicationDelete($application_id)
+    public function applicationDelete($application_id): RedirectResponse
     {
         CourseApplication::find($application_id)->delete();
 
@@ -1098,7 +1084,7 @@ class CourseController extends Controller
         ]);
     }
 
-    public function canReceiveEmailUpdate($course_taken_id, Request $request)
+    public function canReceiveEmailUpdate($course_taken_id, Request $request): JsonResponse
     {
         $courseTaken = CoursesTaken::find($course_taken_id);
         $success = false;
@@ -1116,7 +1102,7 @@ class CourseController extends Controller
         ]);
     }
 
-    public function inFacebookGroupUpdate($course_taken_id, Request $request)
+    public function inFacebookGroupUpdate($course_taken_id, Request $request): JsonResponse
     {
         $courseTaken = CoursesTaken::find($course_taken_id);
         $success = false;
@@ -1134,7 +1120,7 @@ class CourseController extends Controller
         ]);
     }
 
-    public function excludeInScheduledRegistration($course_taken_id, Request $request)
+    public function excludeInScheduledRegistration($course_taken_id, Request $request): JsonResponse
     {
         $courseTaken = CoursesTaken::find($course_taken_id);
         $success = false;
@@ -1152,10 +1138,7 @@ class CourseController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function certificate($course_id, $package_id)
+    public function certificate($course_id, $package_id): JsonResponse
     {
         $course = Course::find($course_id);
         $package = Package::find($package_id);
@@ -1226,7 +1209,7 @@ class CourseController extends Controller
         return $excel->download(new GenericExport($learnerList, $headers), 'Course Buyers 2021.xlsx');
     }
 
-    public function allUpcomingWebinars()
+    public function allUpcomingWebinars(): View
     {
         $webinars = Webinar::where('start_date', '>=', now()->format('Y-m-d H:i:s'))
             ->oldest('start_date')

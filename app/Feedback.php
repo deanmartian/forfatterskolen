@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Feedback extends Model
 {
@@ -20,7 +21,7 @@ class Feedback extends Model
      */
     protected $fillable = ['manuscript_id', 'filename', 'grade', 'notes'];
 
-    public function manuscript()
+    public function manuscript(): BelongsTo
     {
         return $this->belongsTo(\App\Manuscript::class);
     }

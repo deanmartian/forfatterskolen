@@ -16,7 +16,9 @@ use App\ProjectTypeSetting;
 use App\Services\ProjectService;
 use Auth;
 use FrontendHelpers;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ProgressPlanController extends Controller
 {
@@ -48,7 +50,7 @@ class ProgressPlanController extends Controller
         return view('frontend.learner.self-publishing.progress-plan', compact('steps'));
     }
 
-    public function planStep($stepNumber)
+    public function planStep($stepNumber): View
     {
         $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
         if (! $standardProject) {
@@ -120,7 +122,7 @@ class ProgressPlanController extends Controller
 
     }
 
-    public function uploadManuscript(Request $request)
+    public function uploadManuscript(Request $request): RedirectResponse
     {
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
 
@@ -157,7 +159,7 @@ class ProgressPlanController extends Controller
 
     }
 
-    public function uploadOtherServiceManuscript($type, Request $request, ProjectService $projectService)
+    public function uploadOtherServiceManuscript($type, Request $request, ProjectService $projectService): RedirectResponse
     {
         $this->validate($request, ['manuscript' => 'required']);
 
@@ -201,7 +203,7 @@ class ProgressPlanController extends Controller
         ]);
     }
 
-    public function saveEbook($projectId, Request $request, ProjectService $projectService)
+    public function saveEbook($projectId, Request $request, ProjectService $projectService): RedirectResponse
     {
         $request->merge(['project_id' => $projectId]);
 
@@ -212,7 +214,7 @@ class ProgressPlanController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function saveAudio($project_id, Request $request, ProjectService $projectService)
+    public function saveAudio($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         $request->merge(['project_id' => $project_id]);
 
@@ -273,7 +275,7 @@ class ProgressPlanController extends Controller
         }
     }
 
-    public function uploadTypeSetting(Request $request)
+    public function uploadTypeSetting(Request $request): RedirectResponse
     {
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
 

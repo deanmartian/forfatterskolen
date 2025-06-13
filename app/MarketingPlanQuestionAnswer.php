@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MarketingPlanQuestionAnswer extends Model
 {
@@ -15,12 +16,12 @@ class MarketingPlanQuestionAnswer extends Model
         return json_decode($this->attributes['sub_answer']);
     }
 
-    public function question()
+    public function question(): BelongsTo
     {
         return $this->belongsTo(\App\MarketingPlanQuestion::class, 'question_id', 'id');
     }
 
-    public function project()
+    public function project(): BelongsTo
     {
         return $this->belongsTo(\App\Project::class, 'project_id', 'id');
     }

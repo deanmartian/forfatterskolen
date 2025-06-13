@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\UserTask;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -26,10 +27,8 @@ class TaskController extends Controller
 
     /**
      * Create new task
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->model->create($request->except('_token'));
 
@@ -41,10 +40,8 @@ class TaskController extends Controller
 
     /**
      * Finish the task
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function finishTask($task_id)
+    public function finishTask($task_id): RedirectResponse
     {
         $task = $this->model->find($task_id);
         if (! $task) {
@@ -61,10 +58,8 @@ class TaskController extends Controller
 
     /**
      * Update a task
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($task_id, Request $request)
+    public function update($task_id, Request $request): RedirectResponse
     {
         $task = $this->model->find($task_id);
         if (! $task) {
@@ -81,10 +76,8 @@ class TaskController extends Controller
 
     /**
      * Delete a task
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($task_id)
+    public function destroy($task_id): RedirectResponse
     {
         $task = $this->model->find($task_id);
         if (! $task) {

@@ -19,8 +19,10 @@ use App\Settings;
 use App\ShopManuscriptsTaken;
 use App\TimeRegister;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -31,7 +33,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class PageController extends Controller
 {
-    public function dashboard()
+    public function dashboard(): View
     {
         $assigned_shop_manuscripts = ShopManuscriptsTaken::where('feedback_user_id', Auth::user()->id)->get();
         $assignedAssignments = $this->filterAssignmentByCheckMaxWords(1);
@@ -66,7 +68,7 @@ class PageController extends Controller
 
     }
 
-    public function upcomingAssignments()
+    public function upcomingAssignments(): View
     {
         $upcomingAssignments = Assignment::where('editor_id', '=', Auth::user()->id)
             ->whereDoesntHave('manuscripts') // check if there's no submitted manuscript yet
@@ -76,7 +78,7 @@ class PageController extends Controller
         return view('editor.upcoming-assignment', compact('upcomingAssignments'));
     }
 
-    public function assignmentArchive(Request $request)
+    public function assignmentArchive(Request $request): View
     {
         if ($request->search_shop_manuscript && ! empty($request->search_shop_manuscript)) {
             $assigned_shop_manuscripts = ShopManuscriptsTaken::where('feedback_user_id', Auth::user()->id)
@@ -186,19 +188,19 @@ class PageController extends Controller
             'corrections', 'copyEditings', 'assignedAssignmentManuscripts'));
     }
 
-    public function yearlyCalendar()
+    public function yearlyCalendar(): View
     {
         return view('editor.yearly-calendar');
     }
 
-    public function editorsNote()
+    public function editorsNote(): View
     {
         $note = Settings::editorsNote();
 
         return view('editor.editors-note', compact('note'));
     }
 
-    public function selfPublishingFeedback($publishing_id, Request $request)
+    public function selfPublishingFeedback($publishing_id, Request $request): RedirectResponse
     {
         $this->validate($request, [
             'manuscript' => 'required',
@@ -373,7 +375,7 @@ class PageController extends Controller
         return response()->download(public_path($manuscripts[0]));
     }
 
-    public function assignmentManuscriptFinished($assignment_manuscript_id)
+    public function assignmentManuscriptFinished($assignment_manuscript_id): RedirectResponse
     {
         if ($assignment = AssignmentManuscript::find($assignment_manuscript_id)) {
             $assignment->status = AssignmentManuscript::FINISHED_STATUS;
@@ -388,7 +390,7 @@ class PageController extends Controller
         return redirect()->back();
     }
 
-    public function projectDetails($project_id)
+    public function projectDetails($project_id): View
     {
         $project = Project::find($project_id);
         $projectTimeRegisters = TimeRegister::where('project_id', $project->id)->with('project')->get();
@@ -396,7 +398,7 @@ class PageController extends Controller
         return view('editor.project.show', compact('project', 'projectTimeRegisters'));
     }
 
-    public function projectEditorHours($project_id, Request $request)
+    public function projectEditorHours($project_id, Request $request): RedirectResponse
     {
         $project = Project::find($project_id);
         $project->editor_total_hours = $request->editor_total_hours;

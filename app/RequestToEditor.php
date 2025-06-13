@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RequestToEditor extends Model
 {
@@ -10,12 +11,12 @@ class RequestToEditor extends Model
 
     protected $appends = ['editor_name', 'AnswerP'];
 
-    public function editor()
+    public function editor(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 
-    public function manuscript()
+    public function manuscript(): BelongsTo
     {
         return $this->belongsTo(\App\ShopManuscriptsTaken::class, 'manuscript_id', 'id');
     }

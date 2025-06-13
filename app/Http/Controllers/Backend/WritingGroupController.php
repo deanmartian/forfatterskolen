@@ -6,6 +6,8 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddWritingGroupRequest;
 use App\Repositories\Services\WritingGroupService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class WritingGroupController extends Controller
 {
@@ -31,7 +33,7 @@ class WritingGroupController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $writingGroups = $this->writingGroupService->getRecord();
 
@@ -43,7 +45,7 @@ class WritingGroupController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $writingGroup = $this->writingGroupService->fields();
         $learners = AdminHelpers::getLearnerList();
@@ -53,10 +55,8 @@ class WritingGroupController extends Controller
 
     /**
      * Insert writing group
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(AddWritingGroupRequest $request)
+    public function store(AddWritingGroupRequest $request): RedirectResponse
     {
         $this->writingGroupService->store($request);
 
@@ -64,10 +64,9 @@ class WritingGroupController extends Controller
     }
 
     /**
-     * @param  int  $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit($id)
+    public function edit(int $id): View
     {
         $writingGroup = $this->writingGroupService->getRecord($id);
         $learners = AdminHelpers::getLearnerList();
@@ -79,9 +78,8 @@ class WritingGroupController extends Controller
      * Update writing group
      *
      * @param  $id  int
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, AddWritingGroupRequest $request)
+    public function update($id, AddWritingGroupRequest $request): RedirectResponse
     {
         $this->writingGroupService->update($id, $request);
 
@@ -92,9 +90,8 @@ class WritingGroupController extends Controller
      * Delete writing group
      *
      * @param  $id  int
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $this->writingGroupService->destroy($id);
 

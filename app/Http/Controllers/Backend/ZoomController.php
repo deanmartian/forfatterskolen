@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Backend;
 use App\Helpers\ApiResponse;
 use App\Helpers\ZoomApi;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ZoomController extends Controller
 {
@@ -30,7 +32,7 @@ class ZoomController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function webinars($user_id)
+    public function webinars($user_id): View
     {
         \Session::put('zoom_user_id', $user_id);
         $zoom = new ZoomApi;
@@ -51,7 +53,7 @@ class ZoomController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function createWebinar($user_id)
+    public function createWebinar($user_id): View
     {
         $webinar = [
             'topic' => '',
@@ -72,10 +74,8 @@ class ZoomController extends Controller
 
     /**
      * Create new webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function storeWebinar($user_id, Request $request)
+    public function storeWebinar($user_id, Request $request): RedirectResponse
     {
         $zoom = new ZoomApi;
 
@@ -114,7 +114,7 @@ class ZoomController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function editWebinar($webinar_id)
+    public function editWebinar($webinar_id): View
     {
         $zoom = new ZoomApi;
         $response = $zoom->processCurl('GET', $this->zoomUrl.'/webinars/'.$webinar_id);
@@ -165,10 +165,8 @@ class ZoomController extends Controller
 
     /**
      * Update the webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateWebinar($webinar_id, Request $request)
+    public function updateWebinar($webinar_id, Request $request): RedirectResponse
     {
         $zoom = new ZoomApi;
 
@@ -205,10 +203,8 @@ class ZoomController extends Controller
 
     /**
      * Delete the webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteWebinar($webinar_id)
+    public function deleteWebinar($webinar_id): RedirectResponse
     {
         $zoom = new ZoomApi;
         $user_id = \Session::get('zoom_user_id'); // get the set user id from the webinar list
@@ -223,10 +219,8 @@ class ZoomController extends Controller
 
     /**
      * Create new panelist for particular webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function storePanelist($webinar_id, Request $request)
+    public function storePanelist($webinar_id, Request $request): RedirectResponse
     {
         $zoom = new ZoomApi;
 
@@ -248,10 +242,8 @@ class ZoomController extends Controller
 
     /**
      * Delete a panelist for certain webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function deletePanelist($webinar_id, $panelist_id)
+    public function deletePanelist($webinar_id, $panelist_id): RedirectResponse
     {
         $zoom = new ZoomApi;
 

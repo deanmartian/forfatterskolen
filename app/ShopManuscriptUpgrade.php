@@ -4,6 +4,7 @@ namespace App;
 
 use App\Http\FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ShopManuscriptUpgrade extends Model
 {
@@ -18,7 +19,7 @@ class ShopManuscriptUpgrade extends Model
         'price_25_additional',
     ];
 
-    public function upgrade_manuscript()
+    public function upgrade_manuscript(): BelongsTo
     {
         return $this->belongsTo(\App\ShopManuscript::class, 'upgrade_shop_manuscript_id');
     }

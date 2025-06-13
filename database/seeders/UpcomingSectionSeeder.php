@@ -8,10 +8,8 @@ class UpcomingSectionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         \App\UpcomingSection::create([
             'name' => 'Reprise webinar',

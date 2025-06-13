@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WordWrittenGoal extends Model
 {
@@ -20,7 +21,7 @@ class WordWrittenGoal extends Model
      */
     protected $fillable = ['user_id', 'from_date', 'to_date', 'total_words'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

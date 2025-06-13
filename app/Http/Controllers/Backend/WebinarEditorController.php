@@ -5,16 +5,15 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Webinar;
 use App\WebinarEditor;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class WebinarEditorController extends Controller
 {
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store($webinar_id, Request $request)
+    public function store($webinar_id, Request $request): RedirectResponse
     {
         $webinar = Webinar::findOrFail($webinar_id);
 
@@ -30,11 +29,8 @@ class WebinarEditorController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function update($id, Request $request)
+    public function update(int $id, Request $request): RedirectResponse
     {
         $webinarEditor = WebinarEditor::findOrFail($id);
         $webinarEditor->presenter_url = $request->presenter_url;
@@ -47,11 +43,8 @@ class WebinarEditorController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function deleteEditor($id)
+    public function deleteEditor(int $id): RedirectResponse
     {
         $webinarEditor = webinarEditor::findOrFail($id);
         $webinarEditor->forceDelete();

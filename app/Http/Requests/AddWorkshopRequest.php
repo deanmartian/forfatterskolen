@@ -9,20 +9,16 @@ class AddWorkshopRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
-    public function rules(Request $request)
+    public function rules(Request $request): array
     {
         // check if the workshop is free and use this rule
         if ($request->is_free) {

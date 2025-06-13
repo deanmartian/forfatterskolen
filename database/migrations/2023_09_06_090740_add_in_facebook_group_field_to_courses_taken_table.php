@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('courses_taken', function (Blueprint $table) {
             $table->tinyInteger('in_facebook_group')->after('is_pay_later')->default(0);
@@ -20,10 +18,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('courses_taken', function (Blueprint $table) {
             $table->dropColumn('in_facebook_group');

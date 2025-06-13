@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('self_publishing_feedback', function (Blueprint $table) {
             $table->unsignedInteger('feedback_user_id')->nullable()->after('self_publishing_id');
@@ -20,10 +18,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('self_publishing_feedback', function (Blueprint $table) {
             $table->dropColumn('feedback_user_id');

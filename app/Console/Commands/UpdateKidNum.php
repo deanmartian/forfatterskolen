@@ -33,10 +33,8 @@ class UpdateKidNum extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): mixed
     {
         $fikenInvoices = 'https://fiken.no/api/v1/companies/forfatterskolen-as/invoices';
         $username = 'cleidoscope@gmail.com';

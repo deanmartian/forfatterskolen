@@ -7,6 +7,7 @@ use App\EmailHistory;
 use App\Order;
 use App\ShopManuscriptsTaken;
 use DB;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class SaleService
 {
@@ -29,11 +30,7 @@ class SaleService
         $this->order = $order;
     }
 
-    /**
-     * @param  int  $is_archive
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    public function queryCoursesTaken($is_archive = 0)
+    public function queryCoursesTaken(int $is_archive = 0): LengthAwarePaginator
     {
         return $this->coursesTaken->whereHas('user') // , 'receivedWelcomeEmail', 'receivedFollowUpEmail'
             ->whereHas('package.course', function ($query) {
@@ -68,11 +65,7 @@ class SaleService
         ]);
     }
 
-    /**
-     * @param  int  $is_archive
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    public function queryShopManuscriptsTaken($is_archive = 0)
+    public function queryShopManuscriptsTaken(int $is_archive = 0): LengthAwarePaginator
     {
 
         $query = DB::table('shop_manuscripts_taken')

@@ -9,14 +9,17 @@ use App\Http\Controllers\Controller;
 use App\Mail\SubjectBodyEmail;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ContractController extends Controller
 {
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $contracts = Contract::whereNull('project_id')->paginate(10);
         if (! \Auth::user()->isSuperUser()) {
@@ -30,7 +33,7 @@ class ContractController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $route = route('admin.contract.store');
         $action = 'create';
@@ -113,7 +116,7 @@ class ContractController extends Controller
      * @param  null  $id
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function processSave(Request $request, $id = null)
+    public function processSave(Request $request, $id = null): RedirectResponse
     {
         $this->validate($request, [
             'title' => 'required',
@@ -188,7 +191,7 @@ class ContractController extends Controller
     /**
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function destroy($id, Request $request)
+    public function destroy($id, Request $request): RedirectResponse
     {
         $contract = Contract::findOrFail($id);
         $image = substr($contract->image, 1);
@@ -200,7 +203,7 @@ class ContractController extends Controller
         return redirect($request->redirectRoute);
     }
 
-    public function sendContract($id, Request $request)
+    public function sendContract($id, Request $request): RedirectResponse
     {
 
         $this->validate($request, [
@@ -249,7 +252,7 @@ class ContractController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function contractStatus($id, Request $request)
+    public function contractStatus($id, Request $request): JsonResponse
     {
         $contract = Contract::find($id);
         $success = false;
@@ -275,7 +278,7 @@ class ContractController extends Controller
         return $pdf->download($contract->code.'.pdf');
     }
 
-    public function saveContractTemplate($id, Request $request)
+    public function saveContractTemplate($id, Request $request): RedirectResponse
     {
         $this->validate($request, [
             'title' => 'required',
@@ -296,7 +299,7 @@ class ContractController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function deleteContractTemplate($id)
+    public function deleteContractTemplate($id): RedirectResponse
     {
         ContractTemplate::find($id)->delete();
 
@@ -305,10 +308,7 @@ class ContractController extends Controller
                 'alert_type' => 'success']);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function signContract($id, Request $request)
+    public function signContract($id, Request $request): RedirectResponse
     {
         $contract = Contract::findOrFail($id);
 

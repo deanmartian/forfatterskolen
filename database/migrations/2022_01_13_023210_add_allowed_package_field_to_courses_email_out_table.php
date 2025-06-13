@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('courses_email_out', function (Blueprint $table) {
             $table->string('allowed_package')->nullable()->after('from_email');
@@ -20,10 +18,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('courses_email_out', function (Blueprint $table) {
             $table->dropColumn('allowed_package');

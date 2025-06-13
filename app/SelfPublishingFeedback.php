@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SelfPublishingFeedback extends Model
 {
@@ -10,22 +11,20 @@ class SelfPublishingFeedback extends Model
 
     protected $appends = ['file_link'];
 
-    public function selfPublishing()
+    public function selfPublishing(): BelongsTo
     {
         return $this->belongsTo(\App\SelfPublishing::class);
     }
 
-    public function feedbackUser()
+    public function feedbackUser(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'feedback_user_id', 'id');
     }
 
     /**
      * Accessor field
-     *
-     * @return string
      */
-    public function getFileLinkAttribute()
+    public function getFileLinkAttribute(): string
     {
         $fileLink = '';
         $files = explode(',', $this->attributes['manuscript']);

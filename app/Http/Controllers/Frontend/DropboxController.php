@@ -6,8 +6,10 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
 use GuzzleHttp\Client;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -55,7 +57,7 @@ class DropboxController extends Controller
         return $accessToken;
     }
 
-    public function refreshDropboxAccessToken()
+    public function refreshDropboxAccessToken(): JsonResponse
     {
         $appKey = config('filesystems.disks.dropbox.key');
         $appSecret = config('filesystems.disks.dropbox.secret');
@@ -93,7 +95,7 @@ class DropboxController extends Controller
         }
     }
 
-    public function dropboxUpload()
+    public function dropboxUpload(): View
     {
         return view('frontend.test');
     }

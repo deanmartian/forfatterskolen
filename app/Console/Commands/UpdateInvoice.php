@@ -34,10 +34,8 @@ class UpdateInvoice extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): int
     {
         $pageCount = 1;
         // LIVE:forfatterskolen-as DEMO: fiken-demo-glede-og-bil-as2

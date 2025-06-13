@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProjectTask extends Model
 {
@@ -13,12 +14,12 @@ class ProjectTask extends Model
         'status',
     ];
 
-    public function editor()
+    public function editor(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'assigned_to', 'id');
     }
 
-    public function project()
+    public function project(): BelongsTo
     {
         return $this->belongsTo(\App\Project::class);
     }

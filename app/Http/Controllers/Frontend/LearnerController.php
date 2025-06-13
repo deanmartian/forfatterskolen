@@ -99,11 +99,16 @@ use Carbon\Carbon;
 use File;
 use Firebase\JWT\JWT;
 use Hash;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
@@ -282,7 +287,7 @@ class LearnerController extends Controller
             'dashboardCalendar', 'freeCourses', 'projects', 'inventorySummaries'));
     }
 
-    public function course()
+    public function course(): View
     {
         $user = Auth::user();
         $surveys = Survey::all();
@@ -337,7 +342,7 @@ class LearnerController extends Controller
         return $filtered_data;
     }
 
-    public function shopManuscript()
+    public function shopManuscript(): View
     {
         $shopManuscriptsTaken = Auth::user()->shopManuscriptsTaken()->paginate(4);
 
@@ -441,17 +446,15 @@ class LearnerController extends Controller
         return response()->download(public_path($feedbacks[0]));
     }
 
-    public function workshop()
+    public function workshop(): View
     {
         return view('frontend.learner.workshop');
     }
 
     /**
      * Approve the coaching date set by admin
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function approveCoachingDate($id, Request $request)
+    public function approveCoachingDate($id, Request $request): RedirectResponse
     {
         if ($coachingTimer = CoachingTimerManuscript::find($id)) {
             $data = $request->except('_token');
@@ -466,10 +469,8 @@ class LearnerController extends Controller
 
     /**
      * Suggest coaching date
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function suggestCoachingDate($id, Request $request)
+    public function suggestCoachingDate($id, Request $request): RedirectResponse
     {
         if ($coachingTimer = CoachingTimerManuscript::find($id)) {
             $data = $request->except('_token');
@@ -606,10 +607,8 @@ class LearnerController extends Controller
 
     /**
      * Register the user to the webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function webinarRegister($webinar_key, $webinar_id)
+    public function webinarRegister($webinar_key, $webinar_id): RedirectResponse
     {
         $user = Auth::user();
         $data = [
@@ -652,10 +651,8 @@ class LearnerController extends Controller
 
     /**
      * Add the user as registrant on the webinar
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function webinarRegisterOrig($webinar_key, $webinar_id)
+    public function webinarRegisterOrig($webinar_key, $webinar_id): RedirectResponse
     {
         $webinar_link = 'https://attendee.gotowebinar.com/register/'.$webinar_key;
         $user = Auth::user();
@@ -822,12 +819,12 @@ class LearnerController extends Controller
         return abort('450', 'testing here');
     }
 
-    public function notifications()
+    public function notifications(): View
     {
         return view('frontend.learner.notifications');
     }
 
-    public function calendar()
+    public function calendar(): View
     {
         $events = [];
 
@@ -1144,7 +1141,7 @@ class LearnerController extends Controller
             'upcomingAssignments', 'waitingForResponse', 'assignmentGroupLearners', 'noWordLimitAssignments'));
     }
 
-    public function assignmentManuscriptUpload($id, Request $request)
+    public function assignmentManuscriptUpload($id, Request $request): RedirectResponse
     {
         $assignment = Assignment::findOrFail($id);
         $assignmentManuscript = AssignmentManuscript::where('assignment_id', $assignment->id)->where('user_id', Auth::user()->id)->first();
@@ -1307,7 +1304,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function group_show($id)
+    public function group_show($id): View
     {
         $group = AssignmentGroup::where('id', $id)->whereHas('learners', function ($query) {
             $query->where('user_id', Auth::user()->id);
@@ -1329,7 +1326,7 @@ class LearnerController extends Controller
             'groupLearnerList', 'assignmentManuscript'));
     }
 
-    public function groupShowDetails($id)
+    public function groupShowDetails($id): View
     {
         $group = AssignmentGroup::where('id', $id)->whereHas('learners', function ($query) {
             $query->where('user_id', Auth::user()->id);
@@ -1407,7 +1404,7 @@ class LearnerController extends Controller
         ];
     }
 
-    public function submit_feedback($group_id, $id, Request $request)
+    public function submit_feedback($group_id, $id, Request $request): RedirectResponse
     {
         $group = AssignmentGroup::where('id', $group_id)->whereHas('learners', function ($query) use ($id) {
             $query->where('id', $id)->where('user_id', '<>', Auth::user()->id);
@@ -1445,12 +1442,12 @@ class LearnerController extends Controller
         }
     }
 
-    public function manuscript()
+    public function manuscript(): View
     {
         return view('frontend.learner.manuscript');
     }
 
-    public function invoice(Request $request)
+    public function invoice(Request $request): View
     {
         $unpaid = Invoice::where('user_id', Auth::user()->id)
             ->where('fiken_is_paid', 0)
@@ -1520,7 +1517,7 @@ class LearnerController extends Controller
         return abort('503');
     }
 
-    public function changePortal($portal)
+    public function changePortal($portal): RedirectResponse
     {
         \Session::put('current-portal', $portal);
 
@@ -1575,7 +1572,7 @@ class LearnerController extends Controller
         return $pdf->download($order->id.'-Kreditnota.pdf');
     }
 
-    public function saveCompany($order_id, Request $request)
+    public function saveCompany($order_id, Request $request): JsonResponse
     {
         $this->validate($request, [
             'customer_number' => 'required',
@@ -1599,10 +1596,8 @@ class LearnerController extends Controller
 
     /**
      * Redeem purchased gift
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function redeemGift(Request $request)
+    public function redeemGift(Request $request): RedirectResponse
     {
 
         $giftPurchase = GiftPurchase::where('redeem_code', $request->redeem_code)->first();
@@ -1732,7 +1727,7 @@ class LearnerController extends Controller
             $emailTemplate->from_email, null, null, 'shop-manuscripts-taken', $shopManuscriptTaken->id));
     }
 
-    public function vippsEFaktura($invoice_id, Request $request)
+    public function vippsEFaktura($invoice_id, Request $request): RedirectResponse
     {
         $invoice = new Invoice;
         $invoice = $invoice->find($invoice_id);
@@ -1759,10 +1754,8 @@ class LearnerController extends Controller
 
     /**
      * Set the phone number that would be use for sending vipss-efaktura
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function setVippsEFaktura(Request $request)
+    public function setVippsEFaktura(Request $request): RedirectResponse
     {
         if ($request->mobile_number) {
             $this->validate($request, [
@@ -1854,7 +1847,7 @@ class LearnerController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function publishing(Request $request, PublishingService $publishingService)
+    public function publishing(Request $request, PublishingService $publishingService): View
     {
         if ($request->search && ! empty($request->search)) {
             $searchFromGenre = Genre::where('name', 'LIKE', '%'.$request->search.'%')
@@ -1893,7 +1886,7 @@ class LearnerController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function competition(CompetitionService $competitionService)
+    public function competition(CompetitionService $competitionService): View
     {
         $competitions = $competitionService->getActiveRecords();
 
@@ -1905,7 +1898,7 @@ class LearnerController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function privateMessage()
+    public function privateMessage(): View
     {
         $messages = Auth::user()->messages()->paginate(10);
 
@@ -1917,7 +1910,7 @@ class LearnerController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function writingGroups(WritingGroupService $writingGroupService)
+    public function writingGroups(WritingGroupService $writingGroupService): View
     {
         $writingGroups = $writingGroupService->getRecord();
 
@@ -1945,7 +1938,7 @@ class LearnerController extends Controller
         return redirect()->route('learner.writing-groups');
     }
 
-    public function upgrade(Request $request)
+    public function upgrade(Request $request): View
     {
 
         // check if from svea payment
@@ -2010,7 +2003,7 @@ class LearnerController extends Controller
         return view('frontend.learner.upgrade', compact('assignments', 'coursesTaken'));
     }
 
-    public function takeCourse(Request $request)
+    public function takeCourse(Request $request): RedirectResponse
     {
         $courseTaken = CoursesTaken::findOrFail($request->courseTakenId);
         if (Auth::user()->can('participateCourse', $courseTaken) &&
@@ -2043,7 +2036,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function timeRegister()
+    public function timeRegister(): View
     {
         /* $timeRegisters = Auth::user()->timeRegisters->load('project'); */
         $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
@@ -2330,7 +2323,7 @@ class LearnerController extends Controller
         return $data;
     }
 
-    public function saveForSaleBooks(Request $request)
+    public function saveForSaleBooks(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'title' => 'required',
@@ -2349,7 +2342,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function deleteForSaleBooks($id)
+    public function deleteForSaleBooks($id): RedirectResponse
     {
         UserBookForSale::find($id)->delete();
 
@@ -2371,7 +2364,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function project()
+    public function project(): View
     {
         $projects = Project::where('user_id', Auth::user()->id)->get();
 
@@ -2403,7 +2396,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function showProject($project_id)
+    public function showProject($project_id): View
     {
         $project = Project::where('user_id', Auth::user()->id)->where('id', $project_id)->firstOrFail();
 
@@ -2430,14 +2423,14 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function orderService($projectId, $serviceId)
+    public function orderService($projectId, $serviceId): View
     {
         $service = AppPublishingService::findOrFail($serviceId);
 
         return view('frontend.learner.self-publishing.project.service-order', compact('service', 'projectId'));
     }
 
-    public function projectGraphicWork($project_id)
+    public function projectGraphicWork($project_id): View
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $covers = ProjectGraphicWork::cover()->where('project_id', $project_id)->get();
@@ -2453,7 +2446,7 @@ class LearnerController extends Controller
             'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs', 'bookFormattingList', 'indesigns', 'printReadyList'));
     }
 
-    public function projectRegistration($project_id)
+    public function projectRegistration($project_id): View
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
@@ -2466,7 +2459,7 @@ class LearnerController extends Controller
             'centralDistributions', 'mentorBookBases', 'uploadFilesToMentorBookBases'));
     }
 
-    public function marketing()
+    public function marketing(): View
     {
         $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
         $marketingPlans = $standardProject ? MarketingPlan::with(['questions.answers' => function ($query) use ($standardProject) {
@@ -2492,7 +2485,7 @@ class LearnerController extends Controller
         // return $pdf->stream('marketing-plan.pdf');
     }
 
-    public function projectMarketing($project_id)
+    public function projectMarketing($project_id): View
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $emailBookstores = ProjectMarketing::emailBookstores()->where('project_id', $project_id)->get();
@@ -2524,7 +2517,7 @@ class LearnerController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function projectMarketingPlan($project_id)
+    public function projectMarketingPlan($project_id): View
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $marketingPlans = MarketingPlan::with(['questions.answers' => function ($query) use ($project_id) {
@@ -2537,7 +2530,7 @@ class LearnerController extends Controller
     /**
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function saveMarketingPlanQA($project_id, Request $request)
+    public function saveMarketingPlanQA($project_id, Request $request): RedirectResponse
     {
         foreach ($request->arr as $input) {
             $answer = MarketingPlanQuestionAnswer::firstOrNew([
@@ -2557,7 +2550,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function projectContract($project_id)
+    public function projectContract($project_id): View
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $contracts = Contract::where('project_id', $project_id)->paginate(10);
@@ -2565,7 +2558,7 @@ class LearnerController extends Controller
         return view('frontend.learner.self-publishing.project.contract', compact('project', 'contracts'));
     }
 
-    public function projectInvoice($project_id)
+    public function projectInvoice($project_id): View
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $invoices = ProjectInvoice::where('project_id', $project_id)->get();
@@ -2573,7 +2566,7 @@ class LearnerController extends Controller
         return view('frontend.learner.self-publishing.project.invoice', compact('project', 'invoices'));
     }
 
-    public function projectStorage($project_id)
+    public function projectStorage($project_id): View
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $projectBook = $project->book;
@@ -2690,7 +2683,7 @@ class LearnerController extends Controller
         return $compute;
     }
 
-    public function uploadSelfPublishingManuscript($id, Request $request)
+    public function uploadSelfPublishingManuscript($id, Request $request): RedirectResponse
     {
         $this->validate($request, ['manuscript' => 'required']);
 
@@ -2797,7 +2790,7 @@ class LearnerController extends Controller
     /**
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function uploadOtherServiceManuscript($id, $type, Request $request, ProjectService $projectService)
+    public function uploadOtherServiceManuscript($id, $type, Request $request, ProjectService $projectService): RedirectResponse
     {
         $this->validate($request, ['manuscript' => 'required']);
 
@@ -2839,14 +2832,14 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function downloadTimeRegisterInvoice($id)
+    public function downloadTimeRegisterInvoice($id): BinaryFileResponse
     {
         $timeRegister = TimeRegister::find($id);
 
         return response()->download($timeRegister->invoice_file);
     }
 
-    public function profile()
+    public function profile(): View
     {
         // get course certificates based on users course taken
         $certificates = DB::table('course_certificates')
@@ -2865,7 +2858,7 @@ class LearnerController extends Controller
         return view('frontend.learner.profile', compact('certificates'));
     }
 
-    public function profileUpdate(ProfileUpdateRequest $request)
+    public function profileUpdate(ProfileUpdateRequest $request): RedirectResponse
     {
         if (! empty($request->new_password)) {
             if (Hash::check($request->old_password, Auth::user()->password)) {
@@ -2924,10 +2917,8 @@ class LearnerController extends Controller
 
     /**
      * Update the profile image of user
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function profileUpdatePhoto(Request $request)
+    public function profileUpdatePhoto(Request $request): RedirectResponse
     {
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $image = substr(Auth::user()->profile_image, 1);
@@ -2953,7 +2944,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function passwordUpdate(Request $request)
+    public function passwordUpdate(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'password' => 'required',
@@ -2966,7 +2957,7 @@ class LearnerController extends Controller
         return redirect()->back()->with(['passUpdated' => 1]);
     }
 
-    public function terms()
+    public function terms(): View
     {
         return view('frontend.learner.terms');
     }
@@ -3155,7 +3146,7 @@ class LearnerController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(Request $request): View
     {
         $courses = Auth::user()->coursesTaken()->whereHas('package', function ($query) use ($request) {
             $query->whereHas('course', function ($query) use ($request) {
@@ -3191,7 +3182,7 @@ class LearnerController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|void
      */
-    public function courseRenew(Request $request)
+    public function courseRenew(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $courseTaken = CoursesTaken::find($request->course_id);
         if ($courseTaken) {
@@ -3270,19 +3261,19 @@ class LearnerController extends Controller
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
             if ($paymentMode->mode == 'Paypal') {
-                echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
-                <input type="hidden" name="cmd" value="_xclick">
-                <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
-                <input type="hidden" name="currency_code" value="NOK">
-                <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
-                <input type="hidden" name="item_name" value="Course Order Invoice">
-                <input type="hidden" name="amount" value="'.($price / 100).'">
-                <input type="hidden" name="return" value="'.route('front.shop.thankyou').'?gateway=Paypal">
-                <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
-            </form>';
-                echo '<script>document.getElementById("paypal_form").submit();</script>';
+                $paypalForm = '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                    <input type="hidden" name="cmd" value="_xclick">
+                    <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
+                    <input type="hidden" name="currency_code" value="NOK">
+                    <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
+                    <input type="hidden" name="item_name" value="Course Order Invoice">
+                    <input type="hidden" name="amount" value="'.($price / 100).'">
+                    <input type="hidden" name="return" value="'.route('front.shop.thankyou').'">
+                    <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
+                </form>
+                <script>document.getElementById("paypal_form").submit();</script>';
 
-                return;
+                return new Response($paypalForm);
             }
 
             return redirect(route('front.shop.thankyou'));
@@ -3291,7 +3282,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function courseRenewAllDisabled($course_id)
+    public function courseRenewAllDisabled($course_id): RedirectResponse
     {
         $courseTaken = CoursesTaken::find($course_id);
 
@@ -3371,10 +3362,8 @@ class LearnerController extends Controller
 
     /**
      * Set value of auto renew courses field
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function setAutoRenewCourses(Request $request)
+    public function setAutoRenewCourses(Request $request): RedirectResponse
     {
         $user = User::find(Auth::user()->id);
         $user->auto_renew_courses = $request->auto_renew;
@@ -3515,7 +3504,7 @@ class LearnerController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function renewLearnerCourses()
+    public function renewLearnerCourses(): RedirectResponse
     {
         $coursesTaken = Auth::user()->coursesTaken;
         foreach ($coursesTaken as $courseTaken) {
@@ -3668,10 +3657,7 @@ class LearnerController extends Controller
         return view('frontend.learner.upgrade-course', compact('courseTaken', 'currentPackage', 'package_id', 'currentUser'));
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function validateUpgradeCourseForm($courseTakenId, Request $request, CourseService $courseService)
+    public function validateUpgradeCourseForm($courseTakenId, Request $request, CourseService $courseService): JsonResponse
     {
         $validation = [
             'email' => 'required|email',
@@ -4112,7 +4098,7 @@ class LearnerController extends Controller
         return redirect()->route('learner.upgrade');
     }
 
-    public function validateUpgradeManuscriptForm($manuscriptTakenId, Request $request, ShopManuscriptService $shopManuscriptService)
+    public function validateUpgradeManuscriptForm($manuscriptTakenId, Request $request, ShopManuscriptService $shopManuscriptService): JsonResponse
     {
         $validation = [
             'email' => 'required|email',
@@ -4267,10 +4253,7 @@ class LearnerController extends Controller
         return redirect()->route('learner.upgrade');
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function validateUpgradeAssignmentForm($assignment_id, Request $request, AssignmentService $assignmentService)
+    public function validateUpgradeAssignmentForm($assignment_id, Request $request, AssignmentService $assignmentService): JsonResponse
     {
         $validation = [
             'email' => 'required|email',
@@ -4302,7 +4285,7 @@ class LearnerController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|void
      */
-    public function upgradeAssignment($assignment_id, Request $request)
+    public function upgradeAssignment($assignment_id, Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $assignment = Assignment::find($assignment_id);
         if ($assignment) {
@@ -4349,19 +4332,19 @@ class LearnerController extends Controller
             $invoice->create_invoice($invoice_fields);
 
             if ($paymentMode->mode == 'Paypal') {
-                echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
-                <input type="hidden" name="cmd" value="_xclick">
-                <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
-                <input type="hidden" name="currency_code" value="NOK">
-                <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
-                <input type="hidden" name="item_name" value="Course Order Invoice">
-                <input type="hidden" name="amount" value="'.($price / 100).'">
-                <input type="hidden" name="return" value="'.route('front.shop.thankyou').'">
-                <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
-            </form>';
-                echo '<script>document.getElementById("paypal_form").submit();</script>';
+                $paypalForm = '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                    <input type="hidden" name="cmd" value="_xclick">
+                    <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
+                    <input type="hidden" name="currency_code" value="NOK">
+                    <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
+                    <input type="hidden" name="item_name" value="Course Order Invoice">
+                    <input type="hidden" name="amount" value="'.($price / 100).'">
+                    <input type="hidden" name="return" value="'.route('front.shop.thankyou').'">
+                    <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
+                </form>
+                <script>document.getElementById("paypal_form").submit();</script>';
 
-                return;
+                return new Response($paypalForm);
             }
 
             return redirect(route('front.shop.thankyou'));
@@ -4375,9 +4358,8 @@ class LearnerController extends Controller
      * Replace the manuscript from particular assignment
      *
      * @param  $id  int assignment id
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function replaceAssignmentManuscript($id, Request $request)
+    public function replaceAssignmentManuscript($id, Request $request): RedirectResponse
     {
         $assignmentManuscript = AssignmentManuscript::find($id);
 
@@ -4455,7 +4437,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function replaceAssignmentLetter($id, Request $request)
+    public function replaceAssignmentLetter($id, Request $request): RedirectResponse
     {
         $assignmentManuscript = AssignmentManuscript::find($id);
 
@@ -4495,9 +4477,8 @@ class LearnerController extends Controller
      * Delete the manuscript from particular assignment
      *
      * @param  $id  int assignment id
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteAssignmentManuscript($id)
+    public function deleteAssignmentManuscript($id): RedirectResponse
     {
         $manuscript = AssignmentManuscript::findOrFail($id);
 
@@ -4514,10 +4495,8 @@ class LearnerController extends Controller
 
     /**
      * Replace the feedback
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function replaceFeedback($id, Request $request)
+    public function replaceFeedback($id, Request $request): RedirectResponse
     {
         $feedback = AssignmentFeedback::find($id);
 
@@ -4542,7 +4521,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function deleteFeedback($id)
+    public function deleteFeedback($id): RedirectResponse
     {
         $feedback = AssignmentFeedback::findOrFail($id);
         $feedback->forceDelete();
@@ -4854,10 +4833,8 @@ class LearnerController extends Controller
 
     /**
      * Edit the goal
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function wordWrittenGoalsUpdate($id, Request $request)
+    public function wordWrittenGoalsUpdate($id, Request $request): RedirectResponse
     {
         if ($goal = WordWrittenGoal::find($id)) {
             $data = $request->except('_token');
@@ -4871,10 +4848,8 @@ class LearnerController extends Controller
 
     /**
      * Delete a goal
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function wordWrittenGoalsDelete($id)
+    public function wordWrittenGoalsDelete($id): RedirectResponse
     {
         if ($goal = WordWrittenGoal::find($id)) {
             $goal->forceDelete();
@@ -4887,10 +4862,8 @@ class LearnerController extends Controller
 
     /**
      * Get the statistics
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function goalStatistic($goal_id)
+    public function goalStatistic($goal_id): JsonResponse
     {
         $statistics = [];
         $totalStatistic = 0;
@@ -4939,10 +4912,8 @@ class LearnerController extends Controller
 
     /**
      * Mark notification as read
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function markNotificationAsRead($id)
+    public function markNotificationAsRead($id): JsonResponse
     {
         if ($notification = Notification::find($id)) {
             $notification->is_read = 1;
@@ -4956,10 +4927,8 @@ class LearnerController extends Controller
 
     /**
      * Delete a notification
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteNotification($id)
+    public function deleteNotification($id): JsonResponse
     {
         if ($notification = Notification::find($id)) {
             $notification->forceDelete();
@@ -4970,7 +4939,7 @@ class LearnerController extends Controller
         return response()->json(['error' => 'Opss. Something went wrong'], 500);
     }
 
-    public function addCoachingSession(Request $request)
+    public function addCoachingSession(Request $request): RedirectResponse
     {
         $data = $request->except('_token');
         $course_taken_id = $data['course_taken_id'];
@@ -5108,10 +5077,8 @@ class LearnerController extends Controller
 
     /**
      * Update the help with field of coaching timer
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateHelpWith($id, Request $request)
+    public function updateHelpWith($id, Request $request): RedirectResponse
     {
         if ($coachingTimer = CoachingTimerManuscript::find($id)) {
             $coachingTimer->help_with = $request->help_with;
@@ -5124,10 +5091,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function setCoachingStatus($id, Request $request)
+    public function setCoachingStatus($id, Request $request): RedirectResponse
     {
         if ($coachingTimer = CoachingTimerManuscript::find($id)) {
             $coachingTimer->status = $request->status;
@@ -5139,10 +5103,8 @@ class LearnerController extends Controller
 
     /**
      * List all user emails
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function listEmails()
+    public function listEmails(): JsonResponse
     {
         $user = Auth::user();
         $data['primary'] = $user;
@@ -5153,10 +5115,8 @@ class LearnerController extends Controller
 
     /**
      * Send email confirmation to check if user owns the inputted email
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function sendEmailConfirmation(Request $request)
+    public function sendEmailConfirmation(Request $request): JsonResponse
     {
 
         $this->validate($request, [
@@ -5206,10 +5166,8 @@ class LearnerController extends Controller
 
     /**
      * Set Primary Email
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function setPrimaryEmail(Request $request)
+    public function setPrimaryEmail(Request $request): JsonResponse
     {
         DB::beginTransaction();
         $user = Auth::user();
@@ -5247,10 +5205,8 @@ class LearnerController extends Controller
 
     /**
      * Remove a secondary email
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function removeSecondaryEmail(Request $request)
+    public function removeSecondaryEmail(Request $request): JsonResponse
     {
         if (! UserEmail::destroy($request->id)) {
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
@@ -5435,10 +5391,8 @@ class LearnerController extends Controller
 
     /**
      * Get the invoice pdf from the url with login credentials
-     *
-     * @return mixed
      */
-    public function downloadInvoiceV1($url)
+    public function downloadInvoiceV1($url): BinaryFileResponse
     {
         $invoice = Invoice::find($url); // this is invoice id
         $exp_pdf = count(explode('.pdf', $invoice->pdf_url));
@@ -5469,7 +5423,7 @@ class LearnerController extends Controller
         return response()->download($filename);
     }
 
-    public function downloadCreditNote($invoice_id)
+    public function downloadCreditNote($invoice_id): BinaryFileResponse
     {
         $invoice = Invoice::find($invoice_id); // this is invoice id
         $pdf_url = $invoice->credit_note_url;
@@ -5534,10 +5488,8 @@ class LearnerController extends Controller
 
     /**
      * Redirect to forum page
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function forum()
+    public function forum(): JsonResponse
     {
         $token = $this->createUserToken();
         $redirect_url = 'https://forum.forfatterskolen.no/auth/sso?ssoToken='.$token.'&redirect=/';
@@ -5584,10 +5536,8 @@ class LearnerController extends Controller
 
     /**
      * Login to pilotleser
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function pilotleserLogin()
+    public function pilotleserLogin(): JsonResponse
     {
         $user = Auth::user();
         // create token

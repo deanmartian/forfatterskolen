@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PilotReaderChapterFeedbackMessage extends Model
 {
@@ -20,7 +21,7 @@ class PilotReaderChapterFeedbackMessage extends Model
      */
     protected $fillable = ['feedback_id', 'message', 'mark', 'published', 'is_reply', 'reply_from'];
 
-    public function feedback()
+    public function feedback(): BelongsTo
     {
         return $this->belongsTo(\App\PilotReaderChapterFeedback::class, 'feedback_id', 'id');
     }

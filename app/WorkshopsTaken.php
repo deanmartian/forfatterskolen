@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WorkshopsTaken extends Model
 {
@@ -10,17 +11,17 @@ class WorkshopsTaken extends Model
 
     protected $fillable = ['user_id', 'workshop_id', 'menu_id', 'notes', 'is_active'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function workshop()
+    public function workshop(): BelongsTo
     {
         return $this->belongsTo(\App\Workshop::class);
     }
 
-    public function menu()
+    public function menu(): BelongsTo
     {
         return $this->belongsTo(\App\WorkshopMenu::class);
     }

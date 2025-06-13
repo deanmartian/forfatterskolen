@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Survey extends Model
 {
@@ -20,12 +22,12 @@ class Survey extends Model
      */
     protected $fillable = ['title', 'description', 'course_id', 'start_date', 'end_date'];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }
 
-    public function questions()
+    public function questions(): HasMany
     {
         return $this->hasMany(\App\SurveyQuestion::class);
     }
@@ -50,7 +52,7 @@ class Survey extends Model
         return false;
     }
 
-    public function answers()
+    public function answers(): HasMany
     {
         return $this->hasMany(SurveyAnswer::class);
     }

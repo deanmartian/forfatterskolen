@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('project_book_formatting', function (Blueprint $table) {
             $table->string('corporate_page')->nullable()->after('file');
@@ -23,10 +21,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('project_book_formatting', function (Blueprint $table) {
             $table->dropColumn('corporate_page');

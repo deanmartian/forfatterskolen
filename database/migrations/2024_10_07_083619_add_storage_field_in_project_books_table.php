@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('project_books', function (Blueprint $table) {
             $table->tinyInteger('in_storage')->after('isbn_ebook')->default(0);
@@ -20,10 +18,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('project_books', function (Blueprint $table) {
             $table->dropColumn('in_storage');

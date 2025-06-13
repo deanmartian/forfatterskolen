@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Editor;
 use App\Http\Controllers\Controller;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class AssignedWebinarController extends Controller
 {
-    public function show()
+    public function show(): View
     {
         // $assignedWebinar = Auth::user()->assignedWebinars;
         $webinars = DB::table('webinars')

@@ -3,6 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class SelfPublishing extends Model
 {
@@ -13,37 +16,35 @@ class SelfPublishing extends Model
 
     protected $appends = ['file_link', 'file_link_with_download', 'dropbox_file_link_with_download'];
 
-    public function learners()
+    public function learners(): HasMany
     {
         return $this->hasMany(\App\SelfPublishingLearner::class);
     }
 
-    public function editor()
+    public function editor(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function feedback()
+    public function feedback(): HasOne
     {
         return $this->hasOne(\App\SelfPublishingFeedback::class);
     }
 
-    public function project()
+    public function project(): BelongsTo
     {
         return $this->belongsTo(\App\Project::class);
     }
 
-    public function poInvoice()
+    public function poInvoice(): HasOne
     {
         return $this->hasOne(\App\PowerOfficeInvoice::class, 'parent_id', 'id')->where('parent', 'self-publishing');
     }
 
     /**
      * Accessor field
-     *
-     * @return string
      */
-    public function getFileLinkAttribute()
+    public function getFileLinkAttribute(): string
     {
         $fileLink = '';
         $files = explode(',', $this->attributes['manuscript']);
@@ -63,10 +64,8 @@ class SelfPublishing extends Model
 
     /**
      * Accessor field
-     *
-     * @return string
      */
-    public function getFileLinkWithDownloadAttribute()
+    public function getFileLinkWithDownloadAttribute(): string
     {
         $fileLink = '';
         $files = explode(',', $this->attributes['manuscript']);

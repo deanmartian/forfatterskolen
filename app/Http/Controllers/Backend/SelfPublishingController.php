@@ -11,7 +11,9 @@ use App\SelfPublishingFeedback;
 use App\SelfPublishingLearner;
 use App\SelfPublishingOrder;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -25,7 +27,7 @@ class SelfPublishingController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $publishingList = SelfPublishing::all();
         $editors = AdminHelpers::editorList();
@@ -35,10 +37,7 @@ class SelfPublishingController extends Controller
         return view('backend.self-publishing.index', compact('publishingList', 'editors', 'learners', 'projects'));
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->saveData($request);
 
@@ -48,10 +47,7 @@ class SelfPublishingController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $this->saveData($request, $id);
 
@@ -178,11 +174,9 @@ class SelfPublishingController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
-     *
      * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $publishing = SelfPublishing::find($id);
         $publishing->delete();
@@ -194,11 +188,9 @@ class SelfPublishingController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
-     *
      * @throws \Exception
      */
-    public function removeLearnerFromPublishing($id)
+    public function removeLearnerFromPublishing($id): RedirectResponse
     {
         $publishingLearner = SelfPublishingLearner::find($id);
         $publishingLearner->delete();
@@ -213,7 +205,7 @@ class SelfPublishingController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function learners($id)
+    public function learners($id): View
     {
         $selfPublishing = SelfPublishing::find($id);
         $learners = $selfPublishing->learners;
@@ -232,10 +224,7 @@ class SelfPublishingController extends Controller
             'layout', 'selfPublishingIndexRoute'));
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function addLearners($id, Request $request)
+    public function addLearners($id, Request $request): RedirectResponse
     {
         foreach ($request->learners as $learner_id) {
             SelfPublishingLearner::create([
@@ -373,7 +362,7 @@ class SelfPublishingController extends Controller
         return response()->download(public_path($manuscripts[0]));
     }
 
-    public function addFeedback($id, Request $request)
+    public function addFeedback($id, Request $request): RedirectResponse
     {
         $this->validate($request, [
             'manuscript' => 'required',
@@ -524,11 +513,9 @@ class SelfPublishingController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
-     *
      * @throws \Exception
      */
-    public function deleteLearner($learner_id)
+    public function deleteLearner($learner_id): RedirectResponse
     {
         $learner = SelfPublishingLearner::find($learner_id);
         $learner->delete();
@@ -540,7 +527,7 @@ class SelfPublishingController extends Controller
         ]);
     }
 
-    public function orders()
+    public function orders(): View
     {
         $currentOrders = SelfPublishingOrder::active()->get();
         $orderHistory = SelfPublishingOrder::paid()->get();
@@ -549,7 +536,7 @@ class SelfPublishingController extends Controller
         return view('backend.self-publishing.orders', compact('currentOrders', 'orderHistory', 'savedQuotes'));
     }
 
-    public function updateStatus($id, Request $request)
+    public function updateStatus($id, Request $request): RedirectResponse
     {
         $selfPublishing = SelfPublishing::findOrFail($id);
         $selfPublishing->status = $request->status;

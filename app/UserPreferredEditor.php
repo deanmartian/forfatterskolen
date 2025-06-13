@@ -4,6 +4,7 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserPreferredEditor extends Model
 {
@@ -23,12 +24,12 @@ class UserPreferredEditor extends Model
      */
     protected $fillable = ['user_id', 'editor_id'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function editor()
+    public function editor(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }

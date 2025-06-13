@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PilotReaderChapterFeedback extends Model
 {
@@ -20,22 +22,22 @@ class PilotReaderChapterFeedback extends Model
      */
     protected $fillable = ['user_id', 'chapter_id', 'chapter_version_id'];
 
-    public function chapter()
+    public function chapter(): BelongsTo
     {
         return $this->belongsTo(\App\PilotReaderBookChapter::class, 'chapter_id', 'id');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'user_id', 'id');
     }
 
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(\App\PilotReaderChapterFeedbackMessage::class, 'feedback_id', 'id');
     }
 
-    public function readerMessages()
+    public function readerMessages(): HasMany
     {
         return $this->hasMany(\App\PilotReaderChapterFeedbackMessage::class, 'feedback_id', 'id')
             ->where('is_reply', 0)

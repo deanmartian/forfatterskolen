@@ -4,6 +4,7 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserTask extends Model
 {
@@ -16,7 +17,7 @@ class UserTask extends Model
      */
     protected $fillable = ['user_id', 'assigned_to', 'task', 'status'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

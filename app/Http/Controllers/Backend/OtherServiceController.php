@@ -14,8 +14,10 @@ use App\OtherServiceFeedback;
 use App\user;
 use Carbon\Carbon;
 use File;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -31,7 +33,7 @@ class OtherServiceController extends Controller
         $this->middleware('checkPageAccess:13', ['except' => 'editorSetReplay']);
     }
 
-    public function index()
+    public function index(): View
     {
         $copyEditing = CopyEditingManuscript::paginate(10);
         $corrections = CorrectionManuscript::paginate(10);
@@ -46,10 +48,8 @@ class OtherServiceController extends Controller
 
     /**
      * Approve a coaching timer date
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function approveDate($id, Request $request)
+    public function approveDate($id, Request $request): RedirectResponse
     {
         if ($coachingTimer = CoachingTimerManuscript::find($id)) {
             $data = $request->except('_token');
@@ -65,10 +65,8 @@ class OtherServiceController extends Controller
 
     /**
      * Suggest new coaching timer session date
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function suggestDate($id, Request $request)
+    public function suggestDate($id, Request $request): RedirectResponse
     {
         if ($coachingTimer = CoachingTimerManuscript::find($id)) {
             $data = $request->except('_token');
@@ -90,7 +88,7 @@ class OtherServiceController extends Controller
         return redirect()->back();
     }
 
-    public function setApprovedDate(Request $request)
+    public function setApprovedDate(Request $request): RedirectResponse
     {
         $user_id = $request->user_id;
         $course_taken_id = $request->course_taken_id;
@@ -113,10 +111,7 @@ class OtherServiceController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function setCoachingApproveDate($coaching_id, Request $request)
+    public function setCoachingApproveDate($coaching_id, Request $request): RedirectResponse
     {
         if ($coachingTimer = CoachingTimerManuscript::find($coaching_id)) {
             $approvedDate = Carbon::parse($request->approved_date)->format('Y-m-d H:i:s');
@@ -134,10 +129,8 @@ class OtherServiceController extends Controller
 
     /**
      * Set replay for coaching timer
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function setReplay(CoachingTimerManuscript $id, Request $request)
+    public function setReplay(CoachingTimerManuscript $id, Request $request): RedirectResponse
     {
         $data = $request->except('_token');
 
@@ -175,7 +168,7 @@ class OtherServiceController extends Controller
             'not-former-courses' => true]);
     }
 
-    public function markAsFinished(CoachingTimerManuscript $id)
+    public function markAsFinished(CoachingTimerManuscript $id): RedirectResponse
     {
         $coachingManuscript = $id;
         $coachingManuscript->status = 1;
@@ -186,7 +179,7 @@ class OtherServiceController extends Controller
             'not-former-courses' => true]);
     }
 
-    public function editorSetReplay(CoachingTimerManuscript $id, Request $request)
+    public function editorSetReplay(CoachingTimerManuscript $id, Request $request): RedirectResponse
     {
         $data = $request->except('_token');
 
@@ -224,7 +217,7 @@ class OtherServiceController extends Controller
             'not-former-courses' => true]);
     }
 
-    public function deleteCoaching(CoachingTimerManuscript $id)
+    public function deleteCoaching(CoachingTimerManuscript $id): RedirectResponse
     {
         $id->delete();
 
@@ -238,9 +231,8 @@ class OtherServiceController extends Controller
      *
      * @param  $service_id  int Id of the service
      * @param  $service_type  int service type identifier
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateStatus($service_id, $service_type)
+    public function updateStatus($service_id, $service_type): RedirectResponse
     {
         if ($service_type == 1 || $service_type == 2 || $service_type == 3) {
             $service = '';
@@ -284,9 +276,8 @@ class OtherServiceController extends Controller
      *
      * @param  $service_id  int Id of the service
      * @param  $service_type  int service type identifier
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateExpectedFinish($service_id, $service_type, Request $request)
+    public function updateExpectedFinish($service_id, $service_type, Request $request): RedirectResponse
     {
         if ($service_type == 1 || $service_type == 2 || $service_type == 3) {
             $service = '';
@@ -381,9 +372,8 @@ class OtherServiceController extends Controller
      *
      * @param  $service_id  int ID of the service
      * @param  $service_type  int Which service it belongs
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function addFeedback($service_id, $service_type, Request $request)
+    public function addFeedback($service_id, $service_type, Request $request): RedirectResponse
     {
         $data = $request->except('_token');
         $filesWithPath = $this->getFiles($request);
@@ -546,7 +536,7 @@ class OtherServiceController extends Controller
         return redirect()->back()->withErrors('File not found.');
     }
 
-    public function approveFeedback($service_id, $service_type, Request $request)
+    public function approveFeedback($service_id, $service_type, Request $request): RedirectResponse
     {
         // replace feedback file
         $filesWithPath = $this->getFiles($request);

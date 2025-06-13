@@ -4,6 +4,7 @@ namespace App;
 
 use App\Http\FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderCoachingTime extends Model
 {
@@ -13,7 +14,7 @@ class OrderCoachingTime extends Model
 
     protected $appends = ['additional_price_formatted'];
 
-    public function order()
+    public function order(): BelongsTo
     {
         return $this->belongsTo(\App\Order::class);
     }

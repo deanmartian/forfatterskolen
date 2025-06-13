@@ -4,6 +4,7 @@ namespace App;
 
 use FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PublisherBook extends Model
 {
@@ -14,7 +15,7 @@ class PublisherBook extends Model
 
     protected $appends = ['author_image_jpg'];
 
-    public function libraries()
+    public function libraries(): HasMany
     {
         return $this->hasMany(\App\PublisherBookLibrary::class);
     }

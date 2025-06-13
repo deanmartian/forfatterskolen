@@ -71,10 +71,8 @@ class TestimonialRepository extends BaseRepository
 
     /**
      * Delete testimonial
-     *
-     * @return bool
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         $testimonial = $this->find($id);
         if (\File::exists($testimonial->author_image)) {

@@ -6,11 +6,12 @@ use App\Course;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddPackageRequest;
 use App\Package;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PackageController extends Controller
 {
-    public function store($course_id, AddPackageRequest $request)
+    public function store($course_id, AddPackageRequest $request): RedirectResponse
     {
         $course = Course::findOrFail($course_id);
         $exists = Package::where('variation', $request->variation)->where('course_id', $course_id)->first();
@@ -100,7 +101,7 @@ class PackageController extends Controller
         }
     }
 
-    public function update($course_id, $id, AddPackageRequest $request)
+    public function update($course_id, $id, AddPackageRequest $request): RedirectResponse
     {
         $course = Course::findOrFail($course_id);
         $exists = Package::where('variation', $request->variation)->where('course_id', $course_id)->where('id', '!=', $request->variation_id)->first();
@@ -188,7 +189,7 @@ class PackageController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($course_id, $id, Request $request)
+    public function destroy($course_id, $id, Request $request): RedirectResponse
     {
         $course = Course::findOrFail($course_id);
         $package = Package::findOrFail($request->variation_id);
@@ -199,10 +200,8 @@ class PackageController extends Controller
 
     /**
      * Update the package if the admin wants to include/remove coaching session
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function includeCoaching($course_id, $id, Request $request)
+    public function includeCoaching($course_id, $id, Request $request): RedirectResponse
     {
         if (Course::find($course_id) && $package = Package::find($id)) {
             $package->has_coaching = $request->has_coaching;

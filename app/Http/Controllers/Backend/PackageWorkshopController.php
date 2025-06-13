@@ -10,11 +10,12 @@ use App\PackageWorkshop;
 use App\User;
 use App\Workshop;
 use App\WorkshopsTaken;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PackageWorkshopController extends Controller
 {
-    public function store($package_id, Request $request)
+    public function store($package_id, Request $request): RedirectResponse
     {
         $package = Package::findOrFail($package_id);
         $workshop = Workshop::findOrFail($request->workshop_id);
@@ -29,7 +30,7 @@ class PackageWorkshopController extends Controller
         return redirect()->back();
     }
 
-    public function delete($workshop_id)
+    public function delete($workshop_id): RedirectResponse
     {
         $workshop = PackageWorkshop::findOrFail($workshop_id);
         $workshop->forceDelete();
@@ -37,7 +38,7 @@ class PackageWorkshopController extends Controller
         return redirect()->back();
     }
 
-    public function approve($workshop_taken_id, Request $request)
+    public function approve($workshop_taken_id, Request $request): RedirectResponse
     {
         $workshopTaken = WorkshopsTaken::findOrFail($workshop_taken_id);
         $workshopTaken->is_active = true;
@@ -62,7 +63,7 @@ class PackageWorkshopController extends Controller
         return redirect()->back();
     }
 
-    public function disapprove($workshop_id)
+    public function disapprove($workshop_id): RedirectResponse
     {
         $workshopTaken = WorkshopsTaken::findOrFail($workshop_id);
         $workshopTaken->forceDelete();

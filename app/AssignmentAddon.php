@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AssignmentAddon extends Model
 {
@@ -10,7 +11,7 @@ class AssignmentAddon extends Model
 
     protected $fillable = ['user_id', 'assignment_id'];
 
-    public function assignment()
+    public function assignment(): BelongsTo
     {
         return $this->belongsTo(\App\Assignment::class);
     }

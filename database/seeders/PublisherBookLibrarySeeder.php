@@ -8,10 +8,8 @@ class PublisherBookLibrarySeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $publisherBooks = \App\PublisherBook::all();
         $counter = 0;

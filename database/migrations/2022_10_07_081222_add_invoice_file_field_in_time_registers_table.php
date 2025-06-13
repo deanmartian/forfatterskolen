@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('time_registers', function (Blueprint $table) {
             $table->string('invoice_file')->nullable()->after('description');
@@ -20,10 +18,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('time_registers', function (Blueprint $table) {
             $table->dropColumn('invoice_file');

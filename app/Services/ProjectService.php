@@ -57,10 +57,7 @@ class ProjectService
         return $model->load('user');
     }
 
-    /**
-     * @return ProjectActivity
-     */
-    public function saveActivity(Request $request)
+    public function saveActivity(Request $request): ProjectActivity
     {
         $model = $request->id ? ProjectActivity::find($request->id) : new ProjectActivity;
         $model->activity = $request->activity;
@@ -73,10 +70,7 @@ class ProjectService
         return $model;
     }
 
-    /**
-     * @return array
-     */
-    public function saveBook(Request $request)
+    public function saveBook(Request $request): array
     {
         $model = $request->id ? ProjectBook::find($request->id) : new ProjectBook;
         $model->project_id = $request->project_id;
@@ -222,10 +216,7 @@ class ProjectService
         $bookPicture->save();
     }
 
-    /**
-     * @return string
-     */
-    public function saveOtherService($project_id, Request $request)
+    public function saveOtherService($project_id, Request $request): string
     {
         $filePath = null;
         $calculatedPrice = 0;
@@ -258,10 +249,7 @@ class ProjectService
         return $manuType;
     }
 
-    /**
-     * @return string
-     */
-    public function saveFile($project_id, Request $request)
+    public function saveFile($project_id, Request $request): string
     {
         $extension = $request->manuscript->extension();
         $destinationPath = 'Forfatterskolen_app/project/project-'.$project_id.'/correction-manuscripts'; // upload path
@@ -277,10 +265,7 @@ class ProjectService
         return $this->saveFileOrImageDropbox($destinationPath, 'manuscript');
     }
 
-    /**
-     * @return int
-     */
-    public function calculateFileTextPrice($file, $is_copy_editing)
+    public function calculateFileTextPrice($file, $is_copy_editing): int
     {
 
         $word_count = AdminHelpers::dropboxFileCountWords($file, basename($file));
@@ -489,10 +474,7 @@ class ProjectService
         ], $data);
     }
 
-    /**
-     * @return null|string
-     */
-    public function saveGraphicWorkFileOrImage(Request $request, $fieldName, $additionFolder = null, $isDescription = false)
+    public function saveGraphicWorkFileOrImage(Request $request, $fieldName, $additionFolder = null, $isDescription = false): ?string
     {
         $filePath = null;
 
@@ -590,10 +572,7 @@ class ProjectService
         return $filePath;
     }
 
-    /**
-     * @return null|string
-     */
-    public function saveMarketingFileOrImage(Request $request, $fieldName)
+    public function saveMarketingFileOrImage(Request $request, $fieldName): ?string
     {
         $filePath = null;
 
@@ -615,9 +594,8 @@ class ProjectService
 
     /**
      * @param  $requestFile
-     * @return string
      */
-    public function saveFileOrImage($destinationPath, $requestFilename)
+    public function saveFileOrImage($destinationPath, $requestFilename): string
     {
         $requestFile = \request()->file($requestFilename);
         $extension = $requestFile->getClientOriginalExtension();
@@ -649,9 +627,8 @@ class ProjectService
 
     /**
      * @param  $requestFile
-     * @return string
      */
-    public function saveMultipleFileOrImage($destinationPath, $requestFilename)
+    public function saveMultipleFileOrImage($destinationPath, $requestFilename): string
     {
         $filesWithPath = '';
         foreach (\request()->file($requestFilename) as $k => $file) {

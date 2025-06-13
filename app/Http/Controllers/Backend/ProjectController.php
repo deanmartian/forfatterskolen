@@ -51,8 +51,11 @@ use App\User;
 use App\UserBookForSale;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use PhpOffice\PhpWord\PhpWord;
 use Spatie\Dropbox\Client;
 use Storage;
@@ -60,7 +63,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $learners = []; // User::where('role', 2)->get(); //->where('is_self_publishing_learner', 1)
         $activities = ProjectActivity::all();
@@ -84,7 +87,7 @@ class ProjectController extends Controller
             'projectNotes', 'nextProjectNumber', 'editors'));
     }
 
-    public function show($id)
+    public function show($id): View
     {
         $project = Project::find($id)->load(['books', 'user', 'selfPublishingList']);
         $editors = AdminHelpers::editorList();
@@ -165,7 +168,7 @@ class ProjectController extends Controller
         return $model->load('editor');
     }
 
-    public function updateTask($task_id, Request $request)
+    public function updateTask($task_id, Request $request): RedirectResponse
     {
         $task = ProjectTask::find($task_id);
 
@@ -212,7 +215,7 @@ class ProjectController extends Controller
                 'not-former-courses' => true]);
     }
 
-    public function saveProject(ProjectRequest $request, ProjectService $projectService)
+    public function saveProject(ProjectRequest $request, ProjectService $projectService): JsonResponse
     {
         $project = $projectService->saveProject($request);
         $nextProjectNumber = DB::table('projects')
@@ -235,7 +238,7 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function deleteProject($project_id)
+    public function deleteProject($project_id): JsonResponse
     {
         $project = Project::find($project_id);
 
@@ -280,14 +283,14 @@ class ProjectController extends Controller
         return $projectService->saveActivity($request);
     }
 
-    public function deleteActivity($id)
+    public function deleteActivity($id): JsonResponse
     {
         ProjectActivity::find($id)->delete();
 
         return response()->json();
     }
 
-    public function saveNote($project_id, Request $request)
+    public function saveNote($project_id, Request $request): JsonResponse
     {
         $project = Project::find($project_id);
         $project->notes = $request->notes;
@@ -296,7 +299,7 @@ class ProjectController extends Controller
         return response()->json($project);
     }
 
-    public function addLearner($project_id, Request $request, LearnerService $learnerService)
+    public function addLearner($project_id, Request $request, LearnerService $learnerService): JsonResponse
     {
         $this->validate($request, [
             'first_name' => 'required|string|max:255',
@@ -393,17 +396,14 @@ class ProjectController extends Controller
         $book->save();
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function deleteWholeBook($whole_book_id)
+    public function deleteWholeBook($whole_book_id): JsonResponse
     {
         ProjectWholeBook::find($whole_book_id)->delete();
 
         return response()->json();
     }
 
-    public function deleteBookCritique($whole_book_id)
+    public function deleteBookCritique($whole_book_id): JsonResponse
     {
         ProjectBookCritique::find($whole_book_id)->delete();
 
@@ -466,7 +466,7 @@ class ProjectController extends Controller
         }
     }
 
-    public function saveBook($project_id, ProjectBookRequest $request, ProjectService $projectService)
+    public function saveBook($project_id, ProjectBookRequest $request, ProjectService $projectService): JsonResponse
     {
         $request->merge(['project_id' => $project_id]);
         $response = $projectService->saveBook($request);
@@ -474,7 +474,7 @@ class ProjectController extends Controller
         return response()->json($response);
     }
 
-    public function deleteBook($id)
+    public function deleteBook($id): JsonResponse
     {
         ProjectBook::find($id)->delete();
 
@@ -484,7 +484,7 @@ class ProjectController extends Controller
     /**
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function saveBookPicture($project_id, Request $request, ProjectService $projectService)
+    public function saveBookPicture($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         $this->validate($request, ['images' => 'required']);
 
@@ -510,7 +510,7 @@ class ProjectController extends Controller
     /**
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function deleteBookPicture($id)
+    public function deleteBookPicture($id): RedirectResponse
     {
         $bookPicture = ProjectBookPicture::find($id);
         $bookPicture->delete();
@@ -525,7 +525,7 @@ class ProjectController extends Controller
     /**
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function saveBookFormatting($project_id, Request $request, ProjectService $projectService)
+    public function saveBookFormatting($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         if (! $request->id) {
             $this->validate($request, ['file.*' => 'required|mimes:doc,docx']);
@@ -541,7 +541,7 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function approveBookFormattingFeedback($id)
+    public function approveBookFormattingFeedback($id): RedirectResponse
     {
         $bookFormatting = ProjectBookFormatting::find($id);
         $bookFormatting->feedback_status = 'completed';
@@ -557,7 +557,7 @@ class ProjectController extends Controller
     /**
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function deleteBookFormatting($id)
+    public function deleteBookFormatting($id): RedirectResponse
     {
         $bookFormatting = ProjectBookFormatting::find($id);
         $bookFormatting->delete();
@@ -571,11 +571,8 @@ class ProjectController extends Controller
 
     /**
      * Add to correction or copy editing
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function addOtherService($project_id, ProjectCopyEditingRequest $request, ProjectService $projectService)
+    public function addOtherService($project_id, ProjectCopyEditingRequest $request, ProjectService $projectService): RedirectResponse
     {
         if ($project = Project::find($project_id)) {
 
@@ -596,7 +593,7 @@ class ProjectController extends Controller
         return redirect()->back();
     }
 
-    public function graphicWork($project_id)
+    public function graphicWork($project_id): View
     {
         $project = Project::find($project_id);
         $layout = 'backend.layout';
@@ -635,7 +632,7 @@ class ProjectController extends Controller
             'showGraphicWorkRoute'));
     }
 
-    public function saveGraphicWork($project_id, Request $request, ProjectService $projectService)
+    public function saveGraphicWork($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         $request->merge(['project_id' => $project_id]);
 
@@ -691,7 +688,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function deleteGraphicWork($project_id, $graphic_work_id)
+    public function deleteGraphicWork($project_id, $graphic_work_id): RedirectResponse
     {
         $graphicWork = ProjectGraphicWork::find($graphic_work_id);
         $type = $graphicWork->type;
@@ -702,7 +699,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function cover($project_id, $cover_id)
+    public function cover($project_id, $cover_id): View
     {
         $project = Project::find($project_id);
         $cover = ProjectGraphicWork::find($cover_id);
@@ -717,7 +714,7 @@ class ProjectController extends Controller
         return view('backend.project.cover', compact('project', 'cover', 'isbns', 'saveGraphicRoute'));
     }
 
-    public function bookFormat($project_id, $format_id)
+    public function bookFormat($project_id, $format_id): View
     {
         $project = Project::find($project_id);
         $bookFormatting = ProjectBookFormatting::find($format_id);
@@ -728,7 +725,7 @@ class ProjectController extends Controller
         return view('backend.project.book-format', compact('project', 'bookFormatting', 'designers', 'saveBookFormattingRoute'));
     }
 
-    public function registration($project_id)
+    public function registration($project_id): View
     {
         $project = Project::find($project_id);
         $layout = 'backend.layout';
@@ -778,7 +775,7 @@ class ProjectController extends Controller
             'uploadFilesToMentorBookBases', 'backRoute'));
     }
 
-    public function saveRegistration($project_id, Request $request)
+    public function saveRegistration($project_id, Request $request): RedirectResponse
     {
         $data = $request->merge(['project_id' => $project_id])->except('_token');
         switch ($request->field) {
@@ -818,7 +815,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function deleteRegistration($project_id, $registration_id)
+    public function deleteRegistration($project_id, $registration_id): RedirectResponse
     {
         $registration = ProjectRegistration::find($registration_id);
         $type = $registration->type;
@@ -829,7 +826,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function marketing($project_id)
+    public function marketing($project_id): View
     {
         $layout = 'backend.layout';
         $backRoute = 'admin.project.show';
@@ -868,7 +865,7 @@ class ProjectController extends Controller
             'updateTheBookBase', 'ebookOrdered', 'ebookReceived', 'agreementOnTimeRegistration'));
     }
 
-    public function saveMarketing($project_id, Request $request, ProjectService $projectService)
+    public function saveMarketing($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         $data = $request->merge(['project_id' => $project_id])->except('_token');
 
@@ -1002,7 +999,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function deleteMarketing($project_id, $marketing_id)
+    public function deleteMarketing($project_id, $marketing_id): RedirectResponse
     {
         $marketing = ProjectMarketing::find($marketing_id);
         $type = $marketing->type;
@@ -1013,7 +1010,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function marketingPlan($project_id)
+    public function marketingPlan($project_id): View
     {
         $project = Project::find($project_id);
         $marketingPlans = MarketingPlan::with(['questions.answers' => function ($query) use ($project_id) {
@@ -1055,7 +1052,7 @@ class ProjectController extends Controller
         return view('backend.project.progress-plan.steps', compact('layout', 'backRoute', 'project', 'steps'));
     }
 
-    public function progressPlanSave(Request $request)
+    public function progressPlanSave(Request $request): RedirectResponse
     {
         $step = ProjectRoadmapStep::updateOrCreate([
             'project_id' => $request->project_id,
@@ -1070,7 +1067,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function progressPlanStep($project_id, $stepNumber)
+    public function progressPlanStep($project_id, $stepNumber): View
     {
         $project = Project::find($project_id);
         $layout = 'backend.layout';
@@ -1158,7 +1155,7 @@ class ProjectController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function contract($project_id)
+    public function contract($project_id): View
     {
         $layout = 'backend.layout';
         $uploadContractRoute = 'admin.project.contract-upload';
@@ -1188,7 +1185,7 @@ class ProjectController extends Controller
     /**
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function uploadContract($project_id, Request $request, ProjectService $projectService)
+    public function uploadContract($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         $request->merge([
             'project_id' => $project_id,
@@ -1202,7 +1199,7 @@ class ProjectController extends Controller
 
     }
 
-    public function uploadSignedContract($project_id, $contract_id, Request $request, ProjectService $projectService)
+    public function uploadSignedContract($project_id, $contract_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         $request->merge([
             'id' => $contract_id,
@@ -1214,7 +1211,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function createContract($project_id)
+    public function createContract($project_id): View
     {
         $route = route('admin.project.contract-store', $project_id);
         $action = 'create';
@@ -1239,7 +1236,7 @@ class ProjectController extends Controller
         return view('backend.contract.form', compact('route', 'action', 'contract', 'title', 'templates', 'backRoute', 'layout'));
     }
 
-    public function storeContract($project_id, Request $request, ProjectService $projectService)
+    public function storeContract($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         $data = $request->merge([
             'project_id' => $project_id,
@@ -1288,7 +1285,7 @@ class ProjectController extends Controller
     /**
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function updateContract($project_id, $contract_id, Request $request, ProjectService $projectService)
+    public function updateContract($project_id, $contract_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         $projectService->saveContract($request, $contract_id);
         $route = 'admin.project.contract-edit';
@@ -1304,7 +1301,7 @@ class ProjectController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showContract($project_id, $contract_id)
+    public function showContract($project_id, $contract_id): View
     {
         $contract = Contract::findOrFail($contract_id);
         $backRoute = route('admin.project.contract', $project_id);
@@ -1321,7 +1318,7 @@ class ProjectController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function invoice($project_id)
+    public function invoice($project_id): View
     {
         $layout = 'backend.layout';
         $backRoute = route('admin.project.show', $project_id);
@@ -1357,7 +1354,7 @@ class ProjectController extends Controller
     /**
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function saveInvoice($project_id, Request $request, ProjectService $projectService)
+    public function saveInvoice($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
 
         // create graphic work folder first
@@ -1386,7 +1383,7 @@ class ProjectController extends Controller
     /**
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function deleteInvoice($project_id, $invoice_id)
+    public function deleteInvoice($project_id, $invoice_id): RedirectResponse
     {
         $invoice = ProjectInvoice::find($invoice_id);
         $invoice->delete();
@@ -1396,7 +1393,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function saveManualInvoice($project_id, Request $request)
+    public function saveManualInvoice($project_id, Request $request): RedirectResponse
     {
         $this->validate($request, [
             'invoice' => 'required',
@@ -1416,7 +1413,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function deleteManualInvoice($project_id, $invoice_id)
+    public function deleteManualInvoice($project_id, $invoice_id): RedirectResponse
     {
         $invoice = ProjectManualInvoice::find($invoice_id);
         $invoice->delete();
@@ -1795,7 +1792,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function deleteStorageBook($registration_id)
+    public function deleteStorageBook($registration_id): RedirectResponse
     {
         /* $userBookForSale = UserBookForSale::where('project_id', $projectId)->first();
         $userBookForSale->project_id = NULL;
@@ -1818,7 +1815,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function saveBookSales($project_id, Request $request)
+    public function saveBookSales($project_id, Request $request): RedirectResponse
     {
         $request->merge(['project_id' => $project_id]);
 
@@ -1928,7 +1925,7 @@ class ProjectController extends Controller
         ]);
     } */
 
-    public function deleteBookSales($sale_id)
+    public function deleteBookSales($sale_id): RedirectResponse
     {
         ProjectBookSale::find($sale_id)->delete();
 
@@ -2082,7 +2079,7 @@ class ProjectController extends Controller
         return $excel->download(new GenericExport($storageCosts, $headers), 'Distribution Cost Report.xlsx');
     }
 
-    public function storageCostSendEmail($project_id, $registration_id, $selectedYear, Request $request)
+    public function storageCostSendEmail($project_id, $registration_id, $selectedYear, Request $request): RedirectResponse
     {
         if (! $request->has('quarters')) {
             return redirect()->back()
@@ -2350,7 +2347,7 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function storageSalesDetails($project_book_id, Request $request)
+    public function storageSalesDetails($project_book_id, Request $request): JsonResponse
     {
         $details = StorageSale::where('project_book_id', $project_book_id)->where('type', $request->type)
             ->get();
@@ -2360,7 +2357,7 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function ebook($project_id)
+    public function ebook($project_id): View
     {
         $project = Project::find($project_id);
 
@@ -2384,7 +2381,7 @@ class ProjectController extends Controller
             'deleteEbookRoute', 'mobis', 'covers', 'backRoute'));
     }
 
-    public function saveEbook($project_id, Request $request, ProjectService $projectService)
+    public function saveEbook($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         $request->merge(['project_id' => $project_id]);
 
@@ -2403,7 +2400,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function deleteEbook($project_id, $ebook_id)
+    public function deleteEbook($project_id, $ebook_id): RedirectResponse
     {
         $ebook = ProjectEbook::find($ebook_id);
         $type = $ebook->type;
@@ -2414,7 +2411,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function audio($project_id)
+    public function audio($project_id): View
     {
         $project = Project::find($project_id);
 
@@ -2437,7 +2434,7 @@ class ProjectController extends Controller
             'covers', 'backRoute'));
     }
 
-    public function saveAudio($project_id, Request $request, ProjectService $projectService)
+    public function saveAudio($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         $request->merge(['project_id' => $project_id]);
 
@@ -2448,7 +2445,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function deleteAudio($project_id, $audio_id)
+    public function deleteAudio($project_id, $audio_id): RedirectResponse
     {
         $audio = ProjectAudio::find($audio_id);
         $type = $audio->type;
@@ -2459,7 +2456,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function print($project_id)
+    public function print($project_id): View
     {
         $project = Project::find($project_id);
         $print = $project->print;
@@ -2527,7 +2524,7 @@ class ProjectController extends Controller
         }
     }
 
-    public function showNotes($project_id)
+    public function showNotes($project_id): View
     {
         $project = Project::find($project_id);
         $backRoute = route('admin.project.show', $project_id);

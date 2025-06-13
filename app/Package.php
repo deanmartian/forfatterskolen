@@ -4,6 +4,9 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Package extends Model
 {
@@ -32,27 +35,27 @@ class Package extends Model
         return $query->where('is_show', 1);
     }
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class)->orderBy('created_at', 'desc');
     }
 
-    public function shop_manuscripts()
+    public function shop_manuscripts(): HasMany
     {
         return $this->hasMany(\App\PackageShopManuscript::class)->orderBy('created_at', 'desc');
     }
 
-    public function workshops()
+    public function workshops(): HasMany
     {
         return $this->hasMany(\App\PackageWorkshop::class)->orderBy('created_at', 'desc');
     }
 
-    public function included_courses()
+    public function included_courses(): HasMany
     {
         return $this->hasMany(\App\PackageCourse::class, 'package_id')->orderBy('created_at', 'desc');
     }
 
-    public function certificate()
+    public function certificate(): HasOne
     {
         return $this->hasOne(\App\CourseCertificate::class);
     }

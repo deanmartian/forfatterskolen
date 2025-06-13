@@ -60,9 +60,12 @@ use App\WorkshopTakenCount;
 use Carbon\Carbon;
 use DB;
 use File;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use Validator;
 
 include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
@@ -94,7 +97,7 @@ class LearnerController extends Controller
         $this->middleware('checkPageAccess:4');
     }
 
-    public function index(Request $request, User $user)
+    public function index(Request $request, User $user): View
     {
         $learners = $user->newQuery();
         if ($request->sid || $request->sfname || $request->slname || $request->semail) {
@@ -150,7 +153,7 @@ class LearnerController extends Controller
         return view('backend.learner.index', compact('learners'));
     }
 
-    public function show($id)
+    public function show($id): View
     {
         $learner = User::findOrFail($id);
         $learnerAssignments = $learner->assignments;
@@ -253,7 +256,7 @@ class LearnerController extends Controller
             'timeRegisters', 'projects', 'certificates', 'projects', 'bookSaleTypes'));
     }
 
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $learner = User::findOrFail($id);
 
@@ -296,7 +299,7 @@ class LearnerController extends Controller
 
     }
 
-    public function removeLearner(Request $request)
+    public function removeLearner(Request $request): RedirectResponse
     {
         $learner = User::findOrFail($request->learner_id);
         $package = Package::findOrFail($request->package_id);
@@ -322,7 +325,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function addLearner(Request $request)
+    public function addLearner(Request $request): RedirectResponse
     {
         $learner = User::findOrFail($request->learner_id);
         $package = Package::findOrFail($request->package_id);
@@ -372,7 +375,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function activate_course_taken(Request $request)
+    public function activate_course_taken(Request $request): RedirectResponse
     {
         $courseTaken = CoursesTaken::findOrFail($request->coursetaken_id);
         $isGroupCourse = 0;
@@ -427,7 +430,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function delete_course_taken(Request $request)
+    public function delete_course_taken(Request $request): RedirectResponse
     {
         $courseTaken = CoursesTaken::findOrFail($request->coursetaken_id);
         // delete related email history
@@ -438,7 +441,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function activate_shop_manuscript_taken(Request $request)
+    public function activate_shop_manuscript_taken(Request $request): RedirectResponse
     {
         $courseTaken = ShopManuscriptsTaken::findOrFail($request->shop_manuscript_id);
         $courseTaken->is_active = 1;
@@ -447,7 +450,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function delete_shop_manuscript_taken(Request $request)
+    public function delete_shop_manuscript_taken(Request $request): RedirectResponse
     {
         $courseTaken = ShopManuscriptsTaken::findOrFail($request->shop_manuscript_id);
         $courseTaken->forceDelete();
@@ -455,7 +458,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function shopManuscriptTakenShow($id, $shopManuscriptTakenID)
+    public function shopManuscriptTakenShow($id, $shopManuscriptTakenID): View
     {
         $learner = User::findOrFail($id);
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $shopManuscriptTakenID)->where('user_id', $learner->id)->firstOrFail();
@@ -492,7 +495,7 @@ class LearnerController extends Controller
         return view('backend.learner.shopManuscriptTaken', compact('shopManuscriptTaken', 'learner', 'emailTemplate', 'editor'));
     }
 
-    public function shopManuscriptTakenShowEditorPreview($id, $shopManuscriptTakenID)
+    public function shopManuscriptTakenShowEditorPreview($id, $shopManuscriptTakenID): View
     {
         $learner = User::findOrFail($id);
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $shopManuscriptTakenID)->where('user_id', $learner->id)->firstOrFail();
@@ -535,10 +538,8 @@ class LearnerController extends Controller
 
     /**
      *  Get the statistics
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function goalStatistic($goal_id)
+    public function goalStatistic($goal_id): JsonResponse
     {
         $statistics = [];
         $totalStatistic = 0;
@@ -568,10 +569,7 @@ class LearnerController extends Controller
         return response()->json($statistics);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function updateInvoiceDue($invoice_id, Request $request)
+    public function updateInvoiceDue($invoice_id, Request $request): RedirectResponse
     {
         $invoice = Invoice::find($invoice_id);
         if ($invoice) {
@@ -620,10 +618,8 @@ class LearnerController extends Controller
 
     /**
      * Delete learner invoice
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteInvoice($invoice_id)
+    public function deleteInvoice($invoice_id): RedirectResponse
     {
         $invoice = Invoice::find($invoice_id);
         if ($invoice) {
@@ -724,10 +720,8 @@ class LearnerController extends Controller
 
     /**
      * Remove learner from webinar-pakke
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteFromCourse($course_taken_id)
+    public function deleteFromCourse($course_taken_id): RedirectResponse
     {
         $courseTaken = CoursesTaken::find($course_taken_id);
         if ($courseTaken) {
@@ -760,10 +754,8 @@ class LearnerController extends Controller
 
     /**
      * Renew a learners course
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function renewCourse($learner_id, $course_taken_id)
+    public function renewCourse($learner_id, $course_taken_id): RedirectResponse
     {
         $courseTaken = CoursesTaken::where(['user_id' => $learner_id, 'id' => $course_taken_id])->first();
         if ($courseTaken) {
@@ -857,7 +849,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function updateDocumentShopManuscriptTaken($id, Request $request)
+    public function updateDocumentShopManuscriptTaken($id, Request $request): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($id);
 
@@ -901,7 +893,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function addShopManuscript($id, Request $request)
+    public function addShopManuscript($id, Request $request): RedirectResponse
     {
         $learner = User::findOrFail($id);
         $shopManuscript = ShopManuscript::findOrFail($request->shop_manuscript_id);
@@ -937,7 +929,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($id, Request $request)
+    public function destroy($id, Request $request): RedirectResponse
     {
         $learner = User::findOrFail($id);
 
@@ -1056,10 +1048,8 @@ class LearnerController extends Controller
 
     /**
      * update the course taken started at field
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateCourseTakenStartedAt($id, Request $request)
+    public function updateCourseTakenStartedAt($id, Request $request): RedirectResponse
     {
         $courseTaken = CoursesTaken::findOrFail($id);
         $courseTaken->started_at = $request->started_at;
@@ -1072,7 +1062,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function setCourseTakenAvailability($id, Request $request)
+    public function setCourseTakenAvailability($id, Request $request): RedirectResponse
     {
         $courseTaken = CoursesTaken::findOrFail($id);
 
@@ -1091,7 +1081,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function sendRegretForm($course_taken_id, Request $request, CourseService $courseService)
+    public function sendRegretForm($course_taken_id, Request $request, CourseService $courseService): RedirectResponse
     {
         $courseTaken = CoursesTaken::findOrFail($course_taken_id);
         $package = $courseTaken->package;
@@ -1111,7 +1101,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function allow_lesson_access($course_taken_id, $lesson_id)
+    public function allow_lesson_access($course_taken_id, $lesson_id): RedirectResponse
     {
         $courseTaken = CoursesTaken::findOrFail($course_taken_id);
         $lesson = Lesson::findOrFail($lesson_id);
@@ -1127,7 +1117,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function default_lesson_access($course_taken_id, $lesson_id)
+    public function default_lesson_access($course_taken_id, $lesson_id): RedirectResponse
     {
         $courseTaken = CoursesTaken::findOrFail($course_taken_id);
         $lesson = Lesson::findOrFail($lesson_id);
@@ -1141,10 +1131,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function setCourseTakenExpiryReminder($id, Request $request)
+    public function setCourseTakenExpiryReminder($id, Request $request): JsonResponse
     {
         $courseTaken = CoursesTaken::findOrFail($id);
         $courseTaken->send_expiry_reminder = $request->send_expiry_reminder;
@@ -1153,7 +1140,7 @@ class LearnerController extends Controller
         return response()->json();
     }
 
-    public function addToWorkshop(Request $request)
+    public function addToWorkshop(Request $request): RedirectResponse
     {
         $workshop = Workshop::find($request->workshop_id);
         $menu = WorkshopMenu::where('workshop_id', $request->workshop_id)->first();
@@ -1179,10 +1166,8 @@ class LearnerController extends Controller
 
     /**
      * Update the workshop count of the leaner
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateWorkshopCount($id, Request $request)
+    public function updateWorkshopCount($id, Request $request): RedirectResponse
     {
         $workshopTakenCount = WorkshopTakenCount::firstOrNew([
             'user_id' => $id,
@@ -1217,7 +1202,7 @@ class LearnerController extends Controller
      * @param  $id  ShopManuscriptsTaken id
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function saveSynopsis($id, Request $request)
+    public function saveSynopsis($id, Request $request): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::find($id);
         if ($shopManuscriptTaken) {
@@ -1245,10 +1230,8 @@ class LearnerController extends Controller
 
     /**
      * Send Email to learner
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function sendLearnerEmail($id, Request $request)
+    public function sendLearnerEmail($id, Request $request): RedirectResponse
     {
         $learner = User::find($id);
         if (! $learner) {
@@ -1311,7 +1294,7 @@ class LearnerController extends Controller
             'alert_type' => 'success', 'not-former-courses' => true]);
     }
 
-    public function sendEmail($id, Request $request)
+    public function sendEmail($id, Request $request): RedirectResponse
     {
         $learner = User::findOrFail($id);
         $to = $learner->email;
@@ -1344,10 +1327,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function sendWebinarRegistrantEmail($learner_id, $registrant_id, Request $request)
+    public function sendWebinarRegistrantEmail($learner_id, $registrant_id, Request $request): RedirectResponse
     {
         $learner = User::findOrFail($learner_id);
         $to = $learner->email;
@@ -1365,7 +1345,7 @@ class LearnerController extends Controller
             'alert_type' => 'success', 'not-former-courses' => true]);
     }
 
-    public function addNotes($id, Request $request)
+    public function addNotes($id, Request $request): RedirectResponse
     {
         $user = User::find($id);
         if ($user) {
@@ -1381,7 +1361,7 @@ class LearnerController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function listNotes()
+    public function listNotes(): View
     {
         $userNotes = User::whereNotNull('notes')->where('notes', '<>', '')
             ->orderBy('id', 'DESC')
@@ -1395,7 +1375,7 @@ class LearnerController extends Controller
         return AdminHelpers::generateHash(8);
     }
 
-    public function registerLearner(Request $request, LearnerService $learnerService)
+    public function registerLearner(Request $request, LearnerService $learnerService): RedirectResponse
     {
         $this->validate($request, [
             'first_name' => 'required|string|max:255',
@@ -1412,10 +1392,8 @@ class LearnerController extends Controller
 
     /**
      * Update manuscript locked status
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function updateManuscriptLockedStatus(Request $request)
+    public function updateManuscriptLockedStatus(Request $request): JsonResponse
     {
         $shopManuscriptsTaken = ShopManuscriptsTaken::find($request->shop_manuscript_taken_id);
         $success = false;
@@ -1445,10 +1423,8 @@ class LearnerController extends Controller
 
     /**
      * Add to correction or copy editing
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function addOtherService($user_id, Request $request)
+    public function addOtherService($user_id, Request $request): RedirectResponse
     {
         if ($user = User::find($user_id)) {
             $data = $request->except('_token');
@@ -1567,10 +1543,8 @@ class LearnerController extends Controller
 
     /**
      * Assign editor to other service manuscript
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function otherServiceAssignEditor($service_id, $service_type, Request $request)
+    public function otherServiceAssignEditor($service_id, $service_type, Request $request): RedirectResponse
     {
         if ($service_type == 1 || $service_type == 2 || $service_type == 3) {
             if ($service_type == 1) {
@@ -1601,10 +1575,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function deleteOtherService($service_id, $service_type)
+    public function deleteOtherService($service_id, $service_type): RedirectResponse
     {
         if ($service_type == 1 || $service_type == 2 || $service_type == 3) {
             if ($service_type == 1) {
@@ -1629,10 +1600,8 @@ class LearnerController extends Controller
 
     /**
      * Add coaching session for a user
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function addCoachingTimer($user_id, Request $request)
+    public function addCoachingTimer($user_id, Request $request): RedirectResponse
     {
         if ($user = User::find($user_id)) {
             $data = $request->except('_token');
@@ -1755,10 +1724,8 @@ class LearnerController extends Controller
 
     /**
      * Add diploma to user
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function addDiploma($learner_id, Request $request)
+    public function addDiploma($learner_id, Request $request): RedirectResponse
     {
         if ($learner = User::find($learner_id)) {
             $data = $request->except('_token');
@@ -1806,10 +1773,8 @@ class LearnerController extends Controller
 
     /**
      * Edit diploma details
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function editDiploma($id, Request $request)
+    public function editDiploma($id, Request $request): RedirectResponse
     {
         if ($diploma = Diploma::find($id)) {
             $data = $request->except('_token');
@@ -1861,10 +1826,8 @@ class LearnerController extends Controller
 
     /**
      * Delete the diploma the file inclded
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteDiploma($id)
+    public function deleteDiploma($id): RedirectResponse
     {
         if ($diploma = Diploma::find($id)) {
 
@@ -1904,10 +1867,8 @@ class LearnerController extends Controller
 
     /**
      * Approve a coaching timer
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function approveCoachingTimer($id)
+    public function approveCoachingTimer($id): RedirectResponse
     {
         if ($coachingTimer = CoachingTimerManuscript::find($id)) {
             $coachingTimer->is_approved = 1;
@@ -1925,10 +1886,8 @@ class LearnerController extends Controller
 
     /**
      * Update the note for a workshop taken
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateWorkshopTakenNotes($workshop_taken_id, Request $request)
+    public function updateWorkshopTakenNotes($workshop_taken_id, Request $request): RedirectResponse
     {
         if ($workshopTaken = WorkshopsTaken::find($workshop_taken_id)) {
             $workshopTaken->notes = $request->notes;
@@ -1946,10 +1905,8 @@ class LearnerController extends Controller
 
     /**
      * Add secondary email to user
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function addSecondaryEmail($learner_id, Request $request)
+    public function addSecondaryEmail($learner_id, Request $request): RedirectResponse
     {
         $validator = Validator::make(($request->all()), [
             'email' => 'required|email|unique:users|unique:user_emails',
@@ -2023,7 +1980,7 @@ class LearnerController extends Controller
 
     }
 
-    public function removeSecondaryEmail($email_id)
+    public function removeSecondaryEmail($email_id): RedirectResponse
     {
         $userEmail = UserEmail::findOrFail($email_id);
         $userEmail->delete();
@@ -2035,7 +1992,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function saveForSaleBooks($user_id, Request $request)
+    public function saveForSaleBooks($user_id, Request $request): RedirectResponse
     {
         $this->validate($request, [
             'project_id' => 'required',
@@ -2060,7 +2017,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function deleteForSaleBooks($user_id, $id)
+    public function deleteForSaleBooks($user_id, $id): RedirectResponse
     {
         UserBookForSale::find($id)->delete();
 
@@ -2071,7 +2028,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function saveBookSales($user_id, Request $request)
+    public function saveBookSales($user_id, Request $request): RedirectResponse
     {
         $request->merge(['user_id' => $user_id, 'user_book_for_sale_id' => $request->book_id]);
 
@@ -2086,7 +2043,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function deleteBookSales($user_id, $id)
+    public function deleteBookSales($user_id, $id): RedirectResponse
     {
         UserBookSale::find($id)->delete();
 
@@ -2099,10 +2056,8 @@ class LearnerController extends Controller
 
     /**
      * Create private message
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function addPrivateMessage($learner_id, Request $request)
+    public function addPrivateMessage($learner_id, Request $request): RedirectResponse
     {
         $learner = User::find($learner_id);
         if (! $learner) {
@@ -2128,10 +2083,8 @@ class LearnerController extends Controller
 
     /**
      * Update private message
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function updatePrivateMessage($learner_id, $id, Request $request)
+    public function updatePrivateMessage($learner_id, $id, Request $request): RedirectResponse
     {
         $learner = User::find($learner_id);
         if (! $learner) {
@@ -2155,10 +2108,8 @@ class LearnerController extends Controller
 
     /**
      * Delete private message
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function deletePrivateMessage($learner_id, $id)
+    public function deletePrivateMessage($learner_id, $id): RedirectResponse
     {
         $learner = User::find($learner_id);
         if (! $learner) {
@@ -2175,10 +2126,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function setPreferredEditor($learner_id, Request $request)
+    public function setPreferredEditor($learner_id, Request $request): RedirectResponse
     {
         $learner = User::find($learner_id);
         if (! $learner) {
@@ -2196,7 +2144,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function addSelfPublishing($learner_id, Request $request)
+    public function addSelfPublishing($learner_id, Request $request): RedirectResponse
     {
         SelfPublishingLearner::create([
             'user_id' => $learner_id,
@@ -2231,10 +2179,8 @@ class LearnerController extends Controller
 
     /**
      * Delete assignment add-on record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function deleteAssignmentAddOn($learner_id, $assignment_id)
+    public function deleteAssignmentAddOn($learner_id, $assignment_id): RedirectResponse
     {
         $addOn = AssignmentAddon::where([
             'user_id' => $learner_id,
@@ -2250,10 +2196,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function setAutoRenewCourses($user_id, Request $request)
+    public function setAutoRenewCourses($user_id, Request $request): RedirectResponse
     {
         $user = User::find($user_id);
         $user->auto_renew_courses = $request->auto_renew;
@@ -2266,7 +2209,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function setCouldBuyCourse($user_id, Request $request)
+    public function setCouldBuyCourse($user_id, Request $request): RedirectResponse
     {
         $user = User::find($user_id);
         $user->could_buy_course = $request->could_buy_course;
@@ -2323,7 +2266,7 @@ class LearnerController extends Controller
         return $pdf->download($course->title.' certificate.pdf');
     }
 
-    public function selfPublishingOrders($orderId)
+    public function selfPublishingOrders($orderId): View
     {
         $orders = SelfPublishingOrder::where('order_id', $orderId)->get();
 
@@ -2346,7 +2289,7 @@ class LearnerController extends Controller
         }
     }
 
-    public function vippsEFaktura($invoice_id, Request $request)
+    public function vippsEFaktura($invoice_id, Request $request): RedirectResponse
     {
         $invoice = Invoice::find($invoice_id);
         $user = $invoice->user;
@@ -2372,10 +2315,8 @@ class LearnerController extends Controller
 
     /**
      * Set the phone number that would be use for sending vipss-efaktura
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function setVippsEFaktura($user_id, Request $request)
+    public function setVippsEFaktura($user_id, Request $request): RedirectResponse
     {
         if ($request->mobile_number) {
             $this->validate($request, [
@@ -2415,7 +2356,7 @@ class LearnerController extends Controller
         return $excel->download(new GenericExport($userList, $headers), 'Learner with vipps.xlsx');
     }
 
-    public function learnerEmailHistory($learner_id)
+    public function learnerEmailHistory($learner_id): View
     {
         $learner = User::find($learner_id);
 
@@ -2474,7 +2415,7 @@ class LearnerController extends Controller
         return view('backend.learner.email-history', compact('learner', 'emailHistories'));
     }
 
-    public function sendUsernameAndPassword($userId, Request $request)
+    public function sendUsernameAndPassword($userId, Request $request): RedirectResponse
     {
         $this->validate($request, [
             'subject' => 'required',
@@ -2510,7 +2451,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function restoreCourse($user_id, $former_course_id, Request $request)
+    public function restoreCourse($user_id, $former_course_id, Request $request): RedirectResponse
     {
         $formerCourse = FormerCourse::find($former_course_id);
         $courseTaken = CoursesTaken::where('user_id', $user_id)
@@ -2547,7 +2488,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function createSveaCreditNote($order_id)
+    public function createSveaCreditNote($order_id): RedirectResponse
     {
         $order = Order::find($order_id);
 
@@ -2617,7 +2558,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function deliverSveaOrder($order_id)
+    public function deliverSveaOrder($order_id): RedirectResponse
     {
         $order = Order::find($order_id);
 
@@ -2676,7 +2617,7 @@ class LearnerController extends Controller
         ]);
     }
 
-    public function sendRequestToEditor($id, Request $request)
+    public function sendRequestToEditor($id, Request $request): RedirectResponse
     {
         // set expected finish
         $shopManuscriptsTaken = ShopManuscriptsTaken::find($id);

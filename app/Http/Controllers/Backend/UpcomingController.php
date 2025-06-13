@@ -6,18 +6,20 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\UpcomingSection;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class UpcomingController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $upcomingSections = UpcomingSection::all();
 
         return view('backend.upcoming.index', compact('upcomingSections'));
     }
 
-    public function saveSection($id, Request $request)
+    public function saveSection($id, Request $request): RedirectResponse
     {
 
         $section = UpcomingSection::find($id);

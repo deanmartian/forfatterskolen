@@ -9,11 +9,13 @@ use App\Http\Controllers\Controller;
 use App\SelfPublishing;
 use App\Services\LearnerService;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class LearnerController extends Controller
 {
-    public function index(Request $request, User $user)
+    public function index(Request $request, User $user): View
     {
         $learners = $user->newQuery();
         if ($request->sid || $request->sfname || $request->slname || $request->semail) {
@@ -141,7 +143,7 @@ class LearnerController extends Controller
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList'));
     }
 
-    public function registerLearner(Request $request, LearnerService $learnerService)
+    public function registerLearner(Request $request, LearnerService $learnerService): RedirectResponse
     {
         $this->validate($request, [
             'first_name' => 'required|string|max:255',

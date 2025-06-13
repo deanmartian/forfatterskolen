@@ -6,7 +6,10 @@ use App\Course;
 use App\CourseShared;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ShareableCourseController extends Controller
 {
@@ -15,7 +18,7 @@ class ShareableCourseController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $courseShared = CourseShared::all();
 
@@ -24,10 +27,8 @@ class ShareableCourseController extends Controller
 
     /**
      * Get the packages of the given course
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function getCoursePackage($course_id)
+    public function getCoursePackage($course_id): JsonResponse
     {
         $course = Course::find($course_id);
         $packages = $course->packages;
@@ -37,10 +38,8 @@ class ShareableCourseController extends Controller
 
     /**
      * Insert new data
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->except('_token');
         $hash = substr(md5(microtime()), 0, 6);
@@ -53,10 +52,8 @@ class ShareableCourseController extends Controller
 
     /**
      * Update the shared course
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $courseShared = CourseShared::find($id);
 
@@ -75,10 +72,8 @@ class ShareableCourseController extends Controller
 
     /**
      * Delete the shared course
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $courseShared = CourseShared::find($id);
 

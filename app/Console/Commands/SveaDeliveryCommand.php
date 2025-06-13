@@ -35,10 +35,8 @@ class SveaDeliveryCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $orders = Order::whereNotNull('svea_order_id')
             ->whereNull('svea_delivery_id')

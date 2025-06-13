@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PilotReaderChapterNote extends Model
 {
@@ -20,7 +21,7 @@ class PilotReaderChapterNote extends Model
      */
     protected $fillable = ['pilot_reader_book_chapter_id', 'mark', 'published', 'message'];
 
-    public function chapter()
+    public function chapter(): BelongsTo
     {
         return $this->belongsTo(\App\PilotReaderBookChapter::class);
     }

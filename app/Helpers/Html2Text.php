@@ -221,7 +221,7 @@ class Html2Text
      * @param  string  $html  Source HTML
      * @param  array  $options  Set configuration options
      */
-    public function __construct($html = '', $options = [])
+    public function __construct(string $html = '', array $options = [])
     {
         // for backwards compatibility
         if (! is_array($options)) {
@@ -236,10 +236,8 @@ class Html2Text
 
     /**
      * Get the source HTML
-     *
-     * @return string
      */
-    public function getHtml()
+    public function getHtml(): string
     {
         return $this->html;
     }
@@ -249,7 +247,7 @@ class Html2Text
      *
      * @param  string  $html  HTML source content
      */
-    public function setHtml($html)
+    public function setHtml(string $html)
     {
         $this->html = $html;
         $this->converted = false;
@@ -269,10 +267,8 @@ class Html2Text
 
     /**
      * Returns the text, converted from HTML.
-     *
-     * @return string
      */
-    public function getText()
+    public function getText(): string
     {
         if (! $this->converted) {
             $this->convert();
@@ -307,10 +303,8 @@ class Html2Text
 
     /**
      * Sets a base URL to handle relative links.
-     *
-     * @param  string  $baseurl
      */
-    public function setBaseUrl($baseurl)
+    public function setBaseUrl(string $baseurl)
     {
         $this->baseurl = $baseurl;
     }
@@ -381,9 +375,8 @@ class Html2Text
      * @param  string  $link  URL of the link
      * @param  string  $display  Part of the text to associate number with
      * @param  null  $linkOverride
-     * @return string
      */
-    protected function buildlinkList($link, $display, $linkOverride = null)
+    protected function buildlinkList(string $link, string $display, $linkOverride = null): string
     {
         $linkMethod = ($linkOverride) ? $linkOverride : $this->options['do_links'];
         if ($linkMethod == 'none') {
@@ -460,7 +453,7 @@ class Html2Text
      *
      * @param  string  $text  HTML content
      */
-    protected function convertBlockquotes(&$text)
+    protected function convertBlockquotes(string &$text)
     {
         if (preg_match_all('/<\/*blockquote[^>]*>/i', $text, $matches, PREG_OFFSET_CAPTURE)) {
             $originalText = $text;
@@ -516,9 +509,8 @@ class Html2Text
      * Callback function for preg_replace_callback use.
      *
      * @param  array  $matches  PREG matches
-     * @return string
      */
-    protected function pregCallback($matches)
+    protected function pregCallback(array $matches): string
     {
         switch (mb_strtolower($matches[1])) {
             case 'p':
@@ -557,9 +549,8 @@ class Html2Text
      * Callback function for preg_replace_callback use in PRE content handler.
      *
      * @param  array  $matches  PREG matches
-     * @return string
      */
-    protected function pregPreCallback(/** @noinspection PhpUnusedParameterInspection */ $matches)
+    protected function pregPreCallback(/** @noinspection PhpUnusedParameterInspection */ array $matches): string
     {
         return $this->preContent;
     }
@@ -570,7 +561,7 @@ class Html2Text
      * @param  string  $str  Text to convert
      * @return string Converted text
      */
-    protected function toupper($str)
+    protected function toupper(string $str): string
     {
         // string can contain HTML tags
         $chunks = preg_split('/(<[^>]*>)/', $str, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
@@ -590,7 +581,7 @@ class Html2Text
      * @param  string  $str  Text to convert
      * @return string Converted text
      */
-    protected function strtoupper($str)
+    protected function strtoupper(string $str): string
     {
         $str = html_entity_decode($str, $this->htmlFuncFlags, self::ENCODING);
         $str = mb_strtoupper($str);

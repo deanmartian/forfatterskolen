@@ -9,8 +9,10 @@ use App\Mail\PasswordResetEmail;
 use App\Mail\SubjectBodyEmail;
 use App\PasswordReset;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Mail;
 use Validator;
 
@@ -30,7 +32,7 @@ class ResetPasswordController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validator = $this->validator($request->all());
 
@@ -87,7 +89,7 @@ class ResetPasswordController extends Controller
         }
     }
 
-    public function adminStore(Request $request)
+    public function adminStore(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'email' => 'required|string|email|max:255',
@@ -121,7 +123,7 @@ class ResetPasswordController extends Controller
         return redirect()->back()->withErrors("We can't find the email in our records.");
     }
 
-    public function editorStore(Request $request)
+    public function editorStore(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'email' => 'required|string|email|max:255',
@@ -155,28 +157,28 @@ class ResetPasswordController extends Controller
         return redirect()->back()->withErrors("We can't find the email in our records.");
     }
 
-    public function resetForm($token)
+    public function resetForm($token): View
     {
         $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
 
         return view('frontend.auth.passwordreset', compact('passwordReset'));
     }
 
-    public function adminResetForm($token)
+    public function adminResetForm($token): View
     {
         $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
 
         return view('backend.auth.passwordreset', compact('passwordReset'));
     }
 
-    public function editorResetForm($token)
+    public function editorResetForm($token): View
     {
         $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
 
         return view('editor.auth.passwordreset', compact('passwordReset'));
     }
 
-    public function updatePassword($token, Request $request)
+    public function updatePassword($token, Request $request): RedirectResponse
     {
         $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
         $validator = $this->update_validator($request->all());
@@ -194,7 +196,7 @@ class ResetPasswordController extends Controller
         return redirect(route('frontend.login.store'));
     }
 
-    public function adminUpdatePassword($token, Request $request)
+    public function adminUpdatePassword($token, Request $request): RedirectResponse
     {
         $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
         $validator = $this->update_validator($request->all());
@@ -212,7 +214,7 @@ class ResetPasswordController extends Controller
         return redirect()->to('/')->with(['password_change_success' => 'Password changed successfully.']);
     }
 
-    public function editorUpdatePassword($token, Request $request)
+    public function editorUpdatePassword($token, Request $request): RedirectResponse
     {
         $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
         $validator = $this->update_validator($request->all());
@@ -230,7 +232,7 @@ class ResetPasswordController extends Controller
         return redirect()->to('/')->with(['password_change_success' => 'Password changed successfully.']);
     }
 
-    public function changePassword(ChangePasswordRequest $request)
+    public function changePassword(ChangePasswordRequest $request): RedirectResponse
     {
         $user = User::where('email', $request->email)->first();
 

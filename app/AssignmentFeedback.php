@@ -4,6 +4,7 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AssignmentFeedback extends Model
 {
@@ -13,12 +14,12 @@ class AssignmentFeedback extends Model
 
     protected $fillable = ['assignment_group_learner_id', 'user_id', 'filename', 'is_admin', 'is_active', 'availability', 'hours_worked', 'notes_to_head_editor'];
 
-    public function assignment_group_learner()
+    public function assignment_group_learner(): BelongsTo
     {
         return $this->belongsTo(\App\AssignmentGroupLearner::class, 'assignment_group_learner_id');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

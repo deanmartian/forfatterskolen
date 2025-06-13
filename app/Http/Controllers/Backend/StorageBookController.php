@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\ProjectRegistration;
 use DB;
+use Illuminate\View\View;
 
 class StorageBookController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         /* $projectCentralDistributions = ProjectRegistration::join('project_books',
             'project_registrations.project_id', '=', 'project_books.project_id')

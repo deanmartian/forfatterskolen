@@ -8,6 +8,8 @@ use App\Http\Requests\SurveyQuestionRequest;
 use App\Repositories\Services\SurveyQuestionService;
 use App\Survey;
 use App\SurveyQuestion;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class SurveyQuestionController extends Controller
 {
@@ -32,9 +34,8 @@ class SurveyQuestionController extends Controller
      * Create a question for the survey
      *
      * @param  $survey_id  Survey int
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store($survey_id, SurveyQuestionRequest $request)
+    public function store($survey_id, SurveyQuestionRequest $request): RedirectResponse
     {
         if ($this->surveyQuestionService->store($survey_id, $request)) {
             return redirect()->route('admin.survey.show', $survey_id)
@@ -52,7 +53,7 @@ class SurveyQuestionController extends Controller
      * @param  $id  SurveyQuestion int
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit($survey_id, $id)
+    public function edit($survey_id, $id): View
     {
         if (! $this->surveyQuestionService->edit($survey_id, $id)) {
             abort(404);
@@ -69,9 +70,8 @@ class SurveyQuestionController extends Controller
      *
      * @param  $survey_id  Survey int
      * @param  $id  SurveyQuestion int
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($survey_id, $id, SurveyQuestionRequest $request)
+    public function update($survey_id, $id, SurveyQuestionRequest $request): RedirectResponse
     {
         if (! $this->surveyQuestionService->edit($survey_id, $id)) {
             abort(404);
@@ -83,7 +83,7 @@ class SurveyQuestionController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function destroy($survey_id, $id)
+    public function destroy($survey_id, $id): RedirectResponse
     {
         if (! $this->surveyQuestionService->edit($survey_id, $id)) {
             abort(404);

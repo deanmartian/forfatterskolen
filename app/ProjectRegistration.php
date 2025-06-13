@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ProjectRegistration extends Model
 {
@@ -44,17 +46,17 @@ class ProjectRegistration extends Model
         return $this->isbnTypes;
     }
 
-    public function detail()
+    public function detail(): HasOne
     {
         return $this->hasOne(\App\StorageDetail::class, 'project_book_id', 'id');
     }
 
-    public function various()
+    public function various(): HasOne
     {
         return $this->hasOne(\App\StorageVarious::class, 'project_book_id', 'id');
     }
 
-    public function distributionCosts()
+    public function distributionCosts(): HasMany
     {
         return $this->hasMany(\App\StorageDistributionCost::class, 'project_book_id', 'id');
     }

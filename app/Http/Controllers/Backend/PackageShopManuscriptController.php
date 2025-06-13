@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Package;
 use App\PackageShopManuscript;
 use App\ShopManuscript;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PackageShopManuscriptController extends Controller
 {
-    public function store($package_id, Request $request)
+    public function store($package_id, Request $request): RedirectResponse
     {
         $package = Package::findOrFail($package_id);
         $shopManuscript = ShopManuscript::findOrFail($request->shop_manuscript_id);
@@ -22,7 +23,7 @@ class PackageShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function delete($shop_manuscript_id)
+    public function delete($shop_manuscript_id): RedirectResponse
     {
         $shopManuscript = PackageShopManuscript::findOrFail($shop_manuscript_id);
         $shopManuscript->forceDelete();

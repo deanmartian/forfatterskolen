@@ -13,8 +13,11 @@ use App\PaymentPlan;
 use App\Transaction;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class InvoiceController extends Controller
 {
@@ -91,14 +94,14 @@ class InvoiceController extends Controller
             'startDate', 'endDate'));
     }
 
-    public function show($id)
+    public function show($id): View
     {
         $invoice = Invoice::findOrFail($id);
 
         return view('backend.invoice.show', compact('invoice'));
     }
 
-    public function store(InvoiceCreateRequest $request)
+    public function store(InvoiceCreateRequest $request): RedirectResponse
     {
         $fikenValid = false;
         $fikenURL = null;
@@ -172,7 +175,7 @@ class InvoiceController extends Controller
         return redirect()->back();
     }
 
-    public function update($id, InvoiceCreateRequest $request)
+    public function update($id, InvoiceCreateRequest $request): RedirectResponse
     {
         $invoice = Invoice::findOrFail($id);
         $fikenValid = false;
@@ -239,7 +242,7 @@ class InvoiceController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $invoice = Invoice::findOrFail($id);
         $invoice->forceDelete();
@@ -247,7 +250,7 @@ class InvoiceController extends Controller
         return redirect(route('admin.invoice.index'));
     }
 
-    public function addTransaction($invoice_id, TransactionCreateRequest $request)
+    public function addTransaction($invoice_id, TransactionCreateRequest $request): RedirectResponse
     {
         $invoice = Invoice::findOrFail($invoice_id);
         $transaction = new Transaction;
@@ -260,7 +263,7 @@ class InvoiceController extends Controller
         return redirect()->back();
     }
 
-    public function updateTransaction($invoice_id, $id, TransactionCreateRequest $request)
+    public function updateTransaction($invoice_id, $id, TransactionCreateRequest $request): RedirectResponse
     {
         $invoice = Invoice::findOrFail($invoice_id);
         $transaction = Transaction::findOrFail($id);
@@ -272,7 +275,7 @@ class InvoiceController extends Controller
         return redirect()->back();
     }
 
-    public function destroyTransaction($invoice_id, $id)
+    public function destroyTransaction($invoice_id, $id): RedirectResponse
     {
         $invoice = Invoice::findOrFail($invoice_id);
         $transaction = Transaction::findOrFail($id);
@@ -283,10 +286,8 @@ class InvoiceController extends Controller
 
     /**
      * Create invoice
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function addInvoice(Request $request)
+    public function addInvoice(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'price' => 'required',
@@ -386,7 +387,7 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function downloadFikenPdf($invoice_id)
+    public function downloadFikenPdf($invoice_id): BinaryFileResponse
     {
         $invoice = Invoice::find($invoice_id);
         $exp_pdf = count(explode('.pdf', $invoice->pdf_url));

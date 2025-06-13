@@ -25,10 +25,9 @@ class BlogService
 
     /**
      * @param  null  $id
-     * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getRecord($id = null, $page = 15)
+    public function getRecord($id = null, int $page = 15)
     {
         if ($id) {
             return $this->blog->find($id);
@@ -70,11 +69,8 @@ class BlogService
 
     /**
      * Update a blog
-     *
-     * @param  BlogRequest  $request
-     * @return bool
      */
-    public function update($id, $request)
+    public function update($id, BlogRequest $request): bool
     {
         $blog = $this->getRecord($id);
         $requestData = $request->toArray();
@@ -104,10 +100,8 @@ class BlogService
 
     /**
      * Delete a survey
-     *
-     * @return bool
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         $blog = $this->getRecord($id);
         if ($blog) {
@@ -126,11 +120,8 @@ class BlogService
 
     /**
      * Update Blog status
-     *
-     * @param  Request  $request
-     * @return bool
      */
-    public function updateStatus($id, $request)
+    public function updateStatus($id, Request $request): bool
     {
         $blog = $this->getRecord($id);
         $requestData = $request->toArray();

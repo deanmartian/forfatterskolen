@@ -6,16 +6,15 @@ use App\Helpers\BrowserDetection;
 use App\LearnerLogin;
 use App\LearnerLoginActivity;
 use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class LogsActivity
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         // check if user is login before adding activity log
         // learner_login_id set in login controller

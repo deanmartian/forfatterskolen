@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WorkshopEmailLog extends Model
 {
@@ -20,7 +21,7 @@ class WorkshopEmailLog extends Model
      */
     protected $fillable = ['workshop_id', 'subject', 'message', 'learners', 'from_name', 'from_email', 'attachment'];
 
-    public function workshop()
+    public function workshop(): BelongsTo
     {
         return $this->belongsTo(\App\Workshop::class);
     }

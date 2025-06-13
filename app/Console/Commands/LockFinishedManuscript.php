@@ -33,10 +33,8 @@ class LockFinishedManuscript extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $manuscriptsTakenList = ShopManuscriptsTaken::whereNotNull('file')->get();
         foreach ($manuscriptsTakenList as $manuscriptTaken) {

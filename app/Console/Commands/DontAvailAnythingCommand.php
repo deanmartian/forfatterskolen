@@ -36,10 +36,8 @@ class DontAvailAnythingCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         CronLog::create(['activity' => 'DontAvailAnything CRON running.']);
         $yesterday = date('Y-m-d', strtotime('-1 days')); // get the date yesterday

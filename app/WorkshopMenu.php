@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WorkshopMenu extends Model
 {
@@ -10,7 +11,7 @@ class WorkshopMenu extends Model
 
     protected $fillable = ['workshop_id', 'title', 'description', 'image'];
 
-    public function workshop()
+    public function workshop(): BelongsTo
     {
         return $this->belongsTo(\App\Workshop::class);
     }

@@ -53,9 +53,8 @@ class MySQLDump
      * Saves dump to the file.
      *
      * @param  string filename
-     * @return void
      */
-    public function save($file)
+    public function save($file): void
     {
         $handle = strcasecmp(substr($file, -3), '.gz') ? fopen($file, 'wb') : gzopen($file, 'wb');
         if (! $handle) {
@@ -68,9 +67,8 @@ class MySQLDump
      * Writes dump to logical file.
      *
      * @param  resource
-     * @return void
      */
-    public function write($handle = null)
+    public function write($handle = null): void
     {
         if ($handle === null) {
             $handle = fopen('php://output', 'wb');
@@ -118,9 +116,8 @@ class MySQLDump
      * Dumps table to logical file.
      *
      * @param  resource
-     * @return void
      */
-    public function dumpTable($handle, $table)
+    public function dumpTable($handle, $table): void
     {
         $delTable = $this->delimite($table);
         $res = $this->connection->query("SHOW CREATE TABLE $delTable");

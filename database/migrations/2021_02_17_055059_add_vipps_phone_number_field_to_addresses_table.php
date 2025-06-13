@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('addresses', function (Blueprint $table) {
             $table->integer('vipps_phone_number')->nullable()->after('zip');
@@ -20,10 +18,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('addresses', function (Blueprint $table) {
             $table->dropColumn('vipps_phone_number');

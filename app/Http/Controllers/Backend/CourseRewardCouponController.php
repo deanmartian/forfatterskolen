@@ -6,16 +6,15 @@ use App\Course;
 use App\CourseRewardCoupon;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class CourseRewardCouponController extends Controller
 {
     /**
      * Create reward coupon
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store($course_id, Request $request)
+    public function store($course_id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
         if ($course) {
@@ -34,10 +33,8 @@ class CourseRewardCouponController extends Controller
 
     /**
      * update reward coupon
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($course_id, $id, Request $request)
+    public function update($course_id, $id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
         $reward = CourseRewardCoupon::find($id);
@@ -57,10 +54,8 @@ class CourseRewardCouponController extends Controller
 
     /**
      * Delete reward coupon
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($course_id, $id)
+    public function destroy($course_id, $id): RedirectResponse
     {
         $course = Course::find($course_id);
         $reward = CourseRewardCoupon::find($id);
@@ -78,10 +73,8 @@ class CourseRewardCouponController extends Controller
 
     /**
      * Create multiple reward coupon
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function multipleStore($course_id, Request $request)
+    public function multipleStore($course_id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
 
@@ -100,10 +93,8 @@ class CourseRewardCouponController extends Controller
 
     /**
      * Export the coupon codes to a text file
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function exportToText($course_id)
+    public function exportToText($course_id): RedirectResponse
     {
         $course = Course::find($course_id);
         if ($course) {

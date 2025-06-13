@@ -25,13 +25,9 @@ class ApiResponse
     /**
      * Generate success response
      *
-     * @param  string  $responseMsg
-     * @param  array  $data
-     * @param  int  $httpCode
-     * @param  array  $headers
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public static function success($responseMsg = '', $data = [], $httpCode = 200, $headers = [])
+    public static function success(string $responseMsg = '', array $data = [], int $httpCode = 200, array $headers = [])
     {
         $response = self::prepareResponse($httpCode, $responseMsg, $data);
 
@@ -40,10 +36,8 @@ class ApiResponse
 
     /**
      * Prepare API response.
-     *
-     * @return array
      */
-    public static function prepareResponse($httpCode, $responseMsg, $data)
+    public static function prepareResponse($httpCode, $responseMsg, $data): array
     {
         return [
             'http_code' => $httpCode,
@@ -56,13 +50,9 @@ class ApiResponse
      * Generate a Failed API response.
      *
      * @param  string  $responseCode
-     * @param  string  $responseMsg
-     * @param  array  $data
-     * @param  int  $httpCode
-     * @param  array  $headers
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public static function error($responseMsg = '', $data = [], $httpCode = 400, $headers = [])
+    public static function error(string $responseMsg = '', array $data = [], int $httpCode = 400, array $headers = [])
     {
         $response = self::prepareResponse($httpCode, $responseMsg, $data);
 
@@ -71,11 +61,8 @@ class ApiResponse
 
     /**
      * Get corresponding message per error code
-     *
-     * @param  array  $data
-     * @return string
      */
-    public static function getError($data)
+    public static function getError(array $data): string
     {
         $errorMessage = '';
 

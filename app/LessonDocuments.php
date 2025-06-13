@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LessonDocuments extends Model
 {
@@ -20,7 +21,7 @@ class LessonDocuments extends Model
      */
     protected $fillable = ['lesson_id', 'name', 'document'];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Lesson::class);
     }

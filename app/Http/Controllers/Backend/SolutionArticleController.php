@@ -8,6 +8,8 @@ use App\Repositories\Services\SolutionArticleService;
 use App\Repositories\Services\SolutionService;
 use App\Solution;
 use App\SolutionArticle;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class SolutionArticleController extends Controller
 {
@@ -53,7 +55,7 @@ class SolutionArticleController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create($solution_id)
+    public function create($solution_id): View
     {
         $article = $this->solutionArticleService->fields();
 
@@ -62,11 +64,8 @@ class SolutionArticleController extends Controller
 
     /**
      * Create new article
-     *
-     * @param  Solution  $solution_id
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store($solution_id, SolutionArticleCreateRequest $request)
+    public function store(Solution $solution_id, SolutionArticleCreateRequest $request): RedirectResponse
     {
         $solution = $this->solutionService->getRecord($solution_id);
         if ($solution) {
@@ -81,11 +80,9 @@ class SolutionArticleController extends Controller
     /**
      * Display edit article page
      *
-     * @param  Solution  $solution_id
-     * @param  SolutionArticle  $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function edit($solution_id, $id)
+    public function edit(Solution $solution_id, SolutionArticle $id)
     {
         $solution = $this->solutionService->getRecord($solution_id);
         $article = $this->solutionArticleService->getRecord($id);
@@ -100,12 +97,8 @@ class SolutionArticleController extends Controller
 
     /**
      * Update the article
-     *
-     * @param  Solution  $solution_id
-     * @param  SolutionArticle  $id
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($solution_id, $id, SolutionArticleCreateRequest $request)
+    public function update(Solution $solution_id, SolutionArticle $id, SolutionArticleCreateRequest $request): RedirectResponse
     {
         $solution = $this->solutionService->getRecord($solution_id);
         $article = $this->solutionArticleService->getRecord($id);
@@ -121,12 +114,8 @@ class SolutionArticleController extends Controller
 
     /**
      * Delete the solution article
-     *
-     * @param  Solution  $solution_id
-     * @param  SolutionArticle  $id
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($solution_id, $id)
+    public function destroy(Solution $solution_id, SolutionArticle $id): RedirectResponse
     {
         $solution = $this->solutionService->getRecord($solution_id);
         $article = $this->solutionArticleService->getRecord($id);

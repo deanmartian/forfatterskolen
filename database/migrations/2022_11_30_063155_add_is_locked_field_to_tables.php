@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('copy_editing_manuscripts', function (Blueprint $table) {
             $table->tinyInteger('is_locked')->default(0)->after('expected_finish');
@@ -24,10 +22,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('copy_editing_manuscripts', function (Blueprint $table) {
             $table->dropColumn('is_locked');

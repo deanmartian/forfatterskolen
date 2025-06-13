@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('assignment_feedbacks', function (Blueprint $table) {
             $table->string('notes_to_head_editor', 1000)->after('hours_worked')->default('')->nullable();
@@ -32,10 +30,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('assignment_feedbacks', function ($table) {
             $table->dropColumn('notes_to_head_editor');

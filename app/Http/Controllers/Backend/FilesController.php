@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Backend;
 use App\FileUploaded;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class FilesController extends Controller
 {
@@ -16,7 +18,7 @@ class FilesController extends Controller
         $this->model = $fileUploaded;
     }
 
-    public function index()
+    public function index(): View
     {
         $files = $this->model->all();
 
@@ -25,10 +27,8 @@ class FilesController extends Controller
 
     /**
      * Create new file record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $file = $request->file('file');
         $destinationPath = 'storage/files'; // upload path
@@ -52,10 +52,8 @@ class FilesController extends Controller
 
     /**
      * Update file record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $fileUpload = $this->model->find($id);
         if (! $fileUpload) {
@@ -88,10 +86,8 @@ class FilesController extends Controller
 
     /**
      * Delete file record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $fileUpload = $this->model->find($id);
 

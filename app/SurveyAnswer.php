@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SurveyAnswer extends Model
 {
@@ -20,12 +21,12 @@ class SurveyAnswer extends Model
      */
     protected $fillable = ['answer'];
 
-    public function question()
+    public function question(): BelongsTo
     {
         return $this->belongsTo(\App\SurveyQuestion::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

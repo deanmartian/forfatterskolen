@@ -13,17 +13,17 @@ use App\PilotReaderBookSettings;
 use App\PilotReaderQuittedReason;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class PilotReaderBookSettingsController extends Controller
 {
     /**
      * Get the invitation link
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function getInvitationLink(Request $request)
+    public function getInvitationLink(Request $request): JsonResponse
     {
         // check if invitation link is already generated for the book
         $invitation_link = PilotReaderBookInvitationLink::where('book_id', $request->book_id)->first();
@@ -50,7 +50,7 @@ class PilotReaderBookSettingsController extends Controller
      *
      * @return $this|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function openInvitationLink($link_token)
+    public function openInvitationLink($link_token): View
     {
         $invitation_link = PilotReaderBookInvitationLink::where('link_token', $link_token)->first();
         if (! $invitation_link) {
@@ -79,40 +79,32 @@ class PilotReaderBookSettingsController extends Controller
 
     /**
      * Send Invitation to user that is not logged in
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function unauthenticatedSendInvitation(Request $request)
+    public function unauthenticatedSendInvitation(Request $request): JsonResponse
     {
         return $this->sendInvitations($request);
     }
 
     /**
      * Send Invitation to logged in user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function authenticatedSendInvitation(Request $request)
+    public function authenticatedSendInvitation(Request $request): JsonResponse
     {
         return $this->sendInvitations($request);
     }
 
     /**
      * Validate the user email
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function unauthenticatedEmailValidation(Request $request)
+    public function unauthenticatedEmailValidation(Request $request): JsonResponse
     {
         return $this->validateEmail($request);
     }
 
     /**
      * Send Invitation to readers
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    private function sendInvitations(Request $request)
+    private function sendInvitations(Request $request): JsonResponse
     {
         $all = $request->all();
         \DB::beginTransaction();
@@ -170,10 +162,8 @@ class PilotReaderBookSettingsController extends Controller
 
     /**
      * Validate the email sent by user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    private function validateEmail(Request $request)
+    private function validateEmail(Request $request): JsonResponse
     {
         $this->validate($request, ['email' => 'required|email']);
         $invitations = PilotReaderBookInvitation::where(['email' => $request->email, 'book_id' => $request->book_id])->where('status', '<>', 3);
@@ -217,10 +207,8 @@ class PilotReaderBookSettingsController extends Controller
 
     /**
      * Set the status for the book read by user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function setReadingStatus(Request $request)
+    public function setReadingStatus(Request $request): JsonResponse
     {
         if ($request->exists('reasons')) {
             $this->validate($request, [
@@ -250,10 +238,8 @@ class PilotReaderBookSettingsController extends Controller
 
     /**
      * Set the role of the reader
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function setReaderRole(Request $request)
+    public function setReaderRole(Request $request): JsonResponse
     {
         $book_reader = PilotReaderBookReading::find($request->id);
         $data = $request->only('role');
@@ -264,7 +250,7 @@ class PilotReaderBookSettingsController extends Controller
         return response()->json(['success' => "Book reader's role has been successfully set"], 200);
     }
 
-    public function setBookSettings(Request $request)
+    public function setBookSettings(Request $request): JsonResponse
     {
         $data = $request->all();
         $book_settings = PilotReaderBookSettings::where('book_id', $request->book_id)->first();

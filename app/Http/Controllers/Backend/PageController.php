@@ -37,9 +37,12 @@ use App\UserTask;
 use App\WorkshopsTaken;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\MessageBag;
+use Illuminate\View\View;
 
 require app_path('/Http/BackupDB/MySQLDump.php');
 
@@ -54,7 +57,7 @@ class PageController extends Controller
         $this->middleware('checkPageAccess:9')->only('downloadShopManuscript');
     }
 
-    public function dashboard()
+    public function dashboard(): View
     {
         $pending_courses = CoursesTaken::where('is_active', false)->orderBy('created_at', 'desc')->get();
         $pending_shop_manuscripts = ShopManuscriptsTaken::where('is_active', false)->orderBy('created_at', 'desc')->get();
@@ -151,7 +154,7 @@ class PageController extends Controller
             'learners', 'coachingEditors', 'correctionEditors', 'copyEditingEditors', 'projects', 'selfPublishingPortalRequests'));
     }
 
-    public function updateExpectedFinish($type, $id, Request $request)
+    public function updateExpectedFinish($type, $id, Request $request): RedirectResponse
     {
         $manuscript = null;
         $emailType = '';
@@ -191,10 +194,8 @@ class PageController extends Controller
 
     /**
      * Finish an assignment
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function finishAssignment($assignment_id)
+    public function finishAssignment($assignment_id): RedirectResponse
     {
         if ($assignment = AssignmentManuscript::find($assignment_id)) {
             $assignment->has_feedback = 1;
@@ -298,7 +299,7 @@ class PageController extends Controller
         return redirect()->back();
     }
 
-    public function changePassword(Request $request)
+    public function changePassword(Request $request): RedirectResponse
     {
         $data = $request->except('_token');
         $messages = [
@@ -339,7 +340,7 @@ class PageController extends Controller
 
     }
 
-    public function calendar()
+    public function calendar(): View
     {
         $event_1 = [
             'id' => 1,
@@ -364,7 +365,7 @@ class PageController extends Controller
         return view('backend.calendar', compact('events'));
     }
 
-    public function checkNearlyExpiredCourses()
+    public function checkNearlyExpiredCourses(): RedirectResponse
     {
         \App\Http\AdminHelpers::checkNearlyExpiredCourses();
         $customAction = CustomAction::find(1);
@@ -374,7 +375,7 @@ class PageController extends Controller
         return redirect()->back();
     }
 
-    public function singleCompetition()
+    public function singleCompetition(): View
     {
         $applicants = CompetitionApplicant::paginate(25);
         $applicantUsers = CompetitionApplicant::all()->pluck('user_id');
@@ -386,7 +387,7 @@ class PageController extends Controller
         return view('backend.competition.single', compact('applicants', 'learners'));
     }
 
-    public function singleCompetitionShow($id)
+    public function singleCompetitionShow($id): View
     {
         $applicant = CompetitionApplicant::find($id);
 
@@ -395,10 +396,8 @@ class PageController extends Controller
 
     /**
      * Add learner to competition
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function singleCompetitionStore(Request $request)
+    public function singleCompetitionStore(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'learner' => 'required',
@@ -438,7 +437,7 @@ class PageController extends Controller
         return redirect()->back();
     }
 
-    public function singleCompetitionUpdate($id, Request $request)
+    public function singleCompetitionUpdate($id, Request $request): RedirectResponse
     {
         $record = CompetitionApplicant::find($id);
 
@@ -477,7 +476,7 @@ class PageController extends Controller
         return redirect()->back();
     }
 
-    public function singleCompetitionDeleteManuscript($id)
+    public function singleCompetitionDeleteManuscript($id): RedirectResponse
     {
         $record = CompetitionApplicant::find($id);
 
@@ -500,7 +499,7 @@ class PageController extends Controller
         ]);
     }
 
-    public function singleCompetitionDelete($id)
+    public function singleCompetitionDelete($id): RedirectResponse
     {
         $record = CompetitionApplicant::find($id);
 
@@ -516,12 +515,12 @@ class PageController extends Controller
         ]);
     }
 
-    public function pilotReader()
+    public function pilotReader(): View
     {
         return view('backend.pilot-reader');
     }
 
-    public function backup()
+    public function backup(): RedirectResponse
     {
 
         ini_set('max_execution_time', 0);
@@ -716,19 +715,19 @@ class PageController extends Controller
 
     }
 
-    public function translations()
+    public function translations(): RedirectResponse
     {
         return redirect()->to('/translations/view/site');
     }
 
-    public function sveaOrders()
+    public function sveaOrders(): View
     {
         $orders = Order::svea()->where('is_processed', 1)->latest()->paginate(20);
 
         return view('backend.svea-orders', compact('orders'));
     }
 
-    public function approveSelfPublishingRequest($id)
+    public function approveSelfPublishingRequest($id): RedirectResponse
     {
         $request = SelfPublishingPortalRequest::findOrFail($id);
         $user = User::findOrFail($request->user_id);
@@ -743,7 +742,7 @@ class PageController extends Controller
         ]);
     }
 
-    public function deleteSelfPublishingRequest($id)
+    public function deleteSelfPublishingRequest($id): RedirectResponse
     {
         $request = SelfPublishingPortalRequest::findOrFail($id);
         $request->delete();
@@ -851,7 +850,7 @@ class PageController extends Controller
         }
     }
 
-    public function sendEmailToQueue(Request $request)
+    public function sendEmailToQueue(Request $request): RedirectResponse
     {
         $subject = $request->subject;
         $message = $request->message;
@@ -873,7 +872,7 @@ class PageController extends Controller
         ]);
     }
 
-    public function userActivity()
+    public function userActivity(): View
     {
         $logs = ActivityLog::with('user')->orderBy('id', 'desc');
 
@@ -889,7 +888,7 @@ class PageController extends Controller
         return view('backend.user-activity.index', compact('logs', 'fromCount', 'toCount', 'totalCount'));
     }
 
-    public function application()
+    public function application(): View
     {
         $applications = Application::paginate(20);
 
@@ -910,7 +909,7 @@ class PageController extends Controller
         return null;
     }
 
-    public function searchLearners(Request $request)
+    public function searchLearners(Request $request): JsonResponse
     {
         $search = $request->search;
 

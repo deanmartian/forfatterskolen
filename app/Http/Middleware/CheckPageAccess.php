@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CheckPageAccess
 {
@@ -26,12 +28,8 @@ class CheckPageAccess
 
     /**
      * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $page_id
-     * @return mixed
      */
-    public function handle($request, Closure $next, $page_id)
+    public function handle(Request $request, Closure $next, int $page_id): Response
     {
         // check if the admin have set page access and if no access to the page id passed
         if (\Auth::user()->pageAccess->count() && ! in_array($page_id, \Auth::user()->pageAccess->pluck('page_id')->toArray())) {

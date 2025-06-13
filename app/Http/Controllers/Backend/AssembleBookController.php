@@ -7,16 +7,15 @@ use App\PublishingMarketingHelp;
 use App\PublishingPrintColor;
 use App\PublishingPrintCount;
 use App\PublishingPrintCover;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AssembleBookController extends Controller
 {
     /**
      * get all options
-     *
-     * @return json
      */
-    public function getOptions()
+    public function getOptions(): JsonResponse
     {
         $printColors = PublishingPrintColor::all();
         $printCounts = PublishingPrintCount::all();
@@ -33,10 +32,8 @@ class AssembleBookController extends Controller
 
     /**
      * save the cover or color
-     *
-     * @return json
      */
-    public function saveCoverOrColor(Request $request)
+    public function saveCoverOrColor(Request $request): json
     {
         $this->validate($request, [
             'name' => 'required',

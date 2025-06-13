@@ -6,11 +6,13 @@ use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Helpers\DapulseRepository;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class PulseController extends Controller
 {
-    public function index(DapulseRepository $repository)
+    public function index(DapulseRepository $repository): View
     {
         $result = $repository->getBoards();
 
@@ -25,10 +27,8 @@ class PulseController extends Controller
 
     /**
      * Update title of specific pulse
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function updatePulseTitle($pulse_id, Request $request, DapulseRepository $repository)
+    public function updatePulseTitle($pulse_id, Request $request, DapulseRepository $repository): JsonResponse
     {
         $result = $repository->updatePulseTitle($pulse_id, $request);
 

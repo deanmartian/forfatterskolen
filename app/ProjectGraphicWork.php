@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ProjectGraphicWork extends Model
 {
@@ -64,7 +65,7 @@ class ProjectGraphicWork extends Model
         $query->where('type', 'indesign');
     }
 
-    public function isbn()
+    public function isbn(): HasOne
     {
         return $this->hasOne(\App\ProjectRegistration::class, 'id', 'isbn_id');
     }

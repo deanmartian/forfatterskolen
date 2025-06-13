@@ -16,6 +16,7 @@ use App\WorkshopsTaken;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Validator;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
@@ -23,14 +24,14 @@ use App\Http\FikenInvoice;
 
 class WorkshopController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $workshops = Workshop::orderBy('faktura_date', 'ASC')->get();
 
         return view('frontend.workshop.index', compact('workshops'));
     }
 
-    public function show($id)
+    public function show($id): View
     {
         abort(404);
         $workshop = Workshop::findOrFail($id);

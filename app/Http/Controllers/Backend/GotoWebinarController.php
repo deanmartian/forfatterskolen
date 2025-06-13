@@ -6,7 +6,9 @@ use App\GTWebinar;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Settings;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class GotoWebinarController extends Controller
 {
@@ -22,7 +24,7 @@ class GotoWebinarController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $webinars = $this->gotoWebinar->paginate(15);
 
@@ -34,7 +36,7 @@ class GotoWebinarController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
 
         /*$confirmation_email_template = "
@@ -77,10 +79,8 @@ class GotoWebinarController extends Controller
 
     /**
      * Create new notification
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'title' => 'required',
@@ -121,10 +121,8 @@ class GotoWebinarController extends Controller
 
     /**
      * Update the notification
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         if ($webinar = $this->gotoWebinar->find($id)) {
             $requestData = $request->toArray();
@@ -149,7 +147,7 @@ class GotoWebinarController extends Controller
         return redirect()->route('admin.goto-webinar.index');
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         if ($webinar = $this->gotoWebinar->find($id)) {
             $webinar->forceDelete();

@@ -16,7 +16,10 @@ use App\Workshop;
 use App\WorkshopEmailLog;
 use App\WorkshopsTaken;
 use File;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class WorkshopController extends Controller
 {
@@ -29,14 +32,14 @@ class WorkshopController extends Controller
         $this->middleware('checkPageAccess:3');
     }
 
-    public function index()
+    public function index(): View
     {
         $workshops = Workshop::orderBy('created_at', 'desc')->paginate(25);
 
         return view('backend.workshop.index', compact('workshops'));
     }
 
-    public function show($id)
+    public function show($id): View
     {
         $workshop = Workshop::findOrFail($id);
         $emailLog = $workshop->emailLog()->paginate(5);
@@ -45,7 +48,7 @@ class WorkshopController extends Controller
         return view('backend.workshop.show', compact('workshop', 'emailLog', 'courses'));
     }
 
-    public function store(AddWorkshopRequest $request)
+    public function store(AddWorkshopRequest $request): RedirectResponse
     {
         $this->validate($request, [
             'description' => 'required',
@@ -84,7 +87,7 @@ class WorkshopController extends Controller
         return redirect(route('admin.workshop.show', $workshop->id));
     }
 
-    public function update($id, AddWorkshopRequest $request)
+    public function update($id, AddWorkshopRequest $request): RedirectResponse
     {
         $this->validate($request, [
             'description' => 'required',
@@ -127,7 +130,7 @@ class WorkshopController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($id, Request $request)
+    public function destroy($id, Request $request): RedirectResponse
     {
         $workshop = Workshop::findOrFail($id);
         $workshop->forceDelete();
@@ -137,10 +140,8 @@ class WorkshopController extends Controller
 
     /**
      * Update the email to be sent when approved for this workshop
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update_email($id, Request $request)
+    public function update_email($id, Request $request): RedirectResponse
     {
         $workshop = Workshop::findOrFail($id);
         $workshop->email_title = $request->email_title;
@@ -150,7 +151,7 @@ class WorkshopController extends Controller
         return redirect()->back();
     }
 
-    public function removeAttendee($workshop_taken_id, $attendee_id, Request $request)
+    public function removeAttendee($workshop_taken_id, $attendee_id, Request $request): RedirectResponse
     {
         $workshopTaken = WorkshopsTaken::findOrFail($workshop_taken_id);
         $user = User::findOrFail($attendee_id);
@@ -201,10 +202,7 @@ class WorkshopController extends Controller
         })->download('xlsx');*/
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function addLearnersToCourse($id, Request $request)
+    public function addLearnersToCourse($id, Request $request): RedirectResponse
     {
         $workshop = Workshop::findOrFail($id);
 
@@ -238,9 +236,8 @@ class WorkshopController extends Controller
      * Send email to the attendees of the workshop
      *
      * @param  $id  int workshop id
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function sendEmailToAttendees($id, Request $request)
+    public function sendEmailToAttendees($id, Request $request): RedirectResponse
     {
         $workshop = Workshop::find($id);
         if ($workshop) {
@@ -323,10 +320,8 @@ class WorkshopController extends Controller
 
     /**
      * View the log of emails
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function viewEmailLogAttendees($log_id)
+    public function viewEmailLogAttendees($log_id): JsonResponse
     {
         $log = WorkshopEmailLog::find($log_id);
         $attendees = [];
@@ -340,10 +335,8 @@ class WorkshopController extends Controller
 
     /**
      * Update the status of the workshop
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function updateStatus(Request $request)
+    public function updateStatus(Request $request): JsonResponse
     {
 
         $workshop = Workshop::find($request->workshop_id);
@@ -362,7 +355,7 @@ class WorkshopController extends Controller
         ]);
     }
 
-    public function updateForSaleStatus(Request $request)
+    public function updateForSaleStatus(Request $request): JsonResponse
     {
         $workshop = Workshop::find($request->workshop_id);
         $success = false;

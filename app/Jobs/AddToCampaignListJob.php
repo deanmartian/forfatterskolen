@@ -30,10 +30,8 @@ class AddToCampaignListJob implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         AdminHelpers::addToActiveCampaignList($this->list_id, $this->listData);
     }

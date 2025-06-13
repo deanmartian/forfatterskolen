@@ -12,6 +12,7 @@ use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 
@@ -19,10 +20,8 @@ class EmailOutController extends Controller
 {
     /**
      * Create new email out
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store($course_id, Request $request)
+    public function store($course_id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
 
@@ -163,10 +162,8 @@ class EmailOutController extends Controller
 
     /**
      * Update email out record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($course_id, $id, Request $request)
+    public function update($course_id, $id, Request $request): RedirectResponse
     {
         $course = Course::find($course_id);
         $email_out = EmailOut::find($id);
@@ -312,10 +309,8 @@ class EmailOutController extends Controller
 
     /**
      * Delete email out record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($course_id, $id)
+    public function destroy($course_id, $id): RedirectResponse
     {
         $course = Course::find($course_id);
         $email_out = EmailOut::find($id);
@@ -332,7 +327,7 @@ class EmailOutController extends Controller
         ]);
     }
 
-    public function sendEmailToLearners($course_id, $id)
+    public function sendEmailToLearners($course_id, $id): RedirectResponse
     {
         $emailOut = EmailOut::find($id);
         $packages = $emailOut->allowed_package ? json_decode($emailOut->allowed_package) :

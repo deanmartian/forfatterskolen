@@ -5,6 +5,7 @@ namespace App;
 use App\Http\AdminHelpers;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Contract extends Model
 {
@@ -49,17 +50,15 @@ class Contract extends Model
         return $query->where('status', 1);
     }
 
-    public function project()
+    public function project(): BelongsTo
     {
         return $this->belongsTo(\App\Project::class);
     }
 
     /**
      * Accessor field
-     *
-     * @return string
      */
-    public function getSentFileLinkAttribute()
+    public function getSentFileLinkAttribute(): string
     {
         $fileLink = '';
         $filename = isset($this->attributes['sent_file']) ? $this->attributes['sent_file'] : null;
@@ -77,10 +76,8 @@ class Contract extends Model
 
     /**
      * Accessor field
-     *
-     * @return string
      */
-    public function getSignedFileLinkAttribute()
+    public function getSignedFileLinkAttribute(): string
     {
         $fileLink = '';
         if (isset($this->attributes['signed_file'])) {

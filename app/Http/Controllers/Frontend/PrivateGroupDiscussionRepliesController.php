@@ -8,6 +8,7 @@ use App\Mail\DiscussionRepliesEmail;
 use App\PrivateGroupDiscussion;
 use App\PrivateGroupDiscussionReply;
 use App\Transformer\PrivateGroupDiscussionsRepliesTransFormer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use League\Fractal\Manager;
@@ -17,10 +18,8 @@ class PrivateGroupDiscussionRepliesController extends Controller
 {
     /**
      * Get the replies for a certain discussion
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function getDiscussionReplies($discussion_id)
+    public function getDiscussionReplies($discussion_id): JsonResponse
     {
         $fractal = new Manager;
         $query = PrivateGroupDiscussion::where('id', $discussion_id)->get();
@@ -32,10 +31,8 @@ class PrivateGroupDiscussionRepliesController extends Controller
 
     /**
      * Create a reply for a discussion
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function createReply(Request $request)
+    public function createReply(Request $request): JsonResponse
     {
         $data = $request->all();
         $author = \Auth::user();
@@ -103,10 +100,8 @@ class PrivateGroupDiscussionRepliesController extends Controller
 
     /**
      * Update a reply from discussion
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function updateReply(Request $request)
+    public function updateReply(Request $request): JsonResponse
     {
         $data = $request->except('id');
         $model = PrivateGroupDiscussionReply::find($request->id);

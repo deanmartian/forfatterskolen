@@ -20,7 +20,7 @@ class AddToCampaignListListener
     /**
      * Handle the event.
      */
-    public function handle(AddToCampaignList $event)
+    public function handle(AddToCampaignList $event): void
     {
         dispatch(new AddToCampaignListJob($event->list_id, $event->listData));
     }

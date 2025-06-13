@@ -4,6 +4,8 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Assignment extends Model
 {
@@ -30,24 +32,24 @@ class Assignment extends Model
         return $query->where('parent', 'users');
     }
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }
 
-    public function manuscripts()
+    public function manuscripts(): HasMany
     {
         return $this->hasMany(\App\AssignmentManuscript::class)->orderBy('grade', 'desc');
     }
 
-    public function notFinishedManuscripts()
+    public function notFinishedManuscripts(): HasMany
     {
         return $this->hasMany(\App\AssignmentManuscript::class)
             ->where('status', 0)
             ->orderBy('grade', 'desc');
     }
 
-    public function groups()
+    public function groups(): HasMany
     {
         return $this->hasMany(\App\AssignmentGroup::class)->orderBy('created_at', 'desc');
     }
@@ -71,7 +73,7 @@ class Assignment extends Model
         return $value ? date_format(date_create($value), 'M d, Y') : null;
     }
 
-    public function learner()
+    public function learner(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'parent_id', 'id');
     }
@@ -101,22 +103,22 @@ class Assignment extends Model
         return $submission_date;
     }
 
-    public function assignmentManuscriptEditorCanTake()
+    public function assignmentManuscriptEditorCanTake(): HasMany
     {
         return $this->hasMany(\App\AssignmentManuscriptEditorCanTake::class, 'assignment_manuscript_id', 'id');
     }
 
-    public function editor()
+    public function editor(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 
-    public function linkedAssignment()
+    public function linkedAssignment(): BelongsTo
     {
         return $this->belongsTo(\App\Assignment::class, 'parent_id', 'id');
     }
 
-    public function disabledLearners()
+    public function disabledLearners(): HasMany
     {
         return $this->hasMany(\App\AssignmentDisabledLearner::class);
     }

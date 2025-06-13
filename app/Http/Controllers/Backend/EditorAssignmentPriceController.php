@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Backend;
 use App\EditorAssignmentPrices;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class EditorAssignmentPriceController extends Controller
 {
-    public function save(Request $request)
+    public function save(Request $request): RedirectResponse
     {
 
         $data = $request->except('_token');
@@ -32,7 +33,7 @@ class EditorAssignmentPriceController extends Controller
 
     }
 
-    public function delete($id)
+    public function delete($id): RedirectResponse
     {
 
         $editorAssignmentPrices = EditorAssignmentPrices::find($id);

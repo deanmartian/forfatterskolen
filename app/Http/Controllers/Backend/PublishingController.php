@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePublishingRequest;
 use App\Repositories\Services\PublishingService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class PublishingController extends Controller
 {
@@ -32,7 +34,7 @@ class PublishingController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         if ($request->search && ! empty($request->search)) {
             $publishingHouses = $this->publishingService->search($request->search);
@@ -50,7 +52,7 @@ class PublishingController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $publishingHouse = $this->publishingService->fields();
 
@@ -59,10 +61,8 @@ class PublishingController extends Controller
 
     /**
      * Create new publishing house
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CreatePublishingRequest $request)
+    public function store(CreatePublishingRequest $request): RedirectResponse
     {
         if ($this->publishingService->store($request->all())) {
             return redirect()->route('admin.publishing.index');
@@ -90,10 +90,8 @@ class PublishingController extends Controller
 
     /**
      * Update publishing house
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, CreatePublishingRequest $request)
+    public function update($id, CreatePublishingRequest $request): RedirectResponse
     {
         if ($this->publishingService->update($id, $request->except('_token'))) {
             return redirect()->route('admin.publishing.edit', $id);
@@ -104,10 +102,8 @@ class PublishingController extends Controller
 
     /**
      * Delete a publishing house
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $this->publishingService->destroy($id);
 

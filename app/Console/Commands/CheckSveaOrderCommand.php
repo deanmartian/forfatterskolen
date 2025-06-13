@@ -33,10 +33,8 @@ class CheckSveaOrderCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): int
     {
 
         $orders = Order::whereNotNull('svea_order_id')

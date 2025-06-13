@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FreeWebinar extends Model
 {
@@ -22,10 +23,8 @@ class FreeWebinar extends Model
 
     /**
      * Get the webinar presenters
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function webinar_presenters()
+    public function webinar_presenters(): HasMany
     {
         return $this->hasMany(\App\FreeWebinarPresenter::class);
     }

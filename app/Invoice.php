@@ -4,6 +4,8 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Invoice extends Model
 {
@@ -32,22 +34,22 @@ class Invoice extends Model
     protected $fillable = ['user_id', 'fiken_url', 'fiken_weblink', 'pdf_url', 'fiken_is_paid', 'fiken_balance', 'fiken_dueDate', 'balance',
         'kid_number', 'invoice_number', 'fiken_invoice_id', 'fiken_issueDate', 'gross'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function package()
+    public function package(): BelongsTo
     {
         return $this->belongsTo(\App\Package::class);
     }
 
-    public function payment_plan()
+    public function payment_plan(): BelongsTo
     {
         return $this->belongsTo(\App\PaymentPlan::class);
     }
 
-    public function transactions()
+    public function transactions(): HasMany
     {
         return $this->hasMany(\App\Transaction::class)->orderBy('created_at', 'desc');
     }
@@ -59,20 +61,16 @@ class Invoice extends Model
 
     /**
      * Payment completed.
-     *
-     * @return bool
      */
-    public function paid()
+    public function paid(): bool
     {
         return in_array($this->fiken_is_paid, [self::COMPLETED]);
     }
 
     /**
      * Payment is still pending.
-     *
-     * @return bool
      */
-    public function unpaid()
+    public function unpaid(): bool
     {
         return in_array($this->fiken_is_paid, [self::PENDING]);
     }

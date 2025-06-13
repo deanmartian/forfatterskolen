@@ -24,10 +24,9 @@ class SurveyService
 
     /**
      * @param  null  $id
-     * @param  int  $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    public function getRecord($id = null, $page = 15)
+    public function getRecord($id = null, int $page = 15)
     {
         if ($id) {
             return $this->survey->find($id);
@@ -51,10 +50,8 @@ class SurveyService
 
     /**
      * Update a survey
-     *
-     * @return bool
      */
-    public function update($id, $request)
+    public function update($id, $request): bool
     {
         $survey = $this->getRecord($id);
         $requestData = $request->toArray();
@@ -64,10 +61,8 @@ class SurveyService
 
     /**
      * Delete a survey
-     *
-     * @return bool
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         $survey = $this->getRecord($id);
         if ($survey) {

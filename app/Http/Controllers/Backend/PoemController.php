@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Backend;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Poem;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class PoemController extends Controller
 {
@@ -14,7 +16,7 @@ class PoemController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $poems = Poem::orderBy('created_at', 'DESC')->paginate(15);
 
@@ -26,7 +28,7 @@ class PoemController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $poem = [
             'id' => '',
@@ -41,10 +43,8 @@ class PoemController extends Controller
 
     /**
      * Create new poem
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'title' => 'required',
@@ -87,7 +87,7 @@ class PoemController extends Controller
         return redirect()->route('admin.poem.index');
     }
 
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $poem = Poem::find($id);
         if ($poem) {
@@ -115,7 +115,7 @@ class PoemController extends Controller
         return redirect()->route('admin.poem.index');
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $poem = Poem::find($id);
         if ($poem) {

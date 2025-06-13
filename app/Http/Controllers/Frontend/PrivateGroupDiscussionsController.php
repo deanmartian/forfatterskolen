@@ -9,6 +9,7 @@ use App\Mail\DiscussionEmail;
 use App\PrivateGroup;
 use App\PrivateGroupDiscussion;
 use App\Transformer\PrivateGroupDiscussionsTransFormer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -40,10 +41,8 @@ class PrivateGroupDiscussionsController extends Controller
 
     /**
      * Display all the discussions for a particular group
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function listDiscussion($group_id)
+    public function listDiscussion($group_id): JsonResponse
     {
         $fractal = new Manager;
         $query = PrivateGroupDiscussion::where('private_group_id', $group_id)->get();
@@ -55,10 +54,8 @@ class PrivateGroupDiscussionsController extends Controller
 
     /**
      * Create discussion for a particular group
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function create(Request $request)
+    public function create(Request $request): JsonResponse
     {
         $this->validate($request, [
             'subject' => 'required',
@@ -147,10 +144,8 @@ class PrivateGroupDiscussionsController extends Controller
 
     /**
      * Update the discussion details
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request)
+    public function update(Request $request): JsonResponse
     {
         $data = $request->except('id');
         $model = PrivateGroupDiscussion::find($request->id);

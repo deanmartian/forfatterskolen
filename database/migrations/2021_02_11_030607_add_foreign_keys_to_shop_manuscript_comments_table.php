@@ -7,10 +7,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('shop_manuscript_comments', function (Blueprint $table) {
             $table->foreign('shop_manuscript_taken_id', 'shop_manuscript_comments_ibfk_1')->references('id')->on('shop_manuscripts_taken')->onUpdate('RESTRICT')->onDelete('CASCADE');
@@ -20,10 +18,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('shop_manuscript_comments', function (Blueprint $table) {
             $table->dropForeign('shop_manuscript_comments_ibfk_1');

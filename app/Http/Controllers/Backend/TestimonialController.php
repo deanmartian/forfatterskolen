@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Backend;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Repositories\TestimonialRepository;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class TestimonialController extends Controller
 {
@@ -27,7 +29,7 @@ class TestimonialController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $testimonials = $this->repository->paginate(15);
 
@@ -39,7 +41,7 @@ class TestimonialController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $fields = $this->repository->getModel()->getFillable();
         $testimonial = [];
@@ -52,10 +54,8 @@ class TestimonialController extends Controller
 
     /**
      * Create testimonial
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, $this->repository->validationRules);
 
@@ -88,10 +88,8 @@ class TestimonialController extends Controller
 
     /**
      * Update record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $testimonial = $this->repository->find($id);
         if (! $testimonial) {
@@ -110,10 +108,8 @@ class TestimonialController extends Controller
 
     /**
      * Delete record
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $testimonial = $this->repository->find($id);
         if (! $testimonial) {

@@ -53,10 +53,8 @@ class AddMailToQueueJob implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle(SaleService $saleService)
+    public function handle(SaleService $saleService): void
     {
 
         $track_code = md5(rand());

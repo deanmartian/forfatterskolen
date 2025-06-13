@@ -15,13 +15,16 @@ use App\User;
 use App\UserEmail;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
-    public function adminLogin(LoginRequest $request)
+    public function adminLogin(LoginRequest $request): RedirectResponse
     {
         $user = User::where('email', $request->email)->whereIn('role', [1])->first();
 
@@ -37,7 +40,7 @@ class LoginController extends Controller
         return redirect()->back()->withInput()->withErrors('Feil passord');
     }
 
-    public function editorLogin(LoginRequest $request)
+    public function editorLogin(LoginRequest $request): RedirectResponse
     {
         $user = User::where('email', $request->email)
             ->where(function ($query) {
@@ -63,7 +66,7 @@ class LoginController extends Controller
         return redirect()->back()->withInput()->withErrors('Feil passord');
     }
 
-    public function giutbokLogin(LoginRequest $request)
+    public function giutbokLogin(LoginRequest $request): RedirectResponse
     {
         $user = User::where('email', $request->email)
             ->where(function ($query) {
@@ -89,7 +92,7 @@ class LoginController extends Controller
         return redirect()->back()->withInput()->withErrors('Feil passord');
     }
 
-    public function giutbokEmailLoginRedirect($email, $redirect_link)
+    public function giutbokEmailLoginRedirect($email, $redirect_link): RedirectResponse
     {
         $email = decrypt($email);
         $redirect_link = decrypt($redirect_link);
@@ -122,7 +125,7 @@ class LoginController extends Controller
         return redirect()->route('editor.dashboard');
     }
 
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): RedirectResponse
     {
         $this->validate($request, [
             'email' => 'required|email',
@@ -162,7 +165,7 @@ class LoginController extends Controller
         return redirect()->route('auth.login.show')->withInput()->withErrors('Feil passord');
     }
 
-    public function selfPublishingLogin(LoginRequest $request)
+    public function selfPublishingLogin(LoginRequest $request): RedirectResponse
     {
         $this->validate($request, [
             'email' => 'required|email',
@@ -258,9 +261,8 @@ class LoginController extends Controller
     }
 
     /** login using encrypted email
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function emailLogin($email, Request $request)
+    public function emailLogin($email, Request $request): RedirectResponse
     {
         $email = decrypt($email);
 
@@ -279,7 +281,7 @@ class LoginController extends Controller
         return redirect()->route('learner.dashboard');
     }
 
-    public function emailLoginNormal($email, Request $request)
+    public function emailLoginNormal($email, Request $request): RedirectResponse
     {
 
         $user = User::where('email', $email)->where('role', 2)->first();
@@ -299,10 +301,8 @@ class LoginController extends Controller
 
     /**
      * Email login with redirect link
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function emailLoginRedirect($email, $redirect_link)
+    public function emailLoginRedirect($email, $redirect_link): RedirectResponse
     {
         $email = decrypt($email);
         $redirect_link = decrypt($redirect_link);
@@ -317,7 +317,7 @@ class LoginController extends Controller
         return redirect()->to($redirect_link);
     }
 
-    public function logout()
+    public function logout(): RedirectResponse
     {
         Auth::logout();
         // forget all stored session
@@ -328,22 +328,20 @@ class LoginController extends Controller
         return redirect('/');
     }
 
-    public function showFrontend()
+    public function showFrontend(): View
     {
         return view('frontend.auth.login');
     }
 
-    public function showSelfPublishing()
+    public function showSelfPublishing(): View
     {
         return view('frontend.auth.self-publishing-login');
     }
 
     /**
      * Create a redirect method to facebook api.
-     *
-     * @return \Response
      */
-    public function redirectToFacebook()
+    public function redirectToFacebook(): Response
     {
         $prevUrl = explode('?', \URL::previous());
         $queryString = count(\request()->query()) ? '?'.http_build_query(\request()->query()) : '';
@@ -358,7 +356,7 @@ class LoginController extends Controller
      *
      * @return callable URL from facebook
      */
-    public function handleFacebookCallback()
+    public function handleFacebookCallback(): RedirectResponse
     {
         $redirectPage = \Session::has('redirect_page') ? \Session::get('redirect_page')[0]
             : route('learner.dashboard');
@@ -393,10 +391,8 @@ class LoginController extends Controller
 
     /**
      * Create a redirect method to google api.
-     *
-     * @return \Response
      */
-    public function redirectToGoogle()
+    public function redirectToGoogle(): Response
     {
         $prevUrl = explode('?', \URL::previous());
         $queryString = count(\request()->query()) ? '?'.http_build_query(\request()->query()) : '';
@@ -411,7 +407,7 @@ class LoginController extends Controller
      *
      * @return callable URL from google
      */
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(): RedirectResponse
     {
 
         $redirectPage = \Session::has('redirect_page') ? \Session::get('redirect_page')[0]
@@ -446,10 +442,8 @@ class LoginController extends Controller
 
     /**
      * Generate a token for checking before the actual login
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function crossDomainToken(Request $request)
+    public function crossDomainToken(Request $request): JsonResponse
     {
         $token = $request->bearerToken(); // get the bearer token on the header request
         // decode the passed jwt token
@@ -480,10 +474,8 @@ class LoginController extends Controller
 
     /**
      * Login from other domain
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function crossDomainLogin(Request $request)
+    public function crossDomainLogin(Request $request): JsonResponse
     {
         $checkToken = AccessToken::where('jti', $request->jti)->first();
         $now = Carbon::now()->timestamp;
@@ -593,10 +585,8 @@ class LoginController extends Controller
 
     /**
      * Get the user info from vipps
-     *
-     * @return $this
      */
-    public function vippsUserInfo($access_token, $state)
+    public function vippsUserInfo($access_token, $state): RedirectResponse
     {
         $long_url = config('services.vipps.login_user_info_link');
 

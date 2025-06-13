@@ -17,7 +17,10 @@ use App\ShopManuscriptsTaken;
 use App\Staff;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {
@@ -30,7 +33,7 @@ class AdminController extends Controller
         $this->middleware('checkPageAccess:11');
     }
 
-    public function index()
+    public function index(): View
     {
         $admins = User::admins()->where('is_active', 1)->withTrashed()->orderBy('created_at', 'desc')->paginate(20);
         $inactiveAdmins = User::admins()->where('is_active', 0)->withTrashed()->orderBy('created_at', 'desc')->paginate(20);
@@ -53,7 +56,7 @@ class AdminController extends Controller
         return view('backend.admin.show', compact('user'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validate($request, [
             'first_name' => 'required|max:100',
@@ -80,7 +83,7 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $this->validate($request, [
             'first_name' => 'required|max:100',
@@ -149,7 +152,7 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($id, Request $request)
+    public function destroy($id, Request $request): RedirectResponse
     {
         $admin = User::where('id', $id)->whereIn('role', [1, 3])->firstOrFail();
         $admin->delete();
@@ -199,10 +202,8 @@ class AdminController extends Controller
 
     /**
      * Insert/Update page access for the admin
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function pageAccess($admin_id, Request $request, PageAccessService $pageAccessService)
+    public function pageAccess($admin_id, Request $request, PageAccessService $pageAccessService): RedirectResponse
     {
         $pageAccessService->createAccessPage($admin_id, $request);
 
@@ -211,10 +212,8 @@ class AdminController extends Controller
 
     /**
      * Activate/De-activate user
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function adminStatus(Request $request)
+    public function adminStatus(Request $request): JsonResponse
     {
         $user = User::where('id', $request->id)->withTrashed()->first();
         $user->is_active = $request->status;
@@ -227,7 +226,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function adminTypeChange(Request $request)
+    public function adminTypeChange(Request $request): JsonResponse
     {
         $user = User::where('id', $request->id)->first();
         switch ($request->type) {
@@ -254,14 +253,14 @@ class AdminController extends Controller
         ]);
     }
 
-    public function clearCache()
+    public function clearCache(): RedirectResponse
     {
         \Artisan::call('cache:clear');
 
         return redirect()->back()->with('success', 'Cache Cleared!');
     }
 
-    public function saveStaff($id, Request $request)
+    public function saveStaff($id, Request $request): RedirectResponse
     {
 
         $validator = \Validator::make($request->all(), [
@@ -302,7 +301,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function deleteStaff($staff_id)
+    public function deleteStaff($staff_id): RedirectResponse
     {
         $staff = Staff::find($staff_id);
         if (! $staff) {
@@ -317,7 +316,7 @@ class AdminController extends Controller
         ]);
     }
 
-    public function yearlyCalendar()
+    public function yearlyCalendar(): View
     {
         $editor = User::where(function ($query) {
             $query->where('role', 3)->orWhere('admin_with_editor_access', 1);

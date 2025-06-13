@@ -5,6 +5,8 @@ namespace App;
 use App\Traits\Loggable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Course extends Model
 {
@@ -20,14 +22,14 @@ class Course extends Model
 
     protected $appends = ['is_webinar_pakke'];
 
-    public function packages()
+    public function packages(): HasMany
     {
         return $this->hasMany(\App\Package::class)
             ->where('is_reward', 0)
             ->orderBy('full_payment_price', 'asc');
     }
 
-    public function packagesIsShow()
+    public function packagesIsShow(): HasMany
     {
         return $this->hasMany(\App\Package::class)
             ->where('is_reward', 0)
@@ -35,31 +37,31 @@ class Course extends Model
             ->orderBy('full_payment_price', 'asc');
     }
 
-    public function allPackages()
+    public function allPackages(): HasMany
     {
         return $this->hasMany(\App\Package::class)
             ->orderBy('full_payment_price', 'asc');
     }
 
-    public function rewardPackages()
+    public function rewardPackages(): HasMany
     {
         return $this->hasMany(\App\Package::class)
             ->where('is_reward', 1)
             ->orderBy('full_payment_price', 'asc');
     }
 
-    public function workshops()
+    public function workshops(): HasMany
     {
         return $this->hasMany(\App\Workshop::class)->orderBy('created_at', 'desc');
     }
 
-    public function webinars()
+    public function webinars(): HasMany
     {
         // display id of 24 first then other record is by start date
         return $this->hasMany(\App\Webinar::class)->orderByRaw('id=24 DESC')->orderBy('start_date', 'asc');
     }
 
-    public function activeWebinars()
+    public function activeWebinars(): HasMany
     {
         // display id of 24 first then other record is by start date
         return $this->hasMany(\App\Webinar::class)->orderByRaw('id=24 DESC')
@@ -67,7 +69,7 @@ class Course extends Model
             ->orderBy('start_date', 'asc');
     }
 
-    public function assignments()
+    public function assignments(): HasMany
     {
         return $this->hasMany(\App\Assignment::class)
             ->where(function ($query) {
@@ -77,7 +79,7 @@ class Course extends Model
             ->orderBy('created_at', 'desc');
     }
 
-    public function activeAssignments()
+    public function activeAssignments(): HasMany
     {
         return $this->hasMany(\App\Assignment::class)
             // commented because the field now accepts int also not just date
@@ -98,7 +100,7 @@ class Course extends Model
         // ->orderBy('created_at', 'desc');
     }
 
-    public function expiredAssignments()
+    public function expiredAssignments(): HasMany
     {
         return $this->hasMany(\App\Assignment::class)
             // commented because the field now accepts int also not just date
@@ -110,7 +112,7 @@ class Course extends Model
             ->orderBy('created_at', 'desc');
     }
 
-    public function lessons()
+    public function lessons(): HasMany
     {
         return $this->hasMany(\App\Lesson::class)->orderBy('order', 'asc');
     }
@@ -120,38 +122,38 @@ class Course extends Model
         return $this->lessons()->where('title', 'Kursplan');
     }
 
-    public function discounts()
+    public function discounts(): HasMany
     {
         return $this->hasMany(\App\CourseDiscount::class)->orderBy('id', 'asc');
     }
 
-    public function notes()
+    public function notes(): HasMany
     {
         return $this->hasMany(\App\CalendarNote::class);
     }
 
-    public function similar_courses()
+    public function similar_courses(): HasMany
     {
         return $this->hasMany(\App\SimilarCourse::class)->orderBy('created_at', 'desc');
     }
 
-    public function testimonials()
+    public function testimonials(): HasMany
     {
         return $this->hasMany(\App\CourseTestimonial::class);
     }
 
-    public function emailOut()
+    public function emailOut(): HasMany
     {
         return $this->hasMany(\App\EmailOut::class);
     }
 
-    public function emailOutOrdered()
+    public function emailOutOrdered(): HasMany
     {
         return $this->hasMany(\App\EmailOut::class)->orderByRaw('delay + 0 ASC')
             ->orderBy('delay', 'asc');
     }
 
-    public function emailOutActive()
+    public function emailOutActive(): HasMany
     {
         $today = now()->toDateString();
 
@@ -165,7 +167,7 @@ class Course extends Model
             ->orderBy('delay', 'asc');
     }
 
-    public function emailOutArchive()
+    public function emailOutArchive(): HasMany
     {
         $today = now()->toDateString();
 
@@ -176,12 +178,12 @@ class Course extends Model
             ->orderBy('delay', 'asc');
     }
 
-    public function emailOutLog()
+    public function emailOutLog(): HasMany
     {
         return $this->hasMany(\App\EmailOutLog::class);
     }
 
-    public function rewardCoupons()
+    public function rewardCoupons(): HasMany
     {
         return $this->hasMany(\App\CourseRewardCoupon::class);
     }
@@ -191,17 +193,17 @@ class Course extends Model
         return self::where('is_free', '=', 1)->get();
     }
 
-    public function expiryReminders()
+    public function expiryReminders(): HasOne
     {
         return $this->hasOne(\App\CourseExpiryReminder::class);
     }
 
-    public function surveys()
+    public function surveys(): HasMany
     {
         return $this->hasMany(Survey::class);
     }
 
-    public function certificate()
+    public function certificate(): HasOne
     {
         return $this->hasOne(\App\CourseCertificate::class);
     }

@@ -6,10 +6,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         $sp = "CREATE PROCEDURE `getIDWhereHidden`(
             IN `editor_expected_finish` DATE
@@ -31,10 +29,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         DB::unprepared('DROP PROCEDURE IF EXISTS getIDWhereHidden;');
     }

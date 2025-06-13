@@ -11,14 +11,16 @@ use App\SelfPublishing;
 use App\SelfPublishingFeedback;
 use App\Services\ProjectService;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Log;
 use Spatie\Dropbox\Client as DropboxClient;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PageController extends Controller
 {
-    public function dashboard()
+    public function dashboard(): View
     {
         $learners = User::where('role', 2)->get();
         $selfPublishingApprovedFeedbacks = SelfPublishingFeedback::where('is_approved', 1)->pluck('self_publishing_id')->toArray();
@@ -36,7 +38,7 @@ class PageController extends Controller
         return view('giutbok.dashboard', compact('selfPublishingList', 'learners', 'projects', 'pageFormats', 'projectWholeBooks'));
     }
 
-    public function addBookFormatFeedback($id, Request $request, ProjectService $projectService)
+    public function addBookFormatFeedback($id, Request $request, ProjectService $projectService): RedirectResponse
     {
         $request->merge(['id' => $id]);
         $projectService->saveBookFormatFeedback($request);
@@ -48,7 +50,7 @@ class PageController extends Controller
         ]);
     }
 
-    public function updateProjectWholeBook($id, Request $request)
+    public function updateProjectWholeBook($id, Request $request): RedirectResponse
     {
         $wholeBook = ProjectWholeBook::find($id);
 

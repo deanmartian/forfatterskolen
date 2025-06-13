@@ -33,10 +33,8 @@ class CheckFikenContactCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $users = User::whereNull('fiken_contact_id')->get();
         $company = 'forfatterskolen-as';

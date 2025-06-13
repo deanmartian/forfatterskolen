@@ -8,7 +8,10 @@ use App\Http\PowerOffice;
 use App\Jobs\AddMailToQueueJob;
 use App\PowerOfficeInvoice;
 use App\Repositories\Services\SaleService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class SaleController extends Controller
 {
@@ -28,7 +31,7 @@ class SaleController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         return view('backend.sale.index');
         /* $archiveCourses = $this->service->queryCoursesTaken(1);
@@ -62,7 +65,7 @@ class SaleController extends Controller
         ); */
     }
 
-    public function loadTabContent(Request $request)
+    public function loadTabContent(Request $request): View
     {
         $tab = $request->input('tab');
         $page = $request->input('p');
@@ -103,10 +106,7 @@ class SaleController extends Controller
         }
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function sendEmail($id, $parent, Request $request)
+    public function sendEmail($id, $parent, Request $request): RedirectResponse
     {
         $record = [];
         if (in_array($parent, ['courses-taken-welcome', 'courses-taken-follow-up'])) {
@@ -141,7 +141,7 @@ class SaleController extends Controller
         ]);
     }
 
-    public function moveToArchive($id)
+    public function moveToArchive($id): RedirectResponse
     {
         $courseTaken = $this->service->courseTaken($id);
         $courseTaken->is_welcome_email_sent = 1;
@@ -153,7 +153,7 @@ class SaleController extends Controller
         ]);
     }
 
-    public function orderInvoiceSent(Request $request)
+    public function orderInvoiceSent(Request $request): JsonResponse
     {
         $order = $this->service->getOrder($request->order_id);
         $success = false;
@@ -171,7 +171,7 @@ class SaleController extends Controller
         ]);
     }
 
-    public function isOrderWithdrawn(Request $request)
+    public function isOrderWithdrawn(Request $request): JsonResponse
     {
         $order = $this->service->getOrder($request->order_id);
         $success = false;

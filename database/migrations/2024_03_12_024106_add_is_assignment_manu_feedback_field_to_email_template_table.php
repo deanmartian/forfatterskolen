@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('email_template', function (Blueprint $table) {
             $table->tinyInteger('is_assignment_manu_feedback')->after('course_type')->default(0);
@@ -20,10 +18,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('email_template', function (Blueprint $table) {
             $table->dropColumn('is_assignment_manu_feedback');

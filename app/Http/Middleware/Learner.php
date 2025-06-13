@@ -6,6 +6,8 @@ use AdminHelpers;
 use Auth;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class Learner
 {
@@ -28,11 +30,8 @@ class Learner
 
     /**
      * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         if ($this->auth->guest()) {
             if ($request->ajax()) {

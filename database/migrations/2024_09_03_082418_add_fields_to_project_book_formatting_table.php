@@ -8,10 +8,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('project_book_formatting', function (Blueprint $table) {
             $table->unsignedInteger('designer_id')->nullable()->after('file');
@@ -22,10 +20,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('project_book_formatting', function (Blueprint $table) {
             $table->dropColumn('designer_id');

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FreeManuscriptFeedbackHistory extends Model
 {
@@ -20,7 +21,7 @@ class FreeManuscriptFeedbackHistory extends Model
      */
     protected $fillable = ['free_manuscript_id', 'date_sent'];
 
-    public function freeManuscript()
+    public function freeManuscript(): BelongsTo
     {
         return $this->belongsTo('App\FreeManuscripts');
     }

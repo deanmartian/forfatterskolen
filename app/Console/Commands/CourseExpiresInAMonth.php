@@ -36,10 +36,8 @@ class CourseExpiresInAMonth extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         CronLog::create(['activity' => 'CourseExpiresInAMonth CRON running.']);
         $monthDate = Carbon::now()->addDays(30)->format('Y-m-d');

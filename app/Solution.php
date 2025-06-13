@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Solution extends Model
 {
@@ -20,7 +21,7 @@ class Solution extends Model
      */
     protected $fillable = ['title', 'description', 'is_instruction', 'image'];
 
-    public function articles()
+    public function articles(): HasMany
     {
         return $this->hasMany(\App\SolutionArticle::class);
     }

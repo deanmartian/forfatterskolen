@@ -18,9 +18,11 @@ use App\ManuscriptEditorCanTake;
 use App\User;
 use Carbon\Carbon;
 use File;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class EditorController extends Controller
 {
@@ -29,7 +31,7 @@ class EditorController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(): View
     {
         $editors = Editor::paginate(15);
 
@@ -41,7 +43,7 @@ class EditorController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $editor = [
             'name' => old('name'),
@@ -57,7 +59,7 @@ class EditorController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function store(EditorCreateRequest $request)
+    public function store(EditorCreateRequest $request): RedirectResponse
     {
         $editor = new Editor;
         $editor->name = $request->name;
@@ -92,7 +94,7 @@ class EditorController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit($id)
+    public function edit($id): View
     {
         $editor = Editor::findOrFail($id)->toArray();
 
@@ -104,7 +106,7 @@ class EditorController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function update($id, EditorUpdateRequest $request)
+    public function update($id, EditorUpdateRequest $request): RedirectResponse
     {
         $editor = Editor::find($id);
         if ($editor) {
@@ -141,7 +143,7 @@ class EditorController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $editor = Editor::find($id);
         if ($editor) {
@@ -238,7 +240,7 @@ class EditorController extends Controller
         return view('backend.admin.total_editor_worked', compact('editor', 'var', 'data', 'editor', 'price'));
     }
 
-    public function settings()
+    public function settings(): View
     {
 
         $manuscriptEditorCanTake = ManuscriptEditorCanTake::where('editor_id', Auth::user()->id)
@@ -260,7 +262,7 @@ class EditorController extends Controller
         return view('editor.editor-settings', compact('manuscriptEditorCanTake', 'genrePrefrences', 'genreIHaveNotSelected', 'assignmentsBeforeEditorDeadline'));
     }
 
-    public function saveGenrePrefences($fromAdmin, Request $request)
+    public function saveGenrePrefences($fromAdmin, Request $request): RedirectResponse
     {
 
         if ($request->genre_id) {
@@ -282,7 +284,7 @@ class EditorController extends Controller
 
     }
 
-    public function deleteGenrePreferences($id)
+    public function deleteGenrePreferences($id): RedirectResponse
     {
         EditorGenrePreferences::find($id)->delete();
 
@@ -290,7 +292,7 @@ class EditorController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function saveAssignmentManuscriptEditorCanTake($id, $assignment_manu_id, Request $request)
+    public function saveAssignmentManuscriptEditorCanTake($id, $assignment_manu_id, Request $request): RedirectResponse
     {
         if (! $request->has('how_many_you_can_take')) {
             return redirect()->back();
@@ -311,7 +313,7 @@ class EditorController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function hideShowEditor($editor_id, $hide, Request $request)
+    public function hideShowEditor($editor_id, $hide, Request $request): RedirectResponse
     {
         $dateEnd = null;
         if (! $request->hideUntilTurnedBackUnhidden) {
@@ -329,7 +331,7 @@ class EditorController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function showEditorHidden($editor_id)
+    public function showEditorHidden($editor_id): View
     {
 
         $editor = User::find($editor_id);
@@ -341,7 +343,7 @@ class EditorController extends Controller
 
     }
 
-    public function deleteEditorHidden($id)
+    public function deleteEditorHidden($id): RedirectResponse
     {
         HiddenEditor::find($id)->delete();
 
@@ -349,7 +351,7 @@ class EditorController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function setHowManyManuscriptYouCanTake($id, Request $request)
+    public function setHowManyManuscriptYouCanTake($id, Request $request): RedirectResponse
     {
         $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::find($id);
         $assignmentManuscriptEditorCanTake->how_many_you_can_take = $request->howManyManuscriptYouCanTake;

@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Backend;
 
 use App\EmailHistory;
 use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
 class EmailHistoryController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $histories = EmailHistory::latest()->paginate(10);
 

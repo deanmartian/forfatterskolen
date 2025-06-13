@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -39,26 +40,17 @@ class PayPalIPN extends Model
      */
     protected $table = 'paypal_ipn_records';
 
-    /**
-     * @return bool
-     */
-    public function isCompleted()
+    public function isCompleted(): bool
     {
         return in_array($this->payment_status, [self::COMPLETED]);
     }
 
-    /**
-     * @return bool
-     */
-    public function isVerified()
+    public function isVerified(): bool
     {
         return in_array($this->verified, [self::IPN_VERIFIED]);
     }
 
-    /**
-     * @return mixed
-     */
-    public function invoices()
+    public function invoices(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
     }

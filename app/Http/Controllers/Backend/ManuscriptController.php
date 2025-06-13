@@ -12,9 +12,11 @@ use App\Mail\SubjectBodyEmail;
 use App\Manuscript;
 use App\User;
 use File;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
@@ -22,7 +24,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class ManuscriptController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $manuscripts = Manuscript::orderBy('created_at', 'desc')->paginate(15);
 
@@ -46,7 +48,7 @@ class ManuscriptController extends Controller
         return view('backend.manuscript.index', compact('manuscripts', 'emailTemplate', 'emailTemplateRoute', 'isUpdate'));
     }
 
-    public function show($id)
+    public function show($id): View
     {
         $manuscript = Manuscript::findOrFail($id);
         $emailTemplate = EmailTemplate::where('page_name', '=', 'Manuscript')->first();
@@ -54,7 +56,7 @@ class ManuscriptController extends Controller
         return view('backend.manuscript.show', compact('manuscript', 'emailTemplate'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $courseTaken = CoursesTaken::findOrFail($request->coursetaken_id);
         if ($request->hasFile('file') && $request->file('file')->isValid()) {
@@ -87,7 +89,7 @@ class ManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function update($id, Request $request)
+    public function update($id, Request $request): RedirectResponse
     {
         $manuscript = Manuscript::findOrFail($id);
         $manuscript->grade = $request->grade;
@@ -98,7 +100,7 @@ class ManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function destroy($id, Request $request)
+    public function destroy($id, Request $request): RedirectResponse
     {
         $manuscript = Manuscript::findOrFail($id);
         $file = substr($manuscript->filename, 1);
@@ -110,7 +112,7 @@ class ManuscriptController extends Controller
         return redirect('/shop-manuscript?tab=manuscripts');
     }
 
-    public function addFeedback($manuscript_id, FeedbackCreateRequest $request)
+    public function addFeedback($manuscript_id, FeedbackCreateRequest $request): RedirectResponse
     {
         $manuscript = Manuscript::findOrFail($manuscript_id);
         if ($request->hasFile('files') && $manuscript->feedbacks->count() == 0) {
@@ -134,7 +136,7 @@ class ManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function destroyFeedback($id)
+    public function destroyFeedback($id): RedirectResponse
     {
         $feedback = Feedback::findOrFail($id);
         $feedback->forceDelete();
@@ -142,7 +144,7 @@ class ManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function sendEmail($id, Request $request)
+    public function sendEmail($id, Request $request): RedirectResponse
     {
         $manuscript = Manuscript::findOrFail($id);
 

@@ -5,6 +5,9 @@ namespace App;
 use App\Http\FrontendHelpers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * Class FreeManuscript
@@ -19,17 +22,17 @@ class FreeManuscript extends Model
 
     protected $appends = ['deadline_date'];
 
-    public function editor()
+    public function editor(): BelongsTo
     {
         return $this->belongsTo(\App\User::class, 'editor_id', 'id');
     }
 
-    public function latestFeedbackHistory()
+    public function latestFeedbackHistory(): HasOne
     {
         return $this->hasOne(\App\FreeManuscriptFeedbackHistory::class)->latest();
     }
 
-    public function feedbackHistory()
+    public function feedbackHistory(): HasMany
     {
         return $this->hasMany(\App\FreeManuscriptFeedbackHistory::class);
     }

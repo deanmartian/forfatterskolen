@@ -162,10 +162,8 @@ class FrontendHelpers
 
     /**
      * Check if course is active
-     *
-     * @return bool
      */
-    public static function isCourseActive($course)
+    public static function isCourseActive($course): bool
     {
 
         if (! $course->status) {
@@ -272,10 +270,8 @@ class FrontendHelpers
 
     /**
      * List of front pages and the route name
-     *
-     * @return array
      */
-    public static function frontPageList()
+    public static function frontPageList(): array
     {
         return [
             ['page_name' => 'Front Page', 'page_route' => 'front.home'],
@@ -384,9 +380,8 @@ class FrontendHelpers
      * Pilot reader navigation
      *
      * @param  null  $route
-     * @return array
      */
-    public static function pilotReaderNav($route = null)
+    public static function pilotReaderNav($route = null): array
     {
         $navs = [
             ['route_name' => 'learner.book-author-book-show', 'label' => 'Contents'],
@@ -492,10 +487,8 @@ class FrontendHelpers
 
     /**
      * Check if user is member of the group
-     *
-     * @return int
      */
-    public static function isPrivateGroupMember($group_id, $user_id)
+    public static function isPrivateGroupMember($group_id, $user_id): int
     {
         $isMember = 0;
         $groupMember = PrivateGroupMember::where(['private_group_id' => $group_id, 'user_id' => $user_id])->first();
@@ -521,10 +514,8 @@ class FrontendHelpers
 
     /**
      * Count the total reader for certain status
-     *
-     * @return int
      */
-    public static function countReaderWithStatus($book_id, $status)
+    public static function countReaderWithStatus($book_id, $status): int
     {
         return PilotReaderBookReading::withTrashed()->where(['book_id' => $book_id, 'status' => $status])->get()->count();
     }
@@ -564,10 +555,8 @@ class FrontendHelpers
 
     /**
      * Check if the chapter with number already exists then iterate
-     *
-     * @return int
      */
-    public function checkChapterNameByNumber($number)
+    public function checkChapterNameByNumber($number): int
     {
 
         $checkChapterName = PilotReaderBookChapter::where('title', '=', 'Chapter '.$number)->first();
@@ -601,9 +590,8 @@ class FrontendHelpers
      * Change the chapter name if it's empty
      *
      * @param  null  $chapter_title
-     * @return null|string
      */
-    public static function changeChapterName($chapter_title, $chapter_key)
+    public static function changeChapterName($chapter_title, $chapter_key): ?string
     {
         $chapter_name = $chapter_title;
         if (! $chapter_title) {
@@ -664,11 +652,8 @@ class FrontendHelpers
 
     /**
      * get the word count with margin
-     *
-     * @param  float  $margin
-     * @return int
      */
-    public static function wordCountByMargin($word_count, $margin = 0.03)
+    public static function wordCountByMargin($word_count, float $margin = 0.03): int
     {
         $calculatedWords = ceil($word_count * $margin);
         $newWordCount = $word_count - $calculatedWords;
@@ -741,9 +726,8 @@ class FrontendHelpers
      * Manuscript type for assignment either whole, start, middle or last part of the manuscript
      *
      * @param  null  $id
-     * @return array
      */
-    public static function manuscriptType($id = null)
+    public static function manuscriptType($id = null): array
     {
         $types = [
             ['id' => 1, 'option' => 'Hele manuset'],
@@ -767,9 +751,8 @@ class FrontendHelpers
      * Feedback marks
      *
      * @param  null  $setMark
-     * @return array
      */
-    public static function feedbackMarks($setMark = null)
+    public static function feedbackMarks($setMark = null): array
     {
         $marks = [
             ['option' => 'unmarked', 'label' => 'Unmarked'],
@@ -862,10 +845,9 @@ class FrontendHelpers
     /**
      * Payment modes check if vipps option should be included
      *
-     * @param  bool  $showVipps
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public static function paymentModes($showVipps = false)
+    public static function paymentModes(bool $showVipps = false)
     {
         $mode = PaymentMode::query();
         if (! $showVipps) {
@@ -882,11 +864,8 @@ class FrontendHelpers
 
     /**
      * Generate unique code
-     *
-     * @param  int  $codeLength
-     * @return string
      */
-    public static function generateUniqueCode($codeLength = 20)
+    public static function generateUniqueCode(int $codeLength = 20): string
     {
 
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -989,10 +968,8 @@ class FrontendHelpers
 
     /**
      * Separate get content from doc file, the other is used for word count
-     *
-     * @return string
      */
-    public static function getContentFromDocFile($filename)
+    public static function getContentFromDocFile($filename): string
     {
         if (file_exists($filename)) {
             if (($fh = fopen($filename, 'r')) !== false) {
@@ -1035,10 +1012,8 @@ class FrontendHelpers
 
     /**
      * Get the text between specified text
-     *
-     * @return string
      */
-    public static function getTextBetween($content, $start, $end)
+    public static function getTextBetween($content, $start, $end): string
     {
         $r = explode($start, $content);
         if (isset($r[1])) {

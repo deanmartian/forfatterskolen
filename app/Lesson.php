@@ -4,6 +4,8 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lesson extends Model
 {
@@ -24,7 +26,7 @@ class Lesson extends Model
     protected $fillable = ['course_id', 'title', 'whole_lesson_file', 'description', 'description_simplemde', 'delay', 'period',
         'allow_lesson_download'];
 
-    public function course()
+    public function course(): BelongsTo
     {
         return $this->belongsTo(\App\Course::class);
     }
@@ -34,17 +36,17 @@ class Lesson extends Model
         return date_format(date_create($value), 'M d, Y h:i a');
     }
 
-    public function videos()
+    public function videos(): HasMany
     {
         return $this->hasMany(\App\Video::class)->orderBy('created_at', 'desc');
     }
 
-    public function documents()
+    public function documents(): HasMany
     {
         return $this->hasMany(\App\LessonDocuments::class)->orderBy('created_at', 'desc');
     }
 
-    public function lessonContent()
+    public function lessonContent(): HasMany
     {
         return $this->hasMany(\App\LessonContent::class)->orderBy('created_at', 'desc');
     }

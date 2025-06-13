@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\SubjectBodyEmail;
 use App\User;
 use Auth;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Mail;
@@ -25,7 +26,7 @@ class RegisterController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validator = $this->validator($request->all());
 
@@ -90,7 +91,7 @@ class RegisterController extends Controller
         return redirect(route('learner.course'));
     }
 
-    public function verifyEmail($token)
+    public function verifyEmail($token): RedirectResponse
     {
         $user = User::where('email_verification_token', $token)->first();
 

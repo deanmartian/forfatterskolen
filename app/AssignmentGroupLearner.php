@@ -4,6 +4,8 @@ namespace App;
 
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class AssignmentGroupLearner extends Model
 {
@@ -14,12 +16,12 @@ class AssignmentGroupLearner extends Model
     // could_send_feedback_to - stores the group learner id
     protected $fillable = ['assignment_group_id', 'user_id', 'could_send_feedback_to'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }
 
-    public function group()
+    public function group(): BelongsTo
     {
         return $this->belongsTo(\App\AssignmentGroup::class, 'assignment_group_id');
     }
@@ -29,7 +31,7 @@ class AssignmentGroupLearner extends Model
         return $this->attributes['could_send_feedback_to'] ? array_map('intval', explode(', ', $this->attributes['could_send_feedback_to'])) : null;
     }
 
-    public function feedback()
+    public function feedback(): HasOne
     {
         return $this->hasOne(\App\AssignmentFeedback::class, 'assignment_group_learner_id', 'id');
     }
