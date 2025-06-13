@@ -16,11 +16,14 @@ class ActivityLog extends Model
         'data',
     ];
 
-    protected $casts = [
-        'log_date' => 'datetime',
-    ];
-
     protected $appends = ['dateHumanize', 'json_data', 'formatted_date'];
+
+    protected function casts(): array
+    {
+        return [
+            'log_date' => 'datetime',
+        ];
+    }
 
     public function user(): BelongsTo
     {

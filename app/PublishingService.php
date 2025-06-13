@@ -23,9 +23,12 @@ class PublishingService extends Model
 
     protected $appends = ['short_description'];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+        ];
+    }
 
     public function getShortDescriptionAttribute()
     {
