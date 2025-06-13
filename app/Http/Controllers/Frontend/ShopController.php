@@ -41,6 +41,7 @@ use Illuminate\View\View;
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
 use Carbon\Carbon;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use PaypalIPN;
 use PhpOffice\PhpWord\SimpleType\DocProtect;
@@ -1528,7 +1529,7 @@ class ShopController extends Controller
 
     }
 
-    public function place_order_test($course_id, OrderCreateRequest $request): RedirectResponse
+    public function place_order_test($course_id, OrderCreateRequest $request)
     {
         if (Auth::guest()) {
             $user = User::where('email', $request->email)->first();
@@ -1871,19 +1872,19 @@ class ShopController extends Controller
             view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));*/
 
         if ($paymentMode->mode == 'Paypal') {
-            echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
-                <input type="hidden" name="cmd" value="_xclick">
-                <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
-                <input type="hidden" name="currency_code" value="NOK">
-                <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
-                <input type="hidden" name="item_name" value="Course Order Invoice">
-                <input type="hidden" name="amount" value="'.($price / 100).'">
-                <input type="hidden" name="return" value="'.route('front.shop.thankyou').'?gateway=Paypal">
-                <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
-            </form>';
-            echo '<script>document.getElementById("paypal_form").submit();</script>';
+            $paypalForm = '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_xclick">
+            <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
+            <input type="hidden" name="currency_code" value="NOK">
+            <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
+            <input type="hidden" name="item_name" value="Course Order Invoice">
+            <input type="hidden" name="amount" value="'.($price / 100).'">
+            <input type="hidden" name="return" value="'.route('front.shop.thankyou').'">
+            <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
+        </form>
+        <script>document.getElementById("paypal_form").submit();</script>';
 
-            return;
+        return new Response($paypalForm);
         }
 
         // return redirect(route('front.shop.thankyou'));

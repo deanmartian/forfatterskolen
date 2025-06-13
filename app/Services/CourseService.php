@@ -165,7 +165,7 @@ class CourseService
     /**
      * Generate checkout from Svea
      */
-    public function generateSveaCheckout(Request $request): JsonResponse
+    public function generateSveaCheckout(Request $request)
     {
         $package = Package::find($request->package_id);
         $course = $package->course;

@@ -34,7 +34,7 @@ class UpdateGross extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    public function handle(): mixed
     {
         $fikenInvoices = 'https://fiken.no/api/v1/companies/forfatterskolen-as/invoices';
         $username = 'cleidoscope@gmail.com';

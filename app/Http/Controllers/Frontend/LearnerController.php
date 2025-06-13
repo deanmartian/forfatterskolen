@@ -102,6 +102,7 @@ use Hash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
@@ -3181,7 +3182,7 @@ class LearnerController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|void
      */
-    public function courseRenew(Request $request): RedirectResponse
+    public function courseRenew(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $courseTaken = CoursesTaken::find($request->course_id);
         if ($courseTaken) {
@@ -3260,19 +3261,19 @@ class LearnerController extends Controller
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
             if ($paymentMode->mode == 'Paypal') {
-                echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
-                <input type="hidden" name="cmd" value="_xclick">
-                <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
-                <input type="hidden" name="currency_code" value="NOK">
-                <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
-                <input type="hidden" name="item_name" value="Course Order Invoice">
-                <input type="hidden" name="amount" value="'.($price / 100).'">
-                <input type="hidden" name="return" value="'.route('front.shop.thankyou').'?gateway=Paypal">
-                <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
-            </form>';
-                echo '<script>document.getElementById("paypal_form").submit();</script>';
+                $paypalForm = '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                    <input type="hidden" name="cmd" value="_xclick">
+                    <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
+                    <input type="hidden" name="currency_code" value="NOK">
+                    <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
+                    <input type="hidden" name="item_name" value="Course Order Invoice">
+                    <input type="hidden" name="amount" value="'.($price / 100).'">
+                    <input type="hidden" name="return" value="'.route('front.shop.thankyou').'">
+                    <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
+                </form>
+                <script>document.getElementById("paypal_form").submit();</script>';
 
-                return;
+                return new Response($paypalForm);
             }
 
             return redirect(route('front.shop.thankyou'));
@@ -4284,7 +4285,7 @@ class LearnerController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|void
      */
-    public function upgradeAssignment($assignment_id, Request $request): RedirectResponse
+    public function upgradeAssignment($assignment_id, Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $assignment = Assignment::find($assignment_id);
         if ($assignment) {
@@ -4331,19 +4332,19 @@ class LearnerController extends Controller
             $invoice->create_invoice($invoice_fields);
 
             if ($paymentMode->mode == 'Paypal') {
-                echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
-                <input type="hidden" name="cmd" value="_xclick">
-                <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
-                <input type="hidden" name="currency_code" value="NOK">
-                <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
-                <input type="hidden" name="item_name" value="Course Order Invoice">
-                <input type="hidden" name="amount" value="'.($price / 100).'">
-                <input type="hidden" name="return" value="'.route('front.shop.thankyou').'">
-                <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
-            </form>';
-                echo '<script>document.getElementById("paypal_form").submit();</script>';
+                $paypalForm = '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                    <input type="hidden" name="cmd" value="_xclick">
+                    <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
+                    <input type="hidden" name="currency_code" value="NOK">
+                    <input type="hidden" name="custom" value="'.$invoice->invoiceID.'">
+                    <input type="hidden" name="item_name" value="Course Order Invoice">
+                    <input type="hidden" name="amount" value="'.($price / 100).'">
+                    <input type="hidden" name="return" value="'.route('front.shop.thankyou').'">
+                    <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
+                </form>
+                <script>document.getElementById("paypal_form").submit();</script>';
 
-                return;
+                return new Response($paypalForm);
             }
 
             return redirect(route('front.shop.thankyou'));

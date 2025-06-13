@@ -63,6 +63,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log as FacadesLog;
 use Illuminate\Support\Facades\Mail;
@@ -470,7 +471,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|mixed
      */
-    public function otherServiceOrder(Request $request): RedirectResponse
+    public function otherServiceOrder(Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $data = $request->except('_token');
         $file = explode('/', $data['file_location']);
@@ -595,7 +596,7 @@ class HomeController extends Controller
             $emailTemplate->from_email, null, null, $parent, $parentID));
 
         if ($paymentMode->mode == 'Paypal') {
-            echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            $paypalForm = '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
                 <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
                 <input type="hidden" name="currency_code" value="NOK">
@@ -604,10 +605,10 @@ class HomeController extends Controller
                 <input type="hidden" name="amount" value="'.($price / 100).'">
                 <input type="hidden" name="return" value="'.route('front.shop.thankyou').'">
                 <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
-            </form>';
-            echo '<script>document.getElementById("paypal_form").submit();</script>';
+            </form>
+            <script>document.getElementById("paypal_form").submit();</script>';
 
-            return;
+            return new Response($paypalForm);
         }
 
         return redirect()->to('/thank-you');
@@ -946,7 +947,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|mixed
      */
-    public function coachingTimerPlaceOrder($plan, Request $request): RedirectResponse
+    public function coachingTimerPlaceOrder($plan, Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $data = $request->except('_token');
         $suggested_dates = []; // $data['suggested_date'];
@@ -1046,7 +1047,7 @@ class HomeController extends Controller
             'coaching-time-order', $coaching->id));
 
         if ($paymentMode->mode == 'Paypal') {
-            echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            $paypalForm = '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
                 <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
                 <input type="hidden" name="currency_code" value="NOK">
@@ -1055,10 +1056,10 @@ class HomeController extends Controller
                 <input type="hidden" name="amount" value="'.($price / 100).'">
                 <input type="hidden" name="return" value="'.route('front.shop.thankyou').'">
                 <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
-            </form>';
-            echo '<script>document.getElementById("paypal_form").submit();</script>';
+            </form>
+            <script>document.getElementById("paypal_form").submit();</script>';
 
-            return;
+            return new Response($paypalForm);
         }
 
         return redirect()->to('/thank-you'); // route('front.simple.thankyou') not working if route name is used
