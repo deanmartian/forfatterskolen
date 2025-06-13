@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\ServiceProvider;
 
 return [
 
@@ -14,7 +13,6 @@ return [
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
     'log_max_files' => env('APP_LOG_MAX_FILES', 2),
-
 
     'aliases' => Facade::defaultAliases()->merge([
         'AdminHelpers' => App\Http\AdminHelpers::class,
