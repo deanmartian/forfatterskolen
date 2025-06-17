@@ -10,7 +10,10 @@ class ProjectRegistrationDistribution extends Model
 
     protected $fillable = ['project_registration_id', 'years'];
 
-    protected $casts = [
-        'years' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'years' => 'array',
+        ];
+    }
 }

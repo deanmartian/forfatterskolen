@@ -15,13 +15,16 @@ class CourseApplication extends Model
         'approved_date',
     ];
 
-    protected $casts = [
-        'approved_date' => 'timestamp',
-    ];
-
     protected $appends = [
         'file_link',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'approved_date' => 'timestamp',
+        ];
+    }
 
     public function user(): BelongsTo
     {

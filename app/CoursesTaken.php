@@ -21,11 +21,14 @@ class CoursesTaken extends Model
         'can_receive_email', 'is_pay_later', 'exclude_in_scheduled_registration', 'in_facebook_group',
         'created_at', 'updated_at'];
 
-    protected $casts = [
-        'renewed_at' => 'datetime',
-    ];
-
     protected $appends = ['order'];
+
+    protected function casts(): array
+    {
+        return [
+            'renewed_at' => 'datetime',
+        ];
+    }
 
     public function user(): BelongsTo
     {

@@ -1884,7 +1884,7 @@ class ShopController extends Controller
         </form>
         <script>document.getElementById("paypal_form").submit();</script>';
 
-        return new Response($paypalForm);
+            return new Response($paypalForm);
         }
 
         // return redirect(route('front.shop.thankyou'));
