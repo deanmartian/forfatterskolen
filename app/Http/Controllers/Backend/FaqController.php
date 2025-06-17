@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 use App\Faq;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
 class FaqController extends Controller implements HasMiddleware

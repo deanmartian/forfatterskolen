@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePublishingRequest;
 use App\Repositories\Services\PublishingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
 class PublishingController extends Controller implements HasMiddleware

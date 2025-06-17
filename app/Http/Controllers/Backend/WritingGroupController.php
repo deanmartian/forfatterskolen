@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddWritingGroupRequest;
 use App\Repositories\Services\WritingGroupService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\View\View;
 
 class WritingGroupController extends Controller implements HasMiddleware

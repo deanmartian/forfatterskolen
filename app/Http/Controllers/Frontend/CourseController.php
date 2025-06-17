@@ -189,10 +189,10 @@ class CourseController extends Controller
 
             if (Auth::guest()) {
                 $request->validate([
-                        'email' => 'required|email',
-                        'first_name' => 'required|alpha_spaces',
-                        'last_name' => 'required|alpha_spaces',
-                    ]);
+                    'email' => 'required|email',
+                    'first_name' => 'required|alpha_spaces',
+                    'last_name' => 'required|alpha_spaces',
+                ]);
 
                 // manually check if email already exists to display the login modal on the page
                 $checkEmail = User::where('email', $request->get('email'))->first();

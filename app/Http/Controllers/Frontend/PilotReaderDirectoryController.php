@@ -113,8 +113,8 @@ class PilotReaderDirectoryController extends Controller
         $request->validate([
             'book_id' => 'required',
         ], [
-                'book_id.required' => 'Please select a book first.',
-            ]);
+            'book_id.required' => 'Please select a book first.',
+        ]);
 
         $data = $request->all();
         $data['from'] = Auth::user()->id;

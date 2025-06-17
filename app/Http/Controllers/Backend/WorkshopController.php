@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 use App\Course;
 use App\CoursesTaken;
 use App\EmailAttachment;
@@ -21,6 +19,7 @@ use File;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
 class WorkshopController extends Controller implements HasMiddleware
@@ -243,9 +242,9 @@ class WorkshopController extends Controller implements HasMiddleware
         if ($workshop) {
 
             $request->validate([
-                    'subject' => 'required',
-                    'message' => 'required',
-                ]);
+                'subject' => 'required',
+                'message' => 'required',
+            ]);
 
             $attendees = isset($request->check_all) || isset($request->learners) ?
                 $workshop->attendees->whereIn('user_id', $request->learners)

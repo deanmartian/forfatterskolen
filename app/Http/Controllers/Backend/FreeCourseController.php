@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 use App\FreeCourse;
 use App\FreeWebinar;
 use App\FreeWebinarPresenter;
@@ -15,6 +13,7 @@ use App\Http\Requests\FreeCourseUpdateRequest;
 use File;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
 class FreeCourseController extends Controller implements HasMiddleware

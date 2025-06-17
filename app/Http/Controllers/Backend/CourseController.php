@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 use App\Course;
 use App\CourseApplication;
 use App\CourseCertificate;
@@ -37,6 +35,7 @@ use File;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -478,9 +477,9 @@ class CourseController extends Controller implements HasMiddleware
         if ($course) {
 
             $request->validate([
-                    'subject' => 'required',
-                    'message' => 'required',
-                ]);
+                'subject' => 'required',
+                'message' => 'required',
+            ]);
 
             $learners = isset($request->check_all) || isset($request->learners) ?
                 $course->learners->whereIn('user_id', $request->learners)->get()
@@ -592,9 +591,9 @@ class CourseController extends Controller implements HasMiddleware
         if ($course) {
 
             $request->validate([
-                    'subject' => 'required',
-                    'message' => 'required',
-                ]);
+                'subject' => 'required',
+                'message' => 'required',
+            ]);
 
             // check courses taken that's not yet started with the specified course id
             $coursesTaken = CoursesTaken::whereHas('package', function ($query) use ($course_id) {

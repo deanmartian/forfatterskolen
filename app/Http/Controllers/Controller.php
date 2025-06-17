@@ -9,7 +9,6 @@ use App\Repositories\VippsRepository;
 
 class Controller
 {
-
     /**
      * @param  $data  array
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\Response

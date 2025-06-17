@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 use App\Address;
 use App\Assignment;
 use App\AssignmentAddon;
@@ -65,6 +63,7 @@ use File;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -1239,9 +1238,9 @@ class LearnerController extends Controller implements HasMiddleware
         }
 
         $request->validate([
-                'subject' => 'required',
-                'message' => 'required',
-            ]);
+            'subject' => 'required',
+            'message' => 'required',
+        ]);
 
         $data = $request->except('_token');
         $data['email'] = $data['message'];
