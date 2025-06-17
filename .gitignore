@@ -5,8 +5,10 @@
 /public/files
 /public/*
 /storage/*.key
+/storage/pail
 /vendor
 /.idea
+/.nova
 /.vagrant
 Homestead.json
 Homestead.yaml
