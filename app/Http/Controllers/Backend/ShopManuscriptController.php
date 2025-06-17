@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\DelayedEmail;
 use App\EmailTemplate;
 use App\FreeManuscript;
@@ -27,7 +29,7 @@ use Illuminate\View\View;
 use Mail;
 use Validator;
 
-class ShopManuscriptController extends Controller
+class ShopManuscriptController extends Controller implements HasMiddleware
 {
     protected $saleService;
 
@@ -37,8 +39,15 @@ class ShopManuscriptController extends Controller
     public function __construct(SaleService $saleService)
     {
         // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:9')->except('addFeedback');
+
         $this->saleService = $saleService;
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('checkPageAccess:9', except: ['addFeedback']),
+        ];
     }
 
     public function index(Request $request): View

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FikenInvoice;
@@ -19,7 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class InvoiceController extends Controller
+class InvoiceController extends Controller implements HasMiddleware
 {
     // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk
     // Forfatterskolen: forfatterskolen-as
@@ -42,10 +44,17 @@ class InvoiceController extends Controller
     public function __construct()
     {
         // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:8');
+
         $this->headersV2[] = 'Accept: application/json';
         $this->headersV2[] = 'Authorization: Bearer '.config('services.fiken.personal_api_key');
         $this->headersV2[] = 'Content-Type: Application/json';
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            'checkPageAccess:8',
+        ];
     }
 
     public function index(Request $request)

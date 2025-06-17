@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\ActivityLog;
 use App\Application;
 use App\Assignment;
@@ -46,15 +48,13 @@ use Illuminate\View\View;
 
 require app_path('/Http/BackupDB/MySQLDump.php');
 
-class PageController extends Controller
+class PageController extends Controller implements HasMiddleware
 {
-    /**
-     * PageController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:9')->only('downloadShopManuscript');
+        return [
+            new Middleware('checkPageAccess:9', only: ['downloadShopManuscript']),
+        ];
     }
 
     public function dashboard(): View

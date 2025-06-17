@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\Faq;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
@@ -9,15 +11,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class FaqController extends Controller
+class FaqController extends Controller implements HasMiddleware
 {
-    /**
-     * FaqController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:10');
+        return [
+            'checkPageAccess:10',
+        ];
     }
 
     public function index(): View

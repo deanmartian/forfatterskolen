@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\AssignmentManuscript;
 use App\AssignmentManuscriptEditorCanTake;
 use App\CoursesTaken;
@@ -22,15 +24,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class AdminController extends Controller
+class AdminController extends Controller implements HasMiddleware
 {
-    /**
-     * AdminController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:11');
+        return [
+            'checkPageAccess:11',
+        ];
     }
 
     public function index(): View

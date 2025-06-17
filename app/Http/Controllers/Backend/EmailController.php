@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\EmailReader;
@@ -11,15 +13,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class EmailController extends Controller
+class EmailController extends Controller implements HasMiddleware
 {
-    /**
-     * EmailController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:12');
+        return [
+            'checkPageAccess:12',
+        ];
     }
 
     /**

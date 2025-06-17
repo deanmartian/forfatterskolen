@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\DelayedEmail;
 use App\EmailTemplate;
 use App\FreeManuscript;
@@ -20,15 +22,13 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\View\View;
 use Mail;
 
-class FreeManuscriptController extends Controller
+class FreeManuscriptController extends Controller implements HasMiddleware
 {
-    /**
-     * FreeManuscriptController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:7');
+        return [
+            'checkPageAccess:7',
+        ];
     }
 
     public function index(Request $request): View

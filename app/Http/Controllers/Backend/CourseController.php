@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\Course;
 use App\CourseApplication;
 use App\CourseCertificate;
@@ -39,15 +41,13 @@ use Illuminate\View\View;
 use Maatwebsite\Excel\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class CourseController extends Controller
+class CourseController extends Controller implements HasMiddleware
 {
-    /**
-     * CourseController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:1');
+        return [
+            'checkPageAccess:1',
+        ];
     }
 
     public function index(Request $request): View

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePublishingRequest;
 use App\Repositories\Services\PublishingService;
@@ -9,7 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class PublishingController extends Controller
+class PublishingController extends Controller implements HasMiddleware
 {
     /**
      * Variable to store the publishing service
@@ -23,8 +25,15 @@ class PublishingController extends Controller
      */
     public function __construct(PublishingService $publishingService)
     {
-        $this->middleware('checkPageAccess:6');
+
         $this->publishingService = $publishingService;
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            'checkPageAccess:6',
+        ];
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\Address;
 use App\Assignment;
 use App\AssignmentAddon;
@@ -72,7 +74,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
-class LearnerController extends Controller
+class LearnerController extends Controller implements HasMiddleware
 {
     // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk
     // Forfatterskolen: forfatterskolen-as
@@ -88,13 +90,11 @@ class LearnerController extends Controller
         'Content-Type: application/hal+json',
     ];
 
-    /**
-     * CourseController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:4');
+        return [
+            'checkPageAccess:4',
+        ];
     }
 
     public function index(Request $request, User $user): View

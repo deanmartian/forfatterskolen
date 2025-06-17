@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\Course;
 use App\CoursesTaken;
 use App\EmailAttachment;
@@ -21,15 +23,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class WorkshopController extends Controller
+class WorkshopController extends Controller implements HasMiddleware
 {
-    /**
-     * CourseController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:3');
+        return [
+            'checkPageAccess:3',
+        ];
     }
 
     public function index(): View
