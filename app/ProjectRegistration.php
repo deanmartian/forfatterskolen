@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -21,22 +22,26 @@ class ProjectRegistration extends Model
         6 => 'Lydbok (CD)',
     ];
 
-    public function scopeIsbns($query)
+    #[Scope]
+    protected function isbns($query)
     {
         $query->where('field', 'isbn');
     }
 
-    public function scopeCentralDistributions($query)
+    #[Scope]
+    protected function centralDistributions($query)
     {
         $query->where('field', 'central-distribution');
     }
 
-    public function scopeMentorBookBase($query)
+    #[Scope]
+    protected function mentorBookBase($query)
     {
         $query->where('field', 'mentor-book-base');
     }
 
-    public function scopeUploadFilesToMentorBookBase($query)
+    #[Scope]
+    protected function uploadFilesToMentorBookBase($query)
     {
         $query->where('field', 'upload-files-to-mentor-book-base');
     }

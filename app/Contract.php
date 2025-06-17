@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use App\Http\AdminHelpers;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
@@ -45,7 +46,8 @@ class Contract extends Model
         });
     }
 
-    public function scopeAdminOnly($query)
+    #[Scope]
+    protected function adminOnly($query)
     {
         return $query->where('status', 1);
     }

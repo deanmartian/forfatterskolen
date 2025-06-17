@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -30,37 +31,44 @@ class ProjectGraphicWork extends Model
         }); */
     }
 
-    public function scopeCover($query)
+    #[Scope]
+    protected function cover($query)
     {
         $query->where('type', 'cover');
     }
 
-    public function scopeBarcode($query)
+    #[Scope]
+    protected function barcode($query)
     {
         $query->where('type', 'barcode');
     }
 
-    public function scopeRewriteScripts($query)
+    #[Scope]
+    protected function rewriteScripts($query)
     {
         $query->where('type', 'rewrite-script');
     }
 
-    public function scopeTrialPage($query)
+    #[Scope]
+    protected function trialPage($query)
     {
         $query->where('type', 'trial-page');
     }
 
-    public function scopeSampleBookPdf($query)
+    #[Scope]
+    protected function sampleBookPdf($query)
     {
         $query->where('type', 'sample-book-pdf');
     }
 
-    public function scopePrintReady($query)
+    #[Scope]
+    protected function printReady($query)
     {
         $query->where('type', 'print-ready');
     }
 
-    public function scopeIndesigns($query)
+    #[Scope]
+    protected function indesigns($query)
     {
         $query->where('type', 'indesign');
     }

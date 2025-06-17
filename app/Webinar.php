@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,12 +43,14 @@ class Webinar extends Model
         return $this->hasMany(\App\WebinarPresenter::class);
     }
 
-    public function scopeActive($query)
+    #[Scope]
+    protected function active($query)
     {
         return $query->where('status', '=', 1);
     }
 
-    public function scopeNotReplay($query)
+    #[Scope]
+    protected function notReplay($query)
     {
         return $query->where('set_as_replay', '=', 0);
     }

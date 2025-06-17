@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectAudio extends Model
@@ -12,12 +13,14 @@ class ProjectAudio extends Model
 
     protected $appends = ['file_link'];
 
-    public function scopeFiles($query)
+    #[Scope]
+    protected function files($query)
     {
         $query->where('type', 'files');
     }
 
-    public function scopeCover($query)
+    #[Scope]
+    protected function cover($query)
     {
         $query->where('type', 'cover');
     }

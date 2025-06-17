@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use App\Traits\Loggable;
 use Carbon\Carbon;
 use File;
@@ -56,7 +57,8 @@ class User extends Authenticatable
     protected $appends = ['address', 'full_name']; // 'is_webinar_pakke_active', 'assigned_with_no_feedback',
 
     // filter admins and exclude the user of Sven
-    public function scopeAdmins($query)
+    #[Scope]
+    protected function admins($query)
     {
         return $query->whereIn('role', [1, 3, 4])
             ->where('id', '!=', 1376); // 1376 is the id of sven.inge@forfatterskolen.no
