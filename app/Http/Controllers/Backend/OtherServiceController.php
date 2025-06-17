@@ -16,21 +16,21 @@ use Carbon\Carbon;
 use File;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class OtherServiceController extends Controller
+class OtherServiceController extends Controller implements HasMiddleware
 {
-    /**
-     * OtherServiceController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:13', ['except' => 'editorSetReplay']);
+        return [
+            new Middleware('checkPageAccess:13', except: ['editorSetReplay']),
+        ];
     }
 
     public function index(): View

@@ -162,7 +162,7 @@ class PrivateGroupMembersController extends Controller
      */
     private function validateEmail(Request $request): JsonResponse
     {
-        $this->validate($request, ['email' => 'required|email']);
+        $request->validate(['email' => 'required|email']);
         $invitations = PrivateGroupMemberInvitation::where(['email' => $request->email, 'private_group_id' => $request->private_group_id])->where('status', '<>', 3);
         if ($invitations->count() > 0) {
             return response()->json(['email' => ['This email is already invited']], 500);

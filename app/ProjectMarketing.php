@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectMarketing extends Model
@@ -12,92 +13,110 @@ class ProjectMarketing extends Model
 
     protected $appends = ['is_finished_text', 'file_link'];
 
-    public function scopeEmailBookstores($query)
+    #[Scope]
+    protected function emailBookstores($query)
     {
         $query->where('type', 'email-bookstore');
     }
 
-    public function scopeEmailLibraries($query)
+    #[Scope]
+    protected function emailLibraries($query)
     {
         $query->where('type', 'email-library');
     }
 
-    public function scopeEmailPress($query)
+    #[Scope]
+    protected function emailPress($query)
     {
         $query->where('type', 'email-press');
     }
 
-    public function scopeReviewCopiesSent($query)
+    #[Scope]
+    protected function reviewCopiesSent($query)
     {
         $query->where('type', 'review-copies-sent');
     }
 
-    public function scopeSetupOnlineStore($query)
+    #[Scope]
+    protected function setupOnlineStore($query)
     {
         $query->where('type', 'setup-online-store');
     }
 
-    public function scopeSetupFacebook($query)
+    #[Scope]
+    protected function setupFacebook($query)
     {
         $query->where('type', 'setup-facebook');
     }
 
-    public function scopeAdvertisementFacebook($query)
+    #[Scope]
+    protected function advertisementFacebook($query)
     {
         $query->where('type', 'advertisement-facebook');
     }
 
-    public function scopeManuscriptSentToPrint($query)
+    #[Scope]
+    protected function manuscriptSentToPrint($query)
     {
         $query->where('type', 'manuscripts-sent-to-print');
     }
 
-    public function scopeCulturalCouncils($query)
+    #[Scope]
+    protected function culturalCouncils($query)
     {
         $query->where('type', 'cultural-council');
     }
 
-    public function scopeFreeWords($query)
+    #[Scope]
+    protected function freeWords($query)
     {
         $query->where('type', 'application-free-word');
     }
 
-    public function scopePrintEbooks($query)
+    #[Scope]
+    protected function printEbooks($query)
     {
         $query->where('type', 'print-ebook');
     }
 
-    public function scopeSampleBookApproved($query)
+    #[Scope]
+    protected function sampleBookApproved($query)
     {
         $query->where('type', 'sample-book-approved');
     }
 
-    public function scopePdfPrintIsApproved($query)
+    #[Scope]
+    protected function pdfPrintIsApproved($query)
     {
         $query->where('type', 'pdf-print-is-approved');
     }
 
-    public function scopeNumberOfAuthorBooks($query)
+    #[Scope]
+    protected function numberOfAuthorBooks($query)
     {
         $query->where('type', 'number-of-author-books');
     }
 
-    public function scopeUpdateTheBookBase($query)
+    #[Scope]
+    protected function updateTheBookBase($query)
     {
         $query->where('type', 'update-the-book-base');
     }
 
-    public function scopeAgreementOnTimeRegistration($query)
+    #[Scope]
+    protected function agreementOnTimeRegistration($query)
     {
         $query->where('type', 'agreement-on-time-registration');
     }
 
-    public function scopeEbookOrdered($query)
+    #[Scope]
+    protected function ebookOrdered($query)
     {
         $query->where('type', 'ebook-ordered');
     }
 
-    public function scopeEbookReceived($query)
+    #[Scope]
+    protected function ebookReceived($query)
     {
         $query->where('type', 'ebook-received');
     }

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -23,17 +24,20 @@ class SelfPublishingOrder extends Model
 
     protected $appends = ['service_name'];
 
-    public function scopeActive($query)
+    #[Scope]
+    protected function active($query)
     {
         $query->where('status', 'active');
     }
 
-    public function scopePaid($query)
+    #[Scope]
+    protected function paid($query)
     {
         $query->where('status', 'paid');
     }
 
-    public function scopeQuote($query)
+    #[Scope]
+    protected function quote($query)
     {
         $query->where('status', 'quote');
     }

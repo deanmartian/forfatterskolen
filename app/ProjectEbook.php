@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectEbook extends Model
@@ -10,17 +11,20 @@ class ProjectEbook extends Model
 
     protected $appends = ['file_link'];
 
-    public function scopeEpub($query)
+    #[Scope]
+    protected function epub($query)
     {
         $query->where('type', 'epub');
     }
 
-    public function scopeMobi($query)
+    #[Scope]
+    protected function mobi($query)
     {
         $query->where('type', 'mobi');
     }
 
-    public function scopeCover($query)
+    #[Scope]
+    protected function cover($query)
     {
         $query->where('type', 'cover');
     }

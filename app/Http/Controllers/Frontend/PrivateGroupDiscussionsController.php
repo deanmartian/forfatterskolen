@@ -57,7 +57,7 @@ class PrivateGroupDiscussionsController extends Controller
      */
     public function create(Request $request): JsonResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'subject' => 'required',
         ]);
         $data = $request->all();

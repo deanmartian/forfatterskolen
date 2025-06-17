@@ -16,7 +16,7 @@ class AdvisoryController extends Controller
     public function update($id, Request $request): RedirectResponse
     {
         $advisory = Advisory::find($id);
-        $this->validate($request, [
+        $request->validate([
             'from_date' => 'required',
             'advisory' => 'required',
         ]);

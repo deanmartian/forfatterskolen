@@ -7,17 +7,16 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
-class FaqController extends Controller
+class FaqController extends Controller implements HasMiddleware
 {
-    /**
-     * FaqController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:10');
+        return [
+            'checkPageAccess:10',
+        ];
     }
 
     public function index(): View
@@ -29,7 +28,7 @@ class FaqController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'title' => 'required|max:255',
             'description' => 'required',
         ]);
@@ -47,7 +46,7 @@ class FaqController extends Controller
 
     public function update($id, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'title' => 'required|max:255',
             'description' => 'required',
         ]);

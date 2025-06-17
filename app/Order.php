@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Http\FrontendHelpers;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -74,17 +75,20 @@ class Order extends Model
         return $this->hasOne(\App\PaymentMode::class, 'id', 'payment_mode_id');
     }
 
-    public function scopeSvea($query)
+    #[Scope]
+    protected function svea($query)
     {
         return $query->whereNotNull('svea_order_id');
     }
 
-    public function scopePayLater($query)
+    #[Scope]
+    protected function payLater($query)
     {
         return $query->where('is_pay_later', 1);
     }
 
-    public function scopeIsProcessed($query)
+    #[Scope]
+    protected function isProcessed($query)
     {
         return $query->where('is_processed', 1);
     }

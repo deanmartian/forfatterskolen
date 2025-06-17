@@ -19,17 +19,16 @@ use File;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
-class WorkshopController extends Controller
+class WorkshopController extends Controller implements HasMiddleware
 {
-    /**
-     * CourseController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:3');
+        return [
+            'checkPageAccess:3',
+        ];
     }
 
     public function index(): View
@@ -50,7 +49,7 @@ class WorkshopController extends Controller
 
     public function store(AddWorkshopRequest $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'description' => 'required',
         ]);
         $workshop = new Workshop;
@@ -89,7 +88,7 @@ class WorkshopController extends Controller
 
     public function update($id, AddWorkshopRequest $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'description' => 'required',
         ]);
         $workshop = Workshop::findOrFail($id);
@@ -242,12 +241,10 @@ class WorkshopController extends Controller
         $workshop = Workshop::find($id);
         if ($workshop) {
 
-            $this->validate($request,
-                [
-                    'subject' => 'required',
-                    'message' => 'required',
-                ]
-            );
+            $request->validate([
+                'subject' => 'required',
+                'message' => 'required',
+            ]);
 
             $attendees = isset($request->check_all) || isset($request->learners) ?
                 $workshop->attendees->whereIn('user_id', $request->learners)

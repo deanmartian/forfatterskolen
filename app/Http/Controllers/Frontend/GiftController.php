@@ -242,7 +242,7 @@ class GiftController extends Controller
     {
         $giftPurchase = GiftPurchase::where('redeem_code', $request->redeem_code)->first();
 
-        $this->validate($request, [
+        $request->validate([
             'email' => 'required|email',
             'redeem_code' => 'required',
         ]);

@@ -29,6 +29,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use PhpOffice\PhpWord\PhpWord;
@@ -39,15 +40,13 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
-class AssignmentController extends Controller
+class AssignmentController extends Controller implements HasMiddleware
 {
-    /**
-     * AssignmentController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:5');
+        return [
+            'checkPageAccess:5',
+        ];
     }
 
     public function index(): View
@@ -128,7 +127,7 @@ class AssignmentController extends Controller
 
     public function generateGroup($assignmentID, Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'submission_date' => 'required',
         ]);
 

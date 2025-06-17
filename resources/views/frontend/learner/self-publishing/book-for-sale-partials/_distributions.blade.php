@@ -11,7 +11,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($book->distributionCosts as$distributionCost)
+                    @foreach ($book->distributionCosts as $distributionCost)
                         <tr>
                             <td>
                                 {{ $distributionCost->nr }}

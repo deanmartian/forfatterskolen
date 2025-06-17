@@ -6,14 +6,9 @@ use App\EmailTemplate;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Repositories\VippsRepository;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
 
-class Controller extends BaseController
+class Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
-
     /**
      * @param  $data  array
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\Response

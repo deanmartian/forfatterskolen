@@ -91,7 +91,7 @@ class ResetPasswordController extends Controller
 
     public function adminStore(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'email' => 'required|string|email|max:255',
         ]);
 
@@ -125,7 +125,7 @@ class ResetPasswordController extends Controller
 
     public function editorStore(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'email' => 'required|string|email|max:255',
         ]);
 

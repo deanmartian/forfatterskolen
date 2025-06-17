@@ -63,6 +63,7 @@ use File;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -72,7 +73,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
-class LearnerController extends Controller
+class LearnerController extends Controller implements HasMiddleware
 {
     // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk
     // Forfatterskolen: forfatterskolen-as
@@ -88,13 +89,11 @@ class LearnerController extends Controller
         'Content-Type: application/hal+json',
     ];
 
-    /**
-     * CourseController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:4');
+        return [
+            'checkPageAccess:4',
+        ];
     }
 
     public function index(Request $request, User $user): View
@@ -639,7 +638,7 @@ class LearnerController extends Controller
     {
         $invoice = Invoice::find($invoice_id);
         if ($invoice) {
-            $this->validate($request, [
+            $request->validate([
                 'issue_date' => 'required',
             ]);
 
@@ -1238,12 +1237,10 @@ class LearnerController extends Controller
             return redirect()->back();
         }
 
-        $this->validate($request,
-            [
-                'subject' => 'required',
-                'message' => 'required',
-            ]
-        );
+        $request->validate([
+            'subject' => 'required',
+            'message' => 'required',
+        ]);
 
         $data = $request->except('_token');
         $data['email'] = $data['message'];
@@ -1377,7 +1374,7 @@ class LearnerController extends Controller
 
     public function registerLearner(Request $request, LearnerService $learnerService): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
@@ -1994,7 +1991,7 @@ class LearnerController extends Controller
 
     public function saveForSaleBooks($user_id, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'project_id' => 'required',
         ]);
         $request->merge(['user_id' => $user_id]);
@@ -2064,7 +2061,7 @@ class LearnerController extends Controller
             return redirect()->to('/learner');
         }
 
-        $this->validate($request, [
+        $request->validate([
             'message' => 'required',
         ]);
 
@@ -2091,7 +2088,7 @@ class LearnerController extends Controller
             return redirect()->to('/learner');
         }
 
-        $this->validate($request, [
+        $request->validate([
             'message' => 'required',
         ]);
 
@@ -2319,7 +2316,7 @@ class LearnerController extends Controller
     public function setVippsEFaktura($user_id, Request $request): RedirectResponse
     {
         if ($request->mobile_number) {
-            $this->validate($request, [
+            $request->validate([
                 'mobile_number' => 'digits:8',
             ]);
         }
@@ -2417,7 +2414,7 @@ class LearnerController extends Controller
 
     public function sendUsernameAndPassword($userId, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'subject' => 'required',
             'message' => 'required',
         ]);
@@ -2625,7 +2622,7 @@ class LearnerController extends Controller
         $shopManuscriptsTaken->editor_expected_finish = $request->editor_expected_finish;
         $shopManuscriptsTaken->save();
 
-        $this->validate($request, [
+        $request->validate([
             'editor_id' => 'required',
             'answer_until' => 'required',
         ]);

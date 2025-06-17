@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Traits\Loggable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,13 +22,15 @@ class Assignment extends Model
     protected $appends = ['submission_date_time_text'];
 
     // filter for course assignments
-    public function scopeForCourseOnly($query)
+    #[Scope]
+    protected function forCourseOnly($query)
     {
         return $query->whereNull('parent')->orWhere('parent', 'course');
     }
 
     // filter for learner assignments
-    public function scopeForLearnerOnly($query)
+    #[Scope]
+    protected function forLearnerOnly($query)
     {
         return $query->where('parent', 'users');
     }

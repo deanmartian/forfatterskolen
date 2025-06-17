@@ -301,7 +301,7 @@ class ProjectController extends Controller
 
     public function addLearner($project_id, Request $request, LearnerService $learnerService): JsonResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
@@ -329,15 +329,15 @@ class ProjectController extends Controller
         $request->merge(['project_id' => $project_id]);
         if (filter_var($request->is_file, FILTER_VALIDATE_BOOLEAN)) {
             if (! $request->id) {
-                $this->validate($request, ['book_file' => 'required']);
+                $request->validate(['book_file' => 'required']);
             }
             $request->book_content = $projectService->uploadWholeBook($project_id, $request);
         } else {
-            $this->validate($request, ['book_content' => 'required']);
+            $request->validate(['book_content' => 'required']);
         }
 
         if (filter_var($request->send_to_designer, FILTER_VALIDATE_BOOLEAN)) {
-            $this->validate($request, [
+            $request->validate([
                 'designer_id' => 'required',
                 'width' => 'required',
                 'height' => 'required',
@@ -413,7 +413,7 @@ class ProjectController extends Controller
     public function saveBookCritiqueFeedback($id, Request $request, ProjectService $projectService)
     {
         $request->merge(['project_id' => $id]);
-        $this->validate($request, ['feedback' => 'required']);
+        $request->validate(['feedback' => 'required']);
         $record = ProjectBookCritique::find($id);
         $record->feedback = $projectService->uploadFeedback($request);
         $record->save();
@@ -486,7 +486,7 @@ class ProjectController extends Controller
      */
     public function saveBookPicture($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
-        $this->validate($request, ['images' => 'required']);
+        $request->validate(['images' => 'required']);
 
         if ($request->id && count($request->file('images')) > 1) {
             return redirect()->back()->with([
@@ -528,7 +528,7 @@ class ProjectController extends Controller
     public function saveBookFormatting($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         if (! $request->id) {
-            $this->validate($request, ['file.*' => 'required|mimes:doc,docx']);
+            $request->validate(['file.*' => 'required|mimes:doc,docx']);
         }
 
         $request->merge(['project_id' => $project_id]);
@@ -642,7 +642,7 @@ class ProjectController extends Controller
         if (! $request->id) {
             switch ($request->type) {
                 case 'cover':
-                    $this->validate($request, [
+                    $request->validate([
                         'cover.*' => 'required|mimes:jpeg,jpg,png,gif',
                         'description' => 'required',
                         'isbn_id' => 'required',
@@ -654,15 +654,15 @@ class ProjectController extends Controller
                         break;*/
 
                 case 'rewrite-script':
-                    $this->validate($request, ['rewrite_script' => 'required|mimes:pdf']);
+                    $request->validate(['rewrite_script' => 'required|mimes:pdf']);
                     break;
 
                 case 'trial-page':
-                    $this->validate($request, ['trial_page' => 'required|mimes:jpeg,jpg,png,gif']);
+                    $request->validate(['trial_page' => 'required|mimes:jpeg,jpg,png,gif']);
                     break;
 
                 case 'print-ready':
-                    $this->validate($request, [
+                    $request->validate([
                         'print_ready' => 'required|mimes:pdf',
                         'width' => 'required',
                         'height' => 'required',
@@ -676,7 +676,7 @@ class ProjectController extends Controller
                     break;
 
                 case 'sample-book-pdf':
-                    $this->validate($request, ['sample_book_pdf' => 'required|mimes:pdf']);
+                    $request->validate(['sample_book_pdf' => 'required|mimes:pdf']);
                     break;
             }
         }
@@ -780,12 +780,12 @@ class ProjectController extends Controller
         $data = $request->merge(['project_id' => $project_id])->except('_token');
         switch ($request->field) {
             case 'isbn':
-                $this->validate($request, ['isbn' => 'required']);
+                $request->validate(['isbn' => 'required']);
                 $data['value'] = $request->isbn;
                 break;
 
             case 'central-distribution':
-                $this->validate($request, ['central_distribution' => 'required|exists:project_registrations,value']);
+                $request->validate(['central_distribution' => 'required|exists:project_registrations,value']);
                 $data['value'] = $request->central_distribution;
                 $data['type'] = 0;
                 break;
@@ -876,21 +876,21 @@ class ProjectController extends Controller
         switch ($request->type) {
             case 'email-bookstore':
                 if (! $request->id) {
-                    $this->validate($request, ['email_bookstore' => 'required']);
+                    $request->validate(['email_bookstore' => 'required']);
                 }
                 $data['value'] = $projectService->saveMarketingFileOrImage($request, 'email_bookstore');
                 break;
 
             case 'email-library':
                 if (! $request->id) {
-                    $this->validate($request, ['email_library' => 'required']);
+                    $request->validate(['email_library' => 'required']);
                 }
                 $data['value'] = $projectService->saveMarketingFileOrImage($request, 'email_library');
                 break;
 
             case 'email-press':
                 if (! $request->id) {
-                    $this->validate($request, ['email_press' => 'required']);
+                    $request->validate(['email_press' => 'required']);
                 }
                 $data['value'] = $projectService->saveMarketingFileOrImage($request, 'email_press');
                 break;
@@ -922,7 +922,7 @@ class ProjectController extends Controller
 
             case 'cultural-council':
                 if (! $request->id) {
-                    $this->validate($request, ['cultural_council' => 'required']);
+                    $request->validate(['cultural_council' => 'required']);
                 }
                 $data['value'] = $projectService->saveMarketingFileOrImage($request, 'cultural_council');
                 $is_finished_field = 'is_finished_cultural_council';
@@ -930,7 +930,7 @@ class ProjectController extends Controller
 
             case 'application-free-word':
                 if (! $request->id) {
-                    $this->validate($request, ['free_word' => 'required']);
+                    $request->validate(['free_word' => 'required']);
                 }
                 $data['value'] = $projectService->saveMarketingFileOrImage($request, 'free_word');
                 $is_finished_field = 'is_finished_free_word';
@@ -942,7 +942,7 @@ class ProjectController extends Controller
 
             case 'print-ebook':
                 if (! $request->id) {
-                    $this->validate($request, ['print_ebook' => 'required']);
+                    $request->validate(['print_ebook' => 'required']);
                 }
                 $data['value'] = $projectService->saveMarketingFileOrImage($request, 'print_ebook');
                 $is_finished_field = 'is_finished_print_ebook';
@@ -950,7 +950,7 @@ class ProjectController extends Controller
 
             case 'sample-book-approved':
                 if (! $request->id) {
-                    $this->validate($request, ['sample_book_approved' => 'required']);
+                    $request->validate(['sample_book_approved' => 'required']);
                 }
                 $data['value'] = $projectService->saveMarketingFileOrImage($request, 'sample_book_approved');
                 $is_finished_field = 'is_finished_sample_book_approved';
@@ -958,7 +958,7 @@ class ProjectController extends Controller
 
             case 'pdf-print-is-approved':
                 if (! $request->id) {
-                    $this->validate($request, ['pdf_print_is_approved' => 'required|mimes:pdf']);
+                    $request->validate(['pdf_print_is_approved' => 'required|mimes:pdf']);
                 }
                 $data['value'] = $projectService->saveMarketingFileOrImage($request, 'pdf_print_is_approved');
                 $is_finished_field = 'is_finished_pdf_print_is_approved';
@@ -966,7 +966,7 @@ class ProjectController extends Controller
 
             case 'number-of-author-books':
                 if (! $request->id) {
-                    $this->validate($request, ['number_of_author_books' => 'required|numeric']);
+                    $request->validate(['number_of_author_books' => 'required|numeric']);
                 }
                 $data['value'] = $request->number_of_author_books;
                 $is_finished_field = 'is_finished_number_of_author_books';
@@ -1362,7 +1362,7 @@ class ProjectController extends Controller
         $invoice = $request->id ? ProjectInvoice::find($request->id) : new ProjectInvoice;
 
         if (! $request->id) {
-            $this->validate($request, [
+            $request->validate([
                 'invoice' => 'required|mimes:pdf',
             ]);
         }
@@ -1395,7 +1395,7 @@ class ProjectController extends Controller
 
     public function saveManualInvoice($project_id, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'invoice' => 'required',
         ]);
 
@@ -2006,7 +2006,7 @@ class ProjectController extends Controller
 
     public function storePayout(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'project_registration_id' => 'required|exists:project_registrations,id',
             'year' => 'required|integer|min:2000|max:'.(date('Y') + 1),
             'quarter' => 'required|integer|min:1|max:4',
@@ -2477,7 +2477,7 @@ class ProjectController extends Controller
     public function savePrint($project_id, Request $request, ProjectService $projectService)
     {
         try {
-            $this->validate($request, [
+            $request->validate([
                 'isbn' => 'required',
                 'number' => 'required',
                 'pages' => 'required',

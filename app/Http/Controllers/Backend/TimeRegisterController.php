@@ -14,7 +14,7 @@ class TimeRegisterController extends Controller
 {
     public function save(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'date' => 'required',
         ]);
 
@@ -80,7 +80,7 @@ class TimeRegisterController extends Controller
     public function saveTimeUsed($time_register_id, Request $request)
     {
 
-        $this->validate($request, [
+        $request->validate([
             'date' => 'required',
             'time_used' => 'required',
         ]);

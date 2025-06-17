@@ -46,7 +46,7 @@ class PersonalTrainerController extends Controller
             'need_in_course.required' => 'Hva skal til for at du fullfører dette kurset field is required.',
             'expectations.required' => 'Hvilke forventninger har du til deg selv – og oss field is required.',
         ];
-        $this->validate($request, [
+        $request->validate([
             'email' => 'required',
             'first_name' => 'required|alpha_spaces',
             'last_name' => 'required|alpha_spaces',

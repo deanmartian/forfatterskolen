@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AddCompetitionRequest;
 use App\Repositories\Services\CompetitionService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\View\View;
 
-class CompetitionController extends Controller
+class CompetitionController extends Controller implements HasMiddleware
 {
     /**
      * Service where methods is stored for this controller
@@ -23,8 +25,15 @@ class CompetitionController extends Controller
     public function __construct(CompetitionService $competitionService)
     {
         // middleware to check if admin have access to the faq page
-        $this->middleware('checkPageAccess:10');
+
         $this->competitionService = $competitionService;
+    }
+
+    public static function middleware(): array
+    {
+        return [
+            'checkPageAccess:10',
+        ];
     }
 
     /**

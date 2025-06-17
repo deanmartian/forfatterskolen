@@ -127,7 +127,7 @@ class LoginController extends Controller
 
     public function login(LoginRequest $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'email' => 'required|email',
             'g-recaptcha-response' => 'required|captcha',
         ]);
@@ -167,7 +167,7 @@ class LoginController extends Controller
 
     public function selfPublishingLogin(LoginRequest $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'email' => 'required|email',
         ]);
         /* ->where('is_self_publishing_learner', 1) */
@@ -210,7 +210,7 @@ class LoginController extends Controller
     {
         if ($request->ajax()) {
 
-            $this->validate($request, [
+            $request->validate([
                 'email' => 'required|email',
             ]);
 

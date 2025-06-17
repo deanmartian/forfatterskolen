@@ -40,21 +40,21 @@ use DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\MessageBag;
 use Illuminate\View\View;
 
 require app_path('/Http/BackupDB/MySQLDump.php');
 
-class PageController extends Controller
+class PageController extends Controller implements HasMiddleware
 {
-    /**
-     * PageController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:9')->only('downloadShopManuscript');
+        return [
+            new Middleware('checkPageAccess:9', only: ['downloadShopManuscript']),
+        ];
     }
 
     public function dashboard(): View
@@ -399,7 +399,7 @@ class PageController extends Controller
      */
     public function singleCompetitionStore(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'learner' => 'required',
             'manuscript' => 'required',
         ]);

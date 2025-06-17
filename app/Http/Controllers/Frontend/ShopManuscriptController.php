@@ -88,7 +88,7 @@ class ShopManuscriptController extends Controller
     public function validateOrder($shop_manuscript_id, Request $request, ShopManuscriptService $shopManuscriptService)
     {
         if (! $request->has('is_manuscript_only')) {
-            $this->validate($request, [
+            $request->validate([
                 'manuscript' => 'required',
                 'genre' => 'required',
             ]);
@@ -109,7 +109,7 @@ class ShopManuscriptController extends Controller
         }
 
         if ($request->has('synopsis')) {
-            $this->validate($request, [
+            $request->validate([
                 'synopsis' => 'mimes:pdf,doc,docx,odt',
             ]);
         }

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 
 class Testimonial extends Model
@@ -29,7 +30,8 @@ class Testimonial extends Model
         return $this->attributes['status'] == self::ACTIVE ? 'Enabled' : 'Disabled';
     }
 
-    public function scopeActive($query)
+    #[Scope]
+    protected function active($query)
     {
         return $query->where('status', self::ACTIVE);
     }

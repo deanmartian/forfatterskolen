@@ -35,19 +35,18 @@ use File;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class CourseController extends Controller
+class CourseController extends Controller implements HasMiddleware
 {
-    /**
-     * CourseController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:1');
+        return [
+            'checkPageAccess:1',
+        ];
     }
 
     public function index(Request $request): View
@@ -477,12 +476,10 @@ class CourseController extends Controller
         $course = Course::find($id);
         if ($course) {
 
-            $this->validate($request,
-                [
-                    'subject' => 'required',
-                    'message' => 'required',
-                ]
-            );
+            $request->validate([
+                'subject' => 'required',
+                'message' => 'required',
+            ]);
 
             $learners = isset($request->check_all) || isset($request->learners) ?
                 $course->learners->whereIn('user_id', $request->learners)->get()
@@ -593,12 +590,10 @@ class CourseController extends Controller
         $course = Course::find($course_id);
         if ($course) {
 
-            $this->validate($request,
-                [
-                    'subject' => 'required',
-                    'message' => 'required',
-                ]
-            );
+            $request->validate([
+                'subject' => 'required',
+                'message' => 'required',
+            ]);
 
             // check courses taken that's not yet started with the specified course id
             $coursesTaken = CoursesTaken::whereHas('package', function ($query) use ($course_id) {
@@ -786,7 +781,7 @@ class CourseController extends Controller
      */
     public function expirationReminder($course_id, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'subject_28_days' => 'required',
             'message_28_days' => 'required',
             'subject_1_week' => 'required',

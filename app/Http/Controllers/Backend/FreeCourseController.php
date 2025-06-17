@@ -13,17 +13,16 @@ use App\Http\Requests\FreeCourseUpdateRequest;
 use File;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
-class FreeCourseController extends Controller
+class FreeCourseController extends Controller implements HasMiddleware
 {
-    /**
-     * FreeCourseController constructor.
-     */
-    public function __construct()
+    public static function middleware(): array
     {
-        // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:2');
+        return [
+            'checkPageAccess:2',
+        ];
     }
 
     public function index(): View

@@ -64,7 +64,7 @@ class SelfPublishingController extends Controller
      */
     public function saveData(Request $request, $id = null)
     {
-        $this->validate($request, [
+        $request->validate([
             'title' => 'required',
             'description' => 'required',
             'file_path' => 'mimes:pdf,doc,docx',
@@ -364,7 +364,7 @@ class SelfPublishingController extends Controller
 
     public function addFeedback($id, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'manuscript' => 'required',
         ]);
 
