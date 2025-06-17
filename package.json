@@ -17,7 +17,8 @@
         "laravel-mix": "^6.0.12",
         "lodash": "^4.17.4",
         "vue": "^2.1.10",
-        "postcss": "^8.2.8"
+        "postcss": "^8.2.8",
+        "concurrently": "^9.0.1"
     },
     "dependencies": {
         "@tinymce/tinymce-vue": "^3.2.8",
