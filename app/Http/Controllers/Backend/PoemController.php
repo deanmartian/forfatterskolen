@@ -46,7 +46,7 @@ class PoemController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'title' => 'required',
             'poem' => 'required',
             'author' => 'required|alpha_spaces',

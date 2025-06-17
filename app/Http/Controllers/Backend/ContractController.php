@@ -118,7 +118,7 @@ class ContractController extends Controller
      */
     public function processSave(Request $request, $id = null): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'title' => 'required',
         ]);
 
@@ -206,7 +206,7 @@ class ContractController extends Controller
     public function sendContract($id, Request $request): RedirectResponse
     {
 
-        $this->validate($request, [
+        $request->validate([
             'subject' => 'required',
             'name' => 'required',
             'email' => 'required|email',
@@ -280,7 +280,7 @@ class ContractController extends Controller
 
     public function saveContractTemplate($id, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'title' => 'required',
         ]);
 
@@ -312,7 +312,7 @@ class ContractController extends Controller
     {
         $contract = Contract::findOrFail($id);
 
-        $this->validate($request, [
+        $request->validate([
             'admin_name' => 'required',
         ]);
 

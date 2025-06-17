@@ -40,10 +40,9 @@ class PrivateGroupSharedBookController extends Controller
      */
     public function shareBook(Request $request): JsonResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'book_id' => 'required',
-        ],
-            [
+        ], [
                 'book_id.required' => 'Please select a book first.',
             ]);
         $data = $request->all();

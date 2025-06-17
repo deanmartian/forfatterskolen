@@ -29,7 +29,7 @@ class EmailTemplateController extends Controller
 
     public function addEmailTemplate(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'email_content' => 'required',
         ]);
 
@@ -38,7 +38,7 @@ class EmailTemplateController extends Controller
 
         if ($request['is_course_for_sale']) {
             $course = Course::find($request->course_id);
-            $this->validate($request, [
+            $request->validate([
                 'course_id' => 'required',
             ]);
             if ($course->type === 'Group') {
@@ -60,7 +60,7 @@ class EmailTemplateController extends Controller
                 ]);
             }
         } else {
-            $this->validate($request, [
+            $request->validate([
                 'page_name' => 'required|unique:email_template',
             ]);
         }
@@ -124,7 +124,7 @@ class EmailTemplateController extends Controller
 
         } else { // create
 
-            $this->validate($request, [
+            $request->validate([
                 'email_content' => 'required',
             ]);
 

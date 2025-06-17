@@ -73,7 +73,7 @@ class LessonController extends Controller
             $reqFields = $webinarPakkeReqFields;
         }
 
-        $this->validate($request, $reqFields);
+        $request->validate($reqFields);
         $wholeLessonFile = $this->uploadWholeFile($request);
 
         $course = Course::findOrFail($course_id);
@@ -135,7 +135,7 @@ class LessonController extends Controller
             $reqFields = $webinarPakkeReqFields;
         }
 
-        $this->validate($request, $reqFields);
+        $request->validate($reqFields);
         $wholeLessonFile = $this->uploadWholeFile($request);
 
         $course = Course::findOrFail($course_id);

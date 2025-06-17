@@ -639,7 +639,7 @@ class LearnerController extends Controller
     {
         $invoice = Invoice::find($invoice_id);
         if ($invoice) {
-            $this->validate($request, [
+            $request->validate([
                 'issue_date' => 'required',
             ]);
 
@@ -1238,12 +1238,10 @@ class LearnerController extends Controller
             return redirect()->back();
         }
 
-        $this->validate($request,
-            [
+        $request->validate([
                 'subject' => 'required',
                 'message' => 'required',
-            ]
-        );
+            ]);
 
         $data = $request->except('_token');
         $data['email'] = $data['message'];
@@ -1377,7 +1375,7 @@ class LearnerController extends Controller
 
     public function registerLearner(Request $request, LearnerService $learnerService): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
@@ -1994,7 +1992,7 @@ class LearnerController extends Controller
 
     public function saveForSaleBooks($user_id, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'project_id' => 'required',
         ]);
         $request->merge(['user_id' => $user_id]);
@@ -2064,7 +2062,7 @@ class LearnerController extends Controller
             return redirect()->to('/learner');
         }
 
-        $this->validate($request, [
+        $request->validate([
             'message' => 'required',
         ]);
 
@@ -2091,7 +2089,7 @@ class LearnerController extends Controller
             return redirect()->to('/learner');
         }
 
-        $this->validate($request, [
+        $request->validate([
             'message' => 'required',
         ]);
 
@@ -2319,7 +2317,7 @@ class LearnerController extends Controller
     public function setVippsEFaktura($user_id, Request $request): RedirectResponse
     {
         if ($request->mobile_number) {
-            $this->validate($request, [
+            $request->validate([
                 'mobile_number' => 'digits:8',
             ]);
         }
@@ -2417,7 +2415,7 @@ class LearnerController extends Controller
 
     public function sendUsernameAndPassword($userId, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'subject' => 'required',
             'message' => 'required',
         ]);
@@ -2625,7 +2623,7 @@ class LearnerController extends Controller
         $shopManuscriptsTaken->editor_expected_finish = $request->editor_expected_finish;
         $shopManuscriptsTaken->save();
 
-        $this->validate($request, [
+        $request->validate([
             'editor_id' => 'required',
             'answer_until' => 'required',
         ]);

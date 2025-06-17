@@ -29,7 +29,7 @@ class FaqController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'title' => 'required|max:255',
             'description' => 'required',
         ]);
@@ -47,7 +47,7 @@ class FaqController extends Controller
 
     public function update($id, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'title' => 'required|max:255',
             'description' => 'required',
         ]);

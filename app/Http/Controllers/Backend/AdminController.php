@@ -58,7 +58,7 @@ class AdminController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'first_name' => 'required|max:100',
             'last_name' => 'required|max:100',
             'email' => 'required|max:100',
@@ -85,7 +85,7 @@ class AdminController extends Controller
 
     public function update($id, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'first_name' => 'required|max:100',
             'last_name' => 'required|max:100',
             'email' => 'required|max:100',

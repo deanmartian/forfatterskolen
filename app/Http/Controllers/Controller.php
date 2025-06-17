@@ -7,12 +7,11 @@ use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Repositories\VippsRepository;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, ValidatesRequests;
+    use AuthorizesRequests;
 
     /**
      * @param  $data  array

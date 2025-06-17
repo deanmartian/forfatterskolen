@@ -35,7 +35,7 @@ class AssembleBookController extends Controller
      */
     public function saveCoverOrColor(Request $request): json
     {
-        $this->validate($request, [
+        $request->validate([
             'name' => 'required',
             'price' => 'required',
         ]);
@@ -50,7 +50,7 @@ class AssembleBookController extends Controller
 
     public function saveCountOrHelp(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'name' => 'required',
             'value' => 'required|numeric',
             'price' => 'required|numeric',

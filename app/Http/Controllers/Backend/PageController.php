@@ -399,7 +399,7 @@ class PageController extends Controller
      */
     public function singleCompetitionStore(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'learner' => 'required',
             'manuscript' => 'required',
         ]);

@@ -289,7 +289,7 @@ class InvoiceController extends Controller
      */
     public function addInvoice(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'price' => 'required',
         ]);
 

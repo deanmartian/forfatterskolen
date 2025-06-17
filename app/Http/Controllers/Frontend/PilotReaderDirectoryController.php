@@ -110,10 +110,9 @@ class PilotReaderDirectoryController extends Controller
      */
     public function queryReader(Request $request): JsonResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'book_id' => 'required',
-        ],
-            [
+        ], [
                 'book_id.required' => 'Please select a book first.',
             ]);
 

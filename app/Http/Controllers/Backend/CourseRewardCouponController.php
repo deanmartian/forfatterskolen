@@ -19,7 +19,7 @@ class CourseRewardCouponController extends Controller
         $course = Course::find($course_id);
         if ($course) {
             $data = $request->all();
-            $this->validate($request, ['coupon' => 'required|max:10|unique:course_reward_coupons,coupon']);
+            $request->validate(['coupon' => 'required|max:10|unique:course_reward_coupons,coupon']);
             $course->rewardCoupons()->create($data);
 
             return redirect()->back()->with([
@@ -40,7 +40,7 @@ class CourseRewardCouponController extends Controller
         $reward = CourseRewardCoupon::find($id);
         if ($course && $reward) {
             $data = $request->all();
-            $this->validate($request, ['coupon' => 'required|max:10|unique:course_reward_coupons,coupon,'.$reward->id]);
+            $request->validate(['coupon' => 'required|max:10|unique:course_reward_coupons,coupon,'.$reward->id]);
             $reward->update($data);
 
             return redirect()->back()->with([

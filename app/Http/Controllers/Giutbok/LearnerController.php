@@ -145,7 +145,7 @@ class LearnerController extends Controller
 
     public function registerLearner(Request $request, LearnerService $learnerService): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',

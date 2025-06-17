@@ -96,7 +96,7 @@ class CourseController extends Controller
             return redirect()->route('front.course.checkout', $course_id);
         }
 
-        $this->validate($request, [
+        $request->validate([
             'email' => 'required',
             'first_name' => 'required|alpha_spaces',
             'last_name' => 'required|alpha_spaces',
@@ -188,8 +188,7 @@ class CourseController extends Controller
             $package = $course->packages()->first();
 
             if (Auth::guest()) {
-                $this->validate($request,
-                    [
+                $request->validate([
                         'email' => 'required|email',
                         'first_name' => 'required|alpha_spaces',
                         'last_name' => 'required|alpha_spaces',

@@ -477,12 +477,10 @@ class CourseController extends Controller
         $course = Course::find($id);
         if ($course) {
 
-            $this->validate($request,
-                [
+            $request->validate([
                     'subject' => 'required',
                     'message' => 'required',
-                ]
-            );
+                ]);
 
             $learners = isset($request->check_all) || isset($request->learners) ?
                 $course->learners->whereIn('user_id', $request->learners)->get()
@@ -593,12 +591,10 @@ class CourseController extends Controller
         $course = Course::find($course_id);
         if ($course) {
 
-            $this->validate($request,
-                [
+            $request->validate([
                     'subject' => 'required',
                     'message' => 'required',
-                ]
-            );
+                ]);
 
             // check courses taken that's not yet started with the specified course id
             $coursesTaken = CoursesTaken::whereHas('package', function ($query) use ($course_id) {
@@ -786,7 +782,7 @@ class CourseController extends Controller
      */
     public function expirationReminder($course_id, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'subject_28_days' => 'required',
             'message_28_days' => 'required',
             'subject_1_week' => 'required',

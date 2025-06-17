@@ -23,7 +23,7 @@ class PublishingPackageController extends Controller
 
     public function saveService(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'product_service' => 'required',
             'price' => 'required',
             'per_word_hour' => 'required',

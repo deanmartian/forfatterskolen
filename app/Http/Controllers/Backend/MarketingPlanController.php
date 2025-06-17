@@ -31,7 +31,7 @@ class MarketingPlanController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'name' => 'required',
         ]);
 
@@ -52,7 +52,7 @@ class MarketingPlanController extends Controller
      */
     public function update($id, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'name' => 'required',
         ]);
 

@@ -29,7 +29,7 @@ class PageMetaController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'url' => 'required|regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/',
             'meta_title' => 'required|max:70|min:40',
             'meta_description' => 'required|max:160|min:70',
@@ -71,7 +71,7 @@ class PageMetaController extends Controller
     {
         $pageMeta = PageMeta::find($id);
 
-        $this->validate($request, [
+        $request->validate([
             'url' => 'required|regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/',
             'meta_title' => 'required|max:70|min:40',
             'meta_description' => 'required|max:160|min:70',

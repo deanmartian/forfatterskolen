@@ -57,7 +57,7 @@ class TestimonialController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $this->validate($request, $this->repository->validationRules);
+        $request->validate($this->repository->validationRules);
 
         $return['alert_type'] = 'success';
         $return['errors'] = AdminHelpers::createMessageBag('Testimonial created successfully.');

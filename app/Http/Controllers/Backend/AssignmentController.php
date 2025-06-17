@@ -128,7 +128,7 @@ class AssignmentController extends Controller
 
     public function generateGroup($assignmentID, Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'submission_date' => 'required',
         ]);
 

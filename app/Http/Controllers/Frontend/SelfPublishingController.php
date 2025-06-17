@@ -274,7 +274,7 @@ class SelfPublishingController extends Controller
 
     public function saveCover($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'cover.*' => 'required|mimes:jpeg,jpg,png,gif',
             'description' => 'required',
             'isbn_id' => 'required',
@@ -303,7 +303,7 @@ class SelfPublishingController extends Controller
     public function savePageFormat($project_id, Request $request, ProjectService $projectService): RedirectResponse
     {
         if (! $request->id) {
-            $this->validate($request, ['file.*' => 'required|mimes:doc,docx']);
+            $request->validate(['file.*' => 'required|mimes:doc,docx']);
         }
 
         $request->merge(['project_id' => $project_id]);
@@ -332,7 +332,7 @@ class SelfPublishingController extends Controller
     public function validatePublishingOrder(Request $request, ShopManuscriptService $shopManuscriptService)
     {
         if (! $request->has('is_manuscript_only')) {
-            $this->validate($request, [
+            $request->validate([
                 'manuscript' => 'required',
                 'title' => 'required',
                 'description' => 'required',

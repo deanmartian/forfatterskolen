@@ -82,7 +82,7 @@ class GotoWebinarController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'title' => 'required',
             'gt_webinar_key' => 'required|unique:go_to_webinars',
             'webinar_date' => 'required',
@@ -127,7 +127,7 @@ class GotoWebinarController extends Controller
         if ($webinar = $this->gotoWebinar->find($id)) {
             $requestData = $request->toArray();
 
-            $this->validate($request, [
+            $request->validate([
                 'title' => 'required',
                 'gt_webinar_key' => 'required|unique:go_to_webinars,gt_webinar_key,'.$id,
                 'webinar_date' => 'required',

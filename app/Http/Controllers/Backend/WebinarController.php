@@ -312,7 +312,7 @@ class WebinarController extends Controller
             return redirect()->back();
         }
 
-        $this->validate($request, [
+        $request->validate([
             'send_date' => 'required|date',
             'message' => 'required',
             'subject' => 'required',

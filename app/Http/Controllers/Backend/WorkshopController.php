@@ -50,7 +50,7 @@ class WorkshopController extends Controller
 
     public function store(AddWorkshopRequest $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'description' => 'required',
         ]);
         $workshop = new Workshop;
@@ -89,7 +89,7 @@ class WorkshopController extends Controller
 
     public function update($id, AddWorkshopRequest $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'description' => 'required',
         ]);
         $workshop = Workshop::findOrFail($id);
@@ -242,12 +242,10 @@ class WorkshopController extends Controller
         $workshop = Workshop::find($id);
         if ($workshop) {
 
-            $this->validate($request,
-                [
+            $request->validate([
                     'subject' => 'required',
                     'message' => 'required',
-                ]
-            );
+                ]);
 
             $attendees = isset($request->check_all) || isset($request->learners) ?
                 $workshop->attendees->whereIn('user_id', $request->learners)

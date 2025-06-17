@@ -29,7 +29,7 @@ class EmailOutController extends Controller
             return redirect()->back();
         }
 
-        $this->validate($request, [
+        $request->validate([
             'subject' => 'required',
             'message' => 'required',
             'delay' => 'required',
@@ -172,7 +172,7 @@ class EmailOutController extends Controller
             return redirect()->back();
         }
 
-        $this->validate($request, [
+        $request->validate([
             'subject' => 'required',
             'message' => 'required',
             'delay' => 'required',

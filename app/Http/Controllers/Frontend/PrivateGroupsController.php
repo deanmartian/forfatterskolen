@@ -34,7 +34,7 @@ class PrivateGroupsController extends Controller
      */
     public function createGroup(Request $request): JsonResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'name' => 'required|alpha_num_spaces|unique:private_groups|max:50',
             'contact_email' => 'nullable|email|unique:private_groups',
         ]);

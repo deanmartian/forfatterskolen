@@ -161,7 +161,7 @@ class ProgressPlanController extends Controller
 
     public function uploadOtherServiceManuscript($type, Request $request, ProjectService $projectService): RedirectResponse
     {
-        $this->validate($request, ['manuscript' => 'required']);
+        $request->validate(['manuscript' => 'required']);
 
         if (in_array($type, [1, 2])) {
             $model = $type == 1 ? CopyEditingManuscript::class : CorrectionManuscript::class;
@@ -228,7 +228,7 @@ class ProgressPlanController extends Controller
     public function savePrint($project_id, Request $request, ProjectService $projectService)
     {
         try {
-            $this->validate($request, [
+            $request->validate([
                 'isbn' => 'required',
                 'number' => 'required',
                 'pages' => 'required',

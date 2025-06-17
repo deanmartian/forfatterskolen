@@ -1574,7 +1574,7 @@ class LearnerController extends Controller
 
     public function saveCompany($order_id, Request $request): JsonResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'customer_number' => 'required',
             'company_name' => 'required',
             'street_address' => 'required',
@@ -1758,7 +1758,7 @@ class LearnerController extends Controller
     public function setVippsEFaktura(Request $request): RedirectResponse
     {
         if ($request->mobile_number) {
-            $this->validate($request, [
+            $request->validate([
                 'mobile_number' => 'digits:8',
             ]);
         }
@@ -2325,7 +2325,7 @@ class LearnerController extends Controller
 
     public function saveForSaleBooks(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'title' => 'required',
             'price' => 'required|numeric',
         ]);
@@ -2373,7 +2373,7 @@ class LearnerController extends Controller
 
     public function saveProject(Request $request, ProjectService $projectService)
     {
-        $this->validate($request, [
+        $request->validate([
             'name' => 'required|no_links',
         ]);
 
@@ -2685,7 +2685,7 @@ class LearnerController extends Controller
 
     public function uploadSelfPublishingManuscript($id, Request $request): RedirectResponse
     {
-        $this->validate($request, ['manuscript' => 'required']);
+        $request->validate(['manuscript' => 'required']);
 
         $publishing = SelfPublishing::find($id);
 
@@ -2792,7 +2792,7 @@ class LearnerController extends Controller
      */
     public function uploadOtherServiceManuscript($id, $type, Request $request, ProjectService $projectService): RedirectResponse
     {
-        $this->validate($request, ['manuscript' => 'required']);
+        $request->validate(['manuscript' => 'required']);
 
         if (in_array($type, [1, 2])) {
             $data = $type == 1 ? CopyEditingManuscript::find($id) : CorrectionManuscript::find($id);
@@ -2946,7 +2946,7 @@ class LearnerController extends Controller
 
     public function passwordUpdate(Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'password' => 'required',
         ]);
 
@@ -5119,7 +5119,7 @@ class LearnerController extends Controller
     public function sendEmailConfirmation(Request $request): JsonResponse
     {
 
-        $this->validate($request, [
+        $request->validate([
             'email' => 'required|email|unique:users|unique:user_emails',
         ]);
 

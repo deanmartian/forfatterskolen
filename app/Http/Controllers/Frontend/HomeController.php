@@ -194,7 +194,7 @@ class HomeController extends Controller
             ];
 
             // validate the post request
-            $this->validate($request, $validates);
+            $request->validate($validates);
 
             $email_content = 'From: '.$request->fullname.'<br/>';
             $email_content .= 'Email: '.$request->email.'<br/>';
@@ -1166,7 +1166,7 @@ class HomeController extends Controller
 
         if ($request->isMethod('post')) {
 
-            $this->validate($request, ['email' => 'required|email', 'first_name' => 'required', 'last_name' => 'required']);
+            $request->validate(['email' => 'required|email', 'first_name' => 'required', 'last_name' => 'required']);
 
             $explodeName = explode(' ', $request->name);
             $sliced = array_slice($explodeName, 0, -1); // get all except the last
@@ -1236,7 +1236,7 @@ class HomeController extends Controller
         }
 
         if ($request->isMethod('post')) {
-            $this->validate($request, ['email' => 'required|email', 'first_name' => 'required', 'last_name' => 'required']);
+            $request->validate(['email' => 'required|email', 'first_name' => 'required', 'last_name' => 'required']);
 
             $url = config('services.big_marker.register_link');
             $data = $request->except('_token');
@@ -1301,7 +1301,7 @@ class HomeController extends Controller
             ];
 
             // validate the post request
-            $this->validate($request, $validates);
+            $request->validate($validates);
             $list_id = $optIn->list_id;
             AdminHelpers::addToActiveCampaignList($list_id, $request->except('_token', 'terms'));
 
@@ -1482,7 +1482,7 @@ class HomeController extends Controller
             ];
 
             // validate the post request
-            $this->validate($request, $validates);
+            $request->validate($validates);
             $list_id = 64;
 
             AdminHelpers::addToActiveCampaignList($list_id, $request->except('_token', 'terms'));
@@ -1528,7 +1528,7 @@ class HomeController extends Controller
             ];
 
             // validate the post request
-            $this->validate($request, $validates);
+            $request->validate($validates);
             $list_id = 136;
             AdminHelpers::addToActiveCampaignList($list_id, $request->except('_token', 'terms'));
 
@@ -2161,7 +2161,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             'need_in_course.required' => 'Hva skal til for at du fullfører dette kurset field is required.',
             'expectations.required' => 'Hvilke forventninger har du til deg selv – og oss field is required.',
         ];
-        $this->validate($request, [
+        $request->validate([
             'email' => 'required',
             'first_name' => 'required|alpha_spaces',
             'last_name' => 'required|alpha_spaces',
@@ -2229,7 +2229,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             'manuscript' => 'required|mimes:pdf,doc,docx,odt',
         ];
 
-        $this->validate($request, $validates);
+        $request->validate($validates);
 
         if (Auth::guest()) {
             $user = User::where('email', $request->email)->first();
@@ -2456,7 +2456,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     public function application(Request $request)
     {
         if (request()->isMethod('post')) {
-            $this->validate($request, [
+            $request->validate([
                 'first_name' => 'required|alpha',
                 'last_name' => 'required|alpha',
                 'phone' => 'required',

@@ -165,7 +165,7 @@ class PilotReaderBookSettingsController extends Controller
      */
     private function validateEmail(Request $request): JsonResponse
     {
-        $this->validate($request, ['email' => 'required|email']);
+        $request->validate(['email' => 'required|email']);
         $invitations = PilotReaderBookInvitation::where(['email' => $request->email, 'book_id' => $request->book_id])->where('status', '<>', 3);
         if ($invitations->count() > 0) {
             return response()->json(['email' => ['This email is already invited']], 500);
@@ -211,7 +211,7 @@ class PilotReaderBookSettingsController extends Controller
     public function setReadingStatus(Request $request): JsonResponse
     {
         if ($request->exists('reasons')) {
-            $this->validate($request, [
+            $request->validate([
                 'reasons' => 'required|min:25',
             ]);
         }

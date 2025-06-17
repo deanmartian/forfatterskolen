@@ -202,7 +202,7 @@ class PageController extends Controller
 
     public function selfPublishingFeedback($publishing_id, Request $request): RedirectResponse
     {
-        $this->validate($request, [
+        $request->validate([
             'manuscript' => 'required',
         ]);
 
