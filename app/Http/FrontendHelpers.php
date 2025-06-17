@@ -381,7 +381,7 @@ class FrontendHelpers
      *
      * @param  null  $route
      */
-    public static function pilotReaderNav($route = null): array
+    public static function pilotReaderNav($route = null)
     {
         $navs = [
             ['route_name' => 'learner.book-author-book-show', 'label' => 'Contents'],
@@ -727,7 +727,7 @@ class FrontendHelpers
      *
      * @param  null  $id
      */
-    public static function manuscriptType($id = null): array
+    public static function manuscriptType($id = null)
     {
         $types = [
             ['id' => 1, 'option' => 'Hele manuset'],
@@ -752,7 +752,7 @@ class FrontendHelpers
      *
      * @param  null  $setMark
      */
-    public static function feedbackMarks($setMark = null): array
+    public static function feedbackMarks($setMark = null)
     {
         $marks = [
             ['option' => 'unmarked', 'label' => 'Unmarked'],
@@ -969,7 +969,7 @@ class FrontendHelpers
     /**
      * Separate get content from doc file, the other is used for word count
      */
-    public static function getContentFromDocFile($filename): string
+    public static function getContentFromDocFile($filename)
     {
         if (file_exists($filename)) {
             if (($fh = fopen($filename, 'r')) !== false) {
