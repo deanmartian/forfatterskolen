@@ -2802,7 +2802,7 @@
 						<div class="charNum">136 characters left</div>
 					</div>
 
-					<button type="button" class="btn btn-primary pull-right submitInvoice">
+					<button type="submit" class="btn btn-primary pull-right submitInvoice">
 						{{ trans('site.create-invoice') }}
 					</button>
 					<div class="clearfix"></div>

@@ -327,7 +327,7 @@ class InvoiceController extends Controller
         $comment .= 'Betalingsmodus: ' . $payment_mode . ', ';
         $comment .= 'Betalingsplan: ' . $payment_plan . ')';
 
-        $product_ID = $request->product_id;
+        $product_ID = $request->product_id; //279633092
 
         $price = $request->price * 100;
         $dueDate = $request->issue_date ?: date("Y-m-d");

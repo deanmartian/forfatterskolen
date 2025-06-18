@@ -82,7 +82,7 @@ class FikenInvoice
                 'productId'     => $post_fields['productID'],
                 'comment'       => $post_fields['comment'],
                 'quantity'      => 1,
-                'vatType'       => 'NONE',
+                'vatType'       => 'OUTSIDE',
                 'unitPrice'     => $post_fields['netAmount']
             ]],
             'customerId'        => $customer->contactId,
