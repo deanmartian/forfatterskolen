@@ -114,8 +114,8 @@ class FikenInvoice
                 'currency'          => 'NOK',
             ];
         }
-
-        $field_string = json_encode($fields, true);
+        $utf8Data = $this->utf8ize($fields);
+        $field_string = json_encode($utf8Data, true);
         Log::info($field_string);
         $ch = curl_init($this->fiken_create_invoice_service);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -520,6 +520,17 @@ class FikenInvoice
         curl_close($ch);
 
         return $response;
+    }
+
+    private function utf8ize($mixed) {
+        if (is_array($mixed)) {
+            foreach ($mixed as $key => $value) {
+                $mixed[$key] = $this->utf8ize($value);
+            }
+        } elseif (is_string($mixed)) {
+            return mb_convert_encoding($mixed, 'UTF-8', 'UTF-8');
+        }
+        return $mixed;
     }
 }
 
