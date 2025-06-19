@@ -33,6 +33,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator as FacadeValidator;
@@ -1033,7 +1034,7 @@ class ShopManuscriptController extends Controller
         return view('frontend.shop-manuscript.upgrade', compact('shopManuscript', 'upgradeManuscript'));
     }
 
-    public function upgradeManuscript($id, Request $request): RedirectResponse
+    public function upgradeManuscript($id, Request $request): \Symfony\Component\HttpFoundation\Response
     {
         $validator = $this->upgradeValidator($request->all());
         if ($validator->fails()) {
@@ -1159,7 +1160,7 @@ class ShopManuscriptController extends Controller
         // endif;
 
         if ($paymentMode->mode == 'Paypal') {
-            echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            $paypalForm = '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
                 <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
                 <input type="hidden" name="currency_code" value="NOK">
@@ -1168,10 +1169,10 @@ class ShopManuscriptController extends Controller
                 <input type="hidden" name="amount" value="'.($price / 100).'">
                 <input type="hidden" name="return" value="'.route('front.shop.thankyou').'">
                 <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
-            </form>';
-            echo '<script>document.getElementById("paypal_form").submit();</script>';
+            </form>
+            <script>document.getElementById("paypal_form").submit();</script>';
 
-            return;
+            return new Response($paypalForm);
         }
 
         return redirect(route('front.shop.thankyou'));
@@ -1204,7 +1205,7 @@ class ShopManuscriptController extends Controller
         return $this->processFreeManuscript($request);
     }
 
-    public function processFreeManuscript(Request $request): RedirectResponse
+    public function processFreeManuscript(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|alpha_spaces',

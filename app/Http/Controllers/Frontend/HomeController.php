@@ -78,7 +78,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class HomeController extends Controller
 {
-    protected $sosChildren = '';
+    protected $sosChildren;
 
     public function __construct(SosChildren $sosChildren)
     {
@@ -1722,7 +1722,7 @@ class HomeController extends Controller
     /**
      * Download an email attachment based on token
      */
-    public function emailAttachment($token): BinaryFileResponse
+    public function emailAttachment($token)
     {
         $emailAttachment = EmailAttachment::where('hash', '=', $token)->first();
         if ($emailAttachment) {
@@ -2438,7 +2438,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             }
         } else {
             // Email address not found
-            return $powerOffice->registerCustomer();
+            //return $powerOffice->registerCustomer();
         }
     }
 
