@@ -617,10 +617,19 @@ class CourseService
         $redirectLink = encrypt(route('learner.course'));
         $actionUrl = route('auth.login.emailRedirect', [$encode_email, $redirectLink]);
         $actionText = 'Mine Kurs';
-        $attachments = null;
+        $attachments = [];
 
         if ($isEmailOut) {
-            $email_content = $this->getEmailOutWelcomeEmail($package->course_id, $encode_email, $user);
+            $welcomEmail = $this->getEmailOutWelcomeEmail($package->course_id, $encode_email, $user);
+            $email_content = $welcomEmail['message'];
+
+            if (isset($welcomEmail['attachment']) && $welcomEmail['attachment']) {
+                $publicPath = $welcomEmail['attachment']; // since this is stored in storage folder via symlink
+                // Convert to real path
+                $relativePath = str_replace('/storage/', '', $publicPath);
+                $fullPath = storage_path('app/public/' . $relativePath);
+                $attachments[] = $fullPath;
+            }
         } else {
             $search_string = [
                 '[username]', '[password]',
@@ -632,8 +641,8 @@ class CourseService
         }
 
         if ($hasRegretForm) {
-            $attachments = [asset($this->generateDocx($user->id, $package->id)),
-                asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
+            $attachments[] = asset($this->generateDocx($user->id, $package->id));
+            $attachments[] = asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx');
         }
 
         if ($isEmailOut) {
@@ -684,10 +693,17 @@ class CourseService
                 'user_id' => $user->id,
             ]);
 
-            return $message;
+            return [
+                'message' => $message,
+                'attachment' => $emailOut->attachment
+            ];
         }
 
-        return '';
+        $course = Course::find($course_id);
+        
+        return [
+            'message' => $course->email
+        ];
     }
 
     public function createInvoiceFromOder($order)
