@@ -82,7 +82,7 @@ class ShopManuscriptService
         return $synopsis;
     }
 
-    public function processCheckout(Request $request): JsonResponse
+    public function processCheckout(Request $request)
     {
 
         // this is for not logged in user
@@ -180,7 +180,7 @@ class ShopManuscriptService
         ];
     }
 
-    public function generateSveaCheckout(Request $request): JsonResponse
+    public function generateSveaCheckout(Request $request)
     {
         $orderRecord = $this->createOrder($request);
         $userHasPaidCourse = FrontendHelpers::userHasPaidCourse();
