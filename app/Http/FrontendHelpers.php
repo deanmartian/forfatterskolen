@@ -80,7 +80,7 @@ class FrontendHelpers
         if (self::isDate($delay)) {
             $availableOn = date_create($delay);
         } else {
-            $availableOn->addDays($delay);
+            $availableOn->addDays((int) $delay);
         }
 
         return date_format($availableOn, 'M d, Y');
