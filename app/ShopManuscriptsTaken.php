@@ -18,8 +18,8 @@ class ShopManuscriptsTaken extends Model
         'expected_finish', 'manuscript_uploaded_date', 'genre', 'description', 'is_manuscript_locked', 'synopsis',
         'coaching_time_later', 'is_welcome_email_sent', 'gift_purchase_id'];
 
-    protected $with = ['shop_manuscript', 'user', 'receivedWelcomeEmail', 'receivedExpectedFinishEmail',
-        'receivedAdminFeedbackEmail', 'receivedFollowUpEmail'];
+    /* protected $with = ['shop_manuscript', 'user', 'receivedWelcomeEmail', 'receivedExpectedFinishEmail',
+        'receivedAdminFeedbackEmail', 'receivedFollowUpEmail']; */
 
     public function user(): BelongsTo
     {
