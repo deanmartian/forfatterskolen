@@ -118,7 +118,7 @@
             ->get();
     @endphp   
 
-    @if( $feedbacks->count() > 0 && $assignmentManuscript->status)
+    @if( $feedbacks->count() > 0) {{-- && $assignmentManuscript->status --}}
         <div class="group-learner-list-wrapper group-learner-feedback-wrapper mt-5">
             <div class="title-container" style="justify-content: space-between">
                 <h1>
