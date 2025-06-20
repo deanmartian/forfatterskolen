@@ -354,6 +354,7 @@
                     //->whereIn('webinars.id',[24, 25, 31]) // remove this to return the original
                     ->orderBy('courses.type', 'ASC')
                     ->orderBy('webinars.start_date', 'ASC')
+                    ->groupBy('webinars.id')
                     ->get();
 
                 $webinars = DB::table('courses_taken')
@@ -367,6 +368,7 @@
                     ->where('set_as_replay',0)
                     ->orderBy('courses.type', 'ASC')
                     ->orderBy('webinars.start_date', 'ASC')
+                    ->groupBy('webinars.id')
                     ->get();
             ?>
             <div class="row webinar-wrapper">
