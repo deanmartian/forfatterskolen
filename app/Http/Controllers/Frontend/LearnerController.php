@@ -4431,6 +4431,11 @@ class LearnerController extends Controller
                 dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
                     $emailTemplate->from_email, null, null, 'assignment-manuscripts',
                     $assignmentManuscript->id));
+
+                return redirect()->back()->with([
+                    'errors' => AdminHelpers::createMessageBag('Assignment uploaded successfully.'),
+                    'alert_type' => 'success',
+                ]);
             }
         }
 
