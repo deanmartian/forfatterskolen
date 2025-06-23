@@ -1404,7 +1404,7 @@ class LearnerController extends Controller
         ];
     }
 
-    public function submit_feedback($group_id, $id, Request $request): RedirectResponse
+    public function submit_feedback($group_id, $id, Request $request)
     {
         $group = AssignmentGroup::where('id', $group_id)->whereHas('learners', function ($query) use ($id) {
             $query->where('id', $id)->where('user_id', '<>', Auth::user()->id);
