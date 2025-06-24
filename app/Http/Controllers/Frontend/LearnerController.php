@@ -3683,7 +3683,11 @@ class LearnerController extends Controller
             $request->only('street', 'zip', 'city', 'phone')
         );
 
-        $request->merge(['parent' => 'course-taken', 'parent_id' => $courseTakenId]);
+        $request->merge([
+            'parent' => 'course-taken', 
+            'parent_id' => $courseTakenId,
+            'is_pay_later' => 0
+        ]);
 
         return response()->json($courseService->generateSveaCheckout($request));
     }
