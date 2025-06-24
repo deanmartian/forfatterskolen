@@ -301,7 +301,7 @@
 									</a>
 								@endif
 
-								<div class="card global-card">
+								<div class="card global-card" style="overflow: auto">
 									<div class="card-body py-0">
 										<table class="table table-global">
 											<thead>
