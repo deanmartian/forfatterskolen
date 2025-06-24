@@ -982,7 +982,7 @@ class LearnerController extends Controller
                                         }
                                     }
                                 } else {
-                                    if (\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
+                                    if (\Carbon\Carbon::parse($courseTaken->started_at)->addDays((int) $assignment->submission_date)
                                         ->gt(Carbon::now())) {
                                         if ($assignment->max_words === 0) {
                                             $noWordLimitAssignments[] = $assignment;
@@ -1039,7 +1039,7 @@ class LearnerController extends Controller
                                 $expiredAssignments[] = $assignment;
                             }
                         } else {
-                            if (\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
+                            if (\Carbon\Carbon::parse($courseTaken->started_at)->addDays((int) $assignment->submission_date)
                                 ->lt(Carbon::now())) {
                                 $expiredAssignments[] = $assignment;
                             }
