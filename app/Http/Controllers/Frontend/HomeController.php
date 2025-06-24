@@ -2471,7 +2471,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
     public function exportCourseTakenByYear($year)
     {
-        $coursesTaken = CoursesTaken::whereYear('created_at', $year)
+        $coursesTaken = CoursesTaken::whereHas('user')->whereYear('created_at', $year)
             ->where('is_free', 0)
             ->get();
         
@@ -2491,7 +2491,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
     public function exportShopManuscriptsTakenByYear($year)
     {
-        $manuscriptsTaken = ShopManuscriptsTaken::whereYear('created_at', $year)->get();
+        $manuscriptsTaken = ShopManuscriptsTaken::whereHas('user')->whereYear('created_at', $year)->get();
         
         $list = [];
         foreach($manuscriptsTaken as $manuscriptTaken) {
