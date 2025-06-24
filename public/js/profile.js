@@ -37,8 +37,10 @@ const methods = {
         this.setLoadingIcon(email_btn);
         let self = this;
         let form = $(".email-container");
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         $.post(`/account/email/confirmation`, {
-            email : email
+            email : email,
+            _token: token
         })
             .then(function(response){
                 self.clearError(form);
@@ -73,9 +75,11 @@ const methods = {
                     action: function(){
 
                         self_span.prepend('<i class="fa fa-spinner fa-pulse mr-2"></i>');
+                        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                         $.post('/account/email/primary/set', {
-                            id : id
+                            id : id,
+                            _token: token
                         })
                             .then(function(response){
                                 $("#profile_email").val(response.primary_email);
@@ -102,8 +106,10 @@ const methods = {
                     text: 'Ok',
                     btnClass: 'btn-red',
                     action: function(){
+                        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                         $.post('/account/email/destroy', {
-                            id : id
+                            id : id,
+                            _token: token
                         })
                             .then(function(response){
                                 self.listEmails();
