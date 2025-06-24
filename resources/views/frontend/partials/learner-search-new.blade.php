@@ -22,7 +22,7 @@
                 @endif
             @endif
         </div>
-        <div class="col-md-5 col-sm-12 float-right">
+        {{-- <div class="col-md-5 col-sm-12 float-right">
             <div class="input-group">
                 <input type="text" class="form-control" name="search" value="{{ Request::input('search') }}"
                        placeholder="{{ trans('site.learner.search-placeholder') }}" required>
@@ -30,6 +30,6 @@
                     <button class="btn" type="submit"><i class="fa fa-search"></i></button>
                 </span>
             </div>
-        </div>
+        </div> --}}
     </form>
 </div>
