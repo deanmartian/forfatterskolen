@@ -5330,7 +5330,7 @@ class LearnerController extends Controller
                     // $assignments[] = $assignment;
 
                     if (! AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
-                        if (\Carbon\Carbon::parse($course->started_at)->addDays($assignment->submission_date)
+                        if (\Carbon\Carbon::parse($course->started_at)->addDays((int) $assignment->submission_date)
                             ->gt(Carbon::now())) {
                             $assignments[] = $assignment;
                         }
@@ -5345,8 +5345,7 @@ class LearnerController extends Controller
 
         $userAssignments = Auth::user()->activeAssignments;
         foreach ($userAssignments as $assignment) {
-
-            if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
+            if (\Carbon\Carbon::parse((int) $assignment->submission_date)->gt(Carbon::now())) {
                 $assignments[] = $assignment;
             }
 
