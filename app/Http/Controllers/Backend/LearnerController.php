@@ -73,7 +73,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
-class LearnerController extends Controller implements HasMiddleware
+class LearnerController extends Controller
 {
     // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk
     // Forfatterskolen: forfatterskolen-as
@@ -89,11 +89,9 @@ class LearnerController extends Controller implements HasMiddleware
         'Content-Type: application/hal+json',
     ];
 
-    public static function middleware(): array
+    public function __construct()
     {
-        return [
-            'checkPageAccess:4',
-        ];
+        $this->middleware('checkPageAccess:4');
     }
 
     public function index(Request $request, User $user): View
@@ -255,7 +253,7 @@ class LearnerController extends Controller implements HasMiddleware
             'timeRegisters', 'projects', 'certificates', 'projects', 'bookSaleTypes'));
     }
 
-    public function update($id, Request $request): RedirectResponse
+    public function update($id, Request $request)
     {
         $learner = User::findOrFail($id);
 
