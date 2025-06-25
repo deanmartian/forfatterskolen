@@ -278,7 +278,7 @@ class AssignmentGroupController extends Controller
             'assignment-manuscripts', $manuscript_id));
     }
 
-    public function submit_feedback_learner($group_id, $id, Request $request): RedirectResponse
+    public function submit_feedback_learner($group_id, $id, Request $request)
     {
         $group = AssignmentGroup::where('id', $group_id)->whereHas('learners', function ($query) use ($id) {
             $query->where('id', $id);
