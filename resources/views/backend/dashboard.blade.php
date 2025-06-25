@@ -1314,7 +1314,7 @@
 				<h4 class="modal-title">{{ trans('site.submit-feedback-to') }} <em></em></h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action=""  enctype="multipart/form-data">
+				<form method="POST" action=""  enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
