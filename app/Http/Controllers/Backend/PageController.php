@@ -53,7 +53,6 @@ class PageController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('checkPageAccess:9', only: ['downloadShopManuscript']),
         ];
     }
 
@@ -228,6 +227,7 @@ class PageController extends Controller implements HasMiddleware
      *
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
+    #[Middleware('checkPageAccess:9')]
     public function downloadShopManuscript($id)
     {
         $shopManuscript = ShopManuscriptsTaken::find($id);
