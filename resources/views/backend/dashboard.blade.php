@@ -1818,7 +1818,7 @@
             </div>
             <div class="modal-body">
 
-                <form method="POST" action=""  enctype="multipart/form-data">
+                <form method="POST" action=""  enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                     <?php
                     	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Assignment Manuscript Feedback');
                     ?>
