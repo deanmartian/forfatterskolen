@@ -48,12 +48,12 @@ use Illuminate\View\View;
 
 require app_path('/Http/BackupDB/MySQLDump.php');
 
-class PageController extends Controller implements HasMiddleware
+class PageController extends Controller
 {
-    public static function middleware(): array
+
+    public function __construct()
     {
-        return [
-        ];
+        $this->middleware('checkPageAccess:9')->only('downloadShopManuscript');
     }
 
     public function dashboard(): View
@@ -227,7 +227,6 @@ class PageController extends Controller implements HasMiddleware
      *
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    #[Middleware('checkPageAccess:9')]
     public function downloadShopManuscript($id)
     {
         $shopManuscript = ShopManuscriptsTaken::find($id);

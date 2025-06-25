@@ -29,7 +29,7 @@ use Illuminate\View\View;
 use Mail;
 use Validator;
 
-class ShopManuscriptController extends Controller implements HasMiddleware
+class ShopManuscriptController extends Controller
 {
     protected $saleService;
 
@@ -39,16 +39,16 @@ class ShopManuscriptController extends Controller implements HasMiddleware
     public function __construct(SaleService $saleService)
     {
         // middleware to check if admin have access to this page
-
+        $this->middleware('checkPageAccess:9')->except('addFeedback');
         $this->saleService = $saleService;
     }
 
-    public static function middleware(): array
+    /* public static function middleware(): array
     {
         return [
-            new Middleware('checkPageAccess:9', except: ['addFeedback']),
+            ['middleware' => 'checkPageAccess:9', 'except' => ['addFeedback']],
         ];
-    }
+    } */
 
     public function index(Request $request): View
     {
@@ -382,7 +382,7 @@ class ShopManuscriptController extends Controller implements HasMiddleware
         return redirect()->back();
     }
 
-    public function editorAcceptRequest($taken_id, $accepted, $request_id): RedirectResponse
+    public function editorAcceptRequest($taken_id, $accepted, $request_id)
     {
         if ($accepted) {
 

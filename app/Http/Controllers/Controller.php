@@ -6,8 +6,9 @@ use App\EmailTemplate;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Repositories\VippsRepository;
+use Illuminate\Routing\Controller as RoutingController;
 
-class Controller
+class Controller extends RoutingController
 {
     /**
      * @param  $data  array

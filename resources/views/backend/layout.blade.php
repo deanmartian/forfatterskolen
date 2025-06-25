@@ -5,6 +5,7 @@
         @include('backend.partials.backend-css')
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" />
+        <link rel="icon" href="data:,">
         @yield('styles')
         <meta name="csrf-token" content="{{ csrf_token() }}" />
     </head>
