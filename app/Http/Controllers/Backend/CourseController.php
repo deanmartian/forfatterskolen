@@ -40,13 +40,12 @@ use Illuminate\View\View;
 use Maatwebsite\Excel\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class CourseController extends Controller implements HasMiddleware
+class CourseController extends Controller
 {
-    public static function middleware(): array
+
+    public function __construct()
     {
-        return [
-            'checkPageAccess:1',
-        ];
+        $this->middleware('checkPageAccess:1');
     }
 
     public function index(Request $request): View
@@ -1133,7 +1132,7 @@ class CourseController extends Controller implements HasMiddleware
         ]);
     }
 
-    public function certificate($course_id, $package_id): JsonResponse
+    public function certificate($course_id, $package_id)
     {
         $course = Course::find($course_id);
         $package = Package::find($package_id);
