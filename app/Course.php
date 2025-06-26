@@ -226,7 +226,7 @@ class Course extends Model
         $coursesTaken_ids = CoursesTaken::whereIn('package_id', $packages_ids)->pluck('id')->toArray();
         $manuscripts = Manuscript::whereIn('coursetaken_id', $coursesTaken_ids)->orderBy('created_at', 'desc');
 
-        return $manuscripts;
+        return $manuscripts->get();
     }
 
     public function getUrlAttribute()

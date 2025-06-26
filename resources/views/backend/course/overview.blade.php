@@ -148,12 +148,20 @@
 						    </thead>
 						    <tbody>
 						    	@foreach( $course->manuscripts->take(5) as $manuscript )
-						    	<tr>
-						    		<td><a href="{{ route('admin.manuscript.show', $manuscript->id) }}">{{ basename($manuscript->filename) }}</a></td>
-									<td>{{ $manuscript->word_count }}</td>
-									<td><a href="{{route('admin.learner.show', $manuscript->user->id)}}">{{$manuscript->user->full_name}}</a></td>
-									<td>{{ $manuscript->created_at }}</td>
-						    	</tr>
+									@if ($manuscript)
+										<tr>
+											<td>
+												<a href="{{ route('admin.manuscript.show', $manuscript->id) }}">
+												{{ basename($manuscript->filename) }}</a>
+											</td>
+											<td>{{ $manuscript->word_count }}</td>
+											<td>
+												<a href="{{route('admin.learner.show', $manuscript->user->id)}}">
+												{{$manuscript->user->full_name}}</a>
+											</td>
+											<td>{{ $manuscript->created_at }}</td>
+										</tr>
+									@endif
 						    	@endforeach
 						    </tbody>
 						</table>
