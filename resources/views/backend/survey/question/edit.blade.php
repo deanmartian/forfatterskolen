@@ -248,11 +248,11 @@
                     <span class="card-title"> Edit Question</span>
                     <a href="#deleteQuestionModal" class="pull-right red-text"
                        data-toggle="modal" data-action="{{ route('admin.survey.question.destroy', ['survey_id' => $survey->id,
-                       'id' => $surveyQuestion->id]) }}"
+                       'question' => $surveyQuestion->id]) }}"
                        id="deleteQuestionBtn">Delete Question</a>
 
                     <form method="POST" action="{{ route('admin.survey.question.update',
-                    ['survey_id' => $survey->id, 'id' => $surveyQuestion->id]) }}">
+                    ['survey_id' => $survey->id, 'question' => $surveyQuestion->id]) }}">
                         {{ csrf_field() }}
                         {{ method_field('PUT') }}
                         <div class="row">

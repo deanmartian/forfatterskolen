@@ -288,7 +288,7 @@
                                         </a>
 
                                         <a href="{{ route('admin.survey.question.edit', ['survey_id' => $survey->id,
-                                        'id' => $question->id]) }}" class="pull-right"
+                                        'question' => $question->id]) }}" class="pull-right"
                                         style="color: #039be5">Edit</a>
                                     </h4>
                                 </div>
