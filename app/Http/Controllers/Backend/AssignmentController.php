@@ -40,13 +40,11 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
-class AssignmentController extends Controller implements HasMiddleware
+class AssignmentController extends Controller
 {
-    public static function middleware(): array
+    public function __construct()
     {
-        return [
-            'checkPageAccess:5',
-        ];
+        $this->middleware('checkPageAccess:5');
     }
 
     public function index(): View
@@ -335,7 +333,7 @@ class AssignmentController extends Controller implements HasMiddleware
         return redirect()->route('admin.assignment.index');
     }
 
-    public function uploadManuscript($id, Request $request): RedirectResponse
+    public function uploadManuscript($id, Request $request)
     {
         $assignment = Assignment::findOrFail($id);
         $learner = User::findOrFail($request->learner_id);
@@ -721,7 +719,7 @@ class AssignmentController extends Controller implements HasMiddleware
     /**
      * Auto-generate a document from 10 student and put it to one file before downloading
      */
-    public function generateDoc($assignmentId): BinaryFileResponse
+    public function generateDoc($assignmentId)
     {
         $assignment = Assignment::find($assignmentId);
 

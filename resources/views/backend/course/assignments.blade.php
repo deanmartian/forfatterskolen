@@ -60,7 +60,7 @@
 		    <h4 class="modal-title">{{ trans('site.add-assignment') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{route('admin.assignment.store', $course->id)}}">
+		    <form method="POST" action="{{route('admin.assignment.store', $course->id)}}" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 		      <div class="form-group">
 		      	<label>{{ trans('site.title') }}</label>
