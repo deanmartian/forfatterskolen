@@ -1,12 +1,13 @@
 <div class="container">
 	<a class="btn btn-info margin-bottom" href="{{route('admin.course.show', $course->id)}}?section=lessons"><i class="fa fa-arrow-left"></i> {{ trans('site.back-to-lessons') }}</a>
 	@if(Request::is('course/*/lesson/create'))
-	<form action="{{route('admin.lesson.store', $course->id)}}" method="post" enctype="multipart/form-data">
+	<form action="{{route('admin.lesson.store', $course->id)}}" method="post" enctype="multipart/form-data" 
+        onsubmit="disableSubmit(this)">
 	@else
 	@include('backend.lesson.partials.delete')
     @include('backend.lesson.partials.delete-document')
 	<form action="{{route('admin.lesson.update', ['course_id' => $course->id, 'lesson' => $lesson['id']])}}" method="post" id="lessonForm"
-          enctype="multipart/form-data">
+          enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 	{{method_field('PUT')}}
 	@endif
 		{{csrf_field()}}
@@ -201,9 +202,9 @@ jQuery(document).ready(function(){
 	    $(this).find('.deleteLessonDocumentBtn').toggle();
     });
 
-	let get_content_url = $("[name=webinar_pakke]").length ? '{{ route('admin.lesson.get_lesson_content', $lesson['id']) }}' : '';
 
 	if ($("[name=webinar_pakke]").length) {
+        let get_content_url = '{{ route('admin.lesson.get_lesson_content', $lesson['id'] ? $lesson['id'] : 0) }}';
 	    methods.getLessonContents(get_content_url);
     }
 
