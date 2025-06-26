@@ -684,7 +684,8 @@
 		    <h4 class="modal-title">{{ trans('site.create-group') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{route('admin.assignment-group.store', ['course_id' => $course->id, 'assignment_id' => $assignment->id])}}">
+		    <form method="POST" action="{{route('admin.assignment-group.store', ['course_id' => $course->id, 'assignment_id' => $assignment->id])}}"
+				onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 		      <div class="form-group">
 		      	<label>{{ trans('site.group-name') }}</label>
@@ -1308,7 +1309,7 @@
 				<h4 class="modal-title">Edit Availability</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="" enctype="multipart/form-data">
+				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans('site.availability') }}</label>
