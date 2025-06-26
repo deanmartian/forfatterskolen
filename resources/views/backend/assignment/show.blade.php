@@ -747,7 +747,8 @@
 		    <h4 class="modal-title">{{ trans('site.delete-assignment') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{route('admin.assignment.destroy', ['course_id' => $course->id, 'assignment' => $assignment->id])}}">
+		    <form method="POST" action="{{route('admin.assignment.destroy', ['course_id' => $course->id, 'assignment' => $assignment->id])}}"
+				onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 		      {{ method_field('DELETE') }}
 				{{ trans('site.delete-assignment-question') }}
@@ -768,7 +769,8 @@
 		    <h4 class="modal-title">{{ trans('site.edit-assignment') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{route('admin.assignment.update', ['course_id' => $course->id, 'assignment' => $assignment->id])}}">
+		    <form method="POST" action="{{route('admin.assignment.update', ['course_id' => $course->id, 'assignment' => $assignment->id])}}"
+				onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 		      {{ method_field('PUT') }}
 		      <div class="form-group">
