@@ -254,7 +254,8 @@
 				<h4 class="modal-title">Send Email</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('admin.course.welcome-email.send', $course->id) }}">
+				<form method="POST" action="{{ route('admin.course.welcome-email.send', $course->id) }}" 
+					onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group" id="learner-list">
 						<label>
@@ -288,7 +289,8 @@
         <h4 class="modal-title">Add Similar Course</h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="{{ route('admin.course.add_similar_course', $course->id) }}">
+      	<form method="POST" action="{{ route('admin.course.add_similar_course', $course->id) }}"
+			onsubmit="disableSubmit(this)">
       		{{ csrf_field() }}
       		<?php $similar_courses_ids = $course->similar_courses->pluck('similar_course_id')->toArray(); ?>
       		<?php $all_courses = App\Course::where('id', '<>', $course->id)->whereNotIn('id', $similar_courses_ids)->orderBy('created_at', 'desc')->get(); ?>
@@ -336,7 +338,7 @@
         <h4 class="modal-title">{{ trans('site.clone-course') }}</h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="{{ route('admin.course.clone', $course->id) }}">
+      	<form method="POST" action="{{ route('admin.course.clone', $course->id) }}" onsubmit="disableSubmit(this)">
       		{{ csrf_field() }}
 			{{ trans('site.clone-course-question') }}
       		<div class="text-right margin-top">
@@ -356,7 +358,7 @@
 				<h4 class="modal-title">{{ trans('site.send-feedback') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 
 					<div class="form-group">
