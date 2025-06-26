@@ -498,7 +498,8 @@
 		    <h4 class="modal-title">{{ trans('site.add-manuscript') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{ route('assignment.group.upload_manuscript', $assignment->id) }}" enctype="multipart/form-data">
+		    <form method="POST" action="{{ route('assignment.group.upload_manuscript', $assignment->id) }}" enctype="multipart/form-data"
+				onsubmit="disableSubmit(this)">
 		      	{{ csrf_field() }}
 				<?php
 					// get all learners that have already sent manuscript
@@ -548,7 +549,8 @@
 				</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('assignment.add-on-for-learner', $assignment->id) }}">
+				<form method="POST" action="{{ route('assignment.add-on-for-learner', $assignment->id) }}"
+					onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
                     <?php
                     // get all learners that have already sent manuscript
@@ -583,7 +585,7 @@
 				<h4 class="modal-title">{{ trans('site.assign-editor') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="" enctype="multipart/form-data">
+				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans_choice('site.editors', 1) }}</label>
@@ -637,7 +639,7 @@
 				<h4 class="modal-title">Remove Editor</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="" enctype="multipart/form-data">
+				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					{{ method_field('DELETE') }}
 					<p>
@@ -660,7 +662,7 @@
 		    <h4 class="modal-title">{{ trans('site.set-grade') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="">
+		    <form method="POST" action="" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 		      <div class="form-group">
 		      	<label>{{ trans('site.grade') }}</label>
@@ -930,7 +932,7 @@
 				<h4 class="modal-title">{{ trans('site.replace-manuscript') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="" enctype="multipart/form-data">
+				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
@@ -973,7 +975,7 @@
 			</div>
 			<div class="modal-body">
 				{{ trans('site.delete-manuscript-question') }}
-				<form method="POST" action="">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<button type="submit" class="btn btn-danger pull-right margin-top">{{ trans('site.delete') }}</button>
 					<div class="clearfix"></div>
@@ -991,7 +993,7 @@
 				<h4 class="modal-title">{{ trans('site.move-manuscript-to-assignment') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans('site.move-to-assignment') }}</label>
