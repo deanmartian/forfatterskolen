@@ -630,7 +630,7 @@ class AssignmentController extends Controller
      * Download learners with the assignment even if they don't submit assignment manuscript yet
      * include the users that have the assignment as add-on
      */
-    public function exportLearnersIncludeAddOnLearners($assignment_id): RedirectResponse
+    public function exportLearnersIncludeAddOnLearners($assignment_id)
     {
         $assignment = Assignment::find($assignment_id);
 
