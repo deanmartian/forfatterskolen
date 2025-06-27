@@ -196,7 +196,7 @@
 				<h4 class="modal-title">{{ trans('site.set-grade') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans('site.grade') }}</label>
@@ -270,7 +270,7 @@
 				<h4 class="modal-title">{{ trans('site.set-availability') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="" enctype="multipart/form-data">
+				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 
 					<div class="form-group">
@@ -296,7 +296,7 @@
 		    <h4 class="modal-title">{{ trans('site.edit-feedback') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="" enctype="multipart/form-data">
+		    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 		      	{{ csrf_field() }}
 	      		<div class="form-group">
 		      		<label>{{ trans_choice('site.manuscripts', 1) }}</label>
@@ -327,7 +327,7 @@
 		    <h4 class="modal-title">{{ trans('site.delete-feedback') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="">
+		    <form method="POST" action="" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 				{{ trans('site.delete-feedback-question') }}
 		      <div class="text-right margin-top">
@@ -348,7 +348,7 @@
 		    <h4 class="modal-title">{{ trans('site.submit-feedback-to') }} <em></em></h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action=""  enctype="multipart/form-data">
+		    <form method="POST" action=""  enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 		      	{{ csrf_field() }}
 				{{ trans('site.submit-feedback-to-note') }} <br /><br />
 		      	<div class="form-group">
@@ -386,7 +386,7 @@
 		    <h4 class="modal-title">{{ trans('site.submit-feedback-to') }} <em></em></h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action=""  enctype="multipart/form-data">
+		    <form method="POST" action=""  enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 		      	{{ csrf_field() }}
 		      	<div class="form-group">
 		      		<label>{{ trans_choice('site.manuscripts', 1) }}</label>
@@ -438,7 +438,8 @@ $manuscriptUsers = $assignment->manuscripts->whereNotIn('user_id', $groupLearner
 		    <h4 class="modal-title">{{ trans('site.add-learner') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{route('assignment.group.add_learner', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'id' => $group->id])}}">
+		    <form method="POST" action="{{route('assignment.group.add_learner', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'id' => $group->id])}}"
+				onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 		      <label>{{ trans('site.learner-submitted-manuscript-for-assignment') }}</label>
 		      <select class="form-control select2s" name="user_id">
@@ -477,7 +478,7 @@ $manuscriptUsers = $assignment->manuscripts->whereNotIn('user_id', $groupLearner
 		    <h4 class="modal-title">{{ trans('site.remove-learner') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="">
+		    <form method="POST" action="" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 				{{ trans('site.remove-learner-question-only') }}
 		      <button type="submit" class="btn btn-danger pull-right margin-top">{{ trans('site.delete') }}</button>

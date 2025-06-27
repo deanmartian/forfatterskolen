@@ -309,7 +309,10 @@ class AssignmentGroupController extends Controller
                 'availability' => $request->availability,
             ]);
 
-            return redirect()->back();
+            return redirect()->back()->with([
+                'alert_type' => 'success',
+                'errors' => AdminHelpers::createMessageBag('Feedback submitted successfully.'),
+            ]);
         }
     }
 
