@@ -323,7 +323,7 @@
         <h4 class="modal-title">{{ trans('site.add-learner-to') }} {{$course->title}}</h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="{{route('learner.course.add.learner')}}">
+      	<form method="POST" action="{{route('learner.course.add.learner')}}" onsubmit="disableSubmit(this)">
       		{{csrf_field()}}
       		<div class="form-group">
       			<select class="form-control select2" name="learner_id" required>
@@ -505,7 +505,8 @@
 				<h4 class="modal-title">Reminder Email</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('admin.settings.update.course_not_started_reminder') }}">
+				<form method="POST" action="{{ route('admin.settings.update.course_not_started_reminder') }}"
+				onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>Subject</label>

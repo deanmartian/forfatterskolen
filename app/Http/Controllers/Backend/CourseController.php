@@ -683,13 +683,14 @@ class CourseController extends Controller
             'end_date' => $request->date,
         ]);
 
-        return redirect()->back();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('End Date save successfully.'),
+                'alert_type' => 'success']);
     }
 
     /**
      * Export the learners to excel
      */
-    public function learnerListExcel($course_id, $type = 'email'): RedirectResponse
+    public function learnerListExcel($course_id, $type = 'email')
     {
         $course = Course::find($course_id);
         if ($course) {

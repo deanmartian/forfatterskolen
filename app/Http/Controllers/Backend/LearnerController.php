@@ -369,7 +369,11 @@ class LearnerController extends Controller
             }
         }
 
-        return redirect()->back();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Learner added successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
     }
 
     public function activate_course_taken(Request $request): RedirectResponse
