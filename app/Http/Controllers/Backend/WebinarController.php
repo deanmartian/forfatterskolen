@@ -53,7 +53,7 @@ class WebinarController extends Controller
 
             $fileExt = $request->image->extension(); // getting image extension
             $fileType = $request->image->getMimeType();
-            $fileSize = $request->image->getClientSize();
+            $fileSize = $request->image->getSize();
             $fileTmp = $request->image->getPathName();
             $fileName = time().'.'.$fileExt; // renaming image
 
@@ -130,7 +130,10 @@ class WebinarController extends Controller
 
         $webinar->save();
 
-        return redirect()->back();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Webinar created successfully.'),
+            'alert_type' => 'success',
+        ]);
     }
 
     public function update($id, AddWebinarRequest $request): RedirectResponse
@@ -243,7 +246,10 @@ class WebinarController extends Controller
 
         $webinar->save();
 
-        return redirect()->back();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Webinar updated successfully.'),
+            'alert_type' => 'success',
+        ]);
     }
 
     public function updateField($id, Request $request): RedirectResponse

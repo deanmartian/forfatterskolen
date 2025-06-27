@@ -238,7 +238,7 @@
 				<h4 class="no-margin">{{ trans('site.make-as-replay') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" enctype="multipart/form-data" action="">
+				<form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					{{ method_field('PUT') }}
 					<div class="form-group">
@@ -345,7 +345,7 @@
         <h4 class="modal-title">{{ trans('site.delete-presenter') }} <em></em></h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="" enctype="multipart/form-data">
+        <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
           {{ csrf_field() }}
           {{ method_field('DELETE') }}
           <p>{{ trans('site.delete-presenter-question') }}</p>
@@ -407,7 +407,7 @@
       	<h4 class="no-margin"><em></em></h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" enctype="multipart/form-data" action="">
+      	<form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)">
       		{{ csrf_field() }}
 	      	<div class="form-group">
 				<label>{{ trans('site.assign-editor') }}</label>
@@ -442,7 +442,8 @@
         <h4 class="modal-title">{{ trans('site.add-webinar') }}</h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="{{ route('admin.webinar.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('admin.webinar.store') }}" enctype="multipart/form-data"
+		onsubmit="disableSubmit(this)">
           {{ csrf_field() }}
           <input type="hidden" name="course_id" value="{{ $course->id }}">
           <div class="form-group">
@@ -506,7 +507,7 @@
         <h4 class="modal-title">{{ trans('site.edit-webinar') }} <em></em></h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="" enctype="multipart/form-data">
+        <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
           {{ csrf_field() }}
           {{ method_field('PUT') }}
           <div class="form-group">
@@ -639,7 +640,7 @@
 				<h4 class="no-margin">Webinar Email</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 
 					<div class="form-group">
