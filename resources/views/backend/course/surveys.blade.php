@@ -67,7 +67,7 @@
                     <h4 class="modal-title">{{ trans('site.create-survey') }}</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{ route('admin.survey.store') }}">
+                    <form method="POST" action="{{ route('admin.survey.store') }}" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <input type="hidden" name="course_id" value="{{ $course->id }}">
                         <div class="form-group">
