@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use AdminHelpers;
 use App\Course;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddPackageRequest;
@@ -97,7 +98,10 @@ class PackageController extends Controller
 
             $package->save();
 
-            return redirect()->back();
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Package created successfully.'),
+                'alert_type' => 'success',
+            ]);
         }
     }
 
@@ -186,7 +190,10 @@ class PackageController extends Controller
             $package->save();
         }
 
-        return redirect()->back();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Package updated successfully.'),
+            'alert_type' => 'success',
+        ]);
     }
 
     public function destroy($course_id, $id, Request $request): RedirectResponse
@@ -195,7 +202,10 @@ class PackageController extends Controller
         $package = Package::findOrFail($request->variation_id);
         $package->forceDelete();
 
-        return redirect()->back();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Package deleted successfully.'),
+            'alert_type' => 'success',
+        ]);
     }
 
     /**

@@ -307,7 +307,7 @@
         <h4 class="modal-title">{{ trans('site.add-shop-manuscript') }}</h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="">
+        <form method="POST" action="" onsubmit="disableSubmit(this)">
           {{csrf_field()}}
           <label>{{ trans_choice('site.shop-manuscripts', 1) }}</label>
           <select class="form-control" required="" name="shop_manuscript_id">
@@ -621,7 +621,7 @@
             </div>
 
             <div class="modal-body">
-                <form method="POST" action="">
+                <form method="POST" action="" onsubmit="disableSubmit(this)">
                     {{csrf_field()}}
                     <input type="hidden" name="variation_id">
                     <input type="hidden" name="is_reward" value="1">
@@ -976,7 +976,7 @@
         <h4 class="modal-title">{{ trans('site.delete-package') }} <span></span></h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="">
+      	<form method="POST" action="" onsubmit="disableSubmit(this)">
       		{{csrf_field()}}
       		{{ method_field('DELETE') }}
       		<input type="hidden" name="variation_id">
@@ -1004,7 +1004,7 @@
         <h4 class="modal-title">{{ ucfirst(strtolower(trans_choice('site.include-courses', 1))) }}</h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="">
+        <form method="POST" action="" onsubmit="disableSubmit(this)">
           {{ csrf_field() }}
           <div class="form-group">
             <label>{{ trans_choice('site.courses', 1) }}</label>
@@ -1064,7 +1064,7 @@
         <h4 class="modal-title">{{ trans('site.include-coaching-session') }}</h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="">
+        <form method="POST" action="" onsubmit="disableSubmit(this)">
           {{csrf_field()}}
           <div class="form-group">
             <label>{{ trans('site.coaching-length') }}</label>
