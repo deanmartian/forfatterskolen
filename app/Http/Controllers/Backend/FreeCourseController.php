@@ -16,13 +16,12 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
-class FreeCourseController extends Controller implements HasMiddleware
+class FreeCourseController extends Controller
 {
-    public static function middleware(): array
+
+    public function __construct()
     {
-        return [
-            'checkPageAccess:2',
-        ];
+        $this->middleware('checkPageAccess:2');
     }
 
     public function index(): View
@@ -57,7 +56,8 @@ class FreeCourseController extends Controller implements HasMiddleware
         $freeCourse->url = $request->url;
         $freeCourse->save();
 
-        return redirect()->back();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Free Course created successfully.'),
+            'alert_type' => 'success']);
     }
 
     public function update($id, FreeCourseUpdateRequest $request): RedirectResponse
@@ -88,7 +88,8 @@ class FreeCourseController extends Controller implements HasMiddleware
         $freeCourse->url = $request->url;
         $freeCourse->save();
 
-        return redirect()->back();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Free Course updated successfully.'),
+            'alert_type' => 'success']);
     }
 
     public function destroy($id): RedirectResponse
@@ -100,7 +101,8 @@ class FreeCourseController extends Controller implements HasMiddleware
         }
         $freeCourse->forceDelete();
 
-        return redirect()->back();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Free Course deleted successfully.'),
+            'alert_type' => 'success']);
     }
 
     /**
@@ -309,7 +311,8 @@ class FreeCourseController extends Controller implements HasMiddleware
         $webinar = FreeWebinar::findOrFail($id);
         $webinar->forceDelete();
 
-        return redirect()->back();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Free Webinar deleted successfully.'),
+            'alert_type' => 'success']);
     }
 
     /**

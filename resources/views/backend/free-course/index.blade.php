@@ -194,7 +194,8 @@
         <h4 class="modal-title">{{ ucwords(trans('site.add-free-course')) }}</h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="{{ route('admin.free-course.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('admin.free-course.store') }}" enctype="multipart/form-data"
+            onsubmit="disableSubmit(this)">
           {{csrf_field()}}
           <div class="form-group">
           	<label>{{ trans('site.title') }}</label>
@@ -237,7 +238,7 @@
         <h4 class="modal-title">{{ trans('site.edit-free-course') }}</h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="" enctype="multipart/form-data">
+        <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
           {{ csrf_field() }}
           {{ method_field('PUT') }}
           <div class="form-group">
@@ -280,7 +281,7 @@
         <h4 class="modal-title">{{ trans('site.delete-course') }}</h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="" enctype="multipart/form-data">
+        <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
           {{ csrf_field() }}
           {{ method_field('DELETE') }}
           <p>{{ trans('site.delete-free-course-question') }} <strong></strong>?</p>
@@ -303,7 +304,8 @@
                 <h4 class="modal-title">{{ trans('site.add-webinar') }}</h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{ route('admin.free-webinar.store') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('admin.free-webinar.store') }}" enctype="multipart/form-data"
+                    onsubmit="disableSubmit(this)">
                     {{ csrf_field() }}
                     <div class="form-group">
                         <label>{{ trans('site.title') }}</label>
@@ -360,7 +362,7 @@
                 <h4 class="modal-title">{{ trans('site.edit-webinar') }} <em></em></h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="" enctype="multipart/form-data">
+                <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
                     <div class="form-group">
@@ -419,7 +421,7 @@
                 <h4 class="modal-title">{{ trans('site.delete-webinar') }} <em></em></h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="" enctype="multipart/form-data">
+                <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
                     <p>{{ trans('site.delete-webinar-question') }}</p>
