@@ -334,7 +334,8 @@
         <h4 class="modal-title">{{ trans('site.update-document') }}</h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="{{ route('shop_manuscript_taken.update_document', $shopManuscriptTaken->id) }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('shop_manuscript_taken.update_document', $shopManuscriptTaken->id) }}" enctype="multipart/form-data"
+			onsubmit="disableSubmit(this)">
           {{ csrf_field() }}
           <div class="form-group">
           	<input type="file" name="manuscript" class="form-control" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
@@ -391,7 +392,8 @@
                         $subject = $emailTemplate->subject;
                     }
                     ?>
-					<form method="POST" action="{{ route('admin.shop_manuscript_taken.email', $shopManuscriptTaken->user_id) }}" enctype="multipart/form-data">
+					<form method="POST" action="{{ route('admin.shop_manuscript_taken.email', $shopManuscriptTaken->user_id) }}" enctype="multipart/form-data"
+						onsubmit="disableSubmit(this)">
 						{{ csrf_field() }}
 						<input type="hidden" name="shop_manuscripts_taken_id" value="{{ $shopManuscriptTaken->id }}">
 						<div class="form-group">

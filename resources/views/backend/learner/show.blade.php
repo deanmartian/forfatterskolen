@@ -2382,7 +2382,7 @@
       </div>
 
       <div class="modal-body">
-      	<form method="POST">
+      	<form method="POST" onsubmit="disableSubmit(this)">
       		{{ csrf_field() }}
 			{{ trans('site.allow-access-for-this-lesson-question') }}
       		<div class="text-right margin-top">
@@ -2406,7 +2406,7 @@
       </div>
 
       <div class="modal-body">
-      	<form method="POST">
+      	<form method="POST" onsubmit="disableSubmit(this)">
       		{{ csrf_field() }}
       		<div class="form-group">
       			<label>{{ ucfirst(strtolower(trans('site.start-date'))) }}</label>
@@ -2465,7 +2465,8 @@
         <h4 class="modal-title">{{ ucwords(trans('site.add-shop-manuscript')) }}</h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" enctype="multipart/form-data" action="{{ route('admin.shop-manuscript.add_learner', $learner->id) }}">
+      	<form method="POST" enctype="multipart/form-data" action="{{ route('admin.shop-manuscript.add_learner', $learner->id) }}"
+			onsubmit="disableSubmit(this)">
       		{{ csrf_field() }}
       		<?php 
 			$shopManuscripts = \App\ShopManuscript::all();
@@ -2945,7 +2946,7 @@
         <h4 class="modal-title">{{ trans('site.edit-password') }}</h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="{{ route('admin.learner.update', $learner->id) }}">
+      	<form method="POST" action="{{ route('admin.learner.update', $learner->id) }}" onsubmit="disableSubmit(this)">
       		{{ csrf_field() }}
       		{{ method_field('PUT') }}
       		<input type="hidden" name="field" value="password">
@@ -3857,7 +3858,7 @@
 				<h4 class="modal-title">{{ trans('site.delete-from-course') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					{{ method_field('delete') }}
 					<p>
@@ -4440,7 +4441,8 @@
 				<h4 class="modal-title">Add Secondary Email</h4>
 			</div>
 			<div class="modal-body">
-				<form action="{{ route('admin.learner.add-email', $learner->id) }}" method="POST">
+				<form action="{{ route('admin.learner.add-email', $learner->id) }}" method="POST"
+					onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans('site.learner.email-addresses-text') }}</label>
@@ -4562,7 +4564,8 @@
 				</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('admin.learner.set-preferred-editor', $learner->id) }}">
+				<form method="POST" action="{{ route('admin.learner.set-preferred-editor', $learner->id) }}"
+					onsubmit="disableSubmit(this)">
 					{{csrf_field()}}
 					<div class="form-group">
 						<label>{{ trans_choice('site.editors', 1) }}</label>

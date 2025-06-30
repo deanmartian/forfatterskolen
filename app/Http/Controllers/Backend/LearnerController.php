@@ -1072,14 +1072,22 @@ class LearnerController extends Controller
             $userCourses = CoursesTaken::where('user_id', $courseTaken->user_id);
             $userCourses->update(['end_date' => $request->end_date]);
 
-            return redirect()->back();
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Course taken availability updated successfully.'),
+                'alert_type' => 'success',
+                'not-former-courses' => true,
+            ]);
         }
 
         $courseTaken->start_date = $request->start_date;
         $courseTaken->end_date = $request->end_date;
         $courseTaken->save();
 
-        return redirect()->back();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Course taken availability updated successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
     }
 
     public function sendRegretForm($course_taken_id, Request $request, CourseService $courseService): RedirectResponse
