@@ -22,13 +22,11 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
-class WorkshopController extends Controller implements HasMiddleware
+class WorkshopController extends Controller
 {
-    public static function middleware(): array
+    public function __construct()
     {
-        return [
-            'checkPageAccess:3',
-        ];
+        $this->middleware('checkPageAccess:3');
     }
 
     public function index(): View
