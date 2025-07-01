@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class InvoiceController extends Controller implements HasMiddleware
+class InvoiceController extends Controller
 {
     // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk
     // Forfatterskolen: forfatterskolen-as
@@ -48,13 +48,8 @@ class InvoiceController extends Controller implements HasMiddleware
         $this->headersV2[] = 'Accept: application/json';
         $this->headersV2[] = 'Authorization: Bearer '.config('services.fiken.personal_api_key');
         $this->headersV2[] = 'Content-Type: Application/json';
-    }
 
-    public static function middleware(): array
-    {
-        return [
-            'checkPageAccess:8',
-        ];
+        $this->middleware('checkPageAccess:8');
     }
 
     public function index(Request $request)

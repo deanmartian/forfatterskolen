@@ -1358,7 +1358,7 @@ class AssignmentController extends Controller
     /**
      * @param  null  $id
      */
-    public function learnerAssignment($id, Request $request): RedirectResponse
+    public function learnerAssignment(Request $request, $id = null)
     {
         $data = [
             'title' => $request->title,
