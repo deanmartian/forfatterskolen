@@ -11,7 +11,7 @@
 @section('content')
     <div class="page-toolbar">
         <h3><i class="fa fa-file-text-o"></i> Page Format Details</h3>
-        <a href="{{ route($saveBookFormattingRoute, $project->id) }}" class="btn btn-default">
+        <a href="{{ route('admin.project.graphic-work', $project->id) }}" class="btn btn-default">
             <i class="fa fa-arrow-left"></i> Back
         </a>
 
