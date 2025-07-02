@@ -1067,7 +1067,7 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
-    public function progressPlanStep($project_id, $stepNumber): View
+    public function progressPlanStep($project_id, $stepNumber)
     {
         $project = Project::find($project_id);
         $layout = 'backend.layout';
