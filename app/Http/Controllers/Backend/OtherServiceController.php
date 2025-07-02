@@ -24,13 +24,12 @@ use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class OtherServiceController extends Controller implements HasMiddleware
+class OtherServiceController extends Controller
 {
-    public static function middleware(): array
+
+    public function __construct()
     {
-        return [
-            new Middleware('checkPageAccess:13', except: ['editorSetReplay']),
-        ];
+        $this->middleware('checkPageAccess:13')->except('editorSetReplay');
     }
 
     public function index(): View
@@ -373,7 +372,7 @@ class OtherServiceController extends Controller implements HasMiddleware
      * @param  $service_id  int ID of the service
      * @param  $service_type  int Which service it belongs
      */
-    public function addFeedback($service_id, $service_type, Request $request): RedirectResponse
+    public function addFeedback($service_id, $service_type, Request $request)
     {
         $data = $request->except('_token');
         $filesWithPath = $this->getFiles($request);
