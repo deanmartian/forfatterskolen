@@ -398,6 +398,12 @@ class ProjectService
                 break;
 
             case 'cover-print-ready':
+                foreach ($data as $key => $value) {
+                    if (is_null($value)) {
+                        unset($data[$key]);
+                    }
+                }
+                
                 $data['type'] = 'cover';
                 $data['print_ready'] = $this->saveGraphicWorkFileOrImage($request, 'cover_print_ready', 'cover/', true);
                 break;
