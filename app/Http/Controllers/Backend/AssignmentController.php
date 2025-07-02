@@ -1327,7 +1327,7 @@ class AssignmentController extends Controller
     /**
      * @param  null  $id
      */
-    public function saveAssignmentTemplate($id, Request $request): RedirectResponse
+    public function saveAssignmentTemplate(Request $request, $id = null): RedirectResponse
     {
         $data = [
             'title' => $request->title,

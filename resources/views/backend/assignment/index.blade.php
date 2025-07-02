@@ -247,7 +247,7 @@
 						</h4>
 					</div>
 					<div class="modal-body">
-						<form method="POST" action="">
+						<form method="POST" action="" onsubmit="disableSubmit(this)">
 							{{ csrf_field() }}
 
 							<div class="form-group">
@@ -334,7 +334,7 @@
 						</h4>
 					</div>
 					<div class="modal-body">
-						<form method="POST" action="">
+						<form method="POST" action="" onsubmit="disableSubmit(this)">
 							{{ csrf_field() }}
 
 							<div class="form-group">
