@@ -6,7 +6,8 @@
                 <h4 class="modal-title">Delete Notification</h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{ route('admin.goto-webinar.destroy', $webinar['id']) }}">
+                <form method="POST" action="{{ route('admin.goto-webinar.destroy', $webinar['id']) }}"
+                    onsubmit="disableSubmit(this)">
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
                     <p>
