@@ -11,5 +11,7 @@
         </div>
     </div>
 
-    @include('backend.publisher-book.partials.delete')
+    @if ($book['id'])
+        @include('backend.publisher-book.partials.delete')
+    @endif
 @stop

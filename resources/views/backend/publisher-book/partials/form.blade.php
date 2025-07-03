@@ -77,7 +77,8 @@ enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 
                 @if(Request::is('publisher-book/*/edit'))
                     <button type="submit" class="btn btn-primary">{{ trans('site.update-publisher-book') }}</button> <br>
-                    <button type="button" class="btn btn-danger margin-top" data-toggle="modal" data-target="#deleteBlogModal">{{ trans('site.delete-publisher-book') }}</button>
+                    <button type="button" class="btn btn-danger margin-top" data-toggle="modal" 
+                    data-target="#deletePublisherBookModal">{{ trans('site.delete-publisher-book') }}</button>
                 @else
                     <button type="submit" class="btn btn-primary btn-block btn-lg">{{ trans('site.create-publisher-book') }}</button>
                 @endif
