@@ -684,7 +684,7 @@
 
                             <div class="form-group">
                                 <label>Date</label>
-                                <input type="date" class="form-control" name="date">
+                                <input type="date" class="form-control" name="email_bookstore_date">
                             </div>
                         </div>
 
@@ -698,7 +698,7 @@
 
                             <div class="form-group">
                                 <label>Date</label>
-                                <input type="date" class="form-control" name="date">
+                                <input type="date" class="form-control" name="email_library_date">
                             </div>
                         </div>
 
@@ -712,7 +712,7 @@
 
                             <div class="form-group">
                                 <label>Date</label>
-                                <input type="date" class="form-control" name="date">
+                                <input type="date" class="form-control" name="email_press_date">
                             </div>
                         </div>
 
@@ -1111,7 +1111,8 @@
                 }
 
                 if (['email-bookstore', 'email-library', 'email-press'].includes(type)) {
-                    form.find('[name=date]').val(record.date);
+                    const inputName = type.replace('email-', 'email_') + '_date';
+                    form.find(`[name="${inputName}"]`).val(record.date);
                 }
 
                 if (type === 'advertisement-facebook') {

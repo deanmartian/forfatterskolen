@@ -879,6 +879,7 @@ class ProjectController extends Controller
                     $request->validate(['email_bookstore' => 'required']);
                 }
                 $data['value'] = $projectService->saveMarketingFileOrImage($request, 'email_bookstore');
+                $data['date'] = $request->email_bookstore_date;
                 break;
 
             case 'email-library':
@@ -886,6 +887,7 @@ class ProjectController extends Controller
                     $request->validate(['email_library' => 'required']);
                 }
                 $data['value'] = $projectService->saveMarketingFileOrImage($request, 'email_library');
+                $data['date'] = $request->email_library_date;
                 break;
 
             case 'email-press':
@@ -893,6 +895,7 @@ class ProjectController extends Controller
                     $request->validate(['email_press' => 'required']);
                 }
                 $data['value'] = $projectService->saveMarketingFileOrImage($request, 'email_press');
+                 $data['date'] = $request->email_press_date;
                 break;
 
             case 'review-copies-sent':
