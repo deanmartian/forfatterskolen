@@ -23,13 +23,11 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
-class AdminController extends Controller implements HasMiddleware
+class AdminController extends Controller
 {
-    public static function middleware(): array
+    public function __construct()
     {
-        return [
-            'checkPageAccess:11',
-        ];
+        $this->middleware('checkPageAccess:11');
     }
 
     public function index(): View

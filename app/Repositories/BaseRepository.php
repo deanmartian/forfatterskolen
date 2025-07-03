@@ -20,7 +20,7 @@ class BaseRepository
      */
     protected $validationRules = [];
 
-    public function __construct(?Model $model = null)
+    public function __construct(Model $model)
     {
         $this->model = $model;
     }

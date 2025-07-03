@@ -14,7 +14,7 @@ class TestimonialRepository extends BaseRepository
         'testimony' => 'required',
     ];
 
-    public function __construct(?Testimonial $model = null)
+    public function __construct(Testimonial $model)
     {
         parent::__construct($model);
     }
