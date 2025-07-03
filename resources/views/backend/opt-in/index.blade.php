@@ -177,7 +177,8 @@
                     <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="" id="optInForm" enctype="multipart/form-data">
+                    <form method="POST" action="" id="optInForm" enctype="multipart/form-data"
+                        onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
 
                         <div class="form-group">
@@ -235,7 +236,8 @@
                     <h4 class="modal-title">{{ trans('site.delete-opt-in') }}</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="">
+                    <form method="POST" action=""
+                        onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         {{ method_field('DELETE') }}
 
