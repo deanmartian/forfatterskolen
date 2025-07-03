@@ -114,7 +114,8 @@
                     <h4 class="modal-title">{{ trans('site.terms') }}</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{ route('admin.settings.update.opt-in-terms') }}">
+                    <form method="POST" action="{{ route('admin.settings.update.opt-in-terms') }}"
+                        onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <textarea class="form-control tinymce" name="opt_in_terms">{{ App\Settings::optInTerms() }}</textarea>
                         <div class="text-right margin-top">
