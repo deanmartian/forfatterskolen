@@ -6,7 +6,8 @@
                 <h4 class="modal-title">{{ trans('site.delete-document') }}</h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{ route('admin.sos-children.destroy', $document['id']) }}">
+                <form method="POST" action="{{ route('admin.sos-children.destroy', $document['id']) }}"
+                    onsubmit="disableSubmit(this)">
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
                     <p>{{ trans('site.delete-document-question') }}</p>

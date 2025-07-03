@@ -15,5 +15,7 @@
         </div>
     </div>
 
-    @include('backend.sos-children.partials.delete')
+    @if ($document['id'])
+        @include('backend.sos-children.partials.delete')
+    @endif
 @stop
