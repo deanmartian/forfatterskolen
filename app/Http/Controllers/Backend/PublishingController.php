@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
-class PublishingController extends Controller implements HasMiddleware
+class PublishingController extends Controller
 {
     /**
      * Variable to store the publishing service
@@ -24,15 +24,8 @@ class PublishingController extends Controller implements HasMiddleware
      */
     public function __construct(PublishingService $publishingService)
     {
-
+        $this->middleware('checkPageAccess:6');
         $this->publishingService = $publishingService;
-    }
-
-    public static function middleware(): array
-    {
-        return [
-            'checkPageAccess:6',
-        ];
     }
 
     /**
