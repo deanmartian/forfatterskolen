@@ -63,7 +63,8 @@
                     <h4 class="no-margin">Confirmation Email Template</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{ route('admin.settings.update.gt_confirmation_email') }}">
+                    <form method="POST" action="{{ route('admin.settings.update.gt_confirmation_email') }}"
+                        onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <textarea class="form-control tinymce" name="gt_confirmation_email">{{ App\Settings::gtWebinarEmailNotification() }}</textarea>
                         <div class="text-right margin-top">
@@ -83,7 +84,8 @@
                     <h4 class="no-margin">Reminder Email Template</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{ route('admin.settings.update.gt_reminder_email_template') }}">
+                    <form method="POST" action="{{ route('admin.settings.update.gt_reminder_email_template') }}"
+                        onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <textarea class="form-control tinymce" name="gt_reminder_email_template">{{ App\Settings::gtReminderEmailTemplate() }}</textarea>
                         <div class="text-right margin-top">
