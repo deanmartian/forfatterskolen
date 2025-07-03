@@ -15,5 +15,7 @@
         </div>
     </div>
 
-    @include('backend.blog.partials.delete')
+    @if ($blog['id'])
+        @include('backend.blog.partials.delete')
+    @endif
 @stop

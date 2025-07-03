@@ -6,7 +6,8 @@
                 <h4 class="modal-title">{{ trans('site.delete-blog') }}</h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{ route('admin.blog.destroy', $blog['id']) }}">
+                <form method="POST" action="{{ route('admin.blog.destroy', $blog['id']) }}"
+                    onsubmit="disableSubmit(this)">
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
                     <p>{{ trans('site.delete-blog-question') }}</p>
