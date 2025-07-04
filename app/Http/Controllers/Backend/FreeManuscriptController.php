@@ -21,13 +21,11 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\View\View;
 use Mail;
 
-class FreeManuscriptController extends Controller implements HasMiddleware
+class FreeManuscriptController extends Controller
 {
-    public static function middleware(): array
+    public function __construct()
     {
-        return [
-            'checkPageAccess:7',
-        ];
+        $this->middleware('checkPageAccess:7');
     }
 
     public function index(Request $request): View

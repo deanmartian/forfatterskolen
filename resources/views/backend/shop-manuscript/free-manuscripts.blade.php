@@ -180,7 +180,7 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 		  <div class="modal-body">
-		  	<form method="POST" action="">
+		  	<form method="POST" action="" onsubmit="disableSubmit(this)">
 		  		{{ csrf_field() }}
 		  		<div class="form-group">
 		  			<label>{{ trans('site.assign-editor') }}</label>
@@ -230,7 +230,7 @@
 		    <h4 class="modal-title">{{ trans('site.delete-free-manuscript') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="">
+		    <form method="POST" action="" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 				{{ trans('site.delete-free-manuscript-question') }}
 		      <button type="submit" class="btn btn-danger pull-right margin-top">{{ trans('site.delete') }}</button>
@@ -249,7 +249,7 @@
                 <h4 class="modal-title">{{ trans('site.send-feedback') }}</h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="" id="sendFeedbackForm">
+                <form method="POST" action="" id="sendFeedbackForm" onsubmit="disableSubmit(this)">
                     {{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans('site.body') }}</label>
@@ -307,7 +307,7 @@
                 }
 
                 ?>
-				<form method="POST" action="<?php echo e($route); ?>" novalidate>
+				<form method="POST" action="<?php echo e($route); ?>" onsubmit="disableSubmit(this)" novalidate>
                     <?php echo e(csrf_field()); ?>
 
 
@@ -355,7 +355,7 @@
 				<h4 class="modal-title">{{ trans('site.resend-feedback') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form action="" method="POST">
+				<form action="" method="POST" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<p>
 						{{ trans('site.resend-feedback-question') }}
