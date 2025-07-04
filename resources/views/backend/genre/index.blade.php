@@ -69,7 +69,7 @@
                     <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="" enctype="multipart/form-data">
+                    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <div class="form-group">
                             <label>{{ trans('site.name') }}</label>
@@ -96,7 +96,7 @@
                     </h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
                         {{csrf_field()}}
                         {{ method_field('DELETE') }}
 
