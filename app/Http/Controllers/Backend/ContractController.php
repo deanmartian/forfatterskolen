@@ -7,12 +7,12 @@ use App\ContractTemplate;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Mail\SubjectBodyEmail;
-use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Pdf;
 
 class ContractController extends Controller
 {
@@ -223,7 +223,7 @@ class ContractController extends Controller
             }
 
             $filename = $destinationPath.$contract->code.'.pdf';
-            $pdf = PDF::loadView('frontend.pdf.contract', compact('contract'));
+            $pdf = Pdf::loadView('frontend.pdf.contract', compact('contract'));
             $pdf->save($filename);
             $attachment = asset($filename);
 
@@ -273,7 +273,7 @@ class ContractController extends Controller
     public function downloadPDF($id)
     {
         $contract = Contract::find($id);
-        $pdf = PDF::loadView('frontend.pdf.contract', compact('contract'));
+        $pdf = Pdf::loadView('frontend.pdf.contract', compact('contract'));
 
         return $pdf->download($contract->code.'.pdf');
     }

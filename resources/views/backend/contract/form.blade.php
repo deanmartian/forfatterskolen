@@ -297,7 +297,8 @@
                         <h4 class="modal-title">{{ trans('site.delete') }} <em>{{$contract['title']}}</em></h4>
                     </div>
                     <div class="modal-body">
-                        <form method="POST" action="{{route('admin.contract.destroy', $contract['id'])}}">
+                        <form method="POST" action="{{route('admin.contract.destroy', $contract['id'])}}"
+                            onsubmit="disableSubmit(this)">
                             {{csrf_field()}}
                             {{ method_field('DELETE') }}
                             <input type="hidden" name="redirectRoute" value="{{ $backRoute }}">
@@ -443,7 +444,7 @@
             }
             tinymce.get('editContentEditor').setContent(content);
 
-            $('[name=signature_label]').val(fields.signature_label);
+            $('[name=signature_label]').val(fields.signature_label ? fields.signature_label : 'Signature');
         });
 
         let sig = $('#sig').signature({syncField: '#signature64', syncFormat: 'PNG'});

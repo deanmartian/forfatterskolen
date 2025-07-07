@@ -70,6 +70,7 @@ return [
         'FrontendHelpers' => App\Http\FrontendHelpers::class,
         'Image' => Intervention\Image\Facades\Image::class,
         'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
+        'Pdf' => Barryvdh\DomPDF\Facade\Pdf::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
     ])->toArray(),
