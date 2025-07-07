@@ -237,7 +237,7 @@
 	        <h4 class="modal-title">{{ trans('site.add-shop-manuscript') }}</h4>
 	      </div>
 	      <div class="modal-body">
-	      	<form method="POST" action="{{ route('admin.shop-manuscript.store') }}">
+	      	<form method="POST" action="{{ route('admin.shop-manuscript.store') }}" onsubmit="disableSubmit(this)">
 	      		{{ csrf_field() }}
 	      		<div class="row">
 	      			<div class="col-sm-5">
@@ -338,113 +338,6 @@
 			</div>
 		</div>
 	</div>
-
-
-	<div id="editShopManuscriptModal" class="modal fade" role="dialog">
-	  <div class="modal-dialog modal-lg">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal">&times;</button>
-	        <h4 class="modal-title">{{ trans('site.edit-shop-manuscript') }}</h4>
-	      </div>
-	      <div class="modal-body">
-	      	<form method="POST" action="{{ route('admin.shop-manuscript.store') }}">
-	      		{{ csrf_field() }}
-	      		{{ method_field('PUT') }}
-	      		<div class="row">
-	      			<div class="col-sm-5">
-			      		<div class="form-group">
-			      			<label>{{ trans('site.title') }}</label>
-			      			<input type="text" class="form-control" name="title" required>
-			      		</div>
-			      		<div class="form-group">
-			      			<label>{{ trans('site.description') }}</label>
-			      			<textarea class="form-control" name="description" rows="8" required></textarea>
-			      		</div>
-			      		<div class="form-group">
-			      			<label>{{ ucwords(trans('site.max-words')) }}</label>
-			      			<input type="number" class="form-control" name="max_words" required>
-			      		</div>
-			      	</div>
-			      	<div class="col-sm-7">
-		              <ul class="nav nav-tabs">
-		                <li class="active"><a data-toggle="tab" href="#fullpriceedit">{{ trans('site.full-payment') }}</a></li>
-		                <li><a data-toggle="tab" href="#3monthsedit">3 {{ trans('site.months') }}</a></li>
-						  <li><a data-toggle="tab" href="#upgradeedit">{{ trans('site.upgrade-price') }}</a></li>
-		              </ul>
-		              <div class="tab-content">
-		                <div id="fullpriceedit" class="tab-pane fade in active">
-		                  <h4>{{ trans('site.full-payment-price') }}</h4>
-		                  <div class="form-group">
-		                    <label>{{ trans('site.price') }}</label>
-		                    <input type="number" step="0.01" name="full_payment_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
-		                  </div>
-		                  <div class="form-group">
-		                    <label>Fiken Product ID</label>
-		                    <input type="text" name="full_price_product" placeholder="Fiken Product ID" required class="form-control">
-		                  </div>
-		                  <div class="form-group">
-		                    <label>{{ trans('site.due-date-in-days') }}</label>
-		                    <input type="number" name="full_price_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
-		                  </div>
-		                </div>
-		                <div id="3monthsedit" class="tab-pane fade">
-		                  <h4>{{ str_replace('_MONTH_NUMBER_', 3, trans('site.months-payment-price')) }}</h4>
-		                  <div class="form-group">
-		                    <label>{{ trans('site.price') }}</label>
-		                    <input type="number" step="0.01" name="months_3_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
-		                  </div>
-		                  <div class="form-group">
-		                    <label>Fiken Product ID</label>
-		                    <input type="text" name="months_3_product" placeholder="Fiken Product ID" required class="form-control">
-		                  </div>
-		                  <div class="form-group">
-		                    <label>{{ trans('site.due-date-in-days') }}</label>
-		                    <input type="number" name="months_3_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
-		                  </div>
-		                </div>
-					  <div id="upgradeedit" class="tab-pane fade">
-						  <h4>{{ trans('site.upgrade-price') }}</h4>
-						  <div class="form-group">
-							  <label>{{ trans('site.price') }}</label>
-							  <input type="number" step="0.01" name="upgrade_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
-						  </div>
-						  <div id="manuscript-list-container"></div>
-					  </div>
-		              </div>
-		            </div>
-	      		</div>
-
-	      		<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
-	      		<div class="clearfix"></div>
-	      	</form>
-	      </div>
-	    </div>
-
-	  </div>
-	</div>
-
-
-	<div id="deleteShopManuscriptModal" class="modal fade" role="dialog">
-	  <div class="modal-dialog modal-sm">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal">&times;</button>
-	        <h4 class="modal-title">{{ trans('site.delete') }} <em></em></h4>
-	      </div>
-	      <div class="modal-body">
-	      	<form method="POST" action="">
-	      		{{ csrf_field() }}
-	      		{{ method_field('DELETE') }}
-				{{ trans('site.delete-shop-manuscript-question') }}
-		      	<div class="text-right margin-top">
-	      			<button class="btn btn-danger" type="submit">{{ trans('site.delete') }}</button>
-	      		</div>
-	      	</form>
-	      </div>
-	    </div>
-	  </div>
-	</div>
 </div>
 
 <div id="manuscriptEmailTemplate" class="modal fade" role="dialog">
@@ -485,6 +378,110 @@
 			</div>
 		</div>
 
+	</div>
+</div>
+
+<div id="editShopManuscriptModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+	    <div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.edit-shop-manuscript') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.shop-manuscript.store') }}" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ method_field('PUT') }}
+					<div class="row">
+						<div class="col-sm-5">
+							<div class="form-group">
+								<label>{{ trans('site.title') }}</label>
+								<input type="text" class="form-control" name="title" required>
+							</div>
+							<div class="form-group">
+								<label>{{ trans('site.description') }}</label>
+								<textarea class="form-control" name="description" rows="8" required></textarea>
+							</div>
+							<div class="form-group">
+								<label>{{ ucwords(trans('site.max-words')) }}</label>
+								<input type="number" class="form-control" name="max_words" required>
+							</div>
+						</div>
+						<div class="col-sm-7">
+							<ul class="nav nav-tabs">
+							<li class="active"><a data-toggle="tab" href="#fullpriceedit">{{ trans('site.full-payment') }}</a></li>
+							<li><a data-toggle="tab" href="#3monthsedit">3 {{ trans('site.months') }}</a></li>
+								<li><a data-toggle="tab" href="#upgradeedit">{{ trans('site.upgrade-price') }}</a></li>
+							</ul>
+							<div class="tab-content">
+							<div id="fullpriceedit" class="tab-pane fade in active">
+								<h4>{{ trans('site.full-payment-price') }}</h4>
+								<div class="form-group">
+								<label>{{ trans('site.price') }}</label>
+								<input type="number" step="0.01" name="full_payment_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
+								</div>
+								<div class="form-group">
+								<label>Fiken Product ID</label>
+								<input type="text" name="full_price_product" placeholder="Fiken Product ID" required class="form-control">
+								</div>
+								<div class="form-group">
+								<label>{{ trans('site.due-date-in-days') }}</label>
+								<input type="number" name="full_price_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
+								</div>
+							</div>
+							<div id="3monthsedit" class="tab-pane fade">
+								<h4>{{ str_replace('_MONTH_NUMBER_', 3, trans('site.months-payment-price')) }}</h4>
+								<div class="form-group">
+								<label>{{ trans('site.price') }}</label>
+								<input type="number" step="0.01" name="months_3_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
+								</div>
+								<div class="form-group">
+								<label>Fiken Product ID</label>
+								<input type="text" name="months_3_product" placeholder="Fiken Product ID" required class="form-control">
+								</div>
+								<div class="form-group">
+								<label>{{ trans('site.due-date-in-days') }}</label>
+								<input type="number" name="months_3_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
+								</div>
+							</div>
+							<div id="upgradeedit" class="tab-pane fade">
+								<h4>{{ trans('site.upgrade-price') }}</h4>
+								<div class="form-group">
+									<label>{{ trans('site.price') }}</label>
+									<input type="number" step="0.01" name="upgrade_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
+								</div>
+								<div id="manuscript-list-container"></div>
+							</div>
+							</div>
+						</div>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+	    </div>
+	</div>
+</div>
+
+<div id="deleteShopManuscriptModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.delete') }} <em></em></h4>
+			</div>
+			<div class="modal-body">
+			<form method="POST" action="" onsubmit="disableSubmit(this)">
+				{{ csrf_field() }}
+				{{ method_field('DELETE') }}
+				{{ trans('site.delete-shop-manuscript-question') }}
+				<div class="text-right margin-top">
+					<button class="btn btn-danger" type="submit">{{ trans('site.delete') }}</button>
+				</div>
+			</form>
+			</div>
+		</div>
 	</div>
 </div>
 @stop
