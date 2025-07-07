@@ -37,7 +37,7 @@
 		    <h4 class="modal-title">{{ trans('site.add-faq') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{ route('admin.faq.store') }}">
+		    <form method="POST" action="{{ route('admin.faq.store') }}" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 		      <div class="form-group">
 		      	<label>{{ trans('site.title') }}</label>
@@ -63,7 +63,7 @@
 		    <h4 class="modal-title">{{ trans('site.edit-faq') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="">
+		    <form method="POST" action="" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 		      {{ method_field('PUT') }}
 		      <div class="form-group">
@@ -91,7 +91,7 @@
 		    <h4 class="modal-title">{{ trans('site.delete-faq') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{ route('admin.faq.store') }}">
+		    <form method="POST" action="{{ route('admin.faq.store') }}" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 		      {{ method_field('DELETE') }}
 				{{ trans('site.delete-faq-question') }}

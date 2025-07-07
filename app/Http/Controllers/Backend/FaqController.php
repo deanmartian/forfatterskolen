@@ -10,13 +10,12 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
-class FaqController extends Controller implements HasMiddleware
+class FaqController extends Controller
 {
-    public static function middleware(): array
+    public function __construct()
     {
-        return [
-            'checkPageAccess:10',
-        ];
+        // middleware to check if admin have access to this page
+        $this->middleware('checkPageAccess:10');
     }
 
     public function index(): View
