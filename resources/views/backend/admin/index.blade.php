@@ -397,7 +397,10 @@
 										<button class="btn btn-info btn-xs editAdminAccessPageBtn" data-action="{{ route('admin.admin.page-access', $admin->id) }}" data-toggle="modal" data-target="#editAdminAccessPageModal" data-fields="{{ json_encode($admin) }}"
 												data-pages="{{ json_encode($admin->pageAccess) }}"><i class="fa fa-clipboard"></i></button>
 										<button class="btn btn-primary btn-xs editAdminBtn" data-action="{{ route('admin.admin.update', $admin->id) }}" data-toggle="modal" data-target="#editAdminModal" data-fields="{{ json_encode($admin) }}"><i class="fa fa-pencil"></i></button>
-										<button class="btn btn-danger btn-xs deleteAdminBtn" data-action="{{ route('admin.admin.destroy', $admin->id) }}" data-toggle="modal" data-target="#deleteAdminModal"><i class="fa fa-trash"></i></button>
+										@if (!$admin->deleted_at)
+											<button class="btn btn-danger btn-xs deleteAdminBtn" data-action="{{ route('admin.admin.destroy', $admin->id) }}" data-toggle="modal" data-target="#deleteAdminModal"><i class="fa fa-trash"></i></button>
+										@endif
+										
 									</div>
 								</td>
 							</tr>
@@ -550,7 +553,7 @@
 		    <h4 class="modal-title">Create Admin User</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{ route('admin.admin.store') }}">
+		    <form method="POST" action="{{ route('admin.admin.store') }}" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 		      <div class="form-group">
 		      	<label>First name</label>
@@ -584,7 +587,7 @@
 		    <h4 class="modal-title">Edit Admin User</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="">
+		    <form method="POST" action="" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 		      {{ method_field('PUT') }}
 		      <div class="form-group">
@@ -632,7 +635,7 @@
 				<h4 class="modal-title">Head Editor</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('admin.settings.update.head-editor') }}">
+				<form method="POST" action="{{ route('admin.settings.update.head-editor') }}" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 
 					<select class="form-control select2" name="editor_id" required>
@@ -668,7 +671,7 @@
 				<h4 class="modal-title">Edit Admin Access Page</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 
 					<div class="form-group">
@@ -695,7 +698,7 @@
 		    <h4 class="modal-title">Delete admin</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="">
+		    <form method="POST" action="" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 		      {{ method_field('DELETE') }}
 		  		Are you sure to delete this admin user?
@@ -715,7 +718,7 @@
 				<h4 class="modal-title">Welcome Email</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('admin.settings.update.welcome_email') }}">
+				<form method="POST" action="{{ route('admin.settings.update.welcome_email') }}" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<textarea class="form-control" name="welcome_email" rows="6">{{ App\Settings::welcomeEmail() }}</textarea>
 					<div class="text-right margin-top">
@@ -736,7 +739,7 @@
 				<h4 class="modal-title">Terms</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('admin.settings.update.terms') }}">
+				<form method="POST" action="{{ route('admin.settings.update.terms') }}" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<textarea class="form-control tinymce" name="terms">{{ App\Settings::terms() }}</textarea>
 					<div class="text-right margin-top">
@@ -756,7 +759,7 @@
 				<h4 class="modal-title"></h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('admin.settings.update.other-terms') }}">
+				<form method="POST" action="{{ route('admin.settings.update.other-terms') }}" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<textarea class="form-control tinymce" name="terms" id="termsEditor"></textarea>
 					<input type="hidden" name="terms_type">
@@ -777,7 +780,7 @@
 				<h4 class="modal-title">Contact Page Advisory</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('admin.advisory.update', 1) }}">
+				<form method="POST" action="{{ route('admin.advisory.update', 1) }}" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					{{ method_field('PUT') }}
 					<div class="form-group">
@@ -810,7 +813,7 @@
 				<h4 class="modal-title">Shop Manuscript Advisory</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('admin.advisory.update', 2) }}">
+				<form method="POST" action="{{ route('admin.advisory.update', 2) }}" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					{{ method_field('PUT') }}
 					<div class="form-group">
@@ -906,7 +909,7 @@
 				<h4 class="modal-title">Delete Staff</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="" enctype="multipart/form-data">
+				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					{{ method_field('delete') }}
 					<p>Are you sure to delete this record?</p>
@@ -926,7 +929,7 @@
 				<h4 class="modal-title"></h4>
 			</div>
 			<div class="modal-body">
-				<form id="addAssignmentForm" method="POST" action="" enctype="multipart/form-data">
+				<form id="addAssignmentForm" method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{csrf_field()}}
 					<input type="hidden" class="form-control" name="id">
 					<div class="form-group">
@@ -966,7 +969,8 @@
 							
 					</tbody>
 				</table> -->
-				<form id="addAssignmentForm" method="POST" action="{{ route('admin.save-genre-prefences', 1) }}" enctype="multipart/form-data">
+				<form id="addAssignmentForm" method="POST" action="{{ route('admin.save-genre-prefences', 1) }}" 
+				enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{csrf_field()}}
 					<input type="hidden" class="form-control" name="editor_id">
 					<div class="form-group">
@@ -992,7 +996,7 @@
 				<h4 class="modal-title">{{ trans('site.delete-question') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form id="deleteForm" method="POST" action="" enctype="multipart/form-data">
+				<form id="deleteForm" method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{csrf_field()}}
 					<input type="hidden" class="form-control" name="id">
 					<div style="text-align: center;" class="decision">
