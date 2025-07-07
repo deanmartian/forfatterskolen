@@ -101,7 +101,8 @@
                         <h4 class="modal-title">{{ trans('site.hide-editor') }} <em></em></h4>
                     </div>
                     <div class="modal-body">
-                        <form id="hideEditorForm" method="POST" action=""  enctype="multipart/form-data">
+                        <form id="hideEditorForm" method="POST" action=""  enctype="multipart/form-data" 
+                            onsubmit="disableSubmit(this)">
                             {{ csrf_field() }}
                             <div class="form-group">
                                 <label>{{ trans('site.start-date') }}</label>

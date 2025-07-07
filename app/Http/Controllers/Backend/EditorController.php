@@ -336,7 +336,7 @@ class EditorController extends Controller
 
         $editor = User::find($editor_id);
         $hiddenEditor = HiddenEditor::where('editor_id', $editor_id)->get();
-        $assignmentManuscript = AssignmentManuscript::where('editor_id', $editor_id)->get();
+        $assignmentManuscript = AssignmentManuscript::where('editor_id', $editor_id)->get()->pluck('id');
         $assignment = Assignment::whereIn('id', $assignmentManuscript)->orderBy('created_at', 'desc')->get();
 
         return view('editor.editor-hidden', compact('hiddenEditor', 'editor', 'assignmentManuscript', 'assignment'));
