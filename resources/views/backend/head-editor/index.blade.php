@@ -903,7 +903,8 @@
 			</div>
 			<div class="modal-body">
 
-                <form id="courseAssignmentApproveFeedback" method="POST" action=""  enctype="multipart/form-data">
+                <form id="courseAssignmentApproveFeedback" method="POST" action=""  enctype="multipart/form-data"
+					onsubmit="disableSubmit(this)">
                     <?php
                     	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Assignment Manuscript Feedback');
                     ?>
@@ -970,7 +971,8 @@
 			</div>
 			<div class="modal-body">
 
-                <form id="approveOtherServiceFeedback" method="POST" action=""  enctype="multipart/form-data">
+                <form id="approveOtherServiceFeedback" method="POST" action=""  enctype="multipart/form-data"
+					onsubmit="disableSubmit(this)">
                     <?php
                     	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Other Services Feedback');
                     ?>
@@ -1046,7 +1048,7 @@
 			</div>
 			<div class="modal-body">
 
-				<form method="POST" action="">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					<?php
 						$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Head Editor To Editor');
 					?>
