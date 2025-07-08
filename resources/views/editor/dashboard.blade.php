@@ -964,7 +964,7 @@
 		    <h4 class="modal-title">{{ trans('site.approve-feedback') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="">
+		    <form method="POST" action="" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 				{{ trans('site.approve-feedback-question') }}
 		      <div class="text-right margin-top">
@@ -984,7 +984,7 @@
 		    <h4 class="modal-title">{{ trans('site.delete-feedback') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="">
+		    <form method="POST" action="" onsubmit="disableSubmit(this)">
 		      {{ csrf_field() }}
 				{{ trans('site.delete-feedback-question') }}
 		      <div class="text-right margin-top">
@@ -1067,7 +1067,7 @@
 				<h4 class="modal-title">{{ trans('site.add-feedback') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form id="addFeedbackModalForm" method="POST" action="" enctype="multipart/form-data">
+				<form id="addFeedbackModalForm" method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					<?php
 						$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Shop Manuscript Feedback');
 					?>
@@ -1426,7 +1426,8 @@
                 <h4 class="modal-title">{{ trans('site.submit-feedback-to') }} <em></em></h4>
             </div>
             <div class="modal-body">
-                <form id="submitPersonalAssignmentFeedbackForm" method="POST" action=""  enctype="multipart/form-data">
+                <form id="submitPersonalAssignmentFeedbackForm" method="POST" action=""  enctype="multipart/form-data"
+					onsubmit="disableSubmit(this)">
 					<input type="hidden" class="form-control" name="feedback_id">
                     <?php
                     	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Assignment Manuscript Feedback');
