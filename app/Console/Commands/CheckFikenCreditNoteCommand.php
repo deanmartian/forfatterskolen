@@ -35,7 +35,7 @@ class CheckFikenCreditNoteCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): int
+    public function handle()
     {
         CronLog::create(['activity' => 'CheckFikenCreditNote CRON running.']);
         $pageCount = 1;
