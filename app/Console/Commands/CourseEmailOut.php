@@ -42,7 +42,7 @@ class CourseEmailOut extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): int
+    public function handle()
     {
         $today = Carbon::today()->format('Y-m-d');
         CronLog::create(['activity' => 'CourseEmailOut CRON running.']);
