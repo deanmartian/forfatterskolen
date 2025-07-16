@@ -109,6 +109,7 @@ return [
     ],
 
     'dropbox' => [
+        'token' => env('DROPBOX_TOKEN'),
         'key' => env('DROPBOX_APP_KEY'),
         'secret' => env('DROPBOX_APP_SECRET'),
         'refresh_token' => env('DROPBOX_REFRESH_TOKEN'),
