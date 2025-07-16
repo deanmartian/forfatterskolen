@@ -42,9 +42,9 @@ class RefreshDropboxToken extends Command
         $response = $client->post('https://api.dropboxapi.com/oauth2/token', [
             'form_params' => [
                 'grant_type' => 'refresh_token',
-                'refresh_token' => env('DROPBOX_REFRESH_TOKEN'),
-                'client_id' => env('DROPBOX_APP_KEY'),
-                'client_secret' => env('DROPBOX_APP_SECRET'),
+                'refresh_token' => config('services.dropbox.refresh_token'),
+                'client_id' => config('services.dropbox.key'),
+                'client_secret' => config('services.dropbox.secret'),
             ],
         ]);
 

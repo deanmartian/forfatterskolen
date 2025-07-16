@@ -108,4 +108,10 @@ return [
         'key' => env('OPENAI_API_KEY_NEW'),
     ],
 
+    'dropbox' => [
+        'key' => env('DROPBOX_APP_KEY'),
+        'secret' => env('DROPBOX_APP_SECRET'),
+        'refresh_token' => env('DROPBOX_REFRESH_TOKEN'),
+    ],
+
 ];
