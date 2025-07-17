@@ -13,10 +13,10 @@ return [
 
         'dropbox' => [
             'driver' => 'dropbox',
-            'authorization_token' => config('services.dropbox.token'),
-            'refresh_token' => config('services.dropbox.refresh_token'),
-            'client_id' => config('services.dropbox.key'),
-            'client_secret' => config('services.dropbox.secret'),
+            'authorization_token' => env('DROPBOX_TOKEN'),
+            'refresh_token' => env('DROPBOX_REFRESH_TOKEN'),
+            'key' => env('DROPBOX_APP_KEY'),
+            'secret' => env('DROPBOX_APP_SECRET'),
         ],
     ],
 
