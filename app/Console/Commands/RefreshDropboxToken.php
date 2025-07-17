@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Artisan;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Log;
@@ -53,23 +54,35 @@ class RefreshDropboxToken extends Command
             $accessToken = $data['access_token'];
 
             $path = base_path('.env');
-            Log::info('path = '.$path);
+            Log::info('Updating Dropbox token at: '.$path);
+
             if (file_exists($path)) {
-                echo $accessToken;
-                file_put_contents($path, str_replace(
-                    'DROPBOX_TOKEN='.env('DROPBOX_TOKEN'),
-                    'DROPBOX_TOKEN='.$accessToken,
-                    file_get_contents($path)
-                ));
+                $envContent = file_get_contents($path);
+
+                if (str_contains($envContent, 'DROPBOX_TOKEN=')) {
+                    // Replace existing
+                    $envContent = preg_replace(
+                        '/^DROPBOX_TOKEN=.*$/m',
+                        'DROPBOX_TOKEN=' . $accessToken,
+                        $envContent
+                    );
+                } else {
+                    // Append if not found
+                    $envContent .= "\nDROPBOX_TOKEN=" . $accessToken . "\n";
+                }
+
+                file_put_contents($path, $envContent);
             }
 
-            $this->call('config:clear'); // run config clear
-            $this->call('cache:clear'); // run cache clear
+            Artisan::call('config:clear');
+            Artisan::call('cache:clear');
+
             $this->info('Dropbox access token refreshed successfully.');
             Log::info('Dropbox access token refreshed successfully.');
         } else {
             $this->error('Failed to refresh Dropbox access token.');
-            Log::info('Failed to refresh Dropbox access token.');
+            Log::error('Failed to refresh Dropbox access token.');
         }
     }
+
 }
