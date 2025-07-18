@@ -624,35 +624,21 @@ Route::domain($front)->group(function () {
     });
 
     // PAYPAL ROUTES
-    Route::get('/paypal/{order?}', [
-        'name' => 'PayPal Express Checkout',
-        'as' => 'app.home',
-        'uses' => [PaypalController::class, 'form'],
-    ]);
 
-    Route::post('/checkout/payment/{order}/paypal', [
-        'name' => 'PayPal Express Checkout',
-        'as' => 'checkout.payment.paypal',
-        'uses' => [PaypalController::class, 'checkout'],
-    ]);
+    Route::get('/paypal/{order?}', [PaypalController::class, 'form'])
+        ->name('app.home');
 
-    Route::get('/paypal/checkout/{order}/{page?}/completed', [
-        'name' => 'PayPal Express Checkout',
-        'as' => 'paypal.checkout.completed',
-        'uses' => [PaypalController::class, 'completed'],
-    ]);
+    Route::post('/checkout/payment/{order}/paypal', [PaypalController::class, 'checkout'])
+        ->name('checkout.payment.paypal');
 
-    Route::get('/paypal/checkout/{order}/cancelled', [
-        'name' => 'PayPal Express Checkout',
-        'as' => 'paypal.checkout.cancelled',
-        'uses' => [PaypalController::class, 'cancelled'],
-    ]);
+    Route::get('/paypal/checkout/{order}/{page?}/completed', [PaypalController::class, 'completed'])
+        ->name('paypal.checkout.completed');
 
-    Route::post('/webhook/paypal/{order?}/{env?}', [
-        'name' => 'PayPal Express IPN',
-        'as' => 'webhook.paypal.ipn',
-        'uses' => [PaypalController::class, 'webhook'],
-    ]);
+    Route::get('/paypal/checkout/{order}/cancelled', [PaypalController::class, 'cancelled'])
+        ->name('paypal.checkout.cancelled');
+
+    Route::post('/webhook/paypal/{order?}/{env?}', [PaypalController::class, 'webhook'])
+        ->name('webhook.paypal.ipn');
 
 });
 

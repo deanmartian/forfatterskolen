@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Log;
  */
 class IPNRepository
 {
+    protected $request;
+
     public function __construct(Request $request)
     {
         $this->request = $request;
@@ -21,43 +23,52 @@ class IPNRepository
 
     public function handle($event, $verified, $invoice_id)
     {
-        $object = $event->getMessage();
+        // $event is now an array, no need to call getMessage()
+        $data = $event;
+
         Log::info('inside ipn handle');
+        
         $invoice = Invoice::find($invoice_id);
+
         if ($invoice) {
             Log::info('inside ipn handle check invoice');
             Log::info(json_encode($invoice));
+
             $paypal = PayPalIPN::create([
                 'verified' => $verified,
                 'transaction_id' => $invoice->id,
                 'invoice_id' => $invoice->id,
-                'payment_status' => $object->get('payment_status'),
+                'payment_status' => $data['payment_status'] ?? '',
                 'request_method' => $this->request->method(),
                 'request_url' => $this->request->url(),
                 'request_headers' => json_encode($this->request->header()),
-                'payload' => json_encode($this->request->all()),
+                'payload' => json_encode($data),
             ]);
 
             if ($paypal->isVerified() && $paypal->isCompleted()) {
                 Log::info('inside ipn handle if verified and completed');
-                if ($invoice && $invoice->unpaid()) {
+                
+                if ($invoice->unpaid()) {
                     Log::info('inside ipn handle if invoice and unpaid');
+
                     $invoice->update([
                         'fiken_is_paid' => $invoice::COMPLETED,
                     ]);
 
                     $email = 'support@forfatterskolen.no';
                     $subject = 'Paypal Payment';
-                    $message = $invoice->user->full_name.' has paid the amount of '.AdminHelpers::currencyFormat($invoice->gross / 100).
-                        ' for invoice #'.$invoice->invoice_number;
-                    $from_email = '';
-                    $from_name = '';
+                    $message = $invoice->user->full_name . ' has paid the amount of ' .
+                        AdminHelpers::currencyFormat($invoice->gross / 100) .
+                        ' for invoice #' . $invoice->invoice_number;
 
-                    $emailData['email_subject'] = $subject;
-                    $emailData['email_message'] = $message;
-                    $emailData['from_name'] = $from_name;
-                    $emailData['from_email'] = $from_email;
-                    $emailData['attach_file'] = null;
+                    $emailData = [
+                        'email_subject' => $subject,
+                        'email_message' => $message,
+                        'from_name' => '',
+                        'from_email' => '',
+                        'attach_file' => null,
+                    ];
+
                     \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
                     \Mail::to('lovelyayobarrientos@gmail.com')->queue(new SubjectBodyEmail($emailData));
                 }

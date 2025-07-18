@@ -20,7 +20,7 @@ class Paypal
         $gateway->setUsername(config('paypal.credentials.username'));
         $gateway->setPassword(config('paypal.credentials.password'));
         $gateway->setSignature(config('paypal.credentials.signature'));
-        // $gateway->setTestMode(config('paypal.credentials.sandbox'));
+        //$gateway->setTestMode(config('paypal.credentials.sandbox'));
 
         return $gateway;
     }

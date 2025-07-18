@@ -85,7 +85,7 @@ class FikenInvoice
             'lines' => [[
                 'net' => $post_fields['netAmount'],
                 'description' => $post_fields['description'],
-                'productId' => $post_fields['productID'], //279633092
+                'productId' => $post_fields['productID'], //279633092 //9288957242
                 'comment' => $post_fields['comment'],
                 'quantity' => 1,
                 'vatType' => 'OUTSIDE',

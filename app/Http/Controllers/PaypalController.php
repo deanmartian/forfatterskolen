@@ -7,14 +7,11 @@ use App\Invoice;
 use App\Paypal;
 use App\PayPalIPN;
 use App\Repositories\IPNRepository;
+use GuzzleHttp\Client;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
-use PayPal\IPN\Event\IPNInvalid;
-use PayPal\IPN\Event\IPNVerificationFailure;
-use PayPal\IPN\Event\IPNVerified;
-use PayPal\IPN\Listener\Http\ArrayListener;
 
 /**
  * Class PayPalController
@@ -28,13 +25,14 @@ class PaypalController extends Controller
         $this->repository = $repository;
     }
 
-    public function form(Request $request, $invoice_id = null): View
+    public function form(Request $request, $invoice_id = null)/* : View */
     {
         $invoice_id = $invoice_id ?: encrypt(1);
 
         $order = Invoice::findOrFail(decrypt($invoice_id));
 
-        return view('form', compact('order'));
+        return redirect()->route('learner.invoice');
+        //return view('form', compact('order'));
     }
 
     public function checkout($invoice_id, Request $request): RedirectResponse
@@ -102,32 +100,47 @@ class PaypalController extends Controller
      */
     public function webhook($invoice_id, $env, Request $request)
     {
-        $listener = new ArrayListener;
+        Log::info('Received IPN', ['data' => $request->all()]);
+        Log::info('PAYPAL WEBHOOK TRIGGERED', [
+            'uri' => $request->getRequestUri(),
+            'method' => $request->method(),
+            'input' => $request->all(),
+            'ip' => $request->ip(),
+            'referer' => $request->headers->get('referer'),
+            'user-agent' => $request->userAgent(),
+        ]);
 
-        if ($env == 'sandbox') {
-            $listener->useSandbox();
+        $ipnData = $request->all();
+        $ipnData['cmd'] = '_notify-validate';
+
+        $paypalUrl = $env === 'sandbox'
+            ? 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr'
+            : 'https://ipnpb.paypal.com/cgi-bin/webscr';
+
+        try {
+            $client = new Client();
+            $response = $client->post($paypalUrl, [
+                'form_params' => $ipnData,
+                'headers' => ['Connection' => 'close'],
+                'http_errors' => false,
+            ]);
+
+            $body = trim((string) $response->getBody());
+
+            if ($body === 'VERIFIED') {
+                Log::info('IPN VERIFIED');
+                $this->repository->handle($ipnData, \App\PayPalIPN::IPN_VERIFIED, $invoice_id);
+            } elseif ($body === 'INVALID') {
+                Log::warning('IPN INVALID');
+                $this->repository->handle($ipnData, \App\PayPalIPN::IPN_INVALID, $invoice_id);
+            } else {
+                Log::error('Unexpected IPN response', ['response' => $body]);
+                $this->repository->handle($ipnData, \App\PayPalIPN::IPN_FAILURE, $invoice_id);
+            }
+        } catch (\Exception $e) {
+            Log::error('IPN Request Failed', ['error' => $e->getMessage()]);
         }
 
-        Log::info('inside webhook');
-        $listener->setData($request->all());
-
-        $listener = $listener->run();
-
-        $listener->onInvalid(function (IPNInvalid $event) use ($invoice_id) {
-            Log::info('inside invalid');
-            $this->repository->handle($event, PayPalIPN::IPN_INVALID, $invoice_id);
-        });
-
-        $listener->onVerified(function (IPNVerified $event) use ($invoice_id) {
-            Log::info('inside verified');
-            $this->repository->handle($event, PayPalIPN::IPN_VERIFIED, $invoice_id);
-        });
-
-        $listener->onVerificationFailure(function (IPNVerificationFailure $event) use ($invoice_id) {
-            Log::info('inside failure');
-            $this->repository->handle($event, PayPalIPN::IPN_FAILURE, $invoice_id);
-        });
-
-        $listener->listen();
+        return response('OK', 200);
     }
 }

@@ -341,7 +341,7 @@ class LoginController extends Controller
     /**
      * Create a redirect method to facebook api.
      */
-    public function redirectToFacebook(): Response
+    public function redirectToFacebook()/* : Response */
     {
         $prevUrl = explode('?', \URL::previous());
         $queryString = count(\request()->query()) ? '?'.http_build_query(\request()->query()) : '';
@@ -356,7 +356,7 @@ class LoginController extends Controller
      *
      * @return callable URL from facebook
      */
-    public function handleFacebookCallback(): RedirectResponse
+    public function handleFacebookCallback()/* : RedirectResponse */
     {
         $redirectPage = \Session::has('redirect_page') ? \Session::get('redirect_page')[0]
             : route('learner.dashboard');
@@ -392,7 +392,7 @@ class LoginController extends Controller
     /**
      * Create a redirect method to google api.
      */
-    public function redirectToGoogle(): Response
+    public function redirectToGoogle()/* : Response */
     {
         $prevUrl = explode('?', \URL::previous());
         $queryString = count(\request()->query()) ? '?'.http_build_query(\request()->query()) : '';
@@ -407,7 +407,7 @@ class LoginController extends Controller
      *
      * @return callable URL from google
      */
-    public function handleGoogleCallback(): RedirectResponse
+    public function handleGoogleCallback()/* : RedirectResponse */
     {
 
         $redirectPage = \Session::has('redirect_page') ? \Session::get('redirect_page')[0]
