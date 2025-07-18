@@ -383,7 +383,7 @@
 														@endif
 
 														@if(!$invoice->fiken_is_paid)
-															<div class="gateway--paypal">
+															{{-- <div class="gateway--paypal">
 																<form method="POST" 
 																action="{{ route('checkout.payment.paypal', encrypt($invoice->id)) }}">
 																	{{ csrf_field() }}
@@ -398,7 +398,7 @@
 															$invoice->fiken_invoice_id) }}" class="mt-3">
 																<img src="{{ asset('images-new/betal-vipps.png') }}" 
 																class="w-75 mt-3">
-															</a>
+															</a> --}}
 														@endif
 													</td>
 												</tr>
