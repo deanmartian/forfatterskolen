@@ -15,7 +15,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class VippsRepository extends BaseRepository
+class VippsRepository
 {
     const PAYMENT_RESERVED = 'RESERVED';
 
@@ -30,8 +30,8 @@ class VippsRepository extends BaseRepository
      */
     public function getAccessToken()
     {
-        $client_id = env('VIPPS_CLIENT_ID');
-        $client_secret = env('VIPPS_CLIENT_SECRET');
+        $client_id = config('services.vipps.client_id');
+        $client_secret = config('services.vipps.client_secret');
 
         $url = '/accesstoken/get';
         $method = 'POST';
@@ -40,8 +40,7 @@ class VippsRepository extends BaseRepository
         $header[] = 'client_secret: '.$client_secret;
         $header[] = 'Content-Length: 0';
 
-        $response = AdminHelpers::vippsAPI($method, $url, [], $header);
-
+        $response = AdminHelpers::vippsAPI($method, $url, [], $header);        
         if ($response['http_code'] != ApiResponse::HTTPCODE_SUCCESS) {
             Log::info('VIPPS GET ACCESS TOKEN ERROR');
             Log::info(json_encode($response['data']));
@@ -76,7 +75,7 @@ class VippsRepository extends BaseRepository
                 'callbackPrefix' => route('vipps.payment'), // url('/vipps/payment'),
                 'fallBack' => route('vipps.fallback', ['t' => $data['orderId']]), // $fallbackUrl,//url('/thankyou'),
                 'paymentType' => 'eComm Regular Payment',
-                'merchantSerialNumber' => env('VIPPS_MSN'), // AdminHelpers::generateHash(6)
+                'merchantSerialNumber' => config('services.vipps.msn'), // AdminHelpers::generateHash(6)
             ],
 
             'transaction' => [
@@ -182,7 +181,7 @@ class VippsRepository extends BaseRepository
 
         $body = [
             'merchantInfo' => [
-                'merchantSerialNumber' => env('VIPPS_MSN'),
+                'merchantSerialNumber' => config('services.vipps.msn'),
             ],
 
             'transaction' => [

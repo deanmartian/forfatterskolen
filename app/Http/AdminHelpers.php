@@ -218,7 +218,7 @@ class AdminHelpers
      *
      * @param  string  $from_name  Not required field with default value
      */
-    public static function send_email($subject, $from, $to, $content, string $from_name = 'Forfatterskolen', $attachment = null): bool
+    /* public static function send_email($subject, $from, $to, $content, string $from_name = 'Forfatterskolen', $attachment = null): bool
     {
         $from = $from ?: 'postmail@forfatterskolen.no';
         $host = env('MAIL_HOST_SITE');
@@ -255,19 +255,16 @@ class AdminHelpers
         }
 
         return false;
-    }
+    } */
 
-    public static function send_mail($subject, $from, $to, $content, $from_name = 'Forfatterskolen')
+    /* public static function send_mail($subject, $from, $to, $content, $from_name = 'Forfatterskolen')
     {
         $headers = 'From: '.$from_name.'<'.$from.">\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-        /*if ($from) {
-            $headers .= 'Reply-To: '. $from . "\r\n";
-        }*/
 
         mail($to, $subject, $content, $headers);
-    }
+    } */
 
     /**
      * @param  null  $from_name
@@ -1003,10 +1000,12 @@ class AdminHelpers
         $data = '';
 
         // This section takes the input data and converts it to the proper format
-        foreach ($post_data as $key => $value) {
-            $data .= urlencode($key).'='.urlencode($value).'&';
+        if (is_array($post_data)) {
+            foreach ($post_data as $key => $value) {
+                $data .= urlencode($key).'='.urlencode($value).'&';
+            }
+            $data = rtrim($data, '& ');
         }
-        $data = rtrim($data, '& ');
 
         // clean up the url
         $url = rtrim($url, '/ ');
@@ -1345,7 +1344,7 @@ class AdminHelpers
     /**
      * @param  null  $id
      */
-    public static function question_type($id = null): array
+    public static function question_type($id = null)
     {
         $types = [
             ['id' => 'text', 'option' => 'Text'],
@@ -1764,7 +1763,7 @@ class AdminHelpers
                 }
             }
         }
-        $purpose = str_replace(['name', "\n", "\t", ' ', '-', '_'], null, strtolower(trim($purpose)));
+        $purpose = str_replace(['name', "\n", "\t", ' ', '-', '_'], '', strtolower(trim($purpose)));
         $support = ['country', 'countrycode', 'state', 'region', 'city', 'location', 'address'];
         $continents = [
             'AF' => 'Africa',
@@ -1821,7 +1820,7 @@ class AdminHelpers
         return $output;
     }
 
-    public static function callAPI($method, $url, $data = false)
+    public static function callAPI($method, $url, $data = [])
     {
         $curl = curl_init();
 
@@ -1886,12 +1885,12 @@ class AdminHelpers
     /**
      * Curl for vipps
      */
-    public static function vippsAPI($method, $loc_url, bool $data = false, array $header = []): array
+    public static function vippsAPI($method, $loc_url, $data = [], array $header = []): array
     {
         $curl = curl_init();
-        $url = env('VIPPS_URL').$loc_url;
+        $url = config('services.vipps.url').$loc_url;
 
-        $subscription_key = env('VIPPS_SUBSCRIPTION');
+        $subscription_key = config('services.vipps.subscription');
 
         $header[] = 'Ocp-Apim-Subscription-Key: '.$subscription_key;
         $header[] = 'Content-type: application/json';

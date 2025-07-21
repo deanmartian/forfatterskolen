@@ -98,6 +98,12 @@ return [
         'login_auth_link' => 'https://api.vipps.no/access-management-1.0/access/oauth2/auth',
         'login_token_link' => 'https://api.vipps.no/access-management-1.0/access/oauth2/token',
         'login_user_info_link' => 'https://api.vipps.no/vipps-userinfo-api/userinfo',
+        'url' => env('VIPPS_URL'),
+        'url_test' => env('VIPPS_URL_TEST'),
+        'subscription' => env('VIPPS_SUBSCRIPTION'),
+        'subscription_test' => env('VIPPS_SUBSCRIPTION_TEST'),
+        'msn' => env('VIPPS_MSN'),
+        'msn_test' => env('VIPPS_MSN_TEST'),
     ],
 
     'gpt' => [
