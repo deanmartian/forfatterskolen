@@ -2437,8 +2437,20 @@ class ProjectController extends Controller
             'covers', 'backRoute'));
     }
 
-    public function saveAudio($project_id, Request $request, ProjectService $projectService): RedirectResponse
+    public function saveAudio($project_id, Request $request, ProjectService $projectService)/* : RedirectResponse */
     {
+        if ($request->type == 'files') {
+            $request->validate([
+                'files' => 'required'
+            ]);
+        }
+
+        if ($request->type == 'cover') {
+            $request->validate([
+                'cover' => 'required'
+            ]);
+        }
+
         $request->merge(['project_id' => $project_id]);
 
         $projectService->saveAudio($request);

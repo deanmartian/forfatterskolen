@@ -66,11 +66,13 @@
                 @foreach ($covers as $cover)
                     <tr>
                         <td>
-                            <a href="{{ url('/dropbox/download/' . trim($cover->value)) }}">
-                                <i class="fa fa-download" aria-hidden="true"></i>
-                            </a>&nbsp;
+                            @if ($cover->value)
+                                <a href="{{ url('/dropbox/download/' . trim($cover->value)) }}">
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>&nbsp;
 
-                            {!! $cover->file_link !!}
+                                {!! $cover->file_link !!}
+                            @endif
                         </td>
                         <td>                      
                             <button class="btn btn-primary btn-xs audioBtn" data-toggle="modal"
