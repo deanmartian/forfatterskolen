@@ -7,19 +7,20 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue');
+window.Vue = require('vue').default; // safer with `.default`
 window.swal = require("sweetalert2");
 
 // for localization
-Vue.prototype.trans = string => _.get(window.i18n, string);
-
-Vue.prototype.trans = (string, args) => {
-    let value = _.get(window.i18n, string);
-    _.eachRight(args, (paramVal, paramKey) => {
-        value = _.replace(value, paramKey, paramVal);
-    });
-    return value;
-};
+// Only proceed if Vue is defined
+if (window.Vue) {
+    Vue.prototype.trans = function (string, args = {}) {
+        let value = _.get(window.i18n, string, string); // fallback to string itself if not found
+        _.eachRight(args, (paramVal, paramKey) => {
+            value = _.replace(value, paramKey, paramVal);
+        });
+        return value;
+    };
+}
 
 import vueDebounce from 'vue-debounce'
 import toasted from './toasted'
@@ -55,36 +56,36 @@ Vue.use(PrettyCheckbox);
  */
 
 Vue.component('VueSlider', VueSlider);
-Vue.component('example', require('./components/Example.vue'));
-Vue.component('take-survey', require('./components/TakeSurvey.vue'));
-Vue.component('svea-checkout', require('./frontend/course/svea-checkout.vue'));
-Vue.component('publishing-list', require('./frontend/components/publishing-list.vue'));
-Vue.component('publishing-service-checkout', require('./frontend/publishing-service/checkout.vue'));
-Vue.component('service-calculator', require('./frontend/publishing-service/service-calculator.vue'));
-Vue.component('publishing-order', require('./frontend/publishing-service/publishing-order.vue'));
-Vue.component('course-checkout', require('./frontend/course/checkout.vue'));
-Vue.component('gift-course-checkout', require('./frontend/gift/course-checkout.vue'));
-Vue.component('gift-shop-manuscript-checkout', require('./frontend/gift/shop-manuscript-checkout.vue'));
-Vue.component('shop-manuscript-checkout', require('./frontend/shop-manuscript/checkout.vue'));
-Vue.component('course-upgrade', require('./frontend/upgrade/course.vue'));
-Vue.component('manuscript-upgrade', require('./frontend/upgrade/manuscript.vue'));
-Vue.component('assignment-upgrade', require('./frontend/upgrade/assignment.vue'));
-Vue.component('coaching-time-checkout', require('./frontend/coaching-time/checkout.vue'));
-Vue.component('order-history', require('./frontend/components/order-history.vue'));
-Vue.component('time-register', require('./backend/TimeRegister.vue'));
-Vue.component('project', require('./backend/project/list.vue'));
-Vue.component('project-details', require('./backend/project/details.vue'));
-Vue.component('project-whole-book', require('./backend/project/whole-book.vue'));
-Vue.component('project-books', require('./backend/project/books.vue'));
-Vue.component('project-tasks', require('./backend/project/tasks.vue'));
-Vue.component('project-time-register', require('./backend/project/time-register.vue'));
-Vue.component('project-notes', require('./backend/project/notes.vue'));
-Vue.component('publishing-services', require('./backend/publishing-package/services.vue'));
-Vue.component('assemble-book', require('./backend/assemble-books/list.vue'));
-Vue.component('service-order-calculator', require('./frontend/services/calculator.vue'));
-Vue.component('group-assignment', require('./frontend/components/group-assignment.vue'));
-Vue.component('editor-project-time-register', require('./editor/project/time-register.vue'));
-Vue.component('chat', require('./frontend/chat/index.vue'));
+Vue.component('example', require('./components/Example.vue').default);
+Vue.component('take-survey', require('./components/TakeSurvey.vue').default);
+Vue.component('svea-checkout', require('./frontend/course/svea-checkout.vue').default);
+Vue.component('publishing-list', require('./frontend/components/publishing-list.vue').default);
+Vue.component('publishing-service-checkout', require('./frontend/publishing-service/checkout.vue').default);
+Vue.component('service-calculator', require('./frontend/publishing-service/service-calculator.vue').default);
+Vue.component('publishing-order', require('./frontend/publishing-service/publishing-order.vue').default);
+Vue.component('course-checkout', require('./frontend/course/checkout.vue').default);
+Vue.component('gift-course-checkout', require('./frontend/gift/course-checkout.vue').default);
+Vue.component('gift-shop-manuscript-checkout', require('./frontend/gift/shop-manuscript-checkout.vue').default);
+Vue.component('shop-manuscript-checkout', require('./frontend/shop-manuscript/checkout.vue').default);
+Vue.component('course-upgrade', require('./frontend/upgrade/course.vue').default);
+Vue.component('manuscript-upgrade', require('./frontend/upgrade/manuscript.vue').default);
+Vue.component('assignment-upgrade', require('./frontend/upgrade/assignment.vue').default);
+Vue.component('coaching-time-checkout', require('./frontend/coaching-time/checkout.vue').default);
+Vue.component('order-history', require('./frontend/components/order-history.vue').default);
+Vue.component('time-register', require('./backend/TimeRegister.vue').default);
+Vue.component('project', require('./backend/project/list.vue').default);
+Vue.component('project-details', require('./backend/project/details.vue').default);
+Vue.component('project-whole-book', require('./backend/project/whole-book.vue').default);
+Vue.component('project-books', require('./backend/project/books.vue').default);
+Vue.component('project-tasks', require('./backend/project/tasks.vue').default);
+Vue.component('project-time-register', require('./backend/project/time-register.vue').default);
+Vue.component('project-notes', require('./backend/project/notes.vue').default);
+Vue.component('publishing-services', require('./backend/publishing-package/services.vue').default);
+Vue.component('assemble-book', require('./backend/assemble-books/list.vue').default);
+Vue.component('service-order-calculator', require('./frontend/services/calculator.vue').default);
+Vue.component('group-assignment', require('./frontend/components/group-assignment.vue').default);
+Vue.component('editor-project-time-register', require('./editor/project/time-register.vue').default);
+Vue.component('chat', require('./frontend/chat/index.vue').default);
 Vue.component('v-select', vSelect);
 Vue.use(VueQuillEditor);
 

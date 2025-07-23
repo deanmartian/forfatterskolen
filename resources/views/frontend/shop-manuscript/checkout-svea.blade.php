@@ -24,9 +24,5 @@
 @stop
 
 @section('scripts')
-	<script>
-        /* import 'bootstrap/dist/css/bootstrap.css'
-        import 'bootstrap-vue/dist/bootstrap-vue.css' */
-	</script>
 	<script type="text/javascript" src="{{ asset('js/app.js?v='.time()) }}"></script>
 @stop

@@ -688,6 +688,11 @@ import FileUpload from '../../components/FileUpload.vue';
                     additional = price * .25; // get the new additional price
                 }
 
+                if (this.orderForm.genre === 17) { // novelle genre
+                    price = price + ((price - totalDiscount) * .30);
+                    additional = price * .25; // get the new additional price
+                }
+
                 //this.orderForm.totalDiscount = totalDiscount;
                 this.orderForm.price = price;
                 this.orderForm.additional = !this.hasPaidCourse ? additional : 0;
