@@ -589,6 +589,11 @@ class ShopManuscriptController extends Controller
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->firstOrFail();
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
 
+        $request->validate([
+            'manuscript' => 'required',
+            'genre' => 'required'
+        ]);
+
         $word_count = 0;
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
             $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
