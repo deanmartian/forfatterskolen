@@ -229,10 +229,10 @@ class ShopManuscriptService
              * create order
              */
             $data = [
-                'countryCode' => env('SVEA_COUNTRY_CODE'),
-                'currency' => env('SVEA_CURRENCY'),
-                'locale' => env('SVEA_LOCALE'),
-                'clientOrderNumber' => env('SVEA_IDENTIFIER').$orderRecord->id, // rand(10000,30000000),
+                'countryCode' => config('services.svea.country_code'),
+                'currency' => config('services.svea.currency'),
+                'locale' => config('services.svea.locale'),
+                'clientOrderNumber' => config('services.svea.identifier').$orderRecord->id, // rand(10000,30000000),
                 'merchantData' => $shopManuscript->title.' order',
                 'cart' => [
                     'items' => [

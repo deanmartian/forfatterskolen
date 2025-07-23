@@ -182,8 +182,8 @@ class CourseService
         $orderRecord = $this->createOrder($request);
 
         Log::info('inside generate SVEA checkout');
-        $checkoutMerchantId = env('SVEA_CHECKOUTID');
-        $checkoutSecret = env('SVEA_CHECKOUT_SECRET');
+        $checkoutMerchantId = config('services.svea.checkoutid');
+        $checkoutSecret = config('services.svea.checkout_secret');
 
         // set endpoint url. Eg. test or prod
         $baseUrl = \Svea\Checkout\Transport\Connector::PROD_BASE_URL;
@@ -211,10 +211,10 @@ class CourseService
              * create order
              */
             $data = [
-                'countryCode' => env('SVEA_COUNTRY_CODE'),
-                'currency' => env('SVEA_CURRENCY'),
-                'locale' => env('SVEA_LOCALE'),
-                'clientOrderNumber' => env('SVEA_IDENTIFIER').$orderRecord->id, // rand(10000,30000000),
+                'countryCode' => config('services.svea.country_code'),
+                'currency' => config('services.svea.currency'),
+                'locale' => config('services.svea.locale'),
+                'clientOrderNumber' => config('services.svea.identifier').$orderRecord->id, // rand(10000,30000000),
                 'merchantData' => $course->title.' order',
                 'cart' => [
                     'items' => [
