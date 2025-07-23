@@ -408,6 +408,10 @@
 						</tbody>
 					</table>
 				</div>
+
+				<div class="pull-right">
+					{{ $inactiveAdmins->appends(Request::all())->render() }}
+				</div>
 			@else
 				<div class="table-users table-responsive">
 					<table class="table">
