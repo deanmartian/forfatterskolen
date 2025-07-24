@@ -117,6 +117,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\In;
+use Pdf as GlobalPdf;
 
 include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
@@ -3018,7 +3019,7 @@ class LearnerController extends Controller
             // replace the laravel-filemanager with the actual file path location
             $content = str_replace('/laravel-filemanager', public_path(), $lesson->content);
             $title = $lesson->title;
-            $pdf = PDF::loadView('frontend.pdf.lesson', compact('content', 'title'));
+            $pdf = GlobalPdf::loadView('frontend.pdf.lesson', compact('content', 'title'));
 
             // set a cookie to re-enable download button
             $cookie_name = '_lesson_dl';
