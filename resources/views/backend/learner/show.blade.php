@@ -993,7 +993,13 @@
 													}
 												} */
 											} else {
-												$assignments[] = $assignment;
+												if ($assignment->course_id === 17) {
+													if (\Carbon\Carbon::parse($assignment->submission_date)->greaterThan(\Carbon\Carbon::now()->subMonths(3))) {
+														$assignments[] = $assignment;
+													}
+												} else {
+													$assignments[] = $assignment;
+												}
 												/*
 												disable this to always display assignment even if it's already finished
 												if (\Carbon\Carbon::parse($assignment->submission_date)->gt(\Carbon\Carbon::now())) {
