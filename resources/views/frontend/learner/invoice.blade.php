@@ -19,6 +19,35 @@
 		#viewOrderModal table.no-border td {
 			border: none;
 		}
+
+		.invoice-actions {
+			white-space: normal;
+			word-wrap: break-word;
+			max-width: 220px;
+			min-width: 180px;
+			vertical-align: top;
+		}
+
+		.invoice-actions .btn,
+		.invoice-actions form,
+		.invoice-actions a {
+			display: block;
+			width: 100%;
+			margin-bottom: 0.5rem;
+			text-align: center;
+		}
+
+		.invoice-actions .btn {
+			white-space: normal !important;
+			word-break: break-word;
+			text-align: center;
+		}
+
+		.invoice-actions img {
+			max-width: 100%;
+			height: auto;
+			display: block;
+		}
 	</style>
 @stop
 
@@ -301,7 +330,7 @@
 									</a>
 								@endif
 
-								<div class="card global-card" style="overflow: auto">
+								<div class="card global-card">
 									<div class="card-body py-0">
 										<table class="table table-global">
 											<thead>
@@ -365,9 +394,9 @@
 															</a>
 														@endif
 													</td>
-													<td>
+													<td class="invoice-actions">
 														<a href="{{route('learner.download.invoice', $invoice->id)}}" 
-															class="blue-outline-btn">
+															class="blue-outline-btn d-inline-block">
 															{{ trans('site.learner.download-invoice') }}
 														</a>
 
@@ -383,11 +412,11 @@
 														@endif
 
 														@if(!$invoice->fiken_is_paid)
-															<div class="gateway--paypal mt-3">
+															<div class="gateway--paypal mt-3" style="display: block; width: 100%;">
 																<form method="POST" 
 																action="{{ route('checkout.payment.paypal', encrypt($invoice->id)) }}">
 																	{{ csrf_field() }}
-																	<button class="btn btn-primary">
+																	<button class="btn btn-primary d-block w-100">
 																		<i class="fa fa-paypal" aria-hidden="true"></i> 
 																		{{ trans('site.learner.pay-with-paypal-or-credit-card') }}
 																	</button>
@@ -397,7 +426,7 @@
 															<a href="{{ route('learner.invoice.vipps-payment', 
 															$invoice->fiken_invoice_id) }}" class="mt-3">
 																<img src="{{ asset('images-new/betal-vipps.png') }}" 
-																class="w-75 mt-3">
+																class="mt-3">
 															</a>
 														@endif
 													</td>
