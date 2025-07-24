@@ -732,15 +732,20 @@ class ProjectController extends Controller
         $backRoute = 'admin.project.show';
         $saveRegistrationRoute = 'admin.project.save-registration';
         $deleteRegistrationRoute = 'admin.project.delete-registration';
+        $saveMarketingRoute = 'admin.project.save-marketing';
+        $deleteMarketingRoute = 'admin.project.delete-marketing';
         if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
             $backRoute = 'g-admin.project.show';
             $saveRegistrationRoute = 'g-admin.project.save-registration';
             $deleteRegistrationRoute = 'g-admin.project.delete-registration';
+            $saveMarketingRoute = 'g-admin.project.save-marketing';
+            $deleteMarketingRoute = 'g-admin.project.delete-marketing';
         }
 
         $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
         $isbnTypes = (new ProjectRegistration)->isbnTypes();
+        $culturalCouncils = ProjectMarketing::culturalCouncils()->where('project_id', $project_id)->get();
 
         $centralDistributions = ProjectRegistration::centralDistributions()->where('project_id', $project_id)->get();
         $mentorBookBases = ProjectRegistration::mentorBookBase()->where('project_id', $project_id)->get();
@@ -772,7 +777,7 @@ class ProjectController extends Controller
 
         return view('backend.project.registration', compact('project', 'layout', 'saveRegistrationRoute',
             'deleteRegistrationRoute', 'isbns', 'isbnTypes', 'centralDistributions', 'mentorBookBases',
-            'uploadFilesToMentorBookBases', 'backRoute'));
+            'uploadFilesToMentorBookBases', 'backRoute', 'culturalCouncils', 'saveMarketingRoute', 'deleteMarketingRoute'));
     }
 
     public function saveRegistration($project_id, Request $request): RedirectResponse
@@ -847,7 +852,6 @@ class ProjectController extends Controller
         $setupFacebook = ProjectMarketing::setupFacebook()->where('project_id', $project_id)->get();
         $advertisementFacebook = ProjectMarketing::advertisementFacebook()->where('project_id', $project_id)->get();
         $manuscriptSentToPrint = ProjectMarketing::manuscriptSentToPrint()->where('project_id', $project_id)->get();
-        $culturalCouncils = ProjectMarketing::culturalCouncils()->where('project_id', $project_id)->get();
         $freeWords = ProjectMarketing::freeWords()->where('project_id', $project_id)->get();
         $agreementOnTimeRegistration = ProjectMarketing::agreementOnTimeRegistration()->where('project_id', $project_id)->get();
         $printEBooks = ProjectMarketing::printEbooks()->where('project_id', $project_id)->get();
@@ -860,7 +864,7 @@ class ProjectController extends Controller
 
         return view('backend.project.marketing', compact('project', 'layout', 'backRoute', 'saveMarketingRoute',
             'deleteMarketingRoute', 'emailBookstores', 'emailLibraries', 'emailPresses', 'reviewCopiesSent',
-            'setupOnlineStore', 'setupFacebook', 'advertisementFacebook', 'manuscriptSentToPrint', 'culturalCouncils',
+            'setupOnlineStore', 'setupFacebook', 'advertisementFacebook', 'manuscriptSentToPrint',
             'freeWords', 'printEBooks', 'sampleBookApproved', 'pdfPrintIsApproved', 'numberOfAuthorBooks',
             'updateTheBookBase', 'ebookOrdered', 'ebookReceived', 'agreementOnTimeRegistration'));
     }

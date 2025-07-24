@@ -84,6 +84,43 @@
             </table>
         </div>
 
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="cultural-council">+ Add Cultural Council</button>
+        <div class="table-responsive margin-top">
+            <table class="table table-side-bordered table-white">
+                <thead>
+                <tr>
+                    <th>Cultural Council</th>
+                    <th>Is Finished</th>
+                    <th width="300"></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($culturalCouncils as $culturalCouncil)
+                    <tr>
+                        <td>{!! $culturalCouncil->file_link !!}</td>
+                        <td>{{ $culturalCouncil->is_finished_text }}</td>
+                        <td>
+                            <a href="{{ $culturalCouncil->value }}" class="btn btn-success btn-xs" download>
+                                <i class="fa fa-download"></i>
+                            </a>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($culturalCouncil) }}"
+                                    data-type="cultural-council" data-id="{{ $culturalCouncil->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="cultural-council"
+                                    data-action="{{ route($deleteMarketingRoute, [$culturalCouncil->project_id, $culturalCouncil->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+
         {{-- <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
                 data-field="mentor-book-base">+ Add Mentor book base</button> --}}
         <div class="table-responsive margin-top">
@@ -262,6 +299,72 @@
             </div>
         </div>
     </div>
+
+    <div id="marketingModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route($saveMarketingRoute, $project->id) }}" enctype="multipart/form-data"
+                          onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="id">
+                        <input type="hidden" name="type">
+
+                        <div class="form-group">
+                            <label>Cultural Council</label>
+                            <input type="file" class="form-control" name="cultural_council"
+                                    accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+                    application/vnd.oasis.opendocument.text">
+
+                        </div>
+
+                        <div class="form-group">
+                            <label>Is Finished</label> <br>
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                    name="is_finished_cultural_council" data-width="84">
+                        </div>
+
+                        <button type="submit" class="btn btn-success pull-right margin-top">
+                            {{ trans('site.save') }}
+                        </button>
+
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteMarketingModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        {{ method_field('DELETE') }}
+
+                        <p>Are you sure you want to delete this record?</p>
+
+                        <button type="submit" class="btn btn-danger pull-right margin-top">
+                            {{ trans('site.delete') }}
+                        </button>
+
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scripts')
@@ -387,6 +490,39 @@
                     }
                 });
             }
+        });
+
+        $(".marketingBtn").click(function() {
+            let id = $(this).data('id');
+            let type = $(this).data('type');
+            let record = $(this).data('record');
+            let modal = $("#marketingModal");
+            let form = modal.find("form");
+            let is_finished_field = '';
+            let value_field = '';
+
+            modal.find('.modal-title').text('Cultural Council');
+            is_finished_field = 'is_finished_cultural_council';
+
+            form.find('[name=type]').val(type);
+            if (id) {
+                form.find('[name=id]').val(id);
+                form.find('[name='+ is_finished_field +']').prop('checked', record.is_finished).change();
+            } else {
+                form.find('[name=id]').val('');
+                form.find('[name='+ is_finished_field +']').prop('checked', false).change();
+                form.find('[name=date]').val('');
+            }
+        });
+
+        $(".deleteMarketingBtn").click(function() {
+            let type = $(this).data('type');
+            let modal = $("#deleteMarketingModal");
+            let form = modal.find("form");
+            let action = $(this).data('action');
+            let pageTitle = 'Cultural Council';
+            modal.find('.modal-title').text('Delete ' + pageTitle);
+            form.attr('action', action);
         });
     </script>
 @stop

@@ -270,43 +270,6 @@
         </div>
 
         <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
-                data-type="cultural-council">+ Add Cultural Council</button>
-        <div class="table-responsive margin-top">
-            <table class="table table-side-bordered table-white">
-                <thead>
-                <tr>
-                    <th>Cultural Council</th>
-                    <th>Is Finished</th>
-                    <th width="300"></th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($culturalCouncils as $culturalCouncil)
-                    <tr>
-                        <td>{!! $culturalCouncil->file_link !!}</td>
-                        <td>{{ $culturalCouncil->is_finished_text }}</td>
-                        <td>
-                            <a href="{{ $culturalCouncil->value }}" class="btn btn-success btn-xs" download>
-                                <i class="fa fa-download"></i>
-                            </a>
-                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
-                                    data-target="#marketingModal" data-record="{{ json_encode($culturalCouncil) }}"
-                                    data-type="cultural-council" data-id="{{ $culturalCouncil->id }}">
-                                <i class="fa fa-edit"></i>
-                            </button>
-                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
-                                    data-target="#deleteMarketingModal" data-type="cultural-council"
-                                    data-action="{{ route($deleteMarketingRoute, [$culturalCouncil->project_id, $culturalCouncil->id]) }}">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
                 data-type="application-free-word">+ Add Application Free Word</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
