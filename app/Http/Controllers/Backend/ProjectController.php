@@ -743,12 +743,37 @@ class ProjectController extends Controller
             $deleteMarketingRoute = 'g-admin.project.delete-marketing';
         }
 
-        $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
+        $isbns = ProjectRegistration::isbns()->with(['childMentorBookBase', 'childUploadMentorBookBase'])
+            ->where('project_id', $project_id)->get();
+       
+        foreach ($isbns as $isbn) {
+            if (!$isbn->childMentorBookBase) {
+                ProjectRegistration::create([
+                    'project_id' => $project_id,
+                    'field'      => 'mentor-book-base',
+                    'value'      => 0,
+                    'type'       => 0,
+                    'parent_id'  => $isbn->id,
+                ]);
+            }
+
+            if (!$isbn->childUploadMentorBookBase) {
+                ProjectRegistration::create([
+                    'project_id' => $project_id,
+                    'field'      => 'upload-files-to-mentor-book-base',
+                    'value'      => 0,
+                    'type'       => 0,
+                    'parent_id'  => $isbn->id,
+                ]);
+            }
+        }
+        $isbns->load(['childMentorBookBase', 'childUploadMentorBookBase']); //reload relationship
+
         $isbnTypes = (new ProjectRegistration)->isbnTypes();
         $culturalCouncils = ProjectMarketing::culturalCouncils()->where('project_id', $project_id)->get();
 
         $centralDistributions = ProjectRegistration::centralDistributions()->where('project_id', $project_id)->get();
-        $mentorBookBases = ProjectRegistration::mentorBookBase()->where('project_id', $project_id)->get();
+        /* $mentorBookBases = ProjectRegistration::mentorBookBase()->where('project_id', $project_id)->get();
         if ($mentorBookBases->isEmpty()) {
             // Create a new record if no records are found
             $newMentorBookBase = ProjectRegistration::create([
@@ -759,9 +784,9 @@ class ProjectController extends Controller
             ]);
 
             $mentorBookBases = collect([$newMentorBookBase]);
-        }
+        } */
 
-        $uploadFilesToMentorBookBases = ProjectRegistration::uploadFilesToMentorBookBase()
+        /* $uploadFilesToMentorBookBases = ProjectRegistration::uploadFilesToMentorBookBase()
             ->where('project_id', $project_id)->get();
         if ($uploadFilesToMentorBookBases->isEmpty()) {
             // Create a new record if no records are found
@@ -773,11 +798,11 @@ class ProjectController extends Controller
             ]);
 
             $uploadFilesToMentorBookBases = collect([$newUploadFilesToMentorBookBases]);
-        }
+        } */
 
         return view('backend.project.registration', compact('project', 'layout', 'saveRegistrationRoute',
-            'deleteRegistrationRoute', 'isbns', 'isbnTypes', 'centralDistributions', 'mentorBookBases',
-            'uploadFilesToMentorBookBases', 'backRoute', 'culturalCouncils', 'saveMarketingRoute', 'deleteMarketingRoute'));
+            'deleteRegistrationRoute', 'isbns', 'isbnTypes', 'centralDistributions', 
+            'backRoute', 'culturalCouncils', 'saveMarketingRoute', 'deleteMarketingRoute'));
     }
 
     public function saveRegistration($project_id, Request $request): RedirectResponse

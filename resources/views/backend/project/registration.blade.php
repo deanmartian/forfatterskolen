@@ -25,6 +25,8 @@
                     <th>ISBN</th>
                     <th width="700">Type</th>
                     <th>Book Price</th>
+                    <th>Mentor Book Base</th>
+                    <th>Upload files to mentor book base</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
@@ -34,6 +36,19 @@
                         <td>{!! $isbn->value !!}</td>
                         <td>{{ $isbn->isbn_type }}</td>
                         <td>{{ $isbn->book_price ? FrontendHelpers::currencyFormat($isbn->book_price) : '' }}</td>
+                        <td>
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="mini"
+                            name="mentor_book_base" data-width="60"data-record="{{ json_encode($isbn->childMentorBookBase) }}" 
+                            class="mentorToggle" data-field="mentor_book_base"
+                            @if ($isbn->childMentorBookBase->value) checked @endif>
+                        </td>
+                        <td>
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="mini"
+                            name="upload_files_to_mentor_book_base" data-width="60" 
+                            data-record="{{ json_encode($isbn->childUploadMentorBookBase) }}" 
+                            class="mentorToggle" data-field="upload_files_to_mentor_book_base"
+                            @if ($isbn->childUploadMentorBookBase->value) checked @endif>
+                        </td>
                         <td>
                             <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
                                     data-target="#registrationModal" data-record="{{ json_encode($isbn) }}"
@@ -123,7 +138,7 @@
 
         {{-- <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
                 data-field="mentor-book-base">+ Add Mentor book base</button> --}}
-        <div class="table-responsive margin-top">
+        {{-- <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
@@ -141,7 +156,7 @@
                             @if ($mentorBookBase->value) checked @endif>
                         </td>
                         <td>
-                            {{-- <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
+                            <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
                                     data-target="#registrationModal" data-record="{{ json_encode($mentorBookBase) }}"
                                     data-field="mentor-book-base" data-id="{{ $mentorBookBase->id }}">
                                 <i class="fa fa-edit"></i>
@@ -150,17 +165,17 @@
                                     data-target="#deleteRegistrationModal" data-field="mentor-book-base"
                                     data-action="{{ route($deleteRegistrationRoute, [$mentorBookBase->project_id, $mentorBookBase->id]) }}">
                                 <i class="fa fa-trash"></i>
-                            </button>--}}
+                            </button>
                         </td>
                     </tr>
                 @endforeach
                 </tbody>
             </table>
-        </div>
+        </div>--}}
 
         {{-- <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
                 data-field="upload-files-to-mentor-book-base">+ Add Upload files to mentor book base</button> --}}
-        <div class="table-responsive margin-top">
+        {{-- <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
@@ -180,7 +195,7 @@
                             @if ($uploadFilesToMentorBookBase->value) checked @endif>
                         </td>
                         <td>
-                            {{-- <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
+                            <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
                                     data-target="#registrationModal" data-record="{{ json_encode($uploadFilesToMentorBookBase) }}"
                                     data-field="upload-files-to-mentor-book-base" data-id="{{ $uploadFilesToMentorBookBase->id }}">
                                 <i class="fa fa-edit"></i>
@@ -189,13 +204,13 @@
                                     data-target="#deleteRegistrationModal" data-field="upload-files-to-mentor-book-base"
                                     data-action="{{ route($deleteRegistrationRoute, [$uploadFilesToMentorBookBase->project_id, $uploadFilesToMentorBookBase->id]) }}">
                                 <i class="fa fa-trash"></i>
-                            </button>--}}
+                            </button>
                         </td>
                     </tr>
                 @endforeach
                 </tbody>
             </table>
-        </div>
+        </div>--}}
     </div>
 
     <div id="registrationModal" class="modal fade" role="dialog">

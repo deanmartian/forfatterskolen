@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ProjectRegistration extends Model
 {
-    protected $fillable = ['project_id', 'field', 'value', 'type', 'book_price', 'in_storage'];
+    protected $fillable = ['project_id', 'parent_id', 'field', 'value', 'type', 'book_price', 'in_storage'];
 
     protected $appends = ['isbn_type'];
 
@@ -74,5 +74,15 @@ class ProjectRegistration extends Model
     public function totalDistributionCost()
     {
         return $this->distributionCosts()->sum('amount');
+    }
+
+    public function childMentorBookBase()
+    {
+        return $this->hasOne(ProjectRegistration::class, 'parent_id')->where('field', 'mentor-book-base');
+    }
+
+    public function childUploadMentorBookBase()
+    {
+        return $this->hasOne(ProjectRegistration::class, 'parent_id')->where('field', 'upload-files-to-mentor-book-base');
     }
 }
