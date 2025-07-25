@@ -81,6 +81,8 @@ Route::domain($front)->group(function () {
         Route::get('/soknad2024', [Frontend\HomeController::class, 'application']);
         Route::post('/soknad2024', [Frontend\HomeController::class, 'application']);
         Route::get('/export/course-taken/{year}', [Frontend\HomeController::class, 'exportCourseTakenByYear']);
+        Route::get('/export/course-taken/{year}/additional-check', 
+            [Frontend\HomeController::class, 'exportCourseTakenByYearWithAdditionalCheck']);
         Route::get('/export/shop-manuscripts-taken/{year}', [Frontend\HomeController::class, 'exportShopManuscriptsTakenByYear']);
         Route::get('/gpt-count-words', [Frontend\HomeController::class, 'countWordsUsingGPT']);
 

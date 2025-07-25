@@ -60,6 +60,7 @@ use App\WebinarRegistrant;
 use App\Workshop;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -2500,6 +2501,41 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         }
 
         $headers = ['name', 'email', 'course'];
+        $excel = \App::make('excel');
+
+        return $excel->download(new GenericExport($userList, $headers), $year.' Bought Courses.xlsx');
+    }
+
+    public function exportCourseTakenByYearWithAdditionalCheck($year)
+    {
+        $coursesTaken = CoursesTaken::where('is_free', 0)
+            ->whereYear('created_at', $year)
+            ->whereNotNull('started_at')
+            ->whereNotNull('end_date')
+            ->whereNotIn('package_id', [261, 262, 282, 286])
+            ->withTrashed()
+            ->get()->map(function ($courseTaken) {
+                $courseTaken->order = Order::where('user_id', $courseTaken->user_id)
+                    ->where('package_id', $courseTaken->package_id)
+                    ->where('type', 1)
+                    ->first();
+
+                return $courseTaken;
+            });
+
+        $userList = [];
+        foreach ($coursesTaken as $courseTaken) {
+            $userList[] = [
+                'name' => $courseTaken->user->full_name,
+                'email' => $courseTaken->user->email,
+                'course' => $courseTaken->package->course->title,
+                'price' => $courseTaken->order?->price,
+                'discount' => $courseTaken->order?->discount,
+                'total_amount' => $courseTaken->order?->price - $courseTaken->order?->discount
+            ];
+        }
+
+        $headers = ['name', 'email', 'course', 'price', 'discount', 'total_amount'];
         $excel = \App::make('excel');
 
         return $excel->download(new GenericExport($userList, $headers), $year.' Bought Courses.xlsx');
