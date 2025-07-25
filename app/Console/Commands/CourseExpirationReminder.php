@@ -91,13 +91,13 @@ class CourseExpirationReminder extends Command
             $user_email = $courseTaken->user->email;
             $user_name = $courseTaken->user->first_name;
 
-            $expires_in = Carbon::parse($courseTaken->started_at)->diffInDays(Carbon::now());
+            $expires_in = Carbon::now()->diffInDays(Carbon::parse($courseTaken->started_at), false);
 
             if ($courseTaken->end_date) {
-                $expires_in = Carbon::parse($courseTaken->end_date)->diffInDays(Carbon::now());
+                $expires_in = Carbon::now()->diffInDays(Carbon::parse($courseTaken->end_date), false);
             }
 
-            $expires_in = $expires_in + 1;
+            $expires_in = (int) ($expires_in + 1);
 
             $subject = '';
             $content = '';
