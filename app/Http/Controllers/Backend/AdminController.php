@@ -169,7 +169,7 @@ class AdminController extends Controller
 
         foreach ($courses_taken as $course) {
             $end = Carbon::parse($course->end_date);
-            $length = $end->diffInDays($now);
+            $length = (int) round($now->diffInDays($end, false));
 
             if ($length <= 30) {
 

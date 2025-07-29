@@ -97,9 +97,12 @@
 						</h3>
 						@if( $shopManuscriptTaken->feedbacks->count() > 0 )
                             <?php
-                            $feedbackFirst = $shopManuscriptTaken->feedbacks[0];
-                            $created_at = Carbon\Carbon::parse($feedbackFirst->created_at);
-                            $diff = $created_at->diffInDays();
+
+							$feedbackFirst = $shopManuscriptTaken->feedbacks[0];
+							$created_at = Carbon::parse($feedbackFirst->created_at);
+
+							// Signed difference in days from now
+							$diff = (int) round(Carbon::now()->diffInDays($created_at, false));
                             ?>
 							<div class="mt-4">
 								<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"

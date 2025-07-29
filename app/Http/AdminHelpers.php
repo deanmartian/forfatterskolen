@@ -312,7 +312,7 @@ class AdminHelpers
 
         foreach ($courses_taken as $course) {
             $end = Carbon::parse($course->end_date);
-            $length = $end->diffInDays($now);
+            $length = (int) round($now->diffInDays($end, false));
 
             if ($length <= 30) {
                 $updateCourse = CoursesTaken::find($course->id);
@@ -398,7 +398,7 @@ class AdminHelpers
 
         foreach ($courses_taken as $course) {
             $end = Carbon::parse($course->end_date);
-            $length = $end->diffInDays($now);
+            $length = $now->diffInDays($end, false);
 
             if ($length <= 30) {
                 $nearlyExpireCount++;

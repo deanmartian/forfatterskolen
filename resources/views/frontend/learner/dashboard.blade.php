@@ -376,8 +376,10 @@
                     @php
                         $start_date = Carbon\Carbon::parse($webinar->start_date);
                         $now = Carbon\Carbon::now();
-                        $diff = $now->diffIndays($start_date, false);
-                        $diffWithHours = $now->diffInHours($start_date, false);
+
+                        // Ensure days are rounded (Carbon 3 returns float)
+                        $diff = (int) round($now->diffInDays($start_date, false));
+                        $diffWithHours = (int) round($now->diffInHours($start_date, false));
                     @endphp
 
                     @if( $diffWithHours >= 0 )
@@ -489,8 +491,10 @@
                     @php
                         $start_date = Carbon\Carbon::parse($webinar->start_date);
                         $now = Carbon\Carbon::now();
-                        $diff = $now->diffIndays($start_date, false);
-                        $diffWithHours = $now->diffInHours($start_date, false);
+
+                        // Ensure days are rounded (Carbon 3 returns float)
+                        $diff = (int) round($now->diffInDays($start_date, false));
+                        $diffWithHours = (int) round($now->diffInHours($start_date, false));
                     @endphp
 
                     @if( $diffWithHours >= 0 )
