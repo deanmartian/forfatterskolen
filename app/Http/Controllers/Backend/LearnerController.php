@@ -894,7 +894,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function addShopManuscript($id, Request $request): RedirectResponse
+    public function addShopManuscript($id, Request $request)/* : RedirectResponse */
     {
         $learner = User::findOrFail($id);
         $shopManuscript = ShopManuscript::findOrFail($request->shop_manuscript_id);
@@ -906,6 +906,16 @@ class LearnerController extends Controller
             $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION); // getting document extension
             $fileName = $time.'.'.$extension; // rename document
             $request->manuscript->move($destinationPath, $fileName);
+            
+            $extensions = ['pdf', 'docx', 'odt'];
+            if (! in_array($extension, $extensions)) {
+                return redirect()->back()->with([
+                    'errors' => AdminHelpers::createMessageBag('File extension must be pdf, docx, odt.'),
+                    'alert_type' => 'danger',
+                    'not-former-courses' => true,
+                ]);
+            }
+
             // count words
             if ($extension == 'pdf') {
                 $pdf = new \PdfToText($destinationPath.$fileName);
