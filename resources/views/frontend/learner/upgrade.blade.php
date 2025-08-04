@@ -66,8 +66,8 @@
                                                     $today      = \Carbon\Carbon::today();
                                                     $disableUpgradeDate = \Carbon\Carbon::parse($package->disable_upgrade_price_date);
                                                     $orderDate =  \Carbon\Carbon::parse($courseTaken->created_at);
-                                                    //$dateDiff = $orderDate->diffInDays(\Carbon\Carbon::now());
-                                                    $dateDiff = (int) round($now->diffInDays($orderDate, false));
+                                                    //$dateDiff = $orderDate->diffInDays(\CarbonCarbon::now());
+                                                    $dateDiff = (int) round(\Carbon\Carbon::now()->diffInDays($orderDate, false));
     
                                                     if ($package->course->type == 'Single') {
                                                         $displayBtn = $dateDiff <= 14
@@ -106,7 +106,7 @@
                                                     $disableUpgradeDate = \Carbon\Carbon::parse($package->disable_upgrade_price_date);
                                                     $orderDate =  \Carbon\Carbon::parse($courseTaken->created_at);
                                                     //$dateDiff = $orderDate->diffInDays(\Carbon\Carbon::now());
-                                                    $dateDiff = (int) round($now->diffInDays($orderDate, false));
+                                                    $dateDiff = (int) round(\Carbon\Carbon::now()->diffInDays($orderDate, false));
     
                                                     if ($package->course->type == 'Single') {
                                                         $displayBtn = $dateDiff <= 14
