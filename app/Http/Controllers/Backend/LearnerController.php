@@ -1055,7 +1055,11 @@ class LearnerController extends Controller
         // $learner->forceDelete();
         $learner->delete();
 
-        return redirect(route('admin.learner.index'));
+        return redirect(route('admin.learner.index'))->with([
+            'errors' => AdminHelpers::createMessageBag('Learner deleted successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
     }
 
     /**
