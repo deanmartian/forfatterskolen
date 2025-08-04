@@ -794,7 +794,7 @@ class LearnerController extends Controller
             foreach ($user->coursesTaken as $coursesTaken) {
                 $notExpiredCourses = $courseTaken->user->coursesTakenNotExpired()->pluck('id')->toArray();
                 // check if there's other course that's not expired yet and update it
-                if (! in_array($coursesTaken->id, $notExpiredCourses) && $coursesTaken->id !== $courseTaken->id) {
+                //if ($coursesTaken->id !== $courseTaken->id) {
                     // check if course taken have set end date and add one year to it
                     if ($coursesTaken->end_date) {
                         $addYear = date('Y-m-d', strtotime(date('Y-m-d', strtotime($coursesTaken->end_date)).' + 1 year'));
@@ -809,19 +809,20 @@ class LearnerController extends Controller
                         $coursesTaken->end_date = $addYear;
                     }
 
+                    $coursesTaken->renewed_at = Carbon::now();
                     $coursesTaken->save();
-                }
+                //}
             }
 
             // check if course taken have set end date and add one year to it
-            if ($courseTaken->end_date) {
+            /* if ($courseTaken->end_date) {
                 $addYear = date('Y-m-d', strtotime(date('Y-m-d', strtotime($courseTaken->end_date)).' + 1 year'));
                 $courseTaken->end_date = $addYear;
-            }
+            } */
 
-            $coursesTaken->renewed_at = Carbon::now();
+            /* $coursesTaken->renewed_at = Carbon::now();
             $courseTaken->started_at = Carbon::now();
-            $courseTaken->save();
+            $courseTaken->save(); */
 
             // create order record
             $newOrder['user_id'] = $user->id;
