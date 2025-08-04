@@ -166,9 +166,15 @@
 										</td>
 										<td>
 											@if (!$learner->deleted_at)
-												<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" class="btn btn-danger btn-xs pull-right btn-remove-learner"
+												<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" 
+												class="btn btn-danger btn-xs pull-right btn-remove-learner"
 												data-learner="{{$learner->user->full_name}}" data-package="{{$learner->package->id}}"
 												data-learner-id="{{$learner->user->id}}">{{ trans('site.remove-learner') }}</button>
+											@else
+												<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" 
+													class="btn btn-danger btn-xs pull-right btn-remove-learner-permanently"
+													data-learner="{{$learner->user->full_name}}" data-package="{{$learner->package->id}}"
+													data-learner-id="{{$learner->user->id}}">Delete Permanently</button>
 											@endif
 											
 										</td>
@@ -301,10 +307,16 @@
         <h4 class="modal-title">{!! str_replace('_LEARNER_', '<strong id="learner_name"></strong>',trans('site.remove-learner-question')) !!}  <strong>{{$course->title}}</strong>?</h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="{{route('learner.course.remove.learner')}}">
+      	<form method="POST" action="{{route('learner.course.remove.learner')}}" onsubmit="disableSubmit(this)">
       		{{csrf_field()}}
       		<input type="hidden" name="learner_id">
       		<input type="hidden" name="package_id">
+
+			<div class="form-group">
+				<label>Delete Permanently:</label> <br>
+				<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" name="is_permanent">
+			</div>
+
       		<button type="submit" class="btn btn-danger btn-block">{{ trans('site.remove-learner') }}</button>
       	</form>
       </div>
@@ -731,5 +743,16 @@
                 }
             });
         });
+
+		$(".btn-remove-learner").click(function() {
+			$("[name=is_permanent]").prop('checked', false).trigger('change');
+		})
+
+		$(".btn-remove-learner-permanently").click(function() {
+			var form = $('#removeLearnerModal form');
+			form.find('[name=learner_id]').val($(this).data('learner-id'));
+			form.find('[name=package_id]').val($(this).data('package'));
+			$("[name=is_permanent]").prop('checked', true).trigger('change');
+		});
 	</script>
 @stop

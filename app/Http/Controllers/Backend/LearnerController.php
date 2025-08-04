@@ -303,7 +303,8 @@ class LearnerController extends Controller
         $course = Course::findOrFail($package->course_id);
 
         $packageIds = $course->packages->pluck('id')->toArray();
-        $courseTaken = CoursesTaken::where('user_id', $learner->id)->whereIn('package_id', $packageIds)->first();
+        $courseTaken = CoursesTaken::where('user_id', $learner->id)->whereIn('package_id', $packageIds)
+            ->withTrashed()->first();
 
         if ($courseTaken) {
             // Check if course has year extension
@@ -316,10 +317,19 @@ class LearnerController extends Controller
             // delete related email history
             /*EmailHistory::where('parent', 'LIKE', '%courses-taken%')
                 ->where('parent_id', $courseTaken->id)->delete();*/
-            $courseTaken->delete();
+
+            if ($request->has('is_permanent')) {
+                $courseTaken->forceDelete();
+            } else {
+                $courseTaken->delete();
+            }
         }
 
-        return redirect()->back();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Learner removed successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
     }
 
     public function addLearner(Request $request): RedirectResponse
