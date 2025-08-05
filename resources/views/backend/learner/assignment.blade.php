@@ -257,7 +257,8 @@
                     <h4 class="modal-title">{{ trans('site.edit-assignment') }}</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{route('assignment.learner-assignment.save', $assignment->id)}}">
+                    <form method="POST" action="{{route('assignment.learner-assignment.save', $assignment->id)}}"
+                        onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <input type="hidden" name="learner_id" value="{{ $learner->id }}">
 
@@ -313,6 +314,12 @@
                             <label>{{ trans('site.max-words') }}</label>
                             <input type="number" class="form-control" name="max_words"
                                    value="{{ $assignment->max_words }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Allowed up to</label>
+                            <input type="number" class="form-control" name="allow_up_to"
+                            value="{{ $assignment->allow_up_to }}">
                         </div>
 
                         <div class="form-group">
