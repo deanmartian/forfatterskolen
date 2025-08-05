@@ -886,7 +886,7 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function test_manuscript(Request $request): RedirectResponse
+    public function test_manuscript(Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
     {
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
         $word_count = 0;
@@ -902,7 +902,19 @@ class ShopManuscriptController extends Controller
                 );
             }
 
-            $time = time();
+            $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
+            if ($uploadedManuscript['word_count'] == 0) {
+                $customErrors = ['manuscript' => ['The manuscript word count is invalid.']];
+                $validator = FacadeValidator::make([], []);
+                $validator->validate(); // Perform validation without rules
+                $validator->errors()->merge($customErrors);
+
+                throw new ValidationException($validator);
+            }
+
+            $new_word_count = $uploadedManuscript['word_count'];
+
+            /* $time = time();
             $destinationPath = 'storage/manuscript-tests/'; // upload path
             $fileName = $time.'.'.$extension; // rename document
             $request->manuscript->move($destinationPath, $fileName);
@@ -923,32 +935,7 @@ class ShopManuscriptController extends Controller
             }
             $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
             $word_to_deduct = $word_count * 0.02;
-            $new_word_count = ceil($word_count - $word_to_deduct);
-
-            /*
-             * original code for price
-             * if($word_count <= 5000) :
-                $price = '1,500 KR';
-                $button_link = 'http://www.forfatterskolen.no/shop-manuscript/9/checkout';
-            elseif($word_count <= 17500) :
-                $price = '2,900 KR';
-                $button_link = 'http://www.forfatterskolen.no/shop-manuscript/3/checkout';
-            elseif($word_count <= 35000) :
-                $price = '3,900 KR';
-                $button_link = 'http://www.forfatterskolen.no/shop-manuscript/4/checkout';
-            elseif($word_count <= 52500) :
-                $price = '5,000 KR';
-                $button_link = 'http://www.forfatterskolen.no/shop-manuscript/5/checkout';
-            elseif($word_count <= 70000) :
-                $price = '6,100 KR';
-                $button_link = 'http://www.forfatterskolen.no/shop-manuscript/6/checkout';
-            elseif($word_count <= 105000) :
-                $price = '7,800 KR';
-                $button_link = 'http://www.forfatterskolen.no/shop-manuscript/7/checkout';
-            elseif($word_count <= 140000) :
-                $price = '9,500 KR';
-                $button_link = 'http://www.forfatterskolen.no/shop-manuscript/8/checkout';
-            endif;*/
+            $new_word_count = ceil($word_count); */
 
             $checkoutRoute = 'front.shop-manuscript.checkout';
             $prevRoute = app('router')->getRoutes()->match(app('request')->create(\URL::previous()))->getName();
