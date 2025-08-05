@@ -63,6 +63,7 @@ class ShopController extends Controller
 
     public function checkout($course_id, Request $request)
     {
+        abort(404);
         $countryCode = AdminHelpers::ip_info($request->ip(), 'Country Code');
 
         if ($countryCode === 'NO') {

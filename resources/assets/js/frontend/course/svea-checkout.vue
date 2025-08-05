@@ -1,10 +1,10 @@
 <template>
     <div class="card">
 
-        <a :href="'/course/' + course.id + '/fs_checkout'" class="btn site-btn-global"
-           style="width: 200px; border-radius: 0;"> <!--v-if="countryCode != 'NO'"-->
+        <!-- <a :href="'/course/' + course.id + '/fs_checkout'" class="btn site-btn-global"
+           style="width: 200px; border-radius: 0;">
             FS Checkout
-        </a>
+        </a> -->
 
         <form-wizard color="#c12938" error-color="#ff4949"
                      :nextButtonText="'Til betaling'" :backButtonText="trans('site.paginate.previous')"
