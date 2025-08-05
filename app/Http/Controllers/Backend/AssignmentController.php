@@ -426,6 +426,11 @@ class AssignmentController extends Controller
     {
         $assignment = Assignment::find($assignment_id);
         $assignment->max_words = $request->max_words;
+
+        if ($request->has('allow_up_to')){
+            $assignment->allow_up_to = $request->allow_up_to;
+        }
+
         $assignment->save();
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Max words updated.'),

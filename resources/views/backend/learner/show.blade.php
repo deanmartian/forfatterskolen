@@ -1221,7 +1221,8 @@
 										<button class="btn btn-primary btn-xs editMaxWordsBtn" data-toggle="modal"
 												data-target="#editMaxWordsModal"
 												data-action="{{ route('assignment.update-max-words', $assignment->id) }}"
-												data-max_words="{{ $assignment->max_words }}">
+												data-max_words="{{ $assignment->max_words }}"
+												data-allow_up_to="{{ $assignment->allow_up_to }}">
 											<i class="fa fa-edit"></i> Edit
 										</button>
 									</td>
@@ -4011,6 +4012,11 @@
 						<label>{{ trans('site.max-words') }}</label>
 						<input type="number" name="max_words" class="form-control" required>
 					</div>
+
+					<div class="form-group">
+						<label>Allowed up to</label>
+						<input type="number" class="form-control" name="allow_up_to">
+					</div>
 					<div class="text-right">
 						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
 					</div>
@@ -5866,10 +5872,12 @@ console.log(record);
 
     $(".editMaxWordsBtn").click(function() {
         let max_words = $(this).data('max_words');
+        let allow_up_to = $(this).data('allow_up_to');
         let modal = $('#editMaxWordsModal');
         let action = $(this).data('action');
         modal.find('form').attr('action', action);
         modal.find('[name=max_words]').val(max_words);
+        modal.find('[name=allow_up_to]').val(allow_up_to);
     });
 
 
