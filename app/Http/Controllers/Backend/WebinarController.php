@@ -136,7 +136,7 @@ class WebinarController extends Controller
         ]);
     }
 
-    public function update($id, AddWebinarRequest $request): RedirectResponse
+    public function update($id, AddWebinarRequest $request)/* : RedirectResponse */
     {
         $webinar = Webinar::findOrFail($id);
         $webinar->title = $request->title;
@@ -169,7 +169,7 @@ class WebinarController extends Controller
 
             $fileExt = $request->image->extension(); // getting image extension
             $fileType = $request->image->getMimeType();
-            $fileSize = $request->image->getClientSize();
+            $fileSize = $request->image->getSize();
             $fileTmp = $request->image->getPathName();
             $fileName = time().'.'.$fileExt; // renaming image
 

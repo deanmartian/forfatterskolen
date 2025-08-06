@@ -220,7 +220,7 @@ class FreeCourseController extends Controller
 
             $fileExt = $request->image->extension(); // getting image extension
             $fileType = $request->image->getMimeType();
-            $fileSize = $request->image->getClientSize();
+            $fileSize = $request->image->getSize();
             $fileTmp = $request->image->getPathName();
             $fileName = time().'.'.$fileExt; // renaming image
 
