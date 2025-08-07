@@ -38,9 +38,15 @@
 
                             <!-- 'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,' 
                             + 'application/pdf, application/vnd.oasis.opendocument.text' -->
+
+                            <div v-if="orderForm.temp_file" class="temp-file-container">
+                                {{ orderForm.temp_file.original_name }}
+                                <button @click="removeFile">x</button>
+                            </div>
+
                             <FileUpload
                             :accept="'application/vnd.openxmlformats-officedocument.wordprocessingml.document'" 
-                            @fileSelected="handleFileSelected('manuscript', $event)"/>
+                            @fileSelected="handleFileSelected('manuscript', $event)" v-else/>
                             <input type="hidden" name="manuscript">
 
                             <div class="custom-checkbox mt-4">
@@ -386,7 +392,8 @@ import FileUpload from '../../components/FileUpload.vue';
             shopManuscript: Object,
             assignmentTypes: Array,
             userHasPaidCourse: Boolean,
-            originalPrice: [Number, String]
+            origPrice: [Number, String],
+            tempFile: Object,
         },
 
         data() {
@@ -402,7 +409,7 @@ import FileUpload from '../../components/FileUpload.vue';
                     phone: '',
                     password: '',
                     package_id: 0,
-                    price: this.originalPrice,//this.shopManuscript.full_payment_price,
+                    price: this.origPrice,//this.shopManuscript.full_payment_price,
                     payment_plan_id: 8,
                     payment_mode_id: 3,
                     mobile_number: "",
@@ -416,7 +423,8 @@ import FileUpload from '../../components/FileUpload.vue';
                     has_vat: !this.userHasPaidCourse,
                     //is_pay_later: !this.userHasPaidCourse,
                     additional: !this.userHasPaidCourse ? (this.shopManuscript.full_payment_price * .25) : 0,
-                    excess_words_amount: 0
+                    excess_words_amount: 0,
+                    temp_file: this.tempFile
                 },
                 currencyOptions: {
                     thousandsSeparator: '.',
@@ -427,6 +435,7 @@ import FileUpload from '../../components/FileUpload.vue';
                     email: '',
                     password: ''
                 },
+                originalPrice: this.origPrice,
                 isSveaPayment: true,
                 invalidCred: false,
                 isLoginDisabled: false,
@@ -725,6 +734,16 @@ import FileUpload from '../../components/FileUpload.vue';
                 }).catch(error => {
                     this.processError(error);
                 });
+            },
+
+            removeFile() {
+                const data = {
+                    key: 'temp_uploaded_file'
+                }
+                axios.get('/forget-session-key/temp_uploaded_file').then(response => {
+                    this.orderForm.temp_file = null;
+                    this.orderForm.price = this.origPrice;
+                });
             }
         },
 
@@ -732,6 +751,11 @@ import FileUpload from '../../components/FileUpload.vue';
             this.wizardProps = this.$refs.wizard;        
             this.loadOptions();
             this.checkHasPaidCourse();
+
+            if (this.tempFile) {
+                this.originalPrice = this.tempFile.price;
+                this.orderForm.excess_words_amount = this.tempFile.excess_words_amount;
+            }
         }
 
     }
@@ -756,6 +780,35 @@ import FileUpload from '../../components/FileUpload.vue';
         height: 2ex;
         display: inline;
         vertical-align: text-bottom;
+    }
+
+    .temp-file-container {
+        border-radius: 4px;
+        background-color: #f8f8ff;
+        font-family: Inter;
+        font-weight: 700;
+        min-height: 50px;
+        padding: 0;
+        border: 2px dashed rgb(56, 78, 183, 30%);
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+        font-size: 15px;
+        padding: 5px;
+    }
+
+    .temp-file-container button {
+        background: #f00;
+        border:none;
+        border-radius: 3px;
+        color: white;
+        padding: 2px 7px;
+    }
+
+    .temp-file-container button:hover {
+        opacity: .6;
     }
 
 </style>

@@ -14,7 +14,8 @@
 				<shop-manuscript-checkout :user="{{ json_encode($user) }}" :shop-manuscript="{{ json_encode($shopManuscript) }}"
 										  :assignment-types="{{ json_encode($assignmentTypes) }}"
 										  :user-has-paid-course="{{ json_encode($userHasPaidCourse) }}"
-										  :original-price="{{ json_encode($originalPrice) }}">
+										  :orig-price="{{ json_encode($originalPrice) }}"
+										  :temp-file="{{ json_encode(session('temp_uploaded_file')) }}">
 				</shop-manuscript-checkout>
 			</div>
 		</div>

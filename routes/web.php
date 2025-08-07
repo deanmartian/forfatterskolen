@@ -151,6 +151,8 @@ Route::domain($front)->group(function () {
         Route::post('/contract/{code}/sign', [Frontend\HomeController::class, 'contractSign'])->name('front.contract.sign');
         Route::get('/generate-image', [Frontend\HomeController::class, 'generateImage']);
 
+        Route::get('/forget-session-key/{key}', [Frontend\HomeController::class, 'forgetSessionKey']);
+
         Route::prefix('shop-manuscript')->group(function () {
             Route::get('/{id}/checkout', [Frontend\ShopManuscriptController::class, 'checkout'])->name('front.shop-manuscript.checkout'); // Checkout Shop Manuscript
             Route::post('/{id}/place_order', [Frontend\ShopManuscriptController::class, 'place_order'])->name('front.shop-manuscript.place_order'); // Checkout Shop Manuscript

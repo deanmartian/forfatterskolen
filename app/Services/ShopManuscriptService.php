@@ -17,6 +17,8 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Storage;
+use Str;
 
 class ShopManuscriptService
 {
@@ -26,6 +28,9 @@ class ShopManuscriptService
         $filepath = '';
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
             $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
+            $file = $request->file('manuscript');
+            $originalName = $file->getClientOriginalName();
+            $mimeType = $file->getMimeType();
 
             $time = time();
             $destinationPath = 'storage/manuscript-tests/'; // upload path
@@ -57,6 +62,8 @@ class ShopManuscriptService
         return [
             'manuscript_file' => $filepath,
             'word_count' => $word_count,
+            'original_name' => $originalName,
+            'mime_type' => $mimeType,
         ];
 
     }
@@ -343,7 +350,7 @@ class ShopManuscriptService
         $synopsis = null;
 
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
-            $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
+            /* $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
 
             $time = time();
             $destinationPath = 'storage/shop-manuscripts/'; // upload path
@@ -356,9 +363,6 @@ class ShopManuscriptService
                 $pdf_content = $pdf->Text;
                 $word_count = FrontendHelpers::get_num_of_words($pdf_content);
             } elseif ($extension == 'docx') {
-                /* $docObj = new \Docx2Text($filePath);
-                $docText= $docObj->convertToText();
-                $word_count = FrontendHelpers::get_num_of_words($docText); */
                 $extractText = FrontendHelpers::extractTextFromDocx($filePath);
                 $word_count = $extractText['word_count'];
             } elseif ($extension == 'doc') {
@@ -368,7 +372,10 @@ class ShopManuscriptService
                 $doc = odt2text($filePath);
                 $word_count = FrontendHelpers::get_num_of_words($doc);
             }
-            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
+            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count); */
+            $uploadedManuscript = $this->uploadManuscriptTest($request);
+            $word_count = $uploadedManuscript['word_count'];
+            $filePath = $uploadedManuscript['manuscript_file'];
         }
 
         if ($request->hasFile('synopsis') && $request->file('synopsis')->isValid()) {
@@ -379,6 +386,19 @@ class ShopManuscriptService
             $fileName = $time.'.'.$extension; // rename document
             $request->synopsis->move($destinationPath, $fileName);
             $synopsis = '/'.$destinationPath.$fileName;
+        }
+
+        if ($request->temp_file && $request->temp_file !== 'null') {
+            $tempFile = session('temp_uploaded_file');
+            $fullPath = $tempFile['path'];
+            $originalPath = Str::after($fullPath, 'storage/');
+            $newDirectory = 'shop-manuscripts';
+            $filename = basename($originalPath);
+            $newPath = $newDirectory . '/' . $filename;
+
+            Storage::disk('public')->copy($originalPath, $newPath);
+            $filePath = 'storage/'.$newPath;
+            $word_count = $tempFile['word_count'];
         }
 
         OrderShopManuscript::create([

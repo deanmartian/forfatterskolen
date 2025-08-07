@@ -90,9 +90,9 @@ class ShopManuscriptController extends Controller
     {
         if (! $request->has('is_manuscript_only')) {
             $request->validate([
-                'manuscript' => 'required',
-                'genre' => 'required',
-            ]);
+            'genre' => 'required',
+            'manuscript' => ($request->temp_file && $request->temp_file !== 'null') ? 'nullable' : 'required',
+        ]);
         }
 
         if ($request->hasFile('manuscript')) {
@@ -115,8 +115,18 @@ class ShopManuscriptController extends Controller
             ]);
         }
 
-        $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
-        if ($uploadedManuscript['word_count'] == 0) {
+        $word_count = 0;
+
+        if ($request->temp_file && $request->temp_file !== 'null') {
+            $word_count = session('temp_uploaded_file')['word_count'];
+            $manuscript_file = session('temp_uploaded_file')['path'];
+        } else {
+            $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
+            $word_count = $uploadedManuscript['word_count'];
+            $manuscript_file = $uploadedManuscript['manuscript_file'];
+        }
+
+        if ($word_count == 0) {
             $customErrors = ['manuscript' => ['The manuscript word count is invalid.']];
             $validator = FacadeValidator::make([], []);
             $validator->validate(); // Perform validation without rules
@@ -126,7 +136,7 @@ class ShopManuscriptController extends Controller
         }
 
         $shopManuscript = ShopManuscript::find($shop_manuscript_id);
-        $word_count = $uploadedManuscript['word_count'];
+        $word_count = $word_count;
         // $word_to_deduct = $word_count * 0.02;
         $new_word_count = $word_count; // ceil($word_count - $word_to_deduct);
         $excess_words = $new_word_count - 17500; // deduct the manusutvikling 1 max words
@@ -147,8 +157,8 @@ class ShopManuscriptController extends Controller
         $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
 
         $request->merge([
-            'manuscript_file' => $uploadedManuscript['manuscript_file'],
-            'word_count' => $uploadedManuscript['word_count'],
+            'manuscript_file' => $manuscript_file,
+            'word_count' => $word_count,
             'excess_words' => $excess_words,
             'excess_words_amount' => $excess_words > 0 ? $excess_words * $excessPerWordAmount : 0,
             'price' => $shopManuscript->full_payment_price,
@@ -293,6 +303,8 @@ class ShopManuscriptController extends Controller
 
             $order->is_processed = 1;
             $order->save();
+
+            session()->forget('temp_uploaded_file'); // forget session
 
             CheckoutLog::updateOrCreate([
                 'user_id' => \auth()->id(),
@@ -912,7 +924,7 @@ class ShopManuscriptController extends Controller
                 throw new ValidationException($validator);
             }
 
-            $new_word_count = $uploadedManuscript['word_count'];
+            $new_word_count = $uploadedManuscript['word_count'];           
 
             /* $time = time();
             $destinationPath = 'storage/manuscript-tests/'; // upload path
@@ -961,6 +973,20 @@ class ShopManuscriptController extends Controller
         $message = 'Manuset ditt er på '.$word_count.' ord <br />
         <h3  class="no-margin-top">Prisen for ditt manus er kroner: '.$price.'</h3>
         <a href="'.$button_link.'" class="btn btn-theme">Bestill nå</a>';
+
+        $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
+        $excess_words = $new_word_count - 17500;
+
+        session([
+            'temp_uploaded_file' => [
+                'path' => $uploadedManuscript['manuscript_file'],
+                'original_name' => $uploadedManuscript['original_name'],
+                'mime_type' => $uploadedManuscript['mime_type'],
+                'word_count' => $new_word_count,
+                'price' => $price,
+                'excess_words_amount' => $excess_words > 0 ? $excess_words * $excessPerWordAmount : 0,
+            ]
+        ]);
 
         return redirect()->back()->with('manuscript_test', $message);
     }

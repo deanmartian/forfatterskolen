@@ -2485,6 +2485,14 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         return view('frontend.application');
     }
 
+    public function forgetSessionKey($key)
+    {
+        // Remove from session
+        session()->forget($key);
+
+        return response()->json(['success' => true]);
+    }
+
     public function exportCourseTakenByYear($year)
     {
         $coursesTaken = CoursesTaken::whereYear('created_at', $year)
