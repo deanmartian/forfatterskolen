@@ -163,6 +163,27 @@ class CourseController extends Controller
         $course->free_for_days = $free_for_days;
         $course->save();
 
+        // create editor package
+        $package = new Package;
+        $package->course_id = $course->id;
+        $package->variation = 'Editor Package';
+        $package->description = 'Editor Package';
+        $package->manuscripts_count = 0;
+        $package->full_payment_sale_price_from = null;
+        $package->full_payment_sale_price_to = null;
+        $package->full_payment_other_sale_price_from = null;
+        $package->full_payment_other_sale_price_to = null;
+        $package->full_payment_sale_price = null;
+        $package->full_payment_other_sale_price = null;
+        $package->months_3_sale_price_from = null;
+        $package->months_3_sale_price_to = null;
+        $package->months_6_sale_price_from = null;
+        $package->months_6_sale_price_to = null;
+        $package->months_12_sale_price_from = null;
+        $package->months_12_sale_price_to = null;
+        $package->full_payment_price = 0;
+        $package->save();
+
         $display_order = $requestData['display_order'];
         $this->updateDisplayOrder($display_order, $course->id);
 

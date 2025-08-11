@@ -35,6 +35,7 @@ Route::domain($front)->group(function () {
 
     Route::middleware('logActivity')->group(function () {
         Route::get('/', [Frontend\HomeController::class, 'index'])->name('front.home'); // Homepage
+        Route::get('/sample-about', [Frontend\HomeController::class, 'sampleAbout']); // Homepage
         Route::post('/fb-leads', [Frontend\HomeController::class, 'fbLeads']); // Homepage
         Route::post('/agree-gdpr', [Frontend\HomeController::class, 'agreeGdpr'])->name('front.agree-gdpr');
         Route::get('/testemail', [Frontend\HomeController::class, 'testEmail']);
@@ -941,6 +942,7 @@ Route::domain($admin)->group(function () {
 
         Route::post('course/{course_id}/package/{package_id}/include-coaching', [Backend\PackageController::class, 'includeCoaching'])
             ->name('admin.course.package.include-coaching');
+        Route::get('course/package/generate-editor-package', [Backend\PackageController::class, 'generateEditorPackageForActiveCourses']);
 
         // Package Course  Route
         Route::resource('package_course', Backend\PackageCourseController::class, [

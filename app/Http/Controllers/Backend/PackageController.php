@@ -220,4 +220,35 @@ class PackageController extends Controller
 
         return redirect()->back();
     }
+
+    public function generateEditorPackageForActiveCourses()
+    {
+        Course::where([
+            'for_sale' => 1,
+            'status'   => 1,
+            'is_free'  => 0
+        ])->get()->each(function ($course) {
+            if (!$course->packages()->where('variation', 'Editor Package')->exists()) {
+                $package = new Package;
+                $package->course_id = $course->id;
+                $package->variation = 'Editor Package';
+                $package->description = 'Editor Package';
+                $package->manuscripts_count = 0;
+                $package->full_payment_sale_price_from = null;
+                $package->full_payment_sale_price_to = null;
+                $package->full_payment_other_sale_price_from = null;
+                $package->full_payment_other_sale_price_to = null;
+                $package->full_payment_sale_price = null;
+                $package->full_payment_other_sale_price = null;
+                $package->months_3_sale_price_from = null;
+                $package->months_3_sale_price_to = null;
+                $package->months_6_sale_price_from = null;
+                $package->months_6_sale_price_to = null;
+                $package->months_12_sale_price_from = null;
+                $package->months_12_sale_price_to = null;
+                $package->full_payment_price = 0;
+                $package->save();
+            }
+        });
+    }
 }
