@@ -641,8 +641,8 @@ class CourseService
         }
 
         if ($hasRegretForm) {
-            $attachments[] = asset($this->generateDocx($user->id, $package->id));
-            $attachments[] = asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx');
+            $attachments[] = public_path($this->generateDocx($user->id, $package->id));
+            $attachments[] = public_path('/email-attachments/skjema-for-opplysninger-om-angrerett.docx');
         }
 
         if ($isEmailOut) {
