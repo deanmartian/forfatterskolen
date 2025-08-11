@@ -155,7 +155,7 @@ class ShopController extends Controller
             return redirect()->route('front.course.show', $course->id);
         }
 
-        $packages = $course->packages()->isShow()->get();
+        $packages = $course->packages()->isShow()->where('variation', '!=', 'Editor Package')->get();
         $package_id = \Request::has('package') ? \Request::get('package') :
             (isset($packages[1]) ? $packages[1]['id'] : $packages[0]['id']);
         $coupon = \request()->has('c') ? \request()->get('c') : '';
