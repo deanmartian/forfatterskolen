@@ -1121,8 +1121,10 @@ class LearnerController extends Controller
         $package = $courseTaken->package;
         $user = $courseTaken->user;
 
-        $attachments = [asset($courseService->generateDocx($courseTaken->user_id, $courseTaken->package_id)),
-            asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
+        $attachments = [
+            public_path($courseService->generateDocx($courseTaken->user_id, $courseTaken->package_id)),
+            public_path('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')
+        ];
 
         $email_content = $request->email_content ?: '';
         dispatch(new AddMailToQueueJob($user->email, $package->course->title, $email_content,
