@@ -34,6 +34,7 @@ class Course extends Model
         return $this->hasMany(\App\Package::class)
             ->where('is_reward', 0)
             ->where('is_show', 1)
+            ->where('variation', '!=', 'Editor Package')
             ->orderBy('full_payment_price', 'asc');
     }
 
