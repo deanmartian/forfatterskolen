@@ -241,7 +241,7 @@ class Course extends Model
 
     public function getLearnersAttribute()
     {
-        $packageIds = $this->packages()->pluck('id')->toArray();
+        $packageIds = $this->packages()->where('variation', '!=', 'Editor Package')->pluck('id')->toArray();
 
         return CoursesTaken::whereHas('user')->whereIn('package_id', $packageIds)
             ->where('is_active', true)
