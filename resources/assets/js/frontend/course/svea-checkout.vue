@@ -229,6 +229,17 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <div class="row">
+                                <div class="col-sm-12 margin-top custom-checkbox" style="padding-left:32px">
+                                    <input type="checkbox" name="agree_terms" id="agree_terms" v-model="orderForm.terms">
+                                    <label for="agree_terms"> Jeg aksepterer </label>
+                                    <a href="/terms/course-terms" target="_new"> kjøpsvilkårene </a> <br>
+                                    <input type="hidden" name="terms">
+                                </div>
+                            </div>
+                        </div>
+
                         <wizard-button v-if="!wizardProps.isLastStep" @click.native="nextTab()"
                             class="wizard-footer-right w-100" :style="wizardProps.fillButtonStyle">
                             {{ orderForm.is_pay_later && wizardProps.activeTabIndex != 0 
@@ -340,7 +351,8 @@
             passedCoupon: String,
             packages: Array,
             user: Object,
-            countryCode: String
+            countryCode: String,
+            terms: String,
         },
 
         data() {
@@ -367,7 +379,8 @@
                     campaign_months: 0,
                     campaign_initial_fee: 0,
                     campaign_admin_fee: 0,
-                    is_pay_later: 0
+                    is_pay_later: 0,
+                    terms: false
                 },
                 singleCourseDiscount: 500,
                 groupCourseDiscount: 1000,

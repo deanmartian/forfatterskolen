@@ -599,6 +599,7 @@ class ShopController extends Controller
             'zip' => 'required',
             'city' => 'required',
             'phone' => 'required',
+            'terms' => 'accepted',
         ];
 
         if (! \Auth::check()) {

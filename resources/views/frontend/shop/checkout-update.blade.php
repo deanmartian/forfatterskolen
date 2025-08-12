@@ -13,6 +13,13 @@
                            :packages="{{ json_encode($packages) }}"
                            :user="{{ json_encode($user) }}" :start-index="{{ $startIndex }}"
                            :country-code="{{ json_encode($countryCode) }}"
+                           :terms="{{ json_encode(
+                            str_replace(
+                                ["_start_label_", "_end_label_", "_start_link_", "_end_link_"],
+                                ['<label for="agree_terms">', '</label>', '<a href="'.route('front.terms', 'course-terms').'" target="_new">', '</a>'],
+                                trans('site.front.form.accept-terms')
+                            )
+                        ) }}"
             ></svea-checkout>
             <h1 class="hidden">{{ $course->title }}</h1>
         </div>
