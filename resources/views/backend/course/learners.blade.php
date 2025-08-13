@@ -76,9 +76,9 @@
 				  </div>
 			</form>
 			<button type="button" class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addLearnerModal">+ {{ trans('site.add-learner') }}</button>
-			<button type="button" class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addBulkLearnerModal">
+			{{-- <button type="button" class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addBulkLearnerModal">
 				+ Add Bulk Learner
-			</button>
+			</button> --}}
 			@if(count($learners) > 0)
 				<button type="button" class="btn btn-success margin-bottom loadScriptButton" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
 				<a href="{{ route('learner.course.learner-list-excel', $course->id) }}" class="btn btn-default margin-bottom">{{ trans('site.export-learners') }}</a>
