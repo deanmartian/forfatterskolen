@@ -274,7 +274,7 @@
 								<tr>
 									<th>Package</th>
 									<th>Learners</th>
-									{{-- <th></th> --}}
+									<th width="350"></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -287,10 +287,22 @@
 											{{ \App\CoursesTaken::where('package_id', $package->id)
 											->where('is_active', true)->count() }}
 										</td>
-										{{-- <td>
-											<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" 
-													class="btn btn-danger btn-xs pull-right">Delete Permanently</button>
-										</td> --}}
+										<td>
+											{{-- <button type="submit" data-toggle="modal" data-target="#copyPackageModal" 
+													class="btn btn-primary btn-xs pull-right copy-package-btn"
+													data-package="{{ json_encode($package) }}"
+													data-action="{{ route('admin.course.package.copy-package-and-learners') }}">
+													Copy Package
+											</button> --}}
+
+											<button type="submit" data-toggle="modal" data-target="#copyLearnersModal" 
+													class="btn btn-primary btn-xs pull-right copy-learners-btn"
+													data-package="{{ json_encode($package) }}" 
+													data-action="{{ route('admin.course.package.copy-learners') }}"
+													style="margin-right: 3px">
+													Copy Learners
+											</button>
+										</td>
 									</tr>
 								@endforeach
 							</tbody>
@@ -723,6 +735,84 @@
 	</div>
 </div>
 
+<div id="copyLearnersModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Copy Learners</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+				{{csrf_field()}}
+					<div class="form-group">
+						<label>From Package</label>
+						<input type="hidden" class="form-control" name="from_package">
+						<input type="text" class="form-control" name="from_package_name" disabled>
+					</div>
+
+					<div class="form-group">
+						<label>To Package</label>
+						@php
+							$allPackage = App\Package::where('id', '!=', $package->id)->orderBy('course_id')->get();
+						@endphp
+						<select name="to_package" class="form-control select2" required>
+							<option value="" disabled selected> - Select Package -</option>
+							@foreach($allPackage as $package)
+								<option value="{{ $package->id }}">{{ $package->course->title . " - " .$package->variation }}</option>
+							@endforeach
+						</select>
+					</div>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="copyPackageModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Copy Package</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+				{{csrf_field()}}
+					<div class="form-group">
+						<label>Package</label>
+						<input type="hidden" class="form-control" name="from_package">
+						<input type="text" class="form-control" name="from_package_name" disabled>
+					</div>
+
+					<div class="form-group">
+						<label>Course</label>
+						@php
+							$courses = \App\Course::whereHas('packages', function ($query) use ($package) {
+								$query->where('id', '!=', $package->id);
+							})->get();
+						@endphp
+						<select name="course_id" class="form-control select2" required>
+							<option value="" disabled selected> - Select Course -</option>
+							@foreach($courses as $course)
+								<option value="{{ $course->id }}">{{ $course->title }}</option>
+							@endforeach
+						</select>
+					</div>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -808,6 +898,26 @@
 			form.find('[name=learner_id]').val($(this).data('learner-id'));
 			form.find('[name=package_id]').val($(this).data('package'));
 			$("[name=is_permanent]").prop('checked', true).trigger('change');
+		});
+
+		$(".copy-learners-btn").click(function() {
+			let package = $(this).data('package');
+			let action = $(this).data('action');
+			let modal = $("#copyLearnersModal");
+
+			modal.find('form').attr('action', action);
+			modal.find("[name=from_package]").val(package.id);
+			modal.find("[name=from_package_name]").val(package.variation);
+		});
+
+		$(".copy-package-btn").click(function() {
+			let package = $(this).data('package');
+			let action = $(this).data('action');
+			let modal = $("#copyPackageModal");
+
+			modal.find('form').attr('action', action);
+			modal.find("[name=from_package]").val(package.id);
+			modal.find("[name=from_package_name]").val(package.variation);
 		});
 	</script>
 @stop

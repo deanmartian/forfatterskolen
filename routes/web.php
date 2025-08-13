@@ -855,6 +855,10 @@ Route::domain($admin)->group(function () {
         Route::get('/course/application/{id}/download', [Backend\CourseController::class, 'applicationDownload'])->name('admin.course.application.download');
         Route::post('/course/application/{id}/approve', [Backend\CourseController::class, 'applicationApprove'])->name('admin.course.application.approve');
         Route::delete('/course/application/{id}/delete', [Backend\CourseController::class, 'applicationDelete'])->name('admin.course.application.delete');
+        Route::post('/course/package/copy-learners', [Backend\CourseController::class, 'copyPackageLearners'])
+            ->name('admin.course.package.copy-learners');
+        Route::post('/course/package/copy-package-and-learners', [Backend\CourseController::class, 'copyPackageAndLearners'])
+            ->name('admin.course.package.copy-package-and-learners');
         Route::post('course-taken/{id}/update-can-receive-email', [Backend\CourseController::class, 'canReceiveEmailUpdate']);
         Route::post('course-taken/{id}/update-in-facebook-group', [Backend\CourseController::class, 'inFacebookGroupUpdate']);
         Route::post('course-taken/{id}/exclude-in-registration', [Backend\CourseController::class, 'excludeInScheduledRegistration']);

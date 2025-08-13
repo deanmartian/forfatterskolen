@@ -1252,4 +1252,49 @@ class CourseController extends Controller
 
         return $excel->download(new GenericExport($courseList, $headers), 'Course without Certificate.xlsx');
     }
+
+    public function copyPackageLearners(Request $request)
+    {
+        $coursesTaken = CoursesTaken::where('package_id', $request->from_package)->get();
+        $toPackage = Package::findOrFail($request->to_package);
+        
+        foreach ($coursesTaken as $course) {
+            $newCourse = $course->replicate(); // clone all attributes except primary key
+            $newCourse->package_id = $request->to_package; // change package_id
+            $newCourse->save();
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Learners copied to ' 
+                . $toPackage->course->title . ' - ' . $toPackage->variation . '.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
+    }
+
+    public function copyPackageAndLearners(Request $request)
+    {
+        $package = Package::findOrFail($request->from_package);
+        $course = Course::findOrFail($request->course_id);
+        $coursesTaken = CoursesTaken::where('package_id', $request->from_package)->get();
+
+        // copy package and change the course_id
+        $newPackage = $package->replicate();
+        $newPackage->course_id = $request->course_id;
+        $newPackage->save();
+
+        // copy package learners and change to new package
+        foreach ($coursesTaken as $courseTaken) {
+            $newCourse = $courseTaken->replicate();
+            $newCourse->package_id = $newPackage->id;
+            $newCourse->save();
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Package and Learners copied to ' 
+                . $course->title . ' - ' . $newPackage->variation . '.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
+    }
 }
