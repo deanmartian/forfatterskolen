@@ -831,6 +831,7 @@ Route::domain($admin)->group(function () {
         Route::post('course/{id}/add_similar_course', [Backend\CourseController::class, 'add_similar_course'])->name('admin.course.add_similar_course');
         Route::post('course/remove_similar_course/{similar_course_id}', [Backend\CourseController::class, 'remove_similar_course'])->name('admin.course.remove_similar_course');
         Route::post('/course/learner/add', [Backend\LearnerController::class, 'addLearner'])->name('learner.course.add.learner'); // Add Learner To Course
+        Route::post('/course/learner/add-bulk', [Backend\LearnerController::class, 'addBulkLearners'])->name('learner.course.add-bulk.learner'); // Add Learner To Course
         Route::post('/course/learner/remove', [Backend\LearnerController::class, 'removeLearner'])->name('learner.course.remove.learner'); // Remove Learner From Course
         Route::post('/course-status', [Backend\CourseController::class, 'updateStatus'])->name('learner.course.status'); // Courses Page
         Route::post('/course-for-sale', [Backend\CourseController::class, 'updateForSaleStatus'])->name('learner.course.for-sale-status'); // Courses For Sale Status

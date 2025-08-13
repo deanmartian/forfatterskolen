@@ -76,6 +76,9 @@
 				  </div>
 			</form>
 			<button type="button" class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addLearnerModal">+ {{ trans('site.add-learner') }}</button>
+			<button type="button" class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addBulkLearnerModal">
+				+ Add Bulk Learner
+			</button>
 			@if(count($learners) > 0)
 				<button type="button" class="btn btn-success margin-bottom loadScriptButton" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
 				<a href="{{ route('learner.course.learner-list-excel', $course->id) }}" class="btn btn-default margin-bottom">{{ trans('site.export-learners') }}</a>
@@ -271,6 +274,7 @@
 								<tr>
 									<th>Package</th>
 									<th>Learners</th>
+									{{-- <th></th> --}}
 								</tr>
 							</thead>
 							<tbody>
@@ -283,6 +287,10 @@
 											{{ \App\CoursesTaken::where('package_id', $package->id)
 											->where('is_active', true)->count() }}
 										</td>
+										{{-- <td>
+											<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" 
+													class="btn btn-danger btn-xs pull-right">Delete Permanently</button>
+										</td> --}}
 									</tr>
 								@endforeach
 							</tbody>
@@ -352,6 +360,53 @@
       			</select>
       		</div>
       		<div class="form-group">
+      			<select class="form-control" name="package_id" required>
+      				<option value="" selected disabled>- Select Package -</option>
+      				@foreach($course->packages as $package)
+      				<option value="{{$package->id}}">{{$package->variation}}</option>
+      				@endforeach
+      			</select>
+      		</div>
+      		<div class="text-right">
+      			<button type="submit" class="btn btn-primary">{{ trans('site.add-learner') }}</button>
+      		</div>
+      	</form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="addBulkLearnerModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Learners to {{$course->title}}</h4>
+      </div>
+      <div class="modal-body">
+      	<form method="POST" action="{{route('learner.course.add-bulk.learner')}}" onsubmit="disableSubmit(this)">
+      		{{csrf_field()}}
+      		<div class="form-group">
+				<label>
+					Learners
+				</label>
+      			<select class="form-control select2" name="learner_ids[]" multiple required>
+					@if($course->learners->count() > 0)
+	      				@foreach(AdminHelpers::courseAddLearners($course->learners->pluck('user_id')->toArray()) as $learner)
+	      				<option value="{{$learner->id}}">{{$learner->full_name}} ({{ $learner->email }})</option>
+	      				@endforeach
+      				@else
+	      				@foreach(App\User::where('role', 2)->orderBy('first_name', 'asc')->get() as $learner)
+	      				<option value="{{$learner->id}}">{{$learner->full_name}}</option>
+	      				@endforeach
+      				@endif
+      			</select>
+      		</div>
+      		<div class="form-group">
+				<label>
+					Package
+				</label>
       			<select class="form-control" name="package_id" required>
       				<option value="" selected disabled>- Select Package -</option>
       				@foreach($course->packages as $package)

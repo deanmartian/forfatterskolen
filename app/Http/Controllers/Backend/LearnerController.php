@@ -386,6 +386,63 @@ class LearnerController extends Controller
         ]);
     }
 
+    public function addBulkLearners(Request $request)
+    {
+        $package = Package::findOrFail($request->package_id);
+        $course = Course::findOrFail($package->course_id);
+
+        $packageIds = $course->packages->pluck('id')->toArray();
+
+        foreach($request->learner_ids as $learner_id) {
+            $learner = User::findOrFail($learner_id);
+            $courseTaken = CoursesTaken::where('user_id', $learner->id)->whereIn('package_id', $packageIds)->first();
+
+            if (! $courseTaken) {
+                $courseTaken = new CoursesTaken;
+                $courseTaken->user_id = $learner->id;
+                $courseTaken->package_id = $package->id;
+            }
+
+            $courseTaken->started_at = null;
+            $courseTaken->is_active = 1;
+
+            if ($course->is_free) {
+                $started_at = now();
+                $dayCount = $course->free_for_days == 0 ? 30 : $course->free_for_days;
+                $end_date = Carbon::today()->addDays($dayCount)->format('Y-m-d');
+
+                $courseTaken->is_free = 1;
+                $courseTaken->started_at = $started_at;
+                $courseTaken->end_date = $end_date;
+            }
+
+            $courseTaken->save();
+
+            // Check if course has year extension
+            if ($courseTaken->package->course->extend_courses > 0) {
+                foreach ($learner->coursesTaken->where('id', '<>', $courseTaken->id) as $learnerCourseTaken) {
+                    $learnerCourseTaken->years = $courseTaken->package->course->extend_courses;
+                    $learnerCourseTaken->save();
+                }
+            }
+
+            // Check for included courses
+            if ($courseTaken->package->included_courses->count() > 0) {
+                foreach ($package->included_courses as $included_course) {
+                    $includedCourse = CoursesTaken::firstOrNew(['user_id' => $courseTaken->user->id, 'package_id' => $included_course->included_package_id]);
+                    $includedCourse->is_active = true;
+                    $includedCourse->save();
+                }
+            }
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Learners added successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
+    }
+
     public function activate_course_taken(Request $request): RedirectResponse
     {
         $courseTaken = CoursesTaken::findOrFail($request->coursetaken_id);
