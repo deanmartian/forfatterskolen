@@ -9,7 +9,7 @@
         table {
             position: absolute;
             bottom:150px;
-            width: 90%;
+            width: 85%;
         }
 
         body {
