@@ -275,6 +275,7 @@
 									<th>Package</th>
 									<th>Learners</th>
 									<th width="350"></th>
+									<th width="350"></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -286,6 +287,14 @@
 										<td>
 											{{ \App\CoursesTaken::where('package_id', $package->id)
 											->where('is_active', true)->count() }}
+										</td>
+										<td>
+											<button type="submit" data-toggle="modal" data-target="#importLearnersModal" 
+													class="btn btn-primary btn-xs pull-right import-learners-btn"
+													data-package="{{ json_encode($package) }}" 
+													data-action="{{ route('admin.course.package.import-learners') }}">
+													Import Learners
+											</button>
 										</td>
 										<td>
 											{{-- <button type="submit" data-toggle="modal" data-target="#copyPackageModal" 
@@ -773,6 +782,44 @@
 	</div>
 </div>
 
+<div id="importLearnersModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Copy Learners</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+				{{csrf_field()}}
+					<div class="form-group">
+						<label>From Package</label>
+						@php
+							$allPackage = App\Package::where('id', '!=', $package->id)->orderBy('course_id')->get();
+						@endphp
+						<select name="from_package" class="form-control select2" required>
+							<option value="" disabled selected> - Select Package -</option>
+							@foreach($allPackage as $package)
+								<option value="{{ $package->id }}">{{ $package->course->title . " - " .$package->variation }}</option>
+							@endforeach
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label>To Package</label>
+						<input type="hidden" class="form-control" name="to_package">
+						<input type="text" class="form-control" name="to_package_name" disabled>
+					</div>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="copyPackageModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-md">
 		<div class="modal-content">
@@ -908,6 +955,16 @@
 			modal.find('form').attr('action', action);
 			modal.find("[name=from_package]").val(package.id);
 			modal.find("[name=from_package_name]").val(package.variation);
+		});
+
+		$(".import-learners-btn").click(function() {
+			let package = $(this).data('package');
+			let action = $(this).data('action');
+			let modal = $("#importLearnersModal");
+
+			modal.find('form').attr('action', action);
+			modal.find("[name=to_package]").val(package.id);
+			modal.find("[name=to_package_name]").val(package.variation);
 		});
 
 		$(".copy-package-btn").click(function() {

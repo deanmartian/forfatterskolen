@@ -857,6 +857,8 @@ Route::domain($admin)->group(function () {
         Route::delete('/course/application/{id}/delete', [Backend\CourseController::class, 'applicationDelete'])->name('admin.course.application.delete');
         Route::post('/course/package/copy-learners', [Backend\CourseController::class, 'copyPackageLearners'])
             ->name('admin.course.package.copy-learners');
+        Route::post('/course/package/import-learners', [Backend\CourseController::class, 'importPackageLearners'])
+            ->name('admin.course.package.import-learners');
         Route::post('/course/package/copy-package-and-learners', [Backend\CourseController::class, 'copyPackageAndLearners'])
             ->name('admin.course.package.copy-package-and-learners');
         Route::post('course-taken/{id}/update-can-receive-email', [Backend\CourseController::class, 'canReceiveEmailUpdate']);

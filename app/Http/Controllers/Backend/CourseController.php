@@ -1272,6 +1272,25 @@ class CourseController extends Controller
         ]);
     }
 
+    public function importPackageLearners(Request $request)
+    {
+        $fromPackage = Package::findOrFail($request->from_package);
+        $coursesTaken = CoursesTaken::where('package_id', $request->from_package)->get();
+        
+        foreach ($coursesTaken as $course) {
+            $newCourse = $course->replicate(); // clone all attributes except primary key
+            $newCourse->package_id = $request->to_package;
+            $newCourse->save();
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Learners copied from ' 
+                . $fromPackage->course->title . ' - ' . $fromPackage->variation . '.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
+    }
+
     public function copyPackageAndLearners(Request $request)
     {
         $package = Package::findOrFail($request->from_package);
