@@ -1199,6 +1199,9 @@ class CourseController extends Controller
         $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML($certificate->template);
+        
+        /* return response($certificate->template)
+        ->header('Content-Type', 'text/html'); */
 
         return $pdf->download($course->title.' certificate.pdf');
     }

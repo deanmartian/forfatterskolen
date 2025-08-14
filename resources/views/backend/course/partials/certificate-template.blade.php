@@ -8,8 +8,8 @@
 
         table {
             position: absolute;
-            bottom:100px;
-            width: 85%;
+            bottom:150px;
+            width: 90%;
         }
 
         body {
@@ -54,39 +54,27 @@
         <span style="font-size:20px" class="light-text">10 course modules</span>
         <br />
         <span style="font-size:20px" class="light-text">2 assignments</span>
-        <br /><br />
+        <br />
 
-        <div style="float:left; width: 40%">
-            <table>
-                <tr>
-                    <td style="text-align: center; padding-top:10px"><b>{ISSUEDDATE}</b></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td style="border:0;border-bottom:1px solid #000;"></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td style="text-align:center"><b>Date</b></td>
-                </tr>
-            </table>
-        </div>
-
-        <div style="float:right; width: 40%">
-            <table>
-                <tr>
-                    <td style="text-align:center">
-                        <img src='https://www.forfatterskolen.no/images-new/certificate/signature.png' style="height: 30px">
-                    </td>
-                </tr>
-                <tr>
-                    <td style="border:0;border-bottom:1px solid #000;"></td>
-                </tr>
-                <tr>
-                    <td style="text-align:center"><b>Signature</b></td>
-                </tr>
-            </table>
-        </div>
+        <table>
+            <tr>
+                <!-- Date -->
+                <td style="width: 40%; text-align: center;">
+                    <div style="padding-top: 12px" class="light-text"><b>{ISSUEDDATE}</b></div>
+                    <div style="border-bottom: 1px solid #000; height: 19px;"></div>
+                    <div><b>Dato</b></div>
+                </td>
+        
+                <!-- Signature -->
+                <td style="width: 40%; text-align: center;">
+                    <div>
+                        <img src="https://www.forfatterskolen.no/images-new/certificate/signature.png" style="height: 30px">
+                    </div>
+                    <div style="border-bottom: 1px solid #000; height: 20px;"></div>
+                    <div><b>Signatur</b></div>
+                </td>
+            </tr>
+        </table>
 
     </div>
 </center>
