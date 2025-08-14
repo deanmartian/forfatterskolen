@@ -898,7 +898,7 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function test_manuscript(Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
+    public function test_manuscript(Request $request, ShopManuscriptService $shopManuscriptService)/* : RedirectResponse */
     {
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
         $word_count = 0;
@@ -924,6 +924,7 @@ class ShopManuscriptController extends Controller
                 throw new ValidationException($validator);
             }
 
+            $word_count = $uploadedManuscript['word_count'];
             $new_word_count = $uploadedManuscript['word_count'];           
 
             /* $time = time();
