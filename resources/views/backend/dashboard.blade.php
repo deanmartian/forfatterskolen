@@ -161,9 +161,11 @@
 											@endif
 										</td>
 										<td>
-											<a href="{{ route('admin.self-publishing.download-manuscript', $publishing->id) }}">
-												<i class="fa fa-download" aria-hidden="true"></i>
-											</a> &nbsp;{!! $publishing->file_link !!}
+											@if ($publishing->manuscript)
+												<a href="{{ route('admin.self-publishing.download-manuscript', $publishing->id) }}">
+													<i class="fa fa-download" aria-hidden="true"></i>
+												</a> &nbsp;{!! $publishing->file_link !!}
+											@endif
 										</td>
 										<td>
 											@if($publishing->project)
