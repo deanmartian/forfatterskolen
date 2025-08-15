@@ -178,6 +178,7 @@
                                     <th>{{ trans('site.type') }}</th>
                                     <th>{{ trans('site.where') }}</th>
                                     <th>{{ trans_choice('site.words', 2) }}</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -219,6 +220,13 @@
                                         </td>
                                         <td>
                                             {{ $unfinishedAssignment->words }}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-success btn-xs finishAssignmentManuscriptBtn" data-toggle="modal" 
+                                            data-target="#finishAssignmentManuscriptModal" 
+                                            data-action="{{ route('admin.assignment-manuscript.mark-finished', $unfinishedAssignment->id) }}">
+                                                Mark as finished
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -396,6 +404,26 @@
 	</div>
 </div>
 
+<div id="finishAssignmentManuscriptModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.finish-assignment') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+					{{ trans('site.finish-assignment-question') }}
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-success">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -440,6 +468,12 @@
         modal.find('form').attr('action', action);
         modal.find('[name=howManyManuscriptYouCanTake]').val(hMMYCT);
     })
+
+    $(".finishAssignmentManuscriptBtn").click(function(){
+        let modal = $('#finishAssignmentManuscriptModal');
+        let action = $(this).data('action');
+        modal.find('form').attr('action', action);
+	});
 
     </script>
 @stop

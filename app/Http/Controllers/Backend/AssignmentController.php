@@ -1547,6 +1547,21 @@ class AssignmentController extends Controller
             'alert_type' => 'success']);
     }
 
+    public function assignmentManuscriptFinished($assignment_manuscript_id): RedirectResponse
+    {
+        if ($assignment = AssignmentManuscript::find($assignment_manuscript_id)) {
+            $assignment->status = AssignmentManuscript::FINISHED_STATUS;
+            $assignment->save();
+
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Assignment manuscript saved successfully.'),
+                'alert_type' => 'success',
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
     public function specialCharacters($string)
     {
         $characters = [

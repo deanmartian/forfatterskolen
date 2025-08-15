@@ -328,7 +328,7 @@ class AdminController extends Controller
         })->with('user')
             ->where(function ($query) {
                 $query->where('editor_id', 0)
-                    ->orWhere('status', 0);
+                    ->where('status', 0);
             })
             ->latest()
             ->get();

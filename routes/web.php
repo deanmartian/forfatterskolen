@@ -1124,6 +1124,8 @@ Route::domain($admin)->group(function () {
             [Backend\AssignmentController::class, 'listManuscriptsWithoutEditor']);
         Route::post('/course/{course_id}/assignment/{assignment_id}/assign-editor-to-manuscripts',
             [Backend\AssignmentController::class, 'assignEditorToManuscripts'])->name('admin.assignment.assign-editor-to-manuscripts');
+        Route::post('/assignment-manuscript/{id}/mark-finished', [Backend\AssignmentController::class, 'assignmentManuscriptFinished'])
+        ->name('admin.assignment-manuscript.mark-finished');
 
         Route::resource('course/{course_id}/assignment', Backend\AssignmentController::class, [
             'names' => [
