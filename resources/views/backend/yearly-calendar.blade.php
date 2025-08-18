@@ -469,11 +469,12 @@
         modal.find('[name=howManyManuscriptYouCanTake]').val(hMMYCT);
     })
 
-    $(".finishAssignmentManuscriptBtn").click(function(){
+    // use this for datatable click button to work not only on first page
+    $(document).on("click", ".finishAssignmentManuscriptBtn", function () {
         let modal = $('#finishAssignmentManuscriptModal');
         let action = $(this).data('action');
         modal.find('form').attr('action', action);
-	});
+    });
 
     </script>
 @stop
