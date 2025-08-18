@@ -723,6 +723,8 @@ Route::domain($admin)->group(function () {
         Route::post('/workshop-taken/{id}/edit-notes', [Backend\LearnerController::class, 'updateWorkshopTakenNotes'])->name('admin.learner.workshop-taken.update-notes'); // Update workshop count for learner
         Route::post('/course_taken/{id}/update_started_at', [Backend\LearnerController::class, 'updateCourseTakenStartedAt'])->name('admin.course_taken.updated_started_at');
         Route::post('/course_taken/{id}/set_availability', [Backend\LearnerController::class, 'setCourseTakenAvailability'])->name('admin.course_taken.set_availability'); // Shop Manuscript add learner
+        Route::post('/course_taken/{id}/set-disable-date', [Backend\LearnerController::class, 'setCourseTakenDisableDate'])->name('admin.course_taken.set_disable_date'); // Shop Manuscript add learner
+        Route::delete('/course_taken/{id}/remove-disable-date', [Backend\LearnerController::class, 'removeCourseTakenDisableDate'])->name('admin.course_taken.remove_disable_date'); // Shop Manuscript add learner
         Route::post('/course_taken/{id}/send-regret-form', [Backend\LearnerController::class, 'sendRegretForm'])->name('admin.course_taken.send_regret_form');
         Route::post('/course_taken/{course_taken_id}/allow_lesson_access/{lesson_id}', [Backend\LearnerController::class, 'allow_lesson_access'])->name('admin.course_taken.allow_lesson_access'); // allow_lesson_access
         Route::post('/course_taken/{course_taken_id}/default_lesson_access/{lesson_id}', [Backend\LearnerController::class, 'default_lesson_access'])->name('admin.course_taken.default_lesson_access'); // default_lesson_access

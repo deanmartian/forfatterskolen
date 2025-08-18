@@ -72,10 +72,12 @@
 														</button>
 													@endif
 												@else
-													<a class="btn light-red-outline-btn"
-													href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
-														{{ trans('site.learner.continue-this-course') }}
-													</a>
+													@if (!$courseTaken->isDisabled)
+														<a class="btn light-red-outline-btn"
+														href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
+															{{ trans('site.learner.continue-this-course') }}
+														</a>
+													@endif
 												@endif
 											@else
 												<form method="POST" action="{{route('learner.course.take')}}">

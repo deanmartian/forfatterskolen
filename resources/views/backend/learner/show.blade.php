@@ -280,6 +280,18 @@
 													Is Pay Later: {{ $courseTaken->is_pay_later ? 'Yes' : 'No' }}
 												@endif
 
+												@if ($courseTaken->disable_start_date) 
+													<br>
+													Disable Date: 
+													{{  \Carbon\Carbon::parse($courseTaken->disable_start_date)->format('M d, Y') }} - 
+													{{  \Carbon\Carbon::parse($courseTaken->disable_end_date)->format('M d, Y') }}
+													<button class="btn btn-xs btn-danger removeCourseTakenDisableBtn"
+														data-toggle="modal" data-target="#removeCourseTakenDisableModal"
+														data-action="{{ route('admin.course_taken.remove_disable_date', $courseTaken->id) }}">
+														X
+													</button>
+												@endif
+
 												@if ($courseTaken->package->course->id == 17)
 													<br>
 													<label>Send Expiry Reminder:</label>
@@ -310,6 +322,16 @@
 													@endif
 											>
 												{{ trans('site.set-availability') }}</button>
+
+											<button type="button" class="btn btn-xs d-block margin-top btn-primary setDisableCourseBtn"
+												data-title="{{ $courseTaken->package->course->title }}"
+												data-toggle="modal"
+												data-target="#setDisableCourseModal"
+												data-action="{{ route('admin.course_taken.set_disable_date', $courseTaken->id) }}"
+												data-disable_start_date="{{ $courseTaken->disable_start_date }}"
+												data-disable_end_date="{{ $courseTaken->disable_end_date }}">
+												Set Disable Date
+											</button>
 
 											<button class="btn btn-xs btn-info d-block sendRegretFormBtn margin-top"
 													data-toggle="modal"
@@ -2431,6 +2453,58 @@
     </div>
 
   </div>
+</div>
+
+<div id="setDisableCourseModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Set Disable Date for <strong></strong></h4>
+			</div>
+
+			<div class="modal-body">
+				<form method="POST" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ ucfirst(strtolower(trans('site.start-date'))) }}</label>
+						<input type="date" class="form-control" name="disable_start_date" required>
+					</div>
+					<div class="form-group">
+						<label>{{ ucfirst(strtolower(trans('site.end-date'))) }}</label>
+						<input type="date" class="form-control" name="disable_end_date" required>
+					</div>
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="removeCourseTakenDisableModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Remove Disable Date</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" enctype="multipart/form-data" action=""
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ method_field('DELETE') }}
+
+					<p>Are you sure to remove the disable date?</p>
+
+					<button type="submit" class="btn btn-danger pull-right">Delete</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
 </div>
 
 <div id="sendRegretFormModal" class="modal fade" role="dialog">
@@ -5095,6 +5169,28 @@
 			form.attr('action', action);
 			form.find('input[name=start_date]').val(start_date);
 			form.find('input[name=end_date]').val(end_date);
+		});
+
+		$(".setDisableCourseBtn").click(function(){
+			var title = $(this).data('title');
+			var start_date = $(this).data('disable_start_date');
+			var end_date = $(this).data('disable_end_date');
+			var action = $(this).data('action');
+			var modal = $('#setDisableCourseModal');
+			var form = modal.find('form');
+
+			modal.find('.modal-title strong').text(title);
+			form.attr('action', action);
+			form.find('input[name=disable_start_date]').val(start_date);
+			form.find('input[name=disable_end_date]').val(end_date);
+		});
+
+		$(".removeCourseTakenDisableBtn").click(function(){
+			var action = $(this).data('action');
+			var modal = $('#removeCourseTakenDisableModal');
+			var form = modal.find('form');
+
+			form.attr('action', action);
 		});
 
 		$(".sendRegretFormBtn").click(function() {

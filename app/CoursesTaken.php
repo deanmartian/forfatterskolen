@@ -19,7 +19,7 @@ class CoursesTaken extends Model
     protected $fillable = ['user_id', 'package_id', 'gift_purchase_id', 'is_active', 'started_at', 'start_date',
         'end_date', 'access_lessons', 'years', 'is_free', 'send_expiry_reminder', 'is_welcome_email_sent',
         'can_receive_email', 'is_pay_later', 'exclude_in_scheduled_registration', 'in_facebook_group',
-        'created_at', 'updated_at'];
+        'disable_start_date', 'disable_end_date', 'created_at', 'updated_at'];
 
     protected $appends = ['order'];
 
@@ -136,6 +136,35 @@ class CoursesTaken extends Model
         }
 
         return false;
+    }
+
+    public function getIsDisabledAttribute(): bool
+    {
+        $now   = \Carbon\Carbon::now();
+        $start = $this->disable_start_date
+            ? \Carbon\Carbon::parse($this->disable_start_date)->startOfDay()
+            : null;
+        $end   = $this->disable_end_date
+            ? \Carbon\Carbon::parse($this->disable_end_date)->endOfDay()
+            : null;
+
+        // Both null → not disabled
+        if (!$start && !$end) {
+            return false;
+        }
+
+        // Only start set → disabled from start onward
+        if ($start && !$end) {
+            return $now->greaterThanOrEqualTo($start);
+        }
+
+        // Only end set → disabled until end (inclusive), enabled after
+        if (!$start && $end) {
+            return $now->lessThanOrEqualTo($end);
+        }
+
+        // Both set → disabled only between start and end (inclusive)
+        return $now->between($start, $end, true);
     }
 
     public function getAccessLessonsAttribute($value)

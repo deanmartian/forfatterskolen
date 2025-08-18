@@ -555,6 +555,26 @@ class LearnerController extends Controller
             ->leftJoin('courses_taken', 'courses_taken.package_id', '=', 'packages.id')
             ->where('courses_taken.user_id', Auth::user()->id)
             ->whereNull('courses_taken.deleted_at')
+            ->where(function ($q) {
+                // this query is for checking if courses_taken is disabled
+                $today = now()->toDateString();
+
+                $q->where(function ($inner) {
+                    // Case 1: both null → show
+                    $inner->whereNull('courses_taken.disable_start_date')
+                        ->whereNull('courses_taken.disable_end_date');
+                })
+                ->orWhere(function ($inner) use ($today) {
+                    // Case 2: start_date in the future → show
+                    $inner->whereNotNull('courses_taken.disable_start_date')
+                        ->whereRaw("DATE(courses_taken.disable_start_date) > ?", [$today]);
+                })
+                ->orWhere(function ($inner) use ($today) {
+                    // Case 3: end_date in the past → show
+                    $inner->whereNotNull('courses_taken.disable_end_date')
+                        ->whereRaw("DATE(courses_taken.disable_end_date) < ?", [$today]);
+                });
+            })
             ->pluck('courses.id')
             ->toArray();
 
@@ -810,7 +830,7 @@ class LearnerController extends Controller
         $courseTaken = CoursesTaken::findOrFail($id);
 
         if (Auth::user()->can('participateCourse', $courseTaken)) {
-            if ($courseTaken->hasEnded) {
+            if ($courseTaken->hasEnded || $courseTaken->isDisabled) {
                 return redirect()->route('learner.course');
             }
 
@@ -933,7 +953,11 @@ class LearnerController extends Controller
     {
         $assignments = [];
         $expiredAssignments = [];
-        $coursesTaken = Auth::user()->coursesTaken()->whereNotNull('end_date')->get();
+        $coursesTaken = Auth::user()->coursesTaken()->whereNotNull('end_date')->get()
+        ->filter(function ($courseTaken) {
+            // for checking if the course taken is not disabled
+            return !$courseTaken->is_disabled; // use the accessor
+        });
         $addOns = AssignmentAddon::where('user_id', \Auth::user()->id)->pluck('assignment_id')->toArray();
         $userAssignments = Auth::user()->activeAssignments;
         $userExpiredAssignments = Auth::user()->expiredAssignments;
@@ -2984,6 +3008,10 @@ class LearnerController extends Controller
         $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)
             ->whereIn('package_id', $course->allPackages->pluck('id')->toArray()) // $course->packages->pluck('id')
             ->first();
+
+        if ($courseTaken->isDisabled) {
+            return redirect()->route('learner.course');
+        }
 
         $lessons = $courseTaken->package->course->lessons;
         if ($courseTaken || FrontendHelpers::hasLessonAccess($courseTaken, $lesson)) {

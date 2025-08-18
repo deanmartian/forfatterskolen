@@ -1172,6 +1172,36 @@ class LearnerController extends Controller
         ]);
     }
 
+    public function setCourseTakenDisableDate($id, Request $request)
+    {
+        $courseTaken = CoursesTaken::findOrFail($id);
+
+        $courseTaken->disable_start_date = $request->disable_start_date;
+        $courseTaken->disable_end_date = $request->disable_end_date;
+        $courseTaken->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Course taken disable date updated successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
+    }
+
+    public function removeCourseTakenDisableDate($id)
+    {
+        $courseTaken = CoursesTaken::findOrFail($id);
+
+        $courseTaken->disable_start_date = null;
+        $courseTaken->disable_end_date = null;
+        $courseTaken->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Course taken disable date removed successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
+    }
+
     public function sendRegretForm($course_taken_id, Request $request, CourseService $courseService): RedirectResponse
     {
         $courseTaken = CoursesTaken::findOrFail($course_taken_id);
