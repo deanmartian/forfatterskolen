@@ -185,13 +185,24 @@
                                 @foreach($unfinishedAssignments as $unfinishedAssignment)
                                     <tr>
                                         <td>
-                                            <a href="{{ route('admin.assignment.show',
-                                            [
-                                                'course_id' => $unfinishedAssignment->assignment->course_id ,
-                                                'assignment' => $unfinishedAssignment->assignment_id
-                                            ]) }}">
-                                                {{$unfinishedAssignment->assignment->title}}
-                                            </a>
+                                            @if ($unfinishedAssignment->assignment->course_id)
+                                                <a href="{{ route('admin.assignment.show',
+                                                [
+                                                    'course_id' => $unfinishedAssignment->assignment->course_id ,
+                                                    'assignment' => $unfinishedAssignment->assignment_id
+                                                ]) }}">
+                                                    {{$unfinishedAssignment->assignment->title}}
+                                                </a>
+                                            @else
+                                                <a href="{{ route('admin.learner.assignment',
+                                                [
+                                                    'user_id' => $unfinishedAssignment->user_id ,
+                                                    'id' => $unfinishedAssignment->assignment_id
+                                                ]) }}">
+                                                    {{$unfinishedAssignment->assignment->title}}
+                                                </a>
+                                            @endif
+                                            
                                         </td>
                                         <td>
                                             {!! $unfinishedAssignment->file_link !!}
