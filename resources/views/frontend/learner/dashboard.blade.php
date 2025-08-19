@@ -45,32 +45,34 @@
                                                 ) !!}
                                         </p>
 
-                                        @if( $courseTaken->is_active )
-                                            @if($courseTaken->hasStarted)
-                                                @if($courseTaken->hasEnded)
-                                                    <button class="btn light-red-outline-btn" data-toggle="modal"
-                                                            data-target="#renewAllModal">
-                                                        {{ trans('site.learner.renew-subscription') }}
-                                                    </button>
+                                        @if (!Auth::user()->isDisabled)
+                                            @if( $courseTaken->is_active )
+                                                @if($courseTaken->hasStarted)
+                                                    @if($courseTaken->hasEnded)
+                                                        <button class="btn light-red-outline-btn" data-toggle="modal"
+                                                                data-target="#renewAllModal">
+                                                            {{ trans('site.learner.renew-subscription') }}
+                                                        </button>
+                                                    @else
+                                                        <a class="btn light-red-outline-btn"
+                                                            href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
+                                                            {{ trans('site.learner.continue-this-course') }}
+                                                        </a>
+                                                    @endif
                                                 @else
-                                                    <a class="btn light-red-outline-btn"
-                                                        href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
-                                                        {{ trans('site.learner.continue-this-course') }}
-                                                    </a>
+                                                    <form method="POST" action="{{route('learner.course.take')}}">
+                                                        {{csrf_field()}}
+                                                        <input type="hidden" name="courseTakenId" value="{{$courseTaken->id}}">
+                                                        <button type="submit" class="btn light-red-outline-btn">
+                                                            {{ trans('site.learner.start-course') }}
+                                                        </button>
+                                                    </form>
                                                 @endif
                                             @else
-                                                <form method="POST" action="{{route('learner.course.take')}}">
-                                                    {{csrf_field()}}
-                                                    <input type="hidden" name="courseTakenId" value="{{$courseTaken->id}}">
-                                                    <button type="submit" class="btn light-red-outline-btn">
-                                                        {{ trans('site.learner.start-course') }}
-                                                    </button>
-                                                </form>
+                                                <a class="btn btn-warning disabled">
+                                                    {{ trans('site.learner.course-on-hold') }}
+                                                </a>
                                             @endif
-                                        @else
-                                            <a class="btn btn-warning disabled">
-                                                {{ trans('site.learner.course-on-hold') }}
-                                            </a>
                                         @endif
                                     </div>
                                 </div>
@@ -434,48 +436,50 @@
                                 </div>
 
                                 <div>
-                                    @if( \App\Http\FrontendHelpers::isWebinarAvailable($webinar) )
-                                        <a class="btn w-100" href="{{ $webinar->link }}" target="_blank">
-                                            {{ trans('site.learner.join-webinar') }}
-                                        </a>
-                                    @else
-
-                                        @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
-                                            <a class="btn w-100" 
-                                            href="{{ $coursesTaken && $coursesTaken->hasEnded
-                                                        ? 'javascript:void(0)' : $webinar->link }}" target="_blank">
-                                                {{ trans('site.learner.replay') }}
+                                    @if (!Auth::user()->isDisabled)
+                                        @if( \App\Http\FrontendHelpers::isWebinarAvailable($webinar) )
+                                            <a class="btn w-100" href="{{ $webinar->link }}" target="_blank">
+                                                {{ trans('site.learner.join-webinar') }}
                                             </a>
                                         @else
-                                            @if($webinar->set_as_replay)
+
+                                            @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
                                                 <a class="btn w-100" 
-                                                href="{{ $webinar->link }}" target="_blank">
+                                                href="{{ $coursesTaken && $coursesTaken->hasEnded
+                                                            ? 'javascript:void(0)' : $webinar->link }}" target="_blank">
                                                     {{ trans('site.learner.replay') }}
                                                 </a>
                                             @else
-                                                @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, 
-                                                Auth::user()->id))
-                                                    <a class="btn w-100"
-                                                       href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, 
-                                                       Auth::user()->id) }}">
-                                                        {{ trans('site.learner.signed') }}
+                                                @if($webinar->set_as_replay)
+                                                    <a class="btn w-100" 
+                                                    href="{{ $webinar->link }}" target="_blank">
+                                                        {{ trans('site.learner.replay') }}
                                                     </a>
                                                 @else
-                                                    {{-- check if have webinar link --}}
-                                                    @if($webinar->link)
-                                                        <a class="btn w-100 webinarRegister"
-                                                           href="{{ \Carbon\Carbon::parse($webinar->start_date)
-                                                           ->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
-                                                            ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                            [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), 
-                                                            $webinar->id]) }}">
-                                                            {{ trans('site.learner.register') }}
+                                                    @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, 
+                                                    Auth::user()->id))
+                                                        <a class="btn w-100"
+                                                        href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, 
+                                                        Auth::user()->id) }}">
+                                                            {{ trans('site.learner.signed') }}
                                                         </a>
                                                     @else
-                                                        <a href="javascript:void(0)"
-                                                           class="btn w-100 rounded-0 btn-success disabled" disabled>
-                                                            Påmelding kommer
-                                                        </a>
+                                                        {{-- check if have webinar link --}}
+                                                        @if($webinar->link)
+                                                            <a class="btn w-100 webinarRegister"
+                                                            href="{{ \Carbon\Carbon::parse($webinar->start_date)
+                                                            ->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
+                                                                ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                                [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), 
+                                                                $webinar->id]) }}">
+                                                                {{ trans('site.learner.register') }}
+                                                            </a>
+                                                        @else
+                                                            <a href="javascript:void(0)"
+                                                            class="btn w-100 rounded-0 btn-success disabled" disabled>
+                                                                Påmelding kommer
+                                                            </a>
+                                                        @endif
                                                     @endif
                                                 @endif
                                             @endif
@@ -549,48 +553,50 @@
                                 </div>
 
                                 <div>
-                                    @if( \App\Http\FrontendHelpers::isWebinarAvailable($webinar) )
-                                        <a class="btn w-100" href="{{ $webinar->link }}" target="_blank">
-                                            {{ trans('site.learner.join-webinar') }}
-                                        </a>
-                                    @else
-
-                                        @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
-                                            <a class="btn w-100" 
-                                            href="{{ $coursesTaken && $coursesTaken->hasEnded
-                                                        ? 'javascript:void(0)' : $webinar->link }}" target="_blank">
-                                                {{ trans('site.learner.replay') }}
+                                    @if (!Auth::user()->isDisabled)
+                                        @if( \App\Http\FrontendHelpers::isWebinarAvailable($webinar) )
+                                            <a class="btn w-100" href="{{ $webinar->link }}" target="_blank">
+                                                {{ trans('site.learner.join-webinar') }}
                                             </a>
                                         @else
-                                            @if($webinar->set_as_replay)
+
+                                            @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
                                                 <a class="btn w-100" 
-                                                href="{{ $webinar->link }}" target="_blank">
+                                                href="{{ $coursesTaken && $coursesTaken->hasEnded
+                                                            ? 'javascript:void(0)' : $webinar->link }}" target="_blank">
                                                     {{ trans('site.learner.replay') }}
                                                 </a>
                                             @else
-                                                @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, 
-                                                Auth::user()->id))
-                                                    <a class="btn w-100"
-                                                       href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, 
-                                                       Auth::user()->id) }}">
-                                                        {{ trans('site.learner.signed') }}
+                                                @if($webinar->set_as_replay)
+                                                    <a class="btn w-100" 
+                                                    href="{{ $webinar->link }}" target="_blank">
+                                                        {{ trans('site.learner.replay') }}
                                                     </a>
                                                 @else
-                                                    {{-- check if have webinar link --}}
-                                                    @if($webinar->link)
-                                                        <a class="btn w-100 webinarRegister"
-                                                           href="{{ \Carbon\Carbon::parse($webinar->start_date)
-                                                           ->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
-                                                            ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                            [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), 
-                                                            $webinar->id]) }}">
-                                                            {{ trans('site.learner.register') }}
+                                                    @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, 
+                                                    Auth::user()->id))
+                                                        <a class="btn w-100"
+                                                        href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, 
+                                                        Auth::user()->id) }}">
+                                                            {{ trans('site.learner.signed') }}
                                                         </a>
                                                     @else
-                                                        <a href="javascript:void(0)"
-                                                           class="btn w-100 rounded-0 btn-success disabled" disabled>
-                                                            Påmelding kommer
-                                                        </a>
+                                                        {{-- check if have webinar link --}}
+                                                        @if($webinar->link)
+                                                            <a class="btn w-100 webinarRegister"
+                                                            href="{{ \Carbon\Carbon::parse($webinar->start_date)
+                                                            ->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
+                                                                ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                                [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), 
+                                                                $webinar->id]) }}">
+                                                                {{ trans('site.learner.register') }}
+                                                            </a>
+                                                        @else
+                                                            <a href="javascript:void(0)"
+                                                            class="btn w-100 rounded-0 btn-success disabled" disabled>
+                                                                Påmelding kommer
+                                                            </a>
+                                                        @endif
                                                     @endif
                                                 @endif
                                             @endif

@@ -62,36 +62,38 @@
                                                 ) !!}
                                         </p>
 
-										@if( $courseTaken->is_active )
-											@if($courseTaken->hasStarted)
-												@if($courseTaken->hasEnded)
-													@if(!$courseTaken->is_free)
-														<button class="btn light-red-outline-btn" data-toggle="modal"
-																data-target="#renewAllModal">
-															{{ trans('site.learner.renew-subscription') }}
-														</button>
+										@if (!Auth::user()->isDisabled)
+											@if( $courseTaken->is_active )
+												@if($courseTaken->hasStarted)
+													@if($courseTaken->hasEnded)
+														@if(!$courseTaken->is_free)
+															<button class="btn light-red-outline-btn" data-toggle="modal"
+																	data-target="#renewAllModal">
+																{{ trans('site.learner.renew-subscription') }}
+															</button>
+														@endif
+													@else
+														@if (!$courseTaken->isDisabled)
+															<a class="btn light-red-outline-btn"
+															href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
+																{{ trans('site.learner.continue-this-course') }}
+															</a>
+														@endif
 													@endif
 												@else
-													@if (!$courseTaken->isDisabled)
-														<a class="btn light-red-outline-btn"
-														href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
-															{{ trans('site.learner.continue-this-course') }}
-														</a>
-													@endif
+													<form method="POST" action="{{route('learner.course.take')}}">
+														{{csrf_field()}}
+														<input type="hidden" name="courseTakenId" value="{{$courseTaken->id}}">
+														<button type="submit" class="btn light-red-outline-btn">
+															{{ trans('site.learner.start-course') }}
+														</button>
+													</form>
 												@endif
 											@else
-												<form method="POST" action="{{route('learner.course.take')}}">
-													{{csrf_field()}}
-													<input type="hidden" name="courseTakenId" value="{{$courseTaken->id}}">
-													<button type="submit" class="btn light-red-outline-btn">
-														{{ trans('site.learner.start-course') }}
-													</button>
-												</form>
+												<a class="btn light-red-outline-btn disabled">
+													{{ trans('site.learner.course-on-hold') }}
+												</a>
 											@endif
-										@else
-											<a class="btn light-red-outline-btn disabled">
-												{{ trans('site.learner.course-on-hold') }}
-											</a>
 										@endif
 									</div>
 								</div>

@@ -121,7 +121,7 @@
                                                         : !($package->disable_upgrade_price);
                                                     }
                                                 ?>
-                                                    @if($displayBtn && $courseTaken->package->is_upgradeable)
+                                                    @if($displayBtn && $courseTaken->package->is_upgradeable && !Auth::user()->isDisabled)
                                                         <a href="{{ route('learner.get-upgrade-course',
                                                             ['course_taken_id' => $courseTaken->id, 'package_id' => $package->id]) }}"
                                                             class="btn btn-outline-primary">
@@ -168,11 +168,13 @@
                                                 {{ $shopManuscriptTaken->shop_manuscript->max_words }}
                                             </td>
                                             <td>
-                                                <a class="btn btn-outline-primary"
-                                                   href="{{ route('learner.get-upgrade-manuscript', $shopManuscriptTaken->id) }}">
-                                                    {{-- {{ trans('site.learner.upgrade-script-development-text') }} --}}
-                                                    {{ trans('site.learner.upgrade') }}
-                                                </a>
+                                                @if (!Auth::user()->isDisabled)
+                                                    <a class="btn btn-outline-primary"
+                                                    href="{{ route('learner.get-upgrade-manuscript', $shopManuscriptTaken->id) }}">
+                                                        {{-- {{ trans('site.learner.upgrade-script-development-text') }} --}}
+                                                        {{ trans('site.learner.upgrade') }}
+                                                    </a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endif
@@ -205,10 +207,12 @@
                                     <td>{{ \App\Http\FrontendHelpers::formatCurrency($assignment->add_on_price) }}</td>
                                     <td>{{ $assignment->submission_date }}</td>
                                     <td>
-                                        <a href="{{ route('learner.get-upgrade-assignment', $assignment->id) }}"
-                                           class="btn btn-outline-primary">
-                                            Kjøp
-                                        </a>
+                                        @if (!Auth::user()->isDisabled)
+                                            <a href="{{ route('learner.get-upgrade-assignment', $assignment->id) }}"
+                                            class="btn btn-outline-primary">
+                                                Kjøp
+                                            </a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

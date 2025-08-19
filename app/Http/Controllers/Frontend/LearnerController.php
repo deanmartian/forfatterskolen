@@ -830,7 +830,7 @@ class LearnerController extends Controller
         $courseTaken = CoursesTaken::findOrFail($id);
 
         if (Auth::user()->can('participateCourse', $courseTaken)) {
-            if ($courseTaken->hasEnded || $courseTaken->isDisabled) {
+            if ($courseTaken->hasEnded || $courseTaken->isDisabled || Auth::user()->isDisabled) {
                 return redirect()->route('learner.course');
             }
 
@@ -1161,6 +1161,8 @@ class LearnerController extends Controller
         });
 
         $expiredAssignments = array_unique($expiredAssignments);
+        // added this to not show any new assignment if learner is disabled
+        $assignments = !Auth::user()->isDisabled ? $assignments : [];
 
         return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments',
             'upcomingAssignments', 'waitingForResponse', 'assignmentGroupLearners', 'noWordLimitAssignments'));
@@ -3009,7 +3011,7 @@ class LearnerController extends Controller
             ->whereIn('package_id', $course->allPackages->pluck('id')->toArray()) // $course->packages->pluck('id')
             ->first();
 
-        if ($courseTaken->isDisabled) {
+        if ($courseTaken->isDisabled || Auth::user()->isDisabled) {
             return redirect()->route('learner.course');
         }
 

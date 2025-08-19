@@ -111,12 +111,14 @@
                                                         <td>{{ $replayWebinar->title }}</td>
                                                         <td>{{ $replayWebinar->description }}</td>
                                                         <td>
-                                                            <a href="#" data-toggle="modal" data-target="#videoModal"
-                                                             data-record="{{ json_encode($replayWebinar) }}" 
-                                                             class="videoBtn red-outline-btn px-4 py-2">
-                                                                {{ trans('site.view') }}
-                                                                <i class="fa fa-eye"></i>
-                                                            </a>
+                                                            @if (!Auth::user()->isDisabled)
+                                                                <a href="#" data-toggle="modal" data-target="#videoModal"
+                                                                data-record="{{ json_encode($replayWebinar) }}" 
+                                                                class="videoBtn red-outline-btn px-4 py-2">
+                                                                    {{ trans('site.view') }}
+                                                                    <i class="fa fa-eye"></i>
+                                                                </a>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                 @endforeach

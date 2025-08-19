@@ -1187,6 +1187,21 @@ class LearnerController extends Controller
         ]);
     }
 
+    public function setLearnerDisableDate($id, Request $request)
+    {
+        $user = User::findOrFail($id);
+
+        $user->disable_start_date = $request->disable_start_date;
+        $user->disable_end_date = $request->disable_end_date;
+        $user->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('User disable date updated successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
+    }
+
     public function removeCourseTakenDisableDate($id)
     {
         $courseTaken = CoursesTaken::findOrFail($id);
@@ -1197,6 +1212,21 @@ class LearnerController extends Controller
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Course taken disable date removed successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
+    }
+
+    public function removeLearnerDisableDate($id)
+    {
+        $user = User::findOrFail($id);
+
+        $user->disable_start_date = null;
+        $user->disable_end_date = null;
+        $user->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('User disable date removed successfully.'),
             'alert_type' => 'success',
             'not-former-courses' => true,
         ]);

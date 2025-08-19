@@ -165,6 +165,29 @@
 			<button type="button" class="margin-top btn btn-primary loadScriptButton" data-toggle="modal" data-target="#sendUsernameAndPasswordModal">
 				Send Username and Password
 			</button>
+
+			@if ($learner->disable_start_date) 
+				<br> <br>
+				<b>Disable Date: </b>
+				{{  \Carbon\Carbon::parse($learner->disable_start_date)->format('M d, Y') }} - 
+				{{  \Carbon\Carbon::parse($learner->disable_end_date)->format('M d, Y') }}
+				<button class="btn btn-xs btn-danger removeCourseTakenDisableBtn"
+					data-toggle="modal" data-target="#removeCourseTakenDisableModal"
+					data-action="{{ route('admin.learner.remove_disable_date', $learner->id) }}">
+					X
+				</button>
+			@else
+				<button type="button" class="btn d-block margin-top btn-primary setDisableUserBtn"
+					data-title="{{ $learner->full_name }}"
+					data-toggle="modal"
+					data-target="#setDisableCourseModal"
+					data-action="{{ route('admin.learner.set_disable_date', $learner->id) }}"
+					data-disable_start_date="{{ $learner->disable_start_date }}"
+					data-disable_end_date="{{ $learner->disable_end_date }}">
+					Set Disable Date
+				</button>
+			@endif
+
 			<div class="former-course-container">
 				<h4>{{ trans('site.former-courses') }}</h4>
 				<ul>
@@ -5172,6 +5195,20 @@
 		});
 
 		$(".setDisableCourseBtn").click(function(){
+			var title = $(this).data('title');
+			var start_date = $(this).data('disable_start_date');
+			var end_date = $(this).data('disable_end_date');
+			var action = $(this).data('action');
+			var modal = $('#setDisableCourseModal');
+			var form = modal.find('form');
+
+			modal.find('.modal-title strong').text(title);
+			form.attr('action', action);
+			form.find('input[name=disable_start_date]').val(start_date);
+			form.find('input[name=disable_end_date]').val(end_date);
+		});
+
+		$(".setDisableUserBtn").click(function(){
 			var title = $(this).data('title');
 			var start_date = $(this).data('disable_start_date');
 			var end_date = $(this).data('disable_end_date');

@@ -40,7 +40,7 @@ class User extends Authenticatable
         'first_name', 'last_name', 'password', 'email', 'role', 'gender', 'birthday', 'profile_image',
         'default_password', 'need_pass_update', 'is_active', 'admin_with_giutbok_access', 'is_self_publishing_learner',
         'is_ghost_writer_admin', 'is_copy_editing_admin', 'is_correction_admin', 'is_coaching_admin', 'fiken_contact_id',
-        'email_verified_at', 'email_verification_token',
+        'email_verified_at', 'email_verification_token', 'disable_start_date', 'disable_end_date'
     ];
 
     /**
@@ -320,6 +320,35 @@ class User extends Authenticatable
         $image = substr($this->attributes['profile_image'], 1);
 
         return File::exists($image);
+    }
+
+    public function getIsDisabledAttribute(): bool
+    {
+        $now   = \Carbon\Carbon::now();
+        $start = $this->disable_start_date
+            ? \Carbon\Carbon::parse($this->disable_start_date)->startOfDay()
+            : null;
+        $end   = $this->disable_end_date
+            ? \Carbon\Carbon::parse($this->disable_end_date)->endOfDay()
+            : null;
+
+        // Both null → not disabled
+        if (!$start && !$end) {
+            return false;
+        }
+
+        // Only start set → disabled from start onward
+        if ($start && !$end) {
+            return $now->greaterThanOrEqualTo($start);
+        }
+
+        // Only end set → disabled until end (inclusive), enabled after
+        if (!$start && $end) {
+            return $now->lessThanOrEqualTo($end);
+        }
+
+        // Both set → disabled only between start and end (inclusive)
+        return $now->between($start, $end, true);
     }
 
     public function emails(): HasMany
