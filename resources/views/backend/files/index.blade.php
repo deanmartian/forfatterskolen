@@ -45,13 +45,13 @@
                         ?>
                         <tr>
                             <td>
-                                {{ env('APP_LIVE_URL').'/file/'.$file->hash }}
+                                {{ config('app.live_url').'/file/'.$file->hash }}
                             </td>
                             <td>
                                 {!! $fileDisplay !!}
                             </td>
                             <td>
-                                <input type="text" value="{{ env('APP_LIVE_URL').'/file/'.$file->hash }}"
+                                <input type="text" value="{{ config('app.live_url').'/file/'.$file->hash }}"
                                        style="position: absolute; left: -10000px;">
                                 <button type="button" class="btn btn-success btn-xs copyToClipboard">
                                     <i class="fa fa-clipboard"></i>

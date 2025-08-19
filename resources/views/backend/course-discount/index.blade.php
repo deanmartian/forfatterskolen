@@ -44,7 +44,7 @@
                         </td>
                         <td>
                             <?php
-                                $discountUrl = env('APP_LIVE_URL')."/course/".$discount->course_id
+                                $discountUrl = config('app.live_url')."/course/".$discount->course_id
                                     ."/checkout?c=".$discount->coupon;
                             ?>
                             <input type="text" value="{{ $discountUrl }}"

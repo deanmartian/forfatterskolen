@@ -103,7 +103,7 @@
 						<button type="submit" class="btn btn-info">{{ trans('site.create-lesson') }}</button>
 						@else
                             <input type="text" name="copyClip"
-                                   value="{{ env('APP_LIVE_URL')."/account/course/".$course->id."/lesson/".$lesson['id'] }}"
+                                   value="{{ config('app.live_url')."/account/course/".$course->id."/lesson/".$lesson['id'] }}"
                                    style="position: absolute; left: -10000px;">
                             <button type="button" class="btn btn-success copyToClipboard">
                                 Copy Link
