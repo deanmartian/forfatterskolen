@@ -107,15 +107,17 @@ class CourseEmailOut extends Command
                     $emailData['from_email'] = $emailOut->from_email;
                     $emailData['attach_file'] = null;
 
-                    // add email to queue
-                    dispatch(new AddMailToQueueJob($toMail, $emailOut->subject, $message.$attachmentText,
-                        $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
+                    if(!$courseTaken->user->is_disabled) {
+                        // add email to queue
+                        dispatch(new AddMailToQueueJob($toMail, $emailOut->subject, $message.$attachmentText,
+                            $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
 
-                    $emailOut->recipients()->updateOrCreate([
-                        'user_id' => $user->id,
-                    ]);
+                        $emailOut->recipients()->updateOrCreate([
+                            'user_id' => $user->id,
+                        ]);
 
-                    CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
+                        CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
+                    }
                 }
             }
             array_push($emailOutListSent, $emailOut->id);
@@ -186,15 +188,17 @@ class CourseEmailOut extends Command
                     $emailData['from_email'] = $emailOut->from_email;
                     $emailData['attach_file'] = null;
 
-                    // add email to queue
-                    dispatch(new AddMailToQueueJob($toMail, $emailOut->subject, $message.$attachmentText,
-                        $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
+                    if(!$courseTaken->user->is_disabled) {
+                        // add email to queue
+                        dispatch(new AddMailToQueueJob($toMail, $emailOut->subject, $message.$attachmentText,
+                            $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
 
-                    $emailOut->recipients()->updateOrCreate([
-                        'user_id' => $user->id,
-                    ]);
+                        $emailOut->recipients()->updateOrCreate([
+                            'user_id' => $user->id,
+                        ]);
 
-                    CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
+                        CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
+                    }
                 }
             }
             array_push($emailOutListDaySent, $emailOut->id);

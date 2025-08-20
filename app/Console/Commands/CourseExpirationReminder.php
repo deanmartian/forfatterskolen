@@ -147,12 +147,16 @@ class CourseExpirationReminder extends Command
                 'from_email' => $from,
                 'attach_file' => null,
             ];
-            // \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
-            dispatch(new AddMailToQueueJob($user_email, $subject, $message, $from, null, null,
-                'courses-taken', $courseTaken->id));
 
-            // AdminHelpers::send_email($subject, $from, $user_email, $message);
-            CronLog::create(['activity' => 'CourseExpirationReminder CRON sent email to '.$user_name.'.']);
+            if(!$courseTaken->user->is_disabled) {
+                // \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+                dispatch(new AddMailToQueueJob($user_email, $subject, $message, $from, null, null,
+                    'courses-taken', $courseTaken->id));
+
+                // AdminHelpers::send_email($subject, $from, $user_email, $message);
+                CronLog::create(['activity' => 'CourseExpirationReminder CRON sent email to '.$user_name.'.']);
+            }
+            
             // }
         }
 

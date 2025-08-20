@@ -65,10 +65,12 @@ class FreeCourseDelayedEmailCommand extends Command
             $email_data['email_subject'] = $course->title;
             $toEmail = $user->email;
 
-            // \Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
-            dispatch(new AddMailToQueueJob($toEmail, $course->title, $message, 'postmail@forfatterskolen.no', null, null,
-                'learner', $user->id));
-            CronLog::create(['activity' => 'FreeCourseDelayedEmailCommand sent email to user '.$user->id]);
+            if (!$user->is_disabled) {
+                // \Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
+                dispatch(new AddMailToQueueJob($toEmail, $course->title, $message, 'postmail@forfatterskolen.no', null, null,
+                    'learner', $user->id));
+                CronLog::create(['activity' => 'FreeCourseDelayedEmailCommand sent email to user '.$user->id]);
+            }
             // $delayedEmail->delete(); //delete the record after adding it to queue
         }
     }

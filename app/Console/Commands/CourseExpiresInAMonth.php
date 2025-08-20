@@ -66,7 +66,7 @@ class CourseExpiresInAMonth extends Command
             $user_name = $courseTaken->user->first_name;
             // add to automation
             // check if auto renew courses is not set
-            if (! $courseTaken->user->auto_renew_courses) {
+            if (! $courseTaken->user->auto_renew_courses && !$courseTaken->user->is_disabled) {
                 AdminHelpers::addToAutomation($user_email, $automation_id, $user_name);
                 CronLog::create(['activity' => 'CourseExpiresInAMonth CRON added '.$user_name.' to automation '.$automation_id]);
             }

@@ -102,10 +102,12 @@ class WebinarEmailOutCommand extends Command
                 $emailData['attach_file'] = null;
 
                 // add email to queue
-                // \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
-                dispatch(new AddMailToQueueJob($user_email, $subject, $message, 'postmail@forfatterskolen.no',
-                    null, null, 'courses-taken', $courseTaken->id));
-                CronLog::create(['activity' => 'WebinarEmailOutCommand CRON send email to '.$user_email]);
+                if (!$courseTaken->user->is_disabled) {
+                    // \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+                    dispatch(new AddMailToQueueJob($user_email, $subject, $message, 'postmail@forfatterskolen.no',
+                        null, null, 'courses-taken', $courseTaken->id));
+                    CronLog::create(['activity' => 'WebinarEmailOutCommand CRON send email to '.$user_email]);
+                }
             }
         }
         CronLog::create(['activity' => 'WebinarEmailOutCommand CRON done running.']);

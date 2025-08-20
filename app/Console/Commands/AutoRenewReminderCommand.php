@@ -78,11 +78,13 @@ class AutoRenewReminderCommand extends Command
                 $emailData['attach_file'] = null;
 
                 // \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-                dispatch(new AddMailToQueueJob($to, $emailTemplate->subject, $emailTemplate->email_content,
-                    $emailTemplate->from_email, null, null,
-                    'courses-taken', $courseTaken->id));
+                if(!$courseTaken->user->is_disabled) {
+                    dispatch(new AddMailToQueueJob($to, $emailTemplate->subject, $emailTemplate->email_content,
+                        $emailTemplate->from_email, null, null,
+                        'courses-taken', $courseTaken->id));
 
-                CronLog::create(['activity' => 'AutoRenewReminder CRON sent email to '.$to]);
+                    CronLog::create(['activity' => 'AutoRenewReminder CRON sent email to '.$to]);
+                }
 
             }
         }

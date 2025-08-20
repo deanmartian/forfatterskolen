@@ -102,60 +102,62 @@ class WebinarPakkeExpiresInAWeek extends Command
                     'payment_mode' => 'Faktura',
                 ];
 
-                $invoice = new FikenInvoice;
-                $invoice->create_invoice($invoice_fields);
+                if (!$user->is_disabled) {
+                    $invoice = new FikenInvoice;
+                    $invoice->create_invoice($invoice_fields);
 
-                // update all the started at of each courses taken
-                foreach ($courseTaken->user->coursesTaken as $coursesTaken) {
-                    $formerCourse = $courseTaken->user->coursesTakenOld()->pluck('id')->toArray();
+                    // update all the started at of each courses taken
+                    foreach ($courseTaken->user->coursesTaken as $coursesTaken) {
+                        $formerCourse = $courseTaken->user->coursesTakenOld()->pluck('id')->toArray();
 
-                    if (! in_array($coursesTaken->id, $formerCourse)) {
-                        // check if course taken have set end date and add one year to it
-                        if ($coursesTaken->end_date) {
-                            $addYear = date('Y-m-d', strtotime(date('Y-m-d', strtotime($coursesTaken->end_date)).' + 1 year'));
-                            $coursesTaken->end_date = $addYear;
+                        if (! in_array($coursesTaken->id, $formerCourse)) {
+                            // check if course taken have set end date and add one year to it
+                            if ($coursesTaken->end_date) {
+                                $addYear = date('Y-m-d', strtotime(date('Y-m-d', strtotime($coursesTaken->end_date)).' + 1 year'));
+                                $coursesTaken->end_date = $addYear;
+                            }
+
+                            // $coursesTaken->started_at = Carbon::now();
+                            $coursesTaken->renewed_at = Carbon::now();
+                            $coursesTaken->save();
                         }
-
-                        // $coursesTaken->started_at = Carbon::now();
-                        $coursesTaken->renewed_at = Carbon::now();
-                        $coursesTaken->save();
                     }
+
+                    // create order record
+                    $newOrder['user_id'] = $courseTaken->user->id;
+                    $newOrder['item_id'] = $package->course_id;
+                    $newOrder['type'] = Order::COURSE_TYPE;
+                    $newOrder['package_id'] = $package->id;
+                    $newOrder['plan_id'] = 8; // Full payment
+                    $newOrder['price'] = $price / 100;
+                    $newOrder['discount'] = 0;
+                    $newOrder['payment_mode_id'] = 3; // Faktura
+                    $newOrder['is_processed'] = 1;
+                    $order = Order::create($newOrder);
+
+                    // add to automation
+                    $user_email = $courseTaken->user->email;
+                    $automation_id = 73;
+                    $user_name = $courseTaken->user->first_name;
+
+                    AdminHelpers::addToAutomation($user_email, $automation_id, $user_name);
+
+                    // Email to support
+                    $from = 'postmail@forfatterskolen.no';
+                    $to = 'support@forfatterskolen.no';
+                    /*AdminHelpers::send_email('All Courses Renewed',
+                        $from, $to,
+                        $user_name . ' has renewed all the courses');*/
+                    $emailData = [
+                        'email_subject' => 'All Courses Renewed',
+                        'email_message' => $user_name.' has renewed all the courses',
+                        'from_name' => '',
+                        'from_email' => $from,
+                        'attach_file' => null,
+                    ];
+                    \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+                    CronLog::create(['activity' => 'WebinarPakkeExpiresInAWeek CRON renewed the courses for user '.$user->id]);
                 }
-
-                // create order record
-                $newOrder['user_id'] = $courseTaken->user->id;
-                $newOrder['item_id'] = $package->course_id;
-                $newOrder['type'] = Order::COURSE_TYPE;
-                $newOrder['package_id'] = $package->id;
-                $newOrder['plan_id'] = 8; // Full payment
-                $newOrder['price'] = $price / 100;
-                $newOrder['discount'] = 0;
-                $newOrder['payment_mode_id'] = 3; // Faktura
-                $newOrder['is_processed'] = 1;
-                $order = Order::create($newOrder);
-
-                // add to automation
-                $user_email = $courseTaken->user->email;
-                $automation_id = 73;
-                $user_name = $courseTaken->user->first_name;
-
-                AdminHelpers::addToAutomation($user_email, $automation_id, $user_name);
-
-                // Email to support
-                $from = 'postmail@forfatterskolen.no';
-                $to = 'support@forfatterskolen.no';
-                /*AdminHelpers::send_email('All Courses Renewed',
-                    $from, $to,
-                    $user_name . ' has renewed all the courses');*/
-                $emailData = [
-                    'email_subject' => 'All Courses Renewed',
-                    'email_message' => $user_name.' has renewed all the courses',
-                    'from_name' => '',
-                    'from_email' => $from,
-                    'attach_file' => null,
-                ];
-                \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-                CronLog::create(['activity' => 'WebinarPakkeExpiresInAWeek CRON renewed the courses for user '.$user->id]);
             }
         }
 

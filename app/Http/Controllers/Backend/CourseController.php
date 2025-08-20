@@ -575,8 +575,10 @@ class CourseController extends Controller
                 $emailData['from_email'] = $from_email;
                 $emailData['attach_file'] = null;
                 // \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
-                dispatch(new AddMailToQueueJob($email, $subject, $message.$attachmentText, $from_email,
+                if (!$user->is_disabled) {
+                    dispatch(new AddMailToQueueJob($email, $subject, $message.$attachmentText, $from_email,
                     $from_name, null, 'courses-taken', $learner->id));
+                }
             }
 
             $selected_learners = null;
