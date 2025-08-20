@@ -325,13 +325,20 @@ class AdminController extends Controller
 
         $unfinishedAssignments = AssignmentManuscript::whereHas('assignment', function ($query) {
             $query->where('for_editor', 0);
-        })->with('user')
-            ->where(function ($query) {
-                $query->where('editor_id', 0)
-                    ->where('status', 0);
+        })
+        ->with('user')
+        ->where(function ($query) {
+            $query->where(function ($q) {
+                $q->where('editor_id', 0)
+                ->where('status', 0);
             })
-            ->latest()
-            ->get();
+            ->orWhere(function ($q) {
+                $q->where('editor_id', '!=', 0)
+                ->where('has_feedback', 0);
+            });
+        })
+        ->latest()
+        ->get();
 
         $unfinishedShopManuscripts = ShopManuscriptsTaken::whereHas('admin')
             ->whereDoesntHave('feedbacks', function ($query) {
