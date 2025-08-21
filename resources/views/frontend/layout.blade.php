@@ -53,6 +53,9 @@
                 (strpos(url()->current(), 'checkout') !== false ? $checkoutTitle : $genericTitle);
             $meta_description = $pageMeta ? $pageMeta->meta_description :
                 (strpos(url()->current(), 'checkout') !== false ? $checkoutDescription : $genericDescription);
+
+            $defaultKeywords = 'forfatterskolen, forfatterkurs, manusutvikling, manuskript, dikt, sakprosa, serieroman, krim, roman';
+            $meta_keywords = $pageMeta && $pageMeta->meta_keywords ? $pageMeta->meta_keywords : $defaultKeywords;
         ?>
 
         {{--@if ($pageMeta)--}}
@@ -82,7 +85,7 @@
 
         <!-- use meta title first before the title on the actual page added-->
         @yield('title')
-        <meta name="keywords" content="forfatterskolen, forfatter, kurs, manusutvikling, manus, manuskript, kikt, sakprosa, serieroman, krim, roman">
+        <meta name="keywords" content="{{ $meta_keywords }}">
         <meta name="nosnippets">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
