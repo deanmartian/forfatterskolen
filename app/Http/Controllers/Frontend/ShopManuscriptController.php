@@ -770,6 +770,8 @@ class ShopManuscriptController extends Controller
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
 
         $word_count = 0;
+        $isManuscriptUploaded = false;
+
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
             $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
             $original_filename = $request->manuscript->getClientOriginalName();
@@ -804,6 +806,8 @@ class ShopManuscriptController extends Controller
             $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
             $shopManuscriptTaken->file = '/'.$filePath;
             $shopManuscriptTaken->words = $word_count;
+
+            $isManuscriptUploaded = true; // just to check if need to inform editor or not
         }
 
         if ($request->hasFile('synopsis') && $request->file('synopsis')->isValid()) {
@@ -860,6 +864,29 @@ class ShopManuscriptController extends Controller
             $shopManuscriptTaken->coaching_time_later = $request->has('coaching_time_later') ? 1 : 0;
             $shopManuscriptTaken->save();
 
+            // notify editor if manuscript is updated
+            if ($isManuscriptUploaded && $shopManuscriptTaken->feedback_user_id) {
+                $emailTemplate = AdminHelpers::emailTemplate('Manuscript Uploaded');
+                $email_content = str_replace([
+                    ':manuscript_from',
+                    ':learner',
+                ], [
+                    "<em>" . $shopManuscriptTaken->shop_manuscript->title . "</em>",
+                    "<b>" . Auth::user()->full_name . "</b>",
+                ], $emailTemplate->email_content);
+
+                $editor = User::find($shopManuscriptTaken->feedback_user_id);
+                $to = $editor->email;
+                $emailData = [
+                    'email_subject' => $emailTemplate->subject,
+                    'email_message' => $email_content,
+                    'from_name' => '',
+                    'from_email' => $emailTemplate->from_email,
+                    'attach_file' => null,
+                ];
+                \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            }
+
             Log::create([
                 'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for shop manuscript  '.$shopManuscriptTaken->shop_manuscript->title,
             ]);
@@ -879,7 +906,10 @@ class ShopManuscriptController extends Controller
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
-            return redirect()->back();
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
+                'alert_type' => 'success',
+            ]);
         }
     }
 

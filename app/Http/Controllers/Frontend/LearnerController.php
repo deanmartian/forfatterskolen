@@ -2807,6 +2807,28 @@ class LearnerController extends Controller
 
             $publishing->manuscript = $filesWithPath = trim($filesWithPath, ', ');
             $publishing->word_count = $word_count;
+
+            if($publishing->editor_id) {
+                $emailTemplate = AdminHelpers::emailTemplate('Manuscript Uploaded');
+                $email_content = str_replace([
+                    ':manuscript_from',
+                    ':learner',
+                ], [
+                    "<em>" . $publishing->title . "</em>",
+                    "<b>" . Auth::user()->full_name . "</b>",
+                ], $emailTemplate->email_content);
+
+                $editor = User::find($publishing->editor_id);
+                $to = $editor->email;
+                $emailData = [
+                    'email_subject' => $emailTemplate->subject,
+                    'email_message' => $email_content,
+                    'from_name' => '',
+                    'from_email' => $emailTemplate->from_email,
+                    'attach_file' => null,
+                ];
+                \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            }
         }
         $publishing->save();
 
@@ -4456,6 +4478,29 @@ class LearnerController extends Controller
                     File::delete(public_path($oldManuscript));
                 }
 
+                // notify editor if manuscript is updated
+                if ($assignmentManuscript->editor_id) {
+                    $emailTemplate = AdminHelpers::emailTemplate('Manuscript Uploaded');
+                    $email_content = str_replace([
+                        ':manuscript_from',
+                        ':learner',
+                    ], [
+                        "<em>" . $assignmentManuscript->assignment->title . "</em>",
+                        "<b>" . Auth::user()->full_name . "</b>",
+                    ], $emailTemplate->email_content);
+
+                    $editor = User::find($assignmentManuscript->editor_id);
+                    $to = $editor->email;
+                    $emailData = [
+                        'email_subject' => $emailTemplate->subject,
+                        'email_message' => $email_content,
+                        'from_name' => '',
+                        'from_email' => $emailTemplate->from_email,
+                        'attach_file' => null,
+                    ];
+                    \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+                }
+
                 // notify user
                 $user_email = Auth::user()->email;
                 $confirm_email['email_message'] = 'Oppgaven din er levert, har vi problemer med filen vil vi ta kontakt med med deg.';
@@ -4465,9 +4510,9 @@ class LearnerController extends Controller
                 $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
                     Auth::user()->first_name, '');
 
-                dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+                /* dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
                     $emailTemplate->from_email, null, null, 'assignment-manuscripts',
-                    $assignmentManuscript->id));
+                    $assignmentManuscript->id)); */
 
                 return redirect()->back()->with([
                     'errors' => AdminHelpers::createMessageBag('Assignment uploaded successfully.'),
