@@ -59,25 +59,25 @@
                 <li class="nav-item">
                     <a class="nav-link" href="https://twitter.com/Forfatterrektor" target="_blank">
                         <i class="sprite-social twitter-white"></i>
-                        {{--<img src="{{asset('images-new/social-icons/twitter-white.png')}}" class="social-image">--}}
+                        {{--<img src="{{asset('images-new/social-icons/twitter-white.png')}}" class="social-image" alt="Twitter">--}}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank">
                         <i class="sprite-social pinterest-white"></i>
-                        {{--<img src="{{asset('images-new/social-icons/pinterest-white.png')}}" class="social-image">--}}
+                        {{--<img src="{{asset('images-new/social-icons/pinterest-white.png')}}" class="social-image" alt="Pinterest">--}}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="https://www.instagram.com/forfatterskolen_norge/" target="_blank">
                         <i class="sprite-social instagram-white"></i>
-                        {{--<img src="{{asset('images-new/social-icons/instagram-white.png')}}" class="social-image">--}}
+                        {{--<img src="{{asset('images-new/social-icons/instagram-white.png')}}" class="social-image" alt="Instagram">--}}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="https://www.facebook.com/bliforfatter/" target="_blank">
                         <i class="sprite-social facebook-white"></i>
-                        {{--<img src="{{asset('images-new/social-icons/facebook-white.png')}}" class="social-image">--}}
+                        {{--<img src="{{asset('images-new/social-icons/facebook-white.png')}}" class="social-image" alt="Facebook">--}}
                     </a>
                 </li>
             </ul>
@@ -88,7 +88,7 @@
         <div class="container">
             <div class="row justify-content-center text-center">
                 <div class="col-xl-3 col-lg-4 col-md-4">
-                    <img data-src="https://www.forfatterskolen.no/images-new/marker.png" alt="">
+                    <img data-src="https://www.forfatterskolen.no/images-new/marker.png" alt="Adresseikon">
                     <h2 class="mt-4">Adresse</h2>
                     <p class="mt-4">
                         Postboks 9233, 3028 Drammen
@@ -102,7 +102,7 @@
                     </p>
                 </div>
                 <div class="col-xl-3 col-lg-4 col-md-4">
-                    <img data-src="https://www.forfatterskolen.no/images-new/telephone.png" alt="">
+                    <img data-src="https://www.forfatterskolen.no/images-new/telephone.png" alt="Telefonikon">
                     <div class="mt-4 h2">Kontakt Telefon</div>
                     <p class="mt-4">
                         +47 411 23 555

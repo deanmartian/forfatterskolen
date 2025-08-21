@@ -13,7 +13,7 @@
 
 <nav class="navbar navbar-default">
   <div class="navbar-brand-container">
-    <a class="navbar-brand" href="{{url('')}}"><img src="{{asset('images/logo.png')}}"></a>
+    <a class="navbar-brand" href="{{url('')}}"><img src="{{asset('images/logo.png')}}" alt="Forfatterskolen-logo"></a>
   </div>
   <div class="container-fluid">
       <div class="navbar-header">

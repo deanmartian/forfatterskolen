@@ -19,7 +19,7 @@
 
         @if (Route::currentRouteName() === 'learner.invoice')
             <a href="#" data-toggle="modal" data-target="#redeemModal" class="redeem-gift-link">
-                <img src="{{ asset('images-new/icon/gift.png') }}">
+                <img src="{{ asset('images-new/icon/gift.png') }}" alt="Gaveikon">
             </a>
         @endif
         <div class="user-image-container d-inline-block">

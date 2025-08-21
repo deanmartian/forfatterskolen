@@ -40,7 +40,7 @@
                 </div> <!-- end col-md col-sm -->
                 <div class="col-md-7 col-sm-12">
                     <h2>
-                        <img src="{{ asset('images-new/icon/assignment-file.png') }}">{{ $assignment->title }}
+                        <img src="{{ asset('images-new/icon/assignment-file.png') }}" alt="Oppgavefil ikon">{{ $assignment->title }}
                     </h2>
 
                     <p class="description-container">
