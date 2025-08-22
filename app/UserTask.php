@@ -15,7 +15,7 @@ class UserTask extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'assigned_to', 'task', 'status'];
+    protected $fillable = ['user_id', 'assigned_to', 'task', 'status', 'available_date'];
 
     public function user(): BelongsTo
     {

@@ -554,6 +554,7 @@
 							<tr>
 								<th>Task</th>
 								<th>{{ trans('site.assigned-to') }}</th>
+								<th>Available Date</th>
 								<th width="150"></th>
 							</tr>
 						</thead>
@@ -562,6 +563,9 @@
 								<tr>
 									<td>{!! nl2br($task->task) !!}</td>
 									<td>{{ \App\User::find($task->assigned_to)->full_name }}</td>
+									<td>
+										{{ $task->available_date ? \App\Http\FrontendHelpers::formatDate($task->available_date) : '' }}
+									</td>
 									<td>
 										<button class="btn btn-success btn-xs finishTaskBtn" data-toggle="modal"
 												data-target="#finishTaskModal"
@@ -2621,6 +2625,13 @@
 
 					<div class="form-group">
 						<label>
+							Available Date
+						</label>
+						<input type="date" class="form-control" name="available_date" required>
+					</div>
+
+					<div class="form-group">
+						<label>
 							{{ trans('site.assign-to') }}
 						</label>
 						<select name="assigned_to" class="form-control select2" required>
@@ -2682,6 +2693,13 @@
 							Task
 						</label>
 						<textarea name="task" cols="30" rows="10" class="form-control" required></textarea>
+					</div>
+
+					<div class="form-group">
+						<label>
+							Available Date
+						</label>
+						<input type="date" class="form-control" name="available_date" required>
 					</div>
 
 					<div class="form-group">
@@ -5693,6 +5711,7 @@ console.log(record);
         modal.find('form').attr('action', action);
         modal.find('[name=task]').text(fields.task);
         modal.find('[name=user_id]').val(fields.user_id);
+        modal.find('[name=available_date]').val(fields.available_date);
         modal.find('form').find('[name=assigned_to]').val(fields.assigned_to).trigger('change');
 	});
 
