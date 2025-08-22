@@ -559,7 +559,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							@foreach($learner->tasks as $task)
+							@foreach($tasks as $task)
 								<tr>
 									<td>{!! nl2br($task->task) !!}</td>
 									<td>{{ \App\User::find($task->assigned_to)->full_name }}</td>
