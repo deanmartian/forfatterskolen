@@ -16,7 +16,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-4 text-center">
-					<a href="{{ url('') }}" class="footer-brand"><img src="{{asset('images/logo-footer.png')}}"></a>
+                                        <a href="{{ url('') }}" class="footer-brand"><img src="{{asset('images/logo-footer.png')}}" alt="Forfatterskolen-logo"></a>
 				</div>
 
 				<div class="col-md-4">

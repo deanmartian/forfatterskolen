@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
     <head>
         <link rel="manifest" href="{{ asset('manifest.json') }}">
-        <link rel="alternate" href="{{ config('app.url') }}" hreflang="x-default" />
+        {{-- <link rel="alternate" href="{{ config('app.url') }}" hreflang="x-default" /> --}}
+        <link rel="alternate" href="{{ config('app.url') }}" hreflang="no" />
+        <link rel="alternate" href="{{ config('app.url') }}/en" hreflang="en" />
         <link rel="canonical" href="{{ url()->current() }}">
         <!-- Google Tag Manager -->
         <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -20,7 +22,6 @@
         <!-- use meta title first before the title on the actual page added-->
         @yield('title')
         <meta name="keywords" content="forfatterskolen, forfatter, kurs, manusutvikling, manus, manuskript, kikt, sakprosa, serieroman, krim, roman">
-        <meta name="nosnippets">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <meta name="p:domain_verify" content="eca72f9965922b1f82c80a1ef6e62743"/>

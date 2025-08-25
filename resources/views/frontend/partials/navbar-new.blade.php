@@ -20,28 +20,28 @@
                 <a class="nav-link" href="https://twitter.com/Forfatterrektor" target="_blank"
                    title="View twitter page">
                     <i class="sprite-social twitter"></i>
-                    {{--<img src="{{asset('images-new/social-icons/twitter.png')}}" class="social-image">--}}
+                    {{--<img src="{{asset('images-new/social-icons/twitter.png')}}" class="social-image" alt="Twitter">--}}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank"
                    title="View pinterest page">
                     <i class="sprite-social pinterest"></i>
-                    {{--<img src="{{asset('images-new/social-icons/pinterest.png')}}" class="social-image">--}}
+                    {{--<img src="{{asset('images-new/social-icons/pinterest.png')}}" class="social-image" alt="Pinterest">--}}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="https://www.instagram.com/forfatterskolen_norge/" target="_blank"
                     title="View instagram page">
                     <i class="sprite-social instagram"></i>
-                    {{--<img src="{{asset('images-new/social-icons/instagram.png')}}" class="social-image">--}}
+                    {{--<img src="{{asset('images-new/social-icons/instagram.png')}}" class="social-image" alt="Instagram">--}}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="https://www.facebook.com/bliforfatter/" target="_blank"
                     title="View facebook page">
                     <i class="sprite-social facebook"></i>
-                    {{--<img src="{{asset('images-new/social-icons/facebook.png')}}" class="social-image">--}}
+                    {{--<img src="{{asset('images-new/social-icons/facebook.png')}}" class="social-image" alt="Facebook">--}}
                 </a>
             </li>
             @if (Auth::guest())

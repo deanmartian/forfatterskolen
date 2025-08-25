@@ -1859,6 +1859,7 @@ Route::domain($admin)->group(function () {
         Route::post('course_assignment/{id}/approve_feedback/{learner_id}/feedback/{feedback_id}', [Backend\AssignmentGroupController::class, 'approveFeedbackCourse'])->name('head_editor.course_assignment.feedback_approve');
         Route::post('shop-manuscript-taken/{id}/approve-feedback/{learner_id}/feedback/{feedback_id}', [Backend\ShopManuscriptController::class, 'approveFeedback'])->name('head_editor.shop-manuscript-taken-feedback.approve');
         Route::post('other-service/{id}/approve-feedback/{type}', [Backend\OtherServiceController::class, 'approveFeedback'])->name('head_editor.other-service.approve-feedback');
+        Route::post('other-service/{id}/mark-as-finished/coaching-time', [Backend\OtherServiceController::class, 'coachingTimeMarkFinished'])->name('head_editor.other-service.mark-finished');
 
         // editor assignment
         Route::post('editor_assignment_price/save', [Backend\EditorAssignmentPriceController::class, 'save'])->name('editor_assignment_price.save');

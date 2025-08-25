@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
     <head>
         <link rel="manifest" href="{{ asset('manifest.json') }}">
-        <link rel="alternate" href="{{ config('app.url') }}" hreflang="x-default" />
+        <link rel="alternate" href="{{ config('app.url') }}" hreflang="no" />
+        <link rel="alternate" href="{{ config('app.url') }}/en" hreflang="en" />
         <link rel="canonical" href="{{ url()->current() }}">
         <!-- Google Tag Manager -->
         <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -42,12 +43,10 @@
         <?php
             $pageMeta = \App\PageMeta::where('url', url()->current())->first();
 
-            $checkoutTitle = 'Forfatterskolen checkout page where the users could place orders';
-            $checkoutDescription = 'The checkout page is displaying all the possible fields needed and payment options
-                 to choose from for the user and make it easier to order the item';
-            $genericTitle = 'Forfatterskolen page for author';
-            $genericDescription = 'This page belongs to forfatterskolen which would show some items useful for authors to
-            increase their knowledge';
+            $checkoutTitle = 'Forfatterskolens utsjekksside der brukerne kan legge inn bestillinger';
+            $checkoutDescription = 'Utsjekkssiden viser alle nødvendige felt og betalingsalternativer som gjør det enklere for brukeren å bestille varen';
+            $genericTitle = 'Forfatterskolens side for forfattere';
+            $genericDescription = 'Denne siden tilhører Forfatterskolen og viser innhold som hjelper forfattere å øke sin kunnskap';
 
             $meta_title = $pageMeta ? $pageMeta->meta_title :
                 (strpos(url()->current(), 'checkout') !== false ? $checkoutTitle : $genericTitle);
