@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\backend;
 
 use App\AssignmentManuscript;
+use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\EmailTemplate;
@@ -38,6 +39,13 @@ class HeadEditorController extends Controller
                 $query->orWhere('parent', 'assignment');
             })
             ->get();
+        
+        $coachingTimes = CoachingTimerManuscript::where('status', 0)
+            ->where(function($query) {
+                $query->whereNotNull('replay_link');
+                $query->orWhereNotNull('comment');
+                $query->orWhereNotNull('document');
+            })->get();
         $corrections = CorrectionManuscript::where('status', 3)->get();
         $copyEditings = CopyEditingManuscript::where('status', 3)->get();
         $freeManuscripts = FreeManuscript::where('is_feedback_sent', '=', 0)
@@ -51,8 +59,8 @@ class HeadEditorController extends Controller
         $assignmentFeedbackEmailTemplates = EmailTemplate::where('is_assignment_manu_feedback', 1)->get();
 
         return view('backend.head-editor.index', compact('assignedAssignmentManuscripts',
-            'assigned_shop_manuscripts', 'assignedAssignments', 'corrections', 'copyEditings', 'freeManuscripts', 'selfPublishingList',
-            'assignmentFeedbackEmailTemplates'));
+            'assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimes', 'corrections', 'copyEditings', 
+            'freeManuscripts', 'selfPublishingList', 'assignmentFeedbackEmailTemplates'));
     }
 
     public function sendEmail($editor_id, $type, $title, $learner, Request $request): RedirectResponse
