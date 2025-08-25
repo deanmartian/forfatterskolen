@@ -1,10 +1,10 @@
 <nav id="learnerNav" class="navbar navbar-light">
     <a class="navbar-brand" href="javascript:void(0)" style="cursor: default">{{--{{url('')}}--}}
-        <img data-src="https://www.forfatterskolen.no/images-new/logo11.png">
+        <img data-src="https://www.forfatterskolen.no/images-new/logo11.png" alt="Forfatterskolen-logo">
     </a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav">
-        {{--<img src="" alt="">--}}
+        {{--<img src="" alt="Menyikon">--}}
         <i></i>
     </button>
 
@@ -40,25 +40,25 @@
         <li class="nav-item">
             <a class="nav-link" href="https://twitter.com/Forfatterrektor" target="_blank">
                 <i class="sprite-social twitter"></i>
-                {{--<img src="{{asset('images-new/social-icons/twitter.png')}}" class="social-image">--}}
+                {{--<img src="{{asset('images-new/social-icons/twitter.png')}}" class="social-image" alt="Twitter">--}}
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank">
                 <i class="sprite-social pinterest"></i>
-                {{--<img src="{{asset('images-new/social-icons/pinterest.png')}}" class="social-image">--}}
+                {{--<img src="{{asset('images-new/social-icons/pinterest.png')}}" class="social-image" alt="Pinterest">--}}
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="https://www.instagram.com/forfatterskolen_norge/" target="_blank">
                 <i class="sprite-social instagram"></i>
-                {{--<img src="{{asset('images-new/social-icons/instagram.png')}}" class="social-image">--}}
+                {{--<img src="{{asset('images-new/social-icons/instagram.png')}}" class="social-image" alt="Instagram">--}}
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="https://www.facebook.com/bliforfatter/" target="_blank">
                 <i class="sprite-social facebook"></i>
-                {{--<img src="{{asset('images-new/social-icons/facebook.png')}}" class="social-image">--}}
+                {{--<img src="{{asset('images-new/social-icons/facebook.png')}}" class="social-image" alt="Facebook">--}}
             </a>
         </li>
         @if (Auth::guest())
@@ -160,11 +160,11 @@
 
 <div id="mobile-learner-menu" class="navbar navbar-light">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavMobile">
-        <img src="" alt="">
+        <img src="" alt="Åpne meny">
     </button>
 
     <a class="navbar-brand mx-auto" href="{{url('')}}">
-        <img src="{{asset('images-new/logo.png')}}">
+        <img src="{{asset('images-new/logo.png')}}" alt="Forfatterskolen-logo">
     </a>
 </div>
 
