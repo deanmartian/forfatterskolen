@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
     <head>
         <link rel="manifest" href="{{ asset('manifest.json') }}">
-        <link rel="alternate" href="{{ config('app.url') }}" hreflang="x-default" />
+        {{-- <link rel="alternate" href="{{ config('app.url') }}" hreflang="x-default" /> --}}
+        <link rel="alternate" href="{{ config('app.url') }}" hreflang="no" />
+        <link rel="alternate" href="{{ config('app.url') }}/en" hreflang="en" />
         <link rel="canonical" href="{{ url()->current() }}">
         <!-- Google Tag Manager -->
         <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
