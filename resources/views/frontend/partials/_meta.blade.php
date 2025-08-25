@@ -36,7 +36,6 @@
 </title>
 
 <meta name="keywords" content="forfatterskolen, forfatter, kurs, manusutvikling, manus, manuskript, kikt, sakprosa, serieroman, krim, roman">
-<meta name="nosnippets">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 <meta name="p:domain_verify" content="eca72f9965922b1f82c80a1ef6e62743"/>

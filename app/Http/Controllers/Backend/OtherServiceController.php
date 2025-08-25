@@ -593,4 +593,16 @@ class OtherServiceController extends Controller
             'alert_type' => 'success',
         ]);
     }
+
+    public function coachingTimeMarkFinished ($id)
+    {
+        $coaching = CoachingTimerManuscript::findOrFail($id);
+        $coaching->status = 1;
+        $coaching->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Coaching time marked as finished successfully.'),
+            'alert_type' => 'success',
+        ]);
+    }
 }

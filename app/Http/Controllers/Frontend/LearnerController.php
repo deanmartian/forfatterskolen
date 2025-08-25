@@ -2953,7 +2953,8 @@ class LearnerController extends Controller
         $address->save();
 
         $learner = Auth::user();
-        if ($learner->fiken_contact_id && $learner->fiken_contact_id != 'none') {
+        if ($learner->fiken_contact_id && $learner->fiken_contact_id != 'none' 
+            && $learner->activePaidCoursesTakenNotExpired()->count()) {
             dispatch(new UpdateFikenContactDetailsJob($learner));
         }
 

@@ -448,31 +448,6 @@
 				</div>
 			</div>
 
-            <!-- My Coaching Timer -->
-			<!-- <div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>{{ trans('site.my-coaching-timer') }}</h4></div>
-						<table class="table">
-							<thead>
-							<tr>
-								<th>{{ trans('site.learner-id') }}</th>
-								<th>{{ trans('site.approved-date') }}</th>
-								<th>{{ trans('site.session-length') }}</th>
-							</tr>
-							</thead>
-							<tbody>
-							<tr>
-									<td></td>
-									<td></td>
-									<td></td>
-							</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div> -->
-
             <!-- My Correction -->
 			<div class="row">
 				<div class="col-sm-12">
@@ -695,6 +670,57 @@
 									</td>
 								</tr>
 							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<!-- My Coaching Timer -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>{{ trans('site.my-coaching-timer') }}</h4></div>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>{{ trans_choice('site.learners', 1) }}</th>
+									<th>{{ trans('site.approved-date') }}</th>
+									<th>{{ trans('site.session-length') }}</th>
+									<th>{{ trans_choice('site.editors', 1) }}</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach($coachingTimes as $coachingTimer)
+									<tr>
+										<td>
+											<a href="{{ route('admin.learner.show', $coachingTimer->user->id) }}">
+												{{ $coachingTimer->user->full_name }}
+											</a>
+											
+										</td>
+										<td>
+											{{ $coachingTimer->approved_date ?
+											\App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
+											: ''}}
+										</td>
+										<td>
+											{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
+										</td>
+										<td>
+											{{ $coachingTimer->editor->full_name }}
+										</td>
+										<td>
+											<button class="btn btn-success btn-xs finishCoachingTimeBtn" data-toggle="modal" 
+                                            data-target="#finishCoachingTimeModal" 
+                                            data-action="{{ route('head_editor.other-service.mark-finished', $coachingTimer->id) }}">
+                                                Mark as finished
+                                            </button>
+										</td>
+									</tr>
+								@endforeach
+								
 							</tbody>
 						</table>
 					</div>
@@ -1206,6 +1232,26 @@
 	</div>
 </div>
 
+<div id="finishCoachingTimeModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.finish-assignment') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+					{{ trans('site.finish-assignment-question') }}
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-success">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -1356,6 +1402,12 @@
     $(".selfPublishingApproveFeedbackBtn").click(function() {
 		let action = $(this).data('action');
 		let modal = $('#selfPublishingApproveFeedbackModal');
+		modal.find('form').attr('action', action);
+	});
+
+	$(".finishCoachingTimeBtn").click(function() {
+		let action = $(this).data('action');
+		let modal = $('#finishCoachingTimeModal');
 		modal.find('form').attr('action', action);
 	});
 
