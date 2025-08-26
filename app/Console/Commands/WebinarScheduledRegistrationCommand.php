@@ -8,6 +8,7 @@ use App\WebinarRegistrant;
 use App\WebinarScheduledRegistration;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Log;
 
 class WebinarScheduledRegistrationCommand extends Command
 {
@@ -49,6 +50,8 @@ class WebinarScheduledRegistrationCommand extends Command
         $counter = 1;
         $isWebinarPakke = false;
 
+        Log::info("WebinarScheduledRegistration CRON running.");
+
         foreach ($schedules as $schedule) {
 
             $webinar = $schedule->webinar;
@@ -62,10 +65,14 @@ class WebinarScheduledRegistrationCommand extends Command
                     $learners = $webinar->course->webinarLearners->get();
                 }
 
+                $counter = 0;
+                $totalAdded = 0;
+
                 foreach ($learners as $learner) {
                     $user = $learner->user;
 
                     if ($user && ! $isWebinarPakke || ($user && $isWebinarPakke && $user->coursesTakenNotOld2->count() > 0)) {
+                        $counter++;
                         $data = [
                             'id' => $webinar->link,
                             'email' => $user->email,
@@ -92,13 +99,19 @@ class WebinarScheduledRegistrationCommand extends Command
 
                             CronLog::create(['activity' => 'WebinarScheduledRegistration added '.$user->email.
                                 ' to bigmarker webinar '.$webinar->link.'.']);
+
+                            $totalAdded++;
                         }
                     }
                 }
+
+                Log::info("total to be added to webinar $webinar->title = " . $counter);
+                Log::info("total inserted to webinar $webinar->title = " . $totalAdded);
             }
 
         }
 
         CronLog::create(['activity' => 'WebinarScheduledRegistration CRON done running.']);
+        Log::info("WebinarScheduledRegistration CRON done running.");
     }
 }
