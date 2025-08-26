@@ -90,7 +90,7 @@ class WebinarScheduledRegistrationCommand extends Command
                         $response = curl_exec($ch);
                         $decoded_response = json_decode($response);
 
-                        if (property_exists($decoded_response, 'conference_url')) {
+                        if (is_object($decoded_response) && property_exists($decoded_response, 'conference_url')) {
                             $registrant['user_id'] = $user->id;
                             $registrant['webinar_id'] = $webinar->id;
                             $webRegister = WebinarRegistrant::firstOrNew($registrant);
@@ -101,6 +101,13 @@ class WebinarScheduledRegistrationCommand extends Command
                                 ' to bigmarker webinar '.$webinar->link.'.']);
 
                             $totalAdded++;
+                        } else {
+                            Log::info("processing data for " . $user->email);
+                            Log::info(json_encode($data));
+                            // Handle failure gracefully
+                            Log::error('Webinar API response missing conference_url', [
+                                'response' => $response
+                            ]);
                         }
                     }
                 }
