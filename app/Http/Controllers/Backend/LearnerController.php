@@ -297,7 +297,7 @@ class LearnerController extends Controller
 
     }
 
-    public function removeLearner(Request $request): RedirectResponse
+    public function removeLearner(Request $request)/* : RedirectResponse */
     {
         $learner = User::findOrFail($request->learner_id);
         $package = Package::findOrFail($request->package_id);
@@ -320,6 +320,16 @@ class LearnerController extends Controller
                 ->where('parent_id', $courseTaken->id)->delete();*/
 
             if ($request->has('is_permanent')) {
+                if ($courseTaken->is_pay_later) {
+                    Order::where(
+                        [
+                            'user_id' => $courseTaken->user_id,
+                            'package_id' => $courseTaken->package_id,
+                            'is_processed' => 1,
+                            'is_pay_later' => 1
+                        ]
+                    )->delete();
+                }
                 $courseTaken->forceDelete();
             } else {
                 $courseTaken->delete();
