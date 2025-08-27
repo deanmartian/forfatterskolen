@@ -6,6 +6,7 @@
 
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <link rel="alternate" href="{{ config('app.url') }}" hreflang="x-default" />
+    <link rel="alternate" href="{{ url()->current() }}" hreflang="{{ app()->getLocale() }}" />
     <link rel="canonical" href="{{ url()->current() }}">
 
     <!-- Google Tag Manager -->
