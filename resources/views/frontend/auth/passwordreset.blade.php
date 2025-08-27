@@ -1,17 +1,15 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>
-@if(!Request::input('t'))
-Login 
-@elseif(Request::input('t') == 'register')
-Register
-@elseif(Request::input('t') == 'passwordreset')
-Password Reset
-@endif
-&rsaquo; Forfatterskolen
-</title>
-@stop
+@php
+    if(!Request::input('t')) {
+        $pageTitle = 'Login';
+    } elseif(Request::input('t') == 'register') {
+        $pageTitle = 'Register';
+    } elseif(Request::input('t') == 'passwordreset') {
+        $pageTitle = 'Password Reset';
+    }
+@endphp
+@section('title', $pageTitle . ' &rsaquo; Forfatterskolen')
 
 @section('content')
 <div class="container login-container">

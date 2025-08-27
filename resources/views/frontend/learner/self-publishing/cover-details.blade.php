@@ -9,9 +9,7 @@
     </style>
 @stop
 
-@section('title')
-    <title>Cover Details &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Cover Details &rsaquo; Forfatterskolen")
 
 @section('content')
 

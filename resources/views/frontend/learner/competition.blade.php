@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Konkurranser &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Konkurranser &rsaquo; Forfatterskolen")
 
 @section('content')
     <div class="learner-container learner-competition">

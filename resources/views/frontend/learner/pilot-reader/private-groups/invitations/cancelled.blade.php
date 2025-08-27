@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Invitation Cancelled &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Invitation Cancelled &rsaquo; Forfatterskolen")
 
 @section('content')
     <div class="account-container">

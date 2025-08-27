@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>{{$course->title}} &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', $course->title . " &rsaquo; Forfatterskolen")
 
 @section('metas')
 	<meta property="og:title" content="{{ $course->meta_title }}">
@@ -23,9 +21,6 @@
 	<meta name="twitter:description" content="{{ $course->meta_description }}" />
 	<meta property="fb:app_id" content="300010277156315" />
 
-	<title>
-		{{ $course->meta_title }}
-	</title>
 @stop
 
 @section('styles')

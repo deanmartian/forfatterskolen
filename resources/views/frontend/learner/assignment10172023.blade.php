@@ -30,9 +30,7 @@
 	</style>
 @stop
 
-@section('title')
-<title>Assignments &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Assignments &rsaquo; Forfatterskolen")
 
 @section('content')
 

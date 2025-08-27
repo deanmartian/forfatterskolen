@@ -1,9 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-<title>Profile &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Profile &rsaquo; Forfatterskolen")
 
 @section('styles')
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">

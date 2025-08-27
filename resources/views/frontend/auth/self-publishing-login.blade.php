@@ -1,10 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>
-	Login &rsaquo; Forfatterskolen
-</title>
-@stop
+@section('title', 'Login &rsaquo; Forfatterskolen')
 
 @section('content')
 <div class="login-container" data-bg="https://www.forfatterskolen.no/images-new/login/login-bg.jpg">

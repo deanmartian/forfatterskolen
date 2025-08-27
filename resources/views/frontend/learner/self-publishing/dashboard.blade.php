@@ -1,8 +1,6 @@
 @extends('frontend.learner.self-publishing.layout')
 
-@section('title')
-<title>Dashboard &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Dashboard &rsaquo; Forfatterskolen")
 
 @section('styles')
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">

@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Invitation Declined &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Invitation Declined &rsaquo; Forfatterskolen")
 
 @section('heading') Invitation Cancelled @stop
 

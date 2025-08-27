@@ -1,9 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-<title>Mine Kurs &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Mine Kurs &rsaquo; Forfatterskolen")
 
 @section('heading') {{ trans('site.learner.my-course') }} @stop
 

@@ -1,8 +1,6 @@
 @extends('frontend.learner.self-publishing.layout')
 
-@section('title')
-    <title>Project Storage &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Project Storage &rsaquo; Forfatterskolen")
 
 @section('styles')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" />

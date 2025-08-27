@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Service Calculator</title>
-@stop
+@section('title', "Service Calculator")
 
 @section('styles')
 <link rel="stylesheet" href="{{asset('css/self-publishing.css?v='.time())}}">

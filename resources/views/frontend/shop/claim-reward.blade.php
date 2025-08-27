@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Claim Reward &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Claim Reward &rsaquo; Forfatterskolen")
 
 @section('content')
 

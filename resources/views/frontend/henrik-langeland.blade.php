@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Henrik Langeland Page</title>
-@stop
+@section('title', "Henrik Langeland Page")
 
 @section('content')
 

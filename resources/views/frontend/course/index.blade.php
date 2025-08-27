@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Courses &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Courses &rsaquo; Forfatterskolen")
 
 @section('content')
 	<div class="course-page">

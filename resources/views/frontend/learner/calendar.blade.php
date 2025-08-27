@@ -1,9 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-<title>Calendar &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Calendar &rsaquo; Forfatterskolen")
 
 @section('styles')
 <link rel="stylesheet" href="{{asset('bootstrap-calendar/css/calendar.min.css')}}">

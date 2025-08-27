@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Checkout &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Checkout &rsaquo; Forfatterskolen")
 
 @section('styles')
 	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">

@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Upgrade &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Upgrade &rsaquo; Forfatterskolen")
 
 @section('heading')
     {{ trans('site.learner.upgrades-text') }} {{$shopManuscriptTaken->shop_manuscript->title}}

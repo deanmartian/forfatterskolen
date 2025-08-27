@@ -77,13 +77,8 @@
             <meta name="twitter:description" content="{{ $meta_description }}" />
             <meta property="fb:app_id" content="300010277156315" />
 
-            <title>
-                {{ $meta_title }}
-            </title>
+            <title>@yield('title')</title>
         {{--@endif--}}
-
-        <!-- use meta title first before the title on the actual page added-->
-        @yield('title')
         <meta name="keywords" content="{{ $meta_keywords }}">
         <meta name="nosnippets">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">

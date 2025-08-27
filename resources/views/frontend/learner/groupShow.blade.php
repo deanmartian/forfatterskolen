@@ -1,9 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-<title>{{ $group->title }} &rsaquo; Assignments &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', $group->title  . " &rsaquo; Assignments &rsaquo; Forfatterskolen")
 
 @section('content')
 

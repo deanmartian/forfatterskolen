@@ -1,9 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-    <title>Upgrade &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Upgrade &rsaquo; Forfatterskolen")
 
 @section('styles')
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">

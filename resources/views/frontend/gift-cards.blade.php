@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Gift Cards &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Gift Cards &rsaquo; Forfatterskolen")
 
 @section('content')
 

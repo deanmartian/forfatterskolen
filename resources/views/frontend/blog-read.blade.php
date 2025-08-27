@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>{{ $blog->title }}</title>
-@stop
+@section('title', $blog->title)
 
 @section('metas')
     <meta property="og:url"           content="{{ route('front.read-blog', $blog->id) }}" />

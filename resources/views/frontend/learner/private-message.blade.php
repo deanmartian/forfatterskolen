@@ -1,9 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-    <title>Mesages &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', "Mesages &rsaquo; Forfatterskolen")
 
 @section('heading') Private beskjeder @stop
 

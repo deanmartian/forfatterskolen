@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>{{ $solution->title }} Articles &rsaquo; Forfatterskolen</title>
-@stop
+@section('title', $solution->title  . " Articles &rsaquo; Forfatterskolen")
 
 @section('content')
     <div class="container">
