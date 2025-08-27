@@ -247,7 +247,7 @@ class LearnerController extends Controller
         $projects = Project::where('user_id', $learner->id)->get();
         $bookSale = new UserBookSale;
         $bookSaleTypes = $bookSale->saleTypes();
-        $tasks = $learner->tasks()->where('available_date', "<=", today()->format('Y-m-d'))->get();
+        $tasks = $learner->tasks()->get();
 
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList',
