@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use Artisan;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -89,9 +90,29 @@ class QueueJobController extends Controller
 
     public function isQueueWorkerRunning()
     {
-        $output = [];
+        /* $output = [];
         exec("ps aux | grep 'queue:work' | grep -v grep", $output);
 
-        return count($output) > 0;
+        return count($output) > 0; */
+
+        $pending = DB::table('jobs')->count();
+
+        if ($pending === 0) {
+            return true; // no jobs pending
+        }
+
+        $jobs = DB::table('jobs')->orderBy('available_at')->get();
+
+        foreach ($jobs as $job) {
+            $availableAt = Carbon::createFromTimestamp($job->available_at);
+            $diff = $availableAt->diffInMinutes(now(), false);
+
+            // If job became available more than 5 minutes ago → workers are NOT running
+            if ($diff > 5) {
+                return false;
+            }
+        }
+
+        return true; // no overdue jobs
     }
 }
