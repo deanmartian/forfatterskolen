@@ -125,7 +125,11 @@ class PageController extends Controller
             ->where('has_feedback', '=', 0)
             ->get();
         $pendingTasks = UserTask::where('assigned_to', Auth::user()->id)
-            ->where('status', 0)->where('available_date', "<=", today()->format('Y-m-d'))->get();
+            ->where('status', 0)->where(function($query){
+                $query->whereNull('available_date')
+                    ->orWhere('available_date', "<=", today()->format('Y-m-d'));
+
+            })->get();
         $pendingProjectTasks = ProjectTask::where('assigned_to', Auth::user()->id)
             ->where('status', 0)->get();
 
