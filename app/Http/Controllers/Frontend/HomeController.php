@@ -113,6 +113,11 @@ class HomeController extends Controller
             'upcomingSections'));
     }
 
+    public function sampleAbout()
+    {
+        return view('frontend.about');
+    }
+
     public function fbLeads(Request $request, CourseService $courseService)
     {
         \Log::info('FACEBOOK LEADS HERE');
@@ -1864,7 +1869,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             return redirect()->route('front.thank-you');
         }
 
-        return redirect()->to('/');
+        return redirect()->route('learner.webinar');
     }
 
     /**
