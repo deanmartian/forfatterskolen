@@ -57,6 +57,7 @@ use App\Workshop;
 use App\WorkshopMenu;
 use App\WorkshopsTaken;
 use App\WorkshopTakenCount;
+use App\Console\Commands\CheckFikenContactCommand;
 use Carbon\Carbon;
 use DB;
 use File;
@@ -286,6 +287,10 @@ class LearnerController extends Controller
                 $address->zip = $request->zip;
                 $address->city = $request->city;
                 $address->save();
+
+                if (! $learner->fiken_contact_id || $learner->fiken_contact_id == 'none') {
+                    CheckFikenContactCommand::updateFikenContactId($learner);
+                }
 
                 if ($learner->fiken_contact_id && $learner->fiken_contact_id != 'none') {
                     dispatch(new UpdateFikenContactDetailsJob($learner));
