@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\Backend;
 use App\Http\Controllers\Editor;
+use App\Http\Controllers\Editor\CoachingTimeController;
 use App\Http\Controllers\Frontend;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaypalController;
@@ -1936,6 +1937,11 @@ Route::domain($editor)->group(function () {
         Route::get('/other-service/{id}/download/{type}', [Backend\OtherServiceController::class, 'downloadOtherServiceDoc'])->name('editor.other-service.download-doc'); // Download assignment feedback
         Route::post('/other-service/{id}/coaching-timer/set_replay', [Backend\OtherServiceController::class, 'editorSetReplay'])->name('editor.other-service.coaching-timer.set_replay');
         Route::get('settings', [Backend\EditorController::class, 'settings'])->name('editor.settings');
+        Route::prefix('/time-slots')->name('editor.time-slots.')->group(function () {
+            Route::get('fetch', [Backend\EditorController::class, 'fetchTimeSlot'])->name('fetch');
+            Route::post('/', [Backend\EditorController::class, 'storeTimeSlot'])->name('store');
+            Route::delete('{id}', [Backend\EditorController::class, 'destroyTimeSlot'])->name('destroy');
+        });
         Route::post('saveGenrePrefences/{from_admin}', [Backend\EditorController::class, 'saveGenrePrefences'])->name('editor.save-genre-prefences');
         Route::post('deleteGenrePreferences/{id}', [Backend\EditorController::class, 'deleteGenrePreferences'])->name('editor.delete-genre-preferences');
         Route::post('saveAssignmentManuscriptEditorCanTake/{id}/{assignment_manu_id}', [Backend\EditorController::class, 'saveAssignmentManuscriptEditorCanTake'])->name('editor.saveAssignmentManuscriptEditorCanTake');
@@ -1952,6 +1958,12 @@ Route::domain($editor)->group(function () {
         Route::get('/time-register/{id}/time-used-list', [Backend\TimeRegisterController::class, 'timeUsedList']);
         Route::post('/time-register/{id}/save-time-used', [Backend\TimeRegisterController::class, 'saveTimeUsed']);
         Route::delete('/time-register/time-used/{id}/delete', [Backend\TimeRegisterController::class, 'deleteTimeUsed']);
+
+        Route::prefix('/coaching-time')->name('editor.coaching-time.')->group(function () {
+            Route::controller(CoachingTimeController::class)->group(function() {
+                Route::get('/', 'index')->name('index');
+            });
+        });
     });
 
     // Authentication
