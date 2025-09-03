@@ -47,7 +47,7 @@
 @stop
 
 @section('content')
-    <div class="container-fluid coaching-time-index">
+    <div class="container-fluid coaching-time-index dashboard-left">
         <div class="row" style="margin-bottom:20px;">
             <div class="col-sm-3">
                 <div class="stats-card">
@@ -83,7 +83,10 @@
                     </div>
                     <div class="panel-body">
                         <p>Klikk på kalenderen for manuelt gjennomgang av redaksjonstimer</p>
-                        <a href="#" class="btn btn-default btn-block" style="margin-bottom:15px;">Åpne Redaktørkalender</a>
+                        <a href="{{ route('editor.coaching-time.calendar') }}" class="btn btn-default btn-block" 
+                        style="margin-bottom:15px;">
+                            Åpne Redaktørkalender
+                        </a>
                         <a href="#" class="btn btn-default btn-block">Gjenåpne Redaksjonstimer</a>
                     </div>
                 </div>
