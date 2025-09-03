@@ -47,6 +47,14 @@
         background: #000000;
         color: #ffffff;
     }
+
+    #editorAccordion a {
+        color: #862736;
+    }
+
+    #editorAccordion a:hover {
+        text-decoration: underline;
+    }
 </style>
 @stop
 
@@ -141,14 +149,15 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="availableTimesModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div id="availableTimesModal" class="modal fade" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title">Tilgjengelige Tider</h4>
+
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">Tilgjengelige Tider</h4>
             </div>
             <div class="modal-body">
                 <div class="panel-group" id="editorAccordion" role="tablist" aria-multiselectable="true">
@@ -158,7 +167,7 @@
                                 <div class="panel-heading" role="tab" id="heading{{ $editorId }}">
                                     <h4 class="panel-title">
                                         <a role="button" data-toggle="collapse" data-parent="#editorAccordion" href="#collapse{{ $editorId }}" aria-expanded="false" aria-controls="collapse{{ $editorId }}">
-                                            {{ $editorSlots->first()->editor->name }}
+                                            {{ $editorSlots->first()->editor->full_name }}
                                         </a>
                                     </h4>
                                 </div>
