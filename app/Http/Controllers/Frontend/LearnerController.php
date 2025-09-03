@@ -11,6 +11,8 @@ use App\AssignmentGroup;
 use App\AssignmentGroupLearner;
 use App\AssignmentManuscript;
 use App\CalendarNote;
+use App\EditorTimeSlot;
+use App\CoachingTimeRequest;
 use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
 use App\Contract;
@@ -5694,6 +5696,39 @@ class LearnerController extends Controller
         return response()->json([
             'message' => $decode ? $decode->message : '',
         ], $httpcode);
+    }
+
+    public function coachingTime()
+    {
+        $coachingTimer = CoachingTimerManuscript::where("user_id", Auth::id())
+            ->whereNull("editor_id")
+            ->first();
+
+        $editors = EditorTimeSlot::with("editor")
+            ->whereDoesntHave("requests", function($q){
+                $q->where("status", "accepted");
+            })
+            ->orderBy("date")
+            ->get()
+            ->groupBy("editor_id");
+
+        return view("frontend.learners.coaching-time", compact("editors", "coachingTimer"));
+    }
+
+    public function requestCoachingTime(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            "coaching_timer_id" => "required|exists:coaching_timer_manuscripts,id",
+            "editor_time_slot_id" => "required|exists:editor_time_slots,id",
+        ]);
+
+        CoachingTimeRequest::create([
+            "coaching_timer_manuscript_id" => $data["coaching_timer_id"],
+            "editor_time_slot_id" => $data["editor_time_slot_id"],
+            "status" => "pending",
+        ]);
+
+        return redirect()->route("learner.coaching-time")->with("success", "Time slot requested.");
     }
 
     public function currentUser()

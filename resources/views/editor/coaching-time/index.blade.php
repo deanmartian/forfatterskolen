@@ -83,8 +83,7 @@
                     </div>
                     <div class="panel-body">
                         <p>Klikk på kalenderen for manuelt gjennomgang av redaksjonstimer</p>
-                        <a href="{{ route('editor.coaching-time.calendar') }}" class="btn btn-default btn-block" 
-                        style="margin-bottom:15px;">
+                        <a href="{{ route('editor.coaching-time.calendar') }}" class="btn btn-default btn-block" style="margin-bottom:15px;">
                             Åpne Redaktørkalender
                         </a>
                         <a href="#" class="btn btn-default btn-block">Gjenåpne Redaksjonstimer</a>
@@ -133,6 +132,43 @@
                                     <td>Utfordring</td>
                                     <td><a href="#" class="btn btn-default btn-xs">Beskrivelse</a></td>
                                 </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Forespørsler fra studenter</h4>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Tid</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($requests as $req)
+                                    <tr>
+                                        <td>{{ $req->manuscript->user->name }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($req->slot->date)->format('d.m.Y') }} {{ $req->slot->start_time }}</td>
+                                        <td>
+                                            <form method="POST" action="{{ route('editor.coaching-time.request.accept', $req->id) }}">
+                                                @csrf
+                                                <button class="btn btn-primary btn-xs">Accept</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="3">Ingen forespørsler.</td></tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
