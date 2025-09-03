@@ -4,6 +4,52 @@
     <title>Coaching Time &rsaquo; Forfatterskolen</title>
 @endsection
 
+@section('styles')
+<style>
+    .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #f5f5f5;
+        line-height: 50px;
+        margin: 0 auto 10px;
+        font-size: 24px;
+    }
+
+    .stats-card {
+        background: #fff;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+    }
+
+    .stats-card h2 {
+        margin: 0;
+        font-size: 36px;
+    }
+
+    .stats-card p {
+        margin: 0;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 12px;
+    }
+
+    .black-btn {
+        width: 100%;
+        border: 1px solid #e4e4e7;
+        background: #ffffff;
+        border-radius: 5px;
+    }
+
+    .black-btn:hover {
+        background: #000000;
+        color: #ffffff;
+    }
+</style>
+@stop
+
 @section('content')
 <div class="learner-container coaching-time-wrapper">
     <div class="container">
@@ -19,63 +65,52 @@
             }, 0);
         @endphp
 
-        <div class="row">
+        <div class="row mb-5">
             <div class="col-sm-3">
-                <div class="panel panel-default text-center">
-                    <div class="panel-heading">Mine Redaktører</div>
-                    <div class="panel-body">
-                        <h3>{{ $editors->count() }}</h3>
-                    </div>
+                <div class="stats-card text-center">
+                    <p>Mine Redaktører</p>
+                    <h2>{{ $editors->count() }}</h2>
                 </div>
             </div>
             <div class="col-sm-3">
-                <div class="panel panel-default text-center">
-                    <div class="panel-heading">Neste Redaksjon</div>
-                    <div class="panel-body">
-                        <h3>-</h3>
-                    </div>
+                <div class="stats-card">
+                    <p>Neste Redaksjon</p>
+                    <h2>-</h2>
                 </div>
             </div>
             <div class="col-sm-3">
-                <div class="panel panel-default text-center">
-                    <div class="panel-heading">Denne Måneden</div>
-                    <div class="panel-body">
-                        <h3>-</h3>
-                    </div>
+                <div class="stats-card">
+                    <p>Denne Måneden</p>
+                    <h2>-</h2>
                 </div>
             </div>
             <div class="col-sm-3">
-                <div class="panel panel-default text-center">
-                    <div class="panel-heading">Ledige Slots</div>
-                    <div class="panel-body">
-                        <h3>{{ $availableSlots }}</h3>
-                    </div>
+                <div class="stats-card">
+                    <p>Ledige Slots</p>
+                    <h2>{{ $availableSlots }}</h2>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+        <div class="row mb-5">
             <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Book Redaksjonstime</div>
-                    <div class="panel-body">
-                        <p>Velg redaktør og tid for å booke din neste sesjon.</p>
-                        @isset($coachingTimer)
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#availableTimesModal">
-                                Se Tilgjengelige Tider
-                            </button>
-                        @else
-                            <p>Ingen coaching time tilgjengelig.</p>
-                        @endisset
-                    </div>
+                <div class="stats-card text-left">
+                    <h3>Book Redaksjonstime</h3>
+                    <span>Velg redaktør og tid for å booke din neste sesjon.</span>
+                    
+                    @isset($coachingTimer)
+                        <button class="btn black-btn mt-4" data-toggle="modal" data-target="#availableTimesModal">
+                            Se Tilgjengelige Tider
+                        </button>
+                    @else
+                        <p>Ingen coaching time tilgjengelig.</p>
+                    @endisset
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Mine Sesjoner</div>
-                    <div class="panel-body">
-                        <p>Ingen kommende sesjoner.</p>
-                    </div>
+                <div class="stats-card text-left">
+                    <h3>Mine Sesjoner</h3>
+                    <span>Ingen kommende sesjoner.</span>
                 </div>
             </div>
         </div>
@@ -105,24 +140,14 @@
     </div>
 </div>
 
-<style>
-    .avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: #f5f5f5;
-        line-height: 50px;
-        margin: 0 auto 10px;
-        font-size: 24px;
-    }
-</style>
-
 <!-- Modal -->
 <div class="modal fade" id="availableTimesModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title">Tilgjengelige Tider</h4>
             </div>
             <div class="modal-body">
