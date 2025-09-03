@@ -41,6 +41,7 @@
         border: 1px solid #e4e4e7;
         background: #ffffff;
         border-radius: 5px;
+        color: #000000;
     }
 
     .black-btn:hover {
