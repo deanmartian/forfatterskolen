@@ -5715,6 +5715,23 @@ class LearnerController extends Controller
         return view("frontend.learner.coaching-time", compact("editors", "coachingTimer"));
     }
 
+    public function availableCoachingTime()
+    {
+        $coachingTimer = CoachingTimerManuscript::where("user_id", Auth::id())
+            ->whereNull("editor_id")
+            ->first();
+
+        $editors = EditorTimeSlot::with("editor")
+            ->whereDoesntHave("requests", function($q){
+                $q->where("status", "accepted");
+            })
+            ->orderBy("date")
+            ->get()
+            ->groupBy("editor_id");
+
+        return view("frontend.learner.coaching-time-available", compact("editors", "coachingTimer"));
+    }
+
     public function requestCoachingTime(Request $request): RedirectResponse
     {
         $data = $request->validate([

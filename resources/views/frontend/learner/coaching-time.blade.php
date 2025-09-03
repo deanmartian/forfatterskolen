@@ -47,14 +47,6 @@
         background: #000000;
         color: #ffffff;
     }
-
-    #editorAccordion a {
-        color: #862736;
-    }
-
-    #editorAccordion a:hover {
-        text-decoration: underline;
-    }
 </style>
 @stop
 
@@ -107,9 +99,9 @@
                     <span>Velg redaktør og tid for å booke din neste sesjon.</span>
                     
                     @isset($coachingTimer)
-                        <button class="btn black-btn mt-4" data-toggle="modal" data-target="#availableTimesModal">
+                        <a href="{{ route('learner.coaching-time.available') }}" class="btn black-btn mt-4">
                             Se Tilgjengelige Tider
-                        </button>
+                        </a>
                     @else
                         <p>Ingen coaching time tilgjengelig.</p>
                     @endisset
@@ -148,56 +140,4 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div id="availableTimesModal" class="modal fade" role="dialog" data-backdrop="static">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Tilgjengelige Tider</h4>
-
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="panel-group" id="editorAccordion" role="tablist" aria-multiselectable="true">
-                    @isset($coachingTimer)
-                        @forelse($editors as $editorId => $editorSlots)
-                            <div class="panel panel-default">
-                                <div class="panel-heading" role="tab" id="heading{{ $editorId }}">
-                                    <h4 class="panel-title">
-                                        <a role="button" data-toggle="collapse" data-parent="#editorAccordion" href="#collapse{{ $editorId }}" aria-expanded="false" aria-controls="collapse{{ $editorId }}">
-                                            {{ $editorSlots->first()->editor->full_name }}
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="collapse{{ $editorId }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{ $editorId }}">
-                                    <div class="panel-body">
-                                        <ul class="list-unstyled">
-                                            @foreach($editorSlots as $slot)
-                                                <li class="clearfix">
-                                                    {{ \Carbon\Carbon::parse($slot->date)->format('d.m.Y') }} {{ $slot->start_time }} ({{ $slot->duration }} min)
-                                                    <form method="POST" action="{{ route('learner.coaching-time.request') }}" class="pull-right">
-                                                        @csrf
-                                                        <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
-                                                        <input type="hidden" name="editor_time_slot_id" value="{{ $slot->id }}">
-                                                        <button type="submit" class="btn btn-xs btn-primary">Book</button>
-                                                    </form>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <p>Ingen tilgjengelige tidsluker.</p>
-                        @endforelse
-                    @else
-                        <p>Ingen coaching time tilgjengelig.</p>
-                    @endisset
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
