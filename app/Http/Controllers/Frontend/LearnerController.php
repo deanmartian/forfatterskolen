@@ -5712,7 +5712,7 @@ class LearnerController extends Controller
             ->get()
             ->groupBy("editor_id");
 
-        return view("frontend.learners.coaching-time", compact("editors", "coachingTimer"));
+        return view("frontend.learner.coaching-time", compact("editors", "coachingTimer"));
     }
 
     public function requestCoachingTime(Request $request): RedirectResponse
