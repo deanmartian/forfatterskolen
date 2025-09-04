@@ -5700,9 +5700,9 @@ class LearnerController extends Controller
 
     public function coachingTime()
     {
-        $coachingTimer = CoachingTimerManuscript::where("user_id", Auth::id())
-            ->whereNull("editor_id")
-            ->first();
+        $coachingTimers = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNull('editor_id')
+            ->get();
 
         $editors = EditorTimeSlot::with('editor')
             ->whereDoesntHave('requests', function ($q) {
@@ -5713,14 +5713,19 @@ class LearnerController extends Controller
             ->get()
             ->groupBy('editor_id');
 
-        return view("frontend.learner.coaching-time", compact("editors", "coachingTimer"));
+        return view('frontend.learner.coaching-time', compact('editors', 'coachingTimers'));
     }
 
-    public function availableCoachingTime()
+    public function availableCoachingTime(Request $request)
     {
-        $coachingTimer = CoachingTimerManuscript::where("user_id", Auth::id())
-            ->whereNull("editor_id")
-            ->first();
+        $timerQuery = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNull('editor_id');
+
+        if ($request->filled('coaching_timer_id')) {
+            $timerQuery->where('id', $request->input('coaching_timer_id'));
+        }
+
+        $coachingTimer = $timerQuery->first();
 
         $editors = EditorTimeSlot::with(['editor', 'requests'])
             ->whereDoesntHave('requests', function ($q) {
@@ -5731,7 +5736,7 @@ class LearnerController extends Controller
             ->get()
             ->groupBy('editor_id');
 
-        return view("frontend.learner.coaching-time-available", compact("editors", "coachingTimer"));
+        return view('frontend.learner.coaching-time-available', compact('editors', 'coachingTimer'));
     }
 
     public function requestCoachingTime(Request $request): RedirectResponse
