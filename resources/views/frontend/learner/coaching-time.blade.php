@@ -57,7 +57,10 @@
         <h1 class="page-title">Coaching Time</h1>
 
         @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+            <div class="alert alert-success">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                {{ session('success') }}
+            </div>
         @endif
 
         @php
