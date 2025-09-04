@@ -13,6 +13,7 @@ use App\AssignmentManuscript;
 use App\CalendarNote;
 use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
+use App\Console\Commands\CheckFikenContactCommand;
 use App\Contract;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -2953,6 +2954,12 @@ class LearnerController extends Controller
         $address->save();
 
         $learner = Auth::user();
+
+        if (! $learner->fiken_contact_id || $learner->fiken_contact_id == 'none'
+            && $learner->activePaidCoursesTakenNotExpired()->count()) {
+            CheckFikenContactCommand::updateFikenContactId($learner);
+        }
+
         if ($learner->fiken_contact_id && $learner->fiken_contact_id != 'none' 
             && $learner->activePaidCoursesTakenNotExpired()->count()) {
             dispatch(new UpdateFikenContactDetailsJob($learner));
