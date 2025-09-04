@@ -376,18 +376,25 @@
                 </div>
         </div>
 
+		<!-- Hidden trigger -->
+		<button id="hiddenTrigger" type="button" data-toggle="modal" data-target="#unsavedAddressModal" style="display:none;"></button>
+
         <div id="unsavedAddressModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
-                <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                                <div class="modal-body">
-                                        <p>Do you want to save the new information?</p>
-                                </div>
-                                <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary save-changes">Yes</button>
-                                        <button type="button" class="btn btn-secondary discard-changes" data-dismiss="modal">No</button>
-                                </div>
-                        </div>
-                </div>
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+							<h3 class="modal-title">Save Changes</h3>
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+							<p>Do you want to save the new information?</p>
+					</div>
+					<div class="modal-footer">
+							<button type="button" class="btn btn-primary save-changes">Yes</button>
+							<button type="button" class="btn btn-secondary discard-changes" data-dismiss="modal">No</button>
+					</div>
+				</div>
+			</div>
         </div>
 
 @stop
@@ -428,7 +435,8 @@
                             if(isDirty){
                                 e.preventDefault();
                                 targetHref = this.href;
-                                $('#unsavedAddressModal').modal('show');
+								document.getElementById('hiddenTrigger').click();
+                                //$('#unsavedAddressModal').modal('show');	
                             }
                         });
                     });
@@ -436,7 +444,8 @@
                         if(isDirty && (e.which === 116 || (e.which === 82 && e.ctrlKey))){
                             e.preventDefault();
                             targetHref = window.location.href;
-                            $('#unsavedAddressModal').modal('show');
+							document.getElementById('hiddenTrigger').click();
+                            //$('#unsavedAddressModal').modal('show');
                         }
                     });
                     $('#unsavedAddressModal .save-changes').on('click', function(){
