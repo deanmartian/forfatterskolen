@@ -5718,14 +5718,16 @@ class LearnerController extends Controller
 
     public function availableCoachingTime(Request $request)
     {
-        $timerQuery = CoachingTimerManuscript::where('user_id', Auth::id())
-            ->whereNull('editor_id');
+        $coachingTimers = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNull('editor_id')
+            ->get();
 
+        $coachingTimer = null;
         if ($request->filled('coaching_timer_id')) {
-            $timerQuery->where('id', $request->input('coaching_timer_id'));
+            $coachingTimer = $coachingTimers->where('id', $request->input('coaching_timer_id'))->first();
+        } elseif ($coachingTimers->count() === 1) {
+            $coachingTimer = $coachingTimers->first();
         }
-
-        $coachingTimer = $timerQuery->first();
 
         $editors = EditorTimeSlot::with(['editor', 'requests'])
             ->whereDoesntHave('requests', function ($q) {
@@ -5736,7 +5738,7 @@ class LearnerController extends Controller
             ->get()
             ->groupBy('editor_id');
 
-        return view('frontend.learner.coaching-time-available', compact('editors', 'coachingTimer'));
+        return view('frontend.learner.coaching-time-available', compact('editors', 'coachingTimer', 'coachingTimers'));
     }
 
     public function requestCoachingTime(Request $request): RedirectResponse
