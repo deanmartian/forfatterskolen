@@ -36,16 +36,23 @@
                 @endphp
 
                 <div class="editor-slots" id="editor-{{ $loop->index }}">
+                    @if($chunks->count() > 1)
+                        <div class="d-flex justify-content-between mb-2">
+                            <button type="button" class="btn btn-secondary btn-sm prev-btn" data-editor="{{ $loop->index }}" disabled>Prev</button>
+                            <button type="button" class="btn btn-secondary btn-sm next-btn" data-editor="{{ $loop->index }}">Next</button>
+                        </div>
+                    @endif
+
                     @foreach($chunks as $page => $chunk)
                         <div class="editor-page" data-page="{{ $page }}" @if($page > 0) style="display:none;" @endif>
                             @foreach($chunk as $date => $slots)
                                 <div class="mb-4">
-                                    <h4>{{ \Carbon\Carbon::parse($date, 'UTC')->setTimezone(config('app.timezone'))->isoFormat('dddd - MMMM D') }}</h4>
+                                    <h4>{{ \Carbon\Carbon::parse($date, 'UTC')->isoFormat('dddd - MMMM D') }}</h4>
                                     <div class="d-flex flex-wrap">
                                         @foreach($slots as $slot)
                                             <div class="slot-card">
                                                 <div><i class="fa fa-clock-o"></i></div>
-                                                <div class="mt-2">{{ \Carbon\Carbon::parse($slot->date.' '.$slot->start_time, 'UTC')->setTimezone(config('app.timezone'))->format('H:i') }}</div>
+                                                <div class="mt-2 slot-time" data-time="{{ \Carbon\Carbon::parse($slot->date.' '.$slot->start_time, 'UTC')->toIso8601String() }}"></div>
                                                 <div>{{ $slot->duration }} min</div>
                                                 <form method="POST" action="{{ route('learner.coaching-time.request') }}" class="mt-2">
                                                     @csrf
@@ -60,13 +67,6 @@
                             @endforeach
                         </div>
                     @endforeach
-
-                    @if($chunks->count() > 1)
-                        <div class="d-flex justify-content-between mt-2">
-                            <button type="button" class="btn btn-secondary btn-sm prev-btn" data-editor="{{ $loop->index }}" disabled>Prev</button>
-                            <button type="button" class="btn btn-secondary btn-sm next-btn" data-editor="{{ $loop->index }}">Next</button>
-                        </div>
-                    @endif
                 </div>
             @endforeach
         @else
@@ -79,6 +79,16 @@
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.slot-time').forEach(function (el) {
+            const dt = new Date(el.dataset.time);
+            let hours = dt.getHours();
+            const minutes = dt.getMinutes();
+            const suffix = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12 || 12;
+            const formatted = minutes ? `${hours}:${String(minutes).padStart(2, '0')}${suffix}` : `${hours}${suffix}`;
+            el.textContent = formatted;
+        });
+
         document.querySelectorAll('.editor-slots').forEach(function (wrapper) {
             const pages = wrapper.querySelectorAll('.editor-page');
             if (pages.length <= 1) {
