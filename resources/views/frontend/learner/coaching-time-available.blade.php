@@ -21,57 +21,66 @@
 @section('content')
 <div class="learner-container coaching-time-wrapper">
     <div class="container">
-        <div class="mb-3">
-            <a href="{{ route('learner.coaching-time') }}" class="btn btn-secondary">Back</a>
-        </div>
-        <h1 class="page-title">Available Time Slots</h1>
+        <div class="card card-global">
+            <div class="card-body">
+                <div class="mb-3">
+                    <a href="{{ route('learner.coaching-time') }}" class="btn btn-secondary">Back</a>
+                </div>
+                <h1 class="page-title">Available Time Slots</h1>
+            
 
-        @isset($coachingTimer)
-            @foreach($editors as $editorSlots)
-                <h3 class="mt-4">Available Time Slots - {{ $editorSlots->first()->editor->full_name }}</h3>
+                @isset($coachingTimer)
+                    @foreach($editors as $editorSlots)
+                        <h3 class="mt-4">Available Time Slots - {{ $editorSlots->first()->editor->full_name }}</h3>
 
-                @php
-                    $dateGroups = $editorSlots->groupBy('date');
-                    $chunks = $dateGroups->chunk(7);
-                @endphp
+                        @php
+                            $dateGroups = $editorSlots->groupBy('date');
+                            $chunks = $dateGroups->chunk(7);
+                        @endphp
 
-                <div class="editor-slots" id="editor-{{ $loop->index }}">
-                    @if($chunks->count() > 1)
-                        <div class="d-flex justify-content-between mb-2">
-                            <button type="button" class="btn btn-secondary btn-sm prev-btn" data-editor="{{ $loop->index }}" disabled>Prev</button>
-                            <button type="button" class="btn btn-secondary btn-sm next-btn" data-editor="{{ $loop->index }}">Next</button>
-                        </div>
-                    @endif
+                        <div class="editor-slots" id="editor-{{ $loop->index }}">
+                            @if($chunks->count() > 1)
+                                <div class="d-flex justify-content-end mb-2">
+                                    <button type="button" class="btn btn-secondary btn-sm prev-btn mr-2 px-3 bg-white" data-editor="{{ $loop->index }}" disabled>
+                                        <i class="fa fa-chevron-left text-dark"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-sm next-btn px-3 bg-white" data-editor="{{ $loop->index }}">
+                                        <i class="fa fa-chevron-right text-dark"></i>
+                                    </button>
+                                </div>
+                            @endif
 
-                    @foreach($chunks as $page => $chunk)
-                        <div class="editor-page" data-page="{{ $page }}" @if($page > 0) style="display:none;" @endif>
-                            @foreach($chunk as $date => $slots)
-                                <div class="mb-4">
-                                    <h4>{{ \Carbon\Carbon::parse($date, 'UTC')->isoFormat('dddd - MMMM D') }}</h4>
-                                    <div class="d-flex flex-wrap">
-                                        @foreach($slots as $slot)
-                                            <div class="slot-card">
-                                                <div><i class="fa fa-clock-o"></i></div>
-                                                <div class="mt-2 slot-time" data-time="{{ \Carbon\Carbon::parse($slot->date.' '.$slot->start_time, 'UTC')->toIso8601String() }}"></div>
-                                                <div>{{ $slot->duration }} min</div>
-                                                <form method="POST" action="{{ route('learner.coaching-time.request') }}" class="mt-2">
-                                                    @csrf
-                                                    <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
-                                                    <input type="hidden" name="editor_time_slot_id" value="{{ $slot->id }}">
-                                                    <button type="submit" class="btn btn-primary btn-sm">Book</button>
-                                                </form>
+                            @foreach($chunks as $page => $chunk)
+                                <div class="editor-page" data-page="{{ $page }}" @if($page > 0) style="display:none;" @endif>
+                                    @foreach($chunk as $date => $slots)
+                                        <div class="mb-4">
+                                            <h4>{{ \Carbon\Carbon::parse($date, 'UTC')->isoFormat('dddd - MMMM D') }}</h4>
+                                            <div class="d-flex flex-wrap">
+                                                @foreach($slots as $slot)
+                                                    <div class="slot-card">
+                                                        <div><i class="fa fa-clock-o"></i></div>
+                                                        <div class="mt-2 slot-time" data-time="{{ \Carbon\Carbon::parse($slot->date.' '.$slot->start_time, 'UTC')->toIso8601String() }}"></div>
+                                                        <div>{{ $slot->duration }} min</div>
+                                                        <form method="POST" action="{{ route('learner.coaching-time.request') }}" class="mt-2">
+                                                            @csrf
+                                                            <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
+                                                            <input type="hidden" name="editor_time_slot_id" value="{{ $slot->id }}">
+                                                            <button type="submit" class="btn btn-primary btn-sm">Book</button>
+                                                        </form>
+                                                    </div>
+                                                @endforeach
                                             </div>
-                                        @endforeach
-                                    </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             @endforeach
                         </div>
                     @endforeach
-                </div>
-            @endforeach
-        @else
-            <p>Ingen coaching time tilgjengelig.</p>
-        @endisset
+                @else
+                    <p>Ingen coaching time tilgjengelig.</p>
+                @endisset
+            </div>
+        </div>
     </div>
 </div>
 @endsection
