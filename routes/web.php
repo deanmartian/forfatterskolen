@@ -1968,6 +1968,7 @@ Route::domain($editor)->group(function () {
                     Route::delete('{id}', 'destroyTimeSlot')->name('destroy');
                 });
                 Route::post('/request/{id}/accept', 'acceptRequest')->name('request.accept');
+                Route::post('/request/{id}/decline', 'declineRequest')->name('request.decline');
             });
         });
     });

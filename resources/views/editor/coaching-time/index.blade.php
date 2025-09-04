@@ -160,9 +160,13 @@
                                         <td>{{ $req->manuscript->user->name }}</td>
                                         <td>{{ \Carbon\Carbon::parse($req->slot->date)->format('d.m.Y') }} {{ $req->slot->start_time }}</td>
                                         <td>
-                                            <form method="POST" action="{{ route('editor.coaching-time.request.accept', $req->id) }}">
+                                            <form method="POST" action="{{ route('editor.coaching-time.request.accept', $req->id) }}" class="d-inline">
                                                 @csrf
                                                 <button class="btn btn-primary btn-xs">Accept</button>
+                                            </form>
+                                            <form method="POST" action="{{ route('editor.coaching-time.request.decline', $req->id) }}" class="d-inline">
+                                                @csrf
+                                                <button class="btn btn-danger btn-xs">Decline</button>
                                             </form>
                                         </td>
                                     </tr>
