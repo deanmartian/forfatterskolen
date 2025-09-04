@@ -5704,13 +5704,14 @@ class LearnerController extends Controller
             ->whereNull("editor_id")
             ->first();
 
-        $editors = EditorTimeSlot::with("editor")
-            ->whereDoesntHave("requests", function($q){
-                $q->where("status", "accepted");
+        $editors = EditorTimeSlot::with('editor')
+            ->whereDoesntHave('requests', function ($q) {
+                $q->where('status', 'accepted');
             })
-            ->orderBy("date")
+            ->orderBy('date')
+            ->orderBy('start_time')
             ->get()
-            ->groupBy("editor_id");
+            ->groupBy('editor_id');
 
         return view("frontend.learner.coaching-time", compact("editors", "coachingTimer"));
     }
@@ -5721,13 +5722,14 @@ class LearnerController extends Controller
             ->whereNull("editor_id")
             ->first();
 
-        $editors = EditorTimeSlot::with("editor")
-            ->whereDoesntHave("requests", function($q){
-                $q->where("status", "accepted");
+        $editors = EditorTimeSlot::with(['editor', 'requests'])
+            ->whereDoesntHave('requests', function ($q) {
+                $q->where('status', 'accepted');
             })
-            ->orderBy("date")
+            ->orderBy('date')
+            ->orderBy('start_time')
             ->get()
-            ->groupBy("editor_id");
+            ->groupBy('editor_id');
 
         return view("frontend.learner.coaching-time-available", compact("editors", "coachingTimer"));
     }
@@ -5735,17 +5737,25 @@ class LearnerController extends Controller
     public function requestCoachingTime(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            "coaching_timer_id" => "required|exists:coaching_timer_manuscripts,id",
-            "editor_time_slot_id" => "required|exists:editor_time_slots,id",
+            'coaching_timer_id'   => 'required|exists:coaching_timer_manuscripts,id',
+            'editor_time_slot_id' => 'required|exists:editor_time_slots,id',
         ]);
+
+        $exists = CoachingTimeRequest::where('coaching_timer_manuscript_id', $data['coaching_timer_id'])
+            ->where('editor_time_slot_id', $data['editor_time_slot_id'])
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', 'You have already requested this time slot.');
+        }
 
         CoachingTimeRequest::create([
-            "coaching_timer_manuscript_id" => $data["coaching_timer_id"],
-            "editor_time_slot_id" => $data["editor_time_slot_id"],
-            "status" => "pending",
+            'coaching_timer_manuscript_id' => $data['coaching_timer_id'],
+            'editor_time_slot_id'          => $data['editor_time_slot_id'],
+            'status'                       => 'pending',
         ]);
 
-        return redirect()->route("learner.coaching-time")->with("success", "Time slot requested.");
+        return redirect()->route('learner.coaching-time')->with('success', 'Time slot requested.');
     }
 
     public function currentUser()

@@ -91,4 +91,18 @@ class CoachingTimeController extends Controller
 
         return redirect()->back()->with('success', 'Request accepted.');
     }
+
+    public function declineRequest($id): RedirectResponse
+    {
+        $request = CoachingTimeRequest::with('slot')->findOrFail($id);
+
+        if ($request->slot->editor_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->status = 'declined';
+        $request->save();
+
+        return redirect()->back()->with('success', 'Request declined.');
+    }
 }

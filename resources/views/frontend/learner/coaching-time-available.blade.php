@@ -34,7 +34,7 @@
                         <h3 class="mt-4">Available Time Slots - {{ $editorSlots->first()->editor->full_name }}</h3>
 
                         @php
-                            $dateGroups = $editorSlots->groupBy('date');
+                            $dateGroups = $editorSlots->groupBy('date')->sortKeys();
                             $chunks = $dateGroups->chunk(7);
                         @endphp
 
@@ -56,17 +56,24 @@
                                         <div class="mb-4">
                                             <h4>{{ \Carbon\Carbon::parse($date, 'UTC')->isoFormat('dddd - MMMM D') }}</h4>
                                             <div class="d-flex flex-wrap">
-                                                @foreach($slots as $slot)
+                                                @foreach($slots->sortBy('start_time') as $slot)
                                                     <div class="slot-card">
                                                         <div><i class="fa fa-clock-o"></i></div>
                                                         <div class="mt-2 slot-time" data-time="{{ \Carbon\Carbon::parse($slot->date.' '.$slot->start_time, 'UTC')->toIso8601String() }}"></div>
                                                         <div>{{ $slot->duration }} min</div>
-                                                        <form method="POST" action="{{ route('learner.coaching-time.request') }}" class="mt-2">
-                                                            @csrf
-                                                            <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
-                                                            <input type="hidden" name="editor_time_slot_id" value="{{ $slot->id }}">
-                                                            <button type="submit" class="btn btn-primary btn-sm">Book</button>
-                                                        </form>
+                                                        @php
+                                                            $requested = $slot->requests->where('coaching_timer_manuscript_id', $coachingTimer->id)->isNotEmpty();
+                                                        @endphp
+                                                        @if($requested)
+                                                            <div class="mt-2 text-muted">Requested</div>
+                                                        @else
+                                                            <form method="POST" action="{{ route('learner.coaching-time.request') }}" class="mt-2">
+                                                                @csrf
+                                                                <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
+                                                                <input type="hidden" name="editor_time_slot_id" value="{{ $slot->id }}">
+                                                                <button type="submit" class="btn btn-primary btn-sm">Book</button>
+                                                            </form>
+                                                        @endif
                                                     </div>
                                                 @endforeach
                                             </div>
