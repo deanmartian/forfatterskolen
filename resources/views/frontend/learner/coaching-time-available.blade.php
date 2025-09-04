@@ -95,8 +95,10 @@
     </div>
 </div>
 @if($coachingTimers->count() > 1)
-    <div class="modal fade" id="selectCoachingTimerModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+<!-- Hidden trigger -->
+<button id="hiddenTrigger" type="button" data-toggle="modal" data-target="#selectCoachingTimerModal" style="display:none;"></button>
+    <div id="selectCoachingTimerModal" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Select Coaching Time</h5>
@@ -118,8 +120,8 @@
                         <input type="hidden" name="editor_time_slot_id" id="modal_editor_time_slot_id">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary">Book</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -183,7 +185,10 @@
             btn.addEventListener('click', function(){
                 const slotId = this.dataset.slotId;
                 document.getElementById('modal_editor_time_slot_id').value = slotId;
-                $('#selectCoachingTimerModal').modal('show');
+
+                // Simulate clicking the hidden trigger (Bootstrap handles it properly)
+                document.getElementById('hiddenTrigger').click();
+                //$('#selectCoachingTimerModal').modal('show');
             });
         });
         @endif
