@@ -329,6 +329,7 @@ Route::domain($front)->group(function () {
         Route::get('/competition', [Frontend\LearnerController::class, 'competition'])->name('learner.competition'); // Competitions Page
         Route::get('/private-message', [Frontend\LearnerController::class, 'privateMessage'])->name('learner.private-message'); // Private Message Page
         Route::get('/coaching-time', [Frontend\LearnerController::class, 'coachingTime'])->name('learner.coaching-time');
+        Route::get('/coaching-time/available', [Frontend\LearnerController::class, 'availableCoachingTime'])->name('learner.coaching-time.available');
         Route::post('/coaching-time/request', [Frontend\LearnerController::class, 'requestCoachingTime'])->name('learner.coaching-time.request');
         Route::get('/time-register', [Frontend\LearnerController::class, 'timeRegister'])->name('learner.time-register');
         Route::get('/book-sale', [Frontend\LearnerController::class, 'bookSale'])->name('learner.book-sale');

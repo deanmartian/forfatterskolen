@@ -5702,10 +5702,35 @@ class LearnerController extends Controller
     {
         $coachingTimers = CoachingTimerManuscript::where('user_id', Auth::id())
             ->whereNull('editor_id')
+            ->get();
+
+        $editors = EditorTimeSlot::with('editor')
+            ->whereDoesntHave('requests', function ($q) {
+                $q->where('status', 'accepted');
+            })
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->get()
+            ->groupBy('editor_id');
+
+        return view('frontend.learner.coaching-time', compact('editors', 'coachingTimers'));
+    }
+
+    public function availableCoachingTime(Request $request)
+    {
+        $coachingTimers = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNull('editor_id')
             ->with(['requests' => function ($q) {
                 $q->where('status', 'pending');
             }])
             ->get();
+
+        $coachingTimer = null;
+        if ($request->filled('coaching_timer_id')) {
+            $coachingTimer = $coachingTimers->where('id', $request->input('coaching_timer_id'))->first();
+        } elseif ($coachingTimers->count() === 1) {
+            $coachingTimer = $coachingTimers->first();
+        }
 
         $editors = EditorTimeSlot::with(['editor', 'requests'])
             ->whereDoesntHave('requests', function ($q) {
@@ -5716,7 +5741,7 @@ class LearnerController extends Controller
             ->get()
             ->groupBy('editor_id');
 
-        return view('frontend.learner.coaching-time', compact('editors', 'coachingTimers'));
+        return view('frontend.learner.coaching-time-available', compact('editors', 'coachingTimer', 'coachingTimers'));
     }
 
     public function requestCoachingTime(Request $request): RedirectResponse
