@@ -29,10 +29,7 @@
                 <h1 class="page-title">Available Time Slots</h1>
 
                 @php
-                    $hasPendingRequest = $coachingTimers->pluck('requests')
-                        ->flatten()
-                        ->where('status', 'pending')
-                        ->isNotEmpty();
+                    $hasPendingRequest = $coachingTimer && $coachingTimer->requests->where('status', 'pending')->isNotEmpty();
                 @endphp
 
                 @if($coachingTimers->count())
