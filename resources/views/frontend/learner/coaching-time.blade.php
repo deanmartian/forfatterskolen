@@ -121,7 +121,7 @@
                             </button>
                         </form>
                     @else
-                        <p>Ingen coaching time tilgjengelig.</p>
+                        <p class="mt-4">Ingen coaching time tilgjengelig.</p>
                     @endif
                 </div>
             </div>
