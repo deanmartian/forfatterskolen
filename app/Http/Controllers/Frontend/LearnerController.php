@@ -5720,6 +5720,9 @@ class LearnerController extends Controller
     {
         $coachingTimers = CoachingTimerManuscript::where('user_id', Auth::id())
             ->whereNull('editor_id')
+            ->with(['requests' => function ($q) {
+                $q->where('status', 'pending');
+            }])
             ->get();
 
         $coachingTimer = null;
