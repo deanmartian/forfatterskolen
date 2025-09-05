@@ -84,6 +84,11 @@ class CoachingTimeController extends Controller
         $request->status = 'accepted';
         $request->save();
 
+        CoachingTimeRequest::where('editor_time_slot_id', $request->editor_time_slot_id)
+            ->where('id', '!=', $request->id)
+            ->where('status', 'pending')
+            ->update(['status' => 'declined']);
+
         $manuscript = $request->manuscript;
         $manuscript->editor_id = Auth::id();
         $manuscript->editor_time_slot_id = $request->editor_time_slot_id;
