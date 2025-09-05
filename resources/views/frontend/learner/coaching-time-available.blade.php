@@ -74,13 +74,15 @@
                                                             <div class="mt-2 text-muted">Requested</div>
                                                         @elseif($hasPendingRequest)
                                                             {{-- No action available while another request is pending --}}
-                                                        @elseif($coachingTimer)
+                                                        @elseif($coachingTimer && (($coachingTimer->plan_type == 1 && $slot->duration == 60) || ($coachingTimer->plan_type == 2 && $slot->duration == 30)))
                                                             <form method="POST" action="{{ route('learner.coaching-time.request') }}" class="mt-2">
                                                                 @csrf
                                                                 <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
                                                                 <input type="hidden" name="editor_time_slot_id" value="{{ $slot->id }}">
                                                                 <button type="submit" class="btn btn-primary btn-sm">Book</button>
                                                             </form>
+                                                        @elseif($coachingTimer)
+                                                            <div class="mt-2 text-muted">Unavailable</div>
                                                         @endif
                                                     </div>
                                                 @endforeach

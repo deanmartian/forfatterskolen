@@ -5751,6 +5751,14 @@ class LearnerController extends Controller
             'editor_time_slot_id' => 'required|exists:editor_time_slots,id',
         ]);
 
+        $timer = CoachingTimerManuscript::find($data['coaching_timer_id']);
+        $slot  = EditorTimeSlot::find($data['editor_time_slot_id']);
+
+        $requiredDuration = $timer->plan_type == 1 ? 60 : 30;
+        if ($slot->duration != $requiredDuration) {
+            return redirect()->back()->with('error', 'Selected time slot duration does not match your plan.');
+        }
+
         $exists = CoachingTimeRequest::where('coaching_timer_manuscript_id', $data['coaching_timer_id'])
             ->where('editor_time_slot_id', $data['editor_time_slot_id'])
             ->exists();
