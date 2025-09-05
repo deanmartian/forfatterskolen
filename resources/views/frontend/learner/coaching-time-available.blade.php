@@ -29,7 +29,6 @@
                 <h1 class="page-title">Available Time Slots</h1>
 
                 @php
-                    $availableTimers = $coachingTimers->filter(fn($t) => $t->requests->isEmpty());
                     $hasPendingRequest = $coachingTimers->pluck('requests')
                         ->flatten()
                         ->where('status', 'pending')
@@ -78,17 +77,13 @@
                                                             <div class="mt-2 text-muted">Requested</div>
                                                         @elseif($hasPendingRequest)
                                                             {{-- No action available while another request is pending --}}
-                                                        @else
-                                                            @if($coachingTimers->count() === 1)
-                                                                <form method="POST" action="{{ route('learner.coaching-time.request') }}" class="mt-2">
-                                                                    @csrf
-                                                                    <input type="hidden" name="coaching_timer_id" value="{{ $availableTimers->first()->id }}">
-                                                                    <input type="hidden" name="editor_time_slot_id" value="{{ $slot->id }}">
-                                                                    <button type="submit" class="btn btn-primary btn-sm">Book</button>
-                                                                </form>
-                                                            @else
-                                                                <button type="button" class="btn btn-primary btn-sm book-btn" data-slot-id="{{ $slot->id }}">Book</button>
-                                                            @endif
+                                                        @elseif($coachingTimer)
+                                                            <form method="POST" action="{{ route('learner.coaching-time.request') }}" class="mt-2">
+                                                                @csrf
+                                                                <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
+                                                                <input type="hidden" name="editor_time_slot_id" value="{{ $slot->id }}">
+                                                                <button type="submit" class="btn btn-primary btn-sm">Book</button>
+                                                            </form>
                                                         @endif
                                                     </div>
                                                 @endforeach
@@ -106,40 +101,6 @@
         </div>
     </div>
 </div>
-@if($coachingTimers->count() > 1)
-<!-- Hidden trigger -->
-<button id="hiddenTrigger" type="button" data-toggle="modal" data-target="#selectCoachingTimerModal" style="display:none;"></button>
-    <div id="selectCoachingTimerModal" class="modal fade" role="dialog" data-backdrop="static">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Select Coaching Time</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form method="POST" action="{{ route('learner.coaching-time.request') }}">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="modal_coaching_timer_id">Coaching Time</label>
-                            <select name="coaching_timer_id" id="modal_coaching_timer_id" class="form-control">
-                                @foreach($availableTimers as $timer)
-                                    <option value="{{ $timer->id }}">Coaching Time #{{ $loop->iteration }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <input type="hidden" name="editor_time_slot_id" id="modal_editor_time_slot_id">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Book</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-@endif
 @endsection
 
 @section('scripts')
@@ -192,18 +153,6 @@
             updateButtons();
         });
 
-        @if($coachingTimers->count() > 1)
-        document.querySelectorAll('.book-btn').forEach(function(btn){
-            btn.addEventListener('click', function(){
-                const slotId = this.dataset.slotId;
-                document.getElementById('modal_editor_time_slot_id').value = slotId;
-
-                // Simulate clicking the hidden trigger (Bootstrap handles it properly)
-                document.getElementById('hiddenTrigger').click();
-                //$('#selectCoachingTimerModal').modal('show');
-            });
-        });
-        @endif
     });
 </script>
 @endsection

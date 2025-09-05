@@ -103,9 +103,23 @@
                     <span>Velg redaktør og tid for å booke din neste sesjon.</span>
                     
                     @if($coachingTimers->count() >= 1)
-                        <a href="{{ route('learner.coaching-time.available') }}" class="btn black-btn mt-4">
-                            Se Tilgjengelige Tider
-                        </a>
+                        <form method="GET" action="{{ route('learner.coaching-time.available') }}">
+                            @if($coachingTimers->count() > 1)
+                                <div class="form-group mt-3">
+                                    <label for="coaching_timer_id">Coaching Time</label>
+                                    <select name="coaching_timer_id" id="coaching_timer_id" class="form-control">
+                                        @foreach($coachingTimers as $timer)
+                                            <option value="{{ $timer->id }}">Coaching Time #{{ $loop->iteration }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @else
+                                <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimers->first()->id }}">
+                            @endif
+                            <button type="submit" class="btn black-btn mt-4">
+                                Se Tilgjengelige Tider
+                            </button>
+                        </form>
                     @else
                         <p>Ingen coaching time tilgjengelig.</p>
                     @endif
