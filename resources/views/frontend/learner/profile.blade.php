@@ -449,8 +449,9 @@
                         }
                     });
                     $('#unsavedAddressModal .save-changes').on('click', function(){
-                        form.submit();
-                    });
+						isDirty = false;
+						form.submit();
+					});
                     $('#unsavedAddressModal .discard-changes').on('click', function(){
                         isDirty = false;
                         $('#unsavedAddressModal').modal('hide');
