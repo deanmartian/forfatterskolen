@@ -158,7 +158,7 @@
                                 @forelse($requests as $req)
                                     <tr>
                                         <td>{{ $req->manuscript->user->name }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($req->slot->date)->format('d.m.Y') }} {{ $req->slot->start_time }}</td>
+                                        <td class="slot-time" data-time="{{ \Carbon\Carbon::parse($req->slot->date.' '.$req->slot->start_time, 'UTC')->toIso8601String() }}"></td>
                                         <td>
                                             <form method="POST" action="{{ route('editor.coaching-time.request.accept', $req->id) }}" class="d-inline">
                                                 @csrf
@@ -180,4 +180,21 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.slot-time').forEach(function (el) {
+            const dt = new Date(el.dataset.time);
+            const datePart = dt.toLocaleDateString('no-NO');
+            const timePart = dt.toLocaleTimeString('no-NO', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            el.textContent = `${datePart} ${timePart}`;
+        });
+    });
+</script>
 @endsection
