@@ -403,7 +403,7 @@ class CourseService
         $newOrder['discount'] = $discount;
         $newOrder['payment_mode_id'] = $request->payment_mode_id;
         $newOrder['is_processed'] = 0;
-        $newOrder['is_pay_later'] = $request->is_pay_later;
+        $newOrder['is_pay_later'] = $request->is_pay_later ?? 0;
 
         $order = Order::create($newOrder);
 
