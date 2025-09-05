@@ -30,7 +30,10 @@
 
                 @php
                     $availableTimers = $coachingTimers->filter(fn($t) => $t->requests->isEmpty());
-                    $hasAvailableTimer = $availableTimers->isNotEmpty();
+                    $hasPendingRequest = $coachingTimers->pluck('requests')
+                        ->flatten()
+                        ->where('status', 'pending')
+                        ->isNotEmpty();
                 @endphp
 
                 @if($coachingTimers->count())
@@ -71,8 +74,10 @@
                                                                 ->whereIn('coaching_timer_manuscript_id', $coachingTimers->pluck('id'))
                                                                 ->isNotEmpty();
                                                         @endphp
-                                                        @if($requested || !$hasAvailableTimer)
+                                                        @if($requested)
                                                             <div class="mt-2 text-muted">Requested</div>
+                                                        @elseif($hasPendingRequest)
+                                                            {{-- No action available while another request is pending --}}
                                                         @else
                                                             @if($coachingTimers->count() === 1)
                                                                 <form method="POST" action="{{ route('learner.coaching-time.request') }}" class="mt-2">
