@@ -27,7 +27,11 @@
                     <a href="{{ route('learner.coaching-time') }}" class="btn btn-secondary">Back</a>
                 </div>
                 <h1 class="page-title">Available Time Slots</h1>
-            
+
+                @php
+                    $availableTimers = $coachingTimers->filter(fn($t) => $t->requests->isEmpty());
+                    $hasAvailableTimer = $availableTimers->isNotEmpty();
+                @endphp
 
                 @if($coachingTimers->count())
                     @foreach($editors as $editorSlots)
@@ -62,15 +66,18 @@
                                                         <div class="mt-2 slot-time" data-time="{{ \Carbon\Carbon::parse($slot->date.' '.$slot->start_time, 'UTC')->toIso8601String() }}"></div>
                                                         <div>{{ $slot->duration }} min</div>
                                                         @php
-                                                            $requested = $slot->requests->whereIn('coaching_timer_manuscript_id', $coachingTimers->pluck('id'))->isNotEmpty();
+                                                            $requested = $slot->requests
+                                                                ->where('status', 'pending')
+                                                                ->whereIn('coaching_timer_manuscript_id', $coachingTimers->pluck('id'))
+                                                                ->isNotEmpty();
                                                         @endphp
-                                                        @if($requested)
+                                                        @if($requested || !$hasAvailableTimer)
                                                             <div class="mt-2 text-muted">Requested</div>
                                                         @else
                                                             @if($coachingTimers->count() === 1)
                                                                 <form method="POST" action="{{ route('learner.coaching-time.request') }}" class="mt-2">
                                                                     @csrf
-                                                                    <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimers->first()->id }}">
+                                                                    <input type="hidden" name="coaching_timer_id" value="{{ $availableTimers->first()->id }}">
                                                                     <input type="hidden" name="editor_time_slot_id" value="{{ $slot->id }}">
                                                                     <button type="submit" class="btn btn-primary btn-sm">Book</button>
                                                                 </form>
@@ -112,7 +119,7 @@
                         <div class="form-group">
                             <label for="modal_coaching_timer_id">Coaching Time</label>
                             <select name="coaching_timer_id" id="modal_coaching_timer_id" class="form-control">
-                                @foreach($coachingTimers as $timer)
+                                @foreach($availableTimers as $timer)
                                     <option value="{{ $timer->id }}">Coaching Time #{{ $loop->iteration }}</option>
                                 @endforeach
                             </select>
