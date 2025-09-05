@@ -151,20 +151,22 @@
                                 <tr>
                                     <th>Student</th>
                                     <th>Tid</th>
+                                    <th>Duration</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($requests as $req)
                                     <tr>
-                                        <td>{{ $req->manuscript->user->name }}</td>
+                                        <td>{{ $req->manuscript->user->full_name }}</td>
                                         <td class="slot-time" data-time="{{ \Carbon\Carbon::parse($req->slot->date.' '.$req->slot->start_time, 'UTC')->toIso8601String() }}"></td>
+                                        <td>{{ $req->slot->duration }} min</td>
                                         <td>
-                                            <form method="POST" action="{{ route('editor.coaching-time.request.accept', $req->id) }}" class="d-inline">
+                                            <form method="POST" action="{{ route('editor.coaching-time.request.accept', $req->id) }}" style="display: inline">
                                                 @csrf
                                                 <button class="btn btn-primary btn-xs">Accept</button>
                                             </form>
-                                            <form method="POST" action="{{ route('editor.coaching-time.request.decline', $req->id) }}" class="d-inline">
+                                            <form method="POST" action="{{ route('editor.coaching-time.request.decline', $req->id) }}" style="display: inline">
                                                 @csrf
                                                 <button class="btn btn-danger btn-xs">Decline</button>
                                             </form>
