@@ -164,11 +164,11 @@
                                         <td>
                                             <form method="POST" action="{{ route('editor.coaching-time.request.accept', $req->id) }}" style="display: inline">
                                                 @csrf
-                                                <button class="btn btn-primary btn-xs">Accept</button>
+                                                <button type="button" class="btn btn-primary btn-xs confirm-action" data-message="Are you sure you want to accept this request?">Accept</button>
                                             </form>
                                             <form method="POST" action="{{ route('editor.coaching-time.request.decline', $req->id) }}" style="display: inline">
                                                 @csrf
-                                                <button class="btn btn-danger btn-xs">Decline</button>
+                                                <button type="button" class="btn btn-danger btn-xs confirm-action" data-message="Are you sure you want to decline this request?">Decline</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -177,6 +177,24 @@
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="actionConfirmModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Confirm Action</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="actionConfirmMessage">Are you sure?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="actionConfirmBtn">Confirm</button>
                     </div>
                 </div>
             </div>
@@ -196,6 +214,22 @@
                 hour12: false
             });
             el.textContent = `${datePart} ${timePart}`;
+        });
+
+        let formToSubmit;
+        document.querySelectorAll('.confirm-action').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                formToSubmit = this.closest('form');
+                document.getElementById('actionConfirmMessage').textContent = this.dataset.message;
+                $('#actionConfirmModal').modal('show');
+            });
+        });
+
+        document.getElementById('actionConfirmBtn').addEventListener('click', function () {
+            if (formToSubmit) {
+                formToSubmit.submit();
+            }
         });
     });
 </script>
