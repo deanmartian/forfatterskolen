@@ -30,18 +30,34 @@ class CoachingTimeController extends Controller
 
     public function fetchTimeSlot()
     {
-        $slots = EditorTimeSlot::where('editor_id', Auth::user()->id)->get();
+        $slots = EditorTimeSlot::where('editor_id', Auth::user()->id)
+            ->with(['requests.manuscript.user'])
+            ->get();
 
         $events = $slots->map(function ($slot) {
             $startUtc = Carbon::parse("{$slot->date} {$slot->start_time}", 'UTC');
             $endUtc   = (clone $startUtc)->addMinutes($slot->duration);
 
-            return [
+            $event = [
                 'id'    => $slot->id,
                 'title' => $slot->duration . ' min',
                 'start' => $startUtc->toIso8601ZuluString(),
                 'end'   => $endUtc->toIso8601ZuluString(),
             ];
+
+            $accepted = $slot->requests->firstWhere('status', 'accepted');
+            if ($accepted) {
+                $event['backgroundColor'] = '#28a745';
+                $event['borderColor'] = '#28a745';
+                $event['textColor'] = '#ffffff';
+                $event['extendedProps'] = [
+                    'booked'   => true,
+                    'student'  => $accepted->manuscript->user->full_name ?? null,
+                    'duration' => $slot->duration,
+                ];
+            }
+
+            return $event;
         });
 
         return response()->json($events);
