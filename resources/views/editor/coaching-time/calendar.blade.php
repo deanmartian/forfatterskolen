@@ -123,7 +123,7 @@
 
                 if (arg.event.extendedProps.booked) {
                     let viewBtn = document.createElement('span');
-                    viewBtn.innerHTML = 'View Details';
+                    viewBtn.innerHTML = 'View';
                     viewBtn.style.cursor = 'pointer';
                     viewBtn.style.color = 'white';
                     viewBtn.style.fontSize = '12px';
