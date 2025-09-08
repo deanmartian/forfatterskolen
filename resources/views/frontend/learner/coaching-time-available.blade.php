@@ -69,9 +69,16 @@
                                                                 ->where('status', 'pending')
                                                                 ->whereIn('coaching_timer_manuscript_id', $coachingTimers->pluck('id'))
                                                                 ->isNotEmpty();
+
+                                                            $declined = $slot->requests
+                                                                ->where('status', 'declined')
+                                                                ->whereIn('coaching_timer_manuscript_id', $coachingTimers->pluck('id'))
+                                                                ->isNotEmpty();
                                                         @endphp
                                                         @if($requested)
                                                             <div class="mt-2 text-muted">Requested</div>
+                                                        @elseif($declined)
+                                                            <div class="mt-2 text-muted">Unavailable</div>
                                                         @elseif($hasPendingRequest)
                                                             {{-- No action available while another request is pending --}}
                                                         @elseif($coachingTimer && (($coachingTimer->plan_type == 1 && $slot->duration == 60) || ($coachingTimer->plan_type == 2 && $slot->duration == 30)))
