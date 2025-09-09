@@ -134,7 +134,10 @@
                         <ul id="sessions-list" class="list-unstyled mb-0">
                             @foreach($bookedSessions as $session)
                                 @php
-                                    $date = \Carbon\Carbon::parse($session->approved_date);
+                                    $date = \Carbon\Carbon::parse(
+                                        $session->timeSlot->date.' '.$session->timeSlot->start_time,
+                                        'UTC'
+                                    )->setTimezone(config('app.timezone'));
                                     $dateLabel = $date->isToday()
                                         ? 'I dag'
                                         : ($date->isTomorrow() ? 'I morgen' : $date->format('d.m.Y'));
