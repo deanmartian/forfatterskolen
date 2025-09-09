@@ -137,15 +137,27 @@
         <div class="row">
             @foreach($editors as $editorSlots)
                 <div class="col-sm-3">
-                    <div class="panel panel-default text-center">
+                    <div class="panel panel-default">
                         <div class="panel-body">
-                            <div class="avatar">{{ substr($editorSlots->first()->editor->name, 0, 1) }}</div>
-                            <p>{{ $editorSlots->first()->editor->name }}</p>
+                            <div class="media align-items-center">
+                                <div class="media-left">
+                                    <div class="avatar text-center">
+                                        {{ substr($editorSlots->first()->editor->first_name, 0, 1) .''. 
+                                            substr($editorSlots->first()->editor->last_name, 0, 1) }}
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <p class="media-heading" style="margin:0;">
+                                        {{ $editorSlots->first()->editor->full_name }}
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
+
 
         <h3>Hurtighandlinger</h3>
         <div class="row">
