@@ -5719,10 +5719,12 @@ class LearnerController extends Controller
             ->count('editor_id');
 
         $bookedSessions = CoachingTimerManuscript::where('user_id', Auth::id())
-            ->whereNotNull('approved_date')
-            ->with('editor')
-            ->orderBy('approved_date')
-            ->get();
+            ->whereNotNull('editor_time_slot_id')
+            ->with(['editor', 'timeSlot'])
+            ->get()
+            ->sortBy(function ($session) {
+                return $session->timeSlot->date . ' ' . $session->timeSlot->start_time;
+            });
 
         return view('frontend.learner.coaching-time', compact(
             'editors',
