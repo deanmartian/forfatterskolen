@@ -128,7 +128,29 @@
             <div class="col-md-6">
                 <div class="stats-card text-left">
                     <h3>Mine Sesjoner</h3>
-                    <span>Ingen kommende sesjoner.</span>
+                    @php
+                        $sessionsToShow = $showAllSessions ? $bookedSessions : $bookedSessions->take(2);
+                    @endphp
+                    @if($sessionsToShow->isEmpty())
+                        <span>Ingen kommende sesjoner.</span>
+                    @else
+                        <ul class="list-unstyled mb-0">
+                            @foreach($sessionsToShow as $session)
+                                @php
+                                    $date = \Carbon\Carbon::parse($session->approved_date);
+                                    $dateLabel = $date->isToday() ? 'I dag' : $date->format('d.m.Y');
+                                    $duration = $session->plan_type == 1 ? '60 min' : '30 min';
+                                @endphp
+                                <li class="mb-3">
+                                    <div>{{ $dateLabel }} {{ $date->format('H:i') }}</div>
+                                    <div>{{ $duration }} med {{ optional($session->editor)->full_name }}</div>
+                                </li>
+                            @endforeach
+                        </ul>
+                        @if(!$showAllSessions && $bookedSessions->count() > 2)
+                            <a href="{{ route('learner.coaching-time', ['all' => 1]) }}" class="btn black-btn mt-3">Se Alle Sesjoner</a>
+                        @endif
+                    @endif
                 </div>
             </div>
         </div>
