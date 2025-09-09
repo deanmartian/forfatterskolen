@@ -73,7 +73,7 @@
             <div class="col-sm-3">
                 <div class="stats-card text-center">
                     <p>Mine Redaktører</p>
-                    <h2>{{ $editors->count() }}</h2>
+                    <h2>{{ $bookedEditorsCount }}</h2>
                 </div>
             </div>
             <div class="col-sm-3">
