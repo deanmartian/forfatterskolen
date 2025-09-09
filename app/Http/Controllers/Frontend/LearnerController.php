@@ -5698,7 +5698,7 @@ class LearnerController extends Controller
         ], $httpcode);
     }
 
-    public function coachingTime()
+    public function coachingTime(Request $request)
     {
         $coachingTimers = CoachingTimerManuscript::where('user_id', Auth::id())
             ->whereNull('editor_id')
@@ -5718,7 +5718,21 @@ class LearnerController extends Controller
             ->distinct('editor_id')
             ->count('editor_id');
 
-        return view('frontend.learner.coaching-time', compact('editors', 'coachingTimers', 'bookedEditorsCount'));
+        $bookedSessions = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNotNull('approved_date')
+            ->with('editor')
+            ->orderBy('approved_date')
+            ->get();
+
+        $showAllSessions = $request->boolean('all');
+
+        return view('frontend.learner.coaching-time', compact(
+            'editors',
+            'coachingTimers',
+            'bookedEditorsCount',
+            'bookedSessions',
+            'showAllSessions'
+        ));
     }
 
     public function availableCoachingTime(Request $request)
