@@ -5713,7 +5713,12 @@ class LearnerController extends Controller
             ->get()
             ->groupBy('editor_id');
 
-        return view('frontend.learner.coaching-time', compact('editors', 'coachingTimers'));
+        $bookedEditorsCount = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNotNull('editor_id')
+            ->distinct('editor_id')
+            ->count('editor_id');
+
+        return view('frontend.learner.coaching-time', compact('editors', 'coachingTimers', 'bookedEditorsCount'));
     }
 
     public function availableCoachingTime(Request $request)
