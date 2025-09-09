@@ -128,27 +128,24 @@
             <div class="col-md-6">
                 <div class="stats-card text-left">
                     <h3>Mine Sesjoner</h3>
-                    @php
-                        $sessionsToShow = $showAllSessions ? $bookedSessions : $bookedSessions->take(2);
-                    @endphp
-                    @if($sessionsToShow->isEmpty())
+                    @if($bookedSessions->isEmpty())
                         <span>Ingen kommende sesjoner.</span>
                     @else
-                        <ul class="list-unstyled mb-0">
-                            @foreach($sessionsToShow as $session)
+                        <ul id="sessions-list" class="list-unstyled mb-0">
+                            @foreach($bookedSessions as $session)
                                 @php
                                     $date = \Carbon\Carbon::parse($session->approved_date);
                                     $dateLabel = $date->isToday() ? 'I dag' : $date->format('d.m.Y');
                                     $duration = $session->plan_type == 1 ? '60 min' : '30 min';
                                 @endphp
-                                <li class="mb-3">
+                                <li class="mb-3 {{ $loop->iteration > 2 ? 'd-none extra-session' : '' }}">
                                     <div>{{ $dateLabel }} {{ $date->format('H:i') }}</div>
                                     <div>{{ $duration }} med {{ optional($session->editor)->full_name }}</div>
                                 </li>
                             @endforeach
                         </ul>
-                        @if(!$showAllSessions && $bookedSessions->count() > 2)
-                            <a href="{{ route('learner.coaching-time', ['all' => 1]) }}" class="btn black-btn mt-3">Se Alle Sesjoner</a>
+                        @if($bookedSessions->count() > 2)
+                            <button id="toggle-sessions" class="btn black-btn mt-3" data-showing="false">Se Alle Sesjoner</button>
                         @endif
                     @endif
                 </div>
@@ -192,4 +189,24 @@
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggle = document.getElementById('toggle-sessions');
+        if (!toggle) {
+            return;
+        }
+        toggle.addEventListener('click', function () {
+            var extras = document.querySelectorAll('.extra-session');
+            var showing = toggle.getAttribute('data-showing') === 'true';
+            extras.forEach(function (item) {
+                item.classList.toggle('d-none');
+            });
+            toggle.setAttribute('data-showing', showing ? 'false' : 'true');
+            toggle.textContent = showing ? 'Se Alle Sesjoner' : 'Skjul Sesjoner';
+        });
+    });
+</script>
 @endsection
