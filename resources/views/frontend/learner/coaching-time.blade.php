@@ -135,7 +135,9 @@
                             @foreach($bookedSessions as $session)
                                 @php
                                     $date = \Carbon\Carbon::parse($session->approved_date);
-                                    $dateLabel = $date->isToday() ? 'I dag' : $date->format('d.m.Y');
+                                    $dateLabel = $date->isToday()
+                                        ? 'I dag'
+                                        : ($date->isTomorrow() ? 'I morgen' : $date->format('d.m.Y'));
                                     $duration = $session->plan_type == 1 ? '60 min' : '30 min';
                                 @endphp
                                 <li class="mb-3 {{ $loop->iteration > 2 ? 'd-none extra-session' : '' }}">
