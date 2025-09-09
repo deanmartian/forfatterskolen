@@ -5724,14 +5724,11 @@ class LearnerController extends Controller
             ->orderBy('approved_date')
             ->get();
 
-        $showAllSessions = $request->boolean('all');
-
         return view('frontend.learner.coaching-time', compact(
             'editors',
             'coachingTimers',
             'bookedEditorsCount',
-            'bookedSessions',
-            'showAllSessions'
+            'bookedSessions'
         ));
     }
 
