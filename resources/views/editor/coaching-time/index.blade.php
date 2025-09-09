@@ -83,8 +83,7 @@
                     </div>
                     <div class="panel-body">
                         <p>Klikk på kalenderen for manuelt gjennomgang av redaksjonstimer</p>
-                        <a href="{{ route('editor.coaching-time.calendar') }}" class="btn btn-default btn-block" 
-                        style="margin-bottom:15px;">
+                        <a href="{{ route('editor.coaching-time.calendar') }}" class="btn btn-default btn-block" style="margin-bottom:15px;">
                             Åpne Redaktørkalender
                         </a>
                         <a href="#" class="btn btn-default btn-block">Gjenåpne Redaksjonstimer</a>
@@ -139,5 +138,99 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Forespørsler fra studenter</h4>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Tid</th>
+                                    <th>Duration</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($requests as $req)
+                                    <tr>
+                                        <td>{{ $req->manuscript->user->full_name }}</td>
+                                        <td class="slot-time" data-time="{{ \Carbon\Carbon::parse($req->slot->date.' '.$req->slot->start_time, 'UTC')->toIso8601String() }}"></td>
+                                        <td>{{ $req->slot->duration }} min</td>
+                                        <td>
+                                            <form method="POST" action="{{ route('editor.coaching-time.request.accept', $req->id) }}" style="display: inline">
+                                                @csrf
+                                                <button type="button" class="btn btn-primary btn-xs confirm-action" data-message="Are you sure you want to accept this request?">Accept</button>
+                                            </form>
+                                            <form method="POST" action="{{ route('editor.coaching-time.request.decline', $req->id) }}" style="display: inline">
+                                                @csrf
+                                                <button type="button" class="btn btn-danger btn-xs confirm-action" data-message="Are you sure you want to decline this request?">Decline</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="3">Ingen forespørsler.</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="actionConfirmModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Confirm Action</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="actionConfirmMessage">Are you sure?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="actionConfirmBtn">Yes</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.slot-time').forEach(function (el) {
+            const dt = new Date(el.dataset.time);
+            const datePart = dt.toLocaleDateString('no-NO');
+            const timePart = dt.toLocaleTimeString('no-NO', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            el.textContent = `${datePart} ${timePart}`;
+        });
+
+        let formToSubmit;
+        document.querySelectorAll('.confirm-action').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                formToSubmit = this.closest('form');
+                document.getElementById('actionConfirmMessage').textContent = this.dataset.message;
+                $('#actionConfirmModal').modal('show');
+            });
+        });
+
+        document.getElementById('actionConfirmBtn').addEventListener('click', function () {
+            if (formToSubmit) {
+                formToSubmit.submit();
+            }
+        });
+    });
+</script>
 @endsection

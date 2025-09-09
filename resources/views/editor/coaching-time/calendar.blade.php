@@ -21,6 +21,26 @@
         <div id="calendar"></div>
     </div>
 </div>
+
+<div class="modal fade" id="slotDetailsModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Coaching Time Details</h4>
+            </div>
+            <div class="modal-body">
+                <p><strong>Student:</strong> <span id="slotStudent"></span></p>
+                <p><strong>Start:</strong> <span id="slotStart"></span></p>
+                <p><strong>End:</strong> <span id="slotEnd"></span></p>
+                <p><strong>Duration:</strong> <span id="slotDuration"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -99,46 +119,79 @@
                     <div style="font-size: 12px;">${duration}min</div>
                 `;
 
-                // right side (delete ×)
-                let closeBtn = document.createElement('span');
-                closeBtn.innerHTML = '&times;';
-                closeBtn.style.cursor = 'pointer';
-                closeBtn.style.color = 'white';
-                closeBtn.style.fontWeight = 'bold';
-
-                // 👇 increase size of the ×
-                closeBtn.style.fontSize = '20px';      // bigger font
-                closeBtn.style.lineHeight = '1';       // keeps it compact
-                closeBtn.style.marginLeft = '10px';    // spacing from text
-                closeBtn.style.userSelect = 'none';    // prevent accidental text selection
-
-                closeBtn.title = 'Delete slot';
-
-                closeBtn.onclick = function(e) {
-                    e.stopPropagation(); // don’t trigger eventClick
-
-                    if (confirm(`Delete this slot?\n${startTxt} – ${endTxt}`)) {
-                    fetch("{{ url('/coaching-time/time-slots') }}/" + arg.event.id, {
-                        method: "DELETE",
-                        headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" }
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            arg.event.remove();
-                            toastr.success('Your time slot was successfully deleted.', "Success");
-                        }
-                    });
-                    }
-                };
-
                 wrapper.appendChild(left);
-                wrapper.appendChild(closeBtn);
+
+                if (arg.event.extendedProps.booked) {
+                    let viewBtn = document.createElement('span');
+                    viewBtn.innerHTML = 'View';
+                    viewBtn.style.cursor = 'pointer';
+                    viewBtn.style.color = 'white';
+                    viewBtn.style.fontSize = '12px';
+
+                    viewBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        showSlotDetails(arg.event);
+                    };
+
+                    wrapper.appendChild(viewBtn);
+                } else {
+                    let closeBtn = document.createElement('span');
+                    closeBtn.innerHTML = '&times;';
+                    closeBtn.style.cursor = 'pointer';
+                    closeBtn.style.color = 'white';
+                    closeBtn.style.fontWeight = 'bold';
+
+                    closeBtn.style.fontSize = '20px';
+                    closeBtn.style.lineHeight = '1';
+                    closeBtn.style.marginLeft = '10px';
+                    closeBtn.style.userSelect = 'none';
+
+                    closeBtn.title = 'Delete slot';
+
+                    closeBtn.onclick = function(e) {
+                        e.stopPropagation();
+
+                        if (confirm(`Delete this slot?\n${startTxt} – ${endTxt}`)) {
+                        fetch("{{ url('/coaching-time/time-slots') }}/" + arg.event.id, {
+                            method: "DELETE",
+                            headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                arg.event.remove();
+                                toastr.success('Your time slot was successfully deleted.', "Success");
+                            }
+                        });
+                        }
+                    };
+
+                    wrapper.appendChild(closeBtn);
+                }
 
                 return { domNodes: [wrapper] };
+            },
+
+            eventClick: function(info) {
+                if (info.event.extendedProps.booked) {
+                    showSlotDetails(info.event);
+                }
             }
 
         });
+
+        function showSlotDetails(event) {
+            let start = new Date(event.start);
+            let end   = new Date(event.end);
+            let fmt = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+
+            document.getElementById('slotStudent').textContent = event.extendedProps.student || '';
+            document.getElementById('slotStart').textContent = start.toLocaleString([], fmt);
+            document.getElementById('slotEnd').textContent = end.toLocaleString([], fmt);
+            document.getElementById('slotDuration').textContent = (event.extendedProps.duration || ((end - start)/60000)) + ' min';
+
+            $('#slotDetailsModal').modal('show');
+        }
 
         calendar.render();
     });

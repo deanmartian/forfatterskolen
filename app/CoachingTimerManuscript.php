@@ -2,8 +2,12 @@
 
 namespace App;
 
+use App\User;
+use App\EditorTimeSlot;
+use App\CoachingTimeRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CoachingTimerManuscript extends Model
 {
@@ -16,28 +20,28 @@ class CoachingTimerManuscript extends Model
 
     const STATUS_BOOKED = 2;
 
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
     protected $table = 'coaching_timer_manuscripts';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = ['user_id', 'file', 'payment_price', 'plan_type', 'help_with', 'suggested_date', 'approved_date',
-        'suggested_date_admin', 'editor_id', 'replay_link', 'comment', 'document', 'status', 'is_approved', 'hours_worked'];
+        'suggested_date_admin', 'editor_id', 'editor_time_slot_id', 'replay_link', 'comment', 'document', 'status', 'is_approved', 'hours_worked'];
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function editor(): BelongsTo
     {
-        return $this->belongsTo(\App\User::class, 'editor_id', 'id');
+        return $this->belongsTo(User::class, 'editor_id', 'id');
+    }
+
+    public function timeSlot(): BelongsTo
+    {
+        return $this->belongsTo(EditorTimeSlot::class, 'editor_time_slot_id');
+    }
+
+    public function requests(): HasMany
+    {
+        return $this->hasMany(CoachingTimeRequest::class, 'coaching_timer_manuscript_id');
     }
 }

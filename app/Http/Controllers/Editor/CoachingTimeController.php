@@ -2,17 +2,25 @@
 
 namespace App\Http\Controllers\Editor;
 
+use App\CoachingTimeRequest;
 use App\EditorTimeSlot;
 use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class CoachingTimeController extends Controller {
-
+class CoachingTimeController extends Controller
+{
     public function index()
     {
-        return view('editor.coaching-time.index');
+        $requests = CoachingTimeRequest::whereHas('slot', function ($q) {
+            $q->where('editor_id', Auth::id());
+        })->where('status', 'pending')
+            ->with(['manuscript.user', 'slot'])
+            ->get();
+
+        return view('editor.coaching-time.index', compact('requests'));
     }
 
     public function calendar()
@@ -22,20 +30,34 @@ class CoachingTimeController extends Controller {
 
     public function fetchTimeSlot()
     {
-        $slots = EditorTimeSlot::where('editor_id', Auth::user()->id)->get();
+        $slots = EditorTimeSlot::where('editor_id', Auth::user()->id)
+            ->with(['requests.manuscript.user'])
+            ->get();
 
         $events = $slots->map(function ($slot) {
-            // 👇 Tell Carbon these DB fields are UTC
             $startUtc = Carbon::parse("{$slot->date} {$slot->start_time}", 'UTC');
             $endUtc   = (clone $startUtc)->addMinutes($slot->duration);
 
-            return [
+            $event = [
                 'id'    => $slot->id,
                 'title' => $slot->duration . ' min',
-                // 👇 Send Zulu time so the client knows it's UTC
                 'start' => $startUtc->toIso8601ZuluString(),
                 'end'   => $endUtc->toIso8601ZuluString(),
             ];
+
+            $accepted = $slot->requests->firstWhere('status', 'accepted');
+            if ($accepted) {
+                $event['backgroundColor'] = '#28a745';
+                $event['borderColor'] = '#28a745';
+                $event['textColor'] = '#ffffff';
+                $event['extendedProps'] = [
+                    'booked'   => true,
+                    'student'  => $accepted->manuscript->user->full_name ?? null,
+                    'duration' => $slot->duration,
+                ];
+            }
+
+            return $event;
         });
 
         return response()->json($events);
@@ -67,4 +89,41 @@ class CoachingTimeController extends Controller {
         return response()->json(['success' => true]);
     }
 
+    public function acceptRequest($id): RedirectResponse
+    {
+        $request = CoachingTimeRequest::with(['slot', 'manuscript'])->findOrFail($id);
+
+        if ($request->slot->editor_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->status = 'accepted';
+        $request->save();
+
+        CoachingTimeRequest::where('editor_time_slot_id', $request->editor_time_slot_id)
+            ->where('id', '!=', $request->id)
+            ->where('status', 'pending')
+            ->update(['status' => 'declined']);
+
+        $manuscript = $request->manuscript;
+        $manuscript->editor_id = Auth::id();
+        $manuscript->editor_time_slot_id = $request->editor_time_slot_id;
+        $manuscript->save();
+
+        return redirect()->back()->with('success', 'Request accepted.');
+    }
+
+    public function declineRequest($id): RedirectResponse
+    {
+        $request = CoachingTimeRequest::with('slot')->findOrFail($id);
+
+        if ($request->slot->editor_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->status = 'declined';
+        $request->save();
+
+        return redirect()->back()->with('success', 'Request declined.');
+    }
 }

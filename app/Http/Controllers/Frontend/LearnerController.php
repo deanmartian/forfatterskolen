@@ -11,6 +11,8 @@ use App\AssignmentGroup;
 use App\AssignmentGroupLearner;
 use App\AssignmentManuscript;
 use App\CalendarNote;
+use App\EditorTimeSlot;
+use App\CoachingTimeRequest;
 use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
 use App\Console\Commands\CheckFikenContactCommand;
@@ -5701,6 +5703,93 @@ class LearnerController extends Controller
         return response()->json([
             'message' => $decode ? $decode->message : '',
         ], $httpcode);
+    }
+
+    public function coachingTime()
+    {
+        $coachingTimers = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNull('editor_id')
+            ->get();
+
+        $editors = EditorTimeSlot::with('editor')
+            ->whereDoesntHave('requests', function ($q) {
+                $q->where('status', 'accepted');
+            })
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->get()
+            ->groupBy('editor_id');
+
+        return view('frontend.learner.coaching-time', compact('editors', 'coachingTimers'));
+    }
+
+    public function availableCoachingTime(Request $request)
+    {
+        $coachingTimers = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNull('editor_id')
+            ->with(['requests' => function ($q) {
+                $q->where('status', 'pending');
+            }])
+            ->get();
+
+        $coachingTimer = null;
+        if ($request->filled('coaching_timer_id')) {
+            $coachingTimer = $coachingTimers->where('id', $request->input('coaching_timer_id'))->first();
+        } elseif ($coachingTimers->count() === 1) {
+            $coachingTimer = $coachingTimers->first();
+        }
+
+        $now = Carbon::now('UTC');
+
+        $editors = EditorTimeSlot::with(['editor', 'requests'])
+            ->whereDoesntHave('requests', function ($q) {
+                $q->where('status', 'accepted');
+            })
+            ->where(function ($q) use ($now) {
+                $q->where('date', '>', $now->toDateString())
+                    ->orWhere(function ($q) use ($now) {
+                        $q->where('date', $now->toDateString())
+                            ->where('start_time', '>=', $now->toTimeString());
+                    });
+            })
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->get()
+            ->groupBy('editor_id');
+
+        return view('frontend.learner.coaching-time-available', compact('editors', 'coachingTimer', 'coachingTimers'));
+    }
+
+    public function requestCoachingTime(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'coaching_timer_id'   => 'required|exists:coaching_timer_manuscripts,id',
+            'editor_time_slot_id' => 'required|exists:editor_time_slots,id',
+        ]);
+
+        $timer = CoachingTimerManuscript::find($data['coaching_timer_id']);
+        $slot  = EditorTimeSlot::find($data['editor_time_slot_id']);
+
+        $requiredDuration = $timer->plan_type == 1 ? 60 : 30;
+        if ($slot->duration != $requiredDuration) {
+            return redirect()->back()->with('error', 'Selected time slot duration does not match your plan.');
+        }
+
+        $exists = CoachingTimeRequest::where('coaching_timer_manuscript_id', $data['coaching_timer_id'])
+            ->where('editor_time_slot_id', $data['editor_time_slot_id'])
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->with('error', 'You have already requested this time slot.');
+        }
+
+        CoachingTimeRequest::create([
+            'coaching_timer_manuscript_id' => $data['coaching_timer_id'],
+            'editor_time_slot_id'          => $data['editor_time_slot_id'],
+            'status'                       => 'pending',
+        ]);
+
+        return redirect()->route('learner.coaching-time')->with('success', 'Time slot requested.');
     }
 
     public function currentUser()
