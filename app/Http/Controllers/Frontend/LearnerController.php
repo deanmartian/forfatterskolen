@@ -5035,11 +5035,11 @@ class LearnerController extends Controller
         $course_taken_id = $data['course_taken_id'];
 
         if ($courseTaken = CoursesTaken::find($course_taken_id)) {
-            $suggested_dates = $data['suggested_date'];
+            /* $suggested_dates = $data['suggested_date'];
             // format the sent suggested dates
             foreach ($suggested_dates as $k => $suggested_date) {
                 $suggested_dates[$k] = Carbon::parse($suggested_date)->format('Y-m-d H:i:s');
-            }
+            } */
 
             $extensions = ['docx'];
             $file = null;
@@ -5064,7 +5064,7 @@ class LearnerController extends Controller
                 'user_id' => Auth::user()->id,
                 'file' => $file,
                 'plan_type' => $data['plan_type'],
-                'suggested_date' => json_encode($suggested_dates),
+                //'suggested_date' => json_encode($suggested_dates),
             ]);
 
             CoachingTimerTaken::create([
@@ -5072,6 +5072,9 @@ class LearnerController extends Controller
                 'course_taken_id' => $course_taken_id,
             ]);
 
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Coaching Time added.'),
+                'alert_type' => 'success']);
         }
 
         return redirect()->back();
