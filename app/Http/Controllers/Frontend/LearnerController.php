@@ -5722,7 +5722,7 @@ class LearnerController extends Controller
             ->whereNotNull('editor_time_slot_id')
             ->where(function ($q) {
                 $q->where('status', 0)
-                    ->orWhereHas('timeSlot', function ($q) {
+                    ->whereHas('timeSlot', function ($q) {
                         $q->where('date', '>=', now()->toDateString());
                     });
             })
