@@ -56,6 +56,26 @@
     <div class="container">
         <h1 class="page-title">Coaching Time</h1>
 
+        <?php
+            $packages = \App\Package::where('has_coaching', '>', 0)->pluck('id');
+            $coachingTimerTaken = Auth::user()->coachingTimersTaken()->pluck('course_taken_id');
+            $checkCourseTakenWithCoaching = Auth::user()->coursesTaken()->whereIn('package_id', $packages)
+                ->whereNotIn('id', $coachingTimerTaken)->get();
+        ?>
+
+        @if($checkCourseTakenWithCoaching->count())
+            <div class="text-right mb-3">
+                <button class="btn blue-outline-btn"
+                        data-toggle="modal"
+                        data-target="#addCoachingSessionModal"
+                        data-action="{{ route('learner.course-taken.coaching-timer.add') }}"
+                        id="addCoachingSessionBtn">
+                    {{ trans('site.learner.add-coaching-lesson') }}
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        @endif
+
         @if(session('success'))
             <div class="alert alert-success">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
@@ -200,6 +220,48 @@
     </div>
 </div>
 
+<div id="addCoachingSessionModal" class="modal fade" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">{{ trans('site.learner.add-coaching-session') }}</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                    {{csrf_field()}}
+
+                    <div class="form-group">
+                        <label>{{ trans('site.learner.manuscript-text') }}</label>
+                        <input type="file" class="form-control" name="manuscript"
+                               accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                    </div>
+
+                    @if ($checkCourseTakenWithCoaching->count())
+                        <div class="form-group">
+                            <label>{{ trans('site.learner.use-course-included-session') }}</label>
+                            <select name="course_taken_id" class="form-control" required id="course_taken_id">
+                                <option value="" disabled selected> -- {{ trans('site.learner.select-text') }} --</option>
+                                @foreach($checkCourseTakenWithCoaching as $courseTaken)
+                                    <option value="{{ $courseTaken->id }}" data-plan="{{ $courseTaken->package->has_coaching }}">
+                                        {{ $courseTaken->package->course->title }} - {{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($courseTaken->package->has_coaching) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <input type="hidden" name="plan_type">
+                    @endif
+
+                    <div class="text-right mt-4">
+                        <button type="submit" class="btn btn-success">{{ trans('site.front.submit') }}</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.front.cancel') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -219,5 +281,26 @@
             toggle.textContent = showing ? 'Se Alle Sesjoner' : 'Skjul Sesjoner';
         });
     });
+
+    $("#addCoachingSessionBtn").click(function(){
+        let action = $(this).data('action');
+        let form = $("#addCoachingSessionModal").find('form');
+
+        form.attr('action', action);
+    });
+
+    $("#course_taken_id").change(function(){
+        let plan = $(this).find(':selected').data('plan');
+        let form = $("#addCoachingSessionModal").find('form');
+
+        form.find('[name=plan_type]').val(plan);
+    });
+
+    function disableSubmit(t) {
+        let submit_btn = $(t).find('[type=submit]');
+        submit_btn.text('');
+        submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+        submit_btn.attr('disabled', 'disabled');
+    }
 </script>
 @endsection
