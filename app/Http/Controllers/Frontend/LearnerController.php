@@ -5720,6 +5720,12 @@ class LearnerController extends Controller
 
         $bookedSessions = CoachingTimerManuscript::where('user_id', Auth::id())
             ->whereNotNull('editor_time_slot_id')
+            ->where(function ($q) {
+                $q->where('status', 0)
+                    ->orWhereHas('timeSlot', function ($q) {
+                        $q->where('date', '>=', now()->toDateString());
+                    });
+            })
             ->with(['editor', 'timeSlot'])
             ->get()
             ->sortBy(function ($session) {
