@@ -5754,7 +5754,11 @@ class LearnerController extends Controller
 
         $coachingTimer = null;
         if ($request->filled('coaching_timer_id')) {
-            $coachingTimer = $coachingTimers->where('id', $request->input('coaching_timer_id'))->first();
+            $coachingTimer = $coachingTimers->firstWhere('id', $request->input('coaching_timer_id'));
+
+            if (!$coachingTimer) {
+                return redirect()->route('learner.coaching-time');
+            }
         } elseif ($coachingTimers->count() === 1) {
             $coachingTimer = $coachingTimers->first();
         }
