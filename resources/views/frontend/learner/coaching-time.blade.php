@@ -138,9 +138,15 @@
                                         $session->timeSlot->date.' '.$session->timeSlot->start_time,
                                         'UTC'
                                     )->setTimezone(config('app.timezone'));
-                                    $dateLabel = $date->isToday()
-                                        ? 'I dag'
-                                        : ($date->isTomorrow() ? 'I morgen' : $date->format('d.m.Y'));
+                                    if ($date->isToday()) {
+                                        $dateLabel = 'I dag';
+                                    } elseif ($date->isTomorrow()) {
+                                        $dateLabel = 'I morgen';
+                                    } elseif ($date->isSameWeek(\Carbon\Carbon::now(config('app.timezone')))) {
+                                        $dateLabel = ucfirst($date->locale(app()->getLocale())->dayName);
+                                    } else {
+                                        $dateLabel = $date->format('d.m.Y');
+                                    }
                                     $duration = $session->plan_type == 1 ? '60 min' : '30 min';
                                 @endphp
                                 <li class="mb-3 {{ $loop->iteration > 2 ? 'd-none extra-session' : '' }}">
