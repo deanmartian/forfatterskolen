@@ -114,11 +114,11 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.slot-time').forEach(function (el) {
             const dt = new Date(el.dataset.time);
-            let hours = dt.getHours();
-            const minutes = dt.getMinutes();
-            const suffix = hours >= 12 ? 'pm' : 'am';
-            hours = hours % 12 || 12;
-            const formatted = minutes ? `${hours}:${String(minutes).padStart(2, '0')}${suffix}` : `${hours}${suffix}`;
+            const formatted = dt.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
             el.textContent = formatted;
         });
 
