@@ -5789,6 +5789,7 @@ class LearnerController extends Controller
         $data = $request->validate([
             'coaching_timer_id'   => 'required|exists:coaching_timer_manuscripts,id',
             'editor_time_slot_id' => 'required|exists:editor_time_slots,id',
+            'help_with'           => 'nullable|string',
         ]);
 
         $timer = CoachingTimerManuscript::find($data['coaching_timer_id']);
@@ -5799,21 +5800,31 @@ class LearnerController extends Controller
             return redirect()->back()->with('error', 'Selected time slot duration does not match your plan.');
         }
 
-        $exists = CoachingTimeRequest::where('coaching_timer_manuscript_id', $data['coaching_timer_id'])
-            ->where('editor_time_slot_id', $data['editor_time_slot_id'])
+        $exists = CoachingTimeRequest::where('editor_time_slot_id', $data['editor_time_slot_id'])
+            ->where('status', 'accepted')
             ->exists();
 
         if ($exists) {
-            return redirect()->back()->with('error', 'You have already requested this time slot.');
+            return redirect()->back()->with('error', 'This time slot has already been booked.');
         }
 
-        CoachingTimeRequest::create([
+        $requestRecord = CoachingTimeRequest::create([
             'coaching_timer_manuscript_id' => $data['coaching_timer_id'],
             'editor_time_slot_id'          => $data['editor_time_slot_id'],
-            'status'                       => 'pending',
+            'status'                       => 'accepted',
         ]);
 
-        return redirect()->route('learner.coaching-time')->with('success', 'Time slot requested.');
+        CoachingTimeRequest::where('editor_time_slot_id', $data['editor_time_slot_id'])
+            ->where('id', '!=', $requestRecord->id)
+            ->where('status', 'pending')
+            ->update(['status' => 'declined']);
+
+        $timer->help_with = $data['help_with'] ?? null;
+        $timer->editor_id = $slot->editor_id;
+        $timer->editor_time_slot_id = $slot->id;
+        $timer->save();
+
+        return redirect()->route('learner.coaching-time')->with('success', 'Time slot booked.');
     }
 
     public function currentUser()
