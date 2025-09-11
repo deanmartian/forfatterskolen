@@ -129,7 +129,9 @@
                                     <label for="coaching_timer_id">Coaching Time</label>
                                     <select name="coaching_timer_id" id="coaching_timer_id" class="form-control">
                                         @foreach($coachingTimers as $timer)
-                                            <option value="{{ $timer->id }}">Coaching Time #{{ $loop->iteration }}</option>
+                                            <option value="{{ $timer->id }}">
+                                                Coaching Time - {{ FrontendHelpers::getCoachingTimerPlanType($timer->plan_type) }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>

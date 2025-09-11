@@ -119,7 +119,7 @@
                             <input type="hidden" name="editor_time_slot_id" value="">
                             <textarea name="help_with" cols="30" rows="10" class="form-control"></textarea>
                             <div class="text-right mt-4">
-                                <button type="submit" class="btn btn-success">{{ trans('site.front.submit') }}</button>
+                                <button type="submit" class="btn btn-primary">Book</button>
                             </div>
                         </form>
                     </div>
