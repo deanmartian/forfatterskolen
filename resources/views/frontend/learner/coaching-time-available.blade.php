@@ -103,6 +103,7 @@
     </div>
 
     @if ($coachingTimer)
+        <button data-target="#bookSlotModal" data-toggle="modal" class="hidden" id="bookSlotModalTriggerBtn"></button>
         <div id="bookSlotModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -111,7 +112,8 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('learner.coaching-time.request') }}" method="POST" id="bookSlotForm">
+                        <form action="{{ route('learner.coaching-time.request') }}" method="POST" id="bookSlotForm"
+                            onsubmit="disableSubmit(this)">
                             @csrf
                             <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
                             <input type="hidden" name="editor_time_slot_id" value="">
@@ -184,7 +186,8 @@
                 const modal = $('#bookSlotModal');
                 modal.find('[name=editor_time_slot_id]').val(slotId);
                 modal.find('[name=help_with]').val('');
-                modal.modal('show');
+                //modal.modal('show');
+                $("#bookSlotModalTriggerBtn").trigger('click');
             });
         });
 
