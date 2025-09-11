@@ -76,7 +76,7 @@
         </div>
 
         <div class="row" style="margin-bottom:20px;">
-            <div class="col-sm-8">
+            <div class="col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4>Redaktør Kalender</h4>
@@ -86,11 +86,10 @@
                         <a href="{{ route('editor.coaching-time.calendar') }}" class="btn btn-default btn-block" style="margin-bottom:15px;">
                             Åpne Redaktørkalender
                         </a>
-                        <a href="#" class="btn btn-default btn-block">Gjenåpne Redaksjonstimer</a>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            {{-- <div class="col-sm-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4>Mine Forfatter-studenter</h4>
@@ -104,14 +103,14 @@
                         <a href="#" class="btn btn-default btn-block" style="margin-top:15px;">Se Alle Forfatter-studenter</a>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
         <div class="row">
             <div class="col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4>Dagens Timeplan</h4>
+                        <h4>Timeplan</h4>
                     </div>
                     <div class="panel-body">
                         <table class="table schedule-table">
@@ -139,7 +138,7 @@
             </div>
         </div>
 
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -180,7 +179,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="modal fade" id="actionConfirmModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-sm" role="document">
