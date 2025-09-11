@@ -82,12 +82,7 @@
                                                         @elseif($hasPendingRequest)
                                                             {{-- No action available while another request is pending --}}
                                                         @elseif($coachingTimer && (($coachingTimer->plan_type == 1 && $slot->duration == 60) || ($coachingTimer->plan_type == 2 && $slot->duration == 30)))
-                                                            <form method="POST" action="{{ route('learner.coaching-time.request') }}" class="mt-2">
-                                                                @csrf
-                                                                <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
-                                                                <input type="hidden" name="editor_time_slot_id" value="{{ $slot->id }}">
-                                                                <button type="submit" class="btn btn-primary btn-sm">Book</button>
-                                                            </form>
+                                                            <button type="button" class="btn btn-primary btn-sm mt-2 book-slot-btn" data-slot-id="{{ $slot->id }}">Book</button>
                                                         @elseif($coachingTimer)
                                                             <div class="mt-2 text-muted">Unavailable</div>
                                                         @endif
@@ -106,6 +101,32 @@
             </div>
         </div>
     </div>
+
+    @if ($coachingTimer)
+        <button data-target="#bookSlotModal" data-toggle="modal" class="hidden" id="bookSlotModalTriggerBtn"></button>
+        <div id="bookSlotModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">{{ trans('site.learner.help-with-text') }}</h3>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('learner.coaching-time.request') }}" method="POST" id="bookSlotForm"
+                            onsubmit="disableSubmit(this)">
+                            @csrf
+                            <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
+                            <input type="hidden" name="editor_time_slot_id" value="">
+                            <textarea name="help_with" cols="30" rows="10" class="form-control"></textarea>
+                            <div class="text-right mt-4">
+                                <button type="submit" class="btn btn-success">{{ trans('site.front.submit') }}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
 @endsection
 
@@ -114,11 +135,11 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.slot-time').forEach(function (el) {
             const dt = new Date(el.dataset.time);
-            let hours = dt.getHours();
-            const minutes = dt.getMinutes();
-            const suffix = hours >= 12 ? 'pm' : 'am';
-            hours = hours % 12 || 12;
-            const formatted = minutes ? `${hours}:${String(minutes).padStart(2, '0')}${suffix}` : `${hours}${suffix}`;
+            const formatted = dt.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
             el.textContent = formatted;
         });
 
@@ -157,6 +178,17 @@
             });
 
             updateButtons();
+        });
+
+        document.querySelectorAll('.book-slot-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const slotId = this.dataset.slotId;
+                const modal = $('#bookSlotModal');
+                modal.find('[name=editor_time_slot_id]').val(slotId);
+                modal.find('[name=help_with]').val('');
+                //modal.modal('show');
+                $("#bookSlotModalTriggerBtn").trigger('click');
+            });
         });
 
     });

@@ -56,6 +56,26 @@
     <div class="container">
         <h1 class="page-title">Coaching Time</h1>
 
+        <?php
+            $packages = \App\Package::where('has_coaching', '>', 0)->pluck('id');
+            $coachingTimerTaken = Auth::user()->coachingTimersTaken()->pluck('course_taken_id');
+            $checkCourseTakenWithCoaching = Auth::user()->coursesTaken()->whereIn('package_id', $packages)
+                ->whereNotIn('id', $coachingTimerTaken)->get();
+        ?>
+
+        @if($checkCourseTakenWithCoaching->count())
+            <div class="text-right mb-3">
+                <button class="btn blue-outline-btn"
+                        data-toggle="modal"
+                        data-target="#addCoachingSessionModal"
+                        data-action="{{ route('learner.course-taken.coaching-timer.add') }}"
+                        id="addCoachingSessionBtn">
+                    {{ trans('site.learner.add-coaching-lesson') }}
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        @endif
+
         @if(session('success'))
             <div class="alert alert-success">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
@@ -73,7 +93,7 @@
             <div class="col-sm-3">
                 <div class="stats-card text-center">
                     <p>Mine Redaktører</p>
-                    <h2>{{ $editors->count() }}</h2>
+                    <h2>{{ $bookedEditorsCount }}</h2>
                 </div>
             </div>
             <div class="col-sm-3">
@@ -128,7 +148,37 @@
             <div class="col-md-6">
                 <div class="stats-card text-left">
                     <h3>Mine Sesjoner</h3>
-                    <span>Ingen kommende sesjoner.</span>
+                    @if($bookedSessions->isEmpty())
+                        <span>Ingen kommende sesjoner.</span>
+                    @else
+                        <ul id="sessions-list" class="list-unstyled mb-0">
+                            @foreach($bookedSessions as $session)
+                                @php
+                                    $date = \Carbon\Carbon::parse(
+                                        $session->timeSlot->date.' '.$session->timeSlot->start_time,
+                                        'UTC'
+                                    )->setTimezone(config('app.timezone'));
+                                    if ($date->isToday()) {
+                                        $dateLabel = 'I dag';
+                                    } elseif ($date->isTomorrow()) {
+                                        $dateLabel = 'I morgen';
+                                    } elseif ($date->isSameWeek(\Carbon\Carbon::now(config('app.timezone')))) {
+                                        $dateLabel = ucfirst($date->locale(app()->getLocale())->dayName);
+                                    } else {
+                                        $dateLabel = $date->format('d.m.Y');
+                                    }
+                                    $duration = $session->plan_type == 1 ? '60 min' : '30 min';
+                                @endphp
+                                <li class="mb-3 {{ $loop->iteration > 2 ? 'd-none extra-session' : '' }}">
+                                    <div>{{ $dateLabel }} {{ $date->format('H:i') }}</div>
+                                    <div>{{ $duration }} med {{ optional($session->editor)->full_name }}</div>
+                                </li>
+                            @endforeach
+                        </ul>
+                        @if($bookedSessions->count() > 2)
+                            <button id="toggle-sessions" class="btn black-btn mt-3" data-showing="false">Se Alle Sesjoner</button>
+                        @endif
+                    @endif
                 </div>
             </div>
         </div>
@@ -137,15 +187,27 @@
         <div class="row">
             @foreach($editors as $editorSlots)
                 <div class="col-sm-3">
-                    <div class="panel panel-default text-center">
+                    <div class="panel panel-default">
                         <div class="panel-body">
-                            <div class="avatar">{{ substr($editorSlots->first()->editor->name, 0, 1) }}</div>
-                            <p>{{ $editorSlots->first()->editor->name }}</p>
+                            <div class="media align-items-center">
+                                <div class="media-left">
+                                    <div class="avatar text-center">
+                                        {{ substr($editorSlots->first()->editor->first_name, 0, 1) .''. 
+                                            substr($editorSlots->first()->editor->last_name, 0, 1) }}
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <p class="media-heading" style="margin:0;">
+                                        {{ $editorSlots->first()->editor->full_name }}
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
+
 
         <h3>Hurtighandlinger</h3>
         <div class="row">
@@ -158,4 +220,87 @@
     </div>
 </div>
 
+<div id="addCoachingSessionModal" class="modal fade" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">{{ trans('site.learner.add-coaching-session') }}</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                    {{csrf_field()}}
+
+                    <div class="form-group">
+                        <label>{{ trans('site.learner.manuscript-text') }}</label>
+                        <input type="file" class="form-control" name="manuscript"
+                               accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                    </div>
+
+                    @if ($checkCourseTakenWithCoaching->count())
+                        <div class="form-group">
+                            <label>{{ trans('site.learner.use-course-included-session') }}</label>
+                            <select name="course_taken_id" class="form-control" required id="course_taken_id">
+                                <option value="" disabled selected> -- {{ trans('site.learner.select-text') }} --</option>
+                                @foreach($checkCourseTakenWithCoaching as $courseTaken)
+                                    <option value="{{ $courseTaken->id }}" data-plan="{{ $courseTaken->package->has_coaching }}">
+                                        {{ $courseTaken->package->course->title }} - {{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($courseTaken->package->has_coaching) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <input type="hidden" name="plan_type">
+                    @endif
+
+                    <div class="text-right mt-4">
+                        <button type="submit" class="btn btn-success">{{ trans('site.front.submit') }}</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.front.cancel') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggle = document.getElementById('toggle-sessions');
+        if (!toggle) {
+            return;
+        }
+        toggle.addEventListener('click', function () {
+            var extras = document.querySelectorAll('.extra-session');
+            var showing = toggle.getAttribute('data-showing') === 'true';
+            extras.forEach(function (item) {
+                item.classList.toggle('d-none');
+            });
+            toggle.setAttribute('data-showing', showing ? 'false' : 'true');
+            toggle.textContent = showing ? 'Se Alle Sesjoner' : 'Skjul Sesjoner';
+        });
+    });
+
+    $("#addCoachingSessionBtn").click(function(){
+        let action = $(this).data('action');
+        let form = $("#addCoachingSessionModal").find('form');
+
+        form.attr('action', action);
+    });
+
+    $("#course_taken_id").change(function(){
+        let plan = $(this).find(':selected').data('plan');
+        let form = $("#addCoachingSessionModal").find('form');
+
+        form.find('[name=plan_type]').val(plan);
+    });
+
+    function disableSubmit(t) {
+        let submit_btn = $(t).find('[type=submit]');
+        submit_btn.text('');
+        submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+        submit_btn.attr('disabled', 'disabled');
+    }
+</script>
 @endsection

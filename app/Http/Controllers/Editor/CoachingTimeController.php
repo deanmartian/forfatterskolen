@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Editor;
 
+use AdminHelpers;
 use App\CoachingTimeRequest;
 use App\EditorTimeSlot;
 use App\Http\Controllers\Controller;
@@ -110,7 +111,8 @@ class CoachingTimeController extends Controller
         $manuscript->editor_time_slot_id = $request->editor_time_slot_id;
         $manuscript->save();
 
-        return redirect()->back()->with('success', 'Request accepted.');
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Request accepted.'),
+                'alert_type' => 'success']);
     }
 
     public function declineRequest($id): RedirectResponse
@@ -124,6 +126,7 @@ class CoachingTimeController extends Controller
         $request->status = 'declined';
         $request->save();
 
-        return redirect()->back()->with('success', 'Request declined.');
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Request declined.'),
+                'alert_type' => 'success']);
     }
 }
