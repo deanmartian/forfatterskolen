@@ -102,27 +102,29 @@
         </div>
     </div>
 
-    <div id="bookSlotModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">{{ trans('site.learner.help-with-text') }}</h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('learner.coaching-time.request') }}" method="POST" id="bookSlotForm">
-                        @csrf
-                        <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
-                        <input type="hidden" name="editor_time_slot_id" value="">
-                        <textarea name="help_with" cols="30" rows="10" class="form-control"></textarea>
-                        <div class="text-right mt-4">
-                            <button type="submit" class="btn btn-success">{{ trans('site.front.submit') }}</button>
-                        </div>
-                    </form>
+    @if ($coachingTimer)
+        <div id="bookSlotModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">{{ trans('site.learner.help-with-text') }}</h3>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('learner.coaching-time.request') }}" method="POST" id="bookSlotForm">
+                            @csrf
+                            <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
+                            <input type="hidden" name="editor_time_slot_id" value="">
+                            <textarea name="help_with" cols="30" rows="10" class="form-control"></textarea>
+                            <div class="text-right mt-4">
+                                <button type="submit" class="btn btn-success">{{ trans('site.front.submit') }}</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 </div>
 @endsection
 
