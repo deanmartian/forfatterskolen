@@ -5800,29 +5800,36 @@ class LearnerController extends Controller
             return redirect()->back()->with('error', 'Selected time slot duration does not match your plan.');
         }
 
-        $exists = CoachingTimeRequest::where('editor_time_slot_id', $data['editor_time_slot_id'])
-            ->where('status', 'accepted')
-            ->exists();
+        try {
+            DB::transaction(function () use ($data, $timer, $slot) {
+                $exists = CoachingTimeRequest::where('editor_time_slot_id', $data['editor_time_slot_id'])
+                    ->where('status', 'accepted')
+                    ->lockForUpdate()
+                    ->exists();
 
-        if ($exists) {
+                if ($exists) {
+                    throw new \RuntimeException('Slot already booked');
+                }
+
+                $requestRecord = CoachingTimeRequest::create([
+                    'coaching_timer_manuscript_id' => $data['coaching_timer_id'],
+                    'editor_time_slot_id'          => $data['editor_time_slot_id'],
+                    'status'                       => 'accepted',
+                ]);
+
+                CoachingTimeRequest::where('editor_time_slot_id', $data['editor_time_slot_id'])
+                    ->where('id', '!=', $requestRecord->id)
+                    ->where('status', 'pending')
+                    ->update(['status' => 'declined']);
+
+                $timer->help_with = $data['help_with'] ?? null;
+                $timer->editor_id = $slot->editor_id;
+                $timer->editor_time_slot_id = $slot->id;
+                $timer->save();
+            });
+        } catch (\RuntimeException $e) {
             return redirect()->back()->with('error', 'This time slot has already been booked.');
         }
-
-        $requestRecord = CoachingTimeRequest::create([
-            'coaching_timer_manuscript_id' => $data['coaching_timer_id'],
-            'editor_time_slot_id'          => $data['editor_time_slot_id'],
-            'status'                       => 'accepted',
-        ]);
-
-        CoachingTimeRequest::where('editor_time_slot_id', $data['editor_time_slot_id'])
-            ->where('id', '!=', $requestRecord->id)
-            ->where('status', 'pending')
-            ->update(['status' => 'declined']);
-
-        $timer->help_with = $data['help_with'] ?? null;
-        $timer->editor_id = $slot->editor_id;
-        $timer->editor_time_slot_id = $slot->id;
-        $timer->save();
 
         return redirect()->route('learner.coaching-time')->with('success', 'Time slot booked.');
     }
