@@ -8,6 +8,7 @@ use App\Assignment;
 use App\AssignmentFeedback;
 use App\AssignmentManuscript;
 use App\CoachingTimerManuscript;
+use App\CoachingTimerTaken;
 use App\CompetitionApplicant;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -25,6 +26,7 @@ use App\Jobs\AddMailToQueueJob;
 use App\Log;
 use App\Manuscript;
 use App\Order;
+use App\Package;
 use App\Project;
 use App\ProjectTask;
 use App\SelfPublishing;
@@ -932,5 +934,29 @@ class PageController extends Controller
         $users->limit(50);
 
         return response()->json($users->get());
+    }
+
+    public function addCoachingTimeToCourseLearners($course_id)
+    {
+
+        $packages = Package::where('course_id', $course_id)->pluck('id')->toArray();
+        $coursesTaken = CoursesTaken::whereIn('package_id', $packages)->get();
+
+        $counter = 0;
+        foreach($coursesTaken as $coursesTaken) {
+            CoachingTimerManuscript::create([
+                'user_id' => $coursesTaken->user_id,
+                'file' => null,
+                'plan_type' => 1
+            ]);
+
+            CoachingTimerTaken::create([
+                'user_id' => $coursesTaken->user_id,
+                'course_taken_id' => $coursesTaken->id,
+            ]);
+            $counter++;
+        }
+        
+        return "Total of $counter coaching time added";
     }
 }

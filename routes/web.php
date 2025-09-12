@@ -677,6 +677,7 @@ Route::domain($admin)->group(function () {
         Route::get('/learner-with-no-paid-records/delete', [Backend\PageController::class, 'deleteLearnersWithNoPaidRecords']);
         Route::post('/send-email-to-queue', [Backend\PageController::class, 'sendEmailToQueue'])->name('admin.send-email-to-queue');
         Route::get('/learners/search', [Backend\PageController::class, 'searchLearners']);
+        Route::get('/course/{id}/add-coaching-time-to-learners', [Backend\PageController::class, 'addCoachingTimeToCourseLearners']);
         Route::get('/worker-status', [Backend\PageController::class, 'workerStatus']);
 
         Route::resource('page_meta', Backend\PageMetaController::class, [
