@@ -125,8 +125,23 @@
                             </thead>
                             <tbody>
                                 @forelse($bookings as $booking)
+                                    @php
+                                        $dt = \Carbon\Carbon::parse(
+                                            $booking->slot->date.' '.$booking->slot->start_time,
+                                            'UTC'
+                                        )->setTimezone(config('app.timezone'));
+                                        if ($dt->isToday()) {
+                                            $dateLabel = 'I dag';
+                                        } elseif ($dt->isTomorrow()) {
+                                            $dateLabel = 'I morgen';
+                                        } elseif ($dt->isSameWeek(\Carbon\Carbon::now(config('app.timezone')))) {
+                                            $dateLabel = ucfirst($dt->locale(app()->getLocale())->dayName);
+                                        } else {
+                                            $dateLabel = $dt->format('d.m.Y');
+                                        }
+                                    @endphp
                                     <tr>
-                                        <td class="slot-time" data-time="{{ \Carbon\Carbon::parse($booking->slot->date.' '.$booking->slot->start_time, 'UTC')->toIso8601String() }}"></td>
+                                        <td>{{ $dateLabel }} {{ $dt->format('H:i') }}</td>
                                         <td>{{ $booking->manuscript->user->full_name }}</td>
                                         <td>{{ $booking->slot->duration }} min</td>
                                         <td>{{ $booking->manuscript->help_with }}</td>
@@ -208,17 +223,6 @@
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.slot-time').forEach(function (el) {
-            const dt = new Date(el.dataset.time);
-            const datePart = dt.toLocaleDateString('no-NO');
-            const timePart = dt.toLocaleTimeString('no-NO', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            });
-            el.textContent = `${datePart} ${timePart}`;
-        });
-
         let formToSubmit;
         document.querySelectorAll('.confirm-action').forEach(function (btn) {
             btn.addEventListener('click', function (e) {
