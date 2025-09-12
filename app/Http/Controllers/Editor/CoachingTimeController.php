@@ -17,11 +17,19 @@ class CoachingTimeController extends Controller
     {
         $requests = CoachingTimeRequest::whereHas('slot', function ($q) {
             $q->where('editor_id', Auth::id());
-        })->where('status', 'pending')
+        })
+            ->where('status', 'pending')
             ->with(['manuscript.user', 'slot'])
             ->get();
 
-        return view('editor.coaching-time.index', compact('requests'));
+        $bookings = CoachingTimeRequest::whereHas('slot', function ($q) {
+            $q->where('editor_id', Auth::id());
+        })
+            ->where('status', 'accepted')
+            ->with(['manuscript.user', 'slot'])
+            ->get();
+
+        return view('editor.coaching-time.index', compact('requests', 'bookings'));
     }
 
     public function calendar()
