@@ -119,8 +119,6 @@
                                     <th>Tid</th>
                                     <th>Student</th>
                                     <th>Varighet</th>
-                                    <th>Tema</th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -142,10 +140,17 @@
                                     @endphp
                                     <tr>
                                         <td>{{ $dateLabel }} {{ $dt->format('H:i') }}</td>
-                                        <td>{{ $booking->manuscript->user->full_name }}</td>
+                                        <td>
+                                            {{ $booking->manuscript->user->full_name }}
+                                            @if ($booking->manuscript->help_with)
+                                                <br>
+                                                <a href="#viewHelpWithModal" style="color:#eea236" class="viewHelpWithBtn"
+                                                data-toggle="modal" data-details="{{ $booking->manuscript->help_with }}">
+                                                    {{ trans('site.view-help-with') }}
+                                                </a>
+                                            @endif
+                                        </td>
                                         <td>{{ $booking->slot->duration }} min</td>
-                                        <td>{{ $booking->manuscript->help_with }}</td>
-                                        <td></td>
                                     </tr>
                                 @empty
                                     <tr><td colspan="5">Ingen bookinger.</td></tr>
@@ -218,6 +223,20 @@
             </div>
         </div>
     </div>
+
+    <div id="viewHelpWithModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Help With</h4>
+                </div>
+                <div class="modal-body">
+                    <pre></pre>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -239,5 +258,12 @@
             }
         });
     });
+
+    $(".viewHelpWithBtn").click(function(){
+       let details = $(this).data('details');
+       let modal = $("#viewHelpWithModal");
+
+       modal.find('.modal-body').find('pre').text(details);
+	});
 </script>
 @endsection
