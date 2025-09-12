@@ -27,9 +27,15 @@ class CoachingTimeController extends Controller
         })
             ->where('status', 'accepted')
             ->with(['manuscript.user', 'slot'])
-            ->get();
+            ->get()
+            ->sortBy(function ($booking) {
+                return $booking->slot->date . ' ' . $booking->slot->start_time;
+            });
 
-        return view('editor.coaching-time.index', compact('requests', 'bookings'));
+        return view('editor.coaching-time.index', [
+            'requests' => $requests,
+            'bookings' => $bookings,
+        ]);
     }
 
     public function calendar()
