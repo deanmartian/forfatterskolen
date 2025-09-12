@@ -124,13 +124,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>14:00</td>
-                                    <td>Kristine S. Heningsen</td>
-                                    <td>60 min</td>
-                                    <td>Utfordring</td>
-                                    <td><a href="#" class="btn btn-default btn-xs">Beskrivelse</a></td>
-                                </tr>
+                                @forelse($bookings as $booking)
+                                    <tr>
+                                        <td class="slot-time" data-time="{{ \Carbon\Carbon::parse($booking->slot->date.' '.$booking->slot->start_time, 'UTC')->toIso8601String() }}"></td>
+                                        <td>{{ $booking->manuscript->user->full_name }}</td>
+                                        <td>{{ $booking->slot->duration }} min</td>
+                                        <td>{{ $booking->manuscript->help_with }}</td>
+                                        <td></td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="5">Ingen bookinger.</td></tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
