@@ -5042,11 +5042,11 @@ class LearnerController extends Controller
         $course_taken_id = $data['course_taken_id'];
 
         if ($courseTaken = CoursesTaken::find($course_taken_id)) {
-            $suggested_dates = $data['suggested_date'];
+            /* $suggested_dates = $data['suggested_date'];
             // format the sent suggested dates
             foreach ($suggested_dates as $k => $suggested_date) {
                 $suggested_dates[$k] = Carbon::parse($suggested_date)->format('Y-m-d H:i:s');
-            }
+            } */
 
             $extensions = ['docx'];
             $file = null;
@@ -5071,7 +5071,7 @@ class LearnerController extends Controller
                 'user_id' => Auth::user()->id,
                 'file' => $file,
                 'plan_type' => $data['plan_type'],
-                'suggested_date' => json_encode($suggested_dates),
+                //'suggested_date' => json_encode($suggested_dates),
             ]);
 
             CoachingTimerTaken::create([
@@ -5079,6 +5079,9 @@ class LearnerController extends Controller
                 'course_taken_id' => $course_taken_id,
             ]);
 
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Coaching Time added.'),
+                'alert_type' => 'success']);
         }
 
         return redirect()->back();
@@ -5705,7 +5708,7 @@ class LearnerController extends Controller
         ], $httpcode);
     }
 
-    public function coachingTime()
+    public function coachingTime(Request $request)
     {
         $coachingTimers = CoachingTimerManuscript::where('user_id', Auth::id())
             ->whereNull('editor_id')
@@ -5720,7 +5723,31 @@ class LearnerController extends Controller
             ->get()
             ->groupBy('editor_id');
 
-        return view('frontend.learner.coaching-time', compact('editors', 'coachingTimers'));
+        $bookedEditorsCount = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNotNull('editor_id')
+            ->distinct('editor_id')
+            ->count('editor_id');
+
+        $bookedSessions = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNotNull('editor_time_slot_id')
+            ->where(function ($q) {
+                $q->where('status', 0)
+                    ->whereHas('timeSlot', function ($q) {
+                        $q->where('date', '>=', now()->toDateString());
+                    });
+            })
+            ->with(['editor', 'timeSlot'])
+            ->get()
+            ->sortBy(function ($session) {
+                return $session->timeSlot->date . ' ' . $session->timeSlot->start_time;
+            });
+
+        return view('frontend.learner.coaching-time', compact(
+            'editors',
+            'coachingTimers',
+            'bookedEditorsCount',
+            'bookedSessions'
+        ));
     }
 
     public function availableCoachingTime(Request $request)
@@ -5734,7 +5761,11 @@ class LearnerController extends Controller
 
         $coachingTimer = null;
         if ($request->filled('coaching_timer_id')) {
-            $coachingTimer = $coachingTimers->where('id', $request->input('coaching_timer_id'))->first();
+            $coachingTimer = $coachingTimers->firstWhere('id', $request->input('coaching_timer_id'));
+
+            if (!$coachingTimer) {
+                return redirect()->route('learner.coaching-time');
+            }
         } elseif ($coachingTimers->count() === 1) {
             $coachingTimer = $coachingTimers->first();
         }
@@ -5765,6 +5796,7 @@ class LearnerController extends Controller
         $data = $request->validate([
             'coaching_timer_id'   => 'required|exists:coaching_timer_manuscripts,id',
             'editor_time_slot_id' => 'required|exists:editor_time_slots,id',
+            'help_with'           => 'nullable|string',
         ]);
 
         $timer = CoachingTimerManuscript::find($data['coaching_timer_id']);
@@ -5775,21 +5807,38 @@ class LearnerController extends Controller
             return redirect()->back()->with('error', 'Selected time slot duration does not match your plan.');
         }
 
-        $exists = CoachingTimeRequest::where('coaching_timer_manuscript_id', $data['coaching_timer_id'])
-            ->where('editor_time_slot_id', $data['editor_time_slot_id'])
-            ->exists();
+        try {
+            DB::transaction(function () use ($data, $timer, $slot) {
+                $exists = CoachingTimeRequest::where('editor_time_slot_id', $data['editor_time_slot_id'])
+                    ->where('status', 'accepted')
+                    ->lockForUpdate()
+                    ->exists();
 
-        if ($exists) {
-            return redirect()->back()->with('error', 'You have already requested this time slot.');
+                if ($exists) {
+                    throw new \RuntimeException('Slot already booked');
+                }
+
+                $requestRecord = CoachingTimeRequest::create([
+                    'coaching_timer_manuscript_id' => $data['coaching_timer_id'],
+                    'editor_time_slot_id'          => $data['editor_time_slot_id'],
+                    'status'                       => 'accepted',
+                ]);
+
+                CoachingTimeRequest::where('editor_time_slot_id', $data['editor_time_slot_id'])
+                    ->where('id', '!=', $requestRecord->id)
+                    ->where('status', 'pending')
+                    ->update(['status' => 'declined']);
+
+                $timer->help_with = $data['help_with'] ?? null;
+                $timer->editor_id = $slot->editor_id;
+                $timer->editor_time_slot_id = $slot->id;
+                $timer->save();
+            });
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->with('error', 'This time slot has already been booked.');
         }
 
-        CoachingTimeRequest::create([
-            'coaching_timer_manuscript_id' => $data['coaching_timer_id'],
-            'editor_time_slot_id'          => $data['editor_time_slot_id'],
-            'status'                       => 'pending',
-        ]);
-
-        return redirect()->route('learner.coaching-time')->with('success', 'Time slot requested.');
+        return redirect()->route('learner.coaching-time')->with('success', 'Time slot booked.');
     }
 
     public function currentUser()

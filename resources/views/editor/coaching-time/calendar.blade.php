@@ -66,9 +66,16 @@
                 const start = new Date(info.start);
                 const end   = new Date(info.end);
 
-                const fmt = { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' };
-                const startTxt = start.toLocaleString('en-US', fmt);
-                const endTxt   = end.toLocaleString('en-US', fmt);
+                const fmt = {
+                    weekday:'short',
+                    month:'short',
+                    day:'numeric',
+                    hour:'2-digit',
+                    minute:'2-digit',
+                    hour12: false
+                };
+                const startTxt = start.toLocaleString('no-NO', fmt);
+                const endTxt   = end.toLocaleString('no-NO', fmt);
 
                 const diffMinutes = (end - start) / 60000;
                 if (![30, 60].includes(diffMinutes)) {
@@ -101,7 +108,7 @@
                 let end   = new Date(arg.event.end);
 
                 // Format times like "08:00 - 09:00"
-                let fmt = { hour: '2-digit', minute: '2-digit' };
+                let fmt = { hour: '2-digit', minute: '2-digit', hour12: false };
                 let startTxt = start.toLocaleTimeString([], fmt);
                 let endTxt   = end.toLocaleTimeString([], fmt);
 
@@ -183,11 +190,11 @@
         function showSlotDetails(event) {
             let start = new Date(event.start);
             let end   = new Date(event.end);
-            let fmt = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            let fmt = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
 
             document.getElementById('slotStudent').textContent = event.extendedProps.student || '';
-            document.getElementById('slotStart').textContent = start.toLocaleString([], fmt);
-            document.getElementById('slotEnd').textContent = end.toLocaleString([], fmt);
+            document.getElementById('slotStart').textContent = start.toLocaleString('no-NO', fmt);
+            document.getElementById('slotEnd').textContent = end.toLocaleString('no-NO', fmt);
             document.getElementById('slotDuration').textContent = (event.extendedProps.duration || ((end - start)/60000)) + ' min';
 
             $('#slotDetailsModal').modal('show');
