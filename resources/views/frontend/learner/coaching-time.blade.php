@@ -87,6 +87,7 @@
             $availableSlots = $editors->reduce(function ($carry, $group) {
                 return $carry + $group->count();
             }, 0);
+            $nextSession = $bookedSessions->first();
         @endphp
 
         <div class="row mb-5">
@@ -99,7 +100,26 @@
             <div class="col-sm-3">
                 <div class="stats-card">
                     <p>Neste Redaksjon</p>
-                    <h2>-</h2>
+                    @if($nextSession)
+                        @php
+                            $date = \Carbon\Carbon::parse(
+                                $nextSession->timeSlot->date.' '.$nextSession->timeSlot->start_time,
+                                'UTC'
+                            )->setTimezone(config('app.timezone'));
+                            if ($date->isToday()) {
+                                $dateLabel = 'I dag';
+                            } elseif ($date->isTomorrow()) {
+                                $dateLabel = 'I morgen';
+                            } elseif ($date->isSameWeek(\Carbon\Carbon::now(config('app.timezone')))) {
+                                $dateLabel = ucfirst($date->locale(app()->getLocale())->dayName);
+                            } else {
+                                $dateLabel = $date->format('d.m.Y');
+                            }
+                        @endphp
+                        <h2>{{ $dateLabel }} {{ $date->format('H:i') }} - {{ optional($nextSession->editor)->full_name }}</h2>
+                    @else
+                        <h2>-</h2>
+                    @endif
                 </div>
             </div>
             <div class="col-sm-3">
