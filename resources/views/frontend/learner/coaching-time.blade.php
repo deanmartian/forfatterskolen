@@ -116,7 +116,12 @@
                                 $dateLabel = $date->format('d.m.Y');
                             }
                         @endphp
-                        <h2>{{ $dateLabel }} {{ $date->format('H:i') }} - {{ optional($nextSession->editor)->full_name }}</h2>
+                        <h2 style="font-size: 24px">
+                            {{ $dateLabel }} 
+                        </h2>
+                        <p class="text-secondary">
+                            {{ $date->format('H:i') }} - {{ optional($nextSession->editor)->full_name }}
+                        </p>
                     @else
                         <h2>-</h2>
                     @endif
