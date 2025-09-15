@@ -52,7 +52,7 @@
             <div class="col-sm-3">
                 <div class="stats-card">
                     <p>Mine Forfatter-studenter</p>
-                    <h2>3</h2>
+                    <h2>{{ $bookings->count() }}</h2>
                 </div>
             </div>
             <div class="col-sm-3">
