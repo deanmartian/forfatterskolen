@@ -26,8 +26,19 @@ class CoachingTimeController extends Controller
             $q->where('editor_id', Auth::id());
         })
             ->where('status', 'accepted')
+            ->whereHas('manuscript', function ($q) {
+                $q->where('status', 0);
+            })
             ->with(['manuscript.user', 'slot'])
             ->get()
+            ->filter(function ($booking) {
+                $slotDateTime = Carbon::parse(
+                    $booking->slot->date . ' ' . $booking->slot->start_time,
+                    'UTC'
+                );
+
+                return $slotDateTime->greaterThanOrEqualTo(Carbon::now('UTC'));
+            })
             ->sortBy(function ($booking) {
                 return $booking->slot->date . ' ' . $booking->slot->start_time;
             });
