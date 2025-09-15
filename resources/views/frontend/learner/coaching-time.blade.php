@@ -130,7 +130,7 @@
             <div class="col-sm-3">
                 <div class="stats-card">
                     <p>Denne Måneden</p>
-                    <h2>-</h2>
+                    <h2>{{ $bookedSessionsThisMonth }}</h2>
                 </div>
             </div>
             <div class="col-sm-3">

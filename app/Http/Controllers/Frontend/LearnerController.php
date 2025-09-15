@@ -5744,11 +5744,21 @@ class LearnerController extends Controller
                 return $session->timeSlot->date . ' ' . $session->timeSlot->start_time;
             });
 
+        $bookedSessionsThisMonth = $bookedSessions->filter(function ($session) {
+            $dt = Carbon::parse(
+                $session->timeSlot->date . ' ' . $session->timeSlot->start_time,
+                'UTC'
+            )->setTimezone(config('app.timezone'));
+
+            return $dt->isSameMonth(Carbon::now(config('app.timezone')));
+        })->count();
+
         return view('frontend.learner.coaching-time', compact(
             'editors',
             'coachingTimers',
             'bookedEditorsCount',
-            'bookedSessions'
+            'bookedSessions',
+            'bookedSessionsThisMonth'
         ));
     }
 
