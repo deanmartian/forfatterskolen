@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Editor;
 
 use AdminHelpers;
 use App\CoachingTimeRequest;
+use App\CoachingTimerManuscript;
 use App\EditorTimeSlot;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -27,7 +28,7 @@ class CoachingTimeController extends Controller
         })
             ->where('status', 'accepted')
             ->whereHas('manuscript', function ($q) {
-                $q->where('status', 0);
+                $q->where('status', '!=', CoachingTimerManuscript::STATUS_FINISHED);
             })
             ->with(['manuscript.user', 'slot'])
             ->get()
