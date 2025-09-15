@@ -64,7 +64,7 @@
             <div class="col-sm-4">
                 <div class="stats-card">
                     <p>Ledige Slots</p>
-                    <h2>15</h2>
+                    <h2>{{ $availableSlots }}</h2>
                 </div>
             </div>
         </div>

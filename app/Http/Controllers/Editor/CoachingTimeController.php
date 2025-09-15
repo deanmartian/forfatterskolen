@@ -53,10 +53,26 @@ class CoachingTimeController extends Controller
             return $dt->isSameWeek(Carbon::now(config('app.timezone')));
         })->count();
 
+        $availableSlots = EditorTimeSlot::where('editor_id', Auth::id())
+            ->whereDoesntHave('requests', function ($q) {
+                $q->where('status', 'accepted');
+            })
+            ->get()
+            ->filter(function ($slot) {
+                $slotDateTime = Carbon::parse(
+                    $slot->date . ' ' . $slot->start_time,
+                    'UTC'
+                );
+
+                return $slotDateTime->greaterThanOrEqualTo(Carbon::now('UTC'));
+            })
+            ->count();
+
         return view('editor.coaching-time.index', [
             'requests'       => $requests,
             'bookings'       => $bookings,
             'bookingsThisWeek' => $bookingsThisWeek,
+            'availableSlots'  => $availableSlots,
         ]);
     }
 
