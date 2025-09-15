@@ -58,7 +58,7 @@
             <div class="col-sm-3">
                 <div class="stats-card">
                     <p>Denne Uken</p>
-                    <h2>8</h2>
+                    <h2>{{ $bookingsThisWeek }}</h2>
                 </div>
             </div>
             <div class="col-sm-3">
