@@ -49,28 +49,22 @@
 @section('content')
     <div class="container-fluid coaching-time-index dashboard-left">
         <div class="row" style="margin-bottom:20px;">
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="stats-card">
                     <p>Mine Forfatter-studenter</p>
                     <h2>{{ $bookings->count() }}</h2>
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="stats-card">
                     <p>Denne Uken</p>
                     <h2>{{ $bookingsThisWeek }}</h2>
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="stats-card">
                     <p>Ledige Slots</p>
                     <h2>15</h2>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="stats-card">
-                    <p>Fullt</p>
-                    <h2>24</h2>
                 </div>
             </div>
         </div>
