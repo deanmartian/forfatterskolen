@@ -5707,9 +5707,18 @@ class LearnerController extends Controller
             ->whereNull('editor_id')
             ->get();
 
+        $now = Carbon::now('UTC');
+
         $editors = EditorTimeSlot::with('editor')
             ->whereDoesntHave('requests', function ($q) {
                 $q->where('status', 'accepted');
+            })
+            ->where(function ($q) use ($now) {
+                $q->where('date', '>', $now->toDateString())
+                    ->orWhere(function ($q) use ($now) {
+                        $q->where('date', $now->toDateString())
+                            ->where('start_time', '>=', $now->toTimeString());
+                    });
             })
             ->orderBy('date')
             ->orderBy('start_time')
