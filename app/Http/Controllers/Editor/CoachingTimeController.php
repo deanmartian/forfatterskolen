@@ -44,9 +44,19 @@ class CoachingTimeController extends Controller
                 return $booking->slot->date . ' ' . $booking->slot->start_time;
             });
 
+        $bookingsThisWeek = $bookings->filter(function ($booking) {
+            $dt = Carbon::parse(
+                $booking->slot->date . ' ' . $booking->slot->start_time,
+                'UTC'
+            )->setTimezone(config('app.timezone'));
+
+            return $dt->isSameWeek(Carbon::now(config('app.timezone')));
+        })->count();
+
         return view('editor.coaching-time.index', [
-            'requests' => $requests,
-            'bookings' => $bookings,
+            'requests'       => $requests,
+            'bookings'       => $bookings,
+            'bookingsThisWeek' => $bookingsThisWeek,
         ]);
     }
 
