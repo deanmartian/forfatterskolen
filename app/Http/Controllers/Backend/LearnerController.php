@@ -325,7 +325,7 @@ class LearnerController extends Controller
                 ->where('parent_id', $courseTaken->id)->delete();*/
 
             if ($request->has('is_permanent')) {
-                if ($courseTaken->is_pay_later) {
+                //if ($courseTaken->is_pay_later) {
                     Order::where(
                         [
                             'user_id' => $courseTaken->user_id,
@@ -334,7 +334,7 @@ class LearnerController extends Controller
                             'is_pay_later' => 1
                         ]
                     )->delete();
-                }
+                //}
                 $courseTaken->forceDelete();
             } else {
                 $courseTaken->delete();
