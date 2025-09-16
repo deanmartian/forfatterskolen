@@ -5812,7 +5812,7 @@ class LearnerController extends Controller
         ]);
 
         $timer = CoachingTimerManuscript::find($data['coaching_timer_id']);
-        $slot  = EditorTimeSlot::find($data['editor_time_slot_id']);
+        $slot  = EditorTimeSlot::with('editor')->find($data['editor_time_slot_id']);
 
         $requiredDuration = $timer->plan_type == 1 ? 60 : 30;
         if ($slot->duration != $requiredDuration) {
@@ -5850,7 +5850,130 @@ class LearnerController extends Controller
             return redirect()->back()->with('error', 'This time slot has already been booked.');
         }
 
+        $timer->refresh()->load(['user', 'editor', 'timeSlot.editor']);
+        $slotModel = $timer->timeSlot ?: $slot;
+
+        if ($slotModel) {
+            $emailContext = $this->coachingTimeBookingEmailContext($timer, $slotModel);
+            $learnerPortalLink = $this->generateRouteUrl('learner.coaching-time');
+            $editorPortalLink = $this->generateRouteUrl('editor.coaching-time.index');
+            $fullContext = array_merge($emailContext, [
+                'learner_portal_link' => $learnerPortalLink,
+                'editor_portal_link'  => $editorPortalLink,
+            ]);
+
+            if ($timer->user) {
+                $learnerTemplate = AdminHelpers::emailTemplate('Learner Coaching Time Reservation Confirmed');
+
+                if ($learnerTemplate) {
+                    $learnerContent = AdminHelpers::formatEmailContent($learnerTemplate->email_content,
+                        $timer->user->email, $timer->user->first_name, $learnerPortalLink ?: '');
+
+                    $learnerContent = $this->applyCoachingBookingEmailPlaceholders($learnerContent, $fullContext);
+
+                    dispatch(new AddMailToQueueJob($timer->user->email, $learnerTemplate->subject, $learnerContent,
+                        $learnerTemplate->from_email, null, null, 'coaching-time-booking', $timer->id));
+                }
+            }
+
+            if ($timer->editor && $timer->editor->email) {
+                $editorTemplate = AdminHelpers::emailTemplate('Editor New Coaching Time Booking Received');
+
+                if ($editorTemplate) {
+                    $editorContent = $this->applyCoachingBookingEmailPlaceholders($editorTemplate->email_content,
+                        $fullContext);
+
+                    $emailData = [
+                        'email_subject' => $editorTemplate->subject,
+                        'email_message' => $editorContent,
+                        'from_name' => '',
+                        'from_email' => $editorTemplate->from_email ?: 'post@forfatterskolen.no',
+                        'attach_file' => null,
+                    ];
+
+                    Mail::to($timer->editor->email)->queue(new SubjectBodyEmail($emailData));
+                }
+            }
+        }
+
         return redirect()->route('learner.coaching-time')->with('success', 'Time slot booked.');
+    }
+
+    protected function coachingTimeBookingEmailContext(CoachingTimerManuscript $timer, EditorTimeSlot $slot): array
+    {
+        $learner = $timer->user;
+        $editor = $timer->editor ?: $slot->editor;
+
+        $timezone = config('app.timezone', 'UTC');
+        $startUtc = Carbon::parse($slot->date.' '.$slot->start_time, 'UTC');
+        $startLocal = $startUtc->copy()->setTimezone($timezone);
+        $endLocal = $startLocal->copy()->addMinutes($slot->duration);
+
+        $helpWith = $timer->help_with ?? '';
+        $helpWith = trim($helpWith);
+
+        return [
+            'learner_name' => $learner ? $learner->full_name : '',
+            'learner_first_name' => $learner ? $learner->first_name : '',
+            'editor_name' => $editor ? $editor->full_name : '',
+            'editor_first_name' => $editor ? $editor->first_name : '',
+            'slot_date' => $startLocal->format('d.m.Y'),
+            'slot_time' => $startLocal->format('H:i'),
+            'slot_end_time' => $endLocal->format('H:i'),
+            'slot_time_range' => $startLocal->format('H:i').' - '.$endLocal->format('H:i'),
+            'slot_date_time' => $startLocal->format('d.m.Y H:i'),
+            'slot_timezone' => $timezone,
+            'slot_duration' => (string) $slot->duration,
+            'slot_duration_minutes' => (string) $slot->duration,
+            'slot_duration_label' => $slot->duration.' min',
+            'help_with' => $helpWith,
+            'help_with_plain' => $helpWith,
+        ];
+    }
+
+    protected function applyCoachingBookingEmailPlaceholders(string $content, array $data): string
+    {
+        $mapping = [
+            'learner_name' => [':learner_name', '{learner_name}', '_learner_'],
+            'learner_first_name' => [':learner_first_name', '{learner_first_name}'],
+            'editor_name' => [':editor_name', '{editor_name}', ':coach_name', '{coach_name}', '_editor_'],
+            'editor_first_name' => [':editor_first_name', '{editor_first_name}', ':coach_first_name', '{coach_first_name}'],
+            'slot_date' => [':slot_date', '{slot_date}', ':coaching_date', '{coaching_date}'],
+            'slot_time' => [':slot_time', '{slot_time}', ':coaching_time', '{coaching_time}'],
+            'slot_end_time' => [':slot_end_time', '{slot_end_time}', ':coaching_end_time', '{coaching_end_time}'],
+            'slot_time_range' => [':slot_time_range', '{slot_time_range}', ':coaching_time_range', '{coaching_time_range}'],
+            'slot_date_time' => [':slot_date_time', '{slot_date_time}', ':coaching_date_time', '{coaching_date_time}'],
+            'slot_timezone' => [':slot_timezone', '{slot_timezone}', ':coaching_timezone', '{coaching_timezone}'],
+            'slot_duration' => [':slot_duration', '{slot_duration}', ':coaching_duration', '{coaching_duration}'],
+            'slot_duration_minutes' => [':slot_duration_minutes', '{slot_duration_minutes}'],
+            'slot_duration_label' => [':slot_duration_label', '{slot_duration_label}'],
+            'help_with' => [':help_with', '{help_with}', '_help_with_'],
+            'help_with_plain' => [':help_with_plain', '{help_with_plain}'],
+            'learner_portal_link' => [':learner_portal_link', '{learner_portal_link}', ':coaching_portal_link', '{coaching_portal_link}'],
+            'editor_portal_link' => [':editor_portal_link', '{editor_portal_link}', ':dashboard_link', '{dashboard_link}'],
+        ];
+
+        foreach ($mapping as $key => $tokens) {
+            $value = $data[$key] ?? '';
+            if ($value !== '') {
+                $value = e($value);
+            }
+
+            foreach ($tokens as $token) {
+                $content = str_replace($token, $value, $content);
+            }
+        }
+
+        return $content;
+    }
+
+    protected function generateRouteUrl(string $routeName): string
+    {
+        try {
+            return route($routeName);
+        } catch (\Throwable $exception) {
+            return '';
+        }
     }
 
     public function currentUser()
