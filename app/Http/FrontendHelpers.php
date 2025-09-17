@@ -318,10 +318,10 @@ class FrontendHelpers
                 'is_active' => GlobalRequest::is('account/shop-manuscript*'),
             ],
             [
-                'route_name' => 'learner.workshop',
+                'route_name' => 'learner.coaching-time',
                 'fa-icon' => 'fa fa-briefcase',
                 'label' => trans('site.learner.nav.workshop'),
-                'is_active' => GlobalRequest::is('account/workshop*'),
+                'is_active' => GlobalRequest::is('account/coaching-time*'),
             ],
             [
                 'route_name' => 'learner.webinar',
