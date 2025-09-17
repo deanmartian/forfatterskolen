@@ -54,7 +54,10 @@
 @section('content')
 <div class="learner-container coaching-time-wrapper">
     <div class="container">
-        <h1 class="page-title">Coaching Time</h1>
+        <p style="color: red; font-weight:bold">Vennligst ikke bruk denne coaching funksjonen ennå.</p>
+        <h1 class="page-title">
+            {{ trans('site.coaching-timer-text') }}
+        </h1>
 
         <?php
             $packages = \App\Package::where('has_coaching', '>', 0)->pluck('id');
@@ -93,13 +96,13 @@
         <div class="row mb-5">
             <div class="col-sm-3">
                 <div class="stats-card text-center">
-                    <p>Mine Redaktører</p>
+                    <p>{{ trans('site.coaching-time-my-editors') }}</p>
                     <h2>{{ $bookedEditorsCount }}</h2>
                 </div>
             </div>
             <div class="col-sm-3">
                 <div class="stats-card">
-                    <p>Neste Redaksjon</p>
+                    <p>{{ trans('site.coaching-time-next-editorial') }}</p>
                     @if($nextSession)
                         @php
                             $date = \Carbon\Carbon::parse(
@@ -129,13 +132,13 @@
             </div>
             <div class="col-sm-3">
                 <div class="stats-card">
-                    <p>Denne Måneden</p>
+                    <p>{{ trans('site.coaching-time-this-month') }}</p>
                     <h2>{{ $bookedSessionsThisMonth }}</h2>
                 </div>
             </div>
             <div class="col-sm-3">
                 <div class="stats-card">
-                    <p>Ledige Slots</p>
+                    <p>{{ trans('site.coaching-time-available-slots') }}</p>
                     <h2>{{ $availableSlots }}</h2>
                 </div>
             </div>
@@ -144,18 +147,21 @@
         <div class="row mb-5">
             <div class="col-md-6">
                 <div class="stats-card text-left">
-                    <h3>Book Redaksjonstime</h3>
-                    <span>Velg redaktør og tid for å booke din neste sesjon.</span>
+                    <h3>{{ trans('site.coaching-time-book-editorial-class') }}</h3>
+                    <span>{{ trans('site.coaching-time-book-editorial-class-description') }}</span>
                     
                     @if($coachingTimers->count() >= 1)
                         <form method="GET" action="{{ route('learner.coaching-time.available') }}">
                             @if($coachingTimers->count() > 1)
                                 <div class="form-group mt-3">
-                                    <label for="coaching_timer_id">Coaching Time</label>
+                                    <label for="coaching_timer_id">
+                                        {{ trans('site.learner.coaching-time') }}
+                                    </label>
                                     <select name="coaching_timer_id" id="coaching_timer_id" class="form-control">
                                         @foreach($coachingTimers as $timer)
                                             <option value="{{ $timer->id }}">
-                                                Coaching Time - {{ FrontendHelpers::getCoachingTimerPlanType($timer->plan_type) }}
+                                                {{ trans('site.learner.coaching-time') }} - 
+                                                {{ FrontendHelpers::getCoachingTimerPlanType($timer->plan_type) }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -164,11 +170,11 @@
                                 <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimers->first()->id }}">
                             @endif
                             <button type="submit" class="btn black-btn mt-4">
-                                Se Tilgjengelige Tider
+                                {{ trans('site.coaching-time-see-available-slots') }}
                             </button>
                         </form>
                     @else
-                        <p class="mt-4">Ingen coaching time tilgjengelig.</p>
+                        <p class="mt-4">{{ trans('site.coaching-time-no-record') }}</p>
                     @endif
                 </div>
             </div>
