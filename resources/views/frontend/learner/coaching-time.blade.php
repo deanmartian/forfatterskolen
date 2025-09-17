@@ -236,13 +236,13 @@
         </div>
 
 
-        <h3>Hurtighandlinger</h3>
+        {{-- <h3>Hurtighandlinger</h3>
         <div class="row">
             <div class="col-sm-3"><button class="btn btn-default btn-block">Endre Tidspunkt</button></div>
             <div class="col-sm-3"><button class="btn btn-default btn-block">Avbryt Booking</button></div>
             <div class="col-sm-3"><button class="btn btn-default btn-block">Kontakt Redaktør</button></div>
             <div class="col-sm-3"><button class="btn btn-default btn-block">&nbsp;</button></div>
-        </div>
+        </div> --}}
 
     </div>
 </div>
