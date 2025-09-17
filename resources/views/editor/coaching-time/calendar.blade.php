@@ -34,6 +34,8 @@
                 <p><strong>Start:</strong> <span id="slotStart"></span></p>
                 <p><strong>End:</strong> <span id="slotEnd"></span></p>
                 <p><strong>Duration:</strong> <span id="slotDuration"></span></p>
+                <p><strong>Helps with:</strong></p>
+                <pre id="slotHelpsWith"></pre>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -196,6 +198,7 @@
             document.getElementById('slotStart').textContent = start.toLocaleString('no-NO', fmt);
             document.getElementById('slotEnd').textContent = end.toLocaleString('no-NO', fmt);
             document.getElementById('slotDuration').textContent = (event.extendedProps.duration || ((end - start)/60000)) + ' min';
+            document.getElementById('slotHelpsWith').textContent = event.extendedProps.helps_with || '';
 
             $('#slotDetailsModal').modal('show');
         }

@@ -49,34 +49,28 @@
 @section('content')
     <div class="container-fluid coaching-time-index dashboard-left">
         <div class="row" style="margin-bottom:20px;">
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="stats-card">
                     <p>Mine Forfatter-studenter</p>
-                    <h2>3</h2>
+                    <h2>{{ $bookings->count() }}</h2>
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="stats-card">
                     <p>Denne Uken</p>
-                    <h2>8</h2>
+                    <h2>{{ $bookingsThisWeek }}</h2>
                 </div>
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <div class="stats-card">
                     <p>Ledige Slots</p>
-                    <h2>15</h2>
-                </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="stats-card">
-                    <p>Fullt</p>
-                    <h2>24</h2>
+                    <h2>{{ $availableSlots }}</h2>
                 </div>
             </div>
         </div>
 
         <div class="row" style="margin-bottom:20px;">
-            <div class="col-sm-8">
+            <div class="col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4>Redaktør Kalender</h4>
@@ -86,11 +80,10 @@
                         <a href="{{ route('editor.coaching-time.calendar') }}" class="btn btn-default btn-block" style="margin-bottom:15px;">
                             Åpne Redaktørkalender
                         </a>
-                        <a href="#" class="btn btn-default btn-block">Gjenåpne Redaksjonstimer</a>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
+            {{-- <div class="col-sm-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4>Mine Forfatter-studenter</h4>
@@ -104,14 +97,14 @@
                         <a href="#" class="btn btn-default btn-block" style="margin-top:15px;">Se Alle Forfatter-studenter</a>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
         <div class="row">
             <div class="col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4>Dagens Timeplan</h4>
+                        <h4>Timeplan</h4>
                     </div>
                     <div class="panel-body">
                         <table class="table schedule-table">
@@ -120,18 +113,42 @@
                                     <th>Tid</th>
                                     <th>Student</th>
                                     <th>Varighet</th>
-                                    <th>Tema</th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>14:00</td>
-                                    <td>Kristine S. Heningsen</td>
-                                    <td>60 min</td>
-                                    <td>Utfordring</td>
-                                    <td><a href="#" class="btn btn-default btn-xs">Beskrivelse</a></td>
-                                </tr>
+                                @forelse($bookings as $booking)
+                                    @php
+                                        $dt = \Carbon\Carbon::parse(
+                                            $booking->slot->date.' '.$booking->slot->start_time,
+                                            'UTC'
+                                        )->setTimezone(config('app.timezone'));
+                                        if ($dt->isToday()) {
+                                            $dateLabel = 'I dag';
+                                        } elseif ($dt->isTomorrow()) {
+                                            $dateLabel = 'I morgen';
+                                        } elseif ($dt->isSameWeek(\Carbon\Carbon::now(config('app.timezone')))) {
+                                            $dateLabel = ucfirst($dt->locale(app()->getLocale())->dayName);
+                                        } else {
+                                            $dateLabel = $dt->format('d.m.Y');
+                                        }
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $dateLabel }} {{ $dt->format('H:i') }}</td>
+                                        <td>
+                                            {{ $booking->manuscript->user->full_name }}
+                                            @if ($booking->manuscript->help_with)
+                                                <br>
+                                                <a href="#viewHelpWithModal" style="color:#eea236" class="viewHelpWithBtn"
+                                                data-toggle="modal" data-details="{{ $booking->manuscript->help_with }}">
+                                                    {{ trans('site.view-help-with') }}
+                                                </a>
+                                            @endif
+                                        </td>
+                                        <td>{{ $booking->slot->duration }} min</td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="5">Ingen bookinger.</td></tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -139,7 +156,7 @@
             </div>
         </div>
 
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -180,7 +197,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="modal fade" id="actionConfirmModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-sm" role="document">
@@ -200,22 +217,25 @@
             </div>
         </div>
     </div>
+
+    <div id="viewHelpWithModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Help With</h4>
+                </div>
+                <div class="modal-body">
+                    <pre></pre>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.slot-time').forEach(function (el) {
-            const dt = new Date(el.dataset.time);
-            const datePart = dt.toLocaleDateString('no-NO');
-            const timePart = dt.toLocaleTimeString('no-NO', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            });
-            el.textContent = `${datePart} ${timePart}`;
-        });
-
         let formToSubmit;
         document.querySelectorAll('.confirm-action').forEach(function (btn) {
             btn.addEventListener('click', function (e) {
@@ -232,5 +252,12 @@
             }
         });
     });
+
+    $(".viewHelpWithBtn").click(function(){
+       let details = $(this).data('details');
+       let modal = $("#viewHelpWithModal");
+
+       modal.find('.modal-body').find('pre').text(details);
+	});
 </script>
 @endsection

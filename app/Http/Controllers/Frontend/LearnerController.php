@@ -5714,9 +5714,18 @@ class LearnerController extends Controller
             ->whereNull('editor_id')
             ->get();
 
+        $now = Carbon::now('UTC');
+
         $editors = EditorTimeSlot::with('editor')
             ->whereDoesntHave('requests', function ($q) {
                 $q->where('status', 'accepted');
+            })
+            ->where(function ($q) use ($now) {
+                $q->where('date', '>', $now->toDateString())
+                    ->orWhere(function ($q) use ($now) {
+                        $q->where('date', $now->toDateString())
+                            ->where('start_time', '>=', $now->toTimeString());
+                    });
             })
             ->orderBy('date')
             ->orderBy('start_time')
@@ -5742,11 +5751,21 @@ class LearnerController extends Controller
                 return $session->timeSlot->date . ' ' . $session->timeSlot->start_time;
             });
 
+        $bookedSessionsThisMonth = $bookedSessions->filter(function ($session) {
+            $dt = Carbon::parse(
+                $session->timeSlot->date . ' ' . $session->timeSlot->start_time,
+                'UTC'
+            )->setTimezone(config('app.timezone'));
+
+            return $dt->isSameMonth(Carbon::now(config('app.timezone')));
+        })->count();
+
         return view('frontend.learner.coaching-time', compact(
             'editors',
             'coachingTimers',
             'bookedEditorsCount',
-            'bookedSessions'
+            'bookedSessions',
+            'bookedSessionsThisMonth'
         ));
     }
 
@@ -5838,6 +5857,63 @@ class LearnerController extends Controller
             return redirect()->back()->with('error', 'This time slot has already been booked.');
         }
 
+        $timer->refresh()->load(['user', 'editor', 'timeSlot.editor']);
+        $slotModel = $timer->timeSlot ?: $slot;
+
+        if ($slotModel) {
+            $emailContext = $this->coachingTimeBookingEmailContext($timer, $slotModel);
+
+            if ($timer->user) {
+                $learnerTemplate = AdminHelpers::emailTemplate('Learner Coaching Time Reservation Confirmed');
+
+                if ($learnerTemplate) {
+                    $learnerContent =str_replace([
+                        ':first_name',
+                        ':coaching_session',
+                        ':booking_details'
+                    ], [
+                        $emailContext['learner_first_name'],
+                        $emailContext['coaching_session'],
+                        $emailContext['booking_details']
+                    ], $learnerTemplate->email_content);
+
+                    $to = $timer->user->email;
+
+                    dispatch(new AddMailToQueueJob($to, $learnerTemplate->subject, $learnerContent,
+                        $learnerTemplate->from_email, null, null, 'coaching-time-booking', $timer->id));
+                }
+            }
+
+            if ($timer->editor && $timer->editor->email) {
+                $editorTemplate = AdminHelpers::emailTemplate('Editor New Coaching Time Booking Received');
+
+                if ($editorTemplate) {
+                    $editorContent = str_replace([
+                        ':editor',
+                        ':learner',
+                        ':coaching_session',
+                        ':booking_details'
+                    ], [
+                        $emailContext['editor_first_name'],
+                        $emailContext['learner_name'],
+                        $emailContext['coaching_session'],
+                        $emailContext['booking_details']
+                    ], $editorTemplate->email_content);
+
+                    $emailData = [
+                        'email_subject' => $editorTemplate->subject,
+                        'email_message' => $editorContent,
+                        'from_name' => '',
+                        'from_email' => $editorTemplate->from_email ?: 'post@forfatterskolen.no',
+                        'attach_file' => null,
+                    ];
+                    $toEditor = $timer->editor->email;
+
+                    Mail::to($toEditor)->queue(new SubjectBodyEmail($emailData));
+                }
+            }
+        }
+
         return redirect()->route('learner.coaching-time')->with('success', 'Time slot booked.');
     }
 
@@ -5887,6 +5963,42 @@ class LearnerController extends Controller
         return [
             'yearly' => $sales,
             'overall' => $overallSales,
+        ];
+    }
+
+    protected function coachingTimeBookingEmailContext(CoachingTimerManuscript $timer, EditorTimeSlot $slot): array
+    {
+        $learner = $timer->user;
+        $editor = $timer->editor ?: $slot->editor;
+
+        $timezone = config('app.timezone', 'UTC');
+        $startUtc = Carbon::parse($slot->date.' '.$slot->start_time, 'UTC');
+        $startLocal = $startUtc->copy()->setTimezone($timezone);
+        $endLocal = $startLocal->copy()->addMinutes($slot->duration);
+
+        $helpWith = $timer->help_with ?? '';
+        $helpWith = trim($helpWith);
+
+        $coachingSession = $startLocal->format('d.m.Y').' '.$startLocal->format('H:i')
+            .' - '.$endLocal->format('H:i');
+        if (!empty($timezone)) {
+            $coachingSession .= ' ('.$timezone.')';
+        }
+
+        return [
+            'learner_name' => $learner ? $learner->full_name : '',
+            'learner_first_name' => $learner ? $learner->first_name : '',
+            'editor_name' => $editor ? $editor->full_name : '',
+            'editor_first_name' => $editor ? $editor->first_name : '',
+            'slot_date' => $startLocal->format('d.m.Y'),
+            'slot_time' => $startLocal->format('H:i'),
+            'slot_end_time' => $endLocal->format('H:i'),
+            'slot_time_range' => $startLocal->format('H:i').' - '.$endLocal->format('H:i'),
+            'slot_date_time' => $startLocal->format('d.m.Y H:i'),
+            'slot_timezone' => $timezone,
+            'coaching_session' => FrontendHelpers::getCoachingTimerPlanType($timer->plan_type),
+            'booking_details' => $coachingSession,
+            'help_with' => $helpWith,
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Editor;
 
 use AdminHelpers;
 use App\CoachingTimeRequest;
+use App\CoachingTimerManuscript;
 use App\EditorTimeSlot;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -17,11 +18,62 @@ class CoachingTimeController extends Controller
     {
         $requests = CoachingTimeRequest::whereHas('slot', function ($q) {
             $q->where('editor_id', Auth::id());
-        })->where('status', 'pending')
+        })
+            ->where('status', 'pending')
             ->with(['manuscript.user', 'slot'])
             ->get();
 
-        return view('editor.coaching-time.index', compact('requests'));
+        $bookings = CoachingTimeRequest::whereHas('slot', function ($q) {
+            $q->where('editor_id', Auth::id());
+        })
+            ->where('status', 'accepted')
+            ->whereHas('manuscript', function ($q) {
+                $q->where('status', '!=', CoachingTimerManuscript::STATUS_FINISHED);
+            })
+            ->with(['manuscript.user', 'slot'])
+            ->get()
+            ->filter(function ($booking) {
+                $slotDateTime = Carbon::parse(
+                    $booking->slot->date . ' ' . $booking->slot->start_time,
+                    'UTC'
+                );
+
+                return $slotDateTime->greaterThanOrEqualTo(Carbon::now('UTC'));
+            })
+            ->sortBy(function ($booking) {
+                return $booking->slot->date . ' ' . $booking->slot->start_time;
+            });
+
+        $bookingsThisWeek = $bookings->filter(function ($booking) {
+            $dt = Carbon::parse(
+                $booking->slot->date . ' ' . $booking->slot->start_time,
+                'UTC'
+            )->setTimezone(config('app.timezone'));
+
+            return $dt->isSameWeek(Carbon::now(config('app.timezone')));
+        })->count();
+
+        $availableSlots = EditorTimeSlot::where('editor_id', Auth::id())
+            ->whereDoesntHave('requests', function ($q) {
+                $q->where('status', 'accepted');
+            })
+            ->get()
+            ->filter(function ($slot) {
+                $slotDateTime = Carbon::parse(
+                    $slot->date . ' ' . $slot->start_time,
+                    'UTC'
+                );
+
+                return $slotDateTime->greaterThanOrEqualTo(Carbon::now('UTC'));
+            })
+            ->count();
+
+        return view('editor.coaching-time.index', [
+            'requests'       => $requests,
+            'bookings'       => $bookings,
+            'bookingsThisWeek' => $bookingsThisWeek,
+            'availableSlots'  => $availableSlots,
+        ]);
     }
 
     public function calendar()
@@ -52,9 +104,10 @@ class CoachingTimeController extends Controller
                 $event['borderColor'] = '#28a745';
                 $event['textColor'] = '#ffffff';
                 $event['extendedProps'] = [
-                    'booked'   => true,
-                    'student'  => $accepted->manuscript->user->full_name ?? null,
-                    'duration' => $slot->duration,
+                    'booked'      => true,
+                    'student'     => $accepted->manuscript->user->full_name ?? null,
+                    'duration'    => $slot->duration,
+                    'helps_with'  => $accepted->manuscript->help_with,
                 ];
             }
 

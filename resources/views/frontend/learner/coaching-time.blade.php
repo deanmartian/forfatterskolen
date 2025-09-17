@@ -87,6 +87,7 @@
             $availableSlots = $editors->reduce(function ($carry, $group) {
                 return $carry + $group->count();
             }, 0);
+            $nextSession = $bookedSessions->first();
         @endphp
 
         <div class="row mb-5">
@@ -99,13 +100,37 @@
             <div class="col-sm-3">
                 <div class="stats-card">
                     <p>Neste Redaksjon</p>
-                    <h2>-</h2>
+                    @if($nextSession)
+                        @php
+                            $date = \Carbon\Carbon::parse(
+                                $nextSession->timeSlot->date.' '.$nextSession->timeSlot->start_time,
+                                'UTC'
+                            )->setTimezone(config('app.timezone'));
+                            if ($date->isToday()) {
+                                $dateLabel = 'I dag';
+                            } elseif ($date->isTomorrow()) {
+                                $dateLabel = 'I morgen';
+                            } elseif ($date->isSameWeek(\Carbon\Carbon::now(config('app.timezone')))) {
+                                $dateLabel = ucfirst($date->locale(app()->getLocale())->dayName);
+                            } else {
+                                $dateLabel = $date->format('d.m.Y');
+                            }
+                        @endphp
+                        <h2 style="font-size: 24px">
+                            {{ $dateLabel }} 
+                        </h2>
+                        <p class="text-secondary">
+                            {{ $date->format('H:i') }} - {{ optional($nextSession->editor)->full_name }}
+                        </p>
+                    @else
+                        <h2>-</h2>
+                    @endif
                 </div>
             </div>
             <div class="col-sm-3">
                 <div class="stats-card">
                     <p>Denne Måneden</p>
-                    <h2>-</h2>
+                    <h2>{{ $bookedSessionsThisMonth }}</h2>
                 </div>
             </div>
             <div class="col-sm-3">
@@ -129,7 +154,9 @@
                                     <label for="coaching_timer_id">Coaching Time</label>
                                     <select name="coaching_timer_id" id="coaching_timer_id" class="form-control">
                                         @foreach($coachingTimers as $timer)
-                                            <option value="{{ $timer->id }}">Coaching Time #{{ $loop->iteration }}</option>
+                                            <option value="{{ $timer->id }}">
+                                                Coaching Time - {{ FrontendHelpers::getCoachingTimerPlanType($timer->plan_type) }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -209,13 +236,13 @@
         </div>
 
 
-        <h3>Hurtighandlinger</h3>
+        {{-- <h3>Hurtighandlinger</h3>
         <div class="row">
             <div class="col-sm-3"><button class="btn btn-default btn-block">Endre Tidspunkt</button></div>
             <div class="col-sm-3"><button class="btn btn-default btn-block">Avbryt Booking</button></div>
             <div class="col-sm-3"><button class="btn btn-default btn-block">Kontakt Redaktør</button></div>
             <div class="col-sm-3"><button class="btn btn-default btn-block">&nbsp;</button></div>
-        </div>
+        </div> --}}
 
     </div>
 </div>
