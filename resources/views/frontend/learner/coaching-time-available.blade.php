@@ -24,9 +24,13 @@
         <div class="card card-global">
             <div class="card-body">
                 <div class="mb-3">
-                    <a href="{{ route('learner.coaching-time') }}" class="btn btn-secondary">Back</a>
+                    <a href="{{ route('learner.coaching-time') }}" class="btn btn-secondary">
+                        {{ trans('site.back') }}
+                    </a>
                 </div>
-                <h1 class="page-title">Available Time Slots</h1>
+                <h1 class="page-title">
+                    {{ trans('site.coaching-time-available-slots') }}
+                </h1>
 
                 @php
                     $hasPendingRequest = $coachingTimer && $coachingTimer->requests->where('status', 'pending')->isNotEmpty();
@@ -34,7 +38,9 @@
 
                 @if($coachingTimers->count())
                     @foreach($editors as $editorSlots)
-                        <h3 class="mt-4">Available Time Slots - {{ $editorSlots->first()->editor->full_name }}</h3>
+                        <h3 class="mt-4">
+                            {{ trans('site.coaching-time-available-slots') }} - {{ $editorSlots->first()->editor->full_name }}
+                        </h3>
 
                         @php
                             $dateGroups = $editorSlots->groupBy('date')->sortKeys();
@@ -76,15 +82,23 @@
                                                                 ->isNotEmpty();
                                                         @endphp
                                                         @if($requested)
-                                                            <div class="mt-2 text-muted">Requested</div>
+                                                            <div class="mt-2 text-muted">
+                                                                {{ trans('site.coaching-time-requested') }}
+                                                            </div>
                                                         @elseif($declined)
-                                                            <div class="mt-2 text-muted">Unavailable</div>
+                                                            <div class="mt-2 text-muted">
+                                                                {{ trans('site.coaching-time-unavailable') }}
+                                                            </div>
                                                         @elseif($hasPendingRequest)
                                                             {{-- No action available while another request is pending --}}
                                                         @elseif($coachingTimer && (($coachingTimer->plan_type == 1 && $slot->duration == 60) || ($coachingTimer->plan_type == 2 && $slot->duration == 30)))
-                                                            <button type="button" class="btn btn-primary btn-sm mt-2 book-slot-btn" data-slot-id="{{ $slot->id }}">Book</button>
+                                                            <button type="button" class="btn btn-primary btn-sm mt-2 book-slot-btn" data-slot-id="{{ $slot->id }}">
+                                                                {{ trans('site.coaching-time-book') }}
+                                                            </button>
                                                         @elseif($coachingTimer)
-                                                            <div class="mt-2 text-muted">Unavailable</div>
+                                                            <div class="mt-2 text-muted">
+                                                                {{ trans('site.coaching-time-unavailable') }}
+                                                            </div>
                                                         @endif
                                                     </div>
                                                 @endforeach
@@ -96,7 +110,9 @@
                         </div>
                     @endforeach
                 @else
-                    <p class="mt-4">Ingen coaching time tilgjengelig.</p>
+                    <p class="mt-4">
+                        {{ trans('site.coaching-time-no-coaching-hours-available') }}
+                    </p>
                 @endif
             </div>
         </div>

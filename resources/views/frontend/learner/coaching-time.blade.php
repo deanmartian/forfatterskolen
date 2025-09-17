@@ -180,9 +180,9 @@
             </div>
             <div class="col-md-6">
                 <div class="stats-card text-left">
-                    <h3>Mine Sesjoner</h3>
+                    <h3>{{ trans('site.coaching-time-my-sessions') }}</h3>
                     @if($bookedSessions->isEmpty())
-                        <span>Ingen kommende sesjoner.</span>
+                        <span>{{ trans('site.coaching-time-no-upcoming-sessions') }}</span>
                     @else
                         <ul id="sessions-list" class="list-unstyled mb-0">
                             @foreach($bookedSessions as $session)
@@ -209,14 +209,16 @@
                             @endforeach
                         </ul>
                         @if($bookedSessions->count() > 2)
-                            <button id="toggle-sessions" class="btn black-btn mt-3" data-showing="false">Se Alle Sesjoner</button>
+                            <button id="toggle-sessions" class="btn black-btn mt-3" data-showing="false">
+                                {{ trans('site.coaching-time-see-all-sessions') }}
+                            </button>
                         @endif
                     @endif
                 </div>
             </div>
         </div>
 
-        <h3>Tilgjengelige Bokredaktører</h3>
+        <h3>{{ trans('site.coaching-time-available-book-editors') }}</h3>
         <div class="row">
             @foreach($editors as $editorSlots)
                 <div class="col-sm-3">
