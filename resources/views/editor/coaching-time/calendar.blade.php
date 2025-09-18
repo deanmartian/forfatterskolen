@@ -13,10 +13,10 @@
 <div class="container-fluid dashboard-left">
     <div class="panel panel-default" style="padding: 10px">
         <a href="{{ route('editor.coaching-time.index') }}" class="btn btn-default margin-bottom">
-            <i class="fa fa-arrow-left"></i> Back
+            <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
         </a>
 
-        <h2>Manage Time Slots</h2>
+        <h2>{{ trans('site.coaching-time-manage-time-slots') }}</h2>
 
         <div id="calendar"></div>
     </div>
@@ -132,7 +132,7 @@
 
                 if (arg.event.extendedProps.booked) {
                     let viewBtn = document.createElement('span');
-                    viewBtn.innerHTML = 'View';
+                    viewBtn.innerHTML = 'Se';
                     viewBtn.style.cursor = 'pointer';
                     viewBtn.style.color = 'white';
                     viewBtn.style.fontSize = '12px';

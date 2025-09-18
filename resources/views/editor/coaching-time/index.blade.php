@@ -51,19 +51,19 @@
         <div class="row" style="margin-bottom:20px;">
             <div class="col-sm-4">
                 <div class="stats-card">
-                    <p>Mine Forfatter-studenter</p>
+                    <p>{{ trans('site.coaching-time- my-author-students') }}</p>
                     <h2>{{ $bookings->count() }}</h2>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="stats-card">
-                    <p>Denne Uken</p>
+                    <p>{{ trans('site.coaching-time-this-week') }}</p>
                     <h2>{{ $bookingsThisWeek }}</h2>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="stats-card">
-                    <p>Ledige Slots</p>
+                    <p>{{ trans('site.coaching-time-available-slots') }}</p>
                     <h2>{{ $availableSlots }}</h2>
                 </div>
             </div>
@@ -73,12 +73,12 @@
             <div class="col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4>Redaktør Kalender</h4>
+                        <h4>{{ trans('site.coaching-time-editor-calendar') }}</h4>
                     </div>
                     <div class="panel-body">
-                        <p>Klikk på kalenderen for manuelt gjennomgang av redaksjonstimer</p>
+                        <p>{{ trans('site.coaching-time-editor-calendar-description') }}</p>
                         <a href="{{ route('editor.coaching-time.calendar') }}" class="btn btn-default btn-block" style="margin-bottom:15px;">
-                            Åpne Redaktørkalender
+                            {{ trans('site.coaching-time-open-editor-calendar') }}
                         </a>
                     </div>
                 </div>
@@ -104,15 +104,15 @@
             <div class="col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4>Timeplan</h4>
+                        <h4>{{ trans('site.coaching-time-timeplan') }}</h4>
                     </div>
                     <div class="panel-body">
                         <table class="table schedule-table">
                             <thead>
                                 <tr>
-                                    <th>Tid</th>
-                                    <th>Student</th>
-                                    <th>Varighet</th>
+                                    <th>{{ trans('site.learner.date-time') }}</th>
+                                    <th>{{ trans_choice('site.learners', 1) }}</th>
+                                    <th>{{ trans('site.learner.duration-text') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
