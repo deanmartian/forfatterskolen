@@ -285,32 +285,95 @@
             })
         });
 
+        const togglePluginAction = function(toggle, action) {
+            if (typeof toggle.bootstrapToggle === 'function') {
+                if (action === 'on' || action === 'off') {
+                    toggle.data('skipChange', true);
+                }
+                toggle.bootstrapToggle(action);
+            } else if (action === 'enable' || action === 'disable') {
+                toggle.prop('disabled', action === 'disable');
+            } else if (action === 'on' || action === 'off') {
+                toggle.prop('checked', action === 'on');
+            }
+        };
+
         $(document).on('change', '.is-invoice-sent-toggle', function() {
-               var order_id = $(this).attr('data-id');
-               var is_checked = $(this).prop('checked');
-               var check_val = is_checked ? 1 : 0;
-               $.ajax({
-                   type:'POST',
-                   url:'/sale/is-invoice-sent',
-                   headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                   data: { "order_id" : order_id, 'is_invoice_sent' : check_val },
-                   success: function(data){
+            const toggle = $(this);
+
+            if (toggle.data('skipChange')) {
+                toggle.data('skipChange', false);
+                return;
+            }
+
+            if (toggle.data('loading')) {
+                togglePluginAction(toggle, toggle.prop('checked') ? 'off' : 'on');
+                return;
+            }
+
+            const orderId = toggle.data('id');
+            const isChecked = toggle.prop('checked');
+            const successState = isChecked ? 'on' : 'off';
+            const failureState = isChecked ? 'off' : 'on';
+
+            toggle.data('loading', true);
+            togglePluginAction(toggle, 'disable');
+
+            $.ajax({
+                type: 'POST',
+                url: '/sale/is-invoice-sent',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { order_id: orderId, is_invoice_sent: isChecked ? 1 : 0 },
+                success: function(data) {
                     console.log(data);
-                   }
-               });
-		   });
+                    togglePluginAction(toggle, successState);
+                },
+                error: function() {
+                    togglePluginAction(toggle, failureState);
+                },
+                complete: function() {
+                    toggle.data('loading', false);
+                    togglePluginAction(toggle, 'enable');
+                }
+            });
+        });
 
         $(document).on('change', '.is-order-withdrawn-toggle', function() {
-            var order_id = $(this).attr('data-id');
-            var is_checked = $(this).prop('checked');
-            var check_val = is_checked ? 1 : 0;
+            const toggle = $(this);
+
+            if (toggle.data('skipChange')) {
+                toggle.data('skipChange', false);
+                return;
+            }
+
+            if (toggle.data('loading')) {
+                togglePluginAction(toggle, toggle.prop('checked') ? 'off' : 'on');
+                return;
+            }
+
+            const orderId = toggle.data('id');
+            const isChecked = toggle.prop('checked');
+            const successState = isChecked ? 'on' : 'off';
+            const failureState = isChecked ? 'off' : 'on';
+
+            toggle.data('loading', true);
+            togglePluginAction(toggle, 'disable');
+
             $.ajax({
-                type:'POST',
-                url:'/sale/is-order-withdrawn',
+                type: 'POST',
+                url: '/sale/is-order-withdrawn',
                 headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                data: { "order_id" : order_id, 'is_order_withdrawn' : check_val },
+                data: { order_id: orderId, is_order_withdrawn: isChecked ? 1 : 0 },
                 success: function(data){
-                console.log(data);
+                    console.log(data);
+                    togglePluginAction(toggle, successState);
+                },
+                error: function() {
+                    togglePluginAction(toggle, failureState);
+                },
+                complete: function() {
+                    toggle.data('loading', false);
+                    togglePluginAction(toggle, 'enable');
                 }
             });
         });
