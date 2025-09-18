@@ -340,6 +340,19 @@
             }
         };
 
+        const applyToggleState = function(toggle, state) {
+            togglePluginAction(toggle, state);
+            toggle.data('lastState', state);
+        };
+
+        const toggleRequestWasSuccessful = function(response) {
+            return Boolean(response && response.data && response.data.success);
+        };
+
+        const notifyToggleUpdateFailed = function() {
+            alert('Updating the toggle failed. Please try again.');
+        };
+
         $(document).on('change', '.is-invoice-sent-toggle', function() {
             const toggle = $(this);
 
@@ -349,14 +362,15 @@
             }
 
             if (toggle.data('loading')) {
-                togglePluginAction(toggle, toggle.prop('checked') ? 'off' : 'on');
+                const revertState = toggle.data('lastState') || (toggle.prop('checked') ? 'off' : 'on');
+                applyToggleState(toggle, revertState);
                 return;
             }
 
             const orderId = toggle.data('id');
             const isChecked = toggle.prop('checked');
             const successState = isChecked ? 'on' : 'off';
-            const failureState = isChecked ? 'off' : 'on';
+            const failureState = toggle.data('lastState') || (isChecked ? 'off' : 'on');
 
             toggle.data('loading', true);
             togglePluginAction(toggle, 'disable');
@@ -366,20 +380,21 @@
                 url: '/sale/is-invoice-sent',
                 headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 data: { order_id: orderId, is_invoice_sent: isChecked ? 1 : 0 },
-                success: function(data) {
-                    console.log(data);
-                    toggle.data('pendingState', successState);
+                success: function(response) {
+                    if (toggleRequestWasSuccessful(response)) {
+                        applyToggleState(toggle, successState);
+                        return;
+                    }
+
+                    applyToggleState(toggle, failureState);
+                    notifyToggleUpdateFailed();
                 },
                 error: function() {
-                    toggle.data('pendingState', failureState);
+                    applyToggleState(toggle, failureState);
+                    notifyToggleUpdateFailed();
                 },
                 complete: function() {
                     toggle.data('loading', false);
-                    const pendingState = toggle.data('pendingState');
-                    if (pendingState) {
-                        togglePluginAction(toggle, pendingState);
-                        toggle.removeData('pendingState');
-                    }
                     togglePluginAction(toggle, 'enable');
                 }
             });
@@ -394,14 +409,15 @@
             }
 
             if (toggle.data('loading')) {
-                togglePluginAction(toggle, toggle.prop('checked') ? 'off' : 'on');
+                const revertState = toggle.data('lastState') || (toggle.prop('checked') ? 'off' : 'on');
+                applyToggleState(toggle, revertState);
                 return;
             }
 
             const orderId = toggle.data('id');
             const isChecked = toggle.prop('checked');
             const successState = isChecked ? 'on' : 'off';
-            const failureState = isChecked ? 'off' : 'on';
+            const failureState = toggle.data('lastState') || (isChecked ? 'off' : 'on');
 
             toggle.data('loading', true);
             togglePluginAction(toggle, 'disable');
@@ -411,20 +427,21 @@
                 url: '/sale/is-order-withdrawn',
                 headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 data: { order_id: orderId, is_order_withdrawn: isChecked ? 1 : 0 },
-                success: function(data){
-                    console.log(data);
-                    toggle.data('pendingState', successState);
+                success: function(response){
+                    if (toggleRequestWasSuccessful(response)) {
+                        applyToggleState(toggle, successState);
+                        return;
+                    }
+
+                    applyToggleState(toggle, failureState);
+                    notifyToggleUpdateFailed();
                 },
                 error: function() {
-                    toggle.data('pendingState', failureState);
+                    applyToggleState(toggle, failureState);
+                    notifyToggleUpdateFailed();
                 },
                 complete: function() {
                     toggle.data('loading', false);
-                    const pendingState = toggle.data('pendingState');
-                    if (pendingState) {
-                        togglePluginAction(toggle, pendingState);
-                        toggle.removeData('pendingState');
-                    }
                     togglePluginAction(toggle, 'enable');
                 }
             });
@@ -585,6 +602,9 @@
                                 if (!toggle.parent().hasClass('toggle')) {
                                     toggle.bootstrapToggle();
                                 }
+                                toggle.data('lastState', toggle.prop('checked') ? 'on' : 'off');
+                                toggle.data('loading', false);
+                                toggle.data('skipChange', false);
                             });
                         }
 
