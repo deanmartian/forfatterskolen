@@ -289,11 +289,17 @@
             if (typeof toggle.bootstrapToggle === 'function') {
                 if (action === 'on' || action === 'off') {
                     toggle.data('skipChange', true);
+                    toggle.bootstrapToggle(action);
+                } else {
+                    toggle.bootstrapToggle(action);
                 }
-                toggle.bootstrapToggle(action);
-            } else if (action === 'enable' || action === 'disable') {
+            }
+
+            if (action === 'enable' || action === 'disable') {
                 toggle.prop('disabled', action === 'disable');
-            } else if (action === 'on' || action === 'off') {
+            }
+
+            if (action === 'on' || action === 'off') {
                 toggle.prop('checked', action === 'on');
             }
         };
@@ -326,13 +332,18 @@
                 data: { order_id: orderId, is_invoice_sent: isChecked ? 1 : 0 },
                 success: function(data) {
                     console.log(data);
-                    togglePluginAction(toggle, successState);
+                    toggle.data('pendingState', successState);
                 },
                 error: function() {
-                    togglePluginAction(toggle, failureState);
+                    toggle.data('pendingState', failureState);
                 },
                 complete: function() {
                     toggle.data('loading', false);
+                    const pendingState = toggle.data('pendingState');
+                    if (pendingState) {
+                        togglePluginAction(toggle, pendingState);
+                        toggle.removeData('pendingState');
+                    }
                     togglePluginAction(toggle, 'enable');
                 }
             });
@@ -366,13 +377,18 @@
                 data: { order_id: orderId, is_order_withdrawn: isChecked ? 1 : 0 },
                 success: function(data){
                     console.log(data);
-                    togglePluginAction(toggle, successState);
+                    toggle.data('pendingState', successState);
                 },
                 error: function() {
-                    togglePluginAction(toggle, failureState);
+                    toggle.data('pendingState', failureState);
                 },
                 complete: function() {
                     toggle.data('loading', false);
+                    const pendingState = toggle.data('pendingState');
+                    if (pendingState) {
+                        togglePluginAction(toggle, pendingState);
+                        toggle.removeData('pendingState');
+                    }
                     togglePluginAction(toggle, 'enable');
                 }
             });
@@ -526,7 +542,16 @@
                     success: function(data) {
                         // Populate the tab-content div with the loaded data
                         $('#tab-content').html(data);
-                        
+
+                        if (typeof $.fn.bootstrapToggle === 'function') {
+                            $('#tab-content').find('input[data-toggle="toggle"]').each(function() {
+                                const toggle = $(this);
+                                if (!toggle.parent().hasClass('toggle')) {
+                                    toggle.bootstrapToggle();
+                                }
+                            });
+                        }
+
                         // Re-bind pagination click events
                         handlePaginationLinks();
                     },
