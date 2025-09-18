@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\CoachingTimerManuscript;
+use App\CoachingTimerTaken;
 use App\Course;
 use App\CourseApplication;
 use App\CourseCertificate;
@@ -968,6 +970,27 @@ class CourseController extends Controller
         ]);
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Certificate saved successfully.'),
+            'alert_type' => 'success']);
+    }
+
+    public function addCoachingTime(Request $request)
+    {
+        $coursesTaken = CoursesTaken::whereIn('package_id', $request->packages)->get();
+
+        foreach($coursesTaken as $coursesTaken) {
+            CoachingTimerManuscript::create([
+                'user_id' => $coursesTaken->user_id,
+                'file' => null,
+                'plan_type' => 1
+            ]);
+
+            CoachingTimerTaken::create([
+                'user_id' => $coursesTaken->user_id,
+                'course_taken_id' => $coursesTaken->id,
+            ]);
+        }
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Coaching Time added to learners.'),
             'alert_type' => 'success']);
     }
 

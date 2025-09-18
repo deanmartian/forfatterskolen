@@ -857,6 +857,7 @@ Route::domain($admin)->group(function () {
         // Route::get('course/{id}/certificate', 'CourseController@certificate')->name('admin.course.certificate');
         Route::get('course/{id}/download-certificate', [Backend\CourseController::class, 'downloadCertificate'])->name('admin.course.download-certificate-template');
         Route::post('course/{id}/save-certificate-template', [Backend\CourseController::class, 'saveCertificateTemplate'])->name('admin.course.save-certificate-template');
+        Route::post('course/{id}/add-coaching-time', [Backend\CourseController::class, 'addCoachingTime'])->name('admin.course.add-coaching-time');
         Route::get('/course/{id}/export-hidden-webinars', [Backend\CourseController::class, 'exportHiddenWebinars']);
         Route::get('/course/export-former-learners/bulk', [Backend\CourseController::class, 'exportFormerLearners']);
         Route::get('/course/export-current-learners/bulk', [Backend\CourseController::class, 'exportCurrentLearners']);
