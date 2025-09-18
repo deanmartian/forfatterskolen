@@ -346,7 +346,31 @@
         };
 
         const toggleRequestWasSuccessful = function(response) {
-            return Boolean(response && response.data && response.data.success);
+            if (!response) {
+                return false;
+            }
+
+            const payload = (typeof response.data !== 'undefined' && response.data !== null)
+                ? response.data
+                : response;
+
+            if (typeof payload.success !== 'undefined') {
+                return payload.success === true
+                    || payload.success === 1
+                    || payload.success === '1'
+                    || payload.success === 'true'
+                    || payload.success === 'success';
+            }
+
+            if (typeof payload.status !== 'undefined') {
+                return payload.status === true
+                    || payload.status === 1
+                    || payload.status === '1'
+                    || payload.status === 'true'
+                    || payload.status === 'success';
+            }
+
+            return false;
         };
 
         const notifyToggleUpdateFailed = function() {
