@@ -285,6 +285,36 @@
             })
         });
 
+        let toggleRefreshScheduled = false;
+
+        const scheduleToggleRefresh = function() {
+            if (toggleRefreshScheduled) {
+                return;
+            }
+
+            toggleRefreshScheduled = true;
+            alert('The page will refresh to re-synchronise the toggle states.');
+            window.location.reload();
+        };
+
+        const verifyToggleVisualState = function(toggle, expectedState) {
+            const wrapper = toggle.closest('.toggle');
+
+            if (!wrapper.length) {
+                return true;
+            }
+
+            const hasOn = wrapper.hasClass('on');
+            const hasOff = wrapper.hasClass('off');
+            const isChecked = toggle.prop('checked');
+
+            if (expectedState === 'on') {
+                return hasOn || (!hasOff && isChecked);
+            }
+
+            return hasOff || (!hasOn && !isChecked);
+        };
+
         const togglePluginAction = function(toggle, action) {
             if (typeof toggle.bootstrapToggle === 'function') {
                 if (action === 'on' || action === 'off') {
@@ -301,6 +331,12 @@
 
             if (action === 'on' || action === 'off') {
                 toggle.prop('checked', action === 'on');
+
+                setTimeout(function() {
+                    if (!verifyToggleVisualState(toggle, action)) {
+                        scheduleToggleRefresh();
+                    }
+                }, 0);
             }
         };
 
