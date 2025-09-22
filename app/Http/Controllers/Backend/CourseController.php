@@ -810,7 +810,9 @@ class CourseController extends Controller
             $packages = Package::where('course_id', $course_id)->get()->pluck('id')->toArray();
             $payLaterOrders = Order::where([
                 'is_pay_later' => 1,
-                'is_processed' => 1
+                'is_processed' => 1,
+                'is_invoice_sent' => 0,
+                'is_order_withdrawn' => 0,
             ])
             ->whereIn('package_id', $packages)
             ->get();
