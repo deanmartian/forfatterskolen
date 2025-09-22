@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="manifest" href="{{ asset('manifest.json') }}">
-    <link rel="alternate" href="{{ config('app.url') }}" hreflang="x-default" />
+    <link rel="alternate" href="{{ config('app.url') }}" hreflang="no" />
+    <link rel="alternate" href="{{ config('app.url') }}/en" hreflang="en" />
     <link rel="canonical" href="{{ url()->current() }}">
 
     <!-- Google Tag Manager -->
