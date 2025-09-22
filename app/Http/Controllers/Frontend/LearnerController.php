@@ -1497,6 +1497,14 @@ class LearnerController extends Controller
         }
 
         $sveaOrders = Auth::user()->orders()->svea()->with('coachingTime')->paginate(10);
+        $payLaterOrders = Auth::user()->orders()
+            ->where([
+                'is_pay_later' => 1,
+                'is_processed' => 1,
+                'is_invoice_sent' => 0,
+                'is_order_withdrawn' => 0,
+            ])
+            ->paginate(10);
         $user = Auth::user();
 
         $orderAttachments = DB::table('course_order_attachments')
@@ -1524,8 +1532,16 @@ class LearnerController extends Controller
         $data = curl_exec($ch);
         $data = json_decode($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};*/
-        return view('frontend.learner.invoice', compact('invoices', 'sveaOrders', 'user',
-            'orderAttachments', 'giftPurchases', 'orderHistory', 'timeRegisters'));
+        return view('frontend.learner.invoice', compact(
+            'invoices',
+            'sveaOrders',
+            'user',
+            'orderAttachments',
+            'giftPurchases',
+            'orderHistory',
+            'timeRegisters',
+            'payLaterOrders'
+        ));
     }
 
     public function invoiceShow($id)

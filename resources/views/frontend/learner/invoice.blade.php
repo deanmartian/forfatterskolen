@@ -63,14 +63,18 @@
 
 					@php
 						$tabWithLabel = [
-							[
-								'name' => 'svea',
-								'label' => 'Svea'
-							],
-							[
-								'name' => 'regret-form',
-								'label' => 'Angreskjema'
-							],
+                                                        [
+                                                                'name' => 'svea',
+                                                                'label' => 'Svea'
+                                                        ],
+                                                        [
+                                                                'name' => 'pay-later',
+                                                                'label' => 'Pay later'
+                                                        ],
+                                                        [
+                                                                'name' => 'regret-form',
+                                                                'label' => 'Angreskjema'
+                                                        ],
 							[
 								'name' => 'gift',
 								'label' => 'Gift Purchases'
@@ -172,10 +176,47 @@
 								<div class="float-right">
 									{{ $sveaOrders->appends(request()->except('page'))->links('pagination.short-pagination') }}
 								</div>
-							@elseif( Request::input('tab') == 'regret-form' )
-								<div class="card global-card">
-									<div class="card-body py-0">
-										<table class="table table-global">
+                                                        @elseif( Request::input('tab') == 'pay-later' )
+                                                                <div class="card global-card">
+                                                                        <div class="card-body py-0">
+                                                                                <table class="table table-global">
+                                                                                        <thead>
+                                                                                                <tr>
+                                                                                                        <th>Item</th>
+                                                                                                        <th>Package</th>
+                                                                                                        <th>Payment plan</th>
+                                                                                                        <th>Payment mode</th>
+                                                                                                        <th>Date</th>
+                                                                                                        <th>Total</th>
+                                                                                                </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                                @forelse($payLaterOrders as $order)
+                                                                                                        <tr>
+                                                                                                                <td>{{ $order->item }}</td>
+                                                                                                                <td>{{ $order->packageVariation }}</td>
+                                                                                                                <td>{{ optional($order->paymentPlan)->plan }}</td>
+                                                                                                                <td>{{ optional($order->paymentMode)->mode }}</td>
+                                                                                                                <td>{{ $order->created_at_formatted }}</td>
+                                                                                                                <td>{{ $order->total_formatted }}</td>
+                                                                                                        </tr>
+                                                                                                @empty
+                                                                                                        <tr>
+                                                                                                                <td colspan="6" class="text-center">No pay later orders found.</td>
+                                                                                                        </tr>
+                                                                                                @endforelse
+                                                                                        </tbody>
+                                                                                </table>
+                                                                        </div>
+                                                                </div>
+
+                                                                <div class="float-right">
+                                                                        {{ $payLaterOrders->appends(request()->except('page'))->links('pagination.short-pagination') }}
+                                                                </div>
+                                                        @elseif( Request::input('tab') == 'regret-form' )
+                                                                <div class="card global-card">
+                                                                        <div class="card-body py-0">
+                                                                                <table class="table table-global">
 											<thead>
 											<tr>
 												<th>{{ trans_choice('site.courses', 1) }}</th>
