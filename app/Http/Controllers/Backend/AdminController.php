@@ -321,6 +321,9 @@ class AdminController extends Controller
             ->orderBy('first_name', 'ASC')->orderBy('last_name', 'ASC')->get();
 
         $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::whereIn('editor_id', $editor->pluck('id'))
+            ->whereHas('assignment', function($query) {
+                $query->whereDate('editor_expected_finish', '>=', today());
+            })
             ->orderBy('assignment_manuscript_id', 'DESC')->get();
 
         $unfinishedAssignments = AssignmentManuscript::whereHas('assignment', function ($query) {
