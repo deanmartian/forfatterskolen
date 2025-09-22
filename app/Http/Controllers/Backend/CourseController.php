@@ -24,6 +24,7 @@ use App\Jobs\AddMailToQueueJob;
 use App\Jobs\CourseOrderJob;
 use App\Jobs\WebinarScheduleRegistrationJob;
 use App\Mail\SubjectBodyEmail;
+use App\Order;
 use App\Package;
 use App\PackageCourse;
 use App\Services\CourseService;
@@ -798,6 +799,40 @@ class CourseController extends Controller
             })->download('xlsx');*/
         }
 
+        return redirect()->back();
+    }
+
+    public function exportPayLaterLearners($course_id)
+    {
+        $course = Course::find($course_id);
+
+        if ($course) {
+            $packages = Package::where('course_id', $course_id)->get()->pluck('id')->toArray();
+            $payLaterOrders = Order::where([
+                'is_pay_later' => 1,
+                'is_processed' => 1
+            ])
+            ->whereIn('package_id', $packages)
+            ->get();
+
+            $excel = \App::make('excel');
+
+            $learnerList = [];
+            $headers = ['learner', 'package', 'price', 'discount', 'amount']; // first row in excel
+
+            foreach($payLaterOrders as $order) {
+                $learnerList[] = [
+                    $order->user->full_name,
+                    $order->package->variation,
+                    $order->price,
+                    $order->discount,
+                    $order->price - $order->discount,
+                ];
+            }
+
+            return $excel->download(new GenericExport($learnerList, $headers), $course->title.' Pay Later Orders.xlsx');
+        }
+        
         return redirect()->back();
     }
 

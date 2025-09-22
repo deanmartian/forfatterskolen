@@ -97,6 +97,10 @@
 						data-target="#coachingTimeModal">
 					Add Coaching Time
 				</button>
+				<a href="{{ route('learner.course.pay-later', $course->id) }}" 
+					class="btn btn-default margin-bottom">
+					Export Pay Later Learners
+				</a>
 				@if ($course->is_free)
 					<button type="button" class="btn btn-info margin-bottom" data-toggle="modal"
 							data-target="#reminderEmailModal">Send Reminder</button>
