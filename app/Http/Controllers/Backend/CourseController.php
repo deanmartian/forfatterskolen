@@ -808,6 +808,7 @@ class CourseController extends Controller
 
         if ($course) {
             $packages = Package::where('course_id', $course_id)->get()->pluck('id')->toArray();
+            $coursesTaken = CoursesTaken::whereIn('package_id', $packages)->get()->pluck('user_id')->toArray();
             $payLaterOrders = Order::where([
                 'is_pay_later' => 1,
                 'is_processed' => 1,
@@ -815,6 +816,7 @@ class CourseController extends Controller
                 'is_order_withdrawn' => 0,
             ])
             ->whereIn('package_id', $packages)
+            ->whereIn('user_id', $coursesTaken)
             ->get();
 
             $excel = \App::make('excel');
