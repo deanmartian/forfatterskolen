@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\Backend;
 use App\Http\Controllers\Editor;
+use App\Http\Controllers\Editor\CoachingTimeController;
 use App\Http\Controllers\Frontend;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaypalController;
@@ -327,6 +328,9 @@ Route::domain($front)->group(function () {
         Route::put('/writing-group/{id}', [Frontend\LearnerController::class, 'writingGroup'])->name('learner.update.writing-group'); // Writing Group Page
         Route::get('/competition', [Frontend\LearnerController::class, 'competition'])->name('learner.competition'); // Competitions Page
         Route::get('/private-message', [Frontend\LearnerController::class, 'privateMessage'])->name('learner.private-message'); // Private Message Page
+        Route::get('/coaching-time', [Frontend\LearnerController::class, 'coachingTime'])->name('learner.coaching-time');
+        Route::get('/coaching-time/available', [Frontend\LearnerController::class, 'availableCoachingTime'])->name('learner.coaching-time.available');
+        Route::post('/coaching-time/request', [Frontend\LearnerController::class, 'requestCoachingTime'])->name('learner.coaching-time.request');
         Route::get('/time-register', [Frontend\LearnerController::class, 'timeRegister'])->name('learner.time-register');
         Route::get('/book-sale', [Frontend\LearnerController::class, 'bookSale'])->name('learner.book-sale');
         Route::get('/book-for-sale/{id}', [Frontend\LearnerController::class, 'bookForSale'])->name('learner.book-for-sale');
@@ -673,6 +677,7 @@ Route::domain($admin)->group(function () {
         Route::get('/learner-with-no-paid-records/delete', [Backend\PageController::class, 'deleteLearnersWithNoPaidRecords']);
         Route::post('/send-email-to-queue', [Backend\PageController::class, 'sendEmailToQueue'])->name('admin.send-email-to-queue');
         Route::get('/learners/search', [Backend\PageController::class, 'searchLearners']);
+        Route::get('/course/{id}/add-coaching-time-to-learners', [Backend\PageController::class, 'addCoachingTimeToCourseLearners']);
         Route::get('/worker-status', [Backend\PageController::class, 'workerStatus']);
 
         Route::resource('page_meta', Backend\PageMetaController::class, [
@@ -852,6 +857,7 @@ Route::domain($admin)->group(function () {
         // Route::get('course/{id}/certificate', 'CourseController@certificate')->name('admin.course.certificate');
         Route::get('course/{id}/download-certificate', [Backend\CourseController::class, 'downloadCertificate'])->name('admin.course.download-certificate-template');
         Route::post('course/{id}/save-certificate-template', [Backend\CourseController::class, 'saveCertificateTemplate'])->name('admin.course.save-certificate-template');
+        Route::post('course/{id}/add-coaching-time', [Backend\CourseController::class, 'addCoachingTime'])->name('admin.course.add-coaching-time');
         Route::get('/course/{id}/export-hidden-webinars', [Backend\CourseController::class, 'exportHiddenWebinars']);
         Route::get('/course/export-former-learners/bulk', [Backend\CourseController::class, 'exportFormerLearners']);
         Route::get('/course/export-current-learners/bulk', [Backend\CourseController::class, 'exportCurrentLearners']);
@@ -1952,6 +1958,21 @@ Route::domain($editor)->group(function () {
         Route::get('/time-register/{id}/time-used-list', [Backend\TimeRegisterController::class, 'timeUsedList']);
         Route::post('/time-register/{id}/save-time-used', [Backend\TimeRegisterController::class, 'saveTimeUsed']);
         Route::delete('/time-register/time-used/{id}/delete', [Backend\TimeRegisterController::class, 'deleteTimeUsed']);
+
+        Route::prefix('/coaching-time')->name('editor.coaching-time.')->group(function () {
+            Route::controller(CoachingTimeController::class)->group(function() {
+                Route::get('/', 'index')->name('index');
+                Route::get('/calendar', 'calendar')->name('calendar');
+
+                Route::prefix('/time-slots')->name('time-slots.')->group(function () {
+                    Route::get('fetch', 'fetchTimeSlot')->name('fetch');
+                    Route::post('/',  'storeTimeSlot')->name('store');
+                    Route::delete('{id}', 'destroyTimeSlot')->name('destroy');
+                });
+                Route::post('/request/{id}/accept', 'acceptRequest')->name('request.accept');
+                Route::post('/request/{id}/decline', 'declineRequest')->name('request.decline');
+            });
+        });
     });
 
     // Authentication

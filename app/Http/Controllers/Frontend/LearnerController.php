@@ -11,8 +11,11 @@ use App\AssignmentGroup;
 use App\AssignmentGroupLearner;
 use App\AssignmentManuscript;
 use App\CalendarNote;
+use App\EditorTimeSlot;
+use App\CoachingTimeRequest;
 use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
+use App\Console\Commands\CheckFikenContactCommand;
 use App\Contract;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -2953,6 +2956,12 @@ class LearnerController extends Controller
         $address->save();
 
         $learner = Auth::user();
+
+        if (! $learner->fiken_contact_id || $learner->fiken_contact_id == 'none'
+            && $learner->activePaidCoursesTakenNotExpired()->count()) {
+            CheckFikenContactCommand::updateFikenContactId($learner);
+        }
+
         if ($learner->fiken_contact_id && $learner->fiken_contact_id != 'none' 
             && $learner->activePaidCoursesTakenNotExpired()->count()) {
             dispatch(new UpdateFikenContactDetailsJob($learner));
@@ -5033,11 +5042,11 @@ class LearnerController extends Controller
         $course_taken_id = $data['course_taken_id'];
 
         if ($courseTaken = CoursesTaken::find($course_taken_id)) {
-            $suggested_dates = $data['suggested_date'];
+            /* $suggested_dates = $data['suggested_date'];
             // format the sent suggested dates
             foreach ($suggested_dates as $k => $suggested_date) {
                 $suggested_dates[$k] = Carbon::parse($suggested_date)->format('Y-m-d H:i:s');
-            }
+            } */
 
             $extensions = ['docx'];
             $file = null;
@@ -5062,7 +5071,7 @@ class LearnerController extends Controller
                 'user_id' => Auth::user()->id,
                 'file' => $file,
                 'plan_type' => $data['plan_type'],
-                'suggested_date' => json_encode($suggested_dates),
+                //'suggested_date' => json_encode($suggested_dates),
             ]);
 
             CoachingTimerTaken::create([
@@ -5070,6 +5079,9 @@ class LearnerController extends Controller
                 'course_taken_id' => $course_taken_id,
             ]);
 
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Coaching Time added.'),
+                'alert_type' => 'success']);
         }
 
         return redirect()->back();
@@ -5696,6 +5708,215 @@ class LearnerController extends Controller
         ], $httpcode);
     }
 
+    public function coachingTime(Request $request)
+    {
+        $coachingTimers = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNull('editor_id')
+            ->get();
+
+        $now = Carbon::now('UTC');
+
+        $editors = EditorTimeSlot::with('editor')
+            ->whereDoesntHave('requests', function ($q) {
+                $q->where('status', 'accepted');
+            })
+            ->where(function ($q) use ($now) {
+                $q->where('date', '>', $now->toDateString())
+                    ->orWhere(function ($q) use ($now) {
+                        $q->where('date', $now->toDateString())
+                            ->where('start_time', '>=', $now->toTimeString());
+                    });
+            })
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->get()
+            ->groupBy('editor_id');
+
+        $bookedEditorsCount = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNotNull('editor_id')
+            ->distinct('editor_id')
+            ->count('editor_id');
+
+        $bookedSessions = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNotNull('editor_time_slot_id')
+            ->where(function ($q) {
+                $q->where('status', 0)
+                    ->whereHas('timeSlot', function ($q) {
+                        $q->where('date', '>=', now()->toDateString());
+                    });
+            })
+            ->with(['editor', 'timeSlot'])
+            ->get()
+            ->sortBy(function ($session) {
+                return $session->timeSlot->date . ' ' . $session->timeSlot->start_time;
+            });
+
+        $bookedSessionsThisMonth = $bookedSessions->filter(function ($session) {
+            $dt = Carbon::parse(
+                $session->timeSlot->date . ' ' . $session->timeSlot->start_time,
+                'UTC'
+            )->setTimezone(config('app.timezone'));
+
+            return $dt->isSameMonth(Carbon::now(config('app.timezone')));
+        })->count();
+
+        return view('frontend.learner.coaching-time', compact(
+            'editors',
+            'coachingTimers',
+            'bookedEditorsCount',
+            'bookedSessions',
+            'bookedSessionsThisMonth'
+        ));
+    }
+
+    public function availableCoachingTime(Request $request)
+    {
+        $coachingTimers = CoachingTimerManuscript::where('user_id', Auth::id())
+            ->whereNull('editor_id')
+            ->with(['requests' => function ($q) {
+                $q->where('status', 'pending');
+            }])
+            ->get();
+
+        $coachingTimer = null;
+        if ($request->filled('coaching_timer_id')) {
+            $coachingTimer = $coachingTimers->firstWhere('id', $request->input('coaching_timer_id'));
+
+            if (!$coachingTimer) {
+                return redirect()->route('learner.coaching-time');
+            }
+        } elseif ($coachingTimers->count() === 1) {
+            $coachingTimer = $coachingTimers->first();
+        }
+
+        $now = Carbon::now('UTC');
+
+        $editors = EditorTimeSlot::with(['editor', 'requests'])
+            ->whereDoesntHave('requests', function ($q) {
+                $q->where('status', 'accepted');
+            })
+            ->where(function ($q) use ($now) {
+                $q->where('date', '>', $now->toDateString())
+                    ->orWhere(function ($q) use ($now) {
+                        $q->where('date', $now->toDateString())
+                            ->where('start_time', '>=', $now->toTimeString());
+                    });
+            })
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->get()
+            ->groupBy('editor_id');
+
+        return view('frontend.learner.coaching-time-available', compact('editors', 'coachingTimer', 'coachingTimers'));
+    }
+
+    public function requestCoachingTime(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'coaching_timer_id'   => 'required|exists:coaching_timer_manuscripts,id',
+            'editor_time_slot_id' => 'required|exists:editor_time_slots,id',
+            'help_with'           => 'nullable|string',
+        ]);
+
+        $timer = CoachingTimerManuscript::find($data['coaching_timer_id']);
+        $slot  = EditorTimeSlot::find($data['editor_time_slot_id']);
+
+        $requiredDuration = $timer->plan_type == 1 ? 60 : 30;
+        if ($slot->duration != $requiredDuration) {
+            return redirect()->back()->with('error', 'Selected time slot duration does not match your plan.');
+        }
+
+        try {
+            DB::transaction(function () use ($data, $timer, $slot) {
+                $exists = CoachingTimeRequest::where('editor_time_slot_id', $data['editor_time_slot_id'])
+                    ->where('status', 'accepted')
+                    ->lockForUpdate()
+                    ->exists();
+
+                if ($exists) {
+                    throw new \RuntimeException('Slot already booked');
+                }
+
+                $requestRecord = CoachingTimeRequest::create([
+                    'coaching_timer_manuscript_id' => $data['coaching_timer_id'],
+                    'editor_time_slot_id'          => $data['editor_time_slot_id'],
+                    'status'                       => 'accepted',
+                ]);
+
+                CoachingTimeRequest::where('editor_time_slot_id', $data['editor_time_slot_id'])
+                    ->where('id', '!=', $requestRecord->id)
+                    ->where('status', 'pending')
+                    ->update(['status' => 'declined']);
+
+                $timer->help_with = $data['help_with'] ?? null;
+                $timer->editor_id = $slot->editor_id;
+                $timer->editor_time_slot_id = $slot->id;
+                $timer->save();
+            });
+        } catch (\RuntimeException $e) {
+            return redirect()->back()->with('error', 'This time slot has already been booked.');
+        }
+
+        $timer->refresh()->load(['user', 'editor', 'timeSlot.editor']);
+        $slotModel = $timer->timeSlot ?: $slot;
+
+        if ($slotModel) {
+            $emailContext = $this->coachingTimeBookingEmailContext($timer, $slotModel);
+
+            if ($timer->user) {
+                $learnerTemplate = AdminHelpers::emailTemplate('Learner Coaching Time Reservation Confirmed');
+
+                if ($learnerTemplate) {
+                    $learnerContent =str_replace([
+                        ':first_name',
+                        ':coaching_session',
+                        ':booking_details'
+                    ], [
+                        $emailContext['learner_first_name'],
+                        $emailContext['coaching_session'],
+                        $emailContext['booking_details']
+                    ], $learnerTemplate->email_content);
+
+                    $to = $timer->user->email;
+
+                    dispatch(new AddMailToQueueJob($to, $learnerTemplate->subject, $learnerContent,
+                        $learnerTemplate->from_email, null, null, 'coaching-time-booking', $timer->id));
+                }
+            }
+
+            if ($timer->editor && $timer->editor->email) {
+                $editorTemplate = AdminHelpers::emailTemplate('Editor New Coaching Time Booking Received');
+
+                if ($editorTemplate) {
+                    $editorContent = str_replace([
+                        ':editor',
+                        ':learner',
+                        ':coaching_session',
+                        ':booking_details'
+                    ], [
+                        $emailContext['editor_first_name'],
+                        $emailContext['learner_name'],
+                        $emailContext['coaching_session'],
+                        $emailContext['booking_details']
+                    ], $editorTemplate->email_content);
+
+                    $emailData = [
+                        'email_subject' => $editorTemplate->subject,
+                        'email_message' => $editorContent,
+                        'from_name' => '',
+                        'from_email' => $editorTemplate->from_email ?: 'post@forfatterskolen.no',
+                        'attach_file' => null,
+                    ];
+                    $toEditor = $timer->editor->email;
+
+                    Mail::to($toEditor)->queue(new SubjectBodyEmail($emailData));
+                }
+            }
+        }
+
+        return redirect()->route('learner.coaching-time')->with('success', 'Time slot booked.');
+    }
+
     public function currentUser()
     {
         $user = Auth::user();
@@ -5742,6 +5963,42 @@ class LearnerController extends Controller
         return [
             'yearly' => $sales,
             'overall' => $overallSales,
+        ];
+    }
+
+    protected function coachingTimeBookingEmailContext(CoachingTimerManuscript $timer, EditorTimeSlot $slot): array
+    {
+        $learner = $timer->user;
+        $editor = $timer->editor ?: $slot->editor;
+
+        $timezone = config('app.timezone', 'UTC');
+        $startUtc = Carbon::parse($slot->date.' '.$slot->start_time, 'UTC');
+        $startLocal = $startUtc->copy()->setTimezone($timezone);
+        $endLocal = $startLocal->copy()->addMinutes($slot->duration);
+
+        $helpWith = $timer->help_with ?? '';
+        $helpWith = trim($helpWith);
+
+        $coachingSession = $startLocal->format('d.m.Y').' '.$startLocal->format('H:i')
+            .' - '.$endLocal->format('H:i');
+        if (!empty($timezone)) {
+            $coachingSession .= ' ('.$timezone.')';
+        }
+
+        return [
+            'learner_name' => $learner ? $learner->full_name : '',
+            'learner_first_name' => $learner ? $learner->first_name : '',
+            'editor_name' => $editor ? $editor->full_name : '',
+            'editor_first_name' => $editor ? $editor->first_name : '',
+            'slot_date' => $startLocal->format('d.m.Y'),
+            'slot_time' => $startLocal->format('H:i'),
+            'slot_end_time' => $endLocal->format('H:i'),
+            'slot_time_range' => $startLocal->format('H:i').' - '.$endLocal->format('H:i'),
+            'slot_date_time' => $startLocal->format('d.m.Y H:i'),
+            'slot_timezone' => $timezone,
+            'coaching_session' => FrontendHelpers::getCoachingTimerPlanType($timer->plan_type),
+            'booking_details' => $coachingSession,
+            'help_with' => $helpWith,
         ];
     }
 }

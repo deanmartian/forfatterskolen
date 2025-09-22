@@ -102,8 +102,8 @@
 
 								<div class="tab-content p-0">
 									<div id="profile-panel" class="tab-pane fade in active" role="tabpanel">
-										<form method="POST" action="{{route('learner.profile.update')}}" enctype="multipart/form-data"
-										onsubmit="disableSubmit(this)">
+                                                                                <form id="profileForm" method="POST" action="{{route('learner.profile.update')}}" enctype="multipart/form-data"
+                                                                                onsubmit="disableSubmit(this)">
 											{{csrf_field()}}
 											<section>
 												<div class="col-md-10 text-center">
@@ -361,33 +361,107 @@
 		</div> <!-- end container -->
 	</div> <!-- end learner-container -->
 
-	<div id="previewDiplomaModal" class="modal fade" role="dialog" data-backdrop="static">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h3 class="modal-title">{{ trans('site.learner.preview-text') }}</h3>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-				<div class="modal-body">
-					<iframe src="" frameborder="0" width="100%" height="550">
-					</iframe>
+        <div id="previewDiplomaModal" class="modal fade" role="dialog" data-backdrop="static">
+                <div class="modal-dialog">
+                        <div class="modal-content">
+                                <div class="modal-header">
+                                        <h3 class="modal-title">{{ trans('site.learner.preview-text') }}</h3>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                        <iframe src="" frameborder="0" width="100%" height="550">
+                                        </iframe>
+                                </div>
+                        </div>
+                </div>
+        </div>
+
+		<!-- Hidden trigger -->
+		<button id="hiddenTrigger" type="button" data-toggle="modal" data-target="#unsavedAddressModal" style="display:none;"></button>
+
+        <div id="unsavedAddressModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+							<h3 class="modal-title">Save Changes</h3>
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+							<p>Do you want to save the new information?</p>
+					</div>
+					<div class="modal-footer">
+							<button type="button" class="btn btn-primary save-changes">Yes</button>
+							<button type="button" class="btn btn-secondary discard-changes" data-dismiss="modal">No</button>
+					</div>
 				</div>
 			</div>
-		</div>
-	</div>
+        </div>
 
 @stop
 
 @section('scripts')
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
-	<script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
-	<script src="{{ asset('js/profile.js') }}"></script>
-	<script>
-		$(".previewDiplomaBtn").click(function(){
-		   let diploma = $(this).data('diploma');
-		   let modal = $("#previewDiplomaModal");
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+        <script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
+        <script src="{{ asset('js/profile.js') }}"></script>
+        <script>
+                $(".previewDiplomaBtn").click(function(){
+                   let diploma = $(this).data('diploma');
+                   let modal = $("#previewDiplomaModal");
             modal.find('iframe').attr('src', diploma);
-		});
+                });
+
+                (function(){
+                    var form = document.getElementById('profileForm');
+                    if(!form) return;
+                    var inputs = form.querySelectorAll("input[name='street'], input[name='zip'], input[name='city'], input[name='phone']");
+                    var original = {};
+                    inputs.forEach(function(input){ original[input.name] = input.value; });
+                    var isDirty = false;
+                    function checkDirty(){
+                        isDirty = Array.prototype.some.call(inputs, function(input){
+                            return input.value !== original[input.name];
+                        });
+                    }
+                    inputs.forEach(function(input){ input.addEventListener('input', checkDirty); });
+                    var targetHref = null;
+                    window.addEventListener('beforeunload', function(e){
+                        if(isDirty){
+                            e.preventDefault();
+                            e.returnValue = '';
+                        }
+                    });
+                    document.querySelectorAll('a').forEach(function(a){
+                        a.addEventListener('click', function(e){
+                            if(isDirty){
+                                e.preventDefault();
+                                targetHref = this.href;
+								document.getElementById('hiddenTrigger').click();
+                                //$('#unsavedAddressModal').modal('show');	
+                            }
+                        });
+                    });
+                    $(window).on('keydown', function(e){
+                        if(isDirty && (e.which === 116 || (e.which === 82 && e.ctrlKey))){
+                            e.preventDefault();
+                            targetHref = window.location.href;
+							document.getElementById('hiddenTrigger').click();
+                            //$('#unsavedAddressModal').modal('show');
+                        }
+                    });
+                    $('#unsavedAddressModal .save-changes').on('click', function(){
+						isDirty = false;
+						form.submit();
+					});
+                    $('#unsavedAddressModal .discard-changes').on('click', function(){
+                        isDirty = false;
+                        $('#unsavedAddressModal').modal('hide');
+                        if(targetHref){
+                            window.location.href = targetHref;
+                        }else{
+                            window.location.reload();
+                        }
+                    });
+                })();
 
         $('.darken').hover(
             function(){
@@ -397,5 +471,5 @@
                 $(this).find('.message').fadeOut(1000);
             }
         );
-	</script>
+        </script>
 @stop

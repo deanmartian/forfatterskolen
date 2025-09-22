@@ -1289,6 +1289,7 @@ class AdminHelpers
             ['id' => 5, 'options' => 'Assigned Webinar', 'route' => 'editor.assigned-webinar', 'request_name' => 'assigned-webinar'],
             // array( 'id' => 8, 'option' => 'Årshjul', 'route' => 'editor.yearly-calendar.index', 'request_name' => 'yearly_calendar')
             ['id' => 15, 'option' => 'Redaktørinnstruks', 'route' => 'editor.editors-note', 'request_name' => 'editors-note'],
+            ['id' => 16, 'option' => 'Coaching Time', 'route' => 'editor.coaching-time.index', 'request_name' => 'editors-coaching-time'],
         ];
 
         if ($id > 0) {

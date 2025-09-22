@@ -115,7 +115,9 @@ class HeadEditorController extends Controller
             if ($project = $feedback->selfPublishing->project) {
                 $to = $project->user;
                 // $emailTemplate = AdminHelpers::emailTemplate('Self Publishing Feedback');
-                $content = AdminHelpers::formatEmailContent($request->email_content, '', $to->first_name, '');
+                $content = AdminHelpers::formatEmailContent($request->email_content, $to->email, $to->first_name, 
+                route('learner.project.show', $project->id));
+                
                 $email = $to->email;
                 dispatch(new AddMailToQueueJob($email, $request->subject, $content, $request->from_email,
                     null, null, 'learner', $to->id));

@@ -19,7 +19,15 @@ $urlList = array('pulse', 'board');
         <!-- <li @if(Request::is('/')) class="active" @endif><a href="{{route('backend.dashboard')}}">{{ trans('site.admin-menu.dashboard') }}</a></li> -->
         @foreach (\App\Http\AdminHelpers::editorPageList() as $page)
         <li @if(Route::currentRouteName() === strtolower($page['route'])) class="active" @endif>
-          <a href="{{ route($page['route']) }}">{{ trans($page['request_name'] === 'upcoming-assignment' ? 'site.'.$page['request_name'] : 'site.admin-menu.'.$page['request_name']) }}</a>
+          <a href="{{ route($page['route']) }}">
+            @if($page['request_name'] === 'upcoming-assignment')
+                {{ trans('site.'.$page['request_name']) }}
+            @elseif($page['request_name'] === 'editors-coaching-time')
+                {{ trans('site.coaching-timer-text') }}
+            @else
+                {{ trans('site.admin-menu.'.$page['request_name']) }}
+            @endif
+        </a>
         </li>
         @endforeach
         <li>

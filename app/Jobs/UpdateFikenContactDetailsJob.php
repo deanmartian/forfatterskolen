@@ -49,6 +49,11 @@ class UpdateFikenContactDetailsJob implements ShouldQueue
             ],
         ];
 
+        // add phone if present
+        if (!empty($address->phone)) {
+            $fields['phoneNumber'] = $address->phone;
+        }
+
         $field_string = json_encode($fields, true);
 
         $fikenUrl = 'https://api.fiken.no/api/v2/companies/forfatterskolen-as/contacts/'.$this->learner->fiken_contact_id;

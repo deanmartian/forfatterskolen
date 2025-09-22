@@ -18,7 +18,7 @@
                 }
 
                 $submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
-                    ->addDays($assignment->submission_date);
+                    ->addDays((int) $assignment->submission_date);
             }
         @endphp
             <div class="assignment-container">

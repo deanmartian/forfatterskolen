@@ -93,6 +93,10 @@
 						data-target="#certificateDatesModal">
 					Certificate Dates
 				</button>
+				<button type="button" class="btn btn-success margin-bottom" data-toggle="modal"
+						data-target="#coachingTimeModal">
+					Add Coaching Time
+				</button>
 				@if ($course->is_free)
 					<button type="button" class="btn btn-info margin-bottom" data-toggle="modal"
 							data-target="#reminderEmailModal">Send Reminder</button>
@@ -738,6 +742,50 @@
 					<div class="text-right">
 						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
 					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="coachingTimeModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Coaching Time</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.course.add-coaching-time', $course->id) }}" 
+					onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>Coaching Time</label>
+						<select name="coaching_time" class="form-control">
+							<option value="2">
+								{{ FrontendHelpers::getCoachingTimerPlanType(2) }}
+							</option>
+							<option value="1">
+								{{ FrontendHelpers::getCoachingTimerPlanType(1) }}
+							</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label>Packages</label> <br>
+						@if(count($course->packages) > 0)
+							@foreach ($course->packages()->where('variation', '!=', 'Editor Package')->get() as $package)
+								<input type="checkbox" name="packages[]" value="{{ $package->id }}">
+								<label>{{ $package->variation }}</label> <br>
+							@endforeach
+						@endif
+					</div>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+					</div>
+
 				</form>
 			</div>
 		</div>

@@ -57,6 +57,7 @@ use App\Workshop;
 use App\WorkshopMenu;
 use App\WorkshopsTaken;
 use App\WorkshopTakenCount;
+use App\Console\Commands\CheckFikenContactCommand;
 use Carbon\Carbon;
 use DB;
 use File;
@@ -247,7 +248,7 @@ class LearnerController extends Controller
         $projects = Project::where('user_id', $learner->id)->get();
         $bookSale = new UserBookSale;
         $bookSaleTypes = $bookSale->saleTypes();
-        $tasks = $learner->tasks()->where('available_date', "<=", today()->format('Y-m-d'))->get();
+        $tasks = $learner->tasks()->get();
 
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList',
@@ -287,6 +288,10 @@ class LearnerController extends Controller
                 $address->city = $request->city;
                 $address->save();
 
+                if (! $learner->fiken_contact_id || $learner->fiken_contact_id == 'none') {
+                    CheckFikenContactCommand::updateFikenContactId($learner);
+                }
+
                 if ($learner->fiken_contact_id && $learner->fiken_contact_id != 'none') {
                     dispatch(new UpdateFikenContactDetailsJob($learner));
                 }
@@ -297,7 +302,7 @@ class LearnerController extends Controller
 
     }
 
-    public function removeLearner(Request $request): RedirectResponse
+    public function removeLearner(Request $request)/* : RedirectResponse */
     {
         $learner = User::findOrFail($request->learner_id);
         $package = Package::findOrFail($request->package_id);
@@ -320,6 +325,16 @@ class LearnerController extends Controller
                 ->where('parent_id', $courseTaken->id)->delete();*/
 
             if ($request->has('is_permanent')) {
+                //if ($courseTaken->is_pay_later) {
+                    Order::where(
+                        [
+                            'user_id' => $courseTaken->user_id,
+                            'package_id' => $courseTaken->package_id,
+                            'is_processed' => 1,
+                            'is_pay_later' => 1
+                        ]
+                    )->delete();
+                //}
                 $courseTaken->forceDelete();
             } else {
                 $courseTaken->delete();
