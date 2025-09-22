@@ -818,11 +818,12 @@ class CourseController extends Controller
             $excel = \App::make('excel');
 
             $learnerList = [];
-            $headers = ['learner', 'package', 'price', 'discount', 'amount']; // first row in excel
+            $headers = ['learner', 'email', 'package', 'price', 'discount', 'amount']; // first row in excel
 
             foreach($payLaterOrders as $order) {
                 $learnerList[] = [
                     $order->user->full_name,
+                    $order->user->email,
                     $order->package->variation,
                     $order->price,
                     $order->discount,
