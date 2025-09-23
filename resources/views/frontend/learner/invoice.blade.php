@@ -63,18 +63,14 @@
 
 					@php
 						$tabWithLabel = [
-                                                        [
-                                                                'name' => 'svea',
-                                                                'label' => 'Svea'
-                                                        ],
-                                                        [
-                                                                'name' => 'pay-later',
-                                                                'label' => 'Pay later'
-                                                        ],
-                                                        [
-                                                                'name' => 'regret-form',
-                                                                'label' => 'Angreskjema'
-                                                        ],
+							[
+									'name' => 'svea',
+									'label' => 'Svea'
+							],
+							[
+									'name' => 'regret-form',
+									'label' => 'Angreskjema'
+							],
 							[
 								'name' => 'gift',
 								'label' => 'Gift Purchases'
@@ -87,6 +83,10 @@
 								'name' => 'order-history',
 								'label' => trans('site.order-history.title')
 							],
+							/* [
+									'name' => 'pay-later',
+									'label' => 'Pay later'
+							], */
 							/* [
 								'name' => 'time-register',
 								'label' => 'Time Register'
@@ -176,54 +176,17 @@
 								<div class="float-right">
 									{{ $sveaOrders->appends(request()->except('page'))->links('pagination.short-pagination') }}
 								</div>
-                                                        @elseif( Request::input('tab') == 'pay-later' )
-                                                                <div class="card global-card">
-                                                                        <div class="card-body py-0">
-                                                                                <table class="table table-global">
-                                                                                        <thead>
-                                                                                                <tr>
-                                                                                                        <th>Item</th>
-                                                                                                        <th>Package</th>
-                                                                                                        <th>Payment plan</th>
-                                                                                                        <th>Payment mode</th>
-                                                                                                        <th>Date</th>
-                                                                                                        <th>Total</th>
-                                                                                                </tr>
-                                                                                        </thead>
-                                                                                        <tbody>
-                                                                                                @forelse($payLaterOrders as $order)
-                                                                                                        <tr>
-                                                                                                                <td>{{ $order->item }}</td>
-                                                                                                                <td>{{ $order->packageVariation }}</td>
-                                                                                                                <td>{{ optional($order->paymentPlan)->plan }}</td>
-                                                                                                                <td>{{ optional($order->paymentMode)->mode }}</td>
-                                                                                                                <td>{{ $order->created_at_formatted }}</td>
-                                                                                                                <td>{{ $order->total_formatted }}</td>
-                                                                                                        </tr>
-                                                                                                @empty
-                                                                                                        <tr>
-                                                                                                                <td colspan="6" class="text-center">No pay later orders found.</td>
-                                                                                                        </tr>
-                                                                                                @endforelse
-                                                                                        </tbody>
-                                                                                </table>
-                                                                        </div>
-                                                                </div>
-
-                                                                <div class="float-right">
-                                                                        {{ $payLaterOrders->appends(request()->except('page'))->links('pagination.short-pagination') }}
-                                                                </div>
-                                                        @elseif( Request::input('tab') == 'regret-form' )
-                                                                <div class="card global-card">
-                                                                        <div class="card-body py-0">
-                                                                                <table class="table table-global">
-											<thead>
+							@elseif( Request::input('tab') == 'regret-form' )
+								<div class="card global-card">
+									<div class="card-body py-0">
+										<table class="table table-global">
+										<thead>
 											<tr>
 												<th>{{ trans_choice('site.courses', 1) }}</th>
 												<th>{{ trans('site.learner.files-text') }}</th>
 											</tr>
-											</thead>
-											<tbody>
+										</thead>
+										<tbody>
 											@foreach($orderAttachments as $orderAttachment)
 												<tr>
 													<td>
@@ -317,6 +280,49 @@
 							@elseif(Request::input('tab') == 'order-history')
 								<order-history :order-history="{{ json_encode($orderHistory) }}"
 											   :user="{{ json_encode(Auth::user()) }}"></order-history>
+							@elseif( Request::input('tab') == 'pay-later' )
+								<div class="card global-card">
+									<div class="card-body py-0">
+										<table class="table table-global">
+											<thead>
+												<tr>
+													<th>Package</th>
+													<th>Payment plan</th>
+													<th>Payment mode</th>
+													<th>Date</th>
+													<th>Total</th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody>
+												@forelse($payLaterOrders as $order)
+													<tr>
+														<td>{{ $order->packageVariation }}</td>
+														<td>{{ optional($order->paymentPlan)->plan }}</td>
+														<td>{{ optional($order->paymentMode)->mode }}</td>
+														<td>{{ $order->created_at_formatted }}</td>
+														<td>{{ $order->total_formatted }}</td>
+														<td>
+															<button class="btn btn-success btn-xs createInvoiceBtn" data-toggle="modal" 
+																data-target="#createInvoiceModal"
+																data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}">
+																+ Create Invoice
+															</button>
+														</td>
+													</tr>
+												@empty
+													<tr>
+														<td colspan="6" class="text-center">No pay later orders found.</td>
+													</tr>
+												@endforelse
+											</tbody>
+										</table>
+									</div>
+								</div>
+
+								<div class="float-right">
+										{{ $payLaterOrders->appends(request()->except('page'))->links('pagination.short-pagination') }}
+								</div>
 							@elseif( Request::input('tab') == 'time-register' )
 								<div class="card global-card">
 									<div class="card-body py-0">
@@ -731,6 +737,76 @@
 		</div>
 	</div>
 
+	<div id="createInvoiceModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">{{ trans('site.create-invoice') }}</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="" onsubmit="disableSubmit(this)">
+						{{ csrf_field() }}
+
+						<div class="form-group">
+							<label>{{ trans('site.front.form.payment-plan') }}</label> <br>
+							@foreach(App\PaymentPlan::orderBy('division', 'asc')->get() as $paymentPlan)
+								<div class="col-sm-6">
+									<input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
+									name="payment_plan_id" value="{{$paymentPlan->id}}" data-plan="{{trim($paymentPlan->plan)}}"
+										id="{{$paymentPlan->plan}}" onchange="payment_plan_change(this)"
+										data-plan-id="{{ $paymentPlan->id }}">
+									<label>{{$paymentPlan->plan}} </label>
+								</div>
+							@endforeach
+
+							<div class="col-sm-6">
+								<input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
+								name="payment_plan_id" value="10" data-plan="{{trim('24 måneder')}}"
+									id="24 måneder" onchange="payment_plan_change(this)"
+									data-plan-id="10">
+								<label>24 måneder</label>
+							</div>
+
+							<div class="col-sm-6">
+								<input type="number" class="form-control" name="payment_plan_in_months" placeholder="Custom month"
+								onchange="payment_plan_in_month_change(this)" data-plan-id="0">
+							</div>
+							<div class="clearfix"></div>
+						</div>
+
+						<div class="form-group">
+							<div>
+								<label class="split-faktura">
+									{{ trans('site.front.form.monthly-payment') }}?*</label>
+							</div>
+							<div class="payment-option custom-radio col-sm-6">
+								<input type="radio" name="split_invoice" value="1" disabled required
+									id="yes_option">
+								<label for="yes_option">
+									{{ trans('site.front.yes') }}
+								</label>
+							</div>
+							<div class="payment-option custom-radio col-sm-6">
+								<input type="radio" name="split_invoice" value="0" disabled required
+									id="no_option">
+								<label for="no_option">
+									{{ trans('site.front.no') }}
+								</label>
+							</div>
+						</div>
+
+						<button type="submit" class="btn btn-primary pull-right submitInvoice">
+							{{ trans('site.create-invoice') }}
+						</button>
+						<div class="clearfix"></div>
+					</form>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
 @stop
 
 @section('scripts')
@@ -805,5 +881,23 @@
             let vipps_phone_number = $(this).data('vipps-number');
             $("#stopVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
         });
+
+		$(".createInvoiceBtn").click(function() {
+			let action = $(this).data('action');
+			let modal = $("#createInvoiceModal");
+
+			modal.find('form').attr('action', action);
+		});
+
+		function payment_plan_change(t) {
+			let plan = $(t).data('plan');
+			let split_invoice = $('input:radio[name=split_invoice]');
+			split_invoice.prop('disabled', false);
+
+			if( plan === 'Hele beløpet' ) {
+				split_invoice.prop('disabled', true);
+				split_invoice.prop('checked', false);
+			}
+		}
 	</script>
 @stop

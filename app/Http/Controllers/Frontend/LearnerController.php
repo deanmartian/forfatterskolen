@@ -1563,6 +1563,102 @@ class LearnerController extends Controller
         return abort('503');
     }
 
+    public function generatePayLaterInvoice($order_id, Request $request)
+    {
+        $order = Order::where('id', $order_id)->where('user_id', auth()->id())->first();
+
+        if (!$order) {
+            return redirect()->back();
+        }
+
+        $learner = Auth::user();
+        $paymentMode = PaymentMode::findOrFail(3);
+        $payment_mode = 'Bankoverføring';
+
+        if ($request->has('payment_plan_id')) {
+            $paymentPlan = PaymentPlan::find($request->payment_plan_id);
+            $payment_plan = (int) $request->payment_plan_id === 10 ? '24 måneder' : $paymentPlan->plan;
+            $divisor = (int) $request->payment_plan_id === 10 ? 24 : $paymentPlan->division;
+        } else {
+            $payment_plan = $request->payment_plan_in_months.' måneder';
+            $divisor = $request->payment_plan_in_months;
+        }
+
+        $inputtedComment = '';
+        $comment = '('.$inputtedComment.' ';
+        $comment .= 'Betalingsmodus: '.$payment_mode.', ';
+        $comment .= 'Betalingsplan: '.$payment_plan.')';
+
+        $product_ID = 884373255;
+
+        $price = ($order->price - $order->discount) * 100;
+        $dueDate = date('Y-m-d');
+
+        if (isset($request->split_invoice) && $request->split_invoice) {
+            $division = $divisor * 100; // multiply the split count to get the correct value
+            $price = round($price / $division, 2); // round the value to the nearest tenths
+            $price = (int) $price * 100;
+            $has_vat = false;
+
+            for ($i = 1; $i <= $divisor; $i++) { // loop based on the split count
+                $dueDate = Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
+                $invoice_fields = [
+                    'user_id' => $learner->id,
+                    'first_name' => $learner->first_name,
+                    'last_name' => $learner->last_name,
+                    'netAmount' => $price,
+                    'dueDate' => $dueDate,
+                    'description' => 'Kursordrefaktura',
+                    'productID' => $product_ID,
+                    'email' => $learner->email,
+                    'telephone' => $learner->address->telephone,
+                    'address' => $learner->address->street,
+                    'postalPlace' => $learner->address->city,
+                    'postalCode' => $learner->address->zip,
+                    'comment' => $comment,
+                    'payment_mode' => $paymentMode->mode,
+                    'index' => $i,
+                ];
+
+                if ($request->product_type === 'manuscript_vat') {
+                    $invoice_fields['vat'] = ($price / 100) * 25;
+                    $has_vat = true;
+                }
+
+                $invoice = new FikenInvoice;
+                $invoice->create_invoice($invoice_fields, $has_vat);
+            }
+        } else {
+            $has_vat = false;
+            $dueDate = date_format(date_create(Carbon::parse($dueDate)->addDays(14)), 'Y-m-d');
+            $invoice_fields = [
+                'user_id' => $learner->id,
+                'first_name' => $learner->first_name,
+                'last_name' => $learner->last_name,
+                'netAmount' => $price,
+                'dueDate' => $dueDate,
+                'description' => 'Kursordrefaktura',
+                'productID' => $product_ID,
+                'email' => $learner->email,
+                'telephone' => $learner->address->telephone,
+                'address' => $learner->address->street,
+                'postalPlace' => $learner->address->city,
+                'postalCode' => $learner->address->zip,
+                'comment' => $comment,
+                'payment_mode' => $paymentMode->mode,
+            ];
+
+            $invoice = new FikenInvoice;
+            return $invoice->create_invoice($invoice_fields, $has_vat);
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Invoice created successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
+    }
+
     public function changePortal($portal): RedirectResponse
     {
         \Session::put('current-portal', $portal);
