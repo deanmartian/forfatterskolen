@@ -3986,6 +3986,12 @@
 					<p>
 						{{--{!! trans('site.delete-from-webinar-pakke-question') !!}--}}
 					</p>
+
+					<div class="form-group">
+						<label>Delete Permanently:</label> <br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" name="is_permanent">
+					</div>
+
 					<button class="btn btn-danger pull-right" 
 					onclick="checkFormAction(this)" type="button">{{ trans('site.delete') }}</button>
 					<div class="clearfix"></div>

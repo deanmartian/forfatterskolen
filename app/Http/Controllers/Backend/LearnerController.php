@@ -805,7 +805,7 @@ class LearnerController extends Controller
     /**
      * Remove learner from webinar-pakke
      */
-    public function deleteFromCourse($course_taken_id): RedirectResponse
+    public function deleteFromCourse($course_taken_id, Request $request): RedirectResponse
     {
         $courseTaken = CoursesTaken::find($course_taken_id);
         if ($courseTaken) {
@@ -823,7 +823,21 @@ class LearnerController extends Controller
             // delete related email history
             /*EmailHistory::where('parent', 'LIKE', '%courses-taken%')
             ->where('parent_id', $courseTaken->id)->delete();*/
-            $courseTaken->delete();
+            if ($request->has('is_permanent')) {
+                //if ($courseTaken->is_pay_later) {
+                    Order::where(
+                        [
+                            'user_id' => $courseTaken->user_id,
+                            'package_id' => $courseTaken->package_id,
+                            'is_processed' => 1,
+                            'is_pay_later' => 1
+                        ]
+                    )->delete();
+                //}
+                $courseTaken->forceDelete();
+            } else {
+                $courseTaken->delete();
+            }
 
             return redirect()->back()->with([
                 'alert_type' => 'success',
