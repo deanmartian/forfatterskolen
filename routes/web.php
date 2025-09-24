@@ -313,6 +313,7 @@ Route::domain($front)->group(function () {
         Route::get('/calendar', [Frontend\LearnerController::class, 'calendar'])->name('learner.calendar'); // Calendar Page
         Route::get('/invoice', [Frontend\LearnerController::class, 'invoice'])->name('learner.invoice'); // Invoice Listing Page
         Route::get('/invoice/{id}', [Frontend\LearnerController::class, 'invoiceShow'])->name('learner.invoice.show'); // Invoice Single Page
+        Route::post('/invoice/pay-later/{id}/generate', [Frontend\LearnerController::class, 'generatePayLaterInvoice'])->name('learner.invoice.pay-later.generate');
         Route::get('/change-portal/{portal}', [Frontend\LearnerController::class, 'changePortal'])->name('learner.change-portal'); // Invoice Single Page
         Route::get('/invoice/{fiken_invoice_id}/vipps-payment', [Frontend\LearnerController::class, 'invoiceVippsPayment'])->name('learner.invoice.vipps-payment'); // Invoice Single Page
         Route::get('/order/{id}/download-credited', [Frontend\LearnerController::class, 'downloadCreditedOrder'])->name('learner.order.download-credited');
