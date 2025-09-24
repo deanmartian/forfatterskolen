@@ -303,9 +303,11 @@
 														<td>{{ $order->created_at_formatted }}</td>
 														<td>{{ $order->total_formatted }}</td>
 														<td>
-															<button class="btn btn-success btn-xs createInvoiceBtn" data-toggle="modal" 
-																data-target="#createInvoiceModal"
-																data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}">
+                                                                                                                        <button class="btn btn-success btn-xs createInvoiceBtn" data-toggle="modal"
+                                                                                                                               data-target="#createInvoiceModal"
+                                                                                                                               data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
+                                                                                                                               data-plan-id="{{ optional($order->paymentPlan)->id }}"
+                                                                                                                               data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'>
 																+ Create Invoice
 															</button>
 														</td>
@@ -877,12 +879,95 @@
             $("#stopVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
         });
 
-		$(".createInvoiceBtn").click(function() {
-			let action = $(this).data('action');
-			let modal = $("#createInvoiceModal");
+                $(".createInvoiceBtn").click(function() {
+                        let action = $(this).data('action');
+                        let modal = $("#createInvoiceModal");
 
-			modal.find('form').attr('action', action);
-		});
+                        modal.find('form').attr('action', action);
+
+                        let rawPlanIds = $(this).attr('data-payment-plan-ids');
+                        let currentPlanId = $(this).attr('data-plan-id');
+                        let allowedPlanIds = [];
+
+                        if (rawPlanIds) {
+                                try {
+                                        let parsedPlanIds = JSON.parse(rawPlanIds);
+
+                                        if (Array.isArray(parsedPlanIds)) {
+                                                allowedPlanIds = parsedPlanIds
+                                                        .map(function (planId) {
+                                                                return parseInt(planId, 10);
+                                                        })
+                                                        .filter(function (planId) {
+                                                                return !isNaN(planId);
+                                                        });
+                                        }
+                                } catch (error) {
+                                        allowedPlanIds = rawPlanIds.split(',')
+                                                .map(function (planId) {
+                                                        return parseInt(planId, 10);
+                                                })
+                                                .filter(function (planId) {
+                                                        return !isNaN(planId);
+                                                });
+                                }
+                        }
+
+                        let hasAllowedPlanIds = allowedPlanIds.length > 0;
+                        let parsedCurrentPlanId = parseInt(currentPlanId, 10);
+
+                        if (isNaN(parsedCurrentPlanId)) {
+                                parsedCurrentPlanId = null;
+                        }
+
+                        let paymentPlanInputs = modal.find('input[name="payment_plan_id"]');
+                        let selectedInput = null;
+
+                        paymentPlanInputs.each(function () {
+                                let input = $(this);
+                                let planId = parseInt(input.data('plan-id'), 10);
+                                let container = input.closest('.col-sm-6');
+                                let isAllowed = !hasAllowedPlanIds || allowedPlanIds.indexOf(planId) !== -1;
+
+                                if (isAllowed) {
+                                        input.prop('disabled', false);
+                                        container.removeClass('hide');
+                                } else {
+                                        input.prop('checked', false);
+                                        input.prop('disabled', true);
+                                        container.addClass('hide');
+                                }
+
+                                if (isAllowed && parsedCurrentPlanId !== null && planId === parsedCurrentPlanId) {
+                                        selectedInput = input;
+                                }
+                        });
+
+                        if (!selectedInput || !selectedInput.length) {
+                                let availableInputs = paymentPlanInputs.filter(function () {
+                                        return !$(this).prop('disabled');
+                                });
+
+                                if (!availableInputs.length && hasAllowedPlanIds) {
+                                        paymentPlanInputs.each(function () {
+                                                $(this).prop('disabled', false);
+                                                $(this).closest('.col-sm-6').removeClass('hide');
+                                        });
+                                        availableInputs = paymentPlanInputs;
+                                }
+
+                                selectedInput = availableInputs.first();
+                        }
+
+                        if (selectedInput && selectedInput.length) {
+                                selectedInput.prop('checked', true);
+                                payment_plan_change(selectedInput.get(0));
+                        } else {
+                                let splitInvoiceOptions = modal.find('input[name="split_invoice"]');
+                                splitInvoiceOptions.prop('checked', false);
+                                splitInvoiceOptions.prop('disabled', true);
+                        }
+                });
 
 		function payment_plan_change(t) {
 			let plan = $(t).data('plan');
