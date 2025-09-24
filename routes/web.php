@@ -852,6 +852,7 @@ Route::domain($admin)->group(function () {
         Route::get('/course/{id}/learner-list-excel/{type?}', [Backend\CourseController::class, 'learnerListExcel'])->name('learner.course.learner-list-excel'); // Add Learner To Course
         Route::get('/course/{id}/learner-active-list-excel', [Backend\CourseController::class, 'learnerActiveListExcel'])->name('learner.course.learner-active-list-excel'); // Add Learner To Course
         Route::get('/course/{id}/pay-later/export', [Backend\CourseController::class, 'exportPayLaterLearners'])->name('learner.course.pay-later'); // Add Learner To Course
+        Route::post('/course/{course}/payment-plans/toggle', [Backend\CourseController::class, 'togglePaymentPlan'])->name('learner.course.payment-plans.toggle');
         Route::post('/course/{id}/expirationReminder', [Backend\CourseController::class, 'expirationReminder'])->name('admin.course.expiration-reminder');
         Route::post('/course/{id}/add-learners-to-webinars', [Backend\CourseController::class, 'addLearnersToWebinars'])->name('admin.course.add-learners-to-webinars');
         Route::post('/course/{id}/certificate-dates', [Backend\CourseController::class, 'updateCertificateDates'])->name('admin.course.update-certificate-dates');

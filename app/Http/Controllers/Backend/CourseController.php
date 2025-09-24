@@ -494,6 +494,41 @@ class CourseController extends Controller
         ]);
     }
 
+    public function togglePaymentPlan(Request $request, Course $course): JsonResponse
+    {
+        $validated = $request->validate([
+            'payment_plan_id' => 'required|exists:payment_plans,id',
+            'is_active' => 'required|boolean',
+        ]);
+
+        $paymentPlanIds = collect($course->payment_plan_ids ?? [])
+            ->map(static fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $paymentPlanId = (int) $validated['payment_plan_id'];
+
+        if ($request->boolean('is_active')) {
+            if (! in_array($paymentPlanId, $paymentPlanIds, true)) {
+                $paymentPlanIds[] = $paymentPlanId;
+            }
+        } else {
+            $paymentPlanIds = array_values(array_filter($paymentPlanIds, static function ($id) use ($paymentPlanId) {
+                return (int) $id !== $paymentPlanId;
+            }));
+        }
+
+        $course->payment_plan_ids = $paymentPlanIds;
+        $course->save();
+
+        return response()->json([
+            'status' => 'success',
+            'payment_plan_ids' => $course->payment_plan_ids ?? [],
+        ]);
+    }
+
     public function sendEmailToLearners($id, Request $request): RedirectResponse
     {
         $course = Course::find($id);
