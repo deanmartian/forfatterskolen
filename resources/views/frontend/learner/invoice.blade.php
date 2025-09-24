@@ -767,11 +767,6 @@
 									data-plan-id="10">
 								<label>24 måneder</label>
 							</div>
-
-							<div class="col-sm-6">
-								<input type="number" class="form-control" name="payment_plan_in_months" placeholder="Custom month"
-								onchange="payment_plan_in_month_change(this)" data-plan-id="0">
-							</div>
 							<div class="clearfix"></div>
 						</div>
 
