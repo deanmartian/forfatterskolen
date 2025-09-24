@@ -1594,6 +1594,11 @@ class LearnerController extends Controller
         $price = ($order->price - $order->discount) * 100;
         $dueDate = date('Y-m-d');
 
+        // always split the invoice
+        $request->merge([
+            'split_invoice' => 1
+        ]);
+
         if (isset($request->split_invoice) && $request->split_invoice) {
             $division = $divisor * 100; // multiply the split count to get the correct value
             $price = round($price / $division, 2); // round the value to the nearest tenths
@@ -1651,6 +1656,9 @@ class LearnerController extends Controller
             $invoice = new FikenInvoice;
             $invoice->create_invoice($invoice_fields, $has_vat);
         }
+
+        $order->is_invoice_sent = 1;
+        $order->save();
 
         return redirect()->route('learner.invoice', ['tab' => 'pay-later'])->with([
             'errors' => AdminHelpers::createMessageBag('Invoice created successfully.'),

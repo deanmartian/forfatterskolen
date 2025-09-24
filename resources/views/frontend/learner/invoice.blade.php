@@ -303,13 +303,15 @@
 														<td>{{ $order->created_at_formatted }}</td>
 														<td>{{ $order->total_formatted }}</td>
 														<td>
-                                                                                                                        <button class="btn btn-success btn-xs createInvoiceBtn" data-toggle="modal"
-                                                                                                                               data-target="#createInvoiceModal"
-                                                                                                                               data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
-                                                                                                                               data-plan-id="{{ optional($order->paymentPlan)->id }}"
-                                                                                                                               data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'>
-																+ Create Invoice
-															</button>
+															@if ($order->package->course->payment_plan_ids)
+																<button class="btn btn-success btn-xs createInvoiceBtn" data-toggle="modal"
+																	data-target="#createInvoiceModal"
+																	data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
+																	data-plan-id="{{ optional($order->paymentPlan)->id }}"
+																	data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'>
+																	+ Create Invoice
+																</button>
+															@endif
 														</td>
 													</tr>
 												@empty
@@ -770,27 +772,6 @@
 								<label>24 måneder</label>
 							</div>
 							<div class="clearfix"></div>
-						</div>
-
-						<div class="form-group">
-							<div>
-								<label class="split-faktura">
-									{{ trans('site.front.form.monthly-payment') }}?*</label>
-							</div>
-							<div class="payment-option custom-radio col-sm-6">
-								<input type="radio" name="split_invoice" value="1" disabled required
-									id="yes_option">
-								<label for="yes_option">
-									{{ trans('site.front.yes') }}
-								</label>
-							</div>
-							<div class="payment-option custom-radio col-sm-6">
-								<input type="radio" name="split_invoice" value="0" disabled required
-									id="no_option">
-								<label for="no_option">
-									{{ trans('site.front.no') }}
-								</label>
-							</div>
 						</div>
 
 						<button type="submit" class="btn btn-primary pull-right submitInvoice">
