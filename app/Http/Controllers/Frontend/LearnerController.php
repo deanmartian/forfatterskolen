@@ -1652,10 +1652,9 @@ class LearnerController extends Controller
             return $invoice->create_invoice($invoice_fields, $has_vat);
         }
 
-        return redirect()->back()->with([
+        return redirect()->route('learner.invoice', ['tab' => 'pay-later'])->with([
             'errors' => AdminHelpers::createMessageBag('Invoice created successfully.'),
-            'alert_type' => 'success',
-            'not-former-courses' => true,
+            'alert_type' => 'success'
         ]);
     }
 
