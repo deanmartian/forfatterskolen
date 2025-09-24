@@ -59,6 +59,8 @@
 
     $emailOutLog = $course->emailOutLog()->paginate(20);
     $expiryReminder = $course->expiryReminders;
+    $paymentPlans = \App\PaymentPlan::orderBy('division')->orderBy('plan')->get();
+    $coursePaymentPlans = collect($course->payment_plan_ids ?? []);
     ?>
 
 	<div class="col-sm-12 col-md-10 sub-right-content">
@@ -118,13 +120,14 @@
 				</button>
 			@endif
 
-			<ul class="nav nav-tabs margin-top">
-				<li class="active"><a href="#learners" data-toggle="tab">Learners</a></li>
-				<li><a href="#logs" data-toggle="tab">Email Out Log</a></li>
-				<li><a href="#packages" data-toggle="tab">Packages</a></li>
-				@if ($course->is_free)
-					<li><a href="#templateTab" data-toggle="tab">Email Reminder Template</a></li>
-				@endif
+                        <ul class="nav nav-tabs margin-top">
+                                <li class="active"><a href="#learners" data-toggle="tab">Learners</a></li>
+                                <li><a href="#logs" data-toggle="tab">Email Out Log</a></li>
+                                <li><a href="#packages" data-toggle="tab">Packages</a></li>
+                                <li><a href="#payLaterOptions" data-toggle="tab">Pay Later Options</a></li>
+                                @if ($course->is_free)
+                                        <li><a href="#templateTab" data-toggle="tab">Email Reminder Template</a></li>
+                                @endif
 			</ul>
 
 			<div class="tab-content">
@@ -275,60 +278,96 @@
 					</div>
 				</div> <!-- end send email out log -->
 
-				<div class="tab-pane fade margin-top" id="packages" role="tabpanel">
-					<div class="table-responsive">
-						<table class="table table-side-bordered table-white">
-							<thead>
-								<tr>
-									<th>Package</th>
-									<th>Learners</th>
-									<th width="350"></th>
-									<th width="350"></th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach ($course->packages as $package)
-									<tr>
-										<td>
-											{{ $package->variation }}
-										</td>
-										<td>
-											{{ \App\CoursesTaken::where('package_id', $package->id)
-											->where('is_active', true)->count() }}
-										</td>
-										<td>
-											<button type="submit" data-toggle="modal" data-target="#importLearnersModal" 
-													class="btn btn-primary btn-xs pull-right import-learners-btn"
-													data-package="{{ json_encode($package) }}" 
-													data-action="{{ route('admin.course.package.import-learners') }}">
-													Import Learners
-											</button>
-										</td>
-										<td>
-											{{-- <button type="submit" data-toggle="modal" data-target="#copyPackageModal" 
-													class="btn btn-primary btn-xs pull-right copy-package-btn"
-													data-package="{{ json_encode($package) }}"
-													data-action="{{ route('admin.course.package.copy-package-and-learners') }}">
-													Copy Package
-											</button> --}}
+                                <div class="tab-pane fade margin-top" id="packages" role="tabpanel">
+                                        <div class="table-responsive">
+                                                <table class="table table-side-bordered table-white">
+                                                        <thead>
+                                                                <tr>
+                                                                        <th>Package</th>
+                                                                        <th>Learners</th>
+                                                                        <th width="350"></th>
+                                                                        <th width="350"></th>
+                                                                </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                                @foreach ($course->packages as $package)
+                                                                        <tr>
+                                                                                <td>
+                                                                                        {{ $package->variation }}
+                                                                                </td>
+                                                                                <td>
+                                                                                        {{ \App\CoursesTaken::where('package_id', $package->id)
+                                                                                        ->where('is_active', true)->count() }}
+                                                                                </td>
+                                                                                <td>
+                                                                                        <button type="submit" data-toggle="modal" data-target="#importLearnersModal"
+                                                                                                        class="btn btn-primary btn-xs pull-right import-learners-btn"
+                                                                                                        data-package="{{ json_encode($package) }}"
+                                                                                                        data-action="{{ route('admin.course.package.import-learners') }}">
+                                                                                                        Import Learners
+                                                                                        </button>
+                                                                                </td>
+                                                                                <td>
+                                                                                        {{-- <button type="submit" data-toggle="modal" data-target="#copyPackageModal"
+                                                                                                        class="btn btn-primary btn-xs pull-right copy-package-btn"
+                                                                                                        data-package="{{ json_encode($package) }}"
+                                                                                                        data-action="{{ route('admin.course.package.copy-package-and-learners') }}">
+                                                                                                        Copy Package
+                                                                                        </button> --}}
 
-											<button type="submit" data-toggle="modal" data-target="#copyLearnersModal" 
-													class="btn btn-primary btn-xs pull-right copy-learners-btn"
-													data-package="{{ json_encode($package) }}" 
-													data-action="{{ route('admin.course.package.copy-learners') }}"
-													style="margin-right: 3px">
-													Copy Learners
-											</button>
-										</td>
-									</tr>
-								@endforeach
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                                                                                        <button type="submit" data-toggle="modal" data-target="#copyLearnersModal"
+                                                                                                        class="btn btn-primary btn-xs pull-right copy-learners-btn"
+                                                                                                        data-package="{{ json_encode($package) }}"
+                                                                                                        data-action="{{ route('admin.course.package.copy-learners') }}"
+                                                                                                        style="margin-right: 3px">
+                                                                                                        Copy Learners
+                                                                                        </button>
+                                                                                </td>
+                                                                        </tr>
+                                                                @endforeach
+                                                        </tbody>
+                                                </table>
+                                        </div>
+                                </div>
+                                <div class="tab-pane fade margin-top" id="payLaterOptions" role="tabpanel">
+                                        <div class="table-responsive">
+                                                @if ($paymentPlans->count())
+                                                        <table class="table table-side-bordered table-white">
+                                                                <thead>
+                                                                        <tr>
+                                                                                <th>Division</th>
+                                                                                <th>Payment Plan</th>
+                                                                                <th width="200">Active</th>
+                                                                        </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                        @foreach ($paymentPlans as $paymentPlan)
+                                                                                <tr>
+                                                                                        <td>{{ $paymentPlan->division }}</td>
+                                                                                        <td>{{ $paymentPlan->plan }}</td>
+                                                                                        <td>
+                                                                                                <input type="checkbox"
+                                                                                                       data-toggle="toggle"
+                                                                                                       data-on="Yes"
+                                                                                                       data-off="No"
+                                                                                                       data-size="mini"
+                                                                                                       class="course-payment-plan-toggle"
+                                                                                                       data-payment-plan-id="{{ $paymentPlan->id }}"
+                                                                                                       data-url="{{ route('learner.course.payment-plans.toggle', $course->id) }}"
+                                                                                                       @if ($coursePaymentPlans->contains($paymentPlan->id)) checked @endif>
+                                                                                        </td>
+                                                                                </tr>
+                                                                        @endforeach
+                                                                </tbody>
+                                                        </table>
+                                                @else
+                                                        <p class="text-center">No payment plans available.</p>
+                                                @endif
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
 	<div class="clearfix"></div>
 </div>
 
@@ -974,7 +1013,7 @@
             });
         });
 
-		$(".facebook-group-toggle").change(function(){
+        $(".facebook-group-toggle").change(function(){
             let learner_id = $(this).attr('data-id');
             let is_checked = $(this).prop('checked');
             let check_val = is_checked ? 1 : 0;
@@ -988,9 +1027,27 @@
             });
         });
 
-		$(".btn-remove-learner").click(function() {
-			$("[name=is_permanent]").prop('checked', false).trigger('change');
-		})
+        $(".course-payment-plan-toggle").change(function(){
+            let toggle = $(this);
+            let isChecked = toggle.prop('checked');
+            $.ajax({
+                type:'POST',
+                url: toggle.data('url'),
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: {
+                    payment_plan_id: toggle.data('payment-plan-id'),
+                    is_active: isChecked ? 1 : 0
+                },
+                error: function(){
+                    toggle.bootstrapToggle(isChecked ? 'off' : 'on');
+                    alert('Unable to update payment plan. Please try again.');
+                }
+            });
+        });
+
+                $(".btn-remove-learner").click(function() {
+                        $("[name=is_permanent]").prop('checked', false).trigger('change');
+                })
 
 		$(".btn-remove-learner-permanently").click(function() {
 			var form = $('#removeLearnerModal form');
