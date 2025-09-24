@@ -1649,7 +1649,7 @@ class LearnerController extends Controller
             ];
 
             $invoice = new FikenInvoice;
-            return $invoice->create_invoice($invoice_fields, $has_vat);
+            $invoice->create_invoice($invoice_fields, $has_vat);
         }
 
         return redirect()->route('learner.invoice', ['tab' => 'pay-later'])->with([
