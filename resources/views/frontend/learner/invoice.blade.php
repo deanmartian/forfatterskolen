@@ -83,10 +83,10 @@
 								'name' => 'order-history',
 								'label' => trans('site.order-history.title')
 							],
-							[
+							/* [
 									'name' => 'pay-later',
-									'label' => 'Pay later'
-							],
+									'label' => trans('site.pay-later')
+							], */
 							/* [
 								'name' => 'time-register',
 								'label' => 'Time Register'
@@ -286,11 +286,11 @@
 										<table class="table table-global">
 											<thead>
 												<tr>
-													<th>Package</th>
-													<th>Payment plan</th>
-													<th>Payment mode</th>
-													<th>Date</th>
-													<th>Total</th>
+													<th>{{ trans('site.front.form.course-package') }}</th>
+													<th>{{ trans('site.front.form.payment-plan') }}</th>
+													<th>{{ trans('site.front.form.payment-method') }}</th>
+													<th>{{ trans('site.date') }}</th>
+													<th>{{ trans('site.front.total') }}</th>
 													<th></th>
 												</tr>
 											</thead>
