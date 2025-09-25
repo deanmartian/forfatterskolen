@@ -309,14 +309,16 @@
 																	data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
 																	data-plan-id="{{ optional($order->paymentPlan)->id }}"
 																	data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'>
-																	+ Create Invoice
+																	+ {{ trans('site.create-invoice') }}
 																</button>
 															@endif
 														</td>
 													</tr>
 												@empty
 													<tr>
-														<td colspan="6" class="text-center">No pay later orders found.</td>
+														<td colspan="6" class="text-center">
+															{{ trans('site.pay-later-no-record') }}
+														</td>
 													</tr>
 												@endforelse
 											</tbody>
@@ -790,6 +792,74 @@
 @section('scripts')
 	<script type="text/javascript" src="{{ asset('js/app.js?v='.time()) }}"></script>
 	<script>
+        const invoiceProcessingMessage = @json(trans('site.pay-later-invoice-processing'));
+        let invoiceSubmissionInProgress = false;
+
+        function lockInvoiceModal(modal, submitButton) {
+            if (!modal || !modal.length || invoiceSubmissionInProgress) {
+                return;
+            }
+
+            invoiceSubmissionInProgress = true;
+
+            if (submitButton && submitButton.length) {
+                submitButton.prop('disabled', true).addClass('disabled');
+            }
+
+            const closeButtons = modal.find('[data-dismiss="modal"], .close');
+            closeButtons.each(function () {
+                const button = $(this);
+                button.attr('data-dismiss-disabled', 'true');
+                button.removeAttr('data-dismiss');
+                button.prop('disabled', true).addClass('disabled');
+                button.css('pointer-events', 'none');
+            });
+
+            const modalInstance = modal.data('bs.modal');
+            if (modalInstance) {
+                if (typeof modal.data('invoice-original-backdrop') === 'undefined') {
+                    modal.data('invoice-original-backdrop', modalInstance.options.backdrop);
+                }
+
+                if (typeof modal.data('invoice-original-keyboard') === 'undefined') {
+                    modal.data('invoice-original-keyboard', modalInstance.options.keyboard);
+                }
+
+                modalInstance.options.backdrop = 'static';
+                modalInstance.options.keyboard = false;
+            }
+
+            modal.off('click.dismiss.bs.modal');
+            modal.on('hide.bs.modal.invoice', function (event) {
+                if (invoiceSubmissionInProgress) {
+                    event.preventDefault();
+                }
+            });
+
+            if (!$('.invoice-submit-overlay').length) {
+                const overlay = $('<div class="invoice-submit-overlay"><div class="invoice-submit-message"></div></div>');
+                overlay.css({
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: 'rgba(255,255,255,0.7)',
+                    'z-index': 1055,
+                    display: 'flex',
+                    'align-items': 'center',
+                    'justify-content': 'center',
+                    'text-align': 'center',
+                    'font-size': '18px',
+                    color: '#333',
+                    padding: '20px'
+                });
+
+                overlay.find('.invoice-submit-message').text(invoiceProcessingMessage);
+                $('body').append(overlay);
+            }
+        }
+
         $(".vippsFakturaBtn").click(function() {
             let action = $(this).data('action');
             $("#vippsFakturaModal").find('form').attr('action', action);
@@ -858,6 +928,45 @@
         $(".stopVippsEFakturaBtn").click(function(){
             let vipps_phone_number = $(this).data('vipps-number');
             $("#stopVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
+        });
+
+        $('#createInvoiceModal').on('shown.bs.modal', function () {
+            invoiceSubmissionInProgress = false;
+            $('.invoice-submit-overlay').remove();
+
+            const modal = $(this);
+            modal.off('hide.bs.modal.invoice');
+
+            modal.find('[data-dismiss-disabled]').each(function () {
+                const button = $(this);
+                button.removeAttr('data-dismiss-disabled');
+                button.attr('data-dismiss', 'modal');
+                button.prop('disabled', false).removeClass('disabled');
+                button.css('pointer-events', '');
+            });
+
+            const submitButton = modal.find('.submitInvoice');
+            submitButton.prop('disabled', false).removeClass('disabled');
+
+            const modalInstance = modal.data('bs.modal');
+            if (modalInstance) {
+                const originalBackdrop = modal.data('invoice-original-backdrop');
+                const originalKeyboard = modal.data('invoice-original-keyboard');
+
+                modalInstance.options.backdrop = typeof originalBackdrop !== 'undefined' ? originalBackdrop : true;
+                modalInstance.options.keyboard = typeof originalKeyboard !== 'undefined' ? originalKeyboard : true;
+            }
+        });
+
+        $('#createInvoiceModal form').on('submit', function () {
+            const modal = $('#createInvoiceModal');
+            const submitButton = modal.find('.submitInvoice');
+            lockInvoiceModal(modal, submitButton);
+        });
+
+        $('#createInvoiceModal').on('hidden.bs.modal', function () {
+            invoiceSubmissionInProgress = false;
+            $('.invoice-submit-overlay').remove();
         });
 
 		$(".createInvoiceBtn").click(function() {
