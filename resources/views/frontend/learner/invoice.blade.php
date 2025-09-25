@@ -788,8 +788,8 @@
 @stop
 
 @section('scripts')
-        <script type="text/javascript" src="{{ asset('js/app.js?v='.time()) }}"></script>
-        <script>
+	<script type="text/javascript" src="{{ asset('js/app.js?v='.time()) }}"></script>
+	<script>
         const invoiceProcessingMessage = @json(__('Processing invoice, please wait...'));
         let invoiceSubmissionInProgress = false;
 
