@@ -83,10 +83,10 @@
 								'name' => 'order-history',
 								'label' => trans('site.order-history.title')
 							],
-							/* [
+							[
 									'name' => 'pay-later',
 									'label' => trans('site.pay-later')
-							], */
+							],
 							/* [
 								'name' => 'time-register',
 								'label' => 'Time Register'
