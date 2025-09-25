@@ -42,7 +42,7 @@ class WebinarScheduleRegistrationJob implements ShouldQueue
                 ->get();
             $isWebinarPakke = true;
         } else {
-            $learners = $webinar->course->learners->get();
+            $learners = $webinar->course->webinarLearners->get();
         }
 
         $header[] = 'API-KEY: '.config('services.big_marker.api_key');
