@@ -309,14 +309,16 @@
 																	data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
 																	data-plan-id="{{ optional($order->paymentPlan)->id }}"
 																	data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'>
-																	+ Create Invoice
+																	+ {{ trans('site.create-invoice') }}
 																</button>
 															@endif
 														</td>
 													</tr>
 												@empty
 													<tr>
-														<td colspan="6" class="text-center">No pay later orders found.</td>
+														<td colspan="6" class="text-center">
+															{{ trans('site.pay-later-no-record') }}
+														</td>
 													</tr>
 												@endforelse
 											</tbody>
@@ -790,7 +792,7 @@
 @section('scripts')
 	<script type="text/javascript" src="{{ asset('js/app.js?v='.time()) }}"></script>
 	<script>
-        const invoiceProcessingMessage = @json(__('Processing invoice, please wait...'));
+        const invoiceProcessingMessage = @json(trans('site.pay-later-invoice-processing'));
         let invoiceSubmissionInProgress = false;
 
         function lockInvoiceModal(modal, submitButton) {
