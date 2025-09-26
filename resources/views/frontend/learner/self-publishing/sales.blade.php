@@ -484,6 +484,7 @@
             const monthlySalesTitle = monthlySalesModal.find('.selected-month-year');
             const monthlySalesEndpoint = '/account/book-sale/monthly-details/';
             const viewLabel = "{{ trans('site.view') }}";
+            let tooltipLocked = false;
 
             let year = "{{ request()->get('year') }}";
             const currentYear = new Date().getFullYear();
@@ -499,6 +500,18 @@
                     tooltipEl = document.createElement('div');
                     tooltipEl.id = 'chartjs-tooltip';
                     chart.canvas.parentNode.appendChild(tooltipEl);
+
+                    tooltipEl.addEventListener('mouseenter', function() {
+                        tooltipLocked = true;
+                        tooltipEl.classList.add('show');
+                        tooltipEl.style.opacity = 1;
+                    });
+
+                    tooltipEl.addEventListener('mouseleave', function() {
+                        tooltipLocked = false;
+                        tooltipEl.classList.remove('show');
+                        tooltipEl.style.opacity = 0;
+                    });
                 }
 
                 return tooltipEl;
@@ -530,10 +543,14 @@
                         const tooltipEl = getOrCreateTooltip(chartInstance);
 
                         if (!tooltipModel || !tooltipModel.dataPoints || !tooltipModel.dataPoints.length || tooltipModel.opacity === 0) {
-                            tooltipEl.style.opacity = 0;
-                            tooltipEl.classList.remove('show');
+                            if (!tooltipLocked) {
+                                tooltipEl.style.opacity = 0;
+                                tooltipEl.classList.remove('show');
+                            }
                             return;
                         }
+
+                        tooltipLocked = false;
 
                         const dataPoint = tooltipModel.dataPoints[0];
                         const monthIndex = dataPoint.index;
@@ -669,6 +686,7 @@
                 if (tooltipEl.length) {
                     tooltipEl.removeClass('show').css('opacity', 0);
                 }
+                tooltipLocked = false;
             });
         });
 
