@@ -2474,6 +2474,45 @@ class LearnerController extends Controller
         return $data;
     }
 
+    public function bookSaleMonthlyDetails($year, $month): JsonResponse
+    {
+        $year = (int) $year;
+        $month = (int) $month;
+
+        if ($month < 1 || $month > 12) {
+            return response()->json([]);
+        }
+
+        $learner = Auth::user();
+        $standardProject = FrontendHelpers::getLearnerStandardProject($learner->id);
+
+        if (! $standardProject) {
+            return response()->json([]);
+        }
+
+        $sales = ProjectBookSale::select('project_book_sales.*')
+            ->leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
+            ->where('project_books.project_id', $standardProject->id)
+            ->where('project_books.user_id', $learner->id)
+            ->whereYear('project_book_sales.date', $year)
+            ->whereMonth('project_book_sales.date', $month)
+            ->orderBy('project_book_sales.date', 'desc')
+            ->get()
+            ->map(function (ProjectBookSale $sale) {
+                return [
+                    'date' => $sale->date ? Carbon::parse($sale->date)->format('Y-m-d') : null,
+                    'customer_name' => $sale->customer_name,
+                    'quantity' => (int) $sale->quantity,
+                    'price' => $sale->price_formatted,
+                    'discount' => $sale->discount_formatted,
+                    'amount' => $sale->total_amount_formatted,
+                ];
+            })
+            ->values();
+
+        return response()->json($sales);
+    }
+
     public function saveForSaleBooks(Request $request): RedirectResponse
     {
         $request->validate([
