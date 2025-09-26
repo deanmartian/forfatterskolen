@@ -542,15 +542,16 @@
                         const chartInstance = this._chart;
                         const tooltipEl = getOrCreateTooltip(chartInstance);
 
-                        if (!tooltipModel || !tooltipModel.dataPoints || !tooltipModel.dataPoints.length || tooltipModel.opacity === 0) {
+                        const hasBody = tooltipModel && tooltipModel.body && tooltipModel.body.length;
+                        const hasDataPoints = tooltipModel && tooltipModel.dataPoints && tooltipModel.dataPoints.length;
+
+                        if (!hasBody || !hasDataPoints) {
                             if (!tooltipLocked) {
                                 tooltipEl.style.opacity = 0;
                                 tooltipEl.classList.remove('show');
                             }
                             return;
                         }
-
-                        tooltipLocked = false;
 
                         const dataPoint = tooltipModel.dataPoints[0];
                         const monthIndex = dataPoint.index;
