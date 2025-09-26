@@ -484,6 +484,7 @@
             const monthlySalesTitle = monthlySalesModal.find('.selected-month-year');
             const monthlySalesEndpoint = '/account/book-sale/monthly-details/';
             const viewLabel = "{{ trans('site.view') }}";
+            const totalSalesLabel = "{{ addslashes(trans('site.author-portal.total-sales')) }}";
             let tooltipLocked = false;
 
             let year = "{{ request()->get('year') }}";
@@ -543,9 +544,8 @@
                         const tooltipEl = getOrCreateTooltip(chartInstance);
 
                         const hasBody = tooltipModel && tooltipModel.body && tooltipModel.body.length;
-                        const hasDataPoints = tooltipModel && tooltipModel.dataPoints && tooltipModel.dataPoints.length;
 
-                        if (!hasBody || !hasDataPoints) {
+                        if (!hasBody) {
                             if (!tooltipLocked) {
                                 tooltipEl.style.opacity = 0;
                                 tooltipEl.classList.remove('show');
@@ -553,14 +553,36 @@
                             return;
                         }
 
-                        const dataPoint = tooltipModel.dataPoints[0];
-                        const monthIndex = dataPoint.index;
-                        const monthLabel = tooltipModel.title && tooltipModel.title.length ? tooltipModel.title[0] : monthAbbreviations[monthIndex] || '';
-                        const numericValue = Number(dataPoint.yLabel !== undefined ? dataPoint.yLabel : dataPoint.y) || 0;
+                        const monthLabel = tooltipModel.title && tooltipModel.title.length ? tooltipModel.title[0] : '';
+                        let monthIndex = monthAbbreviations.indexOf(monthLabel);
+                        let numericValue = 0;
+
+                        if (tooltipModel.dataPoints && tooltipModel.dataPoints.length) {
+                            const dataPoint = tooltipModel.dataPoints[0];
+                            if (typeof dataPoint.index === 'number') {
+                                monthIndex = dataPoint.index;
+                            }
+                            numericValue = Number(dataPoint.yLabel !== undefined ? dataPoint.yLabel : dataPoint.y) || 0;
+                        } else if (monthIndex > -1 && chartInstance.config && chartInstance.config.data && chartInstance.config.data.datasets && chartInstance.config.data.datasets.length) {
+                            const fallbackDataset = chartInstance.config.data.datasets[0];
+                            if (fallbackDataset && fallbackDataset.data && fallbackDataset.data.length > monthIndex) {
+                                numericValue = Number(fallbackDataset.data[monthIndex]) || 0;
+                            }
+                        }
+
+                        if (monthIndex < 0) {
+                            if (!tooltipLocked) {
+                                tooltipEl.style.opacity = 0;
+                                tooltipEl.classList.remove('show');
+                            }
+                            return;
+                        }
+
+                        const displayMonthLabel = monthLabel || monthAbbreviations[monthIndex] || '';
                         const formattedValue = currencyFormatter.format(numericValue);
 
                         tooltipEl.innerHTML = `
-                            <div class="tooltip-title">${monthLabel}</div>
+                            <div class="tooltip-title">${displayMonthLabel}</div>
                             <div class="tooltip-value">${formattedValue}</div>
                             <div class="text-right">
                                 <button type="button" class="btn btn-primary btn-sm view-month-sales-button" data-month-index="${monthIndex}">${viewLabel}</button>
@@ -594,7 +616,7 @@
                     labels: monthAbbreviations,
                     datasets: [{
                         data: [],
-                        label: i18n.site['author-portal.total-sales'] + ': ', // label on top, this is being changed on ajax_chart
+                        label: totalSalesLabel + ': ', // label on top, this is being changed on ajax_chart
                         borderColor: "#862736",
                         backgroundColor:'#862736',
                         fill: false
