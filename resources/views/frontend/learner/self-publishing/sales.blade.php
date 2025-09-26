@@ -331,7 +331,7 @@
                         {{ trans('site.monthly-sales-empty') }}
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-striped" id="monthlySalesTable">
+                        <table class="table dt-table" id="monthlySalesTable">
                             <thead>
                                 <tr>
                                     <th>{{ trans('site.date') }}</th>
