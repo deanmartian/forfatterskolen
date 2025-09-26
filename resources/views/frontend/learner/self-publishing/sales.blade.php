@@ -28,6 +28,39 @@
             accent-color: #007bff;      /* Optional: Force visible color (e.g. Bootstrap blue) */
             opacity: 1;                 /* Prevent greying out */
         }
+
+        #chartjs-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            border-radius: 4px;
+            padding: 10px 12px;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, -100%);
+            transition: opacity 0.1s ease;
+            z-index: 10;
+            min-width: 160px;
+        }
+
+        #chartjs-tooltip.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #chartjs-tooltip .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        #chartjs-tooltip .tooltip-value {
+            margin-bottom: 8px;
+        }
+
+        #chartjs-tooltip .btn {
+            pointer-events: auto;
+        }
     </style>
 @stop
 
@@ -308,6 +341,48 @@
         </div>
     </div>
 
+    <div id="monthlySalesModal" class="modal fade" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        {{ trans('site.author-portal.book-sales') }}
+                        <small class="text-muted d-block selected-month-year"></small>
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('site.close') }}">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="monthlySalesLoader" class="text-center py-3 d-none">
+                        <i class="fa fa-spinner fa-spin fa-2x" aria-hidden="true"></i>
+                    </div>
+                    <div id="monthlySalesErrorState" class="alert alert-danger d-none">
+                        {{ trans('site.monthly-sales-error') }}
+                    </div>
+                    <div id="monthlySalesEmptyState" class="alert alert-info d-none">
+                        {{ trans('site.monthly-sales-empty') }}
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="monthlySalesTable">
+                            <thead>
+                                <tr>
+                                    <th>{{ trans('site.date') }}</th>
+                                    <th>{{ trans('site.author-portal.customer-name') }}</th>
+                                    <th>{{ trans('site.order-history.quantity') }}</th>
+                                    <th>{{ trans('site.price') }}</th>
+                                    <th>{{ trans('site.front.discount') }}</th>
+                                    <th>{{ trans('site.amount') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="booksForSaleModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
@@ -390,11 +465,44 @@
             "aaSorting": []
         });
 
+        const currencyFormatter = new Intl.NumberFormat('no-NO', {
+            style: 'currency',
+            currency: 'NOK',
+        });
+
         $(document).ready(function() {
             let ctx = $("#chart-line");
+            const yearSelector = $("#yearSelector");
             const monthAbbreviations = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
             ];
+            const monthlySalesModal = $("#monthlySalesModal");
+            const monthlySalesTableBody = $("#monthlySalesTable tbody");
+            const monthlySalesEmptyState = $("#monthlySalesEmptyState");
+            const monthlySalesErrorState = $("#monthlySalesErrorState");
+            const monthlySalesLoader = $("#monthlySalesLoader");
+            const monthlySalesTitle = monthlySalesModal.find('.selected-month-year');
+            const monthlySalesEndpoint = '/account/book-sale/monthly-details/';
+            const viewLabel = "{{ trans('site.view') }}";
+
+            let year = "{{ request()->get('year') }}";
+            const currentYear = new Date().getFullYear();
+
+            if (!year) {
+                year = currentYear;
+            }
+
+            const getOrCreateTooltip = function(chart) {
+                let tooltipEl = chart.canvas.parentNode.querySelector('#chartjs-tooltip');
+
+                if (!tooltipEl) {
+                    tooltipEl = document.createElement('div');
+                    tooltipEl.id = 'chartjs-tooltip';
+                    chart.canvas.parentNode.appendChild(tooltipEl);
+                }
+
+                return tooltipEl;
+            };
 
             const options = {
                 scales: {
@@ -414,17 +522,51 @@
                 },
                 maintainAspectRatio: false,
                 tooltips: {
-                    enabled: true,
-                    mode: 'single',
-                    callbacks: {
-                        label: function(tooltipItems, data) {
-                            const currencyFormatter = new Intl.NumberFormat('no-NO', {
-                                style: 'currency',
-                                currency: 'NOK',
-                            });
-                            return i18n.site['author-portal-menu'].sales + ': ' + currencyFormatter.format(tooltipItems.yLabel);
+                    enabled: false,
+                    mode: 'index',
+                    intersect: false,
+                    custom: function(tooltipModel) {
+                        const chartInstance = this._chart;
+                        const tooltipEl = getOrCreateTooltip(chartInstance);
+
+                        if (!tooltipModel || !tooltipModel.dataPoints || !tooltipModel.dataPoints.length || tooltipModel.opacity === 0) {
+                            tooltipEl.style.opacity = 0;
+                            tooltipEl.classList.remove('show');
+                            return;
                         }
+
+                        const dataPoint = tooltipModel.dataPoints[0];
+                        const monthIndex = dataPoint.index;
+                        const monthLabel = tooltipModel.title && tooltipModel.title.length ? tooltipModel.title[0] : monthAbbreviations[monthIndex] || '';
+                        const numericValue = Number(dataPoint.yLabel !== undefined ? dataPoint.yLabel : dataPoint.y) || 0;
+                        const formattedValue = currencyFormatter.format(numericValue);
+
+                        tooltipEl.innerHTML = `
+                            <div class="tooltip-title">${monthLabel}</div>
+                            <div class="tooltip-value">${formattedValue}</div>
+                            <div class="text-right">
+                                <button type="button" class="btn btn-primary btn-sm view-month-sales-button" data-month-index="${monthIndex}">${viewLabel}</button>
+                            </div>
+                        `;
+
+                        const position = chartInstance.canvas.getBoundingClientRect();
+
+                        tooltipEl.style.opacity = 1;
+                        tooltipEl.classList.add('show');
+                        tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+                        tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
                     }
+                },
+                onClick: function(evt, elements) {
+                    if (! elements.length) {
+                        return;
+                    }
+
+                    const element = elements[0];
+                    const elementIndex = typeof element._index !== 'undefined' ? element._index : element.index;
+                    const selectedYearValue = yearSelector.length ? yearSelector.val() : year;
+
+                    showMonthlySalesModal(selectedYearValue, elementIndex);
                 }
             };
 
@@ -443,15 +585,51 @@
                 options: options
             });
 
-            let year = "{{ request()->get('year') }}";
-            const currentYear = new Date().getFullYear();
-            
-            if (!year) {
-                year = currentYear;
-            }
-
             // get the chart data
             ajax_chart(myLineChart, '/account/book-sale/list-by-month/' + year);
+
+            function showMonthlySalesModal(selectedYearValue, monthIndex) {
+                if (monthIndex < 0 || monthIndex >= monthAbbreviations.length) {
+                    return;
+                }
+
+                const normalizedYear = parseInt(selectedYearValue, 10) || year || currentYear;
+                const monthNumber = monthIndex + 1;
+
+                monthlySalesTitle.text(monthAbbreviations[monthIndex] + ' ' + normalizedYear);
+                monthlySalesTableBody.empty();
+                monthlySalesEmptyState.addClass('d-none');
+                monthlySalesErrorState.addClass('d-none');
+                monthlySalesLoader.removeClass('d-none');
+
+                monthlySalesModal.modal('show');
+
+                $.getJSON(monthlySalesEndpoint + normalizedYear + '/' + monthNumber)
+                    .done(function(records) {
+                        if (Array.isArray(records) && records.length) {
+                            records.forEach(function(record) {
+                                const row = $('<tr/>');
+                                row.append($('<td/>').text(record.date || ''));
+                                row.append($('<td/>').text(record.customer_name || ''));
+                                row.append($('<td/>').text(
+                                    record.quantity !== null && record.quantity !== undefined ? record.quantity : ''
+                                ));
+                                row.append($('<td/>').text(record.price || ''));
+                                row.append($('<td/>').text(record.discount || ''));
+                                row.append($('<td/>').text(record.amount || ''));
+                                monthlySalesTableBody.append(row);
+                            });
+                        } else {
+                            monthlySalesEmptyState.removeClass('d-none');
+                        }
+                    })
+                    .fail(function() {
+                        monthlySalesErrorState.removeClass('d-none');
+                    })
+                    .always(function() {
+                        monthlySalesLoader.addClass('d-none');
+                    });
+            }
 
             $(".booksForSaleBtn").click(function() {
                 let record = $(this).data('record');
@@ -473,6 +651,25 @@
                 modal.find('.modal-title').text(title);
                 modal.find('form').attr('action', action);
             });
+
+            $(document).on('click', '.view-month-sales-button', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const monthIndex = parseInt($(this).data('monthIndex'), 10);
+
+                if (isNaN(monthIndex)) {
+                    return;
+                }
+
+                const selectedYearValue = yearSelector.length ? yearSelector.val() : year;
+                showMonthlySalesModal(selectedYearValue, monthIndex);
+
+                const tooltipEl = ctx.parent().find('#chartjs-tooltip');
+                if (tooltipEl.length) {
+                    tooltipEl.removeClass('show').css('opacity', 0);
+                }
+            });
         });
 
         // function to update our chart
@@ -483,11 +680,6 @@
                 const maxValue = Math.max(...response);
 
                 const totalAmount = response.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-                const currencyFormatter = new Intl.NumberFormat('no-NO', {
-                    style: 'currency',
-                    currency: 'NOK',
-                });
                 const formattedTotalAmount = currencyFormatter.format(totalAmount);
 
                 // Dynamically adjust max ticks based on totalSales

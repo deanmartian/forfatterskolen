@@ -1638,4 +1638,6 @@ Rektor Kristine',
     'contract' => [
         'signature-note' => 'Signatures will appear here once this document is signed.',
     ],
+    'monthly-sales-empty' => 'Ingen salg registrert for denne måneden.',
+    'monthly-sales-error' => 'Klarte ikke å laste inn salg for den valgte måneden. Prøv igjen senere.',
 ];
