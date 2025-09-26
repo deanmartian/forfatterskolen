@@ -543,9 +543,7 @@
                         const chartInstance = this._chart;
                         const tooltipEl = getOrCreateTooltip(chartInstance);
 
-                        const hasBody = tooltipModel && tooltipModel.body && tooltipModel.body.length;
-
-                        if (!hasBody) {
+                        if (!tooltipModel || tooltipModel.opacity === 0) {
                             if (!tooltipLocked) {
                                 tooltipEl.style.opacity = 0;
                                 tooltipEl.classList.remove('show');
@@ -553,20 +551,61 @@
                             return;
                         }
 
-                        const monthLabel = tooltipModel.title && tooltipModel.title.length ? tooltipModel.title[0] : '';
+                        const chartConfig = chartInstance && chartInstance.config ? chartInstance.config : {};
+                        const chartData = chartConfig.data || {};
+                        const datasets = chartData.datasets || [];
+                        const labels = chartData.labels || [];
+
+                        let monthLabel = tooltipModel.title && tooltipModel.title.length ? tooltipModel.title[0] : '';
                         let monthIndex = monthAbbreviations.indexOf(monthLabel);
+                        let datasetIndex = 0;
                         let numericValue = 0;
 
                         if (tooltipModel.dataPoints && tooltipModel.dataPoints.length) {
                             const dataPoint = tooltipModel.dataPoints[0];
-                            if (typeof dataPoint.index === 'number') {
-                                monthIndex = dataPoint.index;
+                            const dataPointIndex = typeof dataPoint.index === 'number' ? dataPoint.index : dataPoint._index;
+                            const dataPointDatasetIndex = typeof dataPoint.datasetIndex === 'number' ? dataPoint.datasetIndex : dataPoint._datasetIndex;
+
+                            if (typeof dataPointIndex === 'number') {
+                                monthIndex = dataPointIndex;
                             }
-                            numericValue = Number(dataPoint.yLabel !== undefined ? dataPoint.yLabel : dataPoint.y) || 0;
-                        } else if (monthIndex > -1 && chartInstance.config && chartInstance.config.data && chartInstance.config.data.datasets && chartInstance.config.data.datasets.length) {
-                            const fallbackDataset = chartInstance.config.data.datasets[0];
-                            if (fallbackDataset && fallbackDataset.data && fallbackDataset.data.length > monthIndex) {
-                                numericValue = Number(fallbackDataset.data[monthIndex]) || 0;
+
+                            if (typeof dataPointDatasetIndex === 'number') {
+                                datasetIndex = dataPointDatasetIndex;
+                            }
+
+                            if (typeof dataPoint.yLabel !== 'undefined') {
+                                numericValue = Number(dataPoint.yLabel) || 0;
+                            } else if (typeof dataPoint.y !== 'undefined') {
+                                numericValue = Number(dataPoint.y) || 0;
+                            }
+                        } else if (chartInstance.tooltip && chartInstance.tooltip._active && chartInstance.tooltip._active.length) {
+                            const activePoint = chartInstance.tooltip._active[0];
+                            const activeIndex = typeof activePoint._index === 'number' ? activePoint._index : activePoint.index;
+                            const activeDatasetIndex = typeof activePoint._datasetIndex === 'number' ? activePoint._datasetIndex : activePoint.datasetIndex;
+
+                            if (typeof activeIndex === 'number') {
+                                monthIndex = activeIndex;
+                            }
+
+                            if (typeof activeDatasetIndex === 'number') {
+                                datasetIndex = activeDatasetIndex;
+                            }
+                        }
+
+                        if (monthIndex < 0 && labels.length) {
+                            const labelIndex = labels.indexOf(monthLabel);
+                            if (labelIndex > -1) {
+                                monthIndex = labelIndex;
+                            }
+                        }
+
+                        const resolvedDataset = datasets[datasetIndex] || datasets[0];
+
+                        if (resolvedDataset && resolvedDataset.data && resolvedDataset.data.length > monthIndex && monthIndex >= 0) {
+                            const fallbackValue = Number(resolvedDataset.data[monthIndex]);
+                            if (!numericValue && !Number.isNaN(fallbackValue)) {
+                                numericValue = fallbackValue;
                             }
                         }
 
@@ -578,11 +617,15 @@
                             return;
                         }
 
-                        const displayMonthLabel = monthLabel || monthAbbreviations[monthIndex] || '';
-                        const formattedValue = currencyFormatter.format(numericValue);
+                        if (!monthLabel) {
+                            monthLabel = labels[monthIndex] || monthAbbreviations[monthIndex] || '';
+                        }
+
+                        const safeNumericValue = Number.isFinite(numericValue) ? numericValue : 0;
+                        const formattedValue = currencyFormatter.format(safeNumericValue);
 
                         tooltipEl.innerHTML = `
-                            <div class="tooltip-title">${displayMonthLabel}</div>
+                            <div class="tooltip-title">${monthLabel}</div>
                             <div class="tooltip-value">${formattedValue}</div>
                             <div class="text-right">
                                 <button type="button" class="btn btn-primary btn-sm view-month-sales-button" data-month-index="${monthIndex}">${viewLabel}</button>
