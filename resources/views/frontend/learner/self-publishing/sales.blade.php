@@ -29,38 +29,6 @@
             opacity: 1;                 /* Prevent greying out */
         }
 
-        #chartjs-tooltip {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.75);
-            color: #fff;
-            border-radius: 4px;
-            padding: 10px 12px;
-            pointer-events: none;
-            opacity: 0;
-            transform: translate(-50%, -100%);
-            transition: opacity 0.1s ease;
-            z-index: 10;
-            min-width: 160px;
-        }
-
-        #chartjs-tooltip.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        #chartjs-tooltip .tooltip-title {
-            font-weight: 600;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
-
-        #chartjs-tooltip .tooltip-value {
-            margin-bottom: 8px;
-        }
-
-        #chartjs-tooltip .btn {
-            pointer-events: auto;
-        }
     </style>
 @stop
 
@@ -483,9 +451,8 @@
             const monthlySalesLoader = $("#monthlySalesLoader");
             const monthlySalesTitle = monthlySalesModal.find('.selected-month-year');
             const monthlySalesEndpoint = '/account/book-sale/monthly-details/';
-            const viewLabel = "{{ trans('site.view') }}";
             const totalSalesLabel = "{{ addslashes(trans('site.author-portal.total-sales')) }}";
-            let tooltipLocked = false;
+            const salesTooltipLabel = "{{ addslashes(trans('site.author-portal-menu.sales')) }}";
 
             let year = "{{ request()->get('year') }}";
             const currentYear = new Date().getFullYear();
@@ -493,30 +460,6 @@
             if (!year) {
                 year = currentYear;
             }
-
-            const getOrCreateTooltip = function(chart) {
-                let tooltipEl = chart.canvas.parentNode.querySelector('#chartjs-tooltip');
-
-                if (!tooltipEl) {
-                    tooltipEl = document.createElement('div');
-                    tooltipEl.id = 'chartjs-tooltip';
-                    chart.canvas.parentNode.appendChild(tooltipEl);
-
-                    tooltipEl.addEventListener('mouseenter', function() {
-                        tooltipLocked = true;
-                        tooltipEl.classList.add('show');
-                        tooltipEl.style.opacity = 1;
-                    });
-
-                    tooltipEl.addEventListener('mouseleave', function() {
-                        tooltipLocked = false;
-                        tooltipEl.classList.remove('show');
-                        tooltipEl.style.opacity = 0;
-                    });
-                }
-
-                return tooltipEl;
-            };
 
             const options = {
                 scales: {
@@ -536,108 +479,12 @@
                 },
                 maintainAspectRatio: false,
                 tooltips: {
-                    enabled: false,
-                    mode: 'index',
-                    intersect: false,
-                    custom: function(tooltipModel) {
-                        const chartInstance = this._chart;
-                        const tooltipEl = getOrCreateTooltip(chartInstance);
-
-                        if (!tooltipModel || tooltipModel.opacity === 0) {
-                            if (!tooltipLocked) {
-                                tooltipEl.style.opacity = 0;
-                                tooltipEl.classList.remove('show');
-                            }
-                            return;
+                    enabled: true,
+                    mode: 'single',
+                    callbacks: {
+                        label: function(tooltipItems) {
+                            return salesTooltipLabel + ': ' + currencyFormatter.format(tooltipItems.yLabel);
                         }
-
-                        const chartConfig = chartInstance && chartInstance.config ? chartInstance.config : {};
-                        const chartData = chartConfig.data || {};
-                        const datasets = chartData.datasets || [];
-                        const labels = chartData.labels || [];
-
-                        let monthLabel = tooltipModel.title && tooltipModel.title.length ? tooltipModel.title[0] : '';
-                        let monthIndex = monthAbbreviations.indexOf(monthLabel);
-                        let datasetIndex = 0;
-                        let numericValue = 0;
-
-                        if (tooltipModel.dataPoints && tooltipModel.dataPoints.length) {
-                            const dataPoint = tooltipModel.dataPoints[0];
-                            const dataPointIndex = typeof dataPoint.index === 'number' ? dataPoint.index : dataPoint._index;
-                            const dataPointDatasetIndex = typeof dataPoint.datasetIndex === 'number' ? dataPoint.datasetIndex : dataPoint._datasetIndex;
-
-                            if (typeof dataPointIndex === 'number') {
-                                monthIndex = dataPointIndex;
-                            }
-
-                            if (typeof dataPointDatasetIndex === 'number') {
-                                datasetIndex = dataPointDatasetIndex;
-                            }
-
-                            if (typeof dataPoint.yLabel !== 'undefined') {
-                                numericValue = Number(dataPoint.yLabel) || 0;
-                            } else if (typeof dataPoint.y !== 'undefined') {
-                                numericValue = Number(dataPoint.y) || 0;
-                            }
-                        } else if (chartInstance.tooltip && chartInstance.tooltip._active && chartInstance.tooltip._active.length) {
-                            const activePoint = chartInstance.tooltip._active[0];
-                            const activeIndex = typeof activePoint._index === 'number' ? activePoint._index : activePoint.index;
-                            const activeDatasetIndex = typeof activePoint._datasetIndex === 'number' ? activePoint._datasetIndex : activePoint.datasetIndex;
-
-                            if (typeof activeIndex === 'number') {
-                                monthIndex = activeIndex;
-                            }
-
-                            if (typeof activeDatasetIndex === 'number') {
-                                datasetIndex = activeDatasetIndex;
-                            }
-                        }
-
-                        if (monthIndex < 0 && labels.length) {
-                            const labelIndex = labels.indexOf(monthLabel);
-                            if (labelIndex > -1) {
-                                monthIndex = labelIndex;
-                            }
-                        }
-
-                        const resolvedDataset = datasets[datasetIndex] || datasets[0];
-
-                        if (resolvedDataset && resolvedDataset.data && resolvedDataset.data.length > monthIndex && monthIndex >= 0) {
-                            const fallbackValue = Number(resolvedDataset.data[monthIndex]);
-                            if (!numericValue && !Number.isNaN(fallbackValue)) {
-                                numericValue = fallbackValue;
-                            }
-                        }
-
-                        if (monthIndex < 0) {
-                            if (!tooltipLocked) {
-                                tooltipEl.style.opacity = 0;
-                                tooltipEl.classList.remove('show');
-                            }
-                            return;
-                        }
-
-                        if (!monthLabel) {
-                            monthLabel = labels[monthIndex] || monthAbbreviations[monthIndex] || '';
-                        }
-
-                        const safeNumericValue = Number.isFinite(numericValue) ? numericValue : 0;
-                        const formattedValue = currencyFormatter.format(safeNumericValue);
-
-                        tooltipEl.innerHTML = `
-                            <div class="tooltip-title">${monthLabel}</div>
-                            <div class="tooltip-value">${formattedValue}</div>
-                            <div class="text-right">
-                                <button type="button" class="btn btn-primary btn-sm view-month-sales-button" data-month-index="${monthIndex}">${viewLabel}</button>
-                            </div>
-                        `;
-
-                        const position = chartInstance.canvas.getBoundingClientRect();
-
-                        tooltipEl.style.opacity = 1;
-                        tooltipEl.classList.add('show');
-                        tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
-                        tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
                     }
                 },
                 onClick: function(evt, elements) {
@@ -735,25 +582,6 @@
                 modal.find('form').attr('action', action);
             });
 
-            $(document).on('click', '.view-month-sales-button', function(event) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                const monthIndex = parseInt($(this).data('monthIndex'), 10);
-
-                if (isNaN(monthIndex)) {
-                    return;
-                }
-
-                const selectedYearValue = yearSelector.length ? yearSelector.val() : year;
-                showMonthlySalesModal(selectedYearValue, monthIndex);
-
-                const tooltipEl = ctx.parent().find('#chartjs-tooltip');
-                if (tooltipEl.length) {
-                    tooltipEl.removeClass('show').css('opacity', 0);
-                }
-                tooltipLocked = false;
-            });
         });
 
         // function to update our chart
