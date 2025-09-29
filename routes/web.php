@@ -336,6 +336,8 @@ Route::domain($front)->group(function () {
         Route::get('/book-sale', [Frontend\LearnerController::class, 'bookSale'])->name('learner.book-sale');
         Route::get('/book-for-sale/{id}', [Frontend\LearnerController::class, 'bookForSale'])->name('learner.book-for-sale');
         Route::get('/book-sale/list-by-month/{year}', [Frontend\LearnerController::class, 'bookSaleByMonth']);
+        Route::get('/book-sale/monthly-details/{year}/{month}',
+            [Frontend\LearnerController::class, 'bookSaleMonthlyDetails']);
         Route::get('project/{project_id}/registration/{registration_id}/storage-cost/{year}/export', [Frontend\LearnerController::class, 'exportStorageCost'])
             ->name('learner.project.storage-cost.export');
         Route::post('/for-sale-books/save', [Frontend\LearnerController::class, 'saveForSaleBooks'])->name('learner.save-for-sale-books');

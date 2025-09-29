@@ -1437,4 +1437,6 @@ kvittering.',
         'upload-your-book' => 'Du kan også laste opp boken din så regner kalkulatoren hva prisen blir.',
         'services-included' => 'Services Included',
     ],
+    'monthly-sales-empty' => 'No sales available for this month.',
+    'monthly-sales-error' => 'Unable to load sales for the selected month. Please try again later.',
 ];
