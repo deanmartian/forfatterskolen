@@ -332,7 +332,7 @@
                         {{ trans('site.monthly-sales-empty') }}
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-striped" id="monthlySalesTable">
+                        <table class="table dt-table" id="monthlySalesTable">
                             <thead>
                                 <tr>
                                     <th>{{ trans('site.date') }}</th>
@@ -453,6 +453,7 @@
             const monthlySalesEndpoint = '/account/book-sale/monthly-details/';
             const totalSalesLabel = "{{ addslashes(trans('site.author-portal.total-sales')) }}";
             const salesTooltipLabel = "{{ addslashes(trans('site.author-portal-menu.sales')) }}";
+            const viewDetailsLabel = "{{ addSlashes(trans('site.front.our-course.view-details')) }}"
 
             let year = "{{ request()->get('year') }}";
             const currentYear = new Date().getFullYear();
@@ -484,7 +485,15 @@
                     callbacks: {
                         label: function(tooltipItems) {
                             return salesTooltipLabel + ': ' + currencyFormatter.format(tooltipItems.yLabel);
+                        },
+                        afterBody: function() {
+                            // Add spacing with a blank line, then a fake underlined "View"
+                            return [
+                            '',                   // blank line = spacing
+                            '\u202F\u202F' + viewDetailsLabel    // text with narrow spaces (acts like padding)
+                            ];
                         }
+                        
                     }
                 },
                 onClick: function(evt, elements) {
