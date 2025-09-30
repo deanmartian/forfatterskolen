@@ -287,7 +287,7 @@
 											<thead>
 												<tr>
 													<th>{{ trans('site.front.form.course-package') }}</th>
-													<th>{{ trans('site.front.form.payment-plan') }}</th>
+													{{-- <th>{{ trans('site.front.form.payment-plan') }}</th> --}}
 													<th>{{ trans('site.front.form.payment-method') }}</th>
 													<th>{{ trans('site.date') }}</th>
 													<th>{{ trans('site.front.total') }}</th>
@@ -298,7 +298,7 @@
 												@forelse($payLaterOrders as $order)
 													<tr>
 														<td>{{ $order->packageVariation }}</td>
-														<td>{{ optional($order->paymentPlan)->plan }}</td>
+														{{-- <td>{{ optional($order->paymentPlan)->plan }}</td> --}}
 														<td>{{ optional($order->paymentMode)->mode }}</td>
 														<td>{{ $order->created_at_formatted }}</td>
 														<td>{{ $order->total_formatted }}</td>
