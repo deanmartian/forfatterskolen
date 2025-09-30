@@ -418,6 +418,17 @@
         </div>
     </div>
 
+    <div id="wordCountResultModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <div id="wordCountResultBody"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @stop
 
 @section('scripts')
@@ -440,6 +451,8 @@
         const manuscriptPlans = @json($manuscriptPlans);
         const excessPerWordPrice = {{ $excessPerWordPrice }};
         const manuscriptBaseWordLimit = 17500;
+        const storeTempUploadUrl = '{{ route('front.shop-manuscript.store-temp-upload') }}';
+        const csrfToken = '{{ csrf_token() }}';
 
         $(document).ready(function(){
             @if(Session::has('manuscript_test'))
@@ -516,229 +529,341 @@
                 updateText(selectedText);
             });
 
-            const wordCountContainer = document.getElementById('wordCountTool');
-            if (wordCountContainer) {
-                const wordCountFileInput = document.getElementById('word-count-file');
-                const wordCountUploadArea = document.getElementById('word-count-upload-area');
-                const wordCountUploadText = document.getElementById('word-count-upload-text');
-                const wordCountFeedback = document.getElementById('word-count-feedback');
-                const wordCountPriceFeedback = document.getElementById('word-count-price-feedback');
-                const defaultWordCountText = wordCountUploadText ? wordCountUploadText.innerHTML : '';
-                let selectedWordCountFile = null;
-                let processingWordCount = false;
+        const wordCountContainer = document.getElementById('wordCountTool');
+        if (wordCountContainer) {
+            const wordCountFileInput = document.getElementById('word-count-file');
+            const wordCountUploadArea = document.getElementById('word-count-upload-area');
+            const wordCountUploadText = document.getElementById('word-count-upload-text');
+            const wordCountFeedback = document.getElementById('word-count-feedback');
+            const wordCountPriceFeedback = document.getElementById('word-count-price-feedback');
+            const wordCountModal = $('#wordCountResultModal');
+            const wordCountModalBody = document.getElementById('wordCountResultBody');
+            const defaultWordCountText = wordCountUploadText ? wordCountUploadText.innerHTML : '';
+            let selectedWordCountFile = null;
+            let processingWordCount = false;
+            let processButton = null;
 
-                const setFeedback = (message, isError = false) => {
-                    if (!wordCountFeedback) {
-                        return;
-                    }
-                    wordCountFeedback.textContent = message;
-                    wordCountFeedback.classList.toggle('text-danger', isError);
-                };
+            const setFeedback = (message, isError = false) => {
+                if (!wordCountFeedback) {
+                    return;
+                }
+                wordCountFeedback.textContent = message;
+                wordCountFeedback.classList.toggle('text-danger', isError);
+            };
 
-                const setPriceFeedback = (message, isError = false) => {
-                    if (!wordCountPriceFeedback) {
-                        return;
-                    }
-                    wordCountPriceFeedback.innerHTML = message;
-                    wordCountPriceFeedback.classList.toggle('text-danger', !!isError && message !== '');
-                };
+            const setPriceFeedback = (message, isError = false) => {
+                if (!wordCountPriceFeedback) {
+                    return;
+                }
+                wordCountPriceFeedback.innerHTML = message;
+                wordCountPriceFeedback.classList.toggle('text-danger', !!isError && message !== '');
+            };
 
-                const updateWordCountText = (text) => {
-                    if (wordCountUploadText) {
-                        wordCountUploadText.innerHTML = text;
-                    }
-                };
+            const updateWordCountText = (text) => {
+                if (wordCountUploadText) {
+                    wordCountUploadText.innerHTML = text;
+                }
+            };
 
-                const resetUploadText = () => {
-                    if (selectedWordCountFile) {
-                        updateWordCountText(selectedWordCountFile.name);
-                    } else {
-                        updateWordCountText(defaultWordCountText);
-                    }
-                };
+            const resetUploadText = () => {
+                if (selectedWordCountFile) {
+                    updateWordCountText(selectedWordCountFile.name);
+                } else {
+                    updateWordCountText(defaultWordCountText);
+                }
+            };
 
-                const formatPrice = (value) => {
-                    if (typeof value !== 'number' || Number.isNaN(value)) {
-                        return null;
-                    }
-
-                    return `${new Intl.NumberFormat('no-NO').format(Math.round(value))} KR`;
-                };
-
-                const findSuggestedPlan = (wordCount) => {
-                    if (!Array.isArray(manuscriptPlans) || manuscriptPlans.length === 0) {
-                        return null;
-                    }
-
-                    const sortedPlans = manuscriptPlans.slice().sort((a, b) => a.max_words - b.max_words);
-                    return sortedPlans.find((plan) => wordCount <= plan.max_words) || null;
-                };
-
-                const calculatePrice = (wordCount) => {
-                    const plan = findSuggestedPlan(wordCount);
-
-                    if (!plan) {
-                        return null;
-                    }
-
-                    let price = parseFloat(plan.full_payment_price);
-                    if (Number.isNaN(price)) {
-                        price = 0;
-                    }
-
-                    if (wordCount > manuscriptBaseWordLimit) {
-                        const excessWords = wordCount - manuscriptBaseWordLimit;
-                        price += excessWords * excessPerWordPrice;
-                    }
-
-                    return {
-                        plan,
-                        price,
-                        formattedPrice: formatPrice(price),
-                    };
-                };
-
-                const processFile = (file) => {
-                    if (!file) {
-                        return;
-                    }
-
-                    if (!/\.docx$/i.test(file.name)) {
-                        setFeedback('Vennligst velg en DOCX-fil for ordtelling.', true);
-                        setPriceFeedback('');
-                        if (wordCountFileInput) {
-                            wordCountFileInput.value = '';
-                        }
-                        resetUploadText();
-                        selectedWordCountFile = null;
-                        return;
-                    }
-
-                    updateWordCountText(file.name);
-                    setFeedback('Beregner antall ord ...');
-                    setPriceFeedback('');
-                    processingWordCount = true;
-
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        if (typeof mammoth === 'undefined') {
-                            setFeedback('Mammoth-biblioteket er ikke tilgjengelig akkurat nå. Prøv igjen senere.', true);
-                            setPriceFeedback('');
-                            processingWordCount = false;
-                            return;
-                        }
-
-                        mammoth.extractRawText({ arrayBuffer: event.target.result })
-                            .then((result) => {
-                                const text = (result.value || '').trim();
-                                const wordCount = text ? text.split(/\s+/).length : 0;
-                                const priceDetails = calculatePrice(wordCount);
-
-                                setFeedback(`Manuskriptet inneholder omtrent ${wordCount} ord.`);
-
-                                if (priceDetails && priceDetails.formattedPrice) {
-                                    const planTitle = priceDetails.plan && priceDetails.plan.title ? ` (${priceDetails.plan.title})` : '';
-                                    const checkoutLink = priceDetails.plan && priceDetails.plan.checkout_url ? priceDetails.plan.checkout_url : null;
-                                    const priceMessage = checkoutLink
-                                        ? `Estimert pris${planTitle}: ${priceDetails.formattedPrice}. <a href="${checkoutLink}" class="btn btn-link p-0 align-baseline">Bestill nå</a>`
-                                        : `Estimert pris${planTitle}: ${priceDetails.formattedPrice}.`;
-                                    setPriceFeedback(priceMessage);
-                                } else {
-                                    setPriceFeedback('Kunne ikke beregne prisen basert på dette manuset.', true);
-                                }
-
-                                processingWordCount = false;
-                            })
-                            .catch(() => {
-                                setFeedback('Kunne ikke lese denne filen. Prøv igjen med en gyldig DOCX-fil.', true);
-                                setPriceFeedback('');
-                                resetUploadText();
-                                selectedWordCountFile = null;
-                                processingWordCount = false;
-                            });
-                    };
-
-                    reader.onerror = () => {
-                        setFeedback('Det oppstod en feil ved lesing av filen. Prøv igjen.', true);
-                        setPriceFeedback('');
-                        resetUploadText();
-                        selectedWordCountFile = null;
-                        processingWordCount = false;
-                    };
-
-                    reader.readAsArrayBuffer(file);
-                };
-
-                const selectFile = (files) => {
-                    if (!files || !files.length) {
-                        selectedWordCountFile = null;
-                        if (wordCountFileInput) {
-                            wordCountFileInput.value = '';
-                        }
-                        resetUploadText();
-                        setFeedback('Velg en DOCX-fil og klikk på knappen for å beregne ord og pris.');
-                        setPriceFeedback('');
-                        return;
-                    }
-                    const [file] = files;
-                    selectedWordCountFile = file;
-                    updateWordCountText(file.name);
-                    setFeedback('Fil valgt. Klikk på knappen for å beregne ord og pris.');
-                    setPriceFeedback('');
-                };
-
-                if (wordCountFileInput) {
-                    wordCountFileInput.addEventListener('change', (event) => {
-                        selectFile(event.target.files);
-                    });
+            const formatPrice = (value) => {
+                if (typeof value !== 'number' || Number.isNaN(value)) {
+                    return null;
                 }
 
-                wordCountContainer.querySelectorAll('.word-count-file-trigger').forEach((button) => {
-                    button.addEventListener('click', () => {
-                        if (wordCountFileInput) {
-                            wordCountFileInput.click();
+                return `${new Intl.NumberFormat('no-NO').format(Math.round(value))} KR`;
+            };
+
+            const findSuggestedPlan = (wordCount) => {
+                if (!Array.isArray(manuscriptPlans) || manuscriptPlans.length === 0) {
+                    return null;
+                }
+
+                const sortedPlans = manuscriptPlans.slice().sort((a, b) => a.max_words - b.max_words);
+                return sortedPlans.find((plan) => wordCount <= plan.max_words) || null;
+            };
+
+            const calculatePrice = (wordCount) => {
+                const plan = findSuggestedPlan(wordCount);
+
+                if (!plan) {
+                    return null;
+                }
+
+                let price = parseFloat(plan.full_payment_price);
+                if (Number.isNaN(price)) {
+                    price = 0;
+                }
+
+                if (wordCount > manuscriptBaseWordLimit) {
+                    const excessWords = wordCount - manuscriptBaseWordLimit;
+                    price += excessWords * excessPerWordPrice;
+                }
+
+                return {
+                    plan,
+                    price,
+                    formattedPrice: formatPrice(price),
+                };
+            };
+
+            const showWordCountModal = (content, isError = false) => {
+                if (!wordCountModalBody) {
+                    return;
+                }
+
+                wordCountModalBody.innerHTML = content;
+                wordCountModalBody.classList.toggle('text-danger', isError);
+
+                if (wordCountModal && typeof wordCountModal.modal === 'function') {
+                    wordCountModal.modal('show');
+                }
+            };
+
+            const storeTempFileOnServer = (file, wordCount) => {
+                if (!storeTempUploadUrl) {
+                    return Promise.resolve(null);
+                }
+
+                const formData = new FormData();
+                formData.append('_token', csrfToken);
+                formData.append('manuscript', file);
+
+                if (typeof wordCount === 'number' && !Number.isNaN(wordCount)) {
+                    formData.append('word_count', wordCount);
+                }
+
+                return fetch(storeTempUploadUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: formData,
+                }).then(async (response) => {
+                    const responseText = await response.text();
+                    let data = null;
+
+                    if (responseText) {
+                        try {
+                            data = JSON.parse(responseText);
+                        } catch (error) {
+                            // Ignore JSON parse errors and fall back to generic handling.
                         }
-                    });
+                    }
+
+                    if (!response.ok) {
+                        if (data && data.message) {
+                            throw data.message;
+                        }
+
+                        if (data && data.errors) {
+                            const firstError = Object.values(data.errors)[0];
+                            if (Array.isArray(firstError) && firstError.length > 0) {
+                                throw firstError[0];
+                            }
+                        }
+
+                        throw 'Kunne ikke lagre resultatet på serveren. Prøv igjen senere.';
+                    }
+
+                    return data || {};
+                });
+            };
+
+            const finalizeProcessing = () => {
+                processingWordCount = false;
+                if (processButton) {
+                    processButton.disabled = false;
+                }
+            };
+
+            const processFile = (file) => {
+                if (!file) {
+                    return;
+                }
+
+                if (!/\.docx$/i.test(file.name)) {
+                    setFeedback('Vennligst velg en DOCX-fil for ordtelling.', true);
+                    setPriceFeedback('');
+                    if (wordCountFileInput) {
+                        wordCountFileInput.value = '';
+                    }
+                    resetUploadText();
+                    selectedWordCountFile = null;
+                    return;
+                }
+
+                updateWordCountText(file.name);
+                setFeedback('Beregner antall ord ...');
+                setPriceFeedback('');
+                processingWordCount = true;
+                if (processButton) {
+                    processButton.disabled = true;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    if (typeof mammoth === 'undefined') {
+                        setFeedback('Mammoth-biblioteket er ikke tilgjengelig akkurat nå. Prøv igjen senere.', true);
+                        setPriceFeedback('');
+                        finalizeProcessing();
+                        return;
+                    }
+
+                    mammoth.extractRawText({ arrayBuffer: event.target.result })
+                        .then((result) => {
+                            const text = (result.value || '').trim();
+                            const wordCount = text ? text.split(/\s+/).length : 0;
+
+                            if (!wordCount) {
+                                setFeedback('Fant ingen ord i dokumentet. Kontroller filen og prøv igjen.', true);
+                                setPriceFeedback('');
+                                finalizeProcessing();
+                                return;
+                            }
+
+                            const priceDetails = calculatePrice(wordCount);
+                            setFeedback(`Manuskriptet inneholder omtrent ${wordCount} ord.`);
+                            setPriceFeedback('Lagrer beregningen ...');
+
+                            storeTempFileOnServer(file, wordCount)
+                                .then((serverData) => {
+                                    const serverWordCount = Number.isInteger(serverData && serverData.word_count)
+                                        ? serverData.word_count
+                                        : wordCount;
+                                    const serverFormattedPrice = serverData && serverData.formatted_price
+                                        ? serverData.formatted_price
+                                        : (priceDetails && priceDetails.formattedPrice ? priceDetails.formattedPrice : null);
+                                    const checkoutLink = serverData && serverData.plan && serverData.plan.checkout_url
+                                        ? serverData.plan.checkout_url
+                                        : (priceDetails && priceDetails.plan && priceDetails.plan.checkout_url
+                                            ? priceDetails.plan.checkout_url
+                                            : null);
+
+                                    let modalContent = serverData && serverData.message ? serverData.message : '';
+
+                                    if (!modalContent) {
+                                        const priceLine = serverFormattedPrice
+                                            ? `<h3 class="no-margin-top">Prisen for ditt manus er kroner: ${serverFormattedPrice}</h3>`
+                                            : '';
+                                        const linkLine = checkoutLink
+                                            ? `<a href="${checkoutLink}" class="btn btn-theme">Bestill nå</a>`
+                                            : '';
+                                        modalContent = `Manuset ditt er på ${serverWordCount} ord <br />${priceLine}${linkLine}`;
+                                    }
+
+                                    showWordCountModal(modalContent);
+                                    setFeedback(`Manuskriptet inneholder omtrent ${serverWordCount} ord.`);
+                                    setPriceFeedback('Resultatet er klart i pop-up-vinduet.');
+                                })
+                                .catch((error) => {
+                                    const errorMessage = typeof error === 'string'
+                                        ? error
+                                        : 'Kunne ikke lagre resultatet på serveren. Prøv igjen senere.';
+                                    setPriceFeedback(errorMessage, true);
+                                })
+                                .finally(() => {
+                                    finalizeProcessing();
+                                });
+                        })
+                        .catch(() => {
+                            setFeedback('Kunne ikke lese denne filen. Prøv igjen med en gyldig DOCX-fil.', true);
+                            setPriceFeedback('');
+                            resetUploadText();
+                            selectedWordCountFile = null;
+                            finalizeProcessing();
+                        });
+                };
+
+                reader.onerror = () => {
+                    setFeedback('Det oppstod en feil ved lesing av filen. Prøv igjen.', true);
+                    setPriceFeedback('');
+                    resetUploadText();
+                    selectedWordCountFile = null;
+                    finalizeProcessing();
+                };
+
+                reader.readAsArrayBuffer(file);
+            };
+
+            const selectFile = (files) => {
+                if (!files || !files.length) {
+                    selectedWordCountFile = null;
+                    if (wordCountFileInput) {
+                        wordCountFileInput.value = '';
+                    }
+                    resetUploadText();
+                    setFeedback('Velg en DOCX-fil og klikk på knappen for å beregne ord og pris.');
+                    setPriceFeedback('');
+                    return;
+                }
+                const [file] = files;
+                selectedWordCountFile = file;
+                updateWordCountText(file.name);
+                setFeedback('Fil valgt. Klikk på knappen for å beregne ord og pris.');
+                setPriceFeedback('');
+            };
+
+            if (wordCountFileInput) {
+                wordCountFileInput.addEventListener('change', (event) => {
+                    selectFile(event.target.files);
+                });
+            }
+
+            wordCountContainer.querySelectorAll('.word-count-file-trigger').forEach((button) => {
+                button.addEventListener('click', () => {
+                    if (wordCountFileInput) {
+                        wordCountFileInput.click();
+                    }
+                });
+            });
+
+            processButton = wordCountContainer.querySelector('.word-count-process-btn');
+            if (processButton) {
+                processButton.addEventListener('click', () => {
+                    if (processingWordCount) {
+                        return;
+                    }
+
+                    if (!selectedWordCountFile) {
+                        setFeedback('Vennligst velg en DOCX-fil før du beregner.', true);
+                        setPriceFeedback('');
+                        return;
+                    }
+
+                    processFile(selectedWordCountFile);
+                });
+            }
+
+            if (wordCountUploadArea) {
+                wordCountUploadArea.addEventListener('dragover', (event) => {
+                    event.preventDefault();
+                    wordCountUploadArea.classList.add('dragover');
+                    updateWordCountText('Slipp filen for å laste opp');
                 });
 
-                const processButton = wordCountContainer.querySelector('.word-count-process-btn');
-                if (processButton) {
-                    processButton.addEventListener('click', () => {
-                        if (processingWordCount) {
-                            return;
-                        }
+                wordCountUploadArea.addEventListener('dragleave', () => {
+                    wordCountUploadArea.classList.remove('dragover');
+                    resetUploadText();
+                });
 
-                        if (!selectedWordCountFile) {
-                            setFeedback('Vennligst velg en DOCX-fil før du beregner.', true);
-                            setPriceFeedback('');
-                            return;
-                        }
-
-                        processFile(selectedWordCountFile);
-                    });
-                }
-
-                if (wordCountUploadArea) {
-                    wordCountUploadArea.addEventListener('dragover', (event) => {
-                        event.preventDefault();
-                        wordCountUploadArea.classList.add('dragover');
-                        updateWordCountText('Slipp filen for å laste opp');
-                    });
-
-                    wordCountUploadArea.addEventListener('dragleave', () => {
-                        wordCountUploadArea.classList.remove('dragover');
-                        resetUploadText();
-                    });
-
-                    wordCountUploadArea.addEventListener('drop', (event) => {
-                        event.preventDefault();
-                        wordCountUploadArea.classList.remove('dragover');
-                        if (event.dataTransfer && event.dataTransfer.files) {
-                            selectFile(event.dataTransfer.files);
-                        }
-                    });
-                }
+                wordCountUploadArea.addEventListener('drop', (event) => {
+                    event.preventDefault();
+                    wordCountUploadArea.classList.remove('dragover');
+                    if (event.dataTransfer && event.dataTransfer.files) {
+                        selectFile(event.dataTransfer.files);
+                    }
+                });
             }
+        }
         });
     </script>
 @stop
