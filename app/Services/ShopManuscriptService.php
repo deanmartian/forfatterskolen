@@ -55,6 +55,15 @@ class ShopManuscriptService
             $word_count = FrontendHelpers::wordCountByMargin((int) $word_count); */
             $extractText = FrontendHelpers::extractTextFromDocx($destinationPath.$fileName);
             $word_count = $extractText['word_count'];
+
+            $providedWordCount = $request->input('word_count');
+            if (is_numeric($providedWordCount)) {
+                $providedWordCount = (int) $providedWordCount;
+
+                if ($providedWordCount > 0) {
+                    $word_count = $providedWordCount;
+                }
+            }
             /* $word_to_deduct = $word_count * 0.02;
             $word_count = ceil($word_count - $word_to_deduct); */
         }
