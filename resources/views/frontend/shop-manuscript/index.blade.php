@@ -104,6 +104,45 @@
             </div>
         </div>
 
+        <div class="third-section word-count-section">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6 left-container">
+                        <img src="{{ asset('images-new/shop-manuscript/notepad.png') }}" class="w-100" alt="notepad illustration">
+                    </div>
+                    <div class="col-md-6 details" id="wordCountTool">
+                        <h2 class="title mb-4">
+                            Sjekk antall ord i manuskriptet ditt
+                        </h2>
+                        <p>
+                            Last opp manuskriptet ditt som en DOCX-fil for å få en rask oversikt over antall ord før du sender det til oss.
+                        </p>
+
+                        <input type="file" class="hidden" id="word-count-file" accept=".docx">
+                        <label for="word-count-file" class="file-upload-label">
+                            <div class="file-upload" id="word-count-upload-area">
+                                <div class="file-upload-text" id="word-count-upload-text">
+                                    <a href="javascript:void(0)" class="word-count-upload-btn">Klikk her</a> for å laste opp filen din eller <br>
+                                    dra filen din hit.
+                                </div>
+                            </div>
+                        </label>
+
+                        <div class="word-count-feedback mt-3" id="word-count-feedback">
+                            Velg en DOCX-fil for å beregne antall ord.
+                        </div>
+
+                        <div class="margin-top">
+                            <button class="btn site-btn-global-w-arrow word-count-upload-btn" type="button">
+                                {{ trans('site.front.upload') }}
+                                <img src="{{ asset('images-new/icon/upload.png') }}" alt="">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="fourth-section">
             <div class="container">
                 <div class="row">
@@ -380,6 +419,7 @@
 @stop
 
 @section('scripts')
+    <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
     <script>
         $(document).ready(function(){
             @if(Session::has('manuscript_test'))
@@ -451,10 +491,121 @@
 
             // Handle file input change event (when a file is selected using the Browse button)
             fileInput.addEventListener('change', () => {
-                const selectedText = fileInput.files.length > 0 ? fileInput.files[0].name 
+                const selectedText = fileInput.files.length > 0 ? fileInput.files[0].name
                     : textWithBrowseButton;
                 updateText(selectedText);
             });
+
+            const wordCountContainer = document.getElementById('wordCountTool');
+            if (wordCountContainer) {
+                const wordCountFileInput = document.getElementById('word-count-file');
+                const wordCountUploadArea = document.getElementById('word-count-upload-area');
+                const wordCountUploadText = document.getElementById('word-count-upload-text');
+                const wordCountFeedback = document.getElementById('word-count-feedback');
+                const defaultWordCountText = wordCountUploadText ? wordCountUploadText.innerHTML : '';
+
+                const setFeedback = (message, isError = false) => {
+                    if (!wordCountFeedback) {
+                        return;
+                    }
+                    wordCountFeedback.textContent = message;
+                    wordCountFeedback.classList.toggle('text-danger', isError);
+                };
+
+                const updateWordCountText = (text) => {
+                    if (wordCountUploadText) {
+                        wordCountUploadText.innerHTML = text;
+                    }
+                };
+
+                const resetUploadText = () => {
+                    updateWordCountText(defaultWordCountText);
+                };
+
+                const processFile = (file) => {
+                    if (!file) {
+                        return;
+                    }
+
+                    if (!/\.docx$/i.test(file.name)) {
+                        setFeedback('Vennligst velg en DOCX-fil for ordtelling.', true);
+                        if (wordCountFileInput) {
+                            wordCountFileInput.value = '';
+                        }
+                        resetUploadText();
+                        return;
+                    }
+
+                    updateWordCountText(file.name);
+                    setFeedback('Beregner antall ord ...');
+
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        if (typeof mammoth === 'undefined') {
+                            setFeedback('Mammoth-biblioteket er ikke tilgjengelig akkurat nå. Prøv igjen senere.', true);
+                            return;
+                        }
+
+                        mammoth.extractRawText({ arrayBuffer: event.target.result })
+                            .then((result) => {
+                                const text = (result.value || '').trim();
+                                const wordCount = text ? text.split(/\s+/).length : 0;
+                                setFeedback(`Manuskriptet inneholder omtrent ${wordCount} ord.`);
+                            })
+                            .catch(() => {
+                                setFeedback('Kunne ikke lese denne filen. Prøv igjen med en gyldig DOCX-fil.', true);
+                                resetUploadText();
+                            });
+                    };
+
+                    reader.onerror = () => {
+                        setFeedback('Det oppstod en feil ved lesing av filen. Prøv igjen.', true);
+                        resetUploadText();
+                    };
+
+                    reader.readAsArrayBuffer(file);
+                };
+
+                const handleFiles = (files) => {
+                    if (!files || !files.length) {
+                        return;
+                    }
+                    processFile(files[0]);
+                };
+
+                if (wordCountFileInput) {
+                    wordCountFileInput.addEventListener('change', (event) => {
+                        handleFiles(event.target.files);
+                    });
+                }
+
+                wordCountContainer.querySelectorAll('.word-count-upload-btn').forEach((button) => {
+                    button.addEventListener('click', () => {
+                        if (wordCountFileInput) {
+                            wordCountFileInput.click();
+                        }
+                    });
+                });
+
+                if (wordCountUploadArea) {
+                    wordCountUploadArea.addEventListener('dragover', (event) => {
+                        event.preventDefault();
+                        wordCountUploadArea.classList.add('dragover');
+                        updateWordCountText('Slipp filen for å laste opp');
+                    });
+
+                    wordCountUploadArea.addEventListener('dragleave', () => {
+                        wordCountUploadArea.classList.remove('dragover');
+                        resetUploadText();
+                    });
+
+                    wordCountUploadArea.addEventListener('drop', (event) => {
+                        event.preventDefault();
+                        wordCountUploadArea.classList.remove('dragover');
+                        handleFiles(event.dataTransfer.files);
+                    });
+                }
+            }
         });
     </script>
 @stop
