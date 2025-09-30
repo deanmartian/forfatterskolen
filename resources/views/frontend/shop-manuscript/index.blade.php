@@ -122,19 +122,21 @@
                         <label for="word-count-file" class="file-upload-label">
                             <div class="file-upload" id="word-count-upload-area">
                                 <div class="file-upload-text" id="word-count-upload-text">
-                                    <a href="javascript:void(0)" class="word-count-upload-btn">Klikk her</a> for å laste opp filen din eller <br>
+                                    <a href="javascript:void(0)" class="word-count-file-trigger">Klikk her</a> for å laste opp filen din eller <br>
                                     dra filen din hit.
                                 </div>
                             </div>
                         </label>
 
                         <div class="word-count-feedback mt-3" id="word-count-feedback">
-                            Velg en DOCX-fil for å beregne antall ord.
+                            Velg en DOCX-fil og klikk på knappen under for å beregne ord og pris.
                         </div>
 
+                        <div class="word-count-feedback mt-2" id="word-count-price-feedback"></div>
+
                         <div class="margin-top">
-                            <button class="btn site-btn-global-w-arrow word-count-upload-btn" type="button">
-                                {{ trans('site.front.upload') }}
+                            <button class="btn site-btn-global-w-arrow word-count-process-btn" type="button">
+                                Beregn ord og pris
                                 <img src="{{ asset('images-new/icon/upload.png') }}" alt="">
                             </button>
                         </div>
@@ -420,7 +422,25 @@
 
 @section('scripts')
     <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+    @php
+        $manuscriptPlans = $shopManuscripts->map(function ($plan) use ($checkoutRoute) {
+            return [
+                'id' => $plan->id,
+                'title' => $plan->title,
+                'max_words' => $plan->max_words,
+                'full_payment_price' => $plan->full_payment_price,
+                'checkout_url' => route($checkoutRoute, $plan->id),
+            ];
+        })->values();
+
+        $excessPerWordPrice = \App\Http\FrontendHelpers::manuscriptExcessPerWordPrice();
+    @endphp
+
     <script>
+        const manuscriptPlans = @json($manuscriptPlans);
+        const excessPerWordPrice = {{ $excessPerWordPrice }};
+        const manuscriptBaseWordLimit = 17500;
+
         $(document).ready(function(){
             @if(Session::has('manuscript_test'))
                 $('#manuscriptTestModal').modal('show');
@@ -502,7 +522,10 @@
                 const wordCountUploadArea = document.getElementById('word-count-upload-area');
                 const wordCountUploadText = document.getElementById('word-count-upload-text');
                 const wordCountFeedback = document.getElementById('word-count-feedback');
+                const wordCountPriceFeedback = document.getElementById('word-count-price-feedback');
                 const defaultWordCountText = wordCountUploadText ? wordCountUploadText.innerHTML : '';
+                let selectedWordCountFile = null;
+                let processingWordCount = false;
 
                 const setFeedback = (message, isError = false) => {
                     if (!wordCountFeedback) {
@@ -512,6 +535,14 @@
                     wordCountFeedback.classList.toggle('text-danger', isError);
                 };
 
+                const setPriceFeedback = (message, isError = false) => {
+                    if (!wordCountPriceFeedback) {
+                        return;
+                    }
+                    wordCountPriceFeedback.innerHTML = message;
+                    wordCountPriceFeedback.classList.toggle('text-danger', !!isError && message !== '');
+                };
+
                 const updateWordCountText = (text) => {
                     if (wordCountUploadText) {
                         wordCountUploadText.innerHTML = text;
@@ -519,7 +550,52 @@
                 };
 
                 const resetUploadText = () => {
-                    updateWordCountText(defaultWordCountText);
+                    if (selectedWordCountFile) {
+                        updateWordCountText(selectedWordCountFile.name);
+                    } else {
+                        updateWordCountText(defaultWordCountText);
+                    }
+                };
+
+                const formatPrice = (value) => {
+                    if (typeof value !== 'number' || Number.isNaN(value)) {
+                        return null;
+                    }
+
+                    return `${new Intl.NumberFormat('no-NO').format(Math.round(value))} KR`;
+                };
+
+                const findSuggestedPlan = (wordCount) => {
+                    if (!Array.isArray(manuscriptPlans) || manuscriptPlans.length === 0) {
+                        return null;
+                    }
+
+                    const sortedPlans = manuscriptPlans.slice().sort((a, b) => a.max_words - b.max_words);
+                    return sortedPlans.find((plan) => wordCount <= plan.max_words) || null;
+                };
+
+                const calculatePrice = (wordCount) => {
+                    const plan = findSuggestedPlan(wordCount);
+
+                    if (!plan) {
+                        return null;
+                    }
+
+                    let price = parseFloat(plan.full_payment_price);
+                    if (Number.isNaN(price)) {
+                        price = 0;
+                    }
+
+                    if (wordCount > manuscriptBaseWordLimit) {
+                        const excessWords = wordCount - manuscriptBaseWordLimit;
+                        price += excessWords * excessPerWordPrice;
+                    }
+
+                    return {
+                        plan,
+                        price,
+                        formattedPrice: formatPrice(price),
+                    };
                 };
 
                 const processFile = (file) => {
@@ -529,20 +605,26 @@
 
                     if (!/\.docx$/i.test(file.name)) {
                         setFeedback('Vennligst velg en DOCX-fil for ordtelling.', true);
+                        setPriceFeedback('');
                         if (wordCountFileInput) {
                             wordCountFileInput.value = '';
                         }
                         resetUploadText();
+                        selectedWordCountFile = null;
                         return;
                     }
 
                     updateWordCountText(file.name);
                     setFeedback('Beregner antall ord ...');
+                    setPriceFeedback('');
+                    processingWordCount = true;
 
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         if (typeof mammoth === 'undefined') {
                             setFeedback('Mammoth-biblioteket er ikke tilgjengelig akkurat nå. Prøv igjen senere.', true);
+                            setPriceFeedback('');
+                            processingWordCount = false;
                             return;
                         }
 
@@ -550,42 +632,91 @@
                             .then((result) => {
                                 const text = (result.value || '').trim();
                                 const wordCount = text ? text.split(/\s+/).length : 0;
+                                const priceDetails = calculatePrice(wordCount);
+
                                 setFeedback(`Manuskriptet inneholder omtrent ${wordCount} ord.`);
+
+                                if (priceDetails && priceDetails.formattedPrice) {
+                                    const planTitle = priceDetails.plan && priceDetails.plan.title ? ` (${priceDetails.plan.title})` : '';
+                                    const checkoutLink = priceDetails.plan && priceDetails.plan.checkout_url ? priceDetails.plan.checkout_url : null;
+                                    const priceMessage = checkoutLink
+                                        ? `Estimert pris${planTitle}: ${priceDetails.formattedPrice}. <a href="${checkoutLink}" class="btn btn-link p-0 align-baseline">Bestill nå</a>`
+                                        : `Estimert pris${planTitle}: ${priceDetails.formattedPrice}.`;
+                                    setPriceFeedback(priceMessage);
+                                } else {
+                                    setPriceFeedback('Kunne ikke beregne prisen basert på dette manuset.', true);
+                                }
+
+                                processingWordCount = false;
                             })
                             .catch(() => {
                                 setFeedback('Kunne ikke lese denne filen. Prøv igjen med en gyldig DOCX-fil.', true);
+                                setPriceFeedback('');
                                 resetUploadText();
+                                selectedWordCountFile = null;
+                                processingWordCount = false;
                             });
                     };
 
                     reader.onerror = () => {
                         setFeedback('Det oppstod en feil ved lesing av filen. Prøv igjen.', true);
+                        setPriceFeedback('');
                         resetUploadText();
+                        selectedWordCountFile = null;
+                        processingWordCount = false;
                     };
 
                     reader.readAsArrayBuffer(file);
                 };
 
-                const handleFiles = (files) => {
+                const selectFile = (files) => {
                     if (!files || !files.length) {
+                        selectedWordCountFile = null;
+                        if (wordCountFileInput) {
+                            wordCountFileInput.value = '';
+                        }
+                        resetUploadText();
+                        setFeedback('Velg en DOCX-fil og klikk på knappen for å beregne ord og pris.');
+                        setPriceFeedback('');
                         return;
                     }
-                    processFile(files[0]);
+                    const [file] = files;
+                    selectedWordCountFile = file;
+                    updateWordCountText(file.name);
+                    setFeedback('Fil valgt. Klikk på knappen for å beregne ord og pris.');
+                    setPriceFeedback('');
                 };
 
                 if (wordCountFileInput) {
                     wordCountFileInput.addEventListener('change', (event) => {
-                        handleFiles(event.target.files);
+                        selectFile(event.target.files);
                     });
                 }
 
-                wordCountContainer.querySelectorAll('.word-count-upload-btn').forEach((button) => {
+                wordCountContainer.querySelectorAll('.word-count-file-trigger').forEach((button) => {
                     button.addEventListener('click', () => {
                         if (wordCountFileInput) {
                             wordCountFileInput.click();
                         }
                     });
                 });
+
+                const processButton = wordCountContainer.querySelector('.word-count-process-btn');
+                if (processButton) {
+                    processButton.addEventListener('click', () => {
+                        if (processingWordCount) {
+                            return;
+                        }
+
+                        if (!selectedWordCountFile) {
+                            setFeedback('Vennligst velg en DOCX-fil før du beregner.', true);
+                            setPriceFeedback('');
+                            return;
+                        }
+
+                        processFile(selectedWordCountFile);
+                    });
+                }
 
                 if (wordCountUploadArea) {
                     wordCountUploadArea.addEventListener('dragover', (event) => {
@@ -602,7 +733,9 @@
                     wordCountUploadArea.addEventListener('drop', (event) => {
                         event.preventDefault();
                         wordCountUploadArea.classList.remove('dragover');
-                        handleFiles(event.dataTransfer.files);
+                        if (event.dataTransfer && event.dataTransfer.files) {
+                            selectFile(event.dataTransfer.files);
+                        }
                     });
                 }
             }
