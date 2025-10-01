@@ -43,13 +43,15 @@ class ShopManuscriptService
 
             $fullPath = $destinationPath.$fileName;
 
-            $word_count = $this->determineWordCount($fullPath, $extension);
-
             $providedWordCount = $request->input('word_count');
-            if (is_numeric($providedWordCount)) {
-                $providedWordCount = (int) $providedWordCount;
+            $providedWordCount = is_numeric($providedWordCount) ? (int) $providedWordCount : null;
 
-                if ($providedWordCount > 0) {
+            if (in_array($extension, ['doc', 'docx'], true) && $providedWordCount && $providedWordCount > 0) {
+                $word_count = $providedWordCount;
+            } else {
+                $word_count = $this->determineWordCount($fullPath, $extension);
+
+                if ((! $word_count || $word_count < 0) && $providedWordCount && $providedWordCount > 0) {
                     $word_count = $providedWordCount;
                 }
             }
