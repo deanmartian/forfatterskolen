@@ -549,7 +549,7 @@
 
 					<div class="form-group" style="max-height: 300px; overflow-y: scroll; margin-top: 10px">
 						@if(count($course->learners->get()) > 0)
-							@foreach( $course->learners->get() as $learner)
+							@foreach( $course->learners->where('can_receive_email', 1)->get() as $learner)
 								<input type="checkbox" name="learners[]" value="{{ $learner->user->id }}" 
 								class="{{ !$learner->in_facebook_group ? 'not-in-facebook-group' : '' }}" 
 								data-package="{{ $learner->package_id }}">
