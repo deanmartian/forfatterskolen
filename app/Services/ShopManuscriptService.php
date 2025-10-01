@@ -26,9 +26,12 @@ class ShopManuscriptService
     {
         $word_count = 0;
         $filepath = '';
+        $originalName = null;
+        $mimeType = null;
+
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
-            $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
             $file = $request->file('manuscript');
+            $extension = strtolower($file->getClientOriginalExtension());
             $originalName = $file->getClientOriginalName();
             $mimeType = $file->getMimeType();
 
@@ -36,25 +39,11 @@ class ShopManuscriptService
             $destinationPath = 'storage/manuscript-tests/'; // upload path
             $fileName = $time.'.'.$extension; // rename document
             $filepath = $destinationPath.$fileName;
-            $request->manuscript->move($destinationPath, $fileName);
-            /* if($extension == "pdf") :
-                $pdf  =  new \PdfToText ( $destinationPath.$fileName ) ;
-                $pdf_content = $pdf->Text;
-                $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-            elseif($extension == "docx") :
-                $docObj = new \Docx2Text($destinationPath.$fileName);
-                $docText= $docObj->convertToText();
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            elseif($extension == "doc") :
-                $docText = FrontendHelpers::readWord($destinationPath.$fileName);
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            elseif($extension == "odt") :
-                $doc = odt2text($destinationPath.$fileName);
-                $word_count = FrontendHelpers::get_num_of_words($doc);
-            endif;
-            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count); */
-            $extractText = FrontendHelpers::extractTextFromDocx($destinationPath.$fileName);
-            $word_count = $extractText['word_count'];
+            $file->move($destinationPath, $fileName);
+
+            $fullPath = $destinationPath.$fileName;
+
+            $word_count = $this->determineWordCount($fullPath, $extension);
 
             $providedWordCount = $request->input('word_count');
             if (is_numeric($providedWordCount)) {
@@ -64,8 +53,6 @@ class ShopManuscriptService
                     $word_count = $providedWordCount;
                 }
             }
-            /* $word_to_deduct = $word_count * 0.02;
-            $word_count = ceil($word_count - $word_to_deduct); */
         }
 
         return [
@@ -75,6 +62,65 @@ class ShopManuscriptService
             'mime_type' => $mimeType,
         ];
 
+    }
+
+    protected function determineWordCount(string $filePath, string $extension): int
+    {
+        $extension = strtolower($extension);
+
+        try {
+            switch ($extension) {
+                case 'pdf':
+                    if (! class_exists('PdfToText')) {
+                        if (file_exists(public_path('Pdf2Text.php'))) {
+                            include_once public_path('Pdf2Text.php');
+                        } elseif (file_exists(base_path('app/Http/Pdf2Text.php'))) {
+                            include_once base_path('app/Http/Pdf2Text.php');
+                        }
+                    }
+
+                    if (class_exists('PdfToText')) {
+                        $pdf = new \PdfToText($filePath);
+                        $text = $pdf->Text;
+
+                        return FrontendHelpers::get_num_of_words($text);
+                    }
+                    break;
+                case 'docx':
+                    $extractText = FrontendHelpers::extractTextFromDocx($filePath);
+
+                    return (int) ($extractText['word_count'] ?? 0);
+                case 'doc':
+                    $text = FrontendHelpers::readWord($filePath);
+
+                    return $text ? FrontendHelpers::get_num_of_words($text) : 0;
+                case 'odt':
+                    if (! function_exists('odt2text')) {
+                        if (file_exists(public_path('Odt2Text.php'))) {
+                            include_once public_path('Odt2Text.php');
+                        } elseif (file_exists(base_path('app/Http/Odt2Text.php'))) {
+                            include_once base_path('app/Http/Odt2Text.php');
+                        }
+                    }
+
+                    if (function_exists('odt2text')) {
+                        $text = odt2text($filePath);
+
+                        return FrontendHelpers::get_num_of_words($text);
+                    }
+                    break;
+                default:
+                    return 0;
+            }
+        } catch (\Throwable $throwable) {
+            Log::error('Unable to determine manuscript word count.', [
+                'file' => $filePath,
+                'extension' => $extension,
+                'error' => $throwable->getMessage(),
+            ]);
+        }
+
+        return 0;
     }
 
     public function uploadSynopsis(Request $request)

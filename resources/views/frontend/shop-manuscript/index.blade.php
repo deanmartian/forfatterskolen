@@ -115,10 +115,10 @@
                             Sjekk antall ord i manuskriptet ditt
                         </h2>
                         <p>
-                            Last opp manuskriptet ditt som en DOCX-fil for å få en rask oversikt over antall ord før du sender det til oss.
+                            Last opp manuskriptet ditt som en DOCX-, PDF-, DOC- eller ODT-fil for å få en rask oversikt over antall ord før du sender det til oss.
                         </p>
 
-                        <input type="file" class="hidden" id="word-count-file" accept=".docx">
+                        <input type="file" class="hidden" id="word-count-file" accept=".doc,.docx,.pdf,.odt">
                         <label for="word-count-file" class="file-upload-label">
                             <div class="file-upload" id="word-count-upload-area">
                                 <div class="file-upload-text" id="word-count-upload-text">
@@ -129,7 +129,7 @@
                         </label>
 
                         <div class="word-count-feedback mt-3" id="word-count-feedback">
-                            Velg en DOCX-fil og klikk på knappen under for å beregne ord og pris.
+                            Velg en DOCX-, PDF-, DOC- eller ODT-fil og klikk på knappen under for å beregne ord og pris.
                         </div>
 
                         <div class="word-count-feedback mt-2" id="word-count-price-feedback"></div>
@@ -432,7 +432,6 @@
 @stop
 
 @section('scripts')
-    <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
     @php
         $manuscriptPlans = $shopManuscripts->map(function ($plan) use ($checkoutRoute) {
             return [
@@ -542,6 +541,7 @@
             let selectedWordCountFile = null;
             let processingWordCount = false;
             let processButton = null;
+            const allowedWordCountExtensions = ['docx', 'pdf', 'doc', 'odt'];
 
             const setFeedback = (message, isError = false) => {
                 if (!wordCountFeedback) {
@@ -627,7 +627,7 @@
                 }
             };
 
-            const storeTempFileOnServer = (file, wordCount) => {
+            const storeTempFileOnServer = (file) => {
                 if (!storeTempUploadUrl) {
                     return Promise.resolve(null);
                 }
@@ -635,10 +635,6 @@
                 const formData = new FormData();
                 formData.append('_token', csrfToken);
                 formData.append('manuscript', file);
-
-                if (typeof wordCount === 'number' && !Number.isNaN(wordCount)) {
-                    formData.append('word_count', wordCount);
-                }
 
                 return fetch(storeTempUploadUrl, {
                     method: 'POST',
@@ -690,8 +686,11 @@
                     return;
                 }
 
-                if (!/\.docx$/i.test(file.name)) {
-                    setFeedback('Vennligst velg en DOCX-fil for ordtelling.', true);
+                const extensionMatch = file.name ? file.name.match(/\.([^.]+)$/) : null;
+                const extension = extensionMatch ? extensionMatch[1].toLowerCase() : '';
+
+                if (!allowedWordCountExtensions.includes(extension)) {
+                    setFeedback('Vennligst velg en DOCX-, PDF-, DOC- eller ODT-fil for ordtelling.', true);
                     setPriceFeedback('');
                     if (wordCountFileInput) {
                         wordCountFileInput.value = '';
@@ -702,96 +701,65 @@
                 }
 
                 updateWordCountText(file.name);
-                setFeedback('Beregner antall ord ...');
+                setFeedback('Laster opp og beregner antall ord ...');
                 setPriceFeedback('');
                 processingWordCount = true;
                 if (processButton) {
                     processButton.disabled = true;
                 }
 
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    if (typeof mammoth === 'undefined') {
-                        setFeedback('Mammoth-biblioteket er ikke tilgjengelig akkurat nå. Prøv igjen senere.', true);
-                        setPriceFeedback('');
-                        finalizeProcessing();
-                        return;
-                    }
+                storeTempFileOnServer(file)
+                    .then((serverData) => {
+                        const serverWordCount = Number.isInteger(serverData && serverData.word_count)
+                            ? serverData.word_count
+                            : null;
+                        const priceDetails = serverWordCount ? calculatePrice(serverWordCount) : null;
+                        const formattedPrice = serverData && serverData.formatted_price
+                            ? serverData.formatted_price
+                            : (priceDetails && priceDetails.formattedPrice ? priceDetails.formattedPrice : null);
+                        const checkoutLink = serverData && serverData.plan && serverData.plan.checkout_url
+                            ? serverData.plan.checkout_url
+                            : (priceDetails && priceDetails.plan && priceDetails.plan.checkout_url
+                                ? priceDetails.plan.checkout_url
+                                : null);
 
-                    mammoth.extractRawText({ arrayBuffer: event.target.result })
-                        .then((result) => {
-                            const text = (result.value || '').trim();
-                            const wordCount = text ? text.split(/\s+/).length : 0;
+                        let modalContent = serverData && serverData.message ? serverData.message : '';
 
-                            if (!wordCount) {
-                                setFeedback('Fant ingen ord i dokumentet. Kontroller filen og prøv igjen.', true);
-                                setPriceFeedback('');
-                                finalizeProcessing();
-                                return;
-                            }
+                        if (!modalContent && serverWordCount) {
+                            const priceLine = formattedPrice
+                                ? `<h3 class="no-margin-top">Prisen for ditt manus er kroner: ${formattedPrice}</h3>`
+                                : '';
+                            const linkLine = checkoutLink
+                                ? `<a href="${checkoutLink}" class="btn btn-theme">Bestill nå</a>`
+                                : '';
+                            modalContent = `Manuset ditt er på ${serverWordCount} ord <br />${priceLine}${linkLine}`;
+                        }
 
-                            const priceDetails = calculatePrice(wordCount);
-                            setFeedback(`Manuskriptet inneholder omtrent ${wordCount} ord.`);
-                            setPriceFeedback('Lagrer beregningen ...');
+                        if (modalContent) {
+                            showWordCountModal(modalContent);
+                        }
 
-                            storeTempFileOnServer(file, wordCount)
-                                .then((serverData) => {
-                                    const serverWordCount = Number.isInteger(serverData && serverData.word_count)
-                                        ? serverData.word_count
-                                        : wordCount;
-                                    const serverFormattedPrice = serverData && serverData.formatted_price
-                                        ? serverData.formatted_price
-                                        : (priceDetails && priceDetails.formattedPrice ? priceDetails.formattedPrice : null);
-                                    const checkoutLink = serverData && serverData.plan && serverData.plan.checkout_url
-                                        ? serverData.plan.checkout_url
-                                        : (priceDetails && priceDetails.plan && priceDetails.plan.checkout_url
-                                            ? priceDetails.plan.checkout_url
-                                            : null);
-
-                                    let modalContent = serverData && serverData.message ? serverData.message : '';
-
-                                    if (!modalContent) {
-                                        const priceLine = serverFormattedPrice
-                                            ? `<h3 class="no-margin-top">Prisen for ditt manus er kroner: ${serverFormattedPrice}</h3>`
-                                            : '';
-                                        const linkLine = checkoutLink
-                                            ? `<a href="${checkoutLink}" class="btn btn-theme">Bestill nå</a>`
-                                            : '';
-                                        modalContent = `Manuset ditt er på ${serverWordCount} ord <br />${priceLine}${linkLine}`;
-                                    }
-
-                                    showWordCountModal(modalContent);
-                                    setFeedback(`Manuskriptet inneholder omtrent ${serverWordCount} ord.`);
-                                    setPriceFeedback('Resultatet er klart i pop-up-vinduet.');
-                                })
-                                .catch((error) => {
-                                    const errorMessage = typeof error === 'string'
-                                        ? error
-                                        : 'Kunne ikke lagre resultatet på serveren. Prøv igjen senere.';
-                                    setPriceFeedback(errorMessage, true);
-                                })
-                                .finally(() => {
-                                    finalizeProcessing();
-                                });
-                        })
-                        .catch(() => {
-                            setFeedback('Kunne ikke lese denne filen. Prøv igjen med en gyldig DOCX-fil.', true);
+                        if (serverWordCount) {
+                            setFeedback(`Manuskriptet inneholder omtrent ${serverWordCount} ord.`);
+                            setPriceFeedback('Resultatet er klart i pop-up-vinduet.');
+                        } else if (modalContent) {
+                            setFeedback('Beregningen ble fullført.');
+                            setPriceFeedback('Resultatet er klart i pop-up-vinduet.');
+                        } else {
+                            setFeedback('Beregningen ble fullført.');
                             setPriceFeedback('');
-                            resetUploadText();
-                            selectedWordCountFile = null;
-                            finalizeProcessing();
-                        });
-                };
-
-                reader.onerror = () => {
-                    setFeedback('Det oppstod en feil ved lesing av filen. Prøv igjen.', true);
-                    setPriceFeedback('');
-                    resetUploadText();
-                    selectedWordCountFile = null;
-                    finalizeProcessing();
-                };
-
-                reader.readAsArrayBuffer(file);
+                        }
+                    })
+                    .catch((error) => {
+                        const errorMessage = typeof error === 'string'
+                            ? error
+                            : 'Kunne ikke beregne antall ord. Prøv igjen senere.';
+                        setFeedback(errorMessage, true);
+                        setPriceFeedback('');
+                    })
+                    .finally(() => {
+                        finalizeProcessing();
+                    });
             };
 
             const selectFile = (files) => {
@@ -801,11 +769,26 @@
                         wordCountFileInput.value = '';
                     }
                     resetUploadText();
-                    setFeedback('Velg en DOCX-fil og klikk på knappen for å beregne ord og pris.');
+                    setFeedback('Velg en DOCX-, PDF-, DOC- eller ODT-fil og klikk på knappen for å beregne ord og pris.');
                     setPriceFeedback('');
                     return;
                 }
+
                 const [file] = files;
+                const extensionMatch = file.name ? file.name.match(/\.([^.]+)$/) : null;
+                const extension = extensionMatch ? extensionMatch[1].toLowerCase() : '';
+
+                if (!allowedWordCountExtensions.includes(extension)) {
+                    selectedWordCountFile = null;
+                    if (wordCountFileInput) {
+                        wordCountFileInput.value = '';
+                    }
+                    resetUploadText();
+                    setFeedback('Vennligst velg en DOCX-, PDF-, DOC- eller ODT-fil før du beregner.', true);
+                    setPriceFeedback('');
+                    return;
+                }
+
                 selectedWordCountFile = file;
                 updateWordCountText(file.name);
                 setFeedback('Fil valgt. Klikk på knappen for å beregne ord og pris.');
@@ -834,7 +817,7 @@
                     }
 
                     if (!selectedWordCountFile) {
-                        setFeedback('Vennligst velg en DOCX-fil før du beregner.', true);
+                        setFeedback('Vennligst velg en DOCX-, PDF-, DOC- eller ODT-fil før du beregner.', true);
                         setPriceFeedback('');
                         return;
                     }

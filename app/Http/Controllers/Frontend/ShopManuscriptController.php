@@ -97,10 +97,10 @@ class ShopManuscriptController extends Controller
 
         if ($request->hasFile('manuscript')) {
             $file = $request->file('manuscript');
-            $extension = $file->getClientOriginalExtension();
+            $extension = strtolower($file->getClientOriginalExtension());
 
-            if (! in_array($extension, ['docx'])) { // 'odt', 'pdf', 'doc',
-                $customErrors = ['manuscript' => ['The manuscript must be a file of type: docx.']]; // odt, pdf, doc,
+            if (! in_array($extension, ['docx', 'pdf', 'doc', 'odt'])) { // 'odt', 'pdf', 'doc',
+                $customErrors = ['manuscript' => ['The manuscript must be a file of type: docx, pdf, doc, odt.']]; // odt, pdf, doc,
                 $validator = FacadeValidator::make([], []);
                 $validator->validate(); // Perform validation without rules
                 $validator->errors()->merge($customErrors);
