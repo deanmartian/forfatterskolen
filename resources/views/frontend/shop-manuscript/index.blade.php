@@ -65,8 +65,9 @@
 
                         <form method="POST" enctype="multipart/form-data" action="{{ route('front.shop-manuscript.test_manuscript') }}">
                             {{ csrf_field() }}
-                            <input type="file" class="hidden" name="manuscript" id="file-upload" 
+                            <input type="file" class="hidden" name="manuscript" id="file-upload"
                             accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+                            <input type="hidden" name="word_count" id="test-manuscript-word-count">
                             <label class="mb-4 mt-3">
                                 <span class="instruction">{{ trans('site.front.shop-manuscript.form.instruction') }}</span>
                                 <br>
@@ -446,6 +447,7 @@
         $excessPerWordPrice = \App\Http\FrontendHelpers::manuscriptExcessPerWordPrice();
     @endphp
 
+    <script src="https://unpkg.com/mammoth@1.4.21/mammoth.browser.min.js"></script>
     <script>
         const manuscriptPlans = @json($manuscriptPlans);
         const excessPerWordPrice = {{ $excessPerWordPrice }};
@@ -454,6 +456,79 @@
         const csrfToken = '{{ csrf_token() }}';
 
         $(document).ready(function(){
+            const getFileExtension = (fileName) => {
+                if (!fileName) {
+                    return '';
+                }
+
+                const match = fileName.toLowerCase().match(/\.([^.]+)$/);
+                return match ? match[1] : '';
+            };
+
+            const mammothPreferredExtensions = ['doc', 'docx'];
+            const mammothAvailable = typeof window !== 'undefined'
+                && typeof window.mammoth !== 'undefined'
+                && typeof window.mammoth.extractRawText === 'function';
+
+            const shouldUseMammothForExtension = (extension) => {
+                if (!extension) {
+                    return false;
+                }
+
+                return mammothPreferredExtensions.includes(extension) && mammothAvailable;
+            };
+
+            const countWordsFromText = (text) => {
+                if (typeof text !== 'string') {
+                    return 0;
+                }
+
+                const normalised = text.replace(/[\r\n\t]+/g, ' ').trim();
+                if (!normalised) {
+                    return 0;
+                }
+
+                const matches = normalised.match(/\S+/g);
+                return matches ? matches.length : 0;
+            };
+
+            const extractWordCountWithMammoth = (file) => new Promise((resolve, reject) => {
+                if (!file || !mammothAvailable) {
+                    resolve(null);
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = (event) => {
+                    const arrayBuffer = event.target ? event.target.result : null;
+
+                    if (!arrayBuffer) {
+                        resolve(null);
+                        return;
+                    }
+
+                    window.mammoth.extractRawText({ arrayBuffer })
+                        .then((result) => {
+                            const text = result && typeof result.value === 'string' ? result.value : '';
+                            resolve(countWordsFromText(text));
+                        })
+                        .catch((error) => {
+                            reject(error);
+                        });
+                };
+
+                reader.onerror = () => {
+                    reject(reader.error || new Error('Kunne ikke lese dokumentet.'));
+                };
+
+                try {
+                    reader.readAsArrayBuffer(file);
+                } catch (error) {
+                    reject(error);
+                }
+            });
+
             @if(Session::has('manuscript_test'))
                 $('#manuscriptTestModal').modal('show');
             @endif
@@ -480,6 +555,61 @@
                     e.preventDefault();
                 }
             });
+
+            const manuscriptTestFormElement = document.querySelector('#testManuscript form');
+            const manuscriptTestHiddenInput = document.getElementById('test-manuscript-word-count');
+            const manuscriptTestFileInput = document.getElementById('file-upload');
+            let manuscriptSubmittingWithMammoth = false;
+
+            if (manuscriptTestFormElement && manuscriptTestFileInput) {
+                manuscriptTestFormElement.addEventListener('submit', (event) => {
+                    if (manuscriptSubmittingWithMammoth) {
+                        manuscriptSubmittingWithMammoth = false;
+                        return;
+                    }
+
+                    const files = manuscriptTestFileInput.files;
+                    if (!files || !files.length) {
+                        if (manuscriptTestHiddenInput) {
+                            manuscriptTestHiddenInput.value = '';
+                        }
+
+                        return;
+                    }
+
+                    const [file] = files;
+                    const extension = getFileExtension(file.name || manuscriptTestFileInput.value);
+
+                    if (!shouldUseMammothForExtension(extension)) {
+                        if (manuscriptTestHiddenInput) {
+                            manuscriptTestHiddenInput.value = '';
+                        }
+
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    extractWordCountWithMammoth(file)
+                        .then((wordCount) => {
+                            if (manuscriptTestHiddenInput) {
+                                manuscriptTestHiddenInput.value = Number.isInteger(wordCount) && wordCount > 0
+                                    ? wordCount
+                                    : '';
+                            }
+                        })
+                        .catch((error) => {
+                            console.error('Unable to count words with Mammoth for manuscript test form', error);
+                            if (manuscriptTestHiddenInput) {
+                                manuscriptTestHiddenInput.value = '';
+                            }
+                        })
+                        .finally(() => {
+                            manuscriptSubmittingWithMammoth = true;
+                            manuscriptTestFormElement.submit();
+                        });
+                });
+            }
 
             const fileUploadArea = document.getElementById('file-upload-area');
             const fileInput = document.getElementById('file-upload');
@@ -627,7 +757,7 @@
                 }
             };
 
-            const storeTempFileOnServer = (file) => {
+            const storeTempFileOnServer = (file, providedWordCount = null) => {
                 if (!storeTempUploadUrl) {
                     return Promise.resolve(null);
                 }
@@ -635,6 +765,9 @@
                 const formData = new FormData();
                 formData.append('_token', csrfToken);
                 formData.append('manuscript', file);
+                if (Number.isInteger(providedWordCount) && providedWordCount > 0) {
+                    formData.append('word_count', providedWordCount);
+                }
 
                 return fetch(storeTempUploadUrl, {
                     method: 'POST',
@@ -686,8 +819,8 @@
                     return;
                 }
 
-                const extensionMatch = file.name ? file.name.match(/\.([^.]+)$/) : null;
-                const extension = extensionMatch ? extensionMatch[1].toLowerCase() : '';
+                const extension = getFileExtension(file.name);
+                const useMammoth = shouldUseMammothForExtension(extension);
 
                 if (!allowedWordCountExtensions.includes(extension)) {
                     setFeedback('Vennligst velg en DOCX-, PDF-, DOC- eller ODT-fil for ordtelling.', true);
@@ -701,14 +834,31 @@
                 }
 
                 updateWordCountText(file.name);
-                setFeedback('Laster opp og beregner antall ord ...');
+                setFeedback(useMammoth
+                    ? 'Bruker Mammoth til å beregne antall ord ...'
+                    : 'Laster opp og beregner antall ord ...');
                 setPriceFeedback('');
                 processingWordCount = true;
                 if (processButton) {
                     processButton.disabled = true;
                 }
 
-                storeTempFileOnServer(file)
+                const uploadPromise = useMammoth
+                    ? extractWordCountWithMammoth(file)
+                        .then((wordCount) => {
+                            if (Number.isInteger(wordCount) && wordCount > 0) {
+                                return storeTempFileOnServer(file, wordCount);
+                            }
+
+                            return storeTempFileOnServer(file);
+                        })
+                        .catch((error) => {
+                            console.error('Unable to count words with Mammoth for word-count tool', error);
+                            return storeTempFileOnServer(file);
+                        })
+                    : storeTempFileOnServer(file);
+
+                uploadPromise
                     .then((serverData) => {
                         const serverWordCount = Number.isInteger(serverData && serverData.word_count)
                             ? serverData.word_count
@@ -775,8 +925,7 @@
                 }
 
                 const [file] = files;
-                const extensionMatch = file.name ? file.name.match(/\.([^.]+)$/) : null;
-                const extension = extensionMatch ? extensionMatch[1].toLowerCase() : '';
+                const extension = getFileExtension(file.name);
 
                 if (!allowedWordCountExtensions.includes(extension)) {
                     selectedWordCountFile = null;
