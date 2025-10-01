@@ -336,6 +336,7 @@ class EmailOutController extends Controller
         $coursesTaken = CoursesTaken::whereHas('user')->whereIn('package_id', $packages)
             ->whereNull('renewed_at')
             ->whereNotIn('user_id', $emailRecipients)
+            ->where('can_receive_email', 1)
             ->get();
 
         $emailAttachment = EmailAttachment::where('hash', $emailOut->attachment_hash)->first();
