@@ -1025,20 +1025,29 @@ class ShopManuscriptController extends Controller
     public function storeTempUploadedFile(Request $request, ShopManuscriptService $shopManuscriptService): JsonResponse
     {
         if (! $request->hasFile('manuscript') || ! $request->file('manuscript')->isValid()) {
-            return response()->json(['message' => 'Filen kunne ikke lastes opp. Vennligst prøv igjen.'], 422);
+            $validator = FacadeValidator::make([], []);
+            $validator->errors()->add('manuscript', 'Filen kunne ikke lastes opp. Vennligst prøv igjen.');
+
+            throw new ValidationException($validator);
         }
 
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
         $extension = strtolower($request->file('manuscript')->getClientOriginalExtension());
 
         if (! in_array($extension, $extensions)) {
-            return response()->json(['message' => 'Ugyldig filformat. Tillatte formater er PDF, DOC, DOCX og ODT.'], 422);
+            $validator = FacadeValidator::make([], []);
+            $validator->errors()->add('manuscript', 'Ugyldig filformat. Tillatte formater er PDF, DOC, DOCX og ODT.');
+
+            throw new ValidationException($validator);
         }
 
         $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
 
         if (empty($uploadedManuscript['word_count'])) {
-            return response()->json(['message' => 'Kunne ikke lese denne filen. Prøv igjen med en gyldig fil.'], 422);
+            $validator = FacadeValidator::make([], []);
+            $validator->errors()->add('manuscript', 'Kunne ikke lese denne filen. Prøv igjen med en gyldig fil.');
+
+            throw new ValidationException($validator);
         }
 
         $wordCount = (int) $uploadedManuscript['word_count'];
