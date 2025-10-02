@@ -677,8 +677,9 @@
                 const normalisedMessages = Array.isArray(messages)
                     ? messages.filter((message) => !!message)
                     : (messages ? [messages] : []);
+                const uniqueMessages = Array.from(new Set(normalisedMessages.map((message) => message.trim())));
 
-                if (!normalisedMessages.length) {
+                if (!uniqueMessages.length) {
                     return;
                 }
 
@@ -725,7 +726,7 @@
                 }
 
                 list.innerHTML = '';
-                normalisedMessages.forEach((message) => {
+                uniqueMessages.forEach((message) => {
                     const item = document.createElement('li');
                     item.innerHTML = message;
                     list.appendChild(item);
