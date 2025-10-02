@@ -39,15 +39,28 @@
                             <!-- 'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,' 
                             + 'application/pdf, application/vnd.oasis.opendocument.text' -->
 
-                            <div v-if="orderForm.temp_file" class="temp-file-container">
-                                {{ orderForm.temp_file.original_name }}
-                                <button @click="removeFile">x</button>
+                            <div v-if="tempFileInfo" class="temp-file-container">
+                                <div class="temp-file-details">
+                                    <span class="temp-file-name">{{ tempFileInfo.original_name }}</span>
+                                    <span v-if="tempFileInfo.word_count" class="temp-file-meta">
+                                        ~{{ tempFileInfo.word_count }} {{ trans('site.learner.words-text') }}
+                                    </span>
+                                </div>
+                                <button type="button" @click="removeFile">x</button>
                             </div>
 
                             <FileUpload
-                            :accept="'application/vnd.openxmlformats-officedocument.wordprocessingml.document'" 
+                            :accept="'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/vnd.oasis.opendocument.text'"
                             @fileSelected="handleFileSelected('manuscript', $event)" v-else/>
                             <input type="hidden" name="manuscript">
+
+                            <div class="word-count-feedback mt-3" v-if="wordCountFeedback"
+                                 :class="{'text-danger': wordCountFeedbackIsError}">
+                                {{ wordCountFeedback }}
+                            </div>
+                            <div class="word-count-feedback mt-2" v-if="wordCountPriceFeedback"
+                                 :class="{'text-danger': wordCountPriceFeedbackIsError}" v-html="wordCountPriceFeedback">
+                            </div>
 
                             <div class="custom-checkbox mt-4">
                                 <input type="checkbox" name="send_to_email" id="send_to_email"
@@ -394,6 +407,14 @@ import FileUpload from '../../components/FileUpload.vue';
             userHasPaidCourse: Boolean,
             origPrice: [Number, String],
             tempFile: Object,
+            storeTempUploadUrl: {
+                type: String,
+                default: '/shop-manuscript/store-temp-upload',
+            },
+            excessPerWord: {
+                type: Number,
+                default: 0,
+            },
         },
 
         data() {
@@ -409,7 +430,7 @@ import FileUpload from '../../components/FileUpload.vue';
                     phone: '',
                     password: '',
                     package_id: 0,
-                    price: this.origPrice,//this.shopManuscript.full_payment_price,
+                    price: this.tempFile ? this.tempFile.price : this.origPrice,
                     payment_plan_id: 8,
                     payment_mode_id: 3,
                     mobile_number: "",
@@ -423,8 +444,10 @@ import FileUpload from '../../components/FileUpload.vue';
                     has_vat: !this.userHasPaidCourse,
                     //is_pay_later: !this.userHasPaidCourse,
                     additional: !this.userHasPaidCourse ? (this.shopManuscript.full_payment_price * .25) : 0,
-                    excess_words_amount: 0,
-                    temp_file: this.tempFile
+                    excess_words_amount: this.tempFile ? this.tempFile.excess_words_amount || 0 : 0,
+                    temp_file: this.tempFile ? 'uploaded' : null,
+                    manuscript: null,
+                    synopsis: null,
                 },
                 currencyOptions: {
                     thousandsSeparator: '.',
@@ -435,7 +458,7 @@ import FileUpload from '../../components/FileUpload.vue';
                     email: '',
                     password: ''
                 },
-                originalPrice: this.origPrice,
+                originalPrice: this.tempFile ? this.tempFile.price : this.origPrice,
                 isSveaPayment: true,
                 invalidCred: false,
                 isLoginDisabled: false,
@@ -447,7 +470,15 @@ import FileUpload from '../../components/FileUpload.vue';
                 isLoading: false,
                 isLoadingSubmit: false,
                 wizardProps: {},
-                requestUrl: '/shop-manuscript/'+this.shopManuscript.id
+                requestUrl: '/shop-manuscript/'+this.shopManuscript.id,
+                tempFileInfo: this.tempFile ? Object.assign({}, this.tempFile) : null,
+                wordCountFeedback: '',
+                wordCountFeedbackIsError: false,
+                wordCountPriceFeedback: '',
+                wordCountPriceFeedbackIsError: false,
+                wordCountProcessing: false,
+                manuscriptBaseWordLimit: 17500,
+                allowedWordCountExtensions: ['docx', 'pdf', 'doc', 'odt'],
             }
         },
 
@@ -462,6 +493,345 @@ import FileUpload from '../../components/FileUpload.vue';
         },
 
         methods: {
+
+            getFileExtension(fileName) {
+                if (!fileName) {
+                    return '';
+                }
+
+                const match = fileName.toLowerCase().match(/\.([^.]+)$/);
+                return match ? match[1] : '';
+            },
+
+            mammothAvailable() {
+                return typeof window !== 'undefined'
+                    && typeof window.mammoth !== 'undefined'
+                    && typeof window.mammoth.extractRawText === 'function';
+            },
+
+            shouldUseMammothForExtension(extension) {
+                if (!extension) {
+                    return false;
+                }
+
+                const preferredExtensions = ['doc', 'docx'];
+                return preferredExtensions.includes(extension) && this.mammothAvailable();
+            },
+
+            countWordsFromText(text) {
+                if (typeof text !== 'string') {
+                    return 0;
+                }
+
+                const normalised = text.replace(/[\r\n\t]+/g, ' ').trim();
+                if (!normalised) {
+                    return 0;
+                }
+
+                const matches = normalised.match(/\S+/g);
+                return matches ? matches.length : 0;
+            },
+
+            extractWordCountWithMammoth(file) {
+                return new Promise((resolve, reject) => {
+                    if (!file || !this.mammothAvailable()) {
+                        resolve(null);
+                        return;
+                    }
+
+                    const reader = new FileReader();
+
+                    reader.onload = (event) => {
+                        const arrayBuffer = event && event.target ? event.target.result : null;
+
+                        if (!arrayBuffer) {
+                            resolve(null);
+                            return;
+                        }
+
+                        window.mammoth.extractRawText({ arrayBuffer })
+                            .then((result) => {
+                                const text = result && typeof result.value === 'string' ? result.value : '';
+                                resolve(this.countWordsFromText(text));
+                            })
+                            .catch((error) => {
+                                reject(error);
+                            });
+                    };
+
+                    reader.onerror = () => {
+                        reject(reader.error || new Error('Kunne ikke lese dokumentet.'));
+                    };
+
+                    try {
+                        reader.readAsArrayBuffer(file);
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+            },
+
+            setWordCountFeedback(message, isError = false) {
+                this.wordCountFeedback = message;
+                this.wordCountFeedbackIsError = !!isError;
+            },
+
+            setWordCountPriceFeedback(message, isError = false) {
+                this.wordCountPriceFeedback = message;
+                this.wordCountPriceFeedbackIsError = !!isError;
+            },
+
+            resetWordCountMessages() {
+                this.setWordCountFeedback('', false);
+                this.setWordCountPriceFeedback('', false);
+            },
+
+            showGlobalAlert(messages, type = 'danger') {
+                const normalisedMessages = Array.isArray(messages)
+                    ? messages.filter((message) => !!message)
+                    : (messages ? [messages] : []);
+                const uniqueMessages = Array.from(new Set(normalisedMessages.map((message) => message.trim())));
+
+                if (!uniqueMessages.length) {
+                    return;
+                }
+
+                let alertElement = document.getElementById('fixed_to_bottom_alert');
+                if (!alertElement) {
+                    alertElement = document.createElement('div');
+                    alertElement.id = 'fixed_to_bottom_alert';
+                    alertElement.className = 'alert global-alert-box';
+                    alertElement.setAttribute('role', 'alert');
+                    alertElement.style.zIndex = '9';
+                    alertElement.style.minWidth = '300px';
+
+                    const closeButton = document.createElement('a');
+                    closeButton.href = '#';
+                    closeButton.className = 'close';
+                    closeButton.setAttribute('data-dismiss', 'alert');
+                    closeButton.setAttribute('aria-label', 'close');
+                    closeButton.setAttribute('title', 'close');
+                    closeButton.innerHTML = '&times;';
+                    closeButton.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        if (alertElement.parentNode) {
+                            alertElement.parentNode.removeChild(alertElement);
+                        } else {
+                            alertElement.remove();
+                        }
+                    });
+
+                    const list = document.createElement('ul');
+                    alertElement.appendChild(closeButton);
+                    alertElement.appendChild(list);
+
+                    document.body.appendChild(alertElement);
+                }
+
+                alertElement.classList.add('alert', 'global-alert-box');
+                alertElement.classList.remove('alert-danger', 'alert-success', 'alert-info', 'alert-warning', 'alert-primary');
+                alertElement.classList.add(`alert-${type}`);
+
+                let list = alertElement.querySelector('ul');
+                if (!list) {
+                    list = document.createElement('ul');
+                    alertElement.appendChild(list);
+                }
+
+                list.innerHTML = '';
+                uniqueMessages.forEach((message) => {
+                    const item = document.createElement('li');
+                    item.innerHTML = message;
+                    list.appendChild(item);
+                });
+
+                alertElement.style.display = 'block';
+                alertElement.classList.remove('d-none');
+            },
+
+            calculateExcessWordsAmount(wordCount) {
+                if (!Number.isInteger(wordCount) || wordCount <= this.manuscriptBaseWordLimit) {
+                    return 0;
+                }
+
+                const excessWords = wordCount - this.manuscriptBaseWordLimit;
+                const perWord = Number(this.excessPerWord) || 0;
+                return excessWords * perWord;
+            },
+
+            storeTempFileOnServer(file, providedWordCount = null) {
+                if (!file) {
+                    return Promise.resolve({});
+                }
+
+                const formData = new FormData();
+                const tokenElement = document.head.querySelector('meta[name="csrf-token"]');
+                if (tokenElement) {
+                    formData.append('_token', tokenElement.getAttribute('content'));
+                }
+
+                formData.append('manuscript', file);
+
+                if (Number.isInteger(providedWordCount) && providedWordCount > 0) {
+                    formData.append('word_count', providedWordCount);
+                }
+
+                return axios.post(this.storeTempUploadUrl, formData)
+                    .then((response) => response.data)
+                    .catch((error) => {
+                        if (error && error.response) {
+                            const data = error.response.data || {};
+                            const errorMessages = [];
+
+                            if (data.message && data.message !== 'The given data was invalid.') {
+                                errorMessages.push(data.message);
+                            }
+
+                            if (data.errors) {
+                                Object.values(data.errors).forEach((entry) => {
+                                    if (Array.isArray(entry)) {
+                                        entry.forEach((item) => {
+                                            if (item) {
+                                                errorMessages.push(item);
+                                            }
+                                        });
+                                    } else if (entry) {
+                                        errorMessages.push(entry);
+                                    }
+                                });
+                            }
+
+                            if (!errorMessages.length) {
+                                errorMessages.push('Kunne ikke lagre resultatet på serveren. Prøv igjen senere.');
+                            }
+
+                            const uploadError = new Error(errorMessages[0]);
+                            uploadError.alertMessages = errorMessages;
+                            uploadError.responseData = data;
+
+                            throw uploadError;
+                        }
+
+                        throw error;
+                    });
+            },
+
+            async processManuscriptFile(file) {
+                if (!file) {
+                    this.orderForm.manuscript = null;
+                    this.orderForm.temp_file = null;
+                    this.tempFileInfo = null;
+                    this.orderForm.excess_words_amount = 0;
+                    this.resetWordCountMessages();
+                    return;
+                }
+
+                const extension = this.getFileExtension(file.name);
+
+                if (!this.allowedWordCountExtensions.includes(extension)) {
+                    this.orderForm.manuscript = null;
+                    this.orderForm.temp_file = null;
+                    this.tempFileInfo = null;
+                    this.orderForm.excess_words_amount = 0;
+                    this.setWordCountFeedback('Vennligst velg en DOCX-, PDF-, DOC- eller ODT-fil for ordtelling.', true);
+                    this.setWordCountPriceFeedback('');
+                    return;
+                }
+
+                let storedSuccessfully = false;
+                this.wordCountProcessing = true;
+                this.setWordCountFeedback(this.shouldUseMammothForExtension(extension)
+                    ? 'Bruker Mammoth til å beregne antall ord ...'
+                    : 'Laster opp og beregner antall ord ...');
+                this.setWordCountPriceFeedback('');
+
+                try {
+                    const useMammoth = this.shouldUseMammothForExtension(extension);
+                    let serverData = null;
+
+                    if (useMammoth) {
+                        try {
+                            const mammothWordCount = await this.extractWordCountWithMammoth(file);
+                            if (Number.isInteger(mammothWordCount) && mammothWordCount > 0) {
+                                serverData = await this.storeTempFileOnServer(file, mammothWordCount);
+                            } else {
+                                serverData = await this.storeTempFileOnServer(file);
+                            }
+                        } catch (mammothError) {
+                            console.error('Unable to count words with Mammoth for checkout form', mammothError);
+                            serverData = await this.storeTempFileOnServer(file);
+                        }
+                    } else {
+                        serverData = await this.storeTempFileOnServer(file);
+                    }
+
+                    storedSuccessfully = true;
+                    const serverWordCount = Number.isInteger(serverData && serverData.word_count)
+                        ? serverData.word_count
+                        : null;
+
+                    this.tempFileInfo = {
+                        original_name: file.name,
+                        word_count: serverWordCount,
+                        formatted_price: serverData && serverData.formatted_price ? serverData.formatted_price : null,
+                        price: serverData && typeof serverData.price !== 'undefined' ? serverData.price : null,
+                        plan: serverData && serverData.plan ? serverData.plan : null,
+                    };
+
+                    this.orderForm.temp_file = 'uploaded';
+                    this.orderForm.manuscript = null;
+                    this.orderForm.excess_words_amount = serverWordCount
+                        ? this.calculateExcessWordsAmount(serverWordCount)
+                        : 0;
+
+                    if (serverWordCount) {
+                        const priceMessage = this.tempFileInfo && this.tempFileInfo.formatted_price
+                            ? `Prisen for ditt manus er ${this.tempFileInfo.formatted_price}.`
+                            : 'Prisen er oppdatert.';
+                        this.setWordCountFeedback(`Manuskriptet inneholder omtrent ${serverWordCount} ord.`);
+                        this.setWordCountPriceFeedback(priceMessage, false);
+                    } else if (serverData && serverData.message) {
+                        this.setWordCountFeedback('Beregningen ble fullført.');
+                        this.setWordCountPriceFeedback(serverData.message, false);
+                    } else {
+                        this.setWordCountFeedback('Beregningen ble fullført.');
+                        this.setWordCountPriceFeedback('');
+                    }
+
+                    try {
+                        await this.computeManuscriptPrice();
+                        this.originalPrice = parseFloat(this.shopManuscript.full_payment_price)
+                            + (this.orderForm.excess_words_amount || 0);
+                    } catch (pricingError) {
+                        this.setWordCountFeedback('Kunne ikke oppdatere prisen. Se varselet for detaljer.', true);
+                        this.setWordCountPriceFeedback('');
+                        throw pricingError;
+                    }
+                } catch (error) {
+                    const errorMessages = Array.isArray(error && error.alertMessages)
+                        ? error.alertMessages.filter((message) => !!message)
+                        : [];
+                    const fallbackMessage = typeof error === 'string'
+                        ? error
+                        : (error && error.message)
+                            ? error.message
+                            : 'Kunne ikke beregne antall ord. Prøv igjen senere.';
+                    const messagesToShow = errorMessages.length ? errorMessages : [fallbackMessage];
+                    this.showGlobalAlert(messagesToShow, 'danger');
+                    this.setWordCountFeedback('Kunne ikke beregne antall ord. Se varselet for detaljer.', true);
+                    this.setWordCountPriceFeedback('');
+                    this.tempFileInfo = null;
+                    this.orderForm.temp_file = null;
+                    this.orderForm.excess_words_amount = 0;
+                    this.orderForm.manuscript = null;
+                    if (storedSuccessfully) {
+                        axios.get('/forget-session-key/temp_uploaded_file');
+                    }
+                    this.genreChanged();
+                } finally {
+                    this.wordCountProcessing = false;
+                }
+            },
 
             getCurrentUser() {
                 axios.get('/current-user').then(response => {
@@ -707,54 +1077,86 @@ import FileUpload from '../../components/FileUpload.vue';
                 this.orderForm.additional = !this.hasPaidCourse ? additional : 0;
             },
 
-            handleFileSelected(type, file) {
+            async handleFileSelected(type, file) {
                 if (type === 'synopsis') {
                     this.orderForm.synopsis = file;
                 } else {
                     this.orderForm.manuscript = file;
-                    this.computeManuscriptPrice();
+                    await this.processManuscriptFile(file);
                 }
             },
 
             computeManuscriptPrice() {
-                let formData = new FormData();
-                $.each(this.orderForm, function(k, v) {
-                    formData.append(k, v);
+                const formData = new FormData();
+
+                Object.entries(this.orderForm).forEach(([key, value]) => {
+                    if (key === 'manuscript') {
+                        if (value instanceof File) {
+                            formData.append(key, value);
+                        }
+                        return;
+                    }
+
+                    if (typeof value === 'boolean') {
+                        formData.append(key, value ? 1 : 0);
+                        return;
+                    }
+
+                    if (value === undefined || value === null) {
+                        formData.append(key, '');
+                        return;
+                    }
+
+                    formData.append(key, value);
                 });
 
                 formData.append('is_manuscript_only', true);
 
-                axios.post(this.requestUrl+'/checkout/validate-order', formData).then(response => {
-                    console.log(response);
-                    this.orderForm.excess_words_amount = response.data.excess_words_amount;
-                    this.orderForm.price = response.data.price;
-                    this.orderForm.price = parseFloat(this.orderForm.price) + response.data.excess_words_amount;
-                    console.log(this.orderForm.price);
-                    
-                }).catch(error => {
-                    this.processError(error);
-                });
+                return axios.post(this.requestUrl + '/checkout/validate-order', formData)
+                    .then((response) => {
+                        if (response.data && typeof response.data.word_count !== 'undefined' && this.tempFileInfo) {
+                            this.tempFileInfo.word_count = response.data.word_count;
+                        }
+
+                        this.orderForm.excess_words_amount = response.data.excess_words_amount || 0;
+                        this.genreChanged();
+                        this.originalPrice = parseFloat(this.shopManuscript.full_payment_price)
+                            + (this.orderForm.excess_words_amount || 0);
+
+                        return response;
+                    })
+                    .catch((error) => {
+                        this.processError(error);
+                        throw error;
+                    });
             },
 
             removeFile() {
-                const data = {
-                    key: 'temp_uploaded_file'
-                }
                 axios.get('/forget-session-key/temp_uploaded_file').then(response => {
                     this.orderForm.temp_file = null;
+                    this.tempFileInfo = null;
+                    this.orderForm.manuscript = null;
+                    this.orderForm.excess_words_amount = 0;
+                    this.originalPrice = this.origPrice;
+                    this.resetWordCountMessages();
+                    this.genreChanged();
                     this.orderForm.price = this.origPrice;
                 });
             }
         },
 
         mounted() {
-            this.wizardProps = this.$refs.wizard;        
+            this.wizardProps = this.$refs.wizard;
             this.loadOptions();
             this.checkHasPaidCourse();
 
             if (this.tempFile) {
                 this.originalPrice = this.tempFile.price;
                 this.orderForm.excess_words_amount = this.tempFile.excess_words_amount;
+                if (this.tempFile.word_count) {
+                    this.setWordCountFeedback(`Manuskriptet inneholder omtrent ${this.tempFile.word_count} ord.`);
+                    this.setWordCountPriceFeedback('Prisen er oppdatert.');
+                }
             }
         }
 
@@ -790,13 +1192,13 @@ import FileUpload from '../../components/FileUpload.vue';
         min-height: 50px;
         padding: 0;
         border: 2px dashed rgb(56, 78, 183, 30%);
-        text-align: center;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
         margin-top: 20px;
         font-size: 15px;
-        padding: 5px;
+        padding: 10px 15px;
+        text-align: left;
     }
 
     .temp-file-container button {
@@ -809,6 +1211,24 @@ import FileUpload from '../../components/FileUpload.vue';
 
     .temp-file-container button:hover {
         opacity: .6;
+    }
+
+    .temp-file-details {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .temp-file-name {
+        font-weight: 700;
+        word-break: break-word;
+    }
+
+    .temp-file-meta {
+        font-size: 13px;
+        font-weight: 400;
+        color: #555;
     }
 
 </style>

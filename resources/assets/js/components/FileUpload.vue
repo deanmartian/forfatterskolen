@@ -66,15 +66,20 @@ export default {
 		handleDragLeave() {
 			this.isDragging = false;
 		},
-		handleDrop(event) {
-			this.isDragging = false;
-			const droppedFiles = event.dataTransfer.files;
-			this.files = droppedFiles[0]; // Only store the first dropped file
-		},
-		handleFileChange(event) {
-			const selectedFiles = event.target.files;
-			this.files = selectedFiles[0]; // Only store the first selected file
-			this.$emit("fileSelected", this.files); // Emit the event
+                handleDrop(event) {
+                        this.isDragging = false;
+                        const droppedFiles = event.dataTransfer.files;
+                        if (!droppedFiles || !droppedFiles.length) {
+                                return;
+                        }
+
+                        this.files = droppedFiles[0]; // Only store the first dropped file
+                        this.$emit("fileSelected", this.files);
+                },
+                handleFileChange(event) {
+                        const selectedFiles = event.target.files;
+                        this.files = selectedFiles[0]; // Only store the first selected file
+                        this.$emit("fileSelected", this.files); // Emit the event
 		},
 	},
 };
