@@ -673,6 +673,68 @@
             let processButton = null;
             const allowedWordCountExtensions = ['docx', 'pdf', 'doc', 'odt'];
 
+            const showGlobalAlert = (messages, type = 'danger') => {
+                const normalisedMessages = Array.isArray(messages)
+                    ? messages.filter((message) => !!message)
+                    : (messages ? [messages] : []);
+
+                if (!normalisedMessages.length) {
+                    return;
+                }
+
+                let alertElement = document.getElementById('fixed_to_bottom_alert');
+                if (!alertElement) {
+                    alertElement = document.createElement('div');
+                    alertElement.id = 'fixed_to_bottom_alert';
+                    alertElement.className = 'alert global-alert-box';
+                    alertElement.setAttribute('role', 'alert');
+                    alertElement.style.zIndex = '9';
+                    alertElement.style.minWidth = '300px';
+
+                    const closeButton = document.createElement('a');
+                    closeButton.href = '#';
+                    closeButton.className = 'close';
+                    closeButton.setAttribute('data-dismiss', 'alert');
+                    closeButton.setAttribute('aria-label', 'close');
+                    closeButton.setAttribute('title', 'close');
+                    closeButton.innerHTML = '&times;';
+                    closeButton.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        if (alertElement.parentNode) {
+                            alertElement.parentNode.removeChild(alertElement);
+                        } else {
+                            alertElement.remove();
+                        }
+                    });
+
+                    const list = document.createElement('ul');
+                    alertElement.appendChild(closeButton);
+                    alertElement.appendChild(list);
+
+                    document.body.appendChild(alertElement);
+                }
+
+                alertElement.classList.add('alert', 'global-alert-box');
+                alertElement.classList.remove('alert-danger', 'alert-success', 'alert-info', 'alert-warning', 'alert-primary');
+                alertElement.classList.add(`alert-${type}`);
+
+                let list = alertElement.querySelector('ul');
+                if (!list) {
+                    list = document.createElement('ul');
+                    alertElement.appendChild(list);
+                }
+
+                list.innerHTML = '';
+                normalisedMessages.forEach((message) => {
+                    const item = document.createElement('li');
+                    item.innerHTML = message;
+                    list.appendChild(item);
+                });
+
+                alertElement.style.display = 'block';
+                alertElement.classList.remove('d-none');
+            };
+
             const setFeedback = (message, isError = false) => {
                 if (!wordCountFeedback) {
                     return;
@@ -789,18 +851,35 @@
                     }
 
                     if (!response.ok) {
-                        if (data && data.message) {
-                            throw data.message;
+                        const errorMessages = [];
+
+                        if (data && data.message && data.message !== 'The given data was invalid.') {
+                            errorMessages.push(data.message);
                         }
 
                         if (data && data.errors) {
-                            const firstError = Object.values(data.errors)[0];
-                            if (Array.isArray(firstError) && firstError.length > 0) {
-                                throw firstError[0];
-                            }
+                            Object.values(data.errors).forEach((errorEntry) => {
+                                if (Array.isArray(errorEntry)) {
+                                    errorEntry.forEach((entry) => {
+                                        if (entry) {
+                                            errorMessages.push(entry);
+                                        }
+                                    });
+                                } else if (errorEntry) {
+                                    errorMessages.push(errorEntry);
+                                }
+                            });
                         }
 
-                        throw 'Kunne ikke lagre resultatet på serveren. Prøv igjen senere.';
+                        if (!errorMessages.length) {
+                            errorMessages.push('Kunne ikke lagre resultatet på serveren. Prøv igjen senere.');
+                        }
+
+                        const error = new Error(errorMessages[0]);
+                        error.alertMessages = errorMessages;
+                        error.responseData = data;
+
+                        throw error;
                     }
 
                     return data || {};
@@ -901,10 +980,17 @@
                         }
                     })
                     .catch((error) => {
-                        const errorMessage = typeof error === 'string'
+                        const errorMessages = Array.isArray(error && error.alertMessages)
+                            ? error.alertMessages.filter((message) => !!message)
+                            : [];
+                        const fallbackMessage = typeof error === 'string'
                             ? error
-                            : 'Kunne ikke beregne antall ord. Prøv igjen senere.';
-                        setFeedback(errorMessage, true);
+                            : (error && error.message)
+                                ? error.message
+                                : 'Kunne ikke beregne antall ord. Prøv igjen senere.';
+                        const messagesToShow = errorMessages.length ? errorMessages : [fallbackMessage];
+                        showGlobalAlert(messagesToShow, 'danger');
+                        setFeedback('Kunne ikke beregne antall ord. Se varselet for detaljer.', true);
                         setPriceFeedback('');
                     })
                     .finally(() => {
