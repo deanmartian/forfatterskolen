@@ -26,6 +26,7 @@ class ShopManuscriptService
     {
         $word_count = 0;
         $filepath = '';
+        $absolutePath = null;
         $originalName = null;
         $mimeType = null;
 
@@ -36,12 +37,18 @@ class ShopManuscriptService
             $mimeType = $file->getMimeType();
 
             $time = time();
-            $destinationPath = 'storage/manuscript-tests/'; // upload path
-            $fileName = $time.'.'.$extension; // rename document
-            $filepath = $destinationPath.$fileName;
-            $file->move($destinationPath, $fileName);
+            $relativeDirectory = 'storage/manuscript-tests';
+            $absoluteDirectory = public_path($relativeDirectory);
 
-            $fullPath = $destinationPath.$fileName;
+            if (! is_dir($absoluteDirectory)) {
+                mkdir($absoluteDirectory, 0755, true);
+            }
+
+            $fileName = $time.'.'.$extension; // rename document
+            $file->move($absoluteDirectory, $fileName);
+
+            $filepath = $relativeDirectory.'/'.$fileName;
+            $absolutePath = $this->resolveFilePath($filepath);
 
             $providedWordCount = $request->input('word_count');
             $providedWordCount = is_numeric($providedWordCount) ? (int) $providedWordCount : null;
@@ -49,7 +56,7 @@ class ShopManuscriptService
             if (in_array($extension, ['doc', 'docx'], true) && $providedWordCount && $providedWordCount > 0) {
                 $word_count = $providedWordCount;
             } else {
-                $word_count = $this->determineWordCount($fullPath, $extension);
+                $word_count = $absolutePath ? $this->determineWordCount($absolutePath, $extension) : 0;
 
                 if ((! $word_count || $word_count < 0) && $providedWordCount && $providedWordCount > 0) {
                     $word_count = $providedWordCount;
@@ -66,9 +73,38 @@ class ShopManuscriptService
 
     }
 
+    protected function resolveFilePath(string $path): ?string
+    {
+        if ($path === '') {
+            return null;
+        }
+
+        if (is_file($path)) {
+            return $path;
+        }
+
+        $trimmed = ltrim($path, '/');
+
+        $publicPath = public_path($trimmed);
+        if (is_file($publicPath)) {
+            return $publicPath;
+        }
+
+        $basePath = base_path($trimmed);
+        if (is_file($basePath)) {
+            return $basePath;
+        }
+
+        return null;
+    }
+
     protected function determineWordCount(string $filePath, string $extension): int
     {
         $extension = strtolower($extension);
+
+        if (! is_file($filePath)) {
+            return 0;
+        }
 
         try {
             switch ($extension) {
