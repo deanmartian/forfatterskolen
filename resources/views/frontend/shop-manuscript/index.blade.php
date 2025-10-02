@@ -52,7 +52,7 @@
         </div>
 
         {{-- data-bg="https://www.forfatterskolen.no/images-new/notebook-pen.png" --}}
-        <div class="third-section">
+        {{-- <div class="third-section">
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-md-6 left-container">
@@ -73,14 +73,14 @@
                                 <br>
                                 <span class="note"><i class="info-icon"></i> {{ trans('site.front.shop-manuscript.form.note') }}</span>
                             </label>
-                            {{-- <div class="input-group mb-4">
+                            <div class="input-group mb-4">
                                 <input type="text" readonly class="form-control disabled" required>
                                 <div class="input-group-append">
                                     <button class="btn bg-site-red select-manuscript" type="button">
                                         {{ trans('site.front.shop-manuscript.form.select-document') }}
                                     </button>
                                 </div>
-                            </div> --}}
+                            </div>
                             <label for="file-upload" class="file-upload-label">
                                 <div class="file-upload" id="file-upload-area">
                                     <div class="file-upload-text">
@@ -103,7 +103,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="third-section word-count-section">
             <div class="container">
@@ -113,33 +113,41 @@
                     </div>
                     <div class="col-md-6 details" id="wordCountTool">
                         <h2 class="title mb-4">
-                            Sjekk antall ord i manuskriptet ditt
+                            {{ trans('site.front.shop-manuscript.form.title') }}
                         </h2>
-                        <p>
-                            Last opp manuskriptet ditt som en DOCX-, PDF-, DOC- eller ODT-fil for å få en rask oversikt over antall ord før du sender det til oss.
-                        </p>
+                        <label class="mb-4 mt-3">
+                            <span class="instruction">{{ trans('site.front.shop-manuscript.form.instruction') }}</span>
+                            <br>
+                            <span class="note"><i class="info-icon"></i> {{ trans('site.front.shop-manuscript.form.note') }}</span>
+                        </label>
 
                         <input type="file" class="hidden" id="word-count-file" accept=".doc,.docx,.pdf,.odt">
                         <label for="word-count-file" class="file-upload-label">
                             <div class="file-upload" id="word-count-upload-area">
                                 <div class="file-upload-text" id="word-count-upload-text">
-                                    <a href="javascript:void(0)" class="word-count-file-trigger">Klikk her</a> for å laste opp filen din eller <br>
+                                    <a href="javascript:void(0)" 
+                                    class="word-count-file-trigger file-upload-btn">Klikk her</a> 
+                                    for å laste opp filen din eller <br>
                                     dra filen din hit.
                                 </div>
                             </div>
                         </label>
 
-                        <div class="word-count-feedback mt-3" id="word-count-feedback">
+                        {{-- <div class="word-count-feedback mt-3" id="word-count-feedback">
                             Velg en DOCX-, PDF-, DOC- eller ODT-fil og klikk på knappen under for å beregne ord og pris.
                         </div>
 
-                        <div class="word-count-feedback mt-2" id="word-count-price-feedback"></div>
+                        <div class="word-count-feedback mt-2" id="word-count-price-feedback"></div> --}}
 
                         <div class="margin-top">
                             <button class="btn site-btn-global-w-arrow word-count-process-btn" type="button">
-                                Beregn ord og pris
+                                {{ trans('site.front.upload') }} 
                                 <img src="{{ asset('images-new/icon/upload.png') }}" alt="">
                             </button>
+                        </div>
+
+                        <div class="price-increase-note">
+                            {!! trans('site.shop-manuscript-price-increase-note') !!}
                         </div>
                     </div>
                 </div>
