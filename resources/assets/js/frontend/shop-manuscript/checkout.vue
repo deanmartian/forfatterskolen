@@ -817,8 +817,8 @@ import FileUpload from '../../components/FileUpload.vue';
                             ? error.message
                             : 'Kunne ikke beregne antall ord. Prøv igjen senere.';
                     const messagesToShow = errorMessages.length ? errorMessages : [fallbackMessage];
-                    this.showGlobalAlert(messagesToShow, 'danger');
-                    this.setWordCountFeedback('Kunne ikke beregne antall ord. Se varselet for detaljer.', true);
+                    const inlineMessage = messagesToShow.filter((message) => !!message).join(' ') || fallbackMessage;
+                    this.setWordCountFeedback(inlineMessage, true);
                     this.setWordCountPriceFeedback('');
                     this.tempFileInfo = null;
                     this.orderForm.temp_file = null;
@@ -1091,6 +1091,13 @@ import FileUpload from '../../components/FileUpload.vue';
 
                 Object.entries(this.orderForm).forEach(([key, value]) => {
                     if (key === 'manuscript') {
+                        if (value instanceof File) {
+                            formData.append(key, value);
+                        }
+                        return;
+                    }
+
+                    if (key === 'synopsis') {
                         if (value instanceof File) {
                             formData.append(key, value);
                         }
