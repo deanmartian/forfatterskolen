@@ -151,6 +151,13 @@
                         </div>
 
                         <div class="form-group">
+                            <label>Send to learners with unpaid pay later</label> <br>
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes"
+                                   data-off="No"
+                                   name="send_to_learners_with_unpaid_pay_later" data-width="84">
+                        </div>
+
+                        <div class="form-group">
                             <label>{{ trans('site.allowed-package') }}</label>
                             @foreach($course->packages as $package)
                                 <div class="form-check">
