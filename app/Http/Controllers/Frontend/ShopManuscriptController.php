@@ -97,10 +97,10 @@ class ShopManuscriptController extends Controller
 
         if ($request->hasFile('manuscript')) {
             $file = $request->file('manuscript');
-            $extension = $file->getClientOriginalExtension();
+            $extension = strtolower($file->getClientOriginalExtension());
 
-            if (! in_array($extension, ['docx'])) { // 'odt', 'pdf', 'doc',
-                $customErrors = ['manuscript' => ['The manuscript must be a file of type: docx.']]; // odt, pdf, doc,
+            if (! in_array($extension, ['docx', 'pdf', 'doc', 'odt'])) { // 'odt', 'pdf', 'doc',
+                $customErrors = ['manuscript' => ['The manuscript must be a file of type: docx, pdf, doc, odt.']]; // odt, pdf, doc,
                 $validator = FacadeValidator::make([], []);
                 $validator->validate(); // Perform validation without rules
                 $validator->errors()->merge($customErrors);
@@ -1020,6 +1020,98 @@ class ShopManuscriptController extends Controller
         ]);
 
         return redirect()->back()->with('manuscript_test', $message);
+    }
+
+    public function storeTempUploadedFile(Request $request, ShopManuscriptService $shopManuscriptService): JsonResponse
+    {
+        if (! $request->hasFile('manuscript') || ! $request->file('manuscript')->isValid()) {
+            $validator = FacadeValidator::make([], []);
+            $validator->errors()->add('manuscript', 'Filen kunne ikke lastes opp. Vennligst prøv igjen.');
+
+            throw new ValidationException($validator);
+        }
+
+        $extensions = ['pdf', 'doc', 'docx', 'odt'];
+        $extension = strtolower($request->file('manuscript')->getClientOriginalExtension());
+
+        if (! in_array($extension, $extensions)) {
+            $validator = FacadeValidator::make([], []);
+            $validator->errors()->add('manuscript', 'Ugyldig filformat. Tillatte formater er PDF, DOC, DOCX og ODT.');
+
+            throw new ValidationException($validator);
+        }
+
+        $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
+
+        if (empty($uploadedManuscript['word_count'])) {
+            $validator = FacadeValidator::make([], []);
+            $validator->errors()->add('manuscript', 'Kunne ikke lese denne filen. Prøv igjen med en gyldig fil.');
+
+            throw new ValidationException($validator);
+        }
+
+        $wordCount = (int) $uploadedManuscript['word_count'];
+        $newWordCount = $wordCount;
+        $price = 0;
+        $buttonLink = null;
+        $checkoutRoute = 'front.shop-manuscript.checkout';
+
+        try {
+            $previousRoute = app('router')->getRoutes()->match(app('request')->create(url()->previous()))->getName();
+            if ($previousRoute === 'front.gift.shop-manuscript') {
+                $checkoutRoute = 'front.gift.shop-manuscript.checkout';
+            }
+        } catch (\Exception $exception) {
+            // Keep default checkout route when previous route cannot be resolved.
+        }
+
+        $suggestedPlan = ShopManuscript::where('max_words', '>=', $newWordCount)
+            ->orderBy('max_words', 'ASC')->first();
+
+        if ($suggestedPlan) {
+            $price = $suggestedPlan->full_payment_price;
+            if ($newWordCount > 17500) {
+                $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
+                $excessWords = $newWordCount - 17500;
+                $price += $excessWords * $excessPerWordAmount;
+            }
+
+            $buttonLink = route($checkoutRoute, $suggestedPlan->id);
+        }
+
+        $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
+        $excessWords = $newWordCount - 17500;
+
+        session([
+            'temp_uploaded_file' => [
+                'path' => $uploadedManuscript['manuscript_file'],
+                'original_name' => $uploadedManuscript['original_name'],
+                'mime_type' => $uploadedManuscript['mime_type'],
+                'word_count' => $newWordCount,
+                'price' => $price,
+                'excess_words_amount' => $excessWords > 0 ? $excessWords * $excessPerWordAmount : 0,
+            ]
+        ]);
+
+        $formattedPrice = FrontendHelpers::formatCurrency($price).' KR';
+        $message = 'Manuset ditt er på '.$newWordCount.' ord <br />'
+            .'<h3 class="no-margin-top">Prisen for ditt manus er kroner: '.$formattedPrice.'</h3>';
+
+        if ($buttonLink) {
+            $message .= '<a href="'.$buttonLink.'" class="btn btn-theme">Bestill nå</a>';
+        }
+
+        return response()->json([
+            'message' => $message,
+            'word_count' => $newWordCount,
+            'price' => $price,
+            'formatted_price' => $formattedPrice,
+            'plan' => $suggestedPlan ? [
+                'id' => $suggestedPlan->id,
+                'title' => $suggestedPlan->title,
+                'checkout_url' => $buttonLink,
+            ] : null,
+        ]);
     }
 
     public function validator($data)

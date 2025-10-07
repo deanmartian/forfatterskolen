@@ -41,6 +41,7 @@
         "vue-select": "^3.20.0",
         "vue-slider-component": "^3.2.24",
         "vue-toasted": "^1.1.28",
-        "vue2-filters": "^0.11.1"
+        "vue2-filters": "^0.11.1",
+        "mammoth": "^1.8.2"
     }
 }
