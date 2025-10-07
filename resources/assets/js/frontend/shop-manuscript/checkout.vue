@@ -839,6 +839,8 @@ import FileUpload from '../../components/FileUpload.vue';
                         this.originalPrice = price;
                     }
 
+                    this.removeValidationError();
+
                     return response.data;
                 } catch (error) {
                     this.processError(error);
