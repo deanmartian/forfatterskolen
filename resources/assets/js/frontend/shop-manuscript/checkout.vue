@@ -45,7 +45,7 @@
                             </div>
 
                             <FileUpload
-                            :accept="'application/vnd.openxmlformats-officedocument.wordprocessingml.document'" 
+                            :accept="'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/vnd.oasis.opendocument.text'"
                             @fileSelected="handleFileSelected('manuscript', $event)" v-else/>
                             <input type="hidden" name="manuscript">
 
@@ -384,6 +384,7 @@
 </template>
 
 <script>
+import mammoth from 'mammoth/mammoth.browser';
 import FileUpload from '../../components/FileUpload.vue';
     export default {
 
@@ -418,6 +419,7 @@ import FileUpload from '../../components/FileUpload.vue';
                     genre: '',
                     description: '',
                     coaching_time_later: false,
+                    word_count: null,
                     item_type: 2,
                     shop_manuscript_id: this.shopManuscript.id,
                     has_vat: !this.userHasPaidCourse,
@@ -707,16 +709,42 @@ import FileUpload from '../../components/FileUpload.vue';
                 this.orderForm.additional = !this.hasPaidCourse ? additional : 0;
             },
 
-            handleFileSelected(type, file) {
+            async handleFileSelected(type, file) {
                 if (type === 'synopsis') {
                     this.orderForm.synopsis = file;
                 } else {
+                    if (!file) {
+                        return;
+                    }
+
                     this.orderForm.manuscript = file;
-                    this.computeManuscriptPrice();
+                    const extension = this.getFileExtension(file);
+                    let wordCount = null;
+
+                    if (['doc', 'docx'].includes(extension)) {
+                        try {
+                            wordCount = await this.extractWordCountWithMammoth(file);
+                        } catch (error) {
+                            console.error('Mammoth word count failed, falling back to server', error);
+                        }
+                    }
+
+                    this.orderForm.word_count = wordCount;
+                    this.orderForm.temp_file = {
+                        original_name: file.name,
+                        word_count: wordCount,
+                    };
+
+                    try {
+                        await this.uploadManuscriptTemp(file, wordCount);
+                        await this.computeManuscriptPrice();
+                    } catch (error) {
+                        // Errors are handled in uploadManuscriptTemp/computeManuscriptPrice
+                    }
                 }
             },
 
-            computeManuscriptPrice() {
+            async computeManuscriptPrice() {
                 let formData = new FormData();
                 $.each(this.orderForm, function(k, v) {
                     formData.append(k, v);
@@ -724,16 +752,15 @@ import FileUpload from '../../components/FileUpload.vue';
 
                 formData.append('is_manuscript_only', true);
 
-                axios.post(this.requestUrl+'/checkout/validate-order', formData).then(response => {
-                    console.log(response);
+                try {
+                    const response = await axios.post(this.requestUrl+'/checkout/validate-order', formData);
                     this.orderForm.excess_words_amount = response.data.excess_words_amount;
                     this.orderForm.price = response.data.price;
                     this.orderForm.price = parseFloat(this.orderForm.price) + response.data.excess_words_amount;
-                    console.log(this.orderForm.price);
-                    
-                }).catch(error => {
+                } catch (error) {
                     this.processError(error);
-                });
+                    throw error;
+                }
             },
 
             removeFile() {
@@ -743,18 +770,95 @@ import FileUpload from '../../components/FileUpload.vue';
                 axios.get('/forget-session-key/temp_uploaded_file').then(response => {
                     this.orderForm.temp_file = null;
                     this.orderForm.price = this.origPrice;
+                    this.orderForm.manuscript = null;
+                    this.orderForm.word_count = null;
+                    this.originalPrice = this.origPrice;
                 });
+            },
+
+            getFileExtension(file) {
+                if (!file || !file.name) {
+                    return '';
+                }
+
+                const parts = file.name.split('.');
+                return parts.length > 1 ? parts.pop().toLowerCase() : '';
+            },
+
+            extractWordCountWithMammoth(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+
+                    reader.onload = async (event) => {
+                        try {
+                            const arrayBuffer = event.target.result;
+                            const result = await mammoth.extractRawText({ arrayBuffer });
+                            resolve(this.countWords(result.value));
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+
+                    reader.onerror = (error) => {
+                        reject(error);
+                    };
+
+                    reader.readAsArrayBuffer(file);
+                });
+            },
+
+            countWords(text) {
+                if (!text) {
+                    return 0;
+                }
+
+                const matches = text.trim().match(/\S+/g);
+                return matches ? matches.length : 0;
+            },
+
+            async uploadManuscriptTemp(file, wordCount = null) {
+                const formData = new FormData();
+                formData.append('manuscript', file);
+
+                if (Number.isFinite(wordCount) && wordCount > 0) {
+                    formData.append('word_count', wordCount);
+                }
+
+                try {
+                    const response = await axios.post('/shop-manuscript/store-temp-upload', formData);
+                    const { word_count: resolvedWordCount, price } = response.data;
+
+                    this.orderForm.temp_file = {
+                        original_name: file.name,
+                        word_count: resolvedWordCount,
+                    };
+
+                    this.orderForm.word_count = resolvedWordCount;
+
+                    if (typeof price === 'number') {
+                        this.originalPrice = price;
+                    }
+
+                    this.removeValidationError();
+
+                    return response.data;
+                } catch (error) {
+                    this.processError(error);
+                    this.orderForm.temp_file = null;
+                    throw error;
+                }
             }
         },
 
         mounted() {
-            this.wizardProps = this.$refs.wizard;        
+            this.wizardProps = this.$refs.wizard;
             this.loadOptions();
             this.checkHasPaidCourse();
 
             if (this.tempFile) {
                 this.originalPrice = this.tempFile.price;
                 this.orderForm.excess_words_amount = this.tempFile.excess_words_amount;
+                this.orderForm.word_count = this.tempFile.word_count || null;
             }
         }
 
