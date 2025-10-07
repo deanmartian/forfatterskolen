@@ -619,7 +619,7 @@
                 });
             }
 
-            const fileUploadArea = document.getElementById('file-upload-area');
+            /* const fileUploadArea = document.getElementById('file-upload-area');
             const fileInput = document.getElementById('file-upload');
             const fileUploadText = document.querySelector('.file-upload-text');
             const textWithBrowseButton = '<a href="javascript:void(0)" class="file-upload-btn">Klikk her</a> for å laste opp filen din eller <br>' 
@@ -664,7 +664,7 @@
                 const selectedText = fileInput.files.length > 0 ? fileInput.files[0].name
                     : textWithBrowseButton;
                 updateText(selectedText);
-            });
+            }); */
 
         const wordCountContainer = document.getElementById('wordCountTool');
         if (wordCountContainer) {
