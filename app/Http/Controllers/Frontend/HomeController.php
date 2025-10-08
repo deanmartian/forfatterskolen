@@ -2608,7 +2608,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             $price = round($price / $division, 2); // round the value to the nearest tenths
             $price = (int) $price * 100;
             //$dueDate = Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
-            $dueDate = $baseDate->copy()->addMonth($i)->format('Y-m-d');
+            //$dueDate = $baseDate->copy()->addMonth($i)->format('Y-m-d');
             
             $invoice_fields = [
                 'user_id' => $learner->id,
