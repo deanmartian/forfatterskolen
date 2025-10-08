@@ -121,4 +121,8 @@ return [
         'refresh_token' => env('DROPBOX_REFRESH_TOKEN'),
     ],
 
+    'cloudconvert' => [
+        'api_key' => env('CLOUDCONVERT_API_KEY'),
+    ],
+
 ];

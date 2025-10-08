@@ -117,13 +117,12 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\In;
 use Pdf as GlobalPdf;
-use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\PhpWord;
 
 require_once app_path('Http/Docx2Text.php');
 require_once app_path('Http/Pdf2Text.php');
@@ -990,37 +989,6 @@ class LearnerController extends Controller
 
         $fullPath = storage_path('app/'.$temporaryPath);
 
-        try {
-            $documentText = $this->extractTextFromDocument($fullPath, $extension);
-        } catch (\Throwable $exception) {
-            \Illuminate\Support\Facades\Log::error('Learner document conversion failed', [
-                'user_id' => Auth::id(),
-                'extension' => $extension,
-                'message' => $exception->getMessage(),
-            ]);
-            $documentText = '';
-        }
-
-        Storage::delete($temporaryPath);
-
-        if ($documentText === '') {
-            return back()
-                ->withErrors(['document' => $conversionFailedMessage])
-                ->with('alert_type', 'danger');
-        }
-
-        $phpWord = new PhpWord();
-        $phpWord->setDefaultFontName('Calibri');
-        $section = $phpWord->addSection();
-
-        foreach (preg_split("/(\r\n|\r|\n)/", $documentText) as $paragraph) {
-            if (trim($paragraph) === '') {
-                $section->addTextBreak();
-            } else {
-                $section->addText($paragraph);
-            }
-        }
-
         $safeBaseName = Str::slug(pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME));
         if ($safeBaseName === '') {
             $safeBaseName = 'document';
@@ -1029,14 +997,245 @@ class LearnerController extends Controller
         $docxFileName = $safeBaseName.'-converted.docx';
         $docxStoragePath = storage_path('app/temp-conversions/'.$docxFileName);
 
-        if (! is_dir(dirname($docxStoragePath))) {
-            mkdir(dirname($docxStoragePath), 0755, true);
+        try {
+            $conversionSucceeded = $this->convertDocumentWithCloudConvert(
+                $fullPath,
+                $extension,
+                $docxStoragePath,
+                $uploadedFile->getClientOriginalName()
+            );
+        } catch (\Throwable $exception) {
+            \Illuminate\Support\Facades\Log::error('Learner document conversion failed', [
+                'user_id' => Auth::id(),
+                'extension' => $extension,
+                'message' => $exception->getMessage(),
+            ]);
+            $conversionSucceeded = false;
         }
 
-        $writer = IOFactory::createWriter($phpWord, 'Word2007');
-        $writer->save($docxStoragePath);
+        Storage::delete($temporaryPath);
+
+        if (! $conversionSucceeded) {
+            return back()
+                ->withErrors(['document' => $conversionFailedMessage])
+                ->with('alert_type', 'danger');
+        }
 
         return response()->download($docxStoragePath, $docxFileName)->deleteFileAfterSend(true);
+    }
+
+    protected function convertDocumentWithCloudConvert(string $sourcePath, string $extension, string $destinationPath, string $originalName): bool
+    {
+        $apiKey = config('services.cloudconvert.api_key');
+
+        if (empty($apiKey)) {
+            \Illuminate\Support\Facades\Log::error('CloudConvert API key missing for learner conversion', [
+                'user_id' => Auth::id(),
+            ]);
+
+            return false;
+        }
+
+        $outputFilename = Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) ?: 'converted-document';
+
+        $jobResponse = Http::withToken($apiKey)
+            ->acceptJson()
+            ->post('https://api.cloudconvert.com/v2/jobs', [
+                'tasks' => [
+                    'import-file' => [
+                        'operation' => 'import/upload',
+                    ],
+                    'convert-file' => [
+                        'operation' => 'convert',
+                        'input' => ['import-file'],
+                        'input_format' => $extension,
+                        'output_format' => 'docx',
+                        'output_filename' => $outputFilename,
+                    ],
+                    'export-file' => [
+                        'operation' => 'export/url',
+                        'input' => ['convert-file'],
+                    ],
+                ],
+                'tag' => 'learner-document-converter',
+            ]);
+
+        if (! $jobResponse->successful()) {
+            \Illuminate\Support\Facades\Log::error('CloudConvert job creation failed', [
+                'user_id' => Auth::id(),
+                'response' => $jobResponse->json(),
+                'status' => $jobResponse->status(),
+            ]);
+
+            return false;
+        }
+
+        $jobData = $jobResponse->json('data');
+        $jobId = is_array($jobData) ? ($jobData['id'] ?? null) : null;
+
+        if (! $jobId) {
+            \Illuminate\Support\Facades\Log::error('CloudConvert response missing job id', [
+                'user_id' => Auth::id(),
+                'response' => $jobResponse->json(),
+            ]);
+
+            return false;
+        }
+
+        $tasks = $jobData['tasks'] ?? [];
+        $importTask = collect($tasks)->firstWhere('operation', 'import/upload');
+
+        $uploadUrl = data_get($importTask, 'result.form.url');
+        $uploadParameters = data_get($importTask, 'result.form.parameters', []);
+
+        if (! is_array($uploadParameters)) {
+            $uploadParameters = [];
+        }
+
+        if (! $uploadUrl) {
+            \Illuminate\Support\Facades\Log::error('CloudConvert upload URL missing', [
+                'user_id' => Auth::id(),
+                'job_id' => $jobId,
+                'task' => $importTask,
+            ]);
+
+            return false;
+        }
+
+        $uploadRequest = Http::asMultipart();
+
+        $fileResource = fopen($sourcePath, 'r');
+        if ($fileResource === false) {
+            \Illuminate\Support\Facades\Log::error('Could not open source file for CloudConvert upload', [
+                'user_id' => Auth::id(),
+                'path' => $sourcePath,
+            ]);
+
+            return false;
+        }
+
+        $uploadResponse = $uploadRequest
+            ->attach('file', $fileResource, basename($originalName) ?: basename($sourcePath))
+            ->post($uploadUrl, $uploadParameters);
+
+        fclose($fileResource);
+
+        if (! $uploadResponse->successful()) {
+            \Illuminate\Support\Facades\Log::error('CloudConvert upload failed', [
+                'user_id' => Auth::id(),
+                'job_id' => $jobId,
+                'status' => $uploadResponse->status(),
+                'response' => $uploadResponse->json(),
+            ]);
+
+            return false;
+        }
+
+        $exportTask = null;
+        $maxAttempts = 30;
+
+        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
+            sleep(2);
+
+            $jobStatusResponse = Http::withToken($apiKey)
+                ->acceptJson()
+                ->get('https://api.cloudconvert.com/v2/jobs/'.$jobId);
+
+            if (! $jobStatusResponse->successful()) {
+                \Illuminate\Support\Facades\Log::error('CloudConvert status check failed', [
+                    'user_id' => Auth::id(),
+                    'job_id' => $jobId,
+                    'status' => $jobStatusResponse->status(),
+                    'response' => $jobStatusResponse->json(),
+                ]);
+
+                return false;
+            }
+
+            $jobStatusData = $jobStatusResponse->json('data');
+            $jobStatus = data_get($jobStatusData, 'status');
+            $exportTask = collect(data_get($jobStatusData, 'tasks', []))
+                ->firstWhere('operation', 'export/url');
+
+            if (data_get($exportTask, 'status') === 'finished') {
+                break;
+            }
+
+            if (data_get($exportTask, 'status') === 'error') {
+                \Illuminate\Support\Facades\Log::error('CloudConvert export task returned error status', [
+                    'user_id' => Auth::id(),
+                    'job_id' => $jobId,
+                    'export_task' => $exportTask,
+                ]);
+
+                return false;
+            }
+
+            if ($jobStatus === 'error') {
+                \Illuminate\Support\Facades\Log::error('CloudConvert reported job error', [
+                    'user_id' => Auth::id(),
+                    'job_id' => $jobId,
+                    'tasks' => $jobStatusData['tasks'] ?? [],
+                ]);
+
+                return false;
+            }
+        }
+
+        if (data_get($exportTask, 'status') !== 'finished') {
+            \Illuminate\Support\Facades\Log::error('CloudConvert export did not finish in time', [
+                'user_id' => Auth::id(),
+                'job_id' => $jobId,
+                'export_task' => $exportTask,
+            ]);
+
+            return false;
+        }
+
+        $downloadUrl = data_get($exportTask, 'result.files.0.url');
+
+        if (! $downloadUrl) {
+            \Illuminate\Support\Facades\Log::error('CloudConvert export missing download URL', [
+                'user_id' => Auth::id(),
+                'job_id' => $jobId,
+                'export_task' => $exportTask,
+            ]);
+
+            return false;
+        }
+
+        $downloadResponse = Http::timeout(120)->get($downloadUrl);
+
+        if (! $downloadResponse->successful()) {
+            \Illuminate\Support\Facades\Log::error('CloudConvert download failed', [
+                'user_id' => Auth::id(),
+                'job_id' => $jobId,
+                'status' => $downloadResponse->status(),
+            ]);
+
+            return false;
+        }
+
+        if (! is_dir(dirname($destinationPath))) {
+            mkdir(dirname($destinationPath), 0755, true);
+        }
+
+        if (is_file($destinationPath)) {
+            @unlink($destinationPath);
+        }
+
+        $writeResult = @file_put_contents($destinationPath, $downloadResponse->body());
+
+        if ($writeResult === false) {
+            \Illuminate\Support\Facades\Log::error('Could not write converted document to disk', [
+                'user_id' => Auth::id(),
+                'destination' => $destinationPath,
+            ]);
+
+            return false;
+        }
+
+        return true;
     }
 
     public function assignment()
