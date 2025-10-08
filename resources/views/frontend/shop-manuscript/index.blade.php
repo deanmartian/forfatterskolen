@@ -125,13 +125,19 @@
                         <label for="word-count-file" class="file-upload-label">
                             <div class="file-upload" id="word-count-upload-area">
                                 <div class="file-upload-text" id="word-count-upload-text">
-                                    <a href="javascript:void(0)" 
-                                    class="word-count-file-trigger file-upload-btn">Klikk her</a> 
+                                    <a href="javascript:void(0)"
+                                    class="word-count-file-trigger file-upload-btn">Klikk her</a>
                                     for å laste opp filen din eller <br>
                                     dra filen din hit.
                                 </div>
                             </div>
                         </label>
+
+                        <div class="form-group mt-3">
+                            <label for="manual-word-count">Eller skriv inn antall ord manuelt</label>
+                            <input type="number" min="1" step="1" class="form-control" id="manual-word-count" placeholder="F.eks. 5000">
+                            <small class="form-text text-muted">Hvis du kjenner antall ord kan du fylle det inn her. Hvis feltet er tomt, bruker vi ordtellingen fra filen.</small>
+                        </div>
 
                         {{-- <div class="word-count-feedback mt-3" id="word-count-feedback">
                             Velg en DOCX-, PDF-, DOC- eller ODT-fil og klikk på knappen under for å beregne ord og pris.
@@ -675,6 +681,7 @@
             const wordCountPriceFeedback = document.getElementById('word-count-price-feedback');
             const wordCountModal = $('#wordCountResultModal');
             const wordCountModalBody = document.getElementById('wordCountResultBody');
+            const manualWordCountInput = document.getElementById('manual-word-count');
             const defaultWordCountText = wordCountUploadText ? wordCountUploadText.innerHTML : '';
             let selectedWordCountFile = null;
             let processingWordCount = false;
@@ -742,6 +749,41 @@
 
                 alertElement.style.display = 'block';
                 alertElement.classList.remove('d-none');
+            };
+
+            const getManualWordCount = (options = {}) => {
+                const { validate = false } = options;
+
+                if (!manualWordCountInput) {
+                    return { value: null, isValid: true, hasValue: false };
+                }
+
+                const rawValue = manualWordCountInput.value;
+                const trimmed = typeof rawValue === 'string'
+                    ? rawValue.trim()
+                    : String(rawValue || '').trim();
+
+                if (!trimmed) {
+                    if (validate) {
+                        manualWordCountInput.classList.remove('is-invalid');
+                    }
+
+                    return { value: null, isValid: true, hasValue: false };
+                }
+
+                const normalised = trimmed.replace(/\s+/g, '');
+                const parsed = Number.parseInt(normalised, 10);
+                const isValid = Number.isFinite(parsed) && parsed > 0;
+
+                if (validate) {
+                    manualWordCountInput.classList.toggle('is-invalid', !isValid);
+                }
+
+                return {
+                    value: isValid ? parsed : null,
+                    isValid,
+                    hasValue: true,
+                };
             };
 
             const setFeedback = (message, isError = false) => {
@@ -921,6 +963,17 @@
                     return;
                 }
 
+                const manualWordCountDetails = getManualWordCount({ validate: true });
+                if (manualWordCountDetails.hasValue && !manualWordCountDetails.isValid) {
+                    const manualWordCountErrorMessage = 'Vennligst skriv inn et gyldig tall i feltet for ordantall eller la det stå tomt.';
+                    showGlobalAlert(manualWordCountErrorMessage, 'danger');
+                    setFeedback(manualWordCountErrorMessage, true);
+                    setPriceFeedback('');
+                    return;
+                }
+
+                const providedManualWordCount = manualWordCountDetails.value;
+
                 updateWordCountText(file.name);
                 setFeedback(useMammoth
                     ? 'Bruker Mammoth til å beregne antall ord ...'
@@ -934,24 +987,29 @@
                 const uploadPromise = useMammoth
                     ? extractWordCountWithMammoth(file)
                         .then((wordCount) => {
-                            if (Number.isInteger(wordCount) && wordCount > 0) {
-                                return storeTempFileOnServer(file, wordCount);
-                            }
+                            const mammothWordCount = Number.isInteger(wordCount) && wordCount > 0 ? wordCount : null;
+                            const effectiveWordCount = Number.isInteger(providedManualWordCount) && providedManualWordCount > 0
+                                ? providedManualWordCount
+                                : mammothWordCount;
 
-                            return storeTempFileOnServer(file);
+                            return storeTempFileOnServer(file, effectiveWordCount);
                         })
                         .catch((error) => {
                             console.error('Unable to count words with Mammoth for word-count tool', error);
-                            return storeTempFileOnServer(file);
+                            return storeTempFileOnServer(file, providedManualWordCount);
                         })
-                    : storeTempFileOnServer(file);
+                    : storeTempFileOnServer(file, providedManualWordCount);
 
                 uploadPromise
                     .then((serverData) => {
                         const serverWordCount = Number.isInteger(serverData && serverData.word_count)
                             ? serverData.word_count
                             : null;
-                        const priceDetails = serverWordCount ? calculatePrice(serverWordCount) : null;
+                        const manualWordCountToUse = Number.isInteger(providedManualWordCount) && providedManualWordCount > 0
+                            ? providedManualWordCount
+                            : null;
+                        const effectiveWordCount = manualWordCountToUse !== null ? manualWordCountToUse : serverWordCount;
+                        const priceDetails = effectiveWordCount ? calculatePrice(effectiveWordCount) : null;
                         const formattedPrice = serverData && serverData.formatted_price
                             ? serverData.formatted_price
                             : (priceDetails && priceDetails.formattedPrice ? priceDetails.formattedPrice : null);
@@ -963,22 +1021,22 @@
 
                         let modalContent = serverData && serverData.message ? serverData.message : '';
 
-                        if (!modalContent && serverWordCount) {
+                        if (!modalContent && effectiveWordCount) {
                             const priceLine = formattedPrice
                                 ? `<h3 class="no-margin-top">Prisen for ditt manus er kroner: ${formattedPrice}</h3>`
                                 : '';
                             const linkLine = checkoutLink
                                 ? `<a href="${checkoutLink}" class="btn btn-theme">Bestill nå</a>`
                                 : '';
-                            modalContent = `Manuset ditt er på ${serverWordCount} ord <br />${priceLine}${linkLine}`;
+                            modalContent = `Manuset ditt er på ${effectiveWordCount} ord <br />${priceLine}${linkLine}`;
                         }
 
                         if (modalContent) {
                             showWordCountModal(modalContent);
                         }
 
-                        if (serverWordCount) {
-                            setFeedback(`Manuskriptet inneholder omtrent ${serverWordCount} ord.`);
+                        if (effectiveWordCount) {
+                            setFeedback(`Manuskriptet inneholder omtrent ${effectiveWordCount} ord.`);
                             setPriceFeedback('Resultatet er klart i pop-up-vinduet.');
                         } else if (modalContent) {
                             setFeedback('Beregningen ble fullført.');
@@ -1038,6 +1096,12 @@
                 setFeedback('Fil valgt. Klikk på knappen for å beregne ord og pris.');
                 setPriceFeedback('');
             };
+
+            if (manualWordCountInput) {
+                manualWordCountInput.addEventListener('input', () => {
+                    getManualWordCount({ validate: true });
+                });
+            }
 
             if (wordCountFileInput) {
                 wordCountFileInput.addEventListener('change', (event) => {
