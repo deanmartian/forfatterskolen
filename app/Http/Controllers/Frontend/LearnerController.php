@@ -110,6 +110,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -121,10 +122,12 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\In;
 use Pdf as GlobalPdf;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
 
-include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
+require_once app_path('Http/Docx2Text.php');
+require_once app_path('Http/Pdf2Text.php');
+require_once app_path('Http/Odt2Text.php');
 
 class LearnerController extends Controller
 {
@@ -950,6 +953,90 @@ class LearnerController extends Controller
         ];
 
         return view('frontend.learner.calendar', compact('events'));
+    }
+
+    public function documentConverter(): View
+    {
+        return view('frontend.learner.document-converter');
+    }
+
+    public function convertDocument(Request $request)
+    {
+        $request->validate([
+            'document' => ['required', 'file', 'max:51200'],
+        ]);
+
+        $uploadedFile = $request->file('document');
+        $extension = strtolower($uploadedFile->getClientOriginalExtension());
+        $allowedExtensions = ['doc', 'docx', 'pdf', 'pages'];
+
+        $invalidFileMessage = __('Please upload a PAGES, PDF, DOC or DOCX file.');
+        $conversionFailedMessage = __('We could not convert the file. Make sure the document contains selectable text and try again.');
+
+        if (! in_array($extension, $allowedExtensions, true)) {
+            return back()
+                ->withErrors(['document' => $invalidFileMessage])
+                ->with('alert_type', 'danger');
+        }
+
+        if (! Storage::exists('temp-conversions')) {
+            Storage::makeDirectory('temp-conversions');
+        }
+
+        $temporaryPath = $uploadedFile->storeAs(
+            'temp-conversions',
+            Str::uuid()->toString().'.'.$extension
+        );
+
+        $fullPath = storage_path('app/'.$temporaryPath);
+
+        try {
+            $documentText = $this->extractTextFromDocument($fullPath, $extension);
+        } catch (\Throwable $exception) {
+            \Illuminate\Support\Facades\Log::error('Learner document conversion failed', [
+                'user_id' => Auth::id(),
+                'extension' => $extension,
+                'message' => $exception->getMessage(),
+            ]);
+            $documentText = '';
+        }
+
+        Storage::delete($temporaryPath);
+
+        if ($documentText === '') {
+            return back()
+                ->withErrors(['document' => $conversionFailedMessage])
+                ->with('alert_type', 'danger');
+        }
+
+        $phpWord = new PhpWord();
+        $phpWord->setDefaultFontName('Calibri');
+        $section = $phpWord->addSection();
+
+        foreach (preg_split("/(\r\n|\r|\n)/", $documentText) as $paragraph) {
+            if (trim($paragraph) === '') {
+                $section->addTextBreak();
+            } else {
+                $section->addText($paragraph);
+            }
+        }
+
+        $safeBaseName = Str::slug(pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME));
+        if ($safeBaseName === '') {
+            $safeBaseName = 'document';
+        }
+
+        $docxFileName = $safeBaseName.'-converted.docx';
+        $docxStoragePath = storage_path('app/temp-conversions/'.$docxFileName);
+
+        if (! is_dir(dirname($docxStoragePath))) {
+            mkdir(dirname($docxStoragePath), 0755, true);
+        }
+
+        $writer = IOFactory::createWriter($phpWord, 'Word2007');
+        $writer->save($docxStoragePath);
+
+        return response()->download($docxStoragePath, $docxFileName)->deleteFileAfterSend(true);
     }
 
     public function assignment()
@@ -6122,6 +6209,92 @@ class LearnerController extends Controller
             'yearly' => $sales,
             'overall' => $overallSales,
         ];
+    }
+
+    protected function cleanConvertedText($content): string
+    {
+        $content = is_string($content) ? trim($content) : '';
+
+        if ($content === '') {
+            return '';
+        }
+
+        $lowerContent = strtolower($content);
+        if (in_array($lowerContent, ['invalid file type', 'file not exists'], true)) {
+            return '';
+        }
+
+        return $content;
+    }
+
+    protected function extractTextFromDocument(string $path, string $extension): string
+    {
+        $extension = strtolower($extension);
+
+        if (in_array($extension, ['doc', 'docx'], true)) {
+            $docxToText = new \Docx2Text($path);
+
+            return $this->cleanConvertedText($docxToText->convertToText());
+        }
+
+        if ($extension === 'pdf') {
+            $pdfToText = new \PdfToText($path, \PdfToText::PDFOPT_NONE);
+
+            return $this->cleanConvertedText((string) $pdfToText);
+        }
+
+        if ($extension === 'pages') {
+            return $this->cleanConvertedText($this->extractTextFromPagesFile($path));
+        }
+
+        return '';
+    }
+
+    protected function extractTextFromPagesFile(string $path): string
+    {
+        $zip = new \ZipArchive();
+        $text = '';
+
+        if ($zip->open($path) === true) {
+            $previewIndex = $zip->locateName('QuickLook/Preview.pdf');
+            if ($previewIndex !== false) {
+                $previewContent = $zip->getFromIndex($previewIndex);
+                if ($previewContent !== false) {
+                    $temporaryPdfPath = storage_path('app/temp-conversions/'.Str::uuid()->toString().'.pdf');
+                    if (! is_dir(dirname($temporaryPdfPath))) {
+                        mkdir(dirname($temporaryPdfPath), 0755, true);
+                    }
+
+                    file_put_contents($temporaryPdfPath, $previewContent);
+
+                    try {
+                        $pdfToText = new \PdfToText($temporaryPdfPath, \PdfToText::PDFOPT_NONE);
+                        $text = (string) $pdfToText;
+                    } catch (\Throwable $exception) {
+                        \Illuminate\Support\Facades\Log::warning('Pages preview conversion failed', [
+                            'user_id' => Auth::id(),
+                            'message' => $exception->getMessage(),
+                        ]);
+                    }
+
+                    @unlink($temporaryPdfPath);
+                }
+            }
+
+            if (trim($text) === '') {
+                $indexXml = $zip->locateName('index.xml');
+                if ($indexXml !== false) {
+                    $xmlContent = $zip->getFromIndex($indexXml);
+                    if ($xmlContent !== false) {
+                        $text = html_entity_decode(strip_tags($xmlContent), ENT_QUOTES | ENT_XML1, 'UTF-8');
+                    }
+                }
+            }
+
+            $zip->close();
+        }
+
+        return $text;
     }
 
     protected function coachingTimeBookingEmailContext(CoachingTimerManuscript $timer, EditorTimeSlot $slot): array
