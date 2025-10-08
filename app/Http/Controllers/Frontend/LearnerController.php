@@ -895,14 +895,18 @@ class LearnerController extends Controller
 
             // assignments
             foreach ($courseTaken->package->course->assignments as $assignment) {
-                $events[] = [
-                    'id' => $assignment->course->id,
-                    'title' => 'Oppgaver: '.$assignment->title.' from '.$assignment->course->title,
-                    'class' => 'event-success-new',
-                    'start' => date('Y-m-d', strtotime($assignment->submission_date)), // strtotime($assignment->submission_date) * 1000,
-                    'end' => date('Y-m-d', strtotime($assignment->submission_date)), // strtotime($assignment->submission_date) * 1000,
-                    'color' => '#44af5e',
-                ];
+                $allowedPackage = json_decode($assignment->allowed_package, true);
+
+                if (is_null($allowedPackage) || in_array($courseTaken->package_id, (array) $allowedPackage)) {
+                    $events[] = [
+                        'id'    => $assignment->course->id,
+                        'title' => 'Oppgaver: ' . $assignment->title . ' from ' . $assignment->course->title,
+                        'class' => 'event-success-new',
+                        'start' => date('Y-m-d', strtotime($assignment->submission_date)),
+                        'end'   => date('Y-m-d', strtotime($assignment->submission_date)),
+                        'color' => '#44af5e',
+                    ];
+                }
             }
 
             // get the calendar notes created by admin for certain course only
