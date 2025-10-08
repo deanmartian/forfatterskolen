@@ -134,7 +134,7 @@
                         </label>
 
                         <div class="form-group mt-3">
-                            <label for="manual-word-count">Eller skriv inn antall ord manuelt</label>
+                            <label for="manual-word-count">Skriv inn antall ord manuelt</label>
                             <input type="number" min="1" step="1" class="form-control" id="manual-word-count" placeholder="F.eks. 5000">
                             <small class="form-text text-muted">Hvis du kjenner antall ord kan du fylle det inn her. Hvis feltet er tomt, bruker vi ordtellingen fra filen.</small>
                         </div>
