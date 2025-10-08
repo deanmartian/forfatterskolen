@@ -6213,7 +6213,15 @@ class LearnerController extends Controller
 
     protected function cleanConvertedText($content): string
     {
-        $content = is_string($content) ? trim($content) : '';
+        if (! is_string($content)) {
+            return '';
+        }
+
+        $content = preg_replace("/[\x00-\x08\x0B\x0C\x0E-\x1F]/u", '', $content) ?? '';
+        $content = str_replace(["\r\n", "\r"], "\n", $content);
+        $content = preg_replace("/\n{3,}/", "\n\n", $content) ?? '';
+        $content = preg_replace("/[ \t]+\n/", "\n", $content) ?? '';
+        $content = trim($content);
 
         if ($content === '') {
             return '';
@@ -6238,9 +6246,7 @@ class LearnerController extends Controller
         }
 
         if ($extension === 'pdf') {
-            $pdfToText = new \PdfToText($path, \PdfToText::PDFOPT_NONE);
-
-            return $this->cleanConvertedText((string) $pdfToText);
+            return $this->extractTextFromPdf($path);
         }
 
         if ($extension === 'pages') {
@@ -6250,44 +6256,89 @@ class LearnerController extends Controller
         return '';
     }
 
+    protected function extractTextFromPdf(string $path): string
+    {
+        $text = $this->cleanConvertedText($this->extractTextUsingPdfLibrary($path));
+
+        if ($text !== '') {
+            return $text;
+        }
+
+        return $this->cleanConvertedText($this->extractTextUsingPdftotextBinary($path));
+    }
+
+    protected function extractTextUsingPdfLibrary(string $path): string
+    {
+        try {
+            $pdfToText = new \PdfToText($path, \PdfToText::PDFOPT_NONE);
+            $pdfToText->Separator = "\n";
+            $pdfToText->BlockSeparator = "\n";
+            $pdfToText->PageSeparator = "\n\n";
+
+            return (string) $pdfToText;
+        } catch (\Throwable $exception) {
+            \Illuminate\Support\Facades\Log::warning('PdfToText library could not extract text', [
+                'user_id' => Auth::id(),
+                'message' => $exception->getMessage(),
+            ]);
+
+            return '';
+        }
+    }
+
+    protected function extractTextUsingPdftotextBinary(string $path): string
+    {
+        if (! function_exists('exec')) {
+            return '';
+        }
+
+        $binaryPath = $this->findSystemExecutable('pdftotext');
+        if ($binaryPath === null) {
+            return '';
+        }
+
+        $temporaryTextPath = $this->createTemporaryConversionPath('txt');
+        $command = escapeshellarg($binaryPath).' -layout -nopgbrk -enc UTF-8 '
+            .escapeshellarg($path).' '.escapeshellarg($temporaryTextPath).' 2>&1';
+
+        $output = [];
+        $exitCode = null;
+        exec($command, $output, $exitCode);
+
+        if ($exitCode !== 0) {
+            \Illuminate\Support\Facades\Log::warning('pdftotext command failed', [
+                'user_id' => Auth::id(),
+                'exit_code' => $exitCode,
+                'output' => implode("\n", $output),
+            ]);
+
+            if (is_file($temporaryTextPath)) {
+                @unlink($temporaryTextPath);
+            }
+
+            return '';
+        }
+
+        $content = is_file($temporaryTextPath) ? file_get_contents($temporaryTextPath) : '';
+        if (is_file($temporaryTextPath)) {
+            @unlink($temporaryTextPath);
+        }
+
+        return is_string($content) ? $content : '';
+    }
+
     protected function extractTextFromPagesFile(string $path): string
     {
         $zip = new \ZipArchive();
         $text = '';
 
         if ($zip->open($path) === true) {
-            $previewIndex = $zip->locateName('QuickLook/Preview.pdf');
-            if ($previewIndex !== false) {
-                $previewContent = $zip->getFromIndex($previewIndex);
-                if ($previewContent !== false) {
-                    $temporaryPdfPath = storage_path('app/temp-conversions/'.Str::uuid()->toString().'.pdf');
-                    if (! is_dir(dirname($temporaryPdfPath))) {
-                        mkdir(dirname($temporaryPdfPath), 0755, true);
-                    }
+            $text = $this->extractTextFromPagesPreview($zip);
 
-                    file_put_contents($temporaryPdfPath, $previewContent);
-
-                    try {
-                        $pdfToText = new \PdfToText($temporaryPdfPath, \PdfToText::PDFOPT_NONE);
-                        $text = (string) $pdfToText;
-                    } catch (\Throwable $exception) {
-                        \Illuminate\Support\Facades\Log::warning('Pages preview conversion failed', [
-                            'user_id' => Auth::id(),
-                            'message' => $exception->getMessage(),
-                        ]);
-                    }
-
-                    @unlink($temporaryPdfPath);
-                }
-            }
-
-            if (trim($text) === '') {
-                $indexXml = $zip->locateName('index.xml');
-                if ($indexXml !== false) {
-                    $xmlContent = $zip->getFromIndex($indexXml);
-                    if ($xmlContent !== false) {
-                        $text = html_entity_decode(strip_tags($xmlContent), ENT_QUOTES | ENT_XML1, 'UTF-8');
-                    }
+            if ($this->cleanConvertedText($text) === '') {
+                $xmlContent = $this->getPagesIndexXml($zip);
+                if ($xmlContent !== '') {
+                    $text = $this->convertPagesXmlToText($xmlContent);
                 }
             }
 
@@ -6295,6 +6346,114 @@ class LearnerController extends Controller
         }
 
         return $text;
+    }
+
+    protected function extractTextFromPagesPreview(\ZipArchive $zip): string
+    {
+        $previewContent = $this->getZipEntryContent($zip, 'QuickLook/Preview.pdf');
+
+        if ($previewContent === null) {
+            return '';
+        }
+
+        $temporaryPdfPath = $this->createTemporaryConversionPath('pdf');
+
+        file_put_contents($temporaryPdfPath, $previewContent);
+
+        try {
+            return $this->extractTextFromPdf($temporaryPdfPath);
+        } finally {
+            if (is_file($temporaryPdfPath)) {
+                @unlink($temporaryPdfPath);
+            }
+        }
+    }
+
+    protected function getPagesIndexXml(\ZipArchive $zip): string
+    {
+        $xmlContent = $this->getZipEntryContent($zip, 'index.xml');
+
+        if ($xmlContent !== null) {
+            return $xmlContent;
+        }
+
+        $compressedIndex = $this->getZipEntryContent($zip, 'Index.zip');
+        if ($compressedIndex === null) {
+            return '';
+        }
+
+        $temporaryZipPath = $this->createTemporaryConversionPath('zip');
+        file_put_contents($temporaryZipPath, $compressedIndex);
+
+        $innerZip = new \ZipArchive();
+        $innerContent = '';
+
+        if ($innerZip->open($temporaryZipPath) === true) {
+            $innerXml = $this->getZipEntryContent($innerZip, 'Index.xml');
+            if ($innerXml !== null) {
+                $innerContent = $innerXml;
+            }
+            $innerZip->close();
+        }
+
+        if (is_file($temporaryZipPath)) {
+            @unlink($temporaryZipPath);
+        }
+
+        return $innerContent;
+    }
+
+    protected function convertPagesXmlToText(string $xmlContent): string
+    {
+        $xmlContent = preg_replace('/<\/((p|br|li|table|tr|td|para)[^>]*)>/i', "\n", $xmlContent) ?? $xmlContent;
+        $xmlContent = strip_tags($xmlContent);
+        $xmlContent = html_entity_decode($xmlContent, ENT_QUOTES | ENT_XML1, 'UTF-8');
+
+        return $xmlContent;
+    }
+
+    protected function getZipEntryContent(\ZipArchive $zip, string $name): ?string
+    {
+        $flags = defined('ZipArchive::FL_NOCASE') ? \ZipArchive::FL_NOCASE : 0;
+        $index = $zip->locateName($name, $flags);
+
+        if ($index === false) {
+            return null;
+        }
+
+        $content = $zip->getFromIndex($index);
+
+        return is_string($content) ? $content : null;
+    }
+
+    protected function createTemporaryConversionPath(string $extension): string
+    {
+        $directory = storage_path('app/temp-conversions');
+
+        if (! is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        return rtrim($directory, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.Str::uuid()->toString().'.'.$extension;
+    }
+
+    protected function findSystemExecutable(string $binary): ?string
+    {
+        if (! function_exists('exec')) {
+            return null;
+        }
+
+        $output = [];
+        $exitCode = null;
+        exec('command -v '.escapeshellarg($binary), $output, $exitCode);
+
+        if ($exitCode === 0 && isset($output[0])) {
+            $path = trim($output[0]);
+
+            return $path !== '' ? $path : null;
+        }
+
+        return null;
     }
 
     protected function coachingTimeBookingEmailContext(CoachingTimerManuscript $timer, EditorTimeSlot $slot): array
