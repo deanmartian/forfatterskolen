@@ -134,9 +134,10 @@
                         </label>
 
                         <div class="form-group mt-3">
-                            <label for="manual-word-count">Skriv inn antall ord manuelt</label>
-                            <input type="number" min="1" step="1" class="form-control" id="manual-word-count" placeholder="F.eks. 5000">
-                            <small class="form-text text-muted">Hvis du kjenner antall ord kan du fylle det inn her. Hvis feltet er tomt, bruker vi ordtellingen fra filen.</small>
+                            <label for="manual-word-count">{{ trans('site.enter-words-manually') }}</label>
+                            <input type="number" min="1" step="1" class="form-control" id="manual-word-count" 
+                            placeholder="{{ trans('site.enter-words-manually-placeholder') }}">
+                            <small class="form-text text-muted">{{ trans('site.enter-words-manually-note') }}</small>
                         </div>
 
                         {{-- <div class="word-count-feedback mt-3" id="word-count-feedback">
