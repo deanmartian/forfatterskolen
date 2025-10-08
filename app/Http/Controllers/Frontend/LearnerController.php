@@ -1609,8 +1609,12 @@ class LearnerController extends Controller
             $price = (int) $price * 100;
             $has_vat = false;
 
+            $baseDate = Carbon::parse($dueDate); // starting due date
+
             for ($i = 1; $i <= $divisor; $i++) { // loop based on the split count
-                $dueDate = Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
+                //$dueDate = Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
+                $dueDate = $baseDate->copy()->addMonth($i)->format('Y-m-d');
+                
                 $invoice_fields = [
                     'user_id' => $learner->id,
                     'first_name' => $learner->first_name,
