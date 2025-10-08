@@ -135,6 +135,8 @@ Route::domain($front)->group(function () {
         Route::get('/opt-in/{slug?}', [Frontend\HomeController::class, 'optIn'])->name('front.opt-in'); // Opt-in page
         Route::post('/opt-in/{slug?}', [Frontend\HomeController::class, 'optIn'])->name('front.opt-in.submit'); // Opt-in page
         Route::get('/opt-in/{slug?}/download', [Frontend\HomeController::class, 'downloadOptIn'])->name('front.opt-in.download'); // Download Opt-in file
+        Route::view('manual-invoice', 'frontend.manual-invoice'); // Download Opt-in file
+        Route::post('manual-invoice', [Frontend\HomeController::class, 'saveManualInvoice']); // Download Opt-in file
 
         // opt in thank you pages
         Route::get('/opt-in/thanks/{slug?}', [Frontend\HomeController::class, 'optInThanks'])->name('front.opt-in.thanks');

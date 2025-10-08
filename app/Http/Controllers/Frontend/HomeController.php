@@ -2572,4 +2572,72 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
         return $excel->download(new GenericExport($list, $headers), $year.' Bought Shop Manuscripts.xlsx');
     }
+
+    public function saveManualInvoice(Request $request)
+    {
+        $learner = User::find($request->user_id);
+
+        $paymentMode = PaymentMode::findOrFail(3);
+        $payment_mode = 'Bankoverføring';
+
+        $payment_plan = $request->payment_plan_in_months.' måneder';
+        $divisor = $request->payment_plan_in_months;
+
+        $inputtedComment = '';
+        $comment = '('.$inputtedComment.' ';
+        $comment .= 'Betalingsmodus: '.$payment_mode.', ';
+        $comment .= 'Betalingsplan: '.$payment_plan.')';
+
+        $product_ID = 884373255;
+
+        $dueDate = $request->date;
+
+        // always split the invoice
+        $request->merge([
+            'split_invoice' => 1
+        ]);
+
+        $division = $divisor * 100; // multiply the split count to get the correct value
+        $price = (int) $request->amount * 100;
+        $has_vat = false;
+
+        $baseDate = Carbon::parse($dueDate); // starting due date
+
+        for ($i = 1; $i <= $divisor; $i++) { // loop based on the split count
+            //$dueDate = Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
+            $dueDate = $baseDate->copy()->addMonth($i)->format('Y-m-d');
+            
+            $invoice_fields = [
+                'user_id' => $learner->id,
+                'first_name' => $learner->first_name,
+                'last_name' => $learner->last_name,
+                'netAmount' => $price,
+                'dueDate' => $dueDate,
+                'description' => 'Kursordrefaktura',
+                'productID' => $product_ID,
+                'email' => $learner->email,
+                'telephone' => $learner->address->telephone,
+                'address' => $learner->address->street,
+                'postalPlace' => $learner->address->city,
+                'postalCode' => $learner->address->zip,
+                'comment' => $comment,
+                'payment_mode' => $paymentMode->mode,
+                'index' => $i,
+                'issueDate' => $request->issueDate ? $request->issueDate : date('Y-m-d')
+            ];
+
+            if ($request->product_type === 'manuscript_vat') {
+                $invoice_fields['vat'] = ($price / 100) * 25;
+                $has_vat = true;
+            }
+
+            $invoice = new FikenInvoice;
+            $invoice->create_invoice($invoice_fields, $has_vat);
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Invoice created successfully.'),
+            'alert_type' => 'success'
+        ]);
+    }
 }
