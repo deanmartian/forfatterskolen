@@ -158,6 +158,12 @@ class ShopController extends Controller
         $packages = $course->packages()->isShow()->where('variation', '!=', 'Editor Package')->get();
         $package_id = \Request::has('package') ? \Request::get('package') :
             (isset($packages[1]) ? $packages[1]['id'] : $packages[0]['id']);
+
+        // If course_id = 115, override package_id
+        if ($course_id == 115) {
+            $package_id = 312;
+        }
+
         $coupon = \request()->has('c') ? \request()->get('c') : '';
         $startIndex = \request()->has('si') ? \request()->get('si') : 0;
 
