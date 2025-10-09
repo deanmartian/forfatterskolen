@@ -69,7 +69,13 @@ class Package extends Model
 
     public function getDescriptionWithCheckAttribute()
     {
-        return str_replace('-', '<i class="checkmark"></i>', nl2br($this->attributes['description']));
+        //return str_replace('-', '<i class="checkmark"></i>', nl2br($this->attributes['description']));
+        $description = nl2br($this->attributes['description']);
+
+        // Replace hyphens only if they start a line or follow a <br> (like a bullet)
+        $description = preg_replace('/(^|<br\s*\/?>)\s*-\s*/', '$1<i class="checkmark"></i> ', $description);
+
+        return $description;
     }
 
     public function getSaleDiscountAttribute()
