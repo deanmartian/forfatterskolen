@@ -754,27 +754,29 @@
 					<form method="POST" action="" onsubmit="disableSubmit(this)">
 						{{ csrf_field() }}
 
-						<div class="form-group">
-							<label>{{ trans('site.front.form.payment-plan') }}</label> <br>
-							@foreach(App\PaymentPlan::orderBy('division', 'asc')->get() as $paymentPlan)
-								<div class="col-sm-6">
-									<input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
-									name="payment_plan_id" value="{{$paymentPlan->id}}" data-plan="{{trim($paymentPlan->plan)}}"
-										id="{{$paymentPlan->plan}}" onchange="payment_plan_change(this)"
-										data-plan-id="{{ $paymentPlan->id }}">
-									<label>{{$paymentPlan->plan}} </label>
-								</div>
-							@endforeach
+                                                <div class="form-group">
+                                                        <label>{{ trans('site.front.form.payment-plan') }}</label> <br>
+                                                        <div class="payment-plan-options">
+                                                                @foreach(App\PaymentPlan::orderBy('division', 'asc')->get() as $paymentPlan)
+                                                                        <div class="col-sm-6 payment-plan-option" data-payment-plan-option="true">
+                                                                                <input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
+                                                                                name="payment_plan_id" value="{{$paymentPlan->id}}" data-plan="{{trim($paymentPlan->plan)}}"
+                                                                                        id="{{$paymentPlan->plan}}" onchange="payment_plan_change(this)"
+                                                                                        data-plan-id="{{ $paymentPlan->id }}">
+                                                                                <label>{{$paymentPlan->plan}} </label>
+                                                                        </div>
+                                                                @endforeach
 
-							<div class="col-sm-6">
-								<input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
-								name="payment_plan_id" value="10" data-plan="{{trim('24 måneder')}}"
-									id="24 måneder" onchange="payment_plan_change(this)"
-									data-plan-id="10">
-								<label>24 måneder</label>
-							</div>
-							<div class="clearfix"></div>
-						</div>
+                                                                <div class="col-sm-6 payment-plan-option" data-payment-plan-option="true">
+                                                                        <input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
+                                                                        name="payment_plan_id" value="10" data-plan="{{trim('24 måneder')}}"
+                                                                                id="24 måneder" onchange="payment_plan_change(this)"
+                                                                                data-plan-id="10">
+                                                                        <label>24 måneder</label>
+                                                                </div>
+                                                                <div class="clearfix"></div>
+                                                        </div>
+                                                </div>
 
 						<button type="submit" class="btn btn-primary pull-right submitInvoice">
 							{{ trans('site.create-invoice') }}
@@ -793,6 +795,8 @@
 	<script type="text/javascript" src="{{ asset('js/app.js?v='.time()) }}"></script>
 	<script>
         const invoiceProcessingMessage = @json(trans('site.pay-later-invoice-processing'));
+        const noPaymentPlanMessage = @json(__('No payment plans available for this purchase.'));
+        const paymentPlanOptionSelector = '[data-payment-plan-option]';
         let invoiceSubmissionInProgress = false;
 
         function lockInvoiceModal(modal, submitButton) {
@@ -930,6 +934,84 @@
             $("#stopVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
         });
 
+        function collectAllPaymentPlans(modal) {
+                let cachedPlans = modal.data('all-payment-plans');
+
+                if (cachedPlans) {
+                        return cachedPlans;
+                }
+
+                let plans = [];
+
+                modal.find('.payment-plan-options').find(paymentPlanOptionSelector).each(function () {
+                        let option = $(this);
+                        let input = option.find('input[name="payment_plan_id"]');
+
+                        if (!input.length) {
+                                return;
+                        }
+
+                        let planId = parseInt(input.data('plan-id'), 10);
+
+                        plans.push({
+                                value: input.val(),
+                                plan: input.data('plan'),
+                                planId: planId,
+                                id: input.attr('id'),
+                                label: option.find('label').text().trim()
+                        });
+                });
+
+                plans = plans.filter(function (plan) {
+                        return !isNaN(plan.planId);
+                });
+
+                modal.data('all-payment-plans', plans);
+
+                return plans;
+        }
+
+        function renderPaymentPlanOptions(modal, plans) {
+                let container = modal.find('.payment-plan-options');
+                container.empty();
+
+                if (!plans || !plans.length) {
+                        let message = $('<p class="text-muted no-payment-plan-message"></p>').text(noPaymentPlanMessage);
+                        container.append(message);
+                        return false;
+                }
+
+                plans.forEach(function (plan) {
+                        let optionWrapper = $('<div class="col-sm-6 payment-plan-option" data-payment-plan-option="true"></div>');
+                        let input = $('<input type="radio" name="payment_plan_id">');
+
+                        input.val(plan.value);
+                        if (plan.plan) {
+                                input.attr('data-plan', plan.plan);
+                        }
+                        input.attr('data-plan-id', plan.planId);
+
+                        if (plan.id) {
+                                input.attr('id', plan.id);
+                        }
+
+                        input.on('change', function () {
+                                payment_plan_change(this);
+                        });
+
+                        let label = $('<label></label>').text(plan.label + ' ');
+
+                        optionWrapper.append(input);
+                        optionWrapper.append(label);
+
+                        container.append(optionWrapper);
+                });
+
+                container.append('<div class="clearfix"></div>');
+
+                return true;
+        }
+
         $('#createInvoiceModal').on('shown.bs.modal', function () {
             invoiceSubmissionInProgress = false;
             $('.invoice-submit-overlay').remove();
@@ -969,95 +1051,90 @@
             $('.invoice-submit-overlay').remove();
         });
 
-		$(".createInvoiceBtn").click(function() {
-			let action = $(this).data('action');
-			let modal = $("#createInvoiceModal");
+                $(".createInvoiceBtn").click(function() {
+                        let action = $(this).data('action');
+                        let modal = $("#createInvoiceModal");
+                        let submitButton = modal.find('.submitInvoice');
 
-			modal.find('form').attr('action', action);
+                        modal.find('form').attr('action', action);
 
-			let rawPlanIds = $(this).attr('data-payment-plan-ids');
-			let currentPlanId = $(this).attr('data-plan-id');
-			let allowedPlanIds = [];
+                        let rawPlanIds = $(this).attr('data-payment-plan-ids');
+                        let currentPlanId = $(this).attr('data-plan-id');
+                        let allowedPlanIds = [];
 
-			if (rawPlanIds) {
-				try {
-					let parsedPlanIds = JSON.parse(rawPlanIds);
+                        if (rawPlanIds) {
+                                try {
+                                        let parsedPlanIds = JSON.parse(rawPlanIds);
 
-					if (Array.isArray(parsedPlanIds)) {
-						allowedPlanIds = parsedPlanIds
-							.map(function (planId) {
-									return parseInt(planId, 10);
-							})
-							.filter(function (planId) {
-									return !isNaN(planId);
-							});
-					}
-				} catch (error) {
-					allowedPlanIds = rawPlanIds.split(',')
-						.map(function (planId) {
-								return parseInt(planId, 10);
-						})
-						.filter(function (planId) {
-								return !isNaN(planId);
-						});
-				}
-			}
+                                        if (Array.isArray(parsedPlanIds)) {
+                                                allowedPlanIds = parsedPlanIds
+                                                        .map(function (planId) {
+                                                                return parseInt(planId, 10);
+                                                        })
+                                                        .filter(function (planId) {
+                                                                return !isNaN(planId);
+                                                        });
+                                        }
+                                } catch (error) {
+                                        allowedPlanIds = rawPlanIds.split(',')
+                                                .map(function (planId) {
+                                                        return parseInt(planId, 10);
+                                                })
+                                                .filter(function (planId) {
+                                                        return !isNaN(planId);
+                                                });
+                                }
+                        }
 
-			let hasAllowedPlanIds = allowedPlanIds.length > 0;
-			let parsedCurrentPlanId = parseInt(currentPlanId, 10);
+                        let hasAllowedPlanIds = allowedPlanIds.length > 0;
+                        let parsedCurrentPlanId = parseInt(currentPlanId, 10);
 
-			if (isNaN(parsedCurrentPlanId)) {
-				parsedCurrentPlanId = null;
-			}
+                        if (isNaN(parsedCurrentPlanId)) {
+                                parsedCurrentPlanId = null;
+                        }
 
-			let paymentPlanInputs = modal.find('input[name="payment_plan_id"]');
-			let selectedInput = null;
+                        let allPaymentPlans = collectAllPaymentPlans(modal);
+                        let plansToRender = allPaymentPlans;
 
-			paymentPlanInputs.each(function () {
-				let input = $(this);
-				let planId = parseInt(input.data('plan-id'), 10);
-				let container = input.closest('.col-sm-6');
-				let isAllowed = !hasAllowedPlanIds || allowedPlanIds.indexOf(planId) !== -1;
+                        if (hasAllowedPlanIds) {
+                                plansToRender = allPaymentPlans.filter(function (plan) {
+                                        return allowedPlanIds.indexOf(plan.planId) !== -1;
+                                });
+                        }
 
-				if (isAllowed) {
-					input.prop('disabled', false);
-					container.removeClass('hide');
-				} else {
-					input.prop('checked', false);
-					input.prop('disabled', true);
-					container.addClass('hide');
-				}
+                        let hasPlans = renderPaymentPlanOptions(modal, plansToRender);
+                        let splitInvoiceOptions = modal.find('input[name="split_invoice"]');
 
-				if (isAllowed && parsedCurrentPlanId !== null && planId === parsedCurrentPlanId) {
-					selectedInput = input;
-				}
-			});
+                        if (!hasPlans) {
+                                splitInvoiceOptions.prop('checked', false);
+                                splitInvoiceOptions.prop('disabled', true);
+                                submitButton.prop('disabled', true).addClass('disabled');
+                                return;
+                        }
 
-			if (!selectedInput || !selectedInput.length) {
-				let availableInputs = paymentPlanInputs.filter(function () {
-						return !$(this).prop('disabled');
-				});
+                        submitButton.prop('disabled', false).removeClass('disabled');
 
-				if (!availableInputs.length && hasAllowedPlanIds) {
-					paymentPlanInputs.each(function () {
-						$(this).prop('disabled', false);
-						$(this).closest('.col-sm-6').removeClass('hide');
-					});
-					availableInputs = paymentPlanInputs;
-				}
+                        let paymentPlanInputs = modal.find('input[name="payment_plan_id"]');
+                        let selectedInput = $();
 
-				selectedInput = availableInputs.first();
-			}
+                        if (parsedCurrentPlanId !== null) {
+                                selectedInput = paymentPlanInputs.filter(function () {
+                                        return parseInt($(this).data('plan-id'), 10) === parsedCurrentPlanId;
+                                }).first();
+                        }
 
-			if (selectedInput && selectedInput.length) {
-				selectedInput.prop('checked', true);
-				payment_plan_change(selectedInput.get(0));
-			} else {
-				let splitInvoiceOptions = modal.find('input[name="split_invoice"]');
-				splitInvoiceOptions.prop('checked', false);
-				splitInvoiceOptions.prop('disabled', true);
-			}
-		});
+                        if (!selectedInput.length) {
+                                selectedInput = paymentPlanInputs.first();
+                        }
+
+                        if (selectedInput.length) {
+                                selectedInput.prop('checked', true);
+                                payment_plan_change(selectedInput.get(0));
+                        } else {
+                                splitInvoiceOptions.prop('checked', false);
+                                splitInvoiceOptions.prop('disabled', true);
+                        }
+                });
 
 		function payment_plan_change(t) {
 			let plan = $(t).data('plan');
