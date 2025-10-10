@@ -129,7 +129,8 @@
             <div><em>{{ trans_choice('site.workshops', 2) }}: {{$package->workshops}}</em></div>
             <div><em>Package ID: <b>{{$package->id}}</b></em></div>
             <div><em>Pay Later Allowed: <b>{{ $package->is_pay_later_allowed ? 'Yes' : 'No' }}</b></em></div>
-  					<div class="package-price">
+            <div><em>Standard Package: <b>{{ $package->is_standard ? 'Yes' : 'No' }}</b></em></div>
+                                        <div class="package-price">
               <div>
                 <strong>{{ trans('site.full-payment') }}</strong><br />
                 <span>{{ trans('site.price') }}: {{FrontendHelpers::currencyFormat($package->full_payment_price)}}</span><br />
@@ -392,9 +393,10 @@
               </div>
               <div class="form-group">
                 <label>Set as Standard Package</label> <br>
+                <input type="hidden" name="is_standard" value="0">
                 <input type="checkbox" data-toggle="toggle" data-on="Yes"
                        class="for-sale-toggle" data-off="No"
-                       name="is_standard" data-width="84">
+                       name="is_standard" value="1" data-width="84">
               </div>
               <div class="form-group">
                 <label>Show Package</label> <br>
@@ -740,9 +742,10 @@
 
               <div class="form-group">
                 <label>Set as Standard Package</label> <br>
+                <input type="hidden" name="is_standard" value="0">
                 <input type="checkbox" data-toggle="toggle" data-on="Yes"
                        class="for-sale-toggle" data-off="No"
-                       name="is_standard" data-width="84">
+                       name="is_standard" value="1" data-width="84">
               </div>
 
               <div class="form-group">
@@ -1181,7 +1184,7 @@ $(document).ready(function(){
         $(".upgrade-price-container").hide();
         $(".upgrade-price-standard-container").hide();
         $(".disable-upgrade-container").hide();
-        $("#addPackageModal input[name=is_standard]").bootstrapToggle('off');
+        $("#addPackageModal input[type=checkbox][name=is_standard]").bootstrapToggle('off');
     });
 
   $('.btndeleteCourse').click(function(){
@@ -1408,9 +1411,9 @@ $(document).ready(function(){
       }
 
       if (is_standard) {
-          $("#editPackageModal input[name=is_standard]").bootstrapToggle('on');
+          $("#editPackageModal input[type=checkbox][name=is_standard]").bootstrapToggle('on');
       } else {
-          $("#editPackageModal input[name=is_standard]").bootstrapToggle('off');
+          $("#editPackageModal input[type=checkbox][name=is_standard]").bootstrapToggle('off');
       }
 
       if (months_3_enable) {
