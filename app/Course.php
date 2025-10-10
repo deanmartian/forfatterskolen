@@ -55,6 +55,12 @@ class Course extends Model
             ->orderBy('full_payment_price', 'asc');
     }
 
+    public function standardPackage()
+    {
+        return $this->hasOne(\App\Package::class)
+            ->where('is_standard', 1);
+    }
+
     public function workshops(): HasMany
     {
         return $this->hasMany(\App\Workshop::class)->orderBy('created_at', 'desc');

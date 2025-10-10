@@ -24,6 +24,7 @@ class AddPackageRequest extends FormRequest
             'description' => 'required',
             'manuscripts_count' => 'required|integer|min:0',
             'full_payment_price' => 'required|numeric|min:0',
+            'is_standard' => 'nullable|boolean',
             /* 'months_3_price' => 'required|numeric|min:0',
             'months_6_price' => 'required|numeric|min:0', */
             'full_price_product' => 'required|string|max:255',

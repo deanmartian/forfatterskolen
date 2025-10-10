@@ -164,6 +164,11 @@ class ShopController extends Controller
             $package_id = 312;
         }
 
+        // check if the course have set standard package
+        if ($course->standardPackage) {
+            $package_id = $course->standardPackage->id;
+        }
+
         $coupon = \request()->has('c') ? \request()->get('c') : '';
         $startIndex = \request()->has('si') ? \request()->get('si') : 0;
 
