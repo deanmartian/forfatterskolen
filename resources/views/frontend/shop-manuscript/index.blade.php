@@ -112,7 +112,8 @@
                         <img src="{{ asset('images-new/shop-manuscript/notepad.png') }}" class="w-100" alt="notepad illustration">
                     </div>
                     <div class="col-md-6 details" id="wordCountTool">
-                        <form id="wordCountForm" method="POST" action="{{ route('front.shop-manuscript.test_manuscript') }}" enctype="multipart/form-data">
+                        <form id="wordCountForm" method="POST" action="{{ route('front.shop-manuscript.test_manuscript') }}" 
+                        enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                             @csrf
 
                             <h2 class="title mb-4">
