@@ -150,11 +150,11 @@
                                 @enderror
                             </div>
 
-                            @if(session('manuscript_test'))
+                            {{-- @if(session('manuscript_test'))
                                 <div class="alert alert-success" role="alert">
                                     {!! session('manuscript_test') !!}
                                 </div>
-                            @endif
+                            @endif --}}
 
                             @if(session('manuscript_test_error'))
                                 <div class="alert alert-danger" role="alert">
