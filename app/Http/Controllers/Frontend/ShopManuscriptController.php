@@ -930,94 +930,117 @@ class ShopManuscriptController extends Controller
 
     public function test_manuscript(Request $request, ShopManuscriptService $shopManuscriptService)/* : RedirectResponse */
     {
-        $extensions = ['pdf', 'doc', 'docx', 'odt'];
-        $word_count = 0;
-        $price = 20000;
+        $validator = FacadeValidator::make($request->all(), [
+            'manuscript' => ['nullable', 'file', 'mimes:pdf,doc,docx,odt'],
+            'manual_word_count' => ['nullable', 'integer', 'min:1'],
+        ], [], [
+            'manual_word_count' => 'ordantall',
+        ]);
+
+        $validator->after(function ($validator) use ($request) {
+            $manualValue = $request->input('manual_word_count');
+            $manualValue = is_string($manualValue) ? trim($manualValue) : $manualValue;
+            $hasManual = $manualValue !== null && $manualValue !== '';
+            $hasFile = $request->hasFile('manuscript') && $request->file('manuscript')->isValid();
+
+            if (! $hasManual && ! $hasFile) {
+                $validator->errors()->add('manual_word_count', 'Vennligst last opp et manus eller skriv inn antall ord.');
+            }
+        });
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $uploadedManuscript = null;
+        $manualWordCount = $request->filled('manual_word_count')
+            ? (int) $request->input('manual_word_count')
+            : null;
+        $word_count = $manualWordCount;
+        $price = 0;
+        $button_link = null;
 
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
-            $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
-            $original_filename = $request->manuscript->getClientOriginalName();
-
-            if (! in_array($extension, $extensions)) {
-                return redirect()->back()->with(
-                    'manuscript_test_error', '<h3>Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT</h3>'
-                );
-            }
-
             $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
-            if ($uploadedManuscript['word_count'] == 0) {
-                $customErrors = ['manuscript' => ['The manuscript word count is invalid.']];
-                $validator = FacadeValidator::make([], []);
-                $validator->validate(); // Perform validation without rules
-                $validator->errors()->merge($customErrors);
+            $extractedWordCount = (int) ($uploadedManuscript['word_count'] ?? 0);
 
-                throw new ValidationException($validator);
+            if ($word_count === null) {
+                if ($extractedWordCount <= 0) {
+                    $fileValidator = FacadeValidator::make([], []);
+                    $fileValidator->errors()->add('manuscript', 'Kunne ikke lese denne filen. Prøv igjen eller skriv inn antall ord manuelt.');
+
+                    throw new ValidationException($fileValidator);
+                }
+
+                $word_count = $extractedWordCount;
             }
+        }
 
-            $word_count = $uploadedManuscript['word_count'];
-            $new_word_count = $uploadedManuscript['word_count'];           
+        if ($word_count === null || $word_count <= 0) {
+            $fallbackValidator = FacadeValidator::make([], []);
+            $fallbackValidator->errors()->add('manual_word_count', 'Vennligst skriv inn et gyldig antall ord.');
 
-            /* $time = time();
-            $destinationPath = 'storage/manuscript-tests/'; // upload path
-            $fileName = $time.'.'.$extension; // rename document
-            $request->manuscript->move($destinationPath, $fileName);
-            if ($extension == 'pdf') {
-                $pdf = new \PdfToText($destinationPath.$fileName);
-                $pdf_content = $pdf->Text;
-                $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-            } elseif ($extension == 'docx') {
-                $docObj = new \Docx2Text($destinationPath.$fileName);
-                $docText = $docObj->convertToText();
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            } elseif ($extension == 'doc') {
-                $docText = $this->readWord($destinationPath.$fileName);
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            } elseif ($extension == 'odt') {
-                $doc = odt2text($destinationPath.$fileName);
-                $word_count = FrontendHelpers::get_num_of_words($doc);
-            }
-            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
-            $word_to_deduct = $word_count * 0.02;
-            $new_word_count = ceil($word_count); */
+            throw new ValidationException($fallbackValidator);
+        }
 
-            $checkoutRoute = 'front.shop-manuscript.checkout';
+        $checkoutRoute = 'front.shop-manuscript.checkout';
+
+        try {
             $prevRoute = app('router')->getRoutes()->match(app('request')->create(\URL::previous()))->getName();
             if ($prevRoute === 'front.gift.shop-manuscript') {
                 $checkoutRoute = 'front.gift.shop-manuscript.checkout';
             }
-
-            $suggestedPlan = ShopManuscript::where('max_words', '>=', $new_word_count)
-                ->orderBy('max_words', 'ASC')->first();
-            if ($suggestedPlan) {
-
-                $price = $suggestedPlan->full_payment_price;
-                if ($new_word_count > 17500) {
-                    $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
-                    $excess_words = $new_word_count - 17500;
-                    $price = $suggestedPlan->full_payment_price + ($excess_words * $excessPerWordAmount);
-                }
-                $button_link = route($checkoutRoute, $suggestedPlan->id);
-            }
-
+        } catch (\Exception $exception) {
+            // Keep default checkout route when previous route cannot be resolved.
         }
 
-        $message = 'Manuset ditt er på '.$word_count.' ord <br />
-        <h3  class="no-margin-top">Prisen for ditt manus er kroner: '.$price.'</h3>
-        <a href="'.$button_link.'" class="btn btn-theme">Bestill nå</a>';
+        $suggestedPlan = ShopManuscript::where('max_words', '>=', $word_count)
+            ->orderBy('max_words', 'ASC')
+            ->first();
 
-        $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
-        $excess_words = $new_word_count - 17500;
+        if ($suggestedPlan) {
+            $price = $suggestedPlan->full_payment_price;
+            if ($word_count > 17500) {
+                $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
+                $excess_words = $word_count - 17500;
+                $price += $excess_words * $excessPerWordAmount;
+            }
 
-        session([
-            'temp_uploaded_file' => [
-                'path' => $uploadedManuscript['manuscript_file'],
-                'original_name' => $uploadedManuscript['original_name'],
-                'mime_type' => $uploadedManuscript['mime_type'],
-                'word_count' => $new_word_count,
-                'price' => $price,
-                'excess_words_amount' => $excess_words > 0 ? $excess_words * $excessPerWordAmount : 0,
-            ]
-        ]);
+            $button_link = route($checkoutRoute, $suggestedPlan->id);
+        }
+
+        $formattedPrice = $price > 0 ? FrontendHelpers::formatCurrency($price).' KR' : null;
+        $message = 'Manuset ditt er på '.$word_count.' ord <br />';
+
+        if ($formattedPrice) {
+            $message .= '<h3 class="no-margin-top">Prisen for ditt manus er kroner: '.$formattedPrice.'</h3>';
+        }
+
+        if ($button_link) {
+            $message .= '<a href="'.$button_link.'" class="btn btn-theme">Bestill nå</a>';
+        } else {
+            $message .= '<p>Ta kontakt med oss for et tilbud tilpasset ditt manus.</p>';
+        }
+
+        if ($uploadedManuscript && ! empty($uploadedManuscript['manuscript_file'])) {
+            $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
+            $excess_words = max($word_count - 17500, 0);
+
+            session([
+                'temp_uploaded_file' => [
+                    'path' => $uploadedManuscript['manuscript_file'],
+                    'original_name' => $uploadedManuscript['original_name'],
+                    'mime_type' => $uploadedManuscript['mime_type'],
+                    'word_count' => $word_count,
+                    'price' => $price,
+                    'excess_words_amount' => $excess_words > 0 ? $excess_words * $excessPerWordAmount : 0,
+                ],
+            ]);
+        } else {
+            session()->forget('temp_uploaded_file');
+        }
 
         return redirect()->back()->with('manuscript_test', $message);
     }
