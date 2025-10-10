@@ -185,6 +185,7 @@ class CourseController extends Controller
         $package->months_12_sale_price_from = null;
         $package->months_12_sale_price_to = null;
         $package->full_payment_price = 0;
+        $package->is_standard = 0;
         $package->save();
 
         $display_order = $requestData['display_order'];
@@ -1403,6 +1404,7 @@ class CourseController extends Controller
         // copy package and change the course_id
         $newPackage = $package->replicate();
         $newPackage->course_id = $request->course_id;
+        $newPackage->is_standard = 0;
         $newPackage->save();
 
         // copy package learners and change to new package

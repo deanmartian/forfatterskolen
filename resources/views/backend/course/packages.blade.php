@@ -92,6 +92,7 @@
                                 data-is_show="{{ $package->is_show }}"
                                 data-is_upgradeable="{{ $package->is_upgradeable }}"
                                 data-is_pay_later_allowed="{{ $package->is_pay_later_allowed }}"
+                                data-is_standard="{{ $package->is_standard }}"
                                 data-full_payment_upgrade_price="{{ $package->full_payment_upgrade_price }}"
                                 data-months_3_upgrade_price="{{ $package->months_3_upgrade_price }}"
                                 data-months_6_upgrade_price="{{ $package->months_6_upgrade_price }}"
@@ -112,10 +113,13 @@
 					</div>
 
 					<h4>
-                        {{$package->variation}}
-                        @if ($package->is_reward)
-                            <span class="label label-success" style="font-size: 10px">Reward</span>
-                        @endif
+                    {{$package->variation}}
+                    @if ($package->is_standard)
+                        <span class="label label-primary" style="font-size: 10px">Standard</span>
+                    @endif
+                    @if ($package->is_reward)
+                        <span class="label label-success" style="font-size: 10px">Reward</span>
+                    @endif
                     </h4>
 				</div>
 				<div class="panel-body row">
@@ -387,6 +391,12 @@
                        name="has_student_discount" data-width="84" checked>
               </div>
               <div class="form-group">
+                <label>Set as Standard Package</label> <br>
+                <input type="checkbox" data-toggle="toggle" data-on="Yes"
+                       class="for-sale-toggle" data-off="No"
+                       name="is_standard" data-width="84">
+              </div>
+              <div class="form-group">
                 <label>Show Package</label> <br>
                 <input type="checkbox" data-toggle="toggle" data-on="Yes"
                        class="for-sale-toggle" data-off="No"
@@ -625,6 +635,7 @@
                     {{csrf_field()}}
                     <input type="hidden" name="variation_id">
                     <input type="hidden" name="is_reward" value="1">
+                    <input type="hidden" name="is_standard" value="0">
 
                     <?php
                         $required_fields = [
@@ -725,6 +736,13 @@
                 <input type="checkbox" data-toggle="toggle" data-on="Enable"
                        class="for-sale-toggle" data-off="Disable"
                        name="has_student_discount" data-width="84">
+              </div>
+
+              <div class="form-group">
+                <label>Set as Standard Package</label> <br>
+                <input type="checkbox" data-toggle="toggle" data-on="Yes"
+                       class="for-sale-toggle" data-off="No"
+                       name="is_standard" data-width="84">
               </div>
 
               <div class="form-group">
@@ -1163,6 +1181,7 @@ $(document).ready(function(){
         $(".upgrade-price-container").hide();
         $(".upgrade-price-standard-container").hide();
         $(".disable-upgrade-container").hide();
+        $("#addPackageModal input[name=is_standard]").bootstrapToggle('off');
     });
 
   $('.btndeleteCourse').click(function(){
@@ -1320,6 +1339,7 @@ $(document).ready(function(){
       let is_show = $(this).data('is_show');
       let is_upgradeable = $(this).data("is_upgradeable");
       let is_pay_later_allowed = $(this).data("is_pay_later_allowed");
+      let is_standard = parseInt($(this).data('is_standard'), 10) === 1;
 
       let issue_date = $(this).data('issue_date');
       let validity_period = $(this).data('validity_period');
@@ -1385,6 +1405,12 @@ $(document).ready(function(){
 
       if (is_pay_later_allowed) {
           $("#editPackageModal").find("input[name=is_pay_later_allowed]").bootstrapToggle('on');
+      }
+
+      if (is_standard) {
+          $("#editPackageModal input[name=is_standard]").bootstrapToggle('on');
+      } else {
+          $("#editPackageModal input[name=is_standard]").bootstrapToggle('off');
       }
 
       if (months_3_enable) {

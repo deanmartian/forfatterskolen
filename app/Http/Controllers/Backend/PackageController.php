@@ -20,6 +20,12 @@ class PackageController extends Controller
         if ($exists) {
             return redirect()->back()->withErrors('Package already exists');
         } else {
+            $isStandard = filter_var($request->input('is_standard'), FILTER_VALIDATE_BOOLEAN);
+
+            if ($isStandard) {
+                Package::where('course_id', $course_id)->update(['is_standard' => 0]);
+            }
+
             $package = new Package;
             $package->course_id = $course_id;
             $package->variation = $request->variation;
@@ -95,6 +101,7 @@ class PackageController extends Controller
             $package->is_show = $isShow;
             $package->is_upgradeable = $isUpgradeable;
             $package->is_pay_later_allowed = $isPayLaterAllowed;
+            $package->is_standard = $isStandard ? 1 : 0;
 
             $package->save();
 
@@ -113,6 +120,11 @@ class PackageController extends Controller
             return redirect()->back()->withErrors('Package already exists');
         } else {
             $package = Package::findOrFail($request->variation_id);
+            $isStandard = filter_var($request->input('is_standard'), FILTER_VALIDATE_BOOLEAN);
+
+            if ($isStandard) {
+                Package::where('course_id', $course_id)->where('id', '!=', $package->id)->update(['is_standard' => 0]);
+            }
             $package->variation = $request->variation;
             $package->description = $request->description;
             $package->manuscripts_count = $request->manuscripts_count;
@@ -182,6 +194,7 @@ class PackageController extends Controller
             $package->is_show = $is_show;
             $package->is_upgradeable = $isUpgradeable;
             $package->is_pay_later_allowed = $isPayLaterAllowed;
+            $package->is_standard = $isStandard ? 1 : 0;
 
             $package->issue_date = $request->issue_date;
             $package->is_reward = isset($request->is_reward) ? $request->is_reward : 0;
@@ -247,6 +260,7 @@ class PackageController extends Controller
                 $package->months_12_sale_price_from = null;
                 $package->months_12_sale_price_to = null;
                 $package->full_payment_price = 0;
+                $package->is_standard = 0;
                 $package->save();
             }
         });
