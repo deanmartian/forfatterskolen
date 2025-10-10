@@ -125,6 +125,7 @@
                             </label>
 
                             <input type="file" class="hidden" id="word-count-file" name="manuscript" accept=".doc,.docx,.pdf,.odt">
+                            <input type="hidden" name="word_count" id="word-count-hidden">
                             <label for="word-count-file" class="file-upload-label">
                                 <div class="file-upload" id="word-count-upload-area">
                                     <div class="file-upload-text" id="word-count-upload-text">
@@ -622,11 +623,14 @@
                 });
             }
 
+            const wordCountFormElement = document.getElementById('wordCountForm');
             const wordCountFileInput = document.getElementById('word-count-file');
             const wordCountUploadArea = document.getElementById('word-count-upload-area');
             const wordCountUploadText = document.getElementById('word-count-upload-text');
             const manualWordCountInput = document.getElementById('manual-word-count');
+            const wordCountHiddenInput = document.getElementById('word-count-hidden');
             const defaultWordCountText = wordCountUploadText ? wordCountUploadText.innerHTML : '';
+            let wordCountSubmittingWithMammoth = false;
 
             const updateWordCountText = (text) => {
                 if (wordCountUploadText) {
@@ -641,11 +645,17 @@
             const selectWordCountFile = (files) => {
                 if (!files || !files.length) {
                     resetUploadText();
+                    if (wordCountHiddenInput) {
+                        wordCountHiddenInput.value = '';
+                    }
                     return;
                 }
 
                 const [file] = files;
                 updateWordCountText(file.name);
+                if (wordCountHiddenInput) {
+                    wordCountHiddenInput.value = '';
+                }
             };
 
             if (wordCountFileInput) {
@@ -703,6 +713,57 @@
                 });
             }
 
+            if (wordCountFormElement && wordCountFileInput) {
+                wordCountFormElement.addEventListener('submit', (event) => {
+                    if (wordCountSubmittingWithMammoth) {
+                        wordCountSubmittingWithMammoth = false;
+                        return;
+                    }
+
+                    const files = wordCountFileInput.files;
+
+                    if (!files || !files.length) {
+                        if (wordCountHiddenInput) {
+                            wordCountHiddenInput.value = '';
+                        }
+
+                        return;
+                    }
+
+                    const [file] = files;
+                    const extension = getFileExtension(file.name || wordCountFileInput.value);
+
+                    if (!shouldUseMammothForExtension(extension)) {
+                        if (wordCountHiddenInput) {
+                            wordCountHiddenInput.value = '';
+                        }
+
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    extractWordCountWithMammoth(file)
+                        .then((wordCount) => {
+                            if (wordCountHiddenInput) {
+                                wordCountHiddenInput.value = Number.isInteger(wordCount) && wordCount > 0
+                                    ? wordCount
+                                    : '';
+                            }
+                        })
+                        .catch((error) => {
+                            console.error('Unable to count words with Mammoth for word count form', error);
+                            if (wordCountHiddenInput) {
+                                wordCountHiddenInput.value = '';
+                            }
+                        })
+                        .finally(() => {
+                            wordCountSubmittingWithMammoth = true;
+                            wordCountFormElement.submit();
+                        });
+                });
+            }
+
             if (manualWordCountInput) {
                 manualWordCountInput.addEventListener('input', () => {
                     manualWordCountInput.classList.remove('is-invalid');
@@ -711,4 +772,3 @@
         });
     </script>
 @stop
-
