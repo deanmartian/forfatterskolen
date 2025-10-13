@@ -150,9 +150,73 @@
 
     function disableSubmit(t) {
         let submit_btn = $(t).find('[type=submit]');
-        submit_btn.text('');
-        submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+
+        if (document.activeElement &&
+            $(document.activeElement).is('[type=submit]') &&
+            $.contains(t, document.activeElement)) {
+            submit_btn = $(document.activeElement);
+        } else {
+            submit_btn = submit_btn.first();
+        }
+
+        if (! submit_btn.length) {
+            return;
+        }
+
+        const originalHtml = submit_btn.html();
+        submit_btn.data('original-html', originalHtml);
+        submit_btn.data('is-loading', true);
+
+        const loadingText = submit_btn.data('loadingText') || 'Please wait...';
+        submit_btn.html('<i class="fa fa-spinner fa-pulse"></i> ' + loadingText);
         submit_btn.attr('disabled', 'disabled');
+
+        let timeoutId;
+
+        function restoreButton() {
+            if (! submit_btn.data('is-loading')) {
+                return;
+            }
+
+            const savedHtml = submit_btn.data('original-html');
+            if (typeof savedHtml !== 'undefined') {
+                submit_btn.html(savedHtml);
+            }
+
+            submit_btn.removeAttr('disabled');
+            submit_btn.removeData('is-loading');
+
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        }
+
+        function cleanupListeners() {
+            window.removeEventListener('focus', onWindowFocus);
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+        }
+
+        function onWindowFocus() {
+            restoreButton();
+            cleanupListeners();
+        }
+
+        function onVisibilityChange() {
+            if (document.visibilityState === 'visible') {
+                restoreButton();
+                cleanupListeners();
+            }
+        }
+
+        window.addEventListener('focus', onWindowFocus);
+        document.addEventListener('visibilitychange', onVisibilityChange);
+
+        timeoutId = setTimeout(function () {
+            if (submit_btn.data('is-loading')) {
+                restoreButton();
+                cleanupListeners();
+            }
+        }, 30000);
     }
 
     function disableSubmitOrigText(t) {

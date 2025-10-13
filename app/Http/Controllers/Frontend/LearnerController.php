@@ -124,9 +124,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\In;
 use Pdf as GlobalPdf;
 
-require_once app_path('Http/Docx2Text.php');
-require_once app_path('Http/Pdf2Text.php');
-require_once app_path('Http/Odt2Text.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class LearnerController extends Controller
 {
