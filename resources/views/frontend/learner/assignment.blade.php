@@ -27,6 +27,14 @@
 		.editor-feedback-table > tbody > tr:last-child > td {
 			padding-bottom: 1.5rem;
 		}
+
+        /* Media Queries */
+        @media only screen and (max-width: 500px) {
+            .nav-tabs {
+                display: inline-grid;
+				padding-left: 10px;
+            }
+        }
 	</style>
 @stop
 
