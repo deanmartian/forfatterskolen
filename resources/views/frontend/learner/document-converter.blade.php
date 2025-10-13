@@ -35,7 +35,7 @@
                                         <span class="text-danger d-block mt-2">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <button type="submit" class="btn light-red-outline-btn mt-3">{{ $submitLabel }}</button>
+                                <button type="submit" class="btn site-btn-global mt-3" style="width: 100%">{{ $submitLabel }}</button>
                             </form>
                         </div>
                     </div>
