@@ -190,6 +190,7 @@ Route::domain($front)->group(function () {
         // Test Manuscript (Shop Manuscript)
         Route::post('/test_manuscript', [Frontend\ShopManuscriptController::class, 'test_manuscript'])->name('front.shop-manuscript.test_manuscript'); // Test count shop manuscript
         Route::post('/shop-manuscript/store-temp-upload', [Frontend\ShopManuscriptController::class, 'storeTempUploadedFile'])->name('front.shop-manuscript.store-temp-upload');
+        Route::post('/documents/convert-to-docx', [Frontend\DocumentConversionController::class, 'convertToDocx'])->name('front.documents.convert-to-docx');
 
         // Pay IPN
         Route::post('/paypalipn', [Frontend\ShopController::class, 'paypalIPN'])->name('front.shop.paypalipn'); // Paypal IPN

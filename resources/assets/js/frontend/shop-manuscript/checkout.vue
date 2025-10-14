@@ -717,13 +717,36 @@ import FileUpload from '../../components/FileUpload.vue';
                         return;
                     }
 
-                    this.orderForm.manuscript = file;
-                    const extension = this.getFileExtension(file);
+                    let manuscriptFile = file;
+                    let extension = this.getFileExtension(manuscriptFile);
+
+                    if (extension !== 'docx') {
+                        try {
+                            manuscriptFile = await this.convertFileToDocx(file);
+                            extension = this.getFileExtension(manuscriptFile);
+                        } catch (error) {
+                            this.orderForm.temp_file = null;
+                            this.orderForm.manuscript = null;
+                            this.orderForm.word_count = null;
+
+                            if (error && error.response) {
+                                this.processError(error);
+                            } else {
+                                this.$toasted.global.showErrorMsg({
+                                    message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                                });
+                            }
+
+                            return;
+                        }
+                    }
+
+                    this.orderForm.manuscript = manuscriptFile;
                     let wordCount = null;
 
-                    if (['doc', 'docx'].includes(extension)) {
+                    if (extension === 'docx') {
                         try {
-                            wordCount = await this.extractWordCountWithMammoth(file);
+                            wordCount = await this.extractWordCountWithMammoth(manuscriptFile);
                         } catch (error) {
                             console.error('Mammoth word count failed, falling back to server', error);
                         }
@@ -731,12 +754,12 @@ import FileUpload from '../../components/FileUpload.vue';
 
                     this.orderForm.word_count = wordCount;
                     this.orderForm.temp_file = {
-                        original_name: file.name,
+                        original_name: manuscriptFile.name,
                         word_count: wordCount,
                     };
 
                     try {
-                        await this.uploadManuscriptTemp(file, wordCount);
+                        await this.uploadManuscriptTemp(manuscriptFile, wordCount);
                         await this.computeManuscriptPrice();
                     } catch (error) {
                         // Errors are handled in uploadManuscriptTemp/computeManuscriptPrice
@@ -783,6 +806,102 @@ import FileUpload from '../../components/FileUpload.vue';
 
                 const parts = file.name.split('.');
                 return parts.length > 1 ? parts.pop().toLowerCase() : '';
+            },
+
+            async convertFileToDocx(file) {
+                const formData = new FormData();
+                formData.append('document', file);
+
+                try {
+                    const response = await axios.post('/documents/convert-to-docx', formData, {
+                        responseType: 'blob',
+                    });
+
+                    const contentDisposition = response.headers ? response.headers['content-disposition'] : null;
+                    const fallbackName = this.createDocxFileName(file && file.name ? file.name : null);
+                    const filename = this.extractFilenameFromContentDisposition(contentDisposition) || fallbackName;
+                    const mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                    const responseBlob = response.data;
+                    const docxBlob = responseBlob instanceof Blob
+                        ? responseBlob
+                        : new Blob(responseBlob ? [responseBlob] : [], { type: mimeType });
+
+                    return new File([docxBlob], filename, { type: mimeType, lastModified: Date.now() });
+                } catch (error) {
+                    if (error && error.response && error.response.data instanceof Blob) {
+                        try {
+                            const parsed = await this.parseErrorBlob(error.response.data);
+                            if (parsed) {
+                                error.response.data = parsed;
+                            }
+                        } catch (parseError) {
+                            console.error('Failed to parse conversion error response', parseError);
+                        }
+                    }
+
+                    if (!error.response || !error.response.data) {
+                        error.response = error.response || {};
+                        error.response.data = {
+                            errors: {
+                                manuscript: ['Kunne ikke konvertere filen. Prøv igjen.']
+                            },
+                            message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                        };
+                    }
+
+                    throw error;
+                }
+            },
+
+            createDocxFileName(originalName) {
+                if (!originalName || typeof originalName !== 'string') {
+                    return 'document-converted.docx';
+                }
+
+                const baseName = originalName.replace(/\.[^/.]+$/, '');
+                const safeBase = baseName ? baseName : 'document';
+
+                return `${safeBase}-converted.docx`;
+            },
+
+            extractFilenameFromContentDisposition(header) {
+                if (!header || typeof header !== 'string') {
+                    return null;
+                }
+
+                const utf8Match = header.match(/filename\*=UTF-8''([^;]+)/i);
+                if (utf8Match && utf8Match[1]) {
+                    try {
+                        return decodeURIComponent(utf8Match[1]);
+                    } catch (error) {
+                        console.error('Failed to decode UTF-8 filename', error);
+                    }
+                }
+
+                const quotedMatch = header.match(/filename="?([^";]+)"?/i);
+                if (quotedMatch && quotedMatch[1]) {
+                    return quotedMatch[1];
+                }
+
+                return null;
+            },
+
+            async parseErrorBlob(blob) {
+                if (!blob || typeof blob.text !== 'function') {
+                    return null;
+                }
+
+                const text = await blob.text();
+
+                if (!text) {
+                    return null;
+                }
+
+                try {
+                    return JSON.parse(text);
+                } catch (error) {
+                    return { message: text };
+                }
             },
 
             extractWordCountWithMammoth(file) {
