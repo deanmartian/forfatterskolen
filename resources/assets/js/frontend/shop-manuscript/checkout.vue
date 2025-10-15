@@ -47,6 +47,9 @@
                             <FileUpload
                             :accept="documentAcceptTypes"
                             @fileSelected="handleFileSelected('manuscript', $event)" v-else/>
+                            <p v-if="isConvertingManuscript" class="text-info mt-2">
+                                {{ conversionMessage }}
+                            </p>
                             <input type="hidden" name="manuscript">
 
                             <div class="custom-checkbox mt-4">
@@ -342,11 +345,11 @@
                         </template>
 
                         <template v-if="!currentUser || (currentUser && currentUser.could_buy_course)">
-                            <wizard-button v-if="!props.isLastStep" @click.native="handleNextTab(props)" 
+                            <wizard-button v-if="!props.isLastStep" @click.native="handleNextTab(props)"
                             class="wizard-footer-right"
                             :class="{'w-100': props.activeTabIndex === 1 }"
-                                        :style="props.fillButtonStyle" :disabled="(!currentUser && !isNewCustomer 
-                                        && props.activeTabIndex > 0) || isLoadingSubmit">
+                                        :style="props.fillButtonStyle" :disabled="(!currentUser && !isNewCustomer
+                                        && props.activeTabIndex > 0) || isLoadingSubmit || isConvertingManuscript">
                                 <i class="fa fa-pulse fa-spinner" v-if="isLoadingSubmit"></i> Til betaling
                             </wizard-button>
 
@@ -367,12 +370,13 @@
                         </template>
                     </template>
                     <template v-else>
-                        <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" 
-                            class="wizard-footer-right w-100" :style="props.fillButtonStyle">
+                        <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()"
+                            class="wizard-footer-right w-100" :style="props.fillButtonStyle"
+                            :disabled="isConvertingManuscript">
                                 Bestill
                         </wizard-button>
                     </template>
-                    
+
                 </div>
             </template> <!-- end buttons slot -->
 
@@ -447,6 +451,8 @@ import FileUpload from '../../components/FileUpload.vue';
                 hasPaidCourse: false,
                 isLoading: false,
                 isLoadingSubmit: false,
+                isConvertingManuscript: false,
+                conversionMessage: 'Konverterer dokumentet… Vennligst vent.',
                 wizardProps: {},
                 requestUrl: '/shop-manuscript/'+this.shopManuscript.id,
                 documentAcceptTypes: [
@@ -731,8 +737,12 @@ import FileUpload from '../../components/FileUpload.vue';
 
                     let manuscriptFile = file;
                     let extension = this.getFileExtension(manuscriptFile);
+                    let conversionStarted = false;
 
                     if (extension !== 'docx') {
+                        this.isConvertingManuscript = true;
+                        this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
+                        conversionStarted = true;
                         try {
                             manuscriptFile = await this.convertFileToDocx(file);
                             extension = this.getFileExtension(manuscriptFile);
@@ -740,6 +750,8 @@ import FileUpload from '../../components/FileUpload.vue';
                             this.orderForm.temp_file = null;
                             this.orderForm.manuscript = null;
                             this.orderForm.word_count = null;
+                            this.isConvertingManuscript = false;
+                            this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
 
                             if (error && error.response) {
                                 this.processError(error);
@@ -775,6 +787,11 @@ import FileUpload from '../../components/FileUpload.vue';
                         await this.computeManuscriptPrice();
                     } catch (error) {
                         // Errors are handled in uploadManuscriptTemp/computeManuscriptPrice
+                    } finally {
+                        if (conversionStarted) {
+                            this.isConvertingManuscript = false;
+                            this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
+                        }
                     }
                 }
             },
@@ -808,6 +825,8 @@ import FileUpload from '../../components/FileUpload.vue';
                     this.orderForm.manuscript = null;
                     this.orderForm.word_count = null;
                     this.originalPrice = this.origPrice;
+                    this.isConvertingManuscript = false;
+                    this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
                 });
             },
 
