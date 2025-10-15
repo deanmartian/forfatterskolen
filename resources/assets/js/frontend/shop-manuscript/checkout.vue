@@ -45,7 +45,7 @@
                             </div>
 
                             <FileUpload
-                            :accept="'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/vnd.oasis.opendocument.text'"
+                            :accept="documentAcceptTypes"
                             @fileSelected="handleFileSelected('manuscript', $event)" v-else/>
                             <input type="hidden" name="manuscript">
 
@@ -78,8 +78,7 @@
                                 {{ trans('site.front.form.synopsis-optional') }}
                             </label>
                             <FileUpload
-                            :accept="'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,' 
-                            + 'application/pdf, application/vnd.oasis.opendocument.text'" 
+                            :accept="documentAcceptTypes"
                             @fileSelected="handleFileSelected('synopsis', $event)"/>
                             <input type="hidden" name="synopsis">
                         </div>
@@ -449,7 +448,20 @@ import FileUpload from '../../components/FileUpload.vue';
                 isLoading: false,
                 isLoadingSubmit: false,
                 wizardProps: {},
-                requestUrl: '/shop-manuscript/'+this.shopManuscript.id
+                requestUrl: '/shop-manuscript/'+this.shopManuscript.id,
+                documentAcceptTypes: [
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/pdf',
+                    'application/vnd.oasis.opendocument.text',
+                    'application/vnd.apple.pages',
+                    'application/x-iwork-pages-sffpages',
+                    '.doc',
+                    '.docx',
+                    '.pdf',
+                    '.odt',
+                    '.pages'
+                ].join(',')
             }
         },
 

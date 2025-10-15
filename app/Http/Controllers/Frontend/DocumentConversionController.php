@@ -12,7 +12,13 @@ class DocumentConversionController extends Controller
     public function convertToDocx(Request $request, DocumentConversionService $documentConversionService)
     {
         $request->validate([
-            'document' => ['required', 'file', 'max:51200', 'mimes:pdf,doc,docx,odt,pages'],
+            'document' => [
+                'required',
+                'file',
+                'max:51200',
+                'mimes:pdf,doc,docx,odt,pages,zip',
+                'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/x-iwork-pages-sffpages,application/zip,application/octet-stream',
+            ],
         ]);
 
         $uploadedFile = $request->file('document');
