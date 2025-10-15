@@ -886,13 +886,25 @@ import FileUpload from '../../components/FileUpload.vue';
 
             createDocxFileName(originalName) {
                 if (!originalName || typeof originalName !== 'string') {
-                    return 'document-converted.docx';
+                    return 'document.docx';
                 }
 
-                const baseName = originalName.replace(/\.[^/.]+$/, '');
-                const safeBase = baseName ? baseName : 'document';
+                const dotIndex = originalName.lastIndexOf('.');
 
-                return `${safeBase}-converted.docx`;
+                if (dotIndex <= 0) {
+                    return originalName.toLowerCase().endsWith('.docx')
+                        ? originalName
+                        : `${originalName}.docx`;
+                }
+
+                const baseName = originalName.substring(0, dotIndex);
+                const extension = originalName.substring(dotIndex + 1).toLowerCase();
+
+                if (extension === 'docx') {
+                    return originalName;
+                }
+
+                return `${baseName}.docx`;
             },
 
             extractFilenameFromContentDisposition(header) {

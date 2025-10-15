@@ -29,14 +29,9 @@ class DocumentConversionService
         );
 
         $fullPath = storage_path('app/'.$temporaryPath);
-        $safeBaseName = Str::slug(pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME));
-        if ($safeBaseName === '') {
-            $safeBaseName = 'document';
-        }
-
-        $docxFileName = $safeBaseName.'-converted-'.Str::uuid()->toString().'.docx';
-        $docxRelativePath = 'temp-conversions/'.$docxFileName;
+        $docxRelativePath = 'temp-conversions/'.Str::uuid()->toString().'.docx';
         $docxStoragePath = storage_path('app/'.$docxRelativePath);
+        $downloadName = $this->determineDownloadName($uploadedFile->getClientOriginalName());
 
         $conversionSucceeded = false;
 
@@ -80,8 +75,35 @@ class DocumentConversionService
         return [
             'relative_path' => $docxRelativePath,
             'full_path' => $docxStoragePath,
-            'download_name' => $docxFileName,
+            'download_name' => $downloadName,
         ];
+    }
+
+    protected function determineDownloadName(?string $originalName): string
+    {
+        $originalName = $originalName ?? '';
+
+        if ($originalName === '') {
+            return 'document.docx';
+        }
+
+        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+
+        if ($extension !== '') {
+            if (strtolower($extension) === 'docx') {
+                return $originalName;
+            }
+
+            $baseName = substr($originalName, 0, - (strlen($extension) + 1));
+
+            if ($baseName === '') {
+                return 'document.docx';
+            }
+
+            return $baseName.'.docx';
+        }
+
+        return $originalName.'.docx';
     }
 
     protected function convertDocumentWithCloudConvert(
