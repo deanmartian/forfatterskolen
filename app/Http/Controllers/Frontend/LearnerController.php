@@ -4641,7 +4641,7 @@ class LearnerController extends Controller
                 $assignment = $assignmentManuscript->assignment;
                 $assignment_max_words = $assignment->allow_up_to > 0 ? $assignment->allow_up_to : $assignment->max_words;
 
-                if ($word_count > $assignment_max_words) {
+                if ($word_count > $assignment_max_words && $assignment->check_max_words) {
                     return redirect()->back()->with(['errorMaxWord' => true, 'editorMaxWord' => $assignmentManuscript->assignment->max_words]);
                 }
 
