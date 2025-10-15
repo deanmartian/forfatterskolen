@@ -136,14 +136,21 @@ class LessonController extends Controller
         }
 
         $request->validate($reqFields);
-        $wholeLessonFile = $this->uploadWholeFile($request);
+
+        if ($request->has('whole_lesson_file')) {
+            $wholeLessonFile = $this->uploadWholeFile($request);
+        }
 
         $course = Course::findOrFail($course_id);
         $lesson = Lesson::findOrFail($id);
         $lesson->course_id = $course->id;
         $lesson->title = $request->title;
         $lesson->content = $request->content;
-        $lesson->whole_lesson_file = $wholeLessonFile;
+
+        if ($request->has('whole_lesson_file')) {
+            $lesson->whole_lesson_file = $wholeLessonFile;
+        }
+        
         $lesson->delay = $request->delay;
         $lesson->allow_lesson_download = $request->has('allow_lesson_download') && $request->allow_lesson_download ? 1 : 0;
         $lesson->save();
