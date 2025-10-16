@@ -146,9 +146,10 @@
 				<label>
 					* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
 				</label>
-      			<input type="file" class="form-control" required name="manuscript" 
-				accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, 
-				application/pdf, application/vnd.oasis.opendocument.text">
+                        <input type="file" class="form-control" required name="manuscript"
+                                accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                application/pdf, application/vnd.oasis.opendocument.text">
+                        <small class="form-text text-muted conversion-status d-none"></small>
       		</div>
 			<div class="form-group">
 				<label for="">{{ trans('site.front.genre') }}</label>
@@ -190,9 +191,10 @@
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
-						<input type="file" class="form-control" required name="manuscript" 
-						accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-						application/pdf, application/vnd.oasis.opendocument.text">
+                                                <input type="file" class="form-control" required name="manuscript"
+                                                accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                                application/pdf, application/vnd.oasis.opendocument.text">
+                                                <small class="form-text text-muted conversion-status d-none"></small>
 					</div>
 					<div class="form-group">
 						<label for="">{{ trans('site.front.genre') }}</label>
@@ -345,6 +347,293 @@
         var action = $(this).data('action');
         form.attr('action', action);
     });
+
+    (function($) {
+        const MANUSCRIPT_INPUT_SELECTOR = '#uploadManuscriptModal input[name="manuscript"], #updateUploadedManuscriptModal input[name="manuscript"]';
+        const CONVERSION_MESSAGES = {
+            start: 'Konverterer dokumentet… Vennligst vent.',
+            success: 'Konvertering fullført. Filen er klar til opplasting.',
+            failure: 'Kunne ikke konvertere filen. Prøv igjen.'
+        };
+
+        if (typeof axios === 'undefined') {
+            return;
+        }
+
+        $(document).on('change', MANUSCRIPT_INPUT_SELECTOR, function() {
+            handleManuscriptChange(this).catch(function(error) {
+                console.error('Manuskriptkonvertering feilet', error);
+            });
+        });
+
+        function getFileExtension(file) {
+            if (!file || !file.name) {
+                return '';
+            }
+
+            var parts = file.name.split('.');
+            return parts.length > 1 ? parts.pop().toLowerCase() : '';
+        }
+
+        function createDocxFileName(originalName) {
+            if (!originalName || typeof originalName !== 'string') {
+                return 'document.docx';
+            }
+
+            var dotIndex = originalName.lastIndexOf('.');
+
+            if (dotIndex <= 0) {
+                return originalName.toLowerCase().endsWith('.docx') ? originalName : originalName + '.docx';
+            }
+
+            var baseName = originalName.substring(0, dotIndex);
+            var extension = originalName.substring(dotIndex + 1).toLowerCase();
+
+            if (extension === 'docx') {
+                return originalName;
+            }
+
+            return baseName + '.docx';
+        }
+
+        function extractFilenameFromContentDisposition(header) {
+            if (!header || typeof header !== 'string') {
+                return null;
+            }
+
+            var utf8Match = header.match(/filename\*=UTF-8''([^;]+)/i);
+            if (utf8Match && utf8Match[1]) {
+                try {
+                    return decodeURIComponent(utf8Match[1]);
+                } catch (error) {
+                    console.error('Klarte ikke å dekode UTF-8 filnavn', error);
+                }
+            }
+
+            var quotedMatch = header.match(/filename="?([^";]+)"?/i);
+            if (quotedMatch && quotedMatch[1]) {
+                return quotedMatch[1];
+            }
+
+            return null;
+        }
+
+        function createDataTransfer() {
+            if (typeof DataTransfer !== 'undefined') {
+                return new DataTransfer();
+            }
+
+            if (typeof ClipboardEvent !== 'undefined') {
+                try {
+                    var clipboard = new ClipboardEvent('');
+                    if (clipboard.clipboardData) {
+                        return clipboard.clipboardData;
+                    }
+                } catch (error) {
+                    console.warn('ClipboardEvent er ikke tilgjengelig for å opprette DataTransfer', error);
+                }
+            }
+
+            return null;
+        }
+
+        function assignFileToInput(input, file) {
+            var dataTransfer = createDataTransfer();
+
+            if (!dataTransfer) {
+                return null;
+            }
+
+            dataTransfer.items.add(file);
+            input.files = dataTransfer.files;
+
+            return file;
+        }
+
+        function setStatus($element, message, type) {
+            if (!$element.length) {
+                return;
+            }
+
+            $element.removeClass('d-none text-muted text-success text-danger');
+
+            if (type === 'success') {
+                $element.addClass('text-success');
+            } else if (type === 'error') {
+                $element.addClass('text-danger');
+            } else {
+                $element.addClass('text-muted');
+            }
+
+            $element.text(message);
+        }
+
+        function setStatusHtml($element, html, type) {
+            if (!$element.length) {
+                return;
+            }
+
+            $element.removeClass('d-none text-muted text-success text-danger');
+
+            if (type === 'success') {
+                $element.addClass('text-success');
+            } else if (type === 'error') {
+                $element.addClass('text-danger');
+            } else {
+                $element.addClass('text-muted');
+            }
+
+            $element.html(html);
+        }
+
+        function clearStatus($element) {
+            if (!$element.length) {
+                return;
+            }
+
+            $element.addClass('d-none text-muted');
+            $element.removeClass('text-success text-danger');
+            $element.text('');
+        }
+
+        async function parseErrorBlob(blob) {
+            if (!blob || typeof blob.text !== 'function') {
+                return null;
+            }
+
+            try {
+                var text = await blob.text();
+
+                if (!text) {
+                    return null;
+                }
+
+                try {
+                    return JSON.parse(text);
+                } catch (error) {
+                    return { message: text };
+                }
+            } catch (error) {
+                console.error('Kunne ikke lese feilrespons', error);
+                return null;
+            }
+        }
+
+        async function convertFileToDocx(file) {
+            var formData = new FormData();
+            formData.append('document', file);
+
+            try {
+                var response = await axios.post('/documents/convert-to-docx', formData, {
+                    responseType: 'blob'
+                });
+
+                var contentDisposition = response.headers ? response.headers['content-disposition'] : null;
+                var fallbackName = createDocxFileName(file && file.name ? file.name : null);
+                var filename = extractFilenameFromContentDisposition(contentDisposition) || fallbackName;
+                var mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                var responseBlob = response.data;
+                var docxBlob = responseBlob instanceof Blob ? responseBlob : new Blob(responseBlob ? [responseBlob] : [], { type: mimeType });
+
+                return new File([docxBlob], filename, { type: mimeType, lastModified: Date.now() });
+            } catch (error) {
+                if (error && error.response && error.response.data instanceof Blob) {
+                    try {
+                        var parsed = await parseErrorBlob(error.response.data);
+                        if (parsed) {
+                            error.response.data = parsed;
+                        }
+                    } catch (parseError) {
+                        console.error('Kunne ikke tolke feilrespons fra konvertering', parseError);
+                    }
+                }
+
+                throw error;
+            }
+        }
+
+        async function getConversionErrorMessage(error) {
+            if (!error || !error.response) {
+                return CONVERSION_MESSAGES.failure;
+            }
+
+            var data = error.response.data;
+
+            if (data && typeof data === 'object' && !(data instanceof Blob)) {
+                if (data.errors && data.errors.manuscript && data.errors.manuscript.length) {
+                    return data.errors.manuscript[0];
+                }
+
+                if (data.message) {
+                    return data.message;
+                }
+            }
+
+            if (typeof data === 'string') {
+                return data;
+            }
+
+            return CONVERSION_MESSAGES.failure;
+        }
+
+        async function handleManuscriptChange(input) {
+            if (!input || input.dataset.converting === 'true') {
+                return;
+            }
+
+            var files = input.files;
+            var file = files && files[0] ? files[0] : null;
+            var $input = $(input);
+            var $status = $input.closest('.form-group').find('.conversion-status');
+            var $form = $input.closest('form');
+            var $submit = $form.find('button[type="submit"]');
+
+            if (!file) {
+                clearStatus($status);
+                return;
+            }
+
+            var extension = getFileExtension(file);
+
+            if (extension === 'docx') {
+                clearStatus($status);
+                return;
+            }
+
+            input.dataset.converting = 'true';
+            $input.prop('disabled', true);
+            $submit.prop('disabled', true);
+            setStatus($status, CONVERSION_MESSAGES.start, 'info');
+
+            try {
+                var convertedFile = await convertFileToDocx(file);
+                var assignedFile = assignFileToInput(input, convertedFile);
+
+                if (!assignedFile) {
+                    var downloadUrl = URL.createObjectURL(convertedFile);
+                    setStatusHtml(
+                        $status,
+                        'Filen ble konvertert til DOCX. <a href="' + downloadUrl + '" download="' + convertedFile.name + '">Last ned filen</a> og velg den manuelt.',
+                        'info'
+                    );
+                    setTimeout(function() {
+                        URL.revokeObjectURL(downloadUrl);
+                    }, 60000);
+                    return;
+                }
+
+                setStatus($status, CONVERSION_MESSAGES.success + ' (' + convertedFile.name + ')', 'success');
+            } catch (error) {
+                var message = await getConversionErrorMessage(error);
+                setStatus($status, message, 'error');
+                input.value = '';
+            } finally {
+                $input.prop('disabled', false);
+                $submit.prop('disabled', false);
+                delete input.dataset.converting;
+            }
+        }
+    })(jQuery);
 
 </script>
 @stop
