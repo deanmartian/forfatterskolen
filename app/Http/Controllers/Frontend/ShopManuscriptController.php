@@ -931,22 +931,8 @@ class ShopManuscriptController extends Controller
     public function test_manuscript(Request $request, ShopManuscriptService $shopManuscriptService)/* : RedirectResponse */
     {
         $validator = FacadeValidator::make($request->all(), [
-            'manuscript' => ['nullable', 'file', 'mimes:pdf,doc,docx,odt'],
-            'manual_word_count' => ['nullable', 'integer', 'min:1'],
-        ], [], [
-            'manual_word_count' => 'ordantall',
+            'manuscript' => ['required', 'file', 'mimes:pdf,doc,docx,odt'],
         ]);
-
-        $validator->after(function ($validator) use ($request) {
-            $manualValue = $request->input('manual_word_count');
-            $manualValue = is_string($manualValue) ? trim($manualValue) : $manualValue;
-            $hasManual = $manualValue !== null && $manualValue !== '';
-            $hasFile = $request->hasFile('manuscript') && $request->file('manuscript')->isValid();
-
-            if (! $hasManual && ! $hasFile) {
-                $validator->errors()->add('manual_word_count', 'Vennligst last opp et manus eller skriv inn antall ord.');
-            }
-        });
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -955,10 +941,7 @@ class ShopManuscriptController extends Controller
         }
 
         $uploadedManuscript = null;
-        $manualWordCount = $request->filled('manual_word_count')
-            ? (int) $request->input('manual_word_count')
-            : null;
-        $word_count = $manualWordCount;
+        $word_count = null;
         $price = 0;
         $button_link = null;
 
@@ -966,21 +949,19 @@ class ShopManuscriptController extends Controller
             $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
             $extractedWordCount = (int) ($uploadedManuscript['word_count'] ?? 0);
 
-            if ($word_count === null) {
-                if ($extractedWordCount <= 0) {
-                    $fileValidator = FacadeValidator::make([], []);
-                    $fileValidator->errors()->add('manuscript', 'Kunne ikke lese denne filen. Prøv igjen eller skriv inn antall ord manuelt.');
+            if ($extractedWordCount <= 0) {
+                $fileValidator = FacadeValidator::make([], []);
+                $fileValidator->errors()->add('manuscript', 'Kunne ikke lese denne filen. Prøv igjen med en annen fil.');
 
-                    throw new ValidationException($fileValidator);
-                }
-
-                $word_count = $extractedWordCount;
+                throw new ValidationException($fileValidator);
             }
+
+            $word_count = $extractedWordCount;
         }
 
         if ($word_count === null || $word_count <= 0) {
             $fallbackValidator = FacadeValidator::make([], []);
-            $fallbackValidator->errors()->add('manual_word_count', 'Vennligst skriv inn et gyldig antall ord.');
+            $fallbackValidator->errors()->add('manuscript', 'Kunne ikke beregne antall ord. Prøv igjen med en annen fil.');
 
             throw new ValidationException($fallbackValidator);
         }

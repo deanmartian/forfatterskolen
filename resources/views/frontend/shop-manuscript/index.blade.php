@@ -143,16 +143,6 @@
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
 
-                            <div class="form-group mt-3">
-                                <label for="manual-word-count">{{ trans('site.enter-words-manually') }}</label>
-                                <input type="number" min="1" step="1" class="form-control @error('manual_word_count') is-invalid @enderror" id="manual-word-count" name="manual_word_count" value="{{ old('manual_word_count') }}"
-                                placeholder="{{ trans('site.enter-words-manually-placeholder') }}">
-                                <small class="form-text text-muted">{{ trans('site.enter-words-manually-note') }}</small>
-                                @error('manual_word_count')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
-                            </div>
-
                             {{-- @if(session('manuscript_test'))
                                 <div class="alert alert-success" role="alert">
                                     {!! session('manuscript_test') !!}
@@ -497,7 +487,6 @@
             const wordCountFileInput = document.getElementById('word-count-file');
             const wordCountUploadArea = document.getElementById('word-count-upload-area');
             const wordCountUploadText = document.getElementById('word-count-upload-text');
-            const manualWordCountInput = document.getElementById('manual-word-count');
             const wordCountHiddenInput = document.getElementById('word-count-hidden');
             const wordCountProcessButton = wordCountFormElement
                 ? wordCountFormElement.querySelector('.word-count-process-btn')
@@ -1114,11 +1103,6 @@
                 });
             }
 
-            if (manualWordCountInput) {
-                manualWordCountInput.addEventListener('input', () => {
-                    manualWordCountInput.classList.remove('is-invalid');
-                });
-            }
         });
     </script>
 @stop
