@@ -116,6 +116,9 @@
 @yield('scripts')
 <script>
 
+    var sidebar = $("#sidebar");
+    var mainContainer = $("#main-container");
+
     checkWindowWidth();
 
     // Add an event listener for the window resize event
@@ -123,13 +126,16 @@
 
     // Toggle sidebar on button click
     $("#sidebarCollapse").click(function () {
-        $("#sidebar").toggleClass("hidden-xs hidden");
-        $("#main-container").toggleClass("enlarge");
+        sidebar.toggleClass("sidebar-visible");
+        mainContainer.toggleClass("enlarge");
     });
 
     $("#main-content").click(function() {
-        checkWindowWidth();
-    })
+        if (window.innerWidth <= 1026 && sidebar.hasClass("sidebar-visible")) {
+            sidebar.removeClass("sidebar-visible");
+            mainContainer.removeClass("enlarge");
+        }
+    });
 
     function handleResize() {
         // Code to execute when the window is resized
@@ -140,11 +146,11 @@
         var windowWidth = window.innerWidth;
 
         if (windowWidth <= 1026) {
-            $("#sidebar").addClass("hidden-xs hidden");
-            $("#main-container").removeClass("enlarge");
+            sidebar.removeClass("sidebar-visible");
+            mainContainer.removeClass("enlarge");
         } else {
-            $("#sidebar").removeClass("hidden-xs hidden");
-            $("#main-container").addClass("enlarge");
+            sidebar.addClass("sidebar-visible");
+            mainContainer.addClass("enlarge");
         }
     }
 

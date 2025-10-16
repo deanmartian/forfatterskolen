@@ -36,6 +36,16 @@ body:not(.modal-open) {
     z-index: 9;
 }
 
+@media only screen and (max-width: 1026px) {
+    #sidebar {
+        display: none;
+    }
+
+    #sidebar.sidebar-visible {
+        display: block;
+    }
+}
+
 #sidebarCollapse {
     color: var(--white);
     background: none;
@@ -1664,7 +1674,7 @@ body:not(.modal-open) {
     text-decoration: none;
 }
 
-@media only screen and (max-width: 1024px) {
+@media only screen and (max-width: 1026px) {
     #topbar .auto-renew-wrapper {
         display: none;
     }
