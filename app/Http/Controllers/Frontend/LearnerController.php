@@ -75,6 +75,7 @@ use App\SelfPublishingLearner;
 use App\SelfPublishingPortalRequest;
 use App\Services\AssignmentService;
 use App\Services\CourseService;
+use App\Services\DocumentConversionService;
 use App\Services\ProjectService;
 use App\Services\ShopManuscriptService;
 use App\Settings;
@@ -110,6 +111,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -954,6 +956,55 @@ class LearnerController extends Controller
         ];
 
         return view('frontend.learner.calendar', compact('events'));
+    }
+
+    public function documentConverter(): View
+    {
+        return view('frontend.learner.document-converter');
+    }
+
+    public function convertDocument(Request $request, DocumentConversionService $documentConversionService)
+    {
+        $request->validate([
+            'document' => ['required', 'file', 'max:51200'],
+        ]);
+
+        $uploadedFile = $request->file('document');
+        $extension = strtolower($uploadedFile->getClientOriginalExtension());
+        $allowedExtensions = ['doc', 'docx', 'pdf', 'pages'];
+
+        $invalidFileMessage = __('Please upload a PAGES, PDF, DOC or DOCX file.');
+        $conversionFailedMessage = __('We could not convert the file. Make sure the document contains selectable text and try again.');
+
+        if (! in_array($extension, $allowedExtensions, true)) {
+            return back()
+                ->withErrors(['document' => $invalidFileMessage])
+                ->with('alert_type', 'danger');
+        }
+
+        try {
+            $conversion = $documentConversionService->convertUploadedFileToDocx(
+                $uploadedFile,
+                'learner-document-converter',
+                Auth::id()
+            );
+        } catch (\Throwable $exception) {
+            \Illuminate\Support\Facades\Log::error('Learner document conversion failed', [
+                'user_id' => Auth::id(),
+                'extension' => $extension,
+                'message' => $exception->getMessage(),
+            ]);
+            $conversion = null;
+        }
+
+        if (! $conversion) {
+            return back()
+                ->withErrors(['document' => $conversionFailedMessage])
+                ->with('alert_type', 'danger');
+        }
+
+        return response()->download($conversion['full_path'], $conversion['download_name'])
+            ->deleteFileAfterSend(true);
     }
 
     public function assignment()
@@ -6130,6 +6181,251 @@ class LearnerController extends Controller
             'yearly' => $sales,
             'overall' => $overallSales,
         ];
+    }
+
+    protected function cleanConvertedText($content): string
+    {
+        if (! is_string($content)) {
+            return '';
+        }
+
+        $content = preg_replace("/[\x00-\x08\x0B\x0C\x0E-\x1F]/u", '', $content) ?? '';
+        $content = str_replace(["\r\n", "\r"], "\n", $content);
+        $content = preg_replace("/\n{3,}/", "\n\n", $content) ?? '';
+        $content = preg_replace("/[ \t]+\n/", "\n", $content) ?? '';
+        $content = trim($content);
+
+        if ($content === '') {
+            return '';
+        }
+
+        $lowerContent = strtolower($content);
+        if (in_array($lowerContent, ['invalid file type', 'file not exists'], true)) {
+            return '';
+        }
+
+        return $content;
+    }
+
+    protected function extractTextFromDocument(string $path, string $extension): string
+    {
+        $extension = strtolower($extension);
+
+        if (in_array($extension, ['doc', 'docx'], true)) {
+            $docxToText = new \Docx2Text($path);
+
+            return $this->cleanConvertedText($docxToText->convertToText());
+        }
+
+        if ($extension === 'pdf') {
+            return $this->extractTextFromPdf($path);
+        }
+
+        if ($extension === 'pages') {
+            return $this->cleanConvertedText($this->extractTextFromPagesFile($path));
+        }
+
+        return '';
+    }
+
+    protected function extractTextFromPdf(string $path): string
+    {
+        $text = $this->cleanConvertedText($this->extractTextUsingPdfLibrary($path));
+
+        if ($text !== '') {
+            return $text;
+        }
+
+        return $this->cleanConvertedText($this->extractTextUsingPdftotextBinary($path));
+    }
+
+    protected function extractTextUsingPdfLibrary(string $path): string
+    {
+        try {
+            $pdfToText = new \PdfToText($path, \PdfToText::PDFOPT_NONE);
+            $pdfToText->Separator = "\n";
+            $pdfToText->BlockSeparator = "\n";
+            $pdfToText->PageSeparator = "\n\n";
+
+            return (string) $pdfToText;
+        } catch (\Throwable $exception) {
+            \Illuminate\Support\Facades\Log::warning('PdfToText library could not extract text', [
+                'user_id' => Auth::id(),
+                'message' => $exception->getMessage(),
+            ]);
+
+            return '';
+        }
+    }
+
+    protected function extractTextUsingPdftotextBinary(string $path): string
+    {
+        if (! function_exists('exec')) {
+            return '';
+        }
+
+        $binaryPath = $this->findSystemExecutable('pdftotext');
+        if ($binaryPath === null) {
+            return '';
+        }
+
+        $temporaryTextPath = $this->createTemporaryConversionPath('txt');
+        $command = escapeshellarg($binaryPath).' -layout -nopgbrk -enc UTF-8 '
+            .escapeshellarg($path).' '.escapeshellarg($temporaryTextPath).' 2>&1';
+
+        $output = [];
+        $exitCode = null;
+        exec($command, $output, $exitCode);
+
+        if ($exitCode !== 0) {
+            \Illuminate\Support\Facades\Log::warning('pdftotext command failed', [
+                'user_id' => Auth::id(),
+                'exit_code' => $exitCode,
+                'output' => implode("\n", $output),
+            ]);
+
+            if (is_file($temporaryTextPath)) {
+                @unlink($temporaryTextPath);
+            }
+
+            return '';
+        }
+
+        $content = is_file($temporaryTextPath) ? file_get_contents($temporaryTextPath) : '';
+        if (is_file($temporaryTextPath)) {
+            @unlink($temporaryTextPath);
+        }
+
+        return is_string($content) ? $content : '';
+    }
+
+    protected function extractTextFromPagesFile(string $path): string
+    {
+        $zip = new \ZipArchive();
+        $text = '';
+
+        if ($zip->open($path) === true) {
+            $text = $this->extractTextFromPagesPreview($zip);
+
+            if ($this->cleanConvertedText($text) === '') {
+                $xmlContent = $this->getPagesIndexXml($zip);
+                if ($xmlContent !== '') {
+                    $text = $this->convertPagesXmlToText($xmlContent);
+                }
+            }
+
+            $zip->close();
+        }
+
+        return $text;
+    }
+
+    protected function extractTextFromPagesPreview(\ZipArchive $zip): string
+    {
+        $previewContent = $this->getZipEntryContent($zip, 'QuickLook/Preview.pdf');
+
+        if ($previewContent === null) {
+            return '';
+        }
+
+        $temporaryPdfPath = $this->createTemporaryConversionPath('pdf');
+
+        file_put_contents($temporaryPdfPath, $previewContent);
+
+        try {
+            return $this->extractTextFromPdf($temporaryPdfPath);
+        } finally {
+            if (is_file($temporaryPdfPath)) {
+                @unlink($temporaryPdfPath);
+            }
+        }
+    }
+
+    protected function getPagesIndexXml(\ZipArchive $zip): string
+    {
+        $xmlContent = $this->getZipEntryContent($zip, 'index.xml');
+
+        if ($xmlContent !== null) {
+            return $xmlContent;
+        }
+
+        $compressedIndex = $this->getZipEntryContent($zip, 'Index.zip');
+        if ($compressedIndex === null) {
+            return '';
+        }
+
+        $temporaryZipPath = $this->createTemporaryConversionPath('zip');
+        file_put_contents($temporaryZipPath, $compressedIndex);
+
+        $innerZip = new \ZipArchive();
+        $innerContent = '';
+
+        if ($innerZip->open($temporaryZipPath) === true) {
+            $innerXml = $this->getZipEntryContent($innerZip, 'Index.xml');
+            if ($innerXml !== null) {
+                $innerContent = $innerXml;
+            }
+            $innerZip->close();
+        }
+
+        if (is_file($temporaryZipPath)) {
+            @unlink($temporaryZipPath);
+        }
+
+        return $innerContent;
+    }
+
+    protected function convertPagesXmlToText(string $xmlContent): string
+    {
+        $xmlContent = preg_replace('/<\/((p|br|li|table|tr|td|para)[^>]*)>/i', "\n", $xmlContent) ?? $xmlContent;
+        $xmlContent = strip_tags($xmlContent);
+        $xmlContent = html_entity_decode($xmlContent, ENT_QUOTES | ENT_XML1, 'UTF-8');
+
+        return $xmlContent;
+    }
+
+    protected function getZipEntryContent(\ZipArchive $zip, string $name): ?string
+    {
+        $flags = defined('ZipArchive::FL_NOCASE') ? \ZipArchive::FL_NOCASE : 0;
+        $index = $zip->locateName($name, $flags);
+
+        if ($index === false) {
+            return null;
+        }
+
+        $content = $zip->getFromIndex($index);
+
+        return is_string($content) ? $content : null;
+    }
+
+    protected function createTemporaryConversionPath(string $extension): string
+    {
+        $directory = storage_path('app/temp-conversions');
+
+        if (! is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        return rtrim($directory, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.Str::uuid()->toString().'.'.$extension;
+    }
+
+    protected function findSystemExecutable(string $binary): ?string
+    {
+        if (! function_exists('exec')) {
+            return null;
+        }
+
+        $output = [];
+        $exitCode = null;
+        exec('command -v '.escapeshellarg($binary), $output, $exitCode);
+
+        if ($exitCode === 0 && isset($output[0])) {
+            $path = trim($output[0]);
+
+            return $path !== '' ? $path : null;
+        }
+
+        return null;
     }
 
     protected function coachingTimeBookingEmailContext(CoachingTimerManuscript $timer, EditorTimeSlot $slot): array

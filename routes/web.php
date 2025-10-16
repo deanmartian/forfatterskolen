@@ -192,6 +192,7 @@ Route::domain($front)->group(function () {
         // Test Manuscript (Shop Manuscript)
         Route::post('/test_manuscript', [Frontend\ShopManuscriptController::class, 'test_manuscript'])->name('front.shop-manuscript.test_manuscript'); // Test count shop manuscript
         Route::post('/shop-manuscript/store-temp-upload', [Frontend\ShopManuscriptController::class, 'storeTempUploadedFile'])->name('front.shop-manuscript.store-temp-upload');
+        Route::post('/documents/convert-to-docx', [Frontend\DocumentConversionController::class, 'convertToDocx'])->name('front.documents.convert-to-docx');
 
         // Pay IPN
         Route::post('/paypalipn', [Frontend\ShopController::class, 'paypalIPN'])->name('front.shop.paypalipn'); // Paypal IPN
@@ -314,6 +315,8 @@ Route::domain($front)->group(function () {
         Route::post('/renew-learner-courses', [Frontend\LearnerController::class, 'renewLearnerCourses'])->name('learner.renew-all-courses'); // Renew all the course of the learner in upgrade page
         Route::post('/course-renew/', [Frontend\LearnerController::class, 'courseRenew'])->name('learner.course.renew'); // Single Course Page
         Route::get('/calendar', [Frontend\LearnerController::class, 'calendar'])->name('learner.calendar'); // Calendar Page
+        Route::get('/document-converter', [Frontend\LearnerController::class, 'documentConverter'])->name('learner.document-converter');
+        Route::post('/document-converter', [Frontend\LearnerController::class, 'convertDocument'])->name('learner.document-converter.convert');
         Route::get('/invoice', [Frontend\LearnerController::class, 'invoice'])->name('learner.invoice'); // Invoice Listing Page
         Route::get('/invoice/{id}', [Frontend\LearnerController::class, 'invoiceShow'])->name('learner.invoice.show'); // Invoice Single Page
         Route::post('/invoice/pay-later/{id}/generate', [Frontend\LearnerController::class, 'generatePayLaterInvoice'])->name('learner.invoice.pay-later.generate');
