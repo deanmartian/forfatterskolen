@@ -607,9 +607,27 @@
                 }
             };
 
+            const getCsrfToken = () => {
+                const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+
+                if (!csrfMeta) {
+                    return null;
+                }
+
+                const token = csrfMeta.getAttribute('content');
+
+                return typeof token === 'string' && token.trim() !== '' ? token : null;
+            };
+
             const convertFileToDocx = async (file) => {
                 const formData = new FormData();
                 formData.append('document', file);
+
+                const csrfToken = getCsrfToken();
+
+                if (csrfToken) {
+                    formData.append('_token', csrfToken);
+                }
 
                 const fallbackName = createDocxFileName(file && file.name ? file.name : null);
                 const mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
@@ -618,6 +636,7 @@
                     try {
                         const response = await window.axios.post('/documents/convert-to-docx', formData, {
                             responseType: 'blob',
+                            headers: csrfToken ? { 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' } : { 'X-Requested-With': 'XMLHttpRequest' },
                         });
 
                         const headers = response.headers || {};
@@ -654,9 +673,16 @@
                     }
                 }
 
+                const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+
+                if (csrfToken) {
+                    headers['X-CSRF-TOKEN'] = csrfToken;
+                }
+
                 const response = await fetch('/documents/convert-to-docx', {
                     method: 'POST',
                     body: formData,
+                    headers,
                 });
 
                 const contentDisposition = response.headers
