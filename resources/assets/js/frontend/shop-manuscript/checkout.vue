@@ -45,8 +45,11 @@
                             </div>
 
                             <FileUpload
-                            :accept="'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/vnd.oasis.opendocument.text'"
+                            :accept="documentAcceptTypes"
                             @fileSelected="handleFileSelected('manuscript', $event)" v-else/>
+                            <p v-if="isConvertingManuscript" class="text-info mt-2">
+                                {{ conversionMessage }}
+                            </p>
                             <input type="hidden" name="manuscript">
 
                             <div class="custom-checkbox mt-4">
@@ -78,8 +81,7 @@
                                 {{ trans('site.front.form.synopsis-optional') }}
                             </label>
                             <FileUpload
-                            :accept="'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,' 
-                            + 'application/pdf, application/vnd.oasis.opendocument.text'" 
+                            :accept="documentAcceptTypes"
                             @fileSelected="handleFileSelected('synopsis', $event)"/>
                             <input type="hidden" name="synopsis">
                         </div>
@@ -343,11 +345,11 @@
                         </template>
 
                         <template v-if="!currentUser || (currentUser && currentUser.could_buy_course)">
-                            <wizard-button v-if="!props.isLastStep" @click.native="handleNextTab(props)" 
+                            <wizard-button v-if="!props.isLastStep" @click.native="handleNextTab(props)"
                             class="wizard-footer-right"
                             :class="{'w-100': props.activeTabIndex === 1 }"
-                                        :style="props.fillButtonStyle" :disabled="(!currentUser && !isNewCustomer 
-                                        && props.activeTabIndex > 0) || isLoadingSubmit">
+                                        :style="props.fillButtonStyle" :disabled="(!currentUser && !isNewCustomer
+                                        && props.activeTabIndex > 0) || isLoadingSubmit || isConvertingManuscript">
                                 <i class="fa fa-pulse fa-spinner" v-if="isLoadingSubmit"></i> Til betaling
                             </wizard-button>
 
@@ -368,12 +370,13 @@
                         </template>
                     </template>
                     <template v-else>
-                        <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" 
-                            class="wizard-footer-right w-100" :style="props.fillButtonStyle">
+                        <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()"
+                            class="wizard-footer-right w-100" :style="props.fillButtonStyle"
+                            :disabled="isConvertingManuscript">
                                 Bestill
                         </wizard-button>
                     </template>
-                    
+
                 </div>
             </template> <!-- end buttons slot -->
 
@@ -448,8 +451,23 @@ import FileUpload from '../../components/FileUpload.vue';
                 hasPaidCourse: false,
                 isLoading: false,
                 isLoadingSubmit: false,
+                isConvertingManuscript: false,
+                conversionMessage: 'Konverterer dokumentet… Vennligst vent.',
                 wizardProps: {},
-                requestUrl: '/shop-manuscript/'+this.shopManuscript.id
+                requestUrl: '/shop-manuscript/'+this.shopManuscript.id,
+                documentAcceptTypes: [
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/pdf',
+                    'application/vnd.oasis.opendocument.text',
+                    'application/vnd.apple.pages',
+                    'application/x-iwork-pages-sffpages',
+                    '.doc',
+                    '.docx',
+                    '.pdf',
+                    '.odt',
+                    '.pages'
+                ].join(',')
             }
         },
 
@@ -717,13 +735,42 @@ import FileUpload from '../../components/FileUpload.vue';
                         return;
                     }
 
-                    this.orderForm.manuscript = file;
-                    const extension = this.getFileExtension(file);
+                    let manuscriptFile = file;
+                    let extension = this.getFileExtension(manuscriptFile);
+                    let conversionStarted = false;
+
+                    if (extension !== 'docx') {
+                        this.isConvertingManuscript = true;
+                        this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
+                        conversionStarted = true;
+                        try {
+                            manuscriptFile = await this.convertFileToDocx(file);
+                            extension = this.getFileExtension(manuscriptFile);
+                        } catch (error) {
+                            this.orderForm.temp_file = null;
+                            this.orderForm.manuscript = null;
+                            this.orderForm.word_count = null;
+                            this.isConvertingManuscript = false;
+                            this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
+
+                            if (error && error.response) {
+                                this.processError(error);
+                            } else {
+                                this.$toasted.global.showErrorMsg({
+                                    message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                                });
+                            }
+
+                            return;
+                        }
+                    }
+
+                    this.orderForm.manuscript = manuscriptFile;
                     let wordCount = null;
 
-                    if (['doc', 'docx'].includes(extension)) {
+                    if (extension === 'docx') {
                         try {
-                            wordCount = await this.extractWordCountWithMammoth(file);
+                            wordCount = await this.extractWordCountWithMammoth(manuscriptFile);
                         } catch (error) {
                             console.error('Mammoth word count failed, falling back to server', error);
                         }
@@ -731,15 +778,20 @@ import FileUpload from '../../components/FileUpload.vue';
 
                     this.orderForm.word_count = wordCount;
                     this.orderForm.temp_file = {
-                        original_name: file.name,
+                        original_name: manuscriptFile.name,
                         word_count: wordCount,
                     };
 
                     try {
-                        await this.uploadManuscriptTemp(file, wordCount);
+                        await this.uploadManuscriptTemp(manuscriptFile, wordCount);
                         await this.computeManuscriptPrice();
                     } catch (error) {
                         // Errors are handled in uploadManuscriptTemp/computeManuscriptPrice
+                    } finally {
+                        if (conversionStarted) {
+                            this.isConvertingManuscript = false;
+                            this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
+                        }
                     }
                 }
             },
@@ -773,6 +825,8 @@ import FileUpload from '../../components/FileUpload.vue';
                     this.orderForm.manuscript = null;
                     this.orderForm.word_count = null;
                     this.originalPrice = this.origPrice;
+                    this.isConvertingManuscript = false;
+                    this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
                 });
             },
 
@@ -783,6 +837,114 @@ import FileUpload from '../../components/FileUpload.vue';
 
                 const parts = file.name.split('.');
                 return parts.length > 1 ? parts.pop().toLowerCase() : '';
+            },
+
+            async convertFileToDocx(file) {
+                const formData = new FormData();
+                formData.append('document', file);
+
+                try {
+                    const response = await axios.post('/documents/convert-to-docx', formData, {
+                        responseType: 'blob',
+                    });
+
+                    const contentDisposition = response.headers ? response.headers['content-disposition'] : null;
+                    const fallbackName = this.createDocxFileName(file && file.name ? file.name : null);
+                    const filename = this.extractFilenameFromContentDisposition(contentDisposition) || fallbackName;
+                    const mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                    const responseBlob = response.data;
+                    const docxBlob = responseBlob instanceof Blob
+                        ? responseBlob
+                        : new Blob(responseBlob ? [responseBlob] : [], { type: mimeType });
+
+                    return new File([docxBlob], filename, { type: mimeType, lastModified: Date.now() });
+                } catch (error) {
+                    if (error && error.response && error.response.data instanceof Blob) {
+                        try {
+                            const parsed = await this.parseErrorBlob(error.response.data);
+                            if (parsed) {
+                                error.response.data = parsed;
+                            }
+                        } catch (parseError) {
+                            console.error('Failed to parse conversion error response', parseError);
+                        }
+                    }
+
+                    if (!error.response || !error.response.data) {
+                        error.response = error.response || {};
+                        error.response.data = {
+                            errors: {
+                                manuscript: ['Kunne ikke konvertere filen. Prøv igjen.']
+                            },
+                            message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                        };
+                    }
+
+                    throw error;
+                }
+            },
+
+            createDocxFileName(originalName) {
+                if (!originalName || typeof originalName !== 'string') {
+                    return 'document.docx';
+                }
+
+                const dotIndex = originalName.lastIndexOf('.');
+
+                if (dotIndex <= 0) {
+                    return originalName.toLowerCase().endsWith('.docx')
+                        ? originalName
+                        : `${originalName}.docx`;
+                }
+
+                const baseName = originalName.substring(0, dotIndex);
+                const extension = originalName.substring(dotIndex + 1).toLowerCase();
+
+                if (extension === 'docx') {
+                    return originalName;
+                }
+
+                return `${baseName}.docx`;
+            },
+
+            extractFilenameFromContentDisposition(header) {
+                if (!header || typeof header !== 'string') {
+                    return null;
+                }
+
+                const utf8Match = header.match(/filename\*=UTF-8''([^;]+)/i);
+                if (utf8Match && utf8Match[1]) {
+                    try {
+                        return decodeURIComponent(utf8Match[1]);
+                    } catch (error) {
+                        console.error('Failed to decode UTF-8 filename', error);
+                    }
+                }
+
+                const quotedMatch = header.match(/filename="?([^";]+)"?/i);
+                if (quotedMatch && quotedMatch[1]) {
+                    return quotedMatch[1];
+                }
+
+                return null;
+            },
+
+            async parseErrorBlob(blob) {
+                if (!blob || typeof blob.text !== 'function') {
+                    return null;
+                }
+
+                const text = await blob.text();
+
+                if (!text) {
+                    return null;
+                }
+
+                try {
+                    return JSON.parse(text);
+                } catch (error) {
+                    return { message: text };
+                }
             },
 
             extractWordCountWithMammoth(file) {
