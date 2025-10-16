@@ -48,6 +48,14 @@
 			height: auto;
 			display: block;
 		}
+
+		/* Media Queries */
+        @media only screen and (max-width: 500px) {
+            .global-nav-tabs {
+                display: inline-grid;
+				padding-left: 10px;
+            }
+        }
 	</style>
 @stop
 
