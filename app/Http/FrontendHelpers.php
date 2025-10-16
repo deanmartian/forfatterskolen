@@ -347,12 +347,12 @@ class FrontendHelpers
                 'label' => trans('site.learner.nav.calendar'),
                 'is_active' => GlobalRequest::is('account/calendar*'),
             ],
-            [
+            /* [
                 'route_name' => 'learner.document-converter',
                 'fa-icon' => 'fa fa-file-word',
                 'label' => trans('site.learner.documents-and-forms-text'),
                 'is_active' => GlobalRequest::is('account/document-converter*'),
-            ],
+            ], */
             [
                 'route_name' => 'learner.invoice',
                 'fa-icon' => 'fa fa-file-invoice',
