@@ -148,7 +148,7 @@
                                 </label>
                         <input type="file" class="form-control" required name="manuscript"
                                 accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-                                application/pdf, application/vnd.oasis.opendocument.text">
+                                application/pdf, application/vnd.oasis.opendocument.text, application/vnd.apple.pages, .doc, .docx, .pdf, .odt, .pages">
                         <input type="hidden" name="word_count" value="">
                                 <p class="text-info manuscript-conversion-message d-none mt-2">Konverterer dokumentet… Vennligst vent.</p>
                                 <p class="text-danger manuscript-conversion-error d-none mt-2"></p>
@@ -164,9 +164,9 @@
 			</div>
 			<div class="form-group">
 				<label for="">{{ trans('site.front.form.synopsis-optional') }}</label>
-				<input type="file" class="form-control" name="synopsis" 
-				accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-				 application/pdf, application/vnd.oasis.opendocument.text">
+                                <input type="file" class="form-control" name="synopsis"
+                                accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                 application/pdf, application/vnd.oasis.opendocument.text, application/vnd.apple.pages, .doc, .docx, .pdf, .odt, .pages">
 			</div>
 			<div class="form-group">
 				<label for="">{{ trans('site.front.form.manuscript-description') }}</label>
@@ -195,7 +195,7 @@
                                                 <label>* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
                                                 <input type="file" class="form-control" required name="manuscript"
                                                 accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-                                                application/pdf, application/vnd.oasis.opendocument.text">
+                                                application/pdf, application/vnd.oasis.opendocument.text, application/vnd.apple.pages, .doc, .docx, .pdf, .odt, .pages">
                                                 <input type="hidden" name="word_count" value="">
                                                 <p class="text-info manuscript-conversion-message d-none mt-2">Konverterer dokumentet… Vennligst vent.</p>
                                                 <p class="text-danger manuscript-conversion-error d-none mt-2"></p>
@@ -211,9 +211,9 @@
 					</div>
 					<div class="form-group synopsis">
 						<label for="">{{ trans('site.front.form.synopsis-optional') }}</label>
-						<input type="file" class="form-control" name="synopsis" 
-						accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-						application/pdf, application/vnd.oasis.opendocument.text">
+                                                <input type="file" class="form-control" name="synopsis"
+                                                accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                                application/pdf, application/vnd.oasis.opendocument.text, application/vnd.apple.pages, .doc, .docx, .pdf, .odt, .pages">
 					</div>
 
 					<div class="form-group synopsis">
