@@ -146,9 +146,8 @@
 				<label>
 					* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
 				</label>
-      			<input type="file" class="form-control" required name="manuscript" 
-				accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, 
-				application/pdf, application/vnd.oasis.opendocument.text">
+                        <input type="file" class="form-control" required name="manuscript"
+                                accept=".doc,.docx,.odt,.pdf,.pages">
       		</div>
 			<div class="form-group">
 				<label for="">{{ trans('site.front.genre') }}</label>
@@ -161,9 +160,8 @@
 			</div>
 			<div class="form-group">
 				<label for="">{{ trans('site.front.form.synopsis-optional') }}</label>
-				<input type="file" class="form-control" name="synopsis" 
-				accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-				 application/pdf, application/vnd.oasis.opendocument.text">
+                                <input type="file" class="form-control" name="synopsis"
+                                accept=".doc,.docx,.odt,.pdf,.pages">
 			</div>
 			<div class="form-group">
 				<label for="">{{ trans('site.front.form.manuscript-description') }}</label>
@@ -190,9 +188,8 @@
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
-						<input type="file" class="form-control" required name="manuscript" 
-						accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-						application/pdf, application/vnd.oasis.opendocument.text">
+                                                <input type="file" class="form-control" required name="manuscript"
+                                                accept=".doc,.docx,.odt,.pdf,.pages">
 					</div>
 					<div class="form-group">
 						<label for="">{{ trans('site.front.genre') }}</label>
@@ -205,9 +202,8 @@
 					</div>
 					<div class="form-group synopsis">
 						<label for="">{{ trans('site.front.form.synopsis-optional') }}</label>
-						<input type="file" class="form-control" name="synopsis" 
-						accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-						application/pdf, application/vnd.oasis.opendocument.text">
+                                                <input type="file" class="form-control" name="synopsis"
+                                                accept=".doc,.docx,.odt,.pdf,.pages">
 					</div>
 
 					<div class="form-group synopsis">
@@ -346,6 +342,344 @@
         form.attr('action', action);
     });
 
+        (function(){
+            const manuscriptForms = document.querySelectorAll('#uploadManuscriptModal form, #updateUploadedManuscriptModal form');
+
+            if (!manuscriptForms.length) {
+                return;
+            }
+
+            const docxMimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+            const showConversionError = (message) => {
+                const text = (message && typeof message === 'string' && message.trim() !== '')
+                    ? message
+                    : 'Kunne ikke konvertere filen. Prøv igjen.';
+
+                if (window.toastr && typeof window.toastr.error === 'function') {
+                    window.toastr.error(text);
+                    return;
+                }
+
+                if (window.toasted && window.toasted.global && typeof window.toasted.global.showErrorMsg === 'function') {
+                    window.toasted.global.showErrorMsg({ message: text });
+                    return;
+                }
+
+                window.alert(text);
+            };
+
+            const createDocxFileName = (originalName) => {
+                if (!originalName || typeof originalName !== 'string') {
+                    return 'document.docx';
+                }
+
+                const dotIndex = originalName.lastIndexOf('.');
+
+                if (dotIndex <= 0) {
+                    return originalName.toLowerCase().endsWith('.docx')
+                        ? originalName
+                        : `${originalName}.docx`;
+                }
+
+                const baseName = originalName.substring(0, dotIndex);
+                const extension = originalName.substring(dotIndex + 1).toLowerCase();
+
+                if (extension === 'docx') {
+                    return originalName;
+                }
+
+                return `${baseName}.docx`;
+            };
+
+            const extractFilenameFromContentDisposition = (header) => {
+                if (!header || typeof header !== 'string') {
+                    return null;
+                }
+
+                const utf8Match = header.match(/filename\*=UTF-8''([^;]+)/i);
+                if (utf8Match && utf8Match[1]) {
+                    try {
+                        return decodeURIComponent(utf8Match[1]);
+                    } catch (error) {
+                        console.error('Failed to decode UTF-8 filename', error);
+                    }
+                }
+
+                const quotedMatch = header.match(/filename="?([^";]+)"?/i);
+                if (quotedMatch && quotedMatch[1]) {
+                    return quotedMatch[1];
+                }
+
+                return null;
+            };
+
+            const parseErrorBlob = async (blob) => {
+                if (!blob || typeof blob.text !== 'function') {
+                    return null;
+                }
+
+                const text = await blob.text();
+
+                if (!text) {
+                    return null;
+                }
+
+                try {
+                    return JSON.parse(text);
+                } catch (error) {
+                    return { message: text };
+                }
+            };
+
+            const getCsrfToken = () => {
+                const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+
+                if (!csrfMeta) {
+                    return null;
+                }
+
+                const token = csrfMeta.getAttribute('content');
+
+                return typeof token === 'string' && token.trim() !== '' ? token : null;
+            };
+
+            const getFileExtension = (name) => {
+                if (!name || typeof name !== 'string') {
+                    return '';
+                }
+
+                const parts = name.split('.');
+                return parts.length > 1 ? parts.pop().toLowerCase() : '';
+            };
+
+            const assignFilesToInput = (input, file) => {
+                if (!input || !file) {
+                    return false;
+                }
+
+                const files = Array.isArray(file) ? file : [file];
+
+                try {
+                    if (typeof DataTransfer !== 'undefined') {
+                        const dataTransfer = new DataTransfer();
+                        files.forEach((item) => dataTransfer.items.add(item));
+                        input.files = dataTransfer.files;
+                        return true;
+                    }
+                } catch (error) {
+                    console.warn('DataTransfer is not available for file assignment.', error);
+                }
+
+                try {
+                    if (typeof ClipboardEvent !== 'undefined') {
+                        const clipboardEvent = new ClipboardEvent('');
+                        if (clipboardEvent.clipboardData) {
+                            files.forEach((item) => clipboardEvent.clipboardData.items.add(item));
+                            input.files = clipboardEvent.clipboardData.files;
+                            return true;
+                        }
+                    }
+                } catch (error) {
+                    console.warn('ClipboardEvent fallback failed for file assignment.', error);
+                }
+
+                return false;
+            };
+
+            const setFormConvertingState = (form, isConverting) => {
+                const submitButton = form ? form.querySelector('button[type="submit"]') : null;
+
+                if (submitButton) {
+                    if (isConverting) {
+                        if (!submitButton.dataset.originalText) {
+                            submitButton.dataset.originalText = submitButton.innerHTML;
+                        }
+                        submitButton.disabled = true;
+                        submitButton.innerHTML = 'Konverterer…';
+                    } else {
+                        submitButton.disabled = false;
+                        if (submitButton.dataset.originalText) {
+                            submitButton.innerHTML = submitButton.dataset.originalText;
+                        }
+                    }
+                }
+            };
+
+            const getErrorMessageFromConversion = (error) => {
+                if (!error) {
+                    return 'Kunne ikke konvertere filen. Prøv igjen.';
+                }
+
+                if (error.response && error.response.data) {
+                    const data = error.response.data;
+
+                    if (data.errors && data.errors.manuscript && data.errors.manuscript.length) {
+                        return data.errors.manuscript[0];
+                    }
+
+                    if (typeof data.message === 'string' && data.message.trim() !== '') {
+                        return data.message;
+                    }
+                }
+
+                if (typeof error.message === 'string' && error.message.trim() !== '') {
+                    return error.message;
+                }
+
+                return 'Kunne ikke konvertere filen. Prøv igjen.';
+            };
+
+            const convertFileToDocx = async (file) => {
+                const formData = new FormData();
+                formData.append('document', file);
+
+                const csrfToken = getCsrfToken();
+
+                if (csrfToken) {
+                    formData.append('_token', csrfToken);
+                }
+
+                if (window.axios) {
+                    try {
+                        const headers = csrfToken
+                            ? { 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' }
+                            : { 'X-Requested-With': 'XMLHttpRequest' };
+                        const response = await window.axios.post('/documents/convert-to-docx', formData, {
+                            responseType: 'blob',
+                            headers,
+                        });
+
+                        const responseHeaders = response.headers || {};
+                        const contentDisposition = responseHeaders['content-disposition'] || responseHeaders['Content-Disposition'] || null;
+                        const filename = extractFilenameFromContentDisposition(contentDisposition) || createDocxFileName(file && file.name ? file.name : null);
+                        const responseBlob = response.data instanceof Blob
+                            ? response.data
+                            : new Blob(response.data ? [response.data] : [], { type: docxMimeType });
+
+                        return new File([responseBlob], filename, { type: docxMimeType, lastModified: Date.now() });
+                    } catch (error) {
+                        if (error && error.response && error.response.data instanceof Blob) {
+                            try {
+                                const parsed = await parseErrorBlob(error.response.data);
+                                if (parsed) {
+                                    error.response.data = parsed;
+                                }
+                            } catch (parseError) {
+                                console.error('Failed to parse conversion error response', parseError);
+                            }
+                        }
+
+                        if (!error.response || !error.response.data) {
+                            error.response = error.response || {};
+                            error.response.data = {
+                                errors: {
+                                    manuscript: ['Kunne ikke konvertere filen. Prøv igjen.'],
+                                },
+                                message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                            };
+                        }
+
+                        throw error;
+                    }
+                }
+
+                const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+
+                if (csrfToken) {
+                    headers['X-CSRF-TOKEN'] = csrfToken;
+                }
+
+                const response = await fetch('/documents/convert-to-docx', {
+                    method: 'POST',
+                    body: formData,
+                    headers,
+                });
+
+                const contentDisposition = response.headers
+                    ? (response.headers.get('content-disposition') || response.headers.get('Content-Disposition'))
+                    : null;
+
+                if (!response.ok) {
+                    const error = new Error('Kunne ikke konvertere filen. Prøv igjen.');
+                    let errorData = null;
+
+                    try {
+                        errorData = await response.clone().json();
+                    } catch (jsonError) {
+                        try {
+                            errorData = { message: await response.text() };
+                        } catch (textError) {
+                            errorData = null;
+                        }
+                    }
+
+                    error.response = {
+                        status: response.status,
+                        data: errorData || {
+                            errors: {
+                                manuscript: ['Kunne ikke konvertere filen. Prøv igjen.'],
+                            },
+                            message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                        }
+                    };
+
+                    throw error;
+                }
+
+                const data = await response.blob();
+                const filename = extractFilenameFromContentDisposition(contentDisposition) || createDocxFileName(file && file.name ? file.name : null);
+                const responseBlob = data instanceof Blob ? data : new Blob([data], { type: docxMimeType });
+
+                return new File([responseBlob], filename, { type: docxMimeType, lastModified: Date.now() });
+            };
+
+            manuscriptForms.forEach((form) => {
+                let submittingAfterConversion = false;
+
+                form.addEventListener('submit', async (event) => {
+                    if (submittingAfterConversion) {
+                        submittingAfterConversion = false;
+                        return;
+                    }
+
+                    const fileInput = form.querySelector('input[name="manuscript"]');
+
+                    if (!fileInput || !fileInput.files || !fileInput.files.length) {
+                        return;
+                    }
+
+                    const [file] = fileInput.files;
+                    const extension = getFileExtension(file && file.name ? file.name : fileInput.value);
+
+                    if (extension === 'docx') {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    setFormConvertingState(form, true);
+
+                    try {
+                        const convertedFile = await convertFileToDocx(file);
+                        const assigned = assignFilesToInput(fileInput, convertedFile);
+
+                        if (!assigned) {
+                            showConversionError('Kunne ikke konvertere filen. Prøv igjen.');
+                            setFormConvertingState(form, false);
+                            return;
+                        }
+
+                        submittingAfterConversion = true;
+                        setFormConvertingState(form, false);
+                        form.submit();
+                    } catch (error) {
+                        const message = getErrorMessageFromConversion(error);
+                        showConversionError(message);
+                        setFormConvertingState(form, false);
+                    }
+                });
+            });
+        })();
 </script>
 @stop
 
