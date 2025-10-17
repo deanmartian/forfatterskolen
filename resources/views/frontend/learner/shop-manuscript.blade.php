@@ -300,6 +300,9 @@
 
 @if (session('exceed'))
 	<input type="hidden" name="exceed">
+	<button class="btn btn-success exceedBtn d-none" type="button" 
+		data-toggle="modal" data-target="#exceedModal"> 
+	</button>
 @endif
 
 @stop
@@ -311,7 +314,7 @@
         var has_exceed = $("input[name=exceed]").length;
 
 	if (has_exceed) {
-	    $("#exceedModal").modal();
+	    $(".exceedBtn").trigger('click');
 	}
 
 	@if(Session::has('manuscript_test_error'))
