@@ -320,7 +320,7 @@ class ShopManuscriptController extends Controller
         return view('frontend.shop-manuscript.thankyou');
     }
 
-    public function place_order($id, Request $request)
+    public function place_order($id, Request $request, ShopManuscriptService $shopManuscriptService)
     {
         $validator = $this->validator($request->all());
         if ($validator->fails()) {
@@ -381,7 +381,6 @@ class ShopManuscriptController extends Controller
 
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
             $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
-            $original_filename = $request->manuscript->getClientOriginalName();
 
             if (! in_array($extension, $extensions)) {
                 return redirect()->back()->withInput()->with(
@@ -389,29 +388,17 @@ class ShopManuscriptController extends Controller
                 );
             }
 
-            $time = time();
-            $destinationPath = 'storage/shop-manuscripts';
-            $filePath = AdminHelpers::checkFileName($destinationPath, Auth::user()->id, $extension); // rename document
-            $expFileName = explode('/', $filePath);
+            $uploadedManuscript = $shopManuscriptService->uploadLearnerManuscript($request, (int) Auth::id());
+            $word_count = (int) ($uploadedManuscript['word_count'] ?? 0);
+            $manuscriptPath = $uploadedManuscript['manuscript_file'] ?? null;
 
-            $request->manuscript->move($destinationPath, end($expFileName));
-            if ($extension == 'pdf') {
-                $pdf = new \PdfToText($filePath);
-                $pdf_content = $pdf->Text;
-                $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-            } elseif ($extension == 'docx') {
-                $docObj = new \Docx2Text($filePath);
-                $docText = $docObj->convertToText();
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            } elseif ($extension == 'doc') {
-                $docText = $this->readWord($filePath);
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            } elseif ($extension == 'odt') {
-                $doc = odt2text($filePath);
-                $word_count = FrontendHelpers::get_num_of_words($doc);
+            if (! $manuscriptPath || $word_count <= 0) {
+                return redirect()->back()->withInput()->with(
+                    'manuscript_test_error', 'Kunne ikke lese denne filen. Prøv igjen med en gyldig fil.'
+                );
             }
-            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
-            $shopManuscriptTaken->file = '/'.$filePath;
+
+            $shopManuscriptTaken->file = $manuscriptPath;
             $shopManuscriptTaken->words = $word_count;
 
             // Admin notification
@@ -596,7 +583,7 @@ class ShopManuscriptController extends Controller
         return redirect()->route('front.shop-manuscript.index');
     }
 
-    public function upload_manuscript($id, Request $request): RedirectResponse
+    public function upload_manuscript($id, Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->firstOrFail();
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
@@ -609,7 +596,6 @@ class ShopManuscriptController extends Controller
         $word_count = 0;
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
             $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
-            $original_filename = $request->manuscript->getClientOriginalName();
 
             if (! in_array($extension, $extensions)) {
                 return redirect()->back()->with(
@@ -617,29 +603,17 @@ class ShopManuscriptController extends Controller
                 );
             }
 
-            $time = time();
-            $destinationPath = 'storage/shop-manuscripts';
-            $filePath = AdminHelpers::checkFileName($destinationPath, Auth::user()->id, $extension); // rename document
-            $expFileName = explode('/', $filePath);
+            $uploadedManuscript = $shopManuscriptService->uploadLearnerManuscript($request, (int) Auth::id());
+            $word_count = (int) ($uploadedManuscript['word_count'] ?? 0);
+            $manuscriptPath = $uploadedManuscript['manuscript_file'] ?? null;
 
-            $request->manuscript->move($destinationPath, end($expFileName));
-            if ($extension == 'pdf') {
-                $pdf = new \PdfToText($filePath);
-                $pdf_content = $pdf->Text;
-                $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-            } elseif ($extension == 'docx') {
-                $docObj = new \Docx2Text($filePath);
-                $docText = $docObj->convertToText();
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            } elseif ($extension == 'doc') {
-                $docText = $this->readWord($filePath);
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            } elseif ($extension == 'odt') {
-                $doc = odt2text($filePath);
-                $word_count = FrontendHelpers::get_num_of_words($doc);
+            if (! $manuscriptPath || $word_count <= 0) {
+                return redirect()->back()->with(
+                    'manuscript_test_error', 'Kunne ikke lese denne filen. Prøv igjen med en gyldig fil.'
+                );
             }
-            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
-            $shopManuscriptTaken->file = '/'.$filePath;
+
+            $shopManuscriptTaken->file = $manuscriptPath;
             $shopManuscriptTaken->words = $word_count;
         }
 
@@ -764,7 +738,7 @@ class ShopManuscriptController extends Controller
     /**
      * Update the manuscript uploaded by the learner
      */
-    public function updateUploadedManuscript($id, Request $request): RedirectResponse
+    public function updateUploadedManuscript($id, Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->first();
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
@@ -774,7 +748,6 @@ class ShopManuscriptController extends Controller
 
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
             $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
-            $original_filename = $request->manuscript->getClientOriginalName();
 
             if (! in_array($extension, $extensions)) {
                 return redirect()->back()->with(
@@ -782,29 +755,17 @@ class ShopManuscriptController extends Controller
                 );
             }
 
-            $time = time();
-            $destinationPath = 'storage/shop-manuscripts';
-            $filePath = AdminHelpers::checkFileName($destinationPath, Auth::user()->id, $extension); // rename document
-            $expFileName = explode('/', $filePath);
+            $uploadedManuscript = $shopManuscriptService->uploadLearnerManuscript($request, (int) Auth::id());
+            $word_count = (int) ($uploadedManuscript['word_count'] ?? 0);
+            $manuscriptPath = $uploadedManuscript['manuscript_file'] ?? null;
 
-            $request->manuscript->move($destinationPath, end($expFileName));
-            if ($extension == 'pdf') {
-                $pdf = new \PdfToText($filePath);
-                $pdf_content = $pdf->Text;
-                $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-            } elseif ($extension == 'docx') {
-                $docObj = new \Docx2Text($filePath);
-                $docText = $docObj->convertToText();
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            } elseif ($extension == 'doc') {
-                $docText = $this->readWord($filePath);
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            } elseif ($extension == 'odt') {
-                $doc = odt2text($filePath);
-                $word_count = FrontendHelpers::get_num_of_words($doc);
+            if (! $manuscriptPath || $word_count <= 0) {
+                return redirect()->back()->with(
+                    'manuscript_test_error', 'Kunne ikke lese denne filen. Prøv igjen med en gyldig fil.'
+                );
             }
-            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
-            $shopManuscriptTaken->file = '/'.$filePath;
+
+            $shopManuscriptTaken->file = $manuscriptPath;
             $shopManuscriptTaken->words = $word_count;
 
             $isManuscriptUploaded = true; // just to check if need to inform editor or not
@@ -857,7 +818,7 @@ class ShopManuscriptController extends Controller
                 ->where('upgrade_shop_manuscript_id', $nextPlan->id)->first();
             $price = $upgradePlan->price;
 
-            return redirect()->back()->with(['exceed' => $price, 'plan' => $nextPlan->id, 'max_words' => $nextPlan]);
+            return redirect()->back()->with(['exceed' => $price, 'plan' => $nextPlan->id, 'max_words' => $nextPlan->max_words]);
         } else {
             $shopManuscriptTaken->genre = $request->genre;
             $shopManuscriptTaken->description = $request->description;
