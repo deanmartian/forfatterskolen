@@ -878,7 +878,7 @@ class ShopManuscriptController extends Controller
                 ->where('upgrade_shop_manuscript_id', $nextPlan->id)->first();
             $price = $upgradePlan->price;
 
-            return redirect()->back()->with(['exceed' => $price, 'plan' => $nextPlan->id, 'max_words' => $nextPlan]);
+            return redirect()->back()->with(['exceed' => $price, 'plan' => $nextPlan->id, 'max_words' => $nextPlan->max_words]);
         } else {
             $shopManuscriptTaken->genre = $request->genre;
             $shopManuscriptTaken->description = $request->description;
