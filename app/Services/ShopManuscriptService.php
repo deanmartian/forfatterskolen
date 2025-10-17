@@ -40,7 +40,7 @@ class ShopManuscriptService
 
                 return AdminHelpers::checkFileName($directory, $filenameBase, $extension);
             },
-            'word_count_field' => null,
+            'word_count_field' => 'word_count',
         ]);
     }
 

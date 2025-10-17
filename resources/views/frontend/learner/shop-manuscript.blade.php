@@ -149,6 +149,7 @@
                         <input type="file" class="form-control" required name="manuscript"
                                 accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                 application/pdf, application/vnd.oasis.opendocument.text">
+                        <input type="hidden" name="word_count" value="">
                                 <p class="text-info manuscript-conversion-message d-none mt-2">Konverterer dokumentet… Vennligst vent.</p>
                                 <p class="text-danger manuscript-conversion-error d-none mt-2"></p>
                 </div>
@@ -195,6 +196,7 @@
                                                 <input type="file" class="form-control" required name="manuscript"
                                                 accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                                 application/pdf, application/vnd.oasis.opendocument.text">
+                                                <input type="hidden" name="word_count" value="">
                                                 <p class="text-info manuscript-conversion-message d-none mt-2">Konverterer dokumentet… Vennligst vent.</p>
                                                 <p class="text-danger manuscript-conversion-error d-none mt-2"></p>
                                         </div>
@@ -303,9 +305,10 @@
 @stop
 
 @section('scripts')
-	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+        <script src="https://unpkg.com/mammoth@1.4.21/mammoth.browser.min.js"></script>
 <script>
-	var has_exceed = $("input[name=exceed]").length;
+        var has_exceed = $("input[name=exceed]").length;
 
 	if (has_exceed) {
 	    $("#exceedModal").modal();
@@ -380,6 +383,72 @@
 
             return typeof token === 'string' && token.trim() !== '' ? token : null;
         };
+
+        const mammothPreferredExtensions = ['doc', 'docx'];
+        const mammothAvailable = typeof window !== 'undefined'
+            && typeof window.mammoth !== 'undefined'
+            && typeof window.mammoth.extractRawText === 'function';
+
+        const shouldUseMammothForExtension = (extension) => {
+            if (!extension || typeof extension !== 'string') {
+                return false;
+            }
+
+            return mammothPreferredExtensions.includes(extension.toLowerCase()) && mammothAvailable;
+        };
+
+        const countWordsFromText = (text) => {
+            if (typeof text !== 'string') {
+                return 0;
+            }
+
+            const normalised = text.replace(/[\r\n\t]+/g, ' ').trim();
+
+            if (!normalised) {
+                return 0;
+            }
+
+            const matches = normalised.match(/\S+/g);
+
+            return matches ? matches.length : 0;
+        };
+
+        const extractWordCountWithMammoth = (file) => new Promise((resolve, reject) => {
+            if (!file || !mammothAvailable) {
+                resolve(null);
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                const arrayBuffer = event.target ? event.target.result : null;
+
+                if (!arrayBuffer) {
+                    resolve(null);
+                    return;
+                }
+
+                window.mammoth.extractRawText({ arrayBuffer })
+                    .then((result) => {
+                        const text = result && typeof result.value === 'string' ? result.value : '';
+                        resolve(countWordsFromText(text));
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    });
+            };
+
+            reader.onerror = () => {
+                reject(reader.error || new Error('Kunne ikke lese dokumentet.'));
+            };
+
+            try {
+                reader.readAsArrayBuffer(file);
+            } catch (error) {
+                reject(error);
+            }
+        });
 
         const createDocxFileName = (originalName) => {
             if (!originalName || typeof originalName !== 'string') {
@@ -643,6 +712,18 @@
             }
         };
 
+        const clearWordCountValue = (form) => {
+            if (!form) {
+                return;
+            }
+
+            const wordCountInput = form.querySelector('input[name="word_count"]');
+
+            if (wordCountInput) {
+                wordCountInput.value = '';
+            }
+        };
+
         const resetConversionUI = (form) => {
             if (!form) {
                 return;
@@ -650,6 +731,7 @@
 
             setFormConversionState(form, false);
             clearConversionError(form);
+            clearWordCountValue(form);
         };
 
         const handleFileChange = async (event) => {
@@ -657,6 +739,7 @@
             const form = input.closest ? input.closest('form') : input.form;
 
             clearConversionError(form);
+            clearWordCountValue(form);
 
             const files = input.files;
 
@@ -692,6 +775,7 @@
                 clearConversionError(form);
             } catch (error) {
                 showConversionError(form, getErrorMessageFromConversion(error));
+                clearWordCountValue(form);
                 try {
                     input.value = '';
                 } catch (resetError) {
@@ -704,14 +788,68 @@
 
         const manuscriptForms = document.querySelectorAll('#uploadManuscriptModal form, #updateUploadedManuscriptModal form');
 
-        manuscriptForms.forEach((form) => {
-            const manuscriptInput = form.querySelector('input[name="manuscript"]');
-
-            if (!manuscriptInput) {
+        const attachWordCountHandler = (form) => {
+            if (!form) {
                 return;
             }
 
-            manuscriptInput.addEventListener('change', handleFileChange);
+            const manuscriptInput = form.querySelector('input[name="manuscript"]');
+            const wordCountInput = form.querySelector('input[name="word_count"]');
+
+            if (!manuscriptInput || !wordCountInput) {
+                return;
+            }
+
+            let submittingWithMammoth = false;
+
+            form.addEventListener('submit', (event) => {
+                if (submittingWithMammoth) {
+                    submittingWithMammoth = false;
+                    return;
+                }
+
+                const files = manuscriptInput.files;
+
+                if (!files || !files.length) {
+                    wordCountInput.value = '';
+                    return;
+                }
+
+                const [file] = files;
+                const extension = getFileExtension(file.name || manuscriptInput.value);
+
+                if (!shouldUseMammothForExtension(extension)) {
+                    wordCountInput.value = '';
+                    return;
+                }
+
+                event.preventDefault();
+
+                extractWordCountWithMammoth(file)
+                    .then((wordCount) => {
+                        wordCountInput.value = Number.isInteger(wordCount) && wordCount > 0
+                            ? wordCount
+                            : '';
+                    })
+                    .catch((error) => {
+                        console.error('Unable to count words for learner manuscript form', error);
+                        wordCountInput.value = '';
+                    })
+                    .finally(() => {
+                        submittingWithMammoth = true;
+                        form.submit();
+                    });
+            });
+        };
+
+        manuscriptForms.forEach((form) => {
+            const manuscriptInput = form.querySelector('input[name="manuscript"]');
+
+            if (manuscriptInput) {
+                manuscriptInput.addEventListener('change', handleFileChange);
+            }
+
+            attachWordCountHandler(form);
         });
 
         const attachModalReset = (modal) => {
