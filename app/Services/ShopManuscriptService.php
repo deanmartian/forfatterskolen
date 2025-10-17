@@ -114,10 +114,6 @@ class ShopManuscriptService
             $word_count = $this->calculateWordCount($absolutePath, $extension, $providedWordCount);
         }
 
-        if (($options['apply_word_margin'] ?? false) && $word_count > 0) {
-            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
-        }
-
         if ($filepath !== '' && ($options['prepend_slash'] ?? false)) {
             $filepath = '/'.ltrim($filepath, '/');
         }
