@@ -1317,6 +1317,41 @@ class FrontendHelpers
         ];
     }
 
+    public static function getWordCountFromDocx(string $filePath): int
+    {
+        if (! is_file($filePath)) {
+            return 0;
+        }
+
+        $extracted = self::extractTextFromDocx($filePath);
+        $wordCount = (int) ($extracted['word_count'] ?? 0);
+
+        if ($wordCount <= 0) {
+            if (! class_exists('Docx2Text')) {
+                $docx2TextPath = public_path('Docx2Text.php');
+                if (file_exists($docx2TextPath)) {
+                    include_once $docx2TextPath;
+                } else {
+                    $docx2TextPath = base_path('Docx2Text.php');
+                    if (file_exists($docx2TextPath)) {
+                        include_once $docx2TextPath;
+                    }
+                }
+            }
+
+            if (class_exists('Docx2Text')) {
+                try {
+                    $docText = (new \Docx2Text($filePath))->convertToText();
+                    $wordCount = $docText ? self::get_num_of_words($docText) : 0;
+                } catch (\Throwable $exception) {
+                    $wordCount = 0;
+                }
+            }
+        }
+
+        return max(0, (int) $wordCount);
+    }
+
     public static function countWordsLikeOpenOffice($text)
     {
         // Remove HTML tags

@@ -146,9 +146,8 @@
 				<label>
 					* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
 				</label>
-      			<input type="file" class="form-control" required name="manuscript" 
-				accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, 
-				application/pdf, application/vnd.oasis.opendocument.text">
+                        <input type="file" class="form-control" required name="manuscript"
+                                accept=".doc,.docx,.odt,.pdf,.pages">
       		</div>
 			<div class="form-group">
 				<label for="">{{ trans('site.front.genre') }}</label>
@@ -161,9 +160,8 @@
 			</div>
 			<div class="form-group">
 				<label for="">{{ trans('site.front.form.synopsis-optional') }}</label>
-				<input type="file" class="form-control" name="synopsis" 
-				accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-				 application/pdf, application/vnd.oasis.opendocument.text">
+                                <input type="file" class="form-control" name="synopsis"
+                                accept=".doc,.docx,.odt,.pdf,.pages">
 			</div>
 			<div class="form-group">
 				<label for="">{{ trans('site.front.form.manuscript-description') }}</label>
@@ -190,9 +188,8 @@
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
-						<input type="file" class="form-control" required name="manuscript" 
-						accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-						application/pdf, application/vnd.oasis.opendocument.text">
+                                                <input type="file" class="form-control" required name="manuscript"
+                                                accept=".doc,.docx,.odt,.pdf,.pages">
 					</div>
 					<div class="form-group">
 						<label for="">{{ trans('site.front.genre') }}</label>
@@ -205,9 +202,8 @@
 					</div>
 					<div class="form-group synopsis">
 						<label for="">{{ trans('site.front.form.synopsis-optional') }}</label>
-						<input type="file" class="form-control" name="synopsis" 
-						accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-						application/pdf, application/vnd.oasis.opendocument.text">
+                                                <input type="file" class="form-control" name="synopsis"
+                                                accept=".doc,.docx,.odt,.pdf,.pages">
 					</div>
 
 					<div class="form-group synopsis">
@@ -345,7 +341,6 @@
         var action = $(this).data('action');
         form.attr('action', action);
     });
-
 </script>
 @stop
 

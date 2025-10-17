@@ -24,18 +24,22 @@ use App\PaymentMode;
 use App\PaymentPlan;
 use App\Paypal;
 use App\Services\CourseService;
+use App\Services\DocumentConversionService;
 use App\Services\ShopManuscriptService;
 use App\ShopManuscript;
 use App\ShopManuscriptsTaken;
 use App\ShopManuscriptUpgrade;
 use App\User;
 use Carbon\Carbon;
+use Closure;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator as FacadeValidator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -48,6 +52,62 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class ShopManuscriptController extends Controller
 {
+    private const ALLOWED_MANUSCRIPT_EXTENSIONS = ['pdf', 'doc', 'docx', 'odt', 'pages'];
+
+    private const ALLOWED_MANUSCRIPT_MIME_TYPES = [
+        'pdf' => ['application/pdf'],
+        'doc' => ['application/msword', 'application/vnd.ms-office', 'application/octet-stream'],
+        'docx' => [
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/zip',
+            'application/octet-stream',
+        ],
+        'odt' => ['application/vnd.oasis.opendocument.text', 'application/octet-stream'],
+        'pages' => [
+            'application/vnd.apple.pages',
+            'application/x-iwork-pages-sffpages',
+            'application/zip',
+            'application/octet-stream',
+        ],
+    ];
+
+    private function manuscriptFileRules(bool $required = true, ?int $maxKilobytes = null): array
+    {
+        $rules = [
+            $required ? 'required' : 'nullable',
+            'file',
+            'mimetypes:application/pdf,application/msword,application/vnd.ms-office,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/x-iwork-pages-sffpages,application/zip,application/octet-stream',
+            function (string $attribute, UploadedFile $value, Closure $fail): void {
+                $extension = strtolower($value->getClientOriginalExtension());
+
+                if (! in_array($extension, self::ALLOWED_MANUSCRIPT_EXTENSIONS, true)) {
+                    $fail(__('validation.mimes', [
+                        'attribute' => str_replace('_', ' ', $attribute),
+                        'values' => implode(', ', self::ALLOWED_MANUSCRIPT_EXTENSIONS),
+                    ]));
+
+                    return;
+                }
+
+                $allowedMimeTypes = self::ALLOWED_MANUSCRIPT_MIME_TYPES[$extension] ?? [];
+                $mimeType = $value->getMimeType();
+
+                if (! empty($allowedMimeTypes) && ! in_array($mimeType, $allowedMimeTypes, true)) {
+                    $fail(__('validation.mimetypes', [
+                        'attribute' => str_replace('_', ' ', $attribute),
+                        'values' => implode(', ', self::ALLOWED_MANUSCRIPT_EXTENSIONS),
+                    ]));
+                }
+            },
+        ];
+
+        if ($maxKilobytes) {
+            $rules[] = 'max:'.$maxKilobytes;
+        }
+
+        return $rules;
+    }
+
     public function index(): View
     {
         $shopManuscripts = ShopManuscript::orderBy('full_payment_price', 'asc')->get();
@@ -96,22 +156,19 @@ class ShopManuscriptController extends Controller
         }
 
         if ($request->hasFile('manuscript')) {
-            $file = $request->file('manuscript');
-            $extension = strtolower($file->getClientOriginalExtension());
+            $fileValidator = FacadeValidator::make(
+                ['manuscript' => $request->file('manuscript')],
+                ['manuscript' => $this->manuscriptFileRules()]
+            );
 
-            if (! in_array($extension, ['docx', 'pdf', 'doc', 'odt'])) { // 'odt', 'pdf', 'doc',
-                $customErrors = ['manuscript' => ['The manuscript must be a file of type: docx, pdf, doc, odt.']]; // odt, pdf, doc,
-                $validator = FacadeValidator::make([], []);
-                $validator->validate(); // Perform validation without rules
-                $validator->errors()->merge($customErrors);
-
-                throw new ValidationException($validator);
+            if ($fileValidator->fails()) {
+                throw new ValidationException($fileValidator);
             }
         }
 
         if ($request->has('synopsis')) {
             $request->validate([
-                'synopsis' => 'mimes:pdf,doc,docx,odt',
+                'synopsis' => $this->manuscriptFileRules(false),
             ]);
         }
 
@@ -596,59 +653,41 @@ class ShopManuscriptController extends Controller
         return redirect()->route('front.shop-manuscript.index');
     }
 
-    public function upload_manuscript($id, Request $request): RedirectResponse
+    public function upload_manuscript($id, Request $request, DocumentConversionService $documentConversionService): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->firstOrFail();
-        $extensions = ['pdf', 'doc', 'docx', 'odt'];
+        $extensions = ['pdf', 'doc', 'docx', 'odt', 'pages'];
 
         $request->validate([
-            'manuscript' => 'required',
-            'genre' => 'required'
+            'manuscript' => $this->manuscriptFileRules(true, 51200),
+            'genre' => 'required',
         ]);
 
         $word_count = 0;
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
-            $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
-            $original_filename = $request->manuscript->getClientOriginalName();
+            $conversionResult = $this->convertAndStoreManuscript(
+                $request->file('manuscript'),
+                $documentConversionService,
+                'shop-manuscript-upload'
+            );
 
-            if (! in_array($extension, $extensions)) {
+            if (! $conversionResult) {
                 return redirect()->back()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    'manuscript_test_error', __('We could not convert the file. Make sure the document contains selectable text and try again.')
                 );
             }
 
-            $time = time();
-            $destinationPath = 'storage/shop-manuscripts';
-            $filePath = AdminHelpers::checkFileName($destinationPath, Auth::user()->id, $extension); // rename document
-            $expFileName = explode('/', $filePath);
-
-            $request->manuscript->move($destinationPath, end($expFileName));
-            if ($extension == 'pdf') {
-                $pdf = new \PdfToText($filePath);
-                $pdf_content = $pdf->Text;
-                $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-            } elseif ($extension == 'docx') {
-                $docObj = new \Docx2Text($filePath);
-                $docText = $docObj->convertToText();
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            } elseif ($extension == 'doc') {
-                $docText = $this->readWord($filePath);
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            } elseif ($extension == 'odt') {
-                $doc = odt2text($filePath);
-                $word_count = FrontendHelpers::get_num_of_words($doc);
-            }
-            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
-            $shopManuscriptTaken->file = '/'.$filePath;
+            $word_count = $conversionResult['word_count'];
+            $shopManuscriptTaken->file = $conversionResult['db_path'];
             $shopManuscriptTaken->words = $word_count;
         }
 
         if ($request->hasFile('synopsis') && $request->file('synopsis')->isValid()) {
-            $extension = pathinfo($_FILES['synopsis']['name'], PATHINFO_EXTENSION);
+            $extension = strtolower(pathinfo($_FILES['synopsis']['name'], PATHINFO_EXTENSION));
 
             if (! in_array($extension, $extensions)) {
                 return redirect()->back()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT, PAGES'
                 );
             }
 
@@ -736,13 +775,13 @@ class ShopManuscriptController extends Controller
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)
             ->where('user_id', Auth::user()->id)->firstOrFail();
-        $extensions = ['pdf', 'doc', 'docx', 'odt'];
+        $extensions = ['pdf', 'doc', 'docx', 'odt', 'pages'];
         if ($request->hasFile('synopsis') && $request->file('synopsis')->isValid()) {
-            $extension = pathinfo($_FILES['synopsis']['name'], PATHINFO_EXTENSION);
+            $extension = strtolower(pathinfo($_FILES['synopsis']['name'], PATHINFO_EXTENSION));
 
             if (! in_array($extension, $extensions)) {
                 return redirect()->back()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT, PAGES'
                 );
             }
 
@@ -764,58 +803,40 @@ class ShopManuscriptController extends Controller
     /**
      * Update the manuscript uploaded by the learner
      */
-    public function updateUploadedManuscript($id, Request $request): RedirectResponse
+    public function updateUploadedManuscript($id, Request $request, DocumentConversionService $documentConversionService): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->first();
-        $extensions = ['pdf', 'doc', 'docx', 'odt'];
+        $extensions = ['pdf', 'doc', 'docx', 'odt', 'pages'];
 
         $word_count = 0;
         $isManuscriptUploaded = false;
 
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
-            $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
-            $original_filename = $request->manuscript->getClientOriginalName();
+            $conversionResult = $this->convertAndStoreManuscript(
+                $request->file('manuscript'),
+                $documentConversionService,
+                'shop-manuscript-update'
+            );
 
-            if (! in_array($extension, $extensions)) {
+            if (! $conversionResult) {
                 return redirect()->back()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    'manuscript_test_error', __('We could not convert the file. Make sure the document contains selectable text and try again.')
                 );
             }
 
-            $time = time();
-            $destinationPath = 'storage/shop-manuscripts';
-            $filePath = AdminHelpers::checkFileName($destinationPath, Auth::user()->id, $extension); // rename document
-            $expFileName = explode('/', $filePath);
-
-            $request->manuscript->move($destinationPath, end($expFileName));
-            if ($extension == 'pdf') {
-                $pdf = new \PdfToText($filePath);
-                $pdf_content = $pdf->Text;
-                $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-            } elseif ($extension == 'docx') {
-                $docObj = new \Docx2Text($filePath);
-                $docText = $docObj->convertToText();
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            } elseif ($extension == 'doc') {
-                $docText = $this->readWord($filePath);
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            } elseif ($extension == 'odt') {
-                $doc = odt2text($filePath);
-                $word_count = FrontendHelpers::get_num_of_words($doc);
-            }
-            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
-            $shopManuscriptTaken->file = '/'.$filePath;
+            $word_count = $conversionResult['word_count'];
+            $shopManuscriptTaken->file = $conversionResult['db_path'];
             $shopManuscriptTaken->words = $word_count;
 
             $isManuscriptUploaded = true; // just to check if need to inform editor or not
         }
 
         if ($request->hasFile('synopsis') && $request->file('synopsis')->isValid()) {
-            $extension = pathinfo($_FILES['synopsis']['name'], PATHINFO_EXTENSION);
+            $extension = strtolower(pathinfo($_FILES['synopsis']['name'], PATHINFO_EXTENSION));
 
             if (! in_array($extension, $extensions)) {
                 return redirect()->back()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT, PAGES'
                 );
             }
 
@@ -928,10 +949,55 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
+    protected function convertAndStoreManuscript(
+        UploadedFile $uploadedFile,
+        DocumentConversionService $documentConversionService,
+        string $tag
+    ): ?array {
+        $conversion = $documentConversionService->convertUploadedFileToDocx($uploadedFile, $tag, Auth::id());
+
+        if (! $conversion) {
+            return null;
+        }
+
+        $destinationDirectory = 'storage/shop-manuscripts';
+        $filePath = AdminHelpers::checkFileName($destinationDirectory, Auth::user()->id, 'docx');
+        $absoluteDestinationPath = public_path($filePath);
+        $directoryPath = dirname($absoluteDestinationPath);
+
+        if (! is_dir($directoryPath) && ! mkdir($directoryPath, 0755, true) && ! is_dir($directoryPath)) {
+            Storage::delete($conversion['relative_path']);
+
+            return null;
+        }
+
+        $copySucceeded = @copy($conversion['full_path'], $absoluteDestinationPath);
+        Storage::delete($conversion['relative_path']);
+
+        if (! $copySucceeded) {
+            return null;
+        }
+
+        $rawWordCount = FrontendHelpers::getWordCountFromDocx($absoluteDestinationPath);
+
+        if ($rawWordCount <= 0) {
+            @unlink($absoluteDestinationPath);
+
+            return null;
+        }
+
+        $wordCount = FrontendHelpers::wordCountByMargin($rawWordCount);
+
+        return [
+            'db_path' => '/'.$filePath,
+            'word_count' => $wordCount,
+        ];
+    }
+
     public function test_manuscript(Request $request, ShopManuscriptService $shopManuscriptService)/* : RedirectResponse */
     {
         $validator = FacadeValidator::make($request->all(), [
-            'manuscript' => ['required', 'file', 'mimes:pdf,doc,docx,odt'],
+            'manuscript' => $this->manuscriptFileRules(),
         ]);
 
         if ($validator->fails()) {

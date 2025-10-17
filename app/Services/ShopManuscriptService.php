@@ -16,12 +16,21 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Storage;
-use Str;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ShopManuscriptService
 {
+    protected DocumentConversionService $documentConversionService;
+
+    public function __construct(DocumentConversionService $documentConversionService)
+    {
+        $this->documentConversionService = $documentConversionService;
+    }
+
     public function uploadManuscriptTest(Request $request)
     {
         $word_count = 0;
@@ -36,7 +45,9 @@ class ShopManuscriptService
             $originalName = $file->getClientOriginalName();
             $mimeType = $file->getMimeType();
 
-            $time = time();
+            $providedWordCount = $request->input('word_count');
+            $providedWordCount = is_numeric($providedWordCount) ? (int) $providedWordCount : null;
+
             $relativeDirectory = 'storage/manuscript-tests';
             $absoluteDirectory = public_path($relativeDirectory);
 
@@ -44,24 +55,36 @@ class ShopManuscriptService
                 mkdir($absoluteDirectory, 0755, true);
             }
 
-            $fileName = $time.'.'.$extension; // rename document
-            $file->move($absoluteDirectory, $fileName);
+            $baseName = Str::uuid()->toString();
+            $storedFileName = $baseName.'.'.$extension;
+            $absoluteStoredPath = $absoluteDirectory.'/'.$storedFileName;
 
-            $filepath = $relativeDirectory.'/'.$fileName;
-            $absolutePath = $this->resolveFilePath($filepath);
+            $copied = $this->copyUploadedFile($file, $absoluteStoredPath);
 
-            $providedWordCount = $request->input('word_count');
-            $providedWordCount = is_numeric($providedWordCount) ? (int) $providedWordCount : null;
-
-            if (in_array($extension, ['doc', 'docx'], true) && $providedWordCount && $providedWordCount > 0) {
-                $word_count = $providedWordCount;
-            } else {
-                $word_count = $absolutePath ? $this->determineWordCount($absolutePath, $extension) : 0;
-
-                if ((! $word_count || $word_count < 0) && $providedWordCount && $providedWordCount > 0) {
-                    $word_count = $providedWordCount;
-                }
+            if ($copied) {
+                $filepath = $relativeDirectory.'/'.$storedFileName;
+                $absolutePath = $absoluteStoredPath;
             }
+
+            $conversionResult = $this->convertUploadedFileForWordCount($file, 'shop-manuscript-test');
+
+            if ($conversionResult) {
+                if (isset($absolutePath) && $absolutePath && is_file($absolutePath)) {
+                    @unlink($absolutePath);
+                }
+
+                $filepath = $conversionResult['stored_path'];
+                $absolutePath = $conversionResult['absolute_path'];
+                $word_count = (int) $conversionResult['word_count'];
+            } elseif (! empty($absolutePath)) {
+                $word_count = $this->determineWordCount($absolutePath, $extension);
+            }
+
+            if ((! $word_count || $word_count <= 0) && $providedWordCount && $providedWordCount > 0) {
+                $word_count = $providedWordCount;
+            }
+
+            $word_count = $word_count > 0 ? FrontendHelpers::wordCountByMargin((int) $word_count) : 0;
         }
 
         return [
@@ -125,9 +148,7 @@ class ShopManuscriptService
                     }
                     break;
                 case 'docx':
-                    $extractText = FrontendHelpers::extractTextFromDocx($filePath);
-
-                    return (int) ($extractText['word_count'] ?? 0);
+                    return FrontendHelpers::getWordCountFromDocx($filePath);
                 case 'doc':
                     $text = FrontendHelpers::readWord($filePath);
 
@@ -159,6 +180,85 @@ class ShopManuscriptService
         }
 
         return 0;
+    }
+
+    protected function convertUploadedFileForWordCount(UploadedFile $file, string $tag): ?array
+    {
+        $conversion = $this->documentConversionService->convertUploadedFileToDocx($file, $tag, Auth::id());
+
+        if (! $conversion) {
+            return null;
+        }
+
+        $relativeDirectory = 'storage/manuscript-tests';
+        $absoluteDirectory = public_path($relativeDirectory);
+
+        if (! is_dir($absoluteDirectory) && ! mkdir($absoluteDirectory, 0755, true) && ! is_dir($absoluteDirectory)) {
+            Storage::delete($conversion['relative_path']);
+
+            return null;
+        }
+
+        $fileName = Str::uuid()->toString().'.docx';
+        $destinationPath = $absoluteDirectory.'/'.$fileName;
+
+        $copySucceeded = @copy($conversion['full_path'], $destinationPath);
+
+        Storage::delete($conversion['relative_path']);
+
+        if (! $copySucceeded) {
+            return null;
+        }
+
+        $wordCount = FrontendHelpers::getWordCountFromDocx($destinationPath);
+
+        if ($wordCount <= 0) {
+            @unlink($destinationPath);
+
+            return null;
+        }
+
+        return [
+            'stored_path' => $relativeDirectory.'/'.$fileName,
+            'absolute_path' => $destinationPath,
+            'word_count' => $wordCount,
+        ];
+    }
+
+    protected function copyUploadedFile(UploadedFile $file, string $destinationPath): bool
+    {
+        $sourcePath = $file->getRealPath();
+
+        if (! $sourcePath || ! is_file($sourcePath)) {
+            return false;
+        }
+
+        $destinationDirectory = dirname($destinationPath);
+
+        if (! is_dir($destinationDirectory) && ! mkdir($destinationDirectory, 0755, true) && ! is_dir($destinationDirectory)) {
+            return false;
+        }
+
+        $sourceStream = fopen($sourcePath, 'rb');
+
+        if ($sourceStream === false) {
+            return false;
+        }
+
+        $destinationStream = fopen($destinationPath, 'wb');
+
+        if ($destinationStream === false) {
+            fclose($sourceStream);
+
+            return false;
+        }
+
+        $copiedBytes = stream_copy_to_stream($sourceStream, $destinationStream);
+
+        fclose($sourceStream);
+        fclose($destinationStream);
+
+        return $copiedBytes !== false;
     }
 
     public function uploadSynopsis(Request $request)
