@@ -24,44 +24,102 @@ class ShopManuscriptService
 {
     public function uploadManuscriptTest(Request $request)
     {
+        return $this->performManuscriptUpload($request, 'storage/manuscript-tests', [
+            'word_count_field' => 'word_count',
+        ]);
+    }
+
+    public function uploadLearnerManuscript(Request $request, int $userId): array
+    {
+        return $this->performManuscriptUpload($request, 'storage/shop-manuscripts', [
+            'apply_word_margin' => true,
+            'prepend_slash' => true,
+            'user_id' => $userId,
+            'path_resolver' => function (string $directory, string $extension, $file, ?int $resolvedUserId) {
+                $filenameBase = $resolvedUserId ?? time();
+
+                return AdminHelpers::checkFileName($directory, $filenameBase, $extension);
+            },
+            'word_count_field' => null,
+        ]);
+    }
+
+    protected function performManuscriptUpload(Request $request, string $destinationDirectory, array $options = []): array
+    {
+        $inputName = $options['input_name'] ?? 'manuscript';
+        $wordCountField = array_key_exists('word_count_field', $options)
+            ? $options['word_count_field']
+            : 'word_count';
+
         $word_count = 0;
         $filepath = '';
         $absolutePath = null;
         $originalName = null;
         $mimeType = null;
 
-        if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
-            $file = $request->file('manuscript');
+        if ($request->hasFile($inputName) && $request->file($inputName)->isValid()) {
+            $file = $request->file($inputName);
             $extension = strtolower($file->getClientOriginalExtension());
             $originalName = $file->getClientOriginalName();
             $mimeType = $file->getMimeType();
 
-            $time = time();
-            $relativeDirectory = 'storage/manuscript-tests';
-            $absoluteDirectory = public_path($relativeDirectory);
+            $relativeDirectory = trim($destinationDirectory, '/');
+            $providedWordCount = null;
 
-            if (! is_dir($absoluteDirectory)) {
-                mkdir($absoluteDirectory, 0755, true);
+            if ($wordCountField !== null) {
+                $providedValue = $request->input($wordCountField);
+                $providedWordCount = is_numeric($providedValue) ? (int) $providedValue : null;
             }
 
-            $fileName = $time.'.'.$extension; // rename document
-            $file->move($absoluteDirectory, $fileName);
+            $resolvedPath = null;
+            if (isset($options['path_resolver']) && is_callable($options['path_resolver'])) {
+                $resolvedPath = $options['path_resolver'](
+                    $relativeDirectory,
+                    $extension,
+                    $file,
+                    $options['user_id'] ?? null
+                );
+                $resolvedPath = $resolvedPath ? ltrim($resolvedPath, '/') : null;
+            }
 
-            $filepath = $relativeDirectory.'/'.$fileName;
-            $absolutePath = $this->resolveFilePath($filepath);
+            if ($resolvedPath) {
+                $filepath = $resolvedPath;
+                $targetDirectory = trim(dirname($filepath), '.');
+                $targetDirectory = $targetDirectory === '' ? $relativeDirectory : $targetDirectory;
+                $absoluteDirectory = base_path($targetDirectory);
 
-            $providedWordCount = $request->input('word_count');
-            $providedWordCount = is_numeric($providedWordCount) ? (int) $providedWordCount : null;
-
-            if (in_array($extension, ['doc', 'docx'], true) && $providedWordCount && $providedWordCount > 0) {
-                $word_count = $providedWordCount;
-            } else {
-                $word_count = $absolutePath ? $this->determineWordCount($absolutePath, $extension) : 0;
-
-                if ((! $word_count || $word_count < 0) && $providedWordCount && $providedWordCount > 0) {
-                    $word_count = $providedWordCount;
+                if (! is_dir($absoluteDirectory)) {
+                    mkdir($absoluteDirectory, 0755, true);
                 }
+
+                $file->move($absoluteDirectory, basename($filepath));
+            } else {
+                $absoluteDirectory = public_path($relativeDirectory);
+
+                if (! is_dir($absoluteDirectory)) {
+                    mkdir($absoluteDirectory, 0755, true);
+                }
+
+                $fileNameGenerator = $options['file_name_generator'] ?? function (string $extension) {
+                    return time().'.'.$extension;
+                };
+
+                $fileName = $fileNameGenerator($extension);
+                $file->move($absoluteDirectory, $fileName);
+
+                $filepath = $relativeDirectory.'/'.$fileName;
             }
+
+            $absolutePath = $this->resolveFilePath($filepath);
+            $word_count = $this->calculateWordCount($absolutePath, $extension, $providedWordCount);
+        }
+
+        if (($options['apply_word_margin'] ?? false) && $word_count > 0) {
+            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
+        }
+
+        if ($filepath !== '' && ($options['prepend_slash'] ?? false)) {
+            $filepath = '/'.ltrim($filepath, '/');
         }
 
         return [
@@ -71,6 +129,23 @@ class ShopManuscriptService
             'mime_type' => $mimeType,
         ];
 
+    }
+
+    protected function calculateWordCount(?string $absolutePath, string $extension, ?int $providedWordCount): int
+    {
+        $extension = strtolower($extension);
+
+        if (in_array($extension, ['doc', 'docx'], true) && $providedWordCount && $providedWordCount > 0) {
+            return (int) $providedWordCount;
+        }
+
+        $wordCount = $absolutePath ? $this->determineWordCount($absolutePath, $extension) : 0;
+
+        if ((! $wordCount || $wordCount < 0) && $providedWordCount && $providedWordCount > 0) {
+            $wordCount = $providedWordCount;
+        }
+
+        return (int) max(0, $wordCount);
     }
 
     protected function resolveFilePath(string $path): ?string
