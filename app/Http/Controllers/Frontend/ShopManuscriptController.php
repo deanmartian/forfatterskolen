@@ -102,8 +102,8 @@ class ShopManuscriptController extends Controller
             $file = $request->file('manuscript');
             $extension = strtolower($file->getClientOriginalExtension());
 
-            if (! in_array($extension, ['docx', 'pdf', 'doc', 'odt'])) { // 'odt', 'pdf', 'doc',
-                $customErrors = ['manuscript' => ['The manuscript must be a file of type: docx, pdf, doc, odt.']]; // odt, pdf, doc,
+            if (! in_array($extension, ['docx', 'pdf', 'doc', 'odt', 'pages'])) { // 'odt', 'pdf', 'doc',
+                $customErrors = ['manuscript' => ['The manuscript must be a file of type: docx, pdf, doc, odt, pages.']]; // odt, pdf, doc,
                 $validator = FacadeValidator::make([], []);
                 $validator->validate(); // Perform validation without rules
                 $validator->errors()->merge($customErrors);
@@ -114,7 +114,7 @@ class ShopManuscriptController extends Controller
 
         if ($request->has('synopsis')) {
             $request->validate([
-                'synopsis' => 'mimes:pdf,doc,docx,odt',
+                'synopsis' => 'mimes:pdf,doc,docx,odt,pages',
             ]);
         }
 
@@ -943,7 +943,7 @@ class ShopManuscriptController extends Controller
     public function test_manuscript(Request $request, ShopManuscriptService $shopManuscriptService)/* : RedirectResponse */
     {
         $validator = FacadeValidator::make($request->all(), [
-            'manuscript' => ['required', 'file', 'mimes:pdf,doc,docx,odt'],
+            'manuscript' => ['required', 'file', 'mimes:pdf,doc,docx,odt,pages'],
         ]);
 
         if ($validator->fails()) {
