@@ -838,88 +838,17 @@
             form.find('input[type=text]').click(function(){
                 form.find('input[type=file]').click();
             });
-            form.find('input[type=file]').on('change', async function(event){
+            form.find('input[type=file]').on('change', function(event){
                 const inputElement = event.target;
-
-                if (!inputElement) {
-                    return;
-                }
-
-                const files = inputElement.files;
-
-                if (!files || !files.length) {
-                    if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
-                        manuscriptTestTextInput.val('');
-                    }
-
-                    return;
-                }
-
-                const [selectedFile] = files;
-
-                if (!selectedFile) {
-                    if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
-                        manuscriptTestTextInput.val('');
-                    }
-
-                    return;
-                }
-
-                const extension = getFileExtension(selectedFile.name);
-                let processedFile = selectedFile;
-                let conversionFailed = false;
-                const requiresAssignment = extension !== 'docx';
-
-                if (requiresAssignment) {
-                    isConvertingManuscriptTestFile = true;
-
-                    try {
-                        processedFile = await convertFileToDocx(selectedFile);
-                    } catch (error) {
-                        conversionFailed = true;
-                        alert(getErrorMessageFromConversion(error));
-                        inputElement.value = '';
-                        if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
-                            manuscriptTestTextInput.val('');
-                        }
-                    } finally {
-                        isConvertingManuscriptTestFile = false;
-                    }
-                }
-
-                if (conversionFailed) {
-                    return;
-                }
+                const files = inputElement && inputElement.files ? Array.from(inputElement.files) : [];
 
                 if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
-                    const displayName = processedFile && processedFile.name
-                        ? processedFile.name
-                        : (selectedFile && selectedFile.name ? selectedFile.name : '');
+                    const [selectedFile] = files;
+                    const displayName = selectedFile && selectedFile.name ? selectedFile.name : '';
                     manuscriptTestTextInput.val(displayName);
-                }
-
-                if (!requiresAssignment) {
-                    return;
-                }
-
-                const assigned = assignFilesToInput(inputElement, processedFile);
-
-                if (!assigned) {
-                    alert('Kunne ikke legge til den konverterte filen automatisk. Prøv igjen i en annen nettleser eller kontakt oss.');
-                    inputElement.value = '';
-                    if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
-                        manuscriptTestTextInput.val('');
-                    }
-                    return;
                 }
             });
             form.on('submit', function(e){
-                if (isConvertingManuscriptTestFile) {
-                    alert('Vennligst vent til filen er ferdig konvertert.');
-                    e.preventDefault();
-                    return;
-                }
-
                 const fileValue = form.find('input[type=file]').val();
                 const file = fileValue ? fileValue.split('\\').pop() : '';
 
@@ -933,9 +862,10 @@
             const manuscriptTestHiddenInput = document.getElementById('test-manuscript-word-count');
             const manuscriptTestFileInput = document.getElementById('file-upload');
             let manuscriptSubmittingWithMammoth = false;
+            let manuscriptSubmittingAfterConversion = false;
 
             if (manuscriptTestFormElement && manuscriptTestFileInput) {
-                manuscriptTestFormElement.addEventListener('submit', (event) => {
+                manuscriptTestFormElement.addEventListener('submit', async (event) => {
                     if (manuscriptSubmittingWithMammoth) {
                         manuscriptSubmittingWithMammoth = false;
                         return;
@@ -956,6 +886,56 @@
                     }
 
                     const [file] = files;
+
+                    if (!manuscriptSubmittingAfterConversion) {
+                        const extensionBeforeConversion = getFileExtension(file.name || manuscriptTestFileInput.value);
+
+                        if (extensionBeforeConversion && extensionBeforeConversion !== 'docx') {
+                            event.preventDefault();
+                            isConvertingManuscriptTestFile = true;
+                            let processedFile = null;
+
+                            try {
+                                processedFile = await convertFileToDocx(file);
+                            } catch (error) {
+                                alert(getErrorMessageFromConversion(error));
+                                manuscriptTestFileInput.value = '';
+                                if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
+                                    manuscriptTestTextInput.val('');
+                                }
+                                return;
+                            } finally {
+                                isConvertingManuscriptTestFile = false;
+                            }
+
+                            if (!processedFile) {
+                                return;
+                            }
+
+                            const assigned = assignFilesToInput(manuscriptTestFileInput, processedFile);
+
+                            if (!assigned) {
+                                alert('Kunne ikke legge til den konverterte filen automatisk. Prøv igjen i en annen nettleser eller kontakt oss.');
+                                manuscriptTestFileInput.value = '';
+                                if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
+                                    manuscriptTestTextInput.val('');
+                                }
+                                return;
+                            }
+
+                            if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
+                                const displayName = processedFile.name || (file && file.name ? file.name : '');
+                                manuscriptTestTextInput.val(displayName);
+                            }
+
+                            manuscriptSubmittingAfterConversion = true;
+                            manuscriptTestFormElement.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                            return;
+                        }
+                    } else {
+                        manuscriptSubmittingAfterConversion = false;
+                    }
+
                     const extension = getFileExtension(file.name || manuscriptTestFileInput.value);
 
                     if (!shouldUseMammothForExtension(extension)) {
@@ -991,6 +971,7 @@
 
             const defaultWordCountText = wordCountUploadText ? wordCountUploadText.innerHTML : '';
             let wordCountSubmittingWithMammoth = false;
+            let wordCountSubmittingAfterConversion = false;
 
             const updateWordCountText = (text) => {
                 if (wordCountUploadText) {
@@ -1002,7 +983,7 @@
                 updateWordCountText(defaultWordCountText);
             };
 
-            const selectWordCountFile = async (files) => {
+            const selectWordCountFile = (files) => {
                 clearWordCountConversionError();
 
                 if (!files || !files.length) {
@@ -1027,63 +1008,9 @@
                     return;
                 }
 
+                hideWordCountConversionMessage();
+                setWordCountConversionState(false);
                 updateWordCountText(selectedFile.name);
-                if (wordCountHiddenInput) {
-                    wordCountHiddenInput.value = '';
-                }
-
-                const extension = getFileExtension(selectedFile.name);
-                let processedFile = selectedFile;
-                let conversionFailed = false;
-
-                if (extension !== 'docx') {
-                    setWordCountConversionState(true);
-                    showWordCountConversionMessage();
-
-                    try {
-                        processedFile = await convertFileToDocx(selectedFile);
-                    } catch (error) {
-                        conversionFailed = true;
-                        showWordCountConversionError(getErrorMessageFromConversion(error));
-                        if (wordCountFileInput) {
-                            suppressWordCountChangeHandler = true;
-                            wordCountFileInput.value = '';
-                            window.setTimeout(() => {
-                                suppressWordCountChangeHandler = false;
-                            }, 0);
-                        }
-                        resetUploadText();
-                    } finally {
-                        hideWordCountConversionMessage();
-                        setWordCountConversionState(false);
-                    }
-                } else {
-                    hideWordCountConversionMessage();
-                    setWordCountConversionState(false);
-                }
-
-                if (conversionFailed) {
-                    return;
-                }
-
-                if (processedFile && processedFile.name) {
-                    updateWordCountText(processedFile.name);
-                }
-
-                if (wordCountFileInput) {
-                    suppressWordCountChangeHandler = true;
-                    const assigned = assignFilesToInput(wordCountFileInput, processedFile);
-                    window.setTimeout(() => {
-                        suppressWordCountChangeHandler = false;
-                    }, 0);
-
-                    if (!assigned) {
-                        showWordCountConversionError('Kunne ikke legge til den konverterte filen automatisk. Prøv igjen i en annen nettleser eller kontakt oss.');
-                        wordCountFileInput.value = '';
-                        resetUploadText();
-                        return;
-                    }
-                }
 
                 if (wordCountHiddenInput) {
                     wordCountHiddenInput.value = '';
@@ -1091,12 +1018,12 @@
             };
 
             if (wordCountFileInput) {
-                wordCountFileInput.addEventListener('change', async (event) => {
+                wordCountFileInput.addEventListener('change', (event) => {
                     if (suppressWordCountChangeHandler) {
                         return;
                     }
 
-                    await selectWordCountFile(event.target.files);
+                    selectWordCountFile(event.target.files);
                 });
             }
 
@@ -1120,13 +1047,13 @@
                     resetUploadText();
                 });
 
-                wordCountUploadArea.addEventListener('drop', async (event) => {
+                wordCountUploadArea.addEventListener('drop', (event) => {
                     event.preventDefault();
                     wordCountUploadArea.classList.remove('dragover');
                     const files = event.dataTransfer ? event.dataTransfer.files : null;
 
                     if (files && files.length) {
-                        await selectWordCountFile(files);
+                        selectWordCountFile(files);
                     } else {
                         resetUploadText();
                     }
@@ -1134,7 +1061,7 @@
             }
 
             if (wordCountFormElement && wordCountFileInput) {
-                wordCountFormElement.addEventListener('submit', (event) => {
+                wordCountFormElement.addEventListener('submit', async (event) => {
                     if (isConvertingWordCountFile) {
                         event.preventDefault();
                         return;
@@ -1156,6 +1083,82 @@
                     }
 
                     const [file] = files;
+
+                    if (!wordCountSubmittingAfterConversion) {
+                        const extensionBeforeConversion = getFileExtension(file.name || wordCountFileInput.value);
+
+                        if (extensionBeforeConversion && extensionBeforeConversion !== 'docx') {
+                            event.preventDefault();
+                            clearWordCountConversionError();
+                            setWordCountConversionState(true);
+                            showWordCountConversionMessage();
+
+                            let processedFile = null;
+                            let conversionFailed = false;
+
+                            try {
+                                processedFile = await convertFileToDocx(file);
+                            } catch (error) {
+                                conversionFailed = true;
+                                showWordCountConversionError(getErrorMessageFromConversion(error));
+                                if (wordCountFileInput) {
+                                    suppressWordCountChangeHandler = true;
+                                    wordCountFileInput.value = '';
+                                    window.setTimeout(() => {
+                                        suppressWordCountChangeHandler = false;
+                                    }, 0);
+                                }
+                                resetUploadText();
+                            } finally {
+                                hideWordCountConversionMessage();
+                                setWordCountConversionState(false);
+                            }
+
+                            if (conversionFailed || !processedFile) {
+                                return;
+                            }
+
+                            let assigned = false;
+
+                            if (wordCountFileInput) {
+                                suppressWordCountChangeHandler = true;
+                                assigned = assignFilesToInput(wordCountFileInput, processedFile);
+                                window.setTimeout(() => {
+                                    suppressWordCountChangeHandler = false;
+                                }, 0);
+                            } else {
+                                assigned = assignFilesToInput(wordCountFileInput, processedFile);
+                            }
+
+                            if (!assigned) {
+                                showWordCountConversionError('Kunne ikke legge til den konverterte filen automatisk. Prøv igjen i en annen nettleser eller kontakt oss.');
+                                if (wordCountFileInput) {
+                                    suppressWordCountChangeHandler = true;
+                                    wordCountFileInput.value = '';
+                                    window.setTimeout(() => {
+                                        suppressWordCountChangeHandler = false;
+                                    }, 0);
+                                }
+                                resetUploadText();
+                                return;
+                            }
+
+                            if (processedFile && processedFile.name) {
+                                updateWordCountText(processedFile.name);
+                            }
+
+                            if (wordCountHiddenInput) {
+                                wordCountHiddenInput.value = '';
+                            }
+
+                            wordCountSubmittingAfterConversion = true;
+                            wordCountFormElement.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                            return;
+                        }
+                    } else {
+                        wordCountSubmittingAfterConversion = false;
+                    }
+
                     const extension = getFileExtension(file.name || wordCountFileInput.value);
 
                     if (!shouldUseMammothForExtension(extension)) {
