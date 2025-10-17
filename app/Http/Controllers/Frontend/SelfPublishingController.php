@@ -18,6 +18,7 @@ use App\SelfPublishing;
 use App\SelfPublishingFeedback;
 use App\SelfPublishingOrder;
 use App\Services\ProjectService;
+use App\Services\DocumentConversionService;
 use App\Services\ShopManuscriptService;
 use App\ShopManuscript;
 use Auth;
@@ -329,7 +330,11 @@ class SelfPublishingController extends Controller
         return view('frontend.learner.self-publishing.publishing-order', compact('shopManuscript'));
     }
 
-    public function validatePublishingOrder(Request $request, ShopManuscriptService $shopManuscriptService)
+    public function validatePublishingOrder(
+        Request $request,
+        ShopManuscriptService $shopManuscriptService,
+        DocumentConversionService $documentConversionService
+    )
     {
         if (! $request->has('is_manuscript_only')) {
             $request->validate([
@@ -343,8 +348,8 @@ class SelfPublishingController extends Controller
             $file = $request->file('manuscript');
             $extension = $file->getClientOriginalExtension();
 
-            if (! in_array($extension, ['odt', 'pdf', 'doc', 'docx'])) {
-                $customErrors = ['manuscript' => ['The manuscript must be a file of type: odt, pdf, doc, docx.']];
+            if (! in_array($extension, ['odt', 'pdf', 'doc', 'docx', 'pages'])) {
+                $customErrors = ['manuscript' => ['The manuscript must be a file of type: odt, pdf, doc, docx, pages.']];
                 $validator = Validator::make([], []);
                 $validator->validate(); // Perform validation without rules
                 $validator->errors()->merge($customErrors);
@@ -354,7 +359,18 @@ class SelfPublishingController extends Controller
         }
 
         $shopManuscript = ShopManuscript::find(3); // manusutvikling 1
-        $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
+        $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest(
+            $request,
+            $documentConversionService,
+            Auth::id()
+        );
+
+        if (! empty($uploadedManuscript['conversion_failed'])) {
+            $validator = Validator::make([], []);
+            $validator->errors()->add('manuscript', __('We could not convert the file. Make sure the document contains selectable text and try again.'));
+
+            throw new ValidationException($validator);
+        }
         $word_count = $uploadedManuscript['word_count'];
         $word_to_deduct = $word_count * 0.02;
         $new_word_count = ceil($word_count - $word_to_deduct);

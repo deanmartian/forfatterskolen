@@ -10,31 +10,95 @@ use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\OrderShopManuscript;
+use App\Services\DocumentConversionService;
 use App\ShopManuscript;
 use App\ShopManuscriptsTaken;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 use Str;
 
 class ShopManuscriptService
 {
-    public function uploadManuscriptTest(Request $request)
+    public function uploadManuscriptTest(
+        Request $request,
+        ?DocumentConversionService $documentConversionService = null,
+        ?int $userId = null
+    )
     {
         $word_count = 0;
         $filepath = '';
         $absolutePath = null;
         $originalName = null;
         $mimeType = null;
+        $conversionFailed = false;
+
+        if ($userId === null && Auth::check()) {
+            $userId = Auth::id();
+        }
+
+        if ($documentConversionService === null) {
+            try {
+                $documentConversionService = app(DocumentConversionService::class);
+            } catch (\Throwable $throwable) {
+                Log::error('Unable to resolve document conversion service.', [
+                    'error' => $throwable->getMessage(),
+                ]);
+                $documentConversionService = null;
+            }
+        }
 
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
             $file = $request->file('manuscript');
             $extension = strtolower($file->getClientOriginalExtension());
             $originalName = $file->getClientOriginalName();
             $mimeType = $file->getMimeType();
+
+            $convertedFullPath = null;
+            $convertedRelativePath = null;
+
+            if ($documentConversionService && $extension !== 'docx'
+                && in_array($extension, ['doc', 'pdf', 'odt', 'pages'], true)
+            ) {
+                try {
+                    $conversion = $documentConversionService->convertUploadedFileToDocx(
+                        $file,
+                        'shop-manuscript-upload',
+                        $userId
+                    );
+                } catch (\Throwable $exception) {
+                    Log::error('Shop manuscript document conversion threw an exception.', [
+                        'user_id' => $userId,
+                        'extension' => $extension,
+                        'error' => $exception->getMessage(),
+                    ]);
+                    $conversion = null;
+                }
+
+                if ($conversion) {
+                    $convertedFullPath = $conversion['full_path'] ?? null;
+                    $convertedRelativePath = $conversion['relative_path'] ?? null;
+                    $originalName = $conversion['download_name'] ?? $originalName;
+                    $mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                    $extension = 'docx';
+                } else {
+                    $conversionFailed = true;
+                }
+            }
+
+            if ($conversionFailed) {
+                return [
+                    'manuscript_file' => '',
+                    'word_count' => 0,
+                    'original_name' => $originalName,
+                    'mime_type' => $mimeType,
+                    'conversion_failed' => true,
+                ];
+            }
 
             $time = time();
             $relativeDirectory = 'storage/manuscript-tests';
@@ -45,7 +109,36 @@ class ShopManuscriptService
             }
 
             $fileName = $time.'.'.$extension; // rename document
-            $file->move($absoluteDirectory, $fileName);
+
+            if ($convertedFullPath) {
+                $destination = $absoluteDirectory.DIRECTORY_SEPARATOR.$fileName;
+
+                if (! @copy($convertedFullPath, $destination)) {
+                    Log::error('Unable to store converted manuscript.', [
+                        'user_id' => $userId,
+                        'source' => $convertedFullPath,
+                        'destination' => $destination,
+                    ]);
+
+                    if ($convertedRelativePath) {
+                        Storage::delete($convertedRelativePath);
+                    }
+
+                    return [
+                        'manuscript_file' => '',
+                        'word_count' => 0,
+                        'original_name' => $originalName,
+                        'mime_type' => $mimeType,
+                        'conversion_failed' => true,
+                    ];
+                }
+
+                if ($convertedRelativePath) {
+                    Storage::delete($convertedRelativePath);
+                }
+            } else {
+                $file->move($absoluteDirectory, $fileName);
+            }
 
             $filepath = $relativeDirectory.'/'.$fileName;
             $absolutePath = $this->resolveFilePath($filepath);

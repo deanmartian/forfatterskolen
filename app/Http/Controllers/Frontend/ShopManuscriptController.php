@@ -24,6 +24,7 @@ use App\PaymentMode;
 use App\PaymentPlan;
 use App\Paypal;
 use App\Services\CourseService;
+use App\Services\DocumentConversionService;
 use App\Services\ShopManuscriptService;
 use App\ShopManuscript;
 use App\ShopManuscriptsTaken;
@@ -86,23 +87,27 @@ class ShopManuscriptController extends Controller
     /**
      * @return array|\Illuminate\Http\JsonResponse
      */
-    public function validateOrder($shop_manuscript_id, Request $request, ShopManuscriptService $shopManuscriptService)
-    {
+    public function validateOrder(
+        $shop_manuscript_id,
+        Request $request,
+        ShopManuscriptService $shopManuscriptService,
+        DocumentConversionService $documentConversionService
+    ) {
         if (! $request->has('is_manuscript_only')) {
             $request->validate([
-            'genre' => 'required',
-            'manuscript' => ($request->temp_file && $request->temp_file !== 'null') ? 'nullable' : 'required',
-        ]);
+                'genre' => 'required',
+                'manuscript' => ($request->temp_file && $request->temp_file !== 'null') ? 'nullable' : 'required',
+            ]);
         }
 
         if ($request->hasFile('manuscript')) {
             $file = $request->file('manuscript');
             $extension = strtolower($file->getClientOriginalExtension());
 
-            if (! in_array($extension, ['docx', 'pdf', 'doc', 'odt'])) { // 'odt', 'pdf', 'doc',
-                $customErrors = ['manuscript' => ['The manuscript must be a file of type: docx, pdf, doc, odt.']]; // odt, pdf, doc,
+            if (! in_array($extension, ['docx', 'pdf', 'doc', 'odt', 'pages'])) {
+                $customErrors = ['manuscript' => ['The manuscript must be a file of type: docx, pdf, doc, odt, pages.']];
                 $validator = FacadeValidator::make([], []);
-                $validator->validate(); // Perform validation without rules
+                $validator->validate();
                 $validator->errors()->merge($customErrors);
 
                 throw new ValidationException($validator);
@@ -121,7 +126,22 @@ class ShopManuscriptController extends Controller
             $word_count = session('temp_uploaded_file')['word_count'];
             $manuscript_file = session('temp_uploaded_file')['path'];
         } else {
-            $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
+            $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest(
+                $request,
+                $documentConversionService,
+                Auth::id()
+            );
+
+            if (! empty($uploadedManuscript['conversion_failed'])) {
+                $conversionValidator = FacadeValidator::make([], []);
+                $conversionValidator->errors()->add(
+                    'manuscript',
+                    __('We could not convert the file. Make sure the document contains selectable text and try again.')
+                );
+
+                throw new ValidationException($conversionValidator);
+            }
+
             $word_count = $uploadedManuscript['word_count'];
             $manuscript_file = $uploadedManuscript['manuscript_file'];
         }
@@ -129,28 +149,24 @@ class ShopManuscriptController extends Controller
         if ($word_count == 0) {
             $customErrors = ['manuscript' => ['The manuscript word count is invalid.']];
             $validator = FacadeValidator::make([], []);
-            $validator->validate(); // Perform validation without rules
+            $validator->validate();
             $validator->errors()->merge($customErrors);
 
             throw new ValidationException($validator);
         }
 
         $shopManuscript = ShopManuscript::find($shop_manuscript_id);
-        $word_count = $word_count;
-        // $word_to_deduct = $word_count * 0.02;
-        $new_word_count = $word_count; // ceil($word_count - $word_to_deduct);
-        $excess_words = $new_word_count - 17500; // deduct the manusutvikling 1 max words
+        $new_word_count = $word_count;
+        $excess_words = $new_word_count - 17500;
 
-        // check if the uploaded file exceeds the plan max words
         if ($new_word_count > $shopManuscript->max_words) {
-            // get the plan that meets the word count uploaded
             $nextPlan = ShopManuscript::where('max_words', '>=', $new_word_count)->first();
 
             return response()->json([
-                'message' => 'Ditt manus er '.$word_count
-                    .' ord, du må bestille <a href="'.route('front.shop-manuscript.checkout', $nextPlan->id).'"
-                     style="color: #000; font-weight: bold">'
-                    .$nextPlan->title.'</a>.',
+                'message' => 'Ditt manus er ' . $word_count
+                    . ' ord, du må bestille <a href="' . route('front.shop-manuscript.checkout', $nextPlan->id) . '"'
+                    . ' style="color: #000; font-weight: bold">'
+                    . $nextPlan->title . '</a>.',
             ], 400);
         }
 
@@ -166,7 +182,6 @@ class ShopManuscriptController extends Controller
 
         return $request->all();
     }
-
     public function validateForm($shop_manuscript_id, Request $request, CourseService $courseService,
         ShopManuscriptService $shopManuscriptService): JsonResponse
     {
@@ -209,10 +224,20 @@ class ShopManuscriptController extends Controller
         return response()->json($shopManuscriptService->processCheckout($request));
     }
 
-    public function vippsCheckout($shop_manuscript_id, Request $request, ShopManuscriptService $shopManuscriptService,
-        LoginController $loginController)
+    public function vippsCheckout(
+        $shop_manuscript_id,
+        Request $request,
+        ShopManuscriptService $shopManuscriptService,
+        DocumentConversionService $documentConversionService,
+        LoginController $loginController
+    )
     {
-        $validatedOrder = $this->validateOrder($shop_manuscript_id, $request, $shopManuscriptService);
+        $validatedOrder = $this->validateOrder(
+            $shop_manuscript_id,
+            $request,
+            $shopManuscriptService,
+            $documentConversionService
+        );
 
         if (is_array($validatedOrder)) {
 
@@ -928,10 +953,14 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function test_manuscript(Request $request, ShopManuscriptService $shopManuscriptService)/* : RedirectResponse */
+    public function test_manuscript(
+        Request $request,
+        ShopManuscriptService $shopManuscriptService,
+        DocumentConversionService $documentConversionService
+    )/* : RedirectResponse */
     {
         $validator = FacadeValidator::make($request->all(), [
-            'manuscript' => ['required', 'file', 'mimes:pdf,doc,docx,odt'],
+            'manuscript' => ['required', 'file', 'mimes:pdf,doc,docx,odt,pages'],
         ]);
 
         if ($validator->fails()) {
@@ -946,7 +975,18 @@ class ShopManuscriptController extends Controller
         $button_link = null;
 
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
-            $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
+            $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest(
+                $request,
+                $documentConversionService,
+                Auth::id()
+            );
+
+            if (! empty($uploadedManuscript['conversion_failed'])) {
+                $fileValidator = FacadeValidator::make([], []);
+                $fileValidator->errors()->add('manuscript', __('We could not convert the file. Make sure the document contains selectable text and try again.'));
+
+                throw new ValidationException($fileValidator);
+            }
             $extractedWordCount = (int) ($uploadedManuscript['word_count'] ?? 0);
 
             if ($extractedWordCount <= 0) {
@@ -1026,7 +1066,11 @@ class ShopManuscriptController extends Controller
         return redirect()->back()->with('manuscript_test', $message);
     }
 
-    public function storeTempUploadedFile(Request $request, ShopManuscriptService $shopManuscriptService): JsonResponse
+    public function storeTempUploadedFile(
+        Request $request,
+        ShopManuscriptService $shopManuscriptService,
+        DocumentConversionService $documentConversionService
+    ): JsonResponse
     {
         if (! $request->hasFile('manuscript') || ! $request->file('manuscript')->isValid()) {
             $validator = FacadeValidator::make([], []);
@@ -1035,17 +1079,28 @@ class ShopManuscriptController extends Controller
             throw new ValidationException($validator);
         }
 
-        $extensions = ['pdf', 'doc', 'docx', 'odt'];
+        $extensions = ['pdf', 'doc', 'docx', 'odt', 'pages'];
         $extension = strtolower($request->file('manuscript')->getClientOriginalExtension());
 
         if (! in_array($extension, $extensions)) {
             $validator = FacadeValidator::make([], []);
-            $validator->errors()->add('manuscript', 'Ugyldig filformat. Tillatte formater er PDF, DOC, DOCX og ODT.');
+            $validator->errors()->add('manuscript', 'Ugyldig filformat. Tillatte formater er PDF, DOC, DOCX, ODT og PAGES.');
 
             throw new ValidationException($validator);
         }
 
-        $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
+        $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest(
+            $request,
+            $documentConversionService,
+            Auth::id()
+        );
+
+        if (! empty($uploadedManuscript['conversion_failed'])) {
+            $validator = FacadeValidator::make([], []);
+            $validator->errors()->add('manuscript', __('We could not convert the file. Make sure the document contains selectable text and try again.'));
+
+            throw new ValidationException($validator);
+        }
 
         if (empty($uploadedManuscript['word_count'])) {
             $validator = FacadeValidator::make([], []);
