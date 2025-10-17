@@ -66,7 +66,7 @@
                         <form method="POST" enctype="multipart/form-data" action="{{ route('front.shop-manuscript.test_manuscript') }}">
                             {{ csrf_field() }}
                             <input type="file" class="hidden" name="manuscript" id="file-upload"
-                            accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+                            accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/x-iwork-pages-sffpages,.doc,.docx,.pdf,.odt,.pages">
                             <input type="hidden" name="word_count" id="test-manuscript-word-count">
                             <label class="mb-4 mt-3">
                                 <span class="instruction">{{ trans('site.front.shop-manuscript.form.instruction') }}</span>
@@ -830,19 +830,100 @@
             @endif
 
             let form = $('#testManuscript form');
+            const manuscriptTestTextInput = form.length ? form.find('input[type=text]') : null;
+            let isConvertingManuscriptTestFile = false;
             $('.file-upload-btn').click(function(){
                 form.find('input[type=file]').click();
             });
             form.find('input[type=text]').click(function(){
                 form.find('input[type=file]').click();
             });
-            form.find('input[type=file]').on('change', function(){
-                let file = $(this).val().split('\\').pop();
-                form.find('input[type=text]').val(file);
+            form.find('input[type=file]').on('change', async function(event){
+                const inputElement = event.target;
+
+                if (!inputElement) {
+                    return;
+                }
+
+                const files = inputElement.files;
+
+                if (!files || !files.length) {
+                    if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
+                        manuscriptTestTextInput.val('');
+                    }
+
+                    return;
+                }
+
+                const [selectedFile] = files;
+
+                if (!selectedFile) {
+                    if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
+                        manuscriptTestTextInput.val('');
+                    }
+
+                    return;
+                }
+
+                const extension = getFileExtension(selectedFile.name);
+                let processedFile = selectedFile;
+                let conversionFailed = false;
+                const requiresAssignment = extension !== 'docx';
+
+                if (requiresAssignment) {
+                    isConvertingManuscriptTestFile = true;
+
+                    try {
+                        processedFile = await convertFileToDocx(selectedFile);
+                    } catch (error) {
+                        conversionFailed = true;
+                        alert(getErrorMessageFromConversion(error));
+                        inputElement.value = '';
+                        if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
+                            manuscriptTestTextInput.val('');
+                        }
+                    } finally {
+                        isConvertingManuscriptTestFile = false;
+                    }
+                }
+
+                if (conversionFailed) {
+                    return;
+                }
+
+                if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
+                    const displayName = processedFile && processedFile.name
+                        ? processedFile.name
+                        : (selectedFile && selectedFile.name ? selectedFile.name : '');
+                    manuscriptTestTextInput.val(displayName);
+                }
+
+                if (!requiresAssignment) {
+                    return;
+                }
+
+                const assigned = assignFilesToInput(inputElement, processedFile);
+
+                if (!assigned) {
+                    alert('Kunne ikke legge til den konverterte filen automatisk. Prøv igjen i en annen nettleser eller kontakt oss.');
+                    inputElement.value = '';
+                    if (manuscriptTestTextInput && manuscriptTestTextInput.length) {
+                        manuscriptTestTextInput.val('');
+                    }
+                    return;
+                }
             });
             form.on('submit', function(e){
-                let file = form.find('input[type=file]').val().split('\\').pop();
-                if( file == '' ){
+                if (isConvertingManuscriptTestFile) {
+                    alert('Vennligst vent til filen er ferdig konvertert.');
+                    e.preventDefault();
+                    return;
+                }
+
+                const fileValue = form.find('input[type=file]').val();
+                const file = fileValue ? fileValue.split('\\').pop() : '';
+
+                if( file === '' ){
                     alert('Please select a document file.');
                     e.preventDefault();
                 }
@@ -857,6 +938,11 @@
                 manuscriptTestFormElement.addEventListener('submit', (event) => {
                     if (manuscriptSubmittingWithMammoth) {
                         manuscriptSubmittingWithMammoth = false;
+                        return;
+                    }
+
+                    if (isConvertingManuscriptTestFile) {
+                        event.preventDefault();
                         return;
                     }
 
