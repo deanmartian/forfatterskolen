@@ -978,7 +978,31 @@ class ShopManuscriptController extends Controller
             return null;
         }
 
-        $rawWordCount = FrontendHelpers::getWordCountFromDocx($absoluteDestinationPath);
+        $extracted = FrontendHelpers::extractTextFromDocx($absoluteDestinationPath);
+        $rawWordCount = (int) ($extracted['word_count'] ?? 0);
+
+        if ($rawWordCount <= 0) {
+            if (! class_exists('Docx2Text')) {
+                $docx2TextPath = public_path('Docx2Text.php');
+                if (file_exists($docx2TextPath)) {
+                    include_once $docx2TextPath;
+                } else {
+                    $docx2TextPath = base_path('Docx2Text.php');
+                    if (file_exists($docx2TextPath)) {
+                        include_once $docx2TextPath;
+                    }
+                }
+            }
+
+            if (class_exists('Docx2Text')) {
+                try {
+                    $docText = (new \Docx2Text($absoluteDestinationPath))->convertToText();
+                    $rawWordCount = $docText ? FrontendHelpers::get_num_of_words($docText) : 0;
+                } catch (\Throwable $exception) {
+                    $rawWordCount = 0;
+                }
+            }
+        }
 
         if ($rawWordCount <= 0) {
             @unlink($absoluteDestinationPath);

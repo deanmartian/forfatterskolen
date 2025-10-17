@@ -148,7 +148,7 @@ class ShopManuscriptService
                     }
                     break;
                 case 'docx':
-                    return FrontendHelpers::getWordCountFromDocx($filePath);
+                    return $this->getDocxWordCount($filePath);
                 case 'doc':
                     $text = FrontendHelpers::readWord($filePath);
 
@@ -182,6 +182,49 @@ class ShopManuscriptService
         return 0;
     }
 
+    protected function getDocxWordCount(string $filePath): int
+    {
+        if (! is_file($filePath)) {
+            return 0;
+        }
+
+        $extracted = FrontendHelpers::extractTextFromDocx($filePath);
+        $wordCount = (int) ($extracted['word_count'] ?? 0);
+
+        if ($wordCount > 0) {
+            return $wordCount;
+        }
+
+        if (! class_exists('Docx2Text')) {
+            $docx2TextPath = public_path('Docx2Text.php');
+            if (file_exists($docx2TextPath)) {
+                include_once $docx2TextPath;
+            } else {
+                $docx2TextPath = base_path('Docx2Text.php');
+                if (file_exists($docx2TextPath)) {
+                    include_once $docx2TextPath;
+                }
+            }
+        }
+
+        if (! class_exists('Docx2Text')) {
+            return 0;
+        }
+
+        try {
+            $docText = (new \Docx2Text($filePath))->convertToText();
+
+            return $docText ? FrontendHelpers::get_num_of_words($docText) : 0;
+        } catch (\Throwable $exception) {
+            Log::warning('Docx2Text failed to extract words from manuscript.', [
+                'file' => $filePath,
+                'error' => $exception->getMessage(),
+            ]);
+
+            return 0;
+        }
+    }
+
     protected function convertUploadedFileForWordCount(UploadedFile $file, string $tag): ?array
     {
         $conversion = $this->documentConversionService->convertUploadedFileToDocx($file, $tag, Auth::id());
@@ -210,7 +253,7 @@ class ShopManuscriptService
             return null;
         }
 
-        $wordCount = FrontendHelpers::getWordCountFromDocx($destinationPath);
+        $wordCount = $this->getDocxWordCount($destinationPath);
 
         if ($wordCount <= 0) {
             @unlink($destinationPath);
