@@ -31,6 +31,7 @@ use App\ShopManuscriptsTaken;
 use App\ShopManuscriptUpgrade;
 use App\User;
 use Carbon\Carbon;
+use Closure;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -51,6 +52,62 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class ShopManuscriptController extends Controller
 {
+    private const ALLOWED_MANUSCRIPT_EXTENSIONS = ['pdf', 'doc', 'docx', 'odt', 'pages'];
+
+    private const ALLOWED_MANUSCRIPT_MIME_TYPES = [
+        'pdf' => ['application/pdf'],
+        'doc' => ['application/msword', 'application/vnd.ms-office', 'application/octet-stream'],
+        'docx' => [
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/zip',
+            'application/octet-stream',
+        ],
+        'odt' => ['application/vnd.oasis.opendocument.text', 'application/octet-stream'],
+        'pages' => [
+            'application/vnd.apple.pages',
+            'application/x-iwork-pages-sffpages',
+            'application/zip',
+            'application/octet-stream',
+        ],
+    ];
+
+    private function manuscriptFileRules(bool $required = true, ?int $maxKilobytes = null): array
+    {
+        $rules = [
+            $required ? 'required' : 'nullable',
+            'file',
+            'mimetypes:application/pdf,application/msword,application/vnd.ms-office,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/x-iwork-pages-sffpages,application/zip,application/octet-stream',
+            function (string $attribute, UploadedFile $value, Closure $fail): void {
+                $extension = strtolower($value->getClientOriginalExtension());
+
+                if (! in_array($extension, self::ALLOWED_MANUSCRIPT_EXTENSIONS, true)) {
+                    $fail(__('validation.mimes', [
+                        'attribute' => str_replace('_', ' ', $attribute),
+                        'values' => implode(', ', self::ALLOWED_MANUSCRIPT_EXTENSIONS),
+                    ]));
+
+                    return;
+                }
+
+                $allowedMimeTypes = self::ALLOWED_MANUSCRIPT_MIME_TYPES[$extension] ?? [];
+                $mimeType = $value->getMimeType();
+
+                if (! empty($allowedMimeTypes) && ! in_array($mimeType, $allowedMimeTypes, true)) {
+                    $fail(__('validation.mimetypes', [
+                        'attribute' => str_replace('_', ' ', $attribute),
+                        'values' => implode(', ', self::ALLOWED_MANUSCRIPT_EXTENSIONS),
+                    ]));
+                }
+            },
+        ];
+
+        if ($maxKilobytes) {
+            $rules[] = 'max:'.$maxKilobytes;
+        }
+
+        return $rules;
+    }
+
     public function index(): View
     {
         $shopManuscripts = ShopManuscript::orderBy('full_payment_price', 'asc')->get();
@@ -99,22 +156,19 @@ class ShopManuscriptController extends Controller
         }
 
         if ($request->hasFile('manuscript')) {
-            $file = $request->file('manuscript');
-            $extension = strtolower($file->getClientOriginalExtension());
+            $fileValidator = FacadeValidator::make(
+                ['manuscript' => $request->file('manuscript')],
+                ['manuscript' => $this->manuscriptFileRules()]
+            );
 
-            if (! in_array($extension, ['docx', 'pdf', 'doc', 'odt', 'pages'])) { // 'odt', 'pdf', 'doc',
-                $customErrors = ['manuscript' => ['The manuscript must be a file of type: docx, pdf, doc, odt, pages.']]; // odt, pdf, doc,
-                $validator = FacadeValidator::make([], []);
-                $validator->validate(); // Perform validation without rules
-                $validator->errors()->merge($customErrors);
-
-                throw new ValidationException($validator);
+            if ($fileValidator->fails()) {
+                throw new ValidationException($fileValidator);
             }
         }
 
         if ($request->has('synopsis')) {
             $request->validate([
-                'synopsis' => 'mimes:pdf,doc,docx,odt,pages',
+                'synopsis' => $this->manuscriptFileRules(false),
             ]);
         }
 
@@ -605,8 +659,8 @@ class ShopManuscriptController extends Controller
         $extensions = ['pdf', 'doc', 'docx', 'odt', 'pages'];
 
         $request->validate([
-            'manuscript' => 'required|file|mimes:pdf,doc,docx,odt,pages|max:51200',
-            'genre' => 'required'
+            'manuscript' => $this->manuscriptFileRules(true, 51200),
+            'genre' => 'required',
         ]);
 
         $word_count = 0;
@@ -943,7 +997,7 @@ class ShopManuscriptController extends Controller
     public function test_manuscript(Request $request, ShopManuscriptService $shopManuscriptService)/* : RedirectResponse */
     {
         $validator = FacadeValidator::make($request->all(), [
-            'manuscript' => ['required', 'file', 'mimes:pdf,doc,docx,odt,pages'],
+            'manuscript' => $this->manuscriptFileRules(),
         ]);
 
         if ($validator->fails()) {
