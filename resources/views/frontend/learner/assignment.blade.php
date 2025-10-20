@@ -179,19 +179,23 @@
 				onsubmit="disableSubmit(this);">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<div class="file-upload" id="file-upload-area">
-							<i class="fa fa-cloud-upload-alt"></i>
-							<div class="file-upload-text" id="file-upload-text-editor-manu">
-								Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
-							</div>
-							<input type="file" class="form-control hidden input-file-upload" name="filename" 
-							id="file-upload" accept="application/msword,
-						application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-						  </div>
-						<label class="file-label">
-							* {{ trans('site.learner.manuscript.doc-format-text') }}
-						</label>
-					</div>
+                                                <div class="file-upload" id="file-upload-area">
+                                                        <i class="fa fa-cloud-upload-alt"></i>
+                                                        <div class="file-upload-text" id="file-upload-text-editor-manu">
+                                                                Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
+                                                        </div>
+                                                        <input type="file" class="form-control hidden input-file-upload" name="filename"
+                                                        id="file-upload" accept="application/msword,
+                                                application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                                                  </div>
+                                                <div class="alert alert-info manuscript-conversion-message d-none mt-3">
+                                                        Konverterer dokumentet… Vennligst vent.
+                                                </div>
+                                                <div class="alert alert-danger manuscript-conversion-error d-none mt-3"></div>
+                                                <label class="file-label">
+                                                        * {{ trans('site.learner.manuscript.doc-format-text') }}
+                                                </label>
+                                        </div>
 
 					<div class="form-group">
 						<label>
@@ -261,19 +265,23 @@
 		    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this);">
 		      	{{ csrf_field() }}
 				<div class="form-group">
-					<div class="file-upload" id="file-upload-area-submit-manu">
-						<i class="fa fa-cloud-upload-alt"></i>
-						<div class="file-upload-text">
-							Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
-						</div>
-						<input type="file" class="form-control hidden input-file-upload" name="filename" 
-						id="file-upload" accept="application/msword,
-					application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-					  </div>
-					<label class="file-label">
-						* {{ trans('site.learner.manuscript.doc-format-text') }}
-					</label>
-				</div>
+                                        <div class="file-upload" id="file-upload-area-submit-manu">
+                                                <i class="fa fa-cloud-upload-alt"></i>
+                                                <div class="file-upload-text">
+                                                        Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
+                                                </div>
+                                                <input type="file" class="form-control hidden input-file-upload" name="filename"
+                                                id="file-upload" accept="application/msword,
+                                        application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                                          </div>
+                                        <div class="alert alert-info manuscript-conversion-message d-none mt-3">
+                                                Konverterer dokumentet… Vennligst vent.
+                                        </div>
+                                        <div class="alert alert-danger manuscript-conversion-error d-none mt-3"></div>
+                                        <label class="file-label">
+                                                * {{ trans('site.learner.manuscript.doc-format-text') }}
+                                        </label>
+                                </div>
 
 				<div class="form-group">
 					<label>
@@ -343,19 +351,23 @@
 				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<div class="file-upload" id="file-upload-area-edit-manu">
-							<i class="fa fa-cloud-upload-alt"></i>
-							<div class="file-upload-text">
-								Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
-							</div>
-							<input type="file" class="form-control hidden input-file-upload" name="filename" 
-							id="file-upload" accept="application/msword,
-						application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-						  </div>
-						<label class="file-label">
-							* {{ trans('site.learner.manuscript.doc-format-text') }}
-						</label>
-					</div>
+                                                <div class="file-upload" id="file-upload-area-edit-manu">
+                                                        <i class="fa fa-cloud-upload-alt"></i>
+                                                        <div class="file-upload-text">
+                                                                Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
+                                                        </div>
+                                                        <input type="file" class="form-control hidden input-file-upload" name="filename"
+                                                        id="file-upload" accept="application/msword,
+                                                application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                                                  </div>
+                                                <div class="alert alert-info manuscript-conversion-message d-none mt-3">
+                                                        Konverterer dokumentet… Vennligst vent.
+                                                </div>
+                                                <div class="alert alert-danger manuscript-conversion-error d-none mt-3"></div>
+                                                <label class="file-label">
+                                                        * {{ trans('site.learner.manuscript.doc-format-text') }}
+                                                </label>
+                                        </div>
 
 					<button type="submit" class="btn btn-primary submit-btn pull-right">
 						{{ trans('site.front.submit') }}
@@ -498,9 +510,9 @@
 	@endif
 
 
-	setupFileUpload('file-upload-area');
-	setupFileUpload('file-upload-area-submit-manu');
-	setupFileUpload('file-upload-area-edit-manu');
+        setupFileUpload('file-upload-area');
+        setupFileUpload('file-upload-area-submit-manu');
+        setupFileUpload('file-upload-area-edit-manu');
 
 	$('.submitManuscriptBtn').click(function(){
 		let form = $('#submitManuscriptModal').find("form");
@@ -580,81 +592,440 @@
         form.attr('action', action);
 	}
 
-	function setupFileUpload(area) {
-		const fileUploadArea = document.getElementById(area);
-		const fileInput = fileUploadArea.querySelector('.input-file-upload');
-		const fileUploadText = fileUploadArea.querySelector('.file-upload-text');
+        function getCsrfToken() {
+                const tokenElement = document.querySelector('meta[name="csrf-token"]');
+                return tokenElement ? tokenElement.getAttribute('content') : null;
+        }
 
-		// Function to open the file input dialog when the file-upload-area is clicked
-		const openFileInput = () => {
-			fileInput.click();
-		};
+        async function parseErrorBlob(blob) {
+                if (!blob || typeof blob.text !== 'function') {
+                        return null;
+                }
 
-		// Function to update the file upload text
-		const updateText = (text) => {
-			fileUploadText.innerHTML = text;
-		};
+                const text = await blob.text();
 
-		// Function to check if the file input is not empty
-		const isFileInputNotEmpty = () => {
-			return fileInput.files.length > 0;
-		};
+                if (!text) {
+                        return null;
+                }
 
-		fileUploadArea.querySelector('.file-upload-btn').addEventListener('mousedown', (e) => {
-			// Check if the mousedown event was triggered by the button inside file-upload-area
-			if (e.target.classList.contains('file-upload-btn')) {
-				openFileInput();
-			}
-		});
+                try {
+                        return JSON.parse(text);
+                } catch (error) {
+                        return { message: text };
+                }
+        }
 
-		// Add a click event for the file-upload-btn in the current modal
-		fileUploadArea.querySelector('.file-upload-btn').addEventListener('click', openFileInput);
+        function createDocxFileName(originalName) {
+                if (!originalName || typeof originalName !== 'string') {
+                        return 'document.docx';
+                }
 
-		const textWithBrowseButton = 'Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>';
+                const dotIndex = originalName.lastIndexOf('.');
 
-		fileUploadArea.addEventListener('dragover', (e) => {
-			e.preventDefault();
-			fileUploadArea.classList.add('dragover');
-			updateText('Release to upload');
-		});
+                if (dotIndex <= 0) {
+                        return originalName.toLowerCase().endsWith('.docx') ? originalName : originalName + '.docx';
+                }
 
-		fileUploadArea.addEventListener('dragleave', () => {
-			fileUploadArea.classList.remove('dragover');
-			updateText(textWithBrowseButton);
-		});
+                const baseName = originalName.substring(0, dotIndex);
+                const extension = originalName.substring(dotIndex + 1).toLowerCase();
 
-		fileUploadArea.addEventListener('drop', (e) => {
-			e.preventDefault();
-			fileUploadArea.classList.remove('dragover');
+                if (extension === 'docx') {
+                        return originalName;
+                }
 
-			const files = e.dataTransfer.files;
+                return baseName + '.docx';
+        }
 
-			for (let i = 0; i < files.length; i++) {
-				console.log('Dropped file:', files[i].name);
-			}
+        function extractFilenameFromContentDisposition(header) {
+                if (!header || typeof header !== 'string') {
+                        return null;
+                }
 
-			fileInput.files = files;
+                const utf8Match = header.match(/filename\*=UTF-8''([^;]+)/i);
 
-			const selectedText = isFileInputNotEmpty() ? fileInput.files[0].name : textWithBrowseButton;
-			updateText(selectedText);
-		});
+                if (utf8Match && utf8Match[1]) {
+                        try {
+                                return decodeURIComponent(utf8Match[1]);
+                        } catch (error) {
+                                console.error('Failed to decode UTF-8 filename', error);
+                        }
+                }
 
-		fileInput.addEventListener('change', () => {
-			const selectedText = isFileInputNotEmpty() ? fileInput.files[0].name : textWithBrowseButton;
-			updateText(selectedText);
-		});
+                const quotedMatch = header.match(/filename="?([^";]+)"?/i);
 
-		// Add a click event for the file-upload-area to open the file input dialog
-		fileUploadArea.addEventListener('click', openFileInput);
+                if (quotedMatch && quotedMatch[1]) {
+                        return quotedMatch[1];
+                }
 
-		// Add a click event for the submit button in the current modal
-		fileUploadArea.closest('.modal').querySelector('[type=submit]').addEventListener('click', function (e) {
-			if (!isFileInputNotEmpty()) {
-				alert('Please select a document file.');
-				e.preventDefault();
-			}
-		});
-	}
+                return null;
+        }
+
+        async function convertFileToDocx(file) {
+                const formData = new FormData();
+                formData.append('document', file);
+
+                const csrfToken = getCsrfToken();
+
+                if (csrfToken) {
+                        formData.append('_token', csrfToken);
+                }
+
+                const fallbackName = createDocxFileName(file && file.name ? file.name : null);
+                const mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+                if (window.axios) {
+                        try {
+                                const response = await window.axios.post('/documents/convert-to-docx', formData, {
+                                        responseType: 'blob',
+                                        headers: csrfToken ? { 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' } : { 'X-Requested-With': 'XMLHttpRequest' },
+                                });
+
+                                const headers = response.headers || {};
+                                const contentDisposition = headers['content-disposition'] || headers['Content-Disposition'] || null;
+                                const filename = extractFilenameFromContentDisposition(contentDisposition) || fallbackName;
+                                const responseBlob = response.data instanceof Blob ? response.data : new Blob(response.data ? [response.data] : [], { type: mimeType });
+
+                                return new File([responseBlob], filename, { type: mimeType, lastModified: Date.now() });
+                        } catch (error) {
+                                if (error && error.response && error.response.data instanceof Blob) {
+                                        try {
+                                                const parsed = await parseErrorBlob(error.response.data);
+                                                if (parsed) {
+                                                        error.response.data = parsed;
+                                                }
+                                        } catch (parseError) {
+                                                console.error('Failed to parse conversion error response', parseError);
+                                        }
+                                }
+
+                                if (!error.response || !error.response.data) {
+                                        error.response = error.response || {};
+                                        error.response.data = {
+                                                errors: {
+                                                        manuscript: ['Kunne ikke konvertere filen. Prøv igjen.']
+                                                },
+                                                message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                                        };
+                                }
+
+                                throw error;
+                        }
+                }
+
+                const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+
+                if (csrfToken) {
+                        headers['X-CSRF-TOKEN'] = csrfToken;
+                }
+
+                const response = await fetch('/documents/convert-to-docx', {
+                        method: 'POST',
+                        body: formData,
+                        headers,
+                });
+
+                const contentDisposition = response.headers ? (response.headers.get('content-disposition') || response.headers.get('Content-Disposition')) : null;
+
+                if (!response.ok) {
+                        const error = new Error('Kunne ikke konvertere filen. Prøv igjen.');
+                        let errorData = null;
+
+                        try {
+                                errorData = await response.clone().json();
+                        } catch (jsonError) {
+                                try {
+                                        errorData = { message: await response.text() };
+                                } catch (textError) {
+                                        errorData = null;
+                                }
+                        }
+
+                        error.response = {
+                                status: response.status,
+                                data: errorData || {
+                                        errors: {
+                                                manuscript: ['Kunne ikke konvertere filen. Prøv igjen.']
+                                        },
+                                        message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                                }
+                        };
+
+                        throw error;
+                }
+
+                const data = await response.blob();
+                const filename = extractFilenameFromContentDisposition(contentDisposition) || fallbackName;
+                const responseBlob = data instanceof Blob ? data : new Blob([data], { type: mimeType });
+
+                return new File([responseBlob], filename, { type: mimeType, lastModified: Date.now() });
+        }
+
+        function getFileExtension(filename) {
+                if (!filename || typeof filename !== 'string') {
+                        return '';
+                }
+
+                const parts = filename.split('.');
+                return parts.length > 1 ? parts.pop().toLowerCase() : '';
+        }
+
+        function getErrorMessageFromConversion(error) {
+                if (!error) {
+                        return 'Kunne ikke konvertere filen. Prøv igjen.';
+                }
+
+                if (error.response && error.response.data) {
+                        const data = error.response.data;
+
+                        if (data.errors && data.errors.manuscript && data.errors.manuscript.length) {
+                                return data.errors.manuscript[0];
+                        }
+
+                        if (typeof data.message === 'string' && data.message.trim() !== '') {
+                                return data.message;
+                        }
+                }
+
+                if (error.message && error.message.trim() !== '') {
+                        return error.message;
+                }
+
+                return 'Kunne ikke konvertere filen. Prøv igjen.';
+        }
+
+        function assignFilesToInput(input, file) {
+                if (!input || !file) {
+                        return false;
+                }
+
+                const files = Array.isArray(file) ? file : [file];
+
+                try {
+                        if (typeof DataTransfer !== 'undefined') {
+                                const dataTransfer = new DataTransfer();
+                                files.forEach((item) => dataTransfer.items.add(item));
+                                input.files = dataTransfer.files;
+                                return true;
+                        }
+                } catch (error) {
+                        console.warn('DataTransfer is not available for file assignment.', error);
+                }
+
+                try {
+                        if (typeof ClipboardEvent !== 'undefined') {
+                                const clipboardEvent = new ClipboardEvent('');
+                                if (clipboardEvent.clipboardData) {
+                                        files.forEach((item) => clipboardEvent.clipboardData.items.add(item));
+                                        input.files = clipboardEvent.clipboardData.files;
+                                        return true;
+                                }
+                        }
+                } catch (error) {
+                        console.warn('ClipboardEvent fallback failed for file assignment.', error);
+                }
+
+                return false;
+        }
+
+        function setFormConversionState(form, isConverting) {
+                if (!form) {
+                        return;
+                }
+
+                const messageElement = form.querySelector('.manuscript-conversion-message');
+
+                if (messageElement) {
+                        if (isConverting) {
+                                messageElement.classList.remove('d-none');
+                        } else {
+                                messageElement.classList.add('d-none');
+                        }
+                }
+
+                const submitButton = form.querySelector('button[type="submit"]');
+
+                if (submitButton) {
+                        submitButton.disabled = !!isConverting;
+                }
+        }
+
+        function showConversionError(form, message) {
+                if (!form) {
+                        window.alert(message);
+                        return;
+                }
+
+                const errorElement = form.querySelector('.manuscript-conversion-error');
+
+                if (errorElement) {
+                        errorElement.textContent = message;
+                        errorElement.classList.remove('d-none');
+                } else {
+                        window.alert(message);
+                }
+        }
+
+        function clearConversionError(form) {
+                if (!form) {
+                        return;
+                }
+
+                const errorElement = form.querySelector('.manuscript-conversion-error');
+
+                if (errorElement) {
+                        errorElement.textContent = '';
+                        errorElement.classList.add('d-none');
+                }
+        }
+
+        function resetFileInput(input) {
+                if (!input) {
+                        return;
+                }
+
+                try {
+                        input.value = '';
+                } catch (error) {
+                        input.value = null;
+                }
+        }
+
+        function setupFileUpload(area) {
+                const fileUploadArea = document.getElementById(area);
+
+                if (!fileUploadArea) {
+                        return;
+                }
+
+                const fileInput = fileUploadArea.querySelector('.input-file-upload');
+                const fileUploadText = fileUploadArea.querySelector('.file-upload-text');
+                const form = fileUploadArea.closest('form');
+                const textWithBrowseButton = 'Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>';
+
+                const updateText = (text) => {
+                        if (fileUploadText) {
+                                fileUploadText.innerHTML = text;
+                        }
+                };
+
+                const openFileInput = (event) => {
+                        if (event) {
+                                event.preventDefault();
+                        }
+
+                        if (fileInput) {
+                                fileInput.click();
+                        }
+                };
+
+                const handleFiles = async (files) => {
+                        if (!fileInput) {
+                                return;
+                        }
+
+                        if (!files || !files.length) {
+                                clearConversionError(form);
+                                setFormConversionState(form, false);
+                                updateText(textWithBrowseButton);
+                                return;
+                        }
+
+                        let selectedFile = files[0];
+
+                        if (!selectedFile) {
+                                clearConversionError(form);
+                                setFormConversionState(form, false);
+                                updateText(textWithBrowseButton);
+                                return;
+                        }
+
+                        const extension = getFileExtension(selectedFile.name || '');
+
+                        clearConversionError(form);
+
+                        if (extension !== 'docx') {
+                                setFormConversionState(form, true);
+
+                                try {
+                                        selectedFile = await convertFileToDocx(selectedFile);
+                                } catch (error) {
+                                        showConversionError(form, getErrorMessageFromConversion(error));
+                                        resetFileInput(fileInput);
+                                        updateText(textWithBrowseButton);
+                                        setFormConversionState(form, false);
+                                        return;
+                                }
+
+                                setFormConversionState(form, false);
+                        }
+
+                        const assigned = assignFilesToInput(fileInput, selectedFile);
+
+                        if (!assigned) {
+                                showConversionError(form, 'Kunne ikke oppdatere filen etter konvertering. Prøv en annen nettleser.');
+                                resetFileInput(fileInput);
+                                updateText(textWithBrowseButton);
+                                setFormConversionState(form, false);
+                                return;
+                        }
+
+                        updateText(selectedFile.name || textWithBrowseButton);
+                        clearConversionError(form);
+                        setFormConversionState(form, false);
+                };
+
+                fileUploadArea.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        fileUploadArea.classList.add('dragover');
+                        updateText('Release to upload');
+                });
+
+                fileUploadArea.addEventListener('dragleave', () => {
+                        fileUploadArea.classList.remove('dragover');
+                        updateText(textWithBrowseButton);
+                });
+
+                fileUploadArea.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        fileUploadArea.classList.remove('dragover');
+                        const files = e.dataTransfer ? e.dataTransfer.files : null;
+                        handleFiles(files);
+                });
+
+                fileUploadArea.addEventListener('click', (event) => {
+                        openFileInput(event);
+                });
+
+                const browseButton = fileUploadArea.querySelector('.file-upload-btn');
+
+                if (browseButton) {
+                        browseButton.addEventListener('click', openFileInput);
+                        browseButton.addEventListener('mousedown', openFileInput);
+                }
+
+                if (fileInput) {
+                        fileInput.addEventListener('change', (event) => {
+                                handleFiles(event.target.files);
+                        });
+                }
+
+                const modal = fileUploadArea.closest('.modal');
+
+                if (modal) {
+                        const submitButton = modal.querySelector('[type=submit]');
+
+                        if (submitButton) {
+                                submitButton.addEventListener('click', function (e) {
+                                        if (!fileInput || !fileInput.files || !fileInput.files.length) {
+                                                alert('Please select a document file.');
+                                                e.preventDefault();
+                                        }
+                                });
+                        }
+                }
+
+                updateText(textWithBrowseButton);
+        }
 
 	function showGroupDetails(group_id) {
 		$(".group-container").removeClass('active');
