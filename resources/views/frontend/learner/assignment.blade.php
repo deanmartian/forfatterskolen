@@ -902,9 +902,28 @@
                 const form = fileUploadArea.closest('form');
                 const textWithBrowseButton = 'Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>';
 
+                const attachBrowseButtonHandlers = () => {
+                        if (!fileUploadArea) {
+                                return;
+                        }
+
+                        const browseButtons = fileUploadArea.querySelectorAll('.file-upload-btn');
+
+                        browseButtons.forEach((button) => {
+                                if (button.dataset.handlerAttached === 'true') {
+                                        return;
+                                }
+
+                                button.addEventListener('click', openFileInput);
+                                button.addEventListener('mousedown', openFileInput);
+                                button.dataset.handlerAttached = 'true';
+                        });
+                };
+
                 const updateText = (text) => {
                         if (fileUploadText) {
                                 fileUploadText.innerHTML = text;
+                                attachBrowseButtonHandlers();
                         }
                 };
 
@@ -996,12 +1015,7 @@
                         openFileInput(event);
                 });
 
-                const browseButton = fileUploadArea.querySelector('.file-upload-btn');
-
-                if (browseButton) {
-                        browseButton.addEventListener('click', openFileInput);
-                        browseButton.addEventListener('mousedown', openFileInput);
-                }
+                attachBrowseButtonHandlers();
 
                 if (fileInput) {
                         fileInput.addEventListener('change', (event) => {
