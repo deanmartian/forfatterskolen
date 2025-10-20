@@ -185,8 +185,9 @@
                                                                 Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
                                                         </div>
                                                         <input type="file" class="form-control hidden input-file-upload" name="filename"
-                                                        id="file-upload" accept="application/msword,
-                                                application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                                                        id="file-upload" accept=".doc,.docx,.pdf,.odt,.pages,application/msword,
+                                                application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,
+                                                application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/x-iwork-pages-sffpages">
                                                   </div>
                                                 <div class="alert alert-info manuscript-conversion-message d-none mt-3">
                                                         Konverterer dokumentet… Vennligst vent.
@@ -237,9 +238,9 @@
 						<label>
 							{{ trans('site.letter-to-editor') }}
 						</label>
-						<input type="file" class="form-control margin-top" name="letter_to_editor" accept="application/msword,
-					application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-					application/vnd.oasis.opendocument.text,application/pdf">
+                                                <input type="file" class="form-control margin-top" name="letter_to_editor" accept=".doc,.docx,.pdf,.odt,.pages,
+                                        application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                        application/vnd.oasis.opendocument.text,application/pdf,application/vnd.apple.pages,application/x-iwork-pages-sffpages">
 					</div>
 
 					<button type="submit" class="btn btn-primary submit-btn pull-right">
@@ -271,8 +272,9 @@
                                                         Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
                                                 </div>
                                                 <input type="file" class="form-control hidden input-file-upload" name="filename"
-                                                id="file-upload" accept="application/msword,
-                                        application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                                                id="file-upload" accept=".doc,.docx,.pdf,.odt,.pages,application/msword,
+                                        application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,
+                                        application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/x-iwork-pages-sffpages">
                                           </div>
                                         <div class="alert alert-info manuscript-conversion-message d-none mt-3">
                                                 Konverterer dokumentet… Vennligst vent.
@@ -323,9 +325,9 @@
 					<label>
 						{{ trans('site.letter-to-editor') }}
 					</label>
-					<input type="file" class="form-control margin-top" name="letter_to_editor" accept="application/msword,
-					application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-					application/vnd.oasis.opendocument.text,application/pdf">
+                                        <input type="file" class="form-control margin-top" name="letter_to_editor" accept=".doc,.docx,.pdf,.odt,.pages,
+                                        application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                        application/vnd.oasis.opendocument.text,application/pdf,application/vnd.apple.pages,application/x-iwork-pages-sffpages">
 				</div>
 
 		      	<button type="submit" class="btn btn-primary submit-btn pull-right">
@@ -357,8 +359,9 @@
                                                                 Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
                                                         </div>
                                                         <input type="file" class="form-control hidden input-file-upload" name="filename"
-                                                        id="file-upload" accept="application/msword,
-                                                application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                                                        id="file-upload" accept=".doc,.docx,.pdf,.odt,.pages,application/msword,
+                                                application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,
+                                                application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/x-iwork-pages-sffpages">
                                                   </div>
                                                 <div class="alert alert-info manuscript-conversion-message d-none mt-3">
                                                         Konverterer dokumentet… Vennligst vent.
@@ -423,8 +426,8 @@
 							<label>
 								{{ trans('site.letter-to-editor') }}
 							</label>
-							<input type="file" class="form-control" required name="filename"
-								   accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+                                                        <input type="file" class="form-control" required name="filename"
+                                                                   accept=".doc,.docx,.pdf,.odt,.pages,application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/x-iwork-pages-sffpages">
 							* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
 						</div>
 
@@ -451,8 +454,8 @@
                       <div class="form-group">
                           <label>* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
                           <input type="file" class="form-control margin-top" required multiple name="filename[]"
-                                 accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-                                 application/pdf, application/vnd.oasis.opendocument.text">
+                                 accept=".doc,.docx,.pdf,.odt,.pages,application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                 application/pdf, application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/x-iwork-pages-sffpages">
                       </div>
     
                       <button type="submit" class="btn btn-primary pull-right">{{ trans('site.front.submit') }}</button>
