@@ -113,7 +113,7 @@ class ShopManuscriptService
                 $filepath = $relativeDirectory.'/'.$fileName;
             }
 
-            $absolutePath = $this->resolveFilePath($filepath);
+            $absolutePath = FileIntegrity::resolveFilePath($filepath);
 
             if (! FileIntegrity::isFileReadable($absolutePath)) {
                 Log::warning('Uploaded manuscript failed integrity check.', [
@@ -158,31 +158,6 @@ class ShopManuscriptService
         }
 
         return (int) max(0, $wordCount);
-    }
-
-    protected function resolveFilePath(string $path): ?string
-    {
-        if ($path === '') {
-            return null;
-        }
-
-        if (is_file($path)) {
-            return $path;
-        }
-
-        $trimmed = ltrim($path, '/');
-
-        $publicPath = public_path($trimmed);
-        if (is_file($publicPath)) {
-            return $publicPath;
-        }
-
-        $basePath = base_path($trimmed);
-        if (is_file($basePath)) {
-            return $basePath;
-        }
-
-        return null;
     }
 
     protected function determineWordCount(string $filePath, string $extension): int
