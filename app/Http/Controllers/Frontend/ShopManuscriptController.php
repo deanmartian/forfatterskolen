@@ -155,13 +155,21 @@ class ShopManuscriptController extends Controller
         }
 
         $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
+        $full_payment_price = $shopManuscript->full_payment_price;
+
+        // check if manuscript start or manuscript 1
+        if (in_array($shop_manuscript_id, [3, 9])) {
+            $excess_words = $new_word_count - 5000;
+            $excessPerWordAmount = 0.112;
+            $full_payment_price = 1500; // starting price
+        }
 
         $request->merge([
             'manuscript_file' => $manuscript_file,
             'word_count' => $word_count,
             'excess_words' => $excess_words,
             'excess_words_amount' => $excess_words > 0 ? $excess_words * $excessPerWordAmount : 0,
-            'price' => $shopManuscript->full_payment_price,
+            'price' => $full_payment_price,
         ]);
 
         return $request->all();
