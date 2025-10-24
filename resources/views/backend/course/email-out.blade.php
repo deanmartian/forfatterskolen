@@ -303,6 +303,21 @@
                     emailModalForm.find('[name='+field+']').bootstrapToggle('on');
                 }
                }
+
+               if (field === 'send_to_learners_no_course') {
+                    emailModalForm.find('[name='+field+']').bootstrapToggle('off');
+                if (value) {
+                    emailModalForm.find('[name='+field+']').bootstrapToggle('on');
+                }
+               }
+
+                if (field === 'send_to_learners_with_unpaid_pay_later') {
+                    emailModalForm.find('[name='+field+']').bootstrapToggle('off');
+                if (value) {
+                    emailModalForm.find('[name='+field+']').bootstrapToggle('on');
+                }
+               }
+
             });
         });
 
