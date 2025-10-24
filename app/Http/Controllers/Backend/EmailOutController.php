@@ -79,12 +79,12 @@ class EmailOutController extends Controller
             $excludeFreeManuscriptLearners = false;
 
             $users = $this->getNonPayingLearners($excludeFreeManuscriptLearners);
-            $totalSent += $this->sendCustomEmailToUsers($users, $request);
+            //$totalSent += $this->sendCustomEmailToUsers($users, $request);
         }
 
         if ($request->send_to_learners_with_unpaid_pay_later) {
             $users = $this->getUnpaidPayLaterLearners($course_id);
-            $totalSent += $this->sendCustomEmailToUsers($users, $request);
+            //$totalSent += $this->sendCustomEmailToUsers($users, $request);
         }
 
         if ($request->send_to) {
@@ -125,7 +125,7 @@ class EmailOutController extends Controller
         }
 
         if ($totalSent) {
-            $notif = AdminHelpers::createMessageBag("Email out created successfully. {$totalSent} email(s) sent.");
+            $notif = AdminHelpers::createMessageBag("Email out created successfully.");
         }
 
         return redirect()->back()->with([
@@ -198,7 +198,7 @@ class EmailOutController extends Controller
                 $excludeFreeManuscriptLearners = true;
             }
 
-            $users = $this->getNonPayingLearners($excludeFreeManuscriptLearners);
+            /* $users = $this->getNonPayingLearners($excludeFreeManuscriptLearners);
 
             $userCounter = 0;
             foreach ($users as $user) {
@@ -233,10 +233,9 @@ class EmailOutController extends Controller
                 \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
                 $userCounter++;
-            }
+            } */
 
-            $notif = AdminHelpers::createMessageBag('Email out updated successfully. '
-            .$userCounter.' email(s) sent.');
+            $notif = AdminHelpers::createMessageBag('Email out updated successfully. ');
         }
 
         if ($request->send_to) {
