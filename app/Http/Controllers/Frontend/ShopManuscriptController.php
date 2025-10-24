@@ -389,6 +389,12 @@ class ShopManuscriptController extends Controller
             }
 
             $uploadedManuscript = $shopManuscriptService->uploadLearnerManuscript($request, (int) Auth::id());
+            if ($uploadedManuscript['is_corrupted'] ?? false) {
+                return redirect()->back()->withInput()->with(
+                    'manuscript_test_error', 'Filen ble lagret, men ser ut til å være korrupt. Last opp en gyldig fil.'
+                );
+            }
+
             $word_count = (int) ($uploadedManuscript['word_count'] ?? 0);
             $manuscriptPath = $uploadedManuscript['manuscript_file'] ?? null;
 
@@ -604,6 +610,12 @@ class ShopManuscriptController extends Controller
             }
 
             $uploadedManuscript = $shopManuscriptService->uploadLearnerManuscript($request, (int) Auth::id());
+            if ($uploadedManuscript['is_corrupted'] ?? false) {
+                return redirect()->back()->with(
+                    'manuscript_test_error', 'Filen ble lagret, men ser ut til å være korrupt. Last opp en gyldig fil.'
+                );
+            }
+
             $word_count = (int) ($uploadedManuscript['word_count'] ?? 0);
             $manuscriptPath = $uploadedManuscript['manuscript_file'] ?? null;
 
@@ -756,6 +768,12 @@ class ShopManuscriptController extends Controller
             }
 
             $uploadedManuscript = $shopManuscriptService->uploadLearnerManuscript($request, (int) Auth::id());
+            if ($uploadedManuscript['is_corrupted'] ?? false) {
+                return redirect()->back()->with(
+                    'manuscript_test_error', 'Filen ble lagret, men ser ut til å være korrupt. Last opp en gyldig fil.'
+                );
+            }
+
             $word_count = (int) ($uploadedManuscript['word_count'] ?? 0);
             $manuscriptPath = $uploadedManuscript['manuscript_file'] ?? null;
 

@@ -57,6 +57,8 @@ class ShopManuscriptService
         $originalName = null;
         $mimeType = null;
 
+        $isCorrupted = false;
+
         if ($request->hasFile($inputName) && $request->file($inputName)->isValid()) {
             $file = $request->file($inputName);
             $extension = strtolower($file->getClientOriginalExtension());
@@ -111,7 +113,19 @@ class ShopManuscriptService
             }
 
             $absolutePath = $this->resolveFilePath($filepath);
-            $word_count = $this->calculateWordCount($absolutePath, $extension, $providedWordCount);
+
+            if (! $this->isFileReadable($absolutePath)) {
+                Log::warning('Uploaded manuscript failed integrity check.', [
+                    'path' => $absolutePath,
+                    'original_name' => $originalName,
+                ]);
+                $this->removeUploadedFile($absolutePath);
+                $filepath = '';
+                $absolutePath = null;
+                $isCorrupted = true;
+            } else {
+                $word_count = $this->calculateWordCount($absolutePath, $extension, $providedWordCount);
+            }
         }
 
         if ($filepath !== '' && ($options['prepend_slash'] ?? false)) {
@@ -123,8 +137,37 @@ class ShopManuscriptService
             'word_count' => $word_count,
             'original_name' => $originalName,
             'mime_type' => $mimeType,
+            'is_corrupted' => $isCorrupted,
         ];
 
+    }
+
+    protected function isFileReadable(?string $absolutePath): bool
+    {
+        if (! $absolutePath || ! is_file($absolutePath)) {
+            return false;
+        }
+
+        if (filesize($absolutePath) <= 0) {
+            return false;
+        }
+
+        $handle = @fopen($absolutePath, 'r');
+
+        if ($handle === false) {
+            return false;
+        }
+
+        fclose($handle);
+
+        return true;
+    }
+
+    protected function removeUploadedFile(?string $absolutePath): void
+    {
+        if ($absolutePath && is_file($absolutePath)) {
+            @unlink($absolutePath);
+        }
     }
 
     protected function calculateWordCount(?string $absolutePath, string $extension, ?int $providedWordCount): int
