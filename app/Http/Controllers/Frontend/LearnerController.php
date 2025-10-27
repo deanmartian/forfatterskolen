@@ -1219,6 +1219,19 @@ class LearnerController extends Controller
         });
 
         $expiredAssignments = array_unique($expiredAssignments);
+
+        $expiredById = [];
+        foreach ($expiredAssignments as $x) {
+            $id = is_array($x) ? $x['id'] : $x->id;
+            $expiredById[$id] = true;
+        }
+        
+        // remove any expired assignments
+        $waitingForResponse = array_values(array_filter($waitingForResponse, function ($w) use ($expiredById) {
+            $id = is_array($w) ? $w['id'] : $w->id;
+            return empty($expiredById[$id]);
+        }));
+        
         // added this to not show any new assignment if learner is disabled
         $assignments = !Auth::user()->isDisabled ? $assignments : [];
 
