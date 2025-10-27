@@ -86,7 +86,7 @@ class ShopManuscriptService
                 $filepath = $resolvedPath;
                 $targetDirectory = trim(dirname($filepath), '.');
                 $targetDirectory = $targetDirectory === '' ? $relativeDirectory : $targetDirectory;
-                $absoluteDirectory = base_path($targetDirectory);
+                $absoluteDirectory = public_path($targetDirectory);
 
                 if (! is_dir($absoluteDirectory)) {
                     mkdir($absoluteDirectory, 0755, true);
