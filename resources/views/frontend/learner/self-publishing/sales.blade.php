@@ -103,7 +103,7 @@
                                                             </td>
                                                             <td colspan="3">
                                                                 {{ FrontendHelpers::currencyFormat(
-                                                                    $projectUserBook->totalDistributionCost()) }}
+                                                                    $projectUserBook->totalDistributionCost() * 1.2) }}
                                                             </td>
                                                         </tr>
                                                     @endif
