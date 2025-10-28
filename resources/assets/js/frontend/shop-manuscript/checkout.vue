@@ -112,7 +112,7 @@
                                 </td>
                             </tr>
 
-                            <tr v-if="orderForm.totalDiscount">
+                            <tr v-if="orderForm.totalDiscount > 0">
                                 <td>{{ trans('site.front.discount') }}:</td>
                                 <td class="text-right">
                                     {{ orderForm.totalDiscount | currency('Kr', 2, currencyOptions) }}
@@ -402,6 +402,10 @@ import FileUpload from '../../components/FileUpload.vue';
 
         data() {
             const initialBasePrice = parseFloat(this.origPrice || this.shopManuscript.full_payment_price) || 0;
+            const hasPaidCourseInitial = typeof this.userHasPaidCourse === 'boolean'
+                ? this.userHasPaidCourse
+                : null;
+            const applyVatInitially = hasPaidCourseInitial === false;
 
             return {
                 currentUser: this.user,
@@ -427,9 +431,9 @@ import FileUpload from '../../components/FileUpload.vue';
                     word_count: null,
                     item_type: 2,
                     shop_manuscript_id: this.shopManuscript.id,
-                    has_vat: !this.userHasPaidCourse,
+                    has_vat: applyVatInitially,
                     //is_pay_later: !this.userHasPaidCourse,
-                    additional: !this.userHasPaidCourse ? (initialBasePrice * .25) : 0,
+                    additional: applyVatInitially ? (initialBasePrice * .25) : 0,
                     excess_words_amount: 0,
                     temp_file: this.tempFile
                 },
@@ -451,7 +455,7 @@ import FileUpload from '../../components/FileUpload.vue';
                 isNewCustomer: false,
                 manuscriptName: i18n.site['learner.files-text'],
                 synopsisName: i18n.site['learner.files-text'],
-                hasPaidCourse: false,
+                hasPaidCourse: hasPaidCourseInitial,
                 isLoading: false,
                 isLoadingSubmit: false,
                 isConvertingManuscript: false,
@@ -476,7 +480,11 @@ import FileUpload from '../../components/FileUpload.vue';
 
         computed: {
             totalPrice() {
-                return parseFloat(this.orderForm.price) - this.orderForm.totalDiscount + parseFloat(this.orderForm.additional);
+                const price = parseFloat(this.orderForm.price) || 0;
+                const discount = parseFloat(this.orderForm.totalDiscount) || 0;
+                const additional = parseFloat(this.orderForm.additional) || 0;
+
+                return price - discount + additional;
             }
         },
 
@@ -703,7 +711,8 @@ import FileUpload from '../../components/FileUpload.vue';
 
             checkHasPaidCourse() {
                 axios.get('/has-paid-course/').then(response => {
-                    this.hasPaidCourse = response.data;
+                    const resolvedValue = response && response.data;
+                    this.hasPaidCourse = resolvedValue === true || resolvedValue === 1 || resolvedValue === '1';
                     this.updatePriceTotals();
                 })
             },
@@ -723,7 +732,9 @@ import FileUpload from '../../components/FileUpload.vue';
                 const genreId = parseInt(this.orderForm.genre, 10);
 
                 let price = basePrice + excessAmount;
-                const totalDiscount = this.hasPaidCourse ? (basePrice * 0.05) : 0;
+                const hasPaidCourse = this.hasPaidCourse === true;
+                const appliesVat = this.hasPaidCourse === false;
+                const totalDiscount = hasPaidCourse ? (basePrice * 0.05) : 0;
 
                 if (genreId === 10) {
                     price += (price - totalDiscount) * 0.50;
@@ -733,8 +744,8 @@ import FileUpload from '../../components/FileUpload.vue';
 
                 this.orderForm.totalDiscount = totalDiscount;
                 this.orderForm.price = price;
-                this.orderForm.has_vat = !this.hasPaidCourse;
-                this.orderForm.additional = !this.hasPaidCourse ? price * 0.25 : 0;
+                this.orderForm.has_vat = appliesVat;
+                this.orderForm.additional = appliesVat ? price * 0.25 : 0;
             },
 
             async handleFileSelected(type, file) {
