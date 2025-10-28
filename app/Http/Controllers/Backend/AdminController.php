@@ -257,7 +257,7 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Cache Cleared!');
     }
 
-    public function saveStaff($id, Request $request): RedirectResponse
+    public function saveStaff(Request $request, $id = null): RedirectResponse
     {
 
         $validator = \Validator::make($request->all(), [
