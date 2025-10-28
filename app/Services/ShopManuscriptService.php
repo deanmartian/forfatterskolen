@@ -10,6 +10,7 @@ use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\OrderShopManuscript;
+use App\Services\FileIntegrityService;
 use App\ShopManuscript;
 use App\ShopManuscriptsTaken;
 use App\User;
@@ -22,6 +23,13 @@ use Str;
 
 class ShopManuscriptService
 {
+    protected FileIntegrityService $fileIntegrityService;
+
+    public function __construct(FileIntegrityService $fileIntegrityService)
+    {
+        $this->fileIntegrityService = $fileIntegrityService;
+    }
+
     public function uploadManuscriptTest(Request $request)
     {
         return $this->performManuscriptUpload($request, 'storage/manuscript-tests', [
@@ -54,6 +62,7 @@ class ShopManuscriptService
         $word_count = 0;
         $filepath = '';
         $absolutePath = null;
+        $integrityPassed = false;
         $originalName = null;
         $mimeType = null;
 
@@ -112,6 +121,7 @@ class ShopManuscriptService
 
             $absolutePath = $this->resolveFilePath($filepath);
             $word_count = $this->calculateWordCount($absolutePath, $extension, $providedWordCount);
+            $integrityPassed = $this->fileIntegrityService->passes($absolutePath, $extension);
         }
 
         if ($filepath !== '' && ($options['prepend_slash'] ?? false)) {
@@ -123,6 +133,8 @@ class ShopManuscriptService
             'word_count' => $word_count,
             'original_name' => $originalName,
             'mime_type' => $mimeType,
+            'absolute_path' => $absolutePath,
+            'integrity_passed' => $integrityPassed,
         ];
 
     }
