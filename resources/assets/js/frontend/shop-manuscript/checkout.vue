@@ -742,7 +742,7 @@ import FileUpload from '../../components/FileUpload.vue';
                     price += (price - totalDiscount) * 0.30;
                 }
 
-                this.orderForm.totalDiscount = totalDiscount;
+                //this.orderForm.totalDiscount = totalDiscount;
                 this.orderForm.price = price;
                 this.orderForm.has_vat = appliesVat;
                 this.orderForm.additional = appliesVat ? price * 0.25 : 0;
