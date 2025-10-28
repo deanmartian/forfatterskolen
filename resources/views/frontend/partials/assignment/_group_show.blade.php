@@ -175,11 +175,16 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{route('learner.assignment.feedback.download', $feedback->id)}}"
+                                        @php
+                                            $fileRel = trim($file); // e.g. "/storage/assignment-feedbacks/5171f (6).docx"
+                                            $fileAbs = public_path($fileRel);
+                                            $v = is_file($fileAbs) ? filemtime($fileAbs) : time();
+                                        @endphp
+                                        <a href="{{route('learner.assignment.feedback.download', ['id' => $feedback->id, 'v' => $v])}}"
                                             class="btn blue-outline-btn">
                                              {{ trans('site.learner.download-text') }}
                                              <i class="fa fa-download"></i>
-                                         </a>
+                                        </a>
                                     </td>
                                 </tr>
                         @endif
