@@ -112,7 +112,7 @@
                                 </td>
                             </tr>
 
-                            <tr v-if="orderForm.totalDiscount">
+                            <tr v-if="orderForm.totalDiscount > 0">
                                 <td>{{ trans('site.front.discount') }}:</td>
                                 <td class="text-right">
                                     {{ orderForm.totalDiscount | currency('Kr', 2, currencyOptions) }}
@@ -401,6 +401,12 @@ import FileUpload from '../../components/FileUpload.vue';
         },
 
         data() {
+            const initialBasePrice = parseFloat(this.origPrice || this.shopManuscript.full_payment_price) || 0;
+            const hasPaidCourseInitial = typeof this.userHasPaidCourse === 'boolean'
+                ? this.userHasPaidCourse
+                : null;
+            const applyVatInitially = hasPaidCourseInitial === false;
+
             return {
                 currentUser: this.user,
                 orderForm: {
@@ -413,7 +419,7 @@ import FileUpload from '../../components/FileUpload.vue';
                     phone: '',
                     password: '',
                     package_id: 0,
-                    price: this.origPrice,//this.shopManuscript.full_payment_price,
+                    price: initialBasePrice,//this.shopManuscript.full_payment_price,
                     payment_plan_id: 8,
                     payment_mode_id: 3,
                     mobile_number: "",
@@ -425,9 +431,9 @@ import FileUpload from '../../components/FileUpload.vue';
                     word_count: null,
                     item_type: 2,
                     shop_manuscript_id: this.shopManuscript.id,
-                    has_vat: !this.userHasPaidCourse,
+                    has_vat: applyVatInitially,
                     //is_pay_later: !this.userHasPaidCourse,
-                    additional: !this.userHasPaidCourse ? (this.shopManuscript.full_payment_price * .25) : 0,
+                    additional: applyVatInitially ? (initialBasePrice * .25) : 0,
                     excess_words_amount: 0,
                     temp_file: this.tempFile
                 },
@@ -440,7 +446,8 @@ import FileUpload from '../../components/FileUpload.vue';
                     email: '',
                     password: ''
                 },
-                originalPrice: this.origPrice,
+                initialBasePrice,
+                originalPrice: initialBasePrice,
                 isSveaPayment: true,
                 invalidCred: false,
                 isLoginDisabled: false,
@@ -448,7 +455,7 @@ import FileUpload from '../../components/FileUpload.vue';
                 isNewCustomer: false,
                 manuscriptName: i18n.site['learner.files-text'],
                 synopsisName: i18n.site['learner.files-text'],
-                hasPaidCourse: false,
+                hasPaidCourse: hasPaidCourseInitial,
                 isLoading: false,
                 isLoadingSubmit: false,
                 isConvertingManuscript: false,
@@ -473,7 +480,11 @@ import FileUpload from '../../components/FileUpload.vue';
 
         computed: {
             totalPrice() {
-                return parseFloat(this.orderForm.price) - this.orderForm.totalDiscount + parseFloat(this.orderForm.additional);
+                const price = parseFloat(this.orderForm.price) || 0;
+                const discount = parseFloat(this.orderForm.totalDiscount) || 0;
+                const additional = parseFloat(this.orderForm.additional) || 0;
+
+                return price - discount + additional;
             }
         },
 
@@ -700,31 +711,41 @@ import FileUpload from '../../components/FileUpload.vue';
 
             checkHasPaidCourse() {
                 axios.get('/has-paid-course/').then(response => {
-                    this.hasPaidCourse = response.data;
-                    this.genreChanged();
-                    this.orderForm.price = this.originalPrice; // to set original price instead of the 2900
+                    const resolvedValue = response && response.data;
+                    this.hasPaidCourse = resolvedValue === true || resolvedValue === 1 || resolvedValue === '1';
+                    this.updatePriceTotals();
                 })
             },
 
             genreChanged() {
-                let shopManuscript = this.shopManuscript;
-                let totalDiscount = this.hasPaidCourse ? (shopManuscript.full_payment_price * 0.05) : 0;
-                let price = parseFloat(this.shopManuscript.full_payment_price) + this.orderForm.excess_words_amount;
-                let additional = price * .25;
+                this.updatePriceTotals();
+            },
 
-                if (this.orderForm.genre === 10) {
-                    price = price + ((price - totalDiscount) * .50);
-                    additional = price * .25; // get the new additional price
+            updatePriceTotals() {
+                let basePrice = parseFloat(this.originalPrice);
+
+                if (!Number.isFinite(basePrice)) {
+                    basePrice = parseFloat(this.shopManuscript.full_payment_price) || 0;
                 }
 
-                if (this.orderForm.genre === 17) { // novelle genre
-                    price = price + ((price - totalDiscount) * .30);
-                    additional = price * .25; // get the new additional price
+                const excessAmount = parseFloat(this.orderForm.excess_words_amount) || 0;
+                const genreId = parseInt(this.orderForm.genre, 10);
+
+                let price = basePrice + excessAmount;
+                const hasPaidCourse = this.hasPaidCourse === true;
+                const appliesVat = this.hasPaidCourse === false;
+                const totalDiscount = hasPaidCourse ? (basePrice * 0.05) : 0;
+
+                if (genreId === 10) {
+                    price += (price - totalDiscount) * 0.50;
+                } else if (genreId === 17) {
+                    price += (price - totalDiscount) * 0.30;
                 }
 
-                //this.orderForm.totalDiscount = totalDiscount;
+                this.orderForm.totalDiscount = totalDiscount;
                 this.orderForm.price = price;
-                this.orderForm.additional = !this.hasPaidCourse ? additional : 0;
+                this.orderForm.has_vat = appliesVat;
+                this.orderForm.additional = appliesVat ? price * 0.25 : 0;
             },
 
             async handleFileSelected(type, file) {
@@ -806,9 +827,12 @@ import FileUpload from '../../components/FileUpload.vue';
 
                 try {
                     const response = await axios.post(this.requestUrl+'/checkout/validate-order', formData);
-                    this.orderForm.excess_words_amount = response.data.excess_words_amount;
-                    this.orderForm.price = response.data.price;
-                    this.orderForm.price = parseFloat(this.orderForm.price) + response.data.excess_words_amount;
+                    this.orderForm.excess_words_amount = parseFloat(response.data.excess_words_amount) || 0;
+                    const computedPrice = parseFloat(response.data.price);
+                    if (Number.isFinite(computedPrice)) {
+                        this.originalPrice = computedPrice;
+                    }
+                    this.updatePriceTotals();
                 } catch (error) {
                     this.processError(error);
                     throw error;
@@ -821,10 +845,11 @@ import FileUpload from '../../components/FileUpload.vue';
                 }
                 axios.get('/forget-session-key/temp_uploaded_file').then(response => {
                     this.orderForm.temp_file = null;
-                    this.orderForm.price = this.origPrice;
+                    this.originalPrice = this.initialBasePrice;
                     this.orderForm.manuscript = null;
                     this.orderForm.word_count = null;
-                    this.originalPrice = this.origPrice;
+                    this.orderForm.excess_words_amount = 0;
+                    this.updatePriceTotals();
                     this.isConvertingManuscript = false;
                     this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
                 });
@@ -997,8 +1022,9 @@ import FileUpload from '../../components/FileUpload.vue';
 
                     this.orderForm.word_count = resolvedWordCount;
 
-                    if (typeof price === 'number') {
-                        this.originalPrice = price;
+                    const resolvedPrice = parseFloat(price);
+                    if (Number.isFinite(resolvedPrice)) {
+                        this.originalPrice = resolvedPrice;
                     }
 
                     this.removeValidationError();
@@ -1018,10 +1044,15 @@ import FileUpload from '../../components/FileUpload.vue';
             this.checkHasPaidCourse();
 
             if (this.tempFile) {
-                this.originalPrice = this.tempFile.price;
-                this.orderForm.excess_words_amount = this.tempFile.excess_words_amount;
+                const tempPrice = parseFloat(this.tempFile.price);
+                if (Number.isFinite(tempPrice)) {
+                    this.originalPrice = tempPrice;
+                }
+                this.orderForm.excess_words_amount = parseFloat(this.tempFile.excess_words_amount) || 0;
                 this.orderForm.word_count = this.tempFile.word_count || null;
             }
+
+            this.updatePriceTotals();
         }
 
     }
