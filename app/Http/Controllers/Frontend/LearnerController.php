@@ -76,6 +76,7 @@ use App\SelfPublishingPortalRequest;
 use App\Services\AssignmentService;
 use App\Services\CourseService;
 use App\Services\DocumentConversionService;
+use App\Services\FileIntegrityService;
 use App\Services\ProjectService;
 use App\Services\ShopManuscriptService;
 use App\Settings;
@@ -144,9 +145,11 @@ class LearnerController extends Controller
         'Content-Type: application/hal+json'
    ];*/
     protected $headers = [];
+    protected FileIntegrityService $fileIntegrityService;
 
-    public function __construct()
+    public function __construct(FileIntegrityService $fileIntegrityService)
     {
+        $this->fileIntegrityService = $fileIntegrityService;
         $this->headers[] = 'Accept: application/json';
         $this->headers[] = 'Authorization: Bearer '.config('services.fiken.personal_api_key');
         $this->headers[] = 'Content-Type: Application/json';
@@ -1239,6 +1242,23 @@ class LearnerController extends Controller
             'upcomingAssignments', 'waitingForResponse', 'assignmentGroupLearners', 'noWordLimitAssignments'));
     }
 
+    protected function resolveUploadedFilePath(string $destinationPath, string $fileName): string
+    {
+        $relativeDirectory = trim($destinationPath, '/');
+        $relativePath = $relativeDirectory === '' ? $fileName : $relativeDirectory.'/'.$fileName;
+
+        return public_path($relativePath);
+    }
+
+    protected function cleanupUploadedFiles(array $files): void
+    {
+        foreach ($files as $file) {
+            if (isset($file['absolute']) && $file['absolute'] && File::exists($file['absolute'])) {
+                File::delete($file['absolute']);
+            }
+        }
+    }
+
     public function assignmentManuscriptUpload($id, Request $request): RedirectResponse
     {
         $assignment = Assignment::findOrFail($id);
@@ -1255,7 +1275,6 @@ class LearnerController extends Controller
             $request->file('filename')->isValid() &&
             (in_array($assignment->course_id, $courseIds) || $assignment->parent === 'users') &&
             ! $assignmentManuscript) {
-            $time = time();
             $destinationPath = 'storage/assignment-manuscripts/'; // upload path
 
             $extensions = ['doc', 'docx', 'odt', 'pdf'];
@@ -1263,17 +1282,27 @@ class LearnerController extends Controller
                 $extensions = ['docx', 'doc'];
             }
 
-            $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
+            $extension = strtolower($request->file('filename')->getClientOriginalExtension());
+            if (! in_array($extension, $extensions)) {
+                return redirect()->back()->withInput()->with(
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF'
+                );
+            }
+
             $actual_name = Auth::user()->id;
             $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
 
             $expFileName = explode('/', $fileName);
+            $storedFileName = end($expFileName);
 
-            $request->filename->move($destinationPath, end($expFileName));
+            $request->filename->move($destinationPath, $storedFileName);
 
-            if (! in_array($extension, $extensions)) {
+            $absolutePath = $this->resolveUploadedFilePath($destinationPath, $storedFileName);
+            if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                File::delete($absolutePath);
+
                 return redirect()->back()->withInput()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF'
+                    'manuscript_test_error', 'The uploaded file appears to be invalid or corrupted.'
                 );
             }
 
@@ -1314,10 +1343,8 @@ class LearnerController extends Controller
             if ($request->hasFile('letter_to_editor') && $request->file('letter_to_editor')->isValid()
                 && $assignment->send_letter_to_editor) {
                 $destinationPathLetter = 'storage/letter-to-editor';
-                $extensionLetter = pathinfo($_FILES['letter_to_editor']['name'], PATHINFO_EXTENSION);
+                $extensionLetter = strtolower($request->file('letter_to_editor')->getClientOriginalExtension());
                 $actualNameLetter = time(); // pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_FILENAME);
-                $fileNameLetter = AdminHelpers::checkFileName($destinationPathLetter, $actualNameLetter, $extension); // rename document
-                $expFileNameLetter = explode('/', $fileNameLetter);
 
                 if (! in_array($extensionLetter, $extensions)) {
                     return redirect()->back()->withInput()->with(
@@ -1325,7 +1352,21 @@ class LearnerController extends Controller
                     );
                 }
 
-                $request->letter_to_editor->move($destinationPathLetter, end($expFileNameLetter));
+                $fileNameLetter = AdminHelpers::checkFileName($destinationPathLetter, $actualNameLetter, $extensionLetter); // rename document
+                $expFileNameLetter = explode('/', $fileNameLetter);
+                $storedLetterName = end($expFileNameLetter);
+
+                $request->letter_to_editor->move($destinationPathLetter, $storedLetterName);
+
+                $letterAbsolutePath = $this->resolveUploadedFilePath($destinationPathLetter, $storedLetterName);
+                if (! $this->fileIntegrityService->passes($letterAbsolutePath, $extensionLetter)) {
+                    File::delete($letterAbsolutePath);
+
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'The uploaded file appears to be invalid or corrupted.'
+                    );
+                }
+
                 $letterToEditor = '/'.$fileNameLetter;
 
             }
@@ -1508,27 +1549,53 @@ class LearnerController extends Controller
             $query->where('id', $id)->where('user_id', '<>', Auth::user()->id);
         })->firstOrFail();
         if ($request->hasFile('filename')) {
-            $time = time();
             $destinationPath = 'storage/assignment-feedbacks'; // upload path
             $extensions = ['pdf', 'docx', 'odt'];
+            $assignmentGroupLearner = AssignmentGroupLearner::find($id);
 
-            $filesWithPath = '';
-            // loop through all the uploaded files
-            foreach ($request->file('filename') as $k => $file) {
-                $extension = pathinfo($_FILES['filename']['name'][$k], PATHINFO_EXTENSION);
-                $actual_name = AssignmentGroupLearner::find($id)->user_id;
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension);
-                $filesWithPath .= '/'.AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension).', ';
+            $uploadedFiles = [];
 
-                if (! in_array($extension, $extensions)) {
-                    return redirect()->back();
+            foreach ($request->file('filename') as $file) {
+                if (! $file || ! $file->isValid()) {
+                    $this->cleanupUploadedFiles($uploadedFiles);
+
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'One or more files could not be uploaded.'
+                    );
                 }
 
-                $file->move($destinationPath, $fileName);
+                $extension = strtolower($file->getClientOriginalExtension());
+                if (! in_array($extension, $extensions)) {
+                    $this->cleanupUploadedFiles($uploadedFiles);
 
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOCX, ODT'
+                    );
+                }
+
+                $actual_name = $assignmentGroupLearner ? $assignmentGroupLearner->user_id : Auth::id();
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension);
+                $storedFileName = basename($fileName);
+
+                $file->move($destinationPath, $storedFileName);
+
+                $absolutePath = $this->resolveUploadedFilePath($destinationPath, $storedFileName);
+                if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                    File::delete($absolutePath);
+                    $this->cleanupUploadedFiles($uploadedFiles);
+
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'The uploaded file appears to be invalid or corrupted.'
+                    );
+                }
+
+                $uploadedFiles[] = [
+                    'relative' => '/'.$fileName,
+                    'absolute' => $absolutePath,
+                ];
             }
 
-            $filesWithPath = trim($filesWithPath, ', ');
+            $filesWithPath = implode(', ', array_column($uploadedFiles, 'relative'));
 
             AssignmentFeedback::create([
                 'assignment_group_learner_id' => $id,
@@ -4717,20 +4784,30 @@ class LearnerController extends Controller
         if ($assignmentManuscript) {
             if ($request->hasFile('filename') && $request->file('filename')->isValid()) {
                 $oldManuscript = $assignmentManuscript->filename;
-                $time = time();
                 $destinationPath = 'storage/assignment-manuscripts/'; // upload path
                 $extensions = ['pdf', 'doc', 'docx', 'odt'];
-                $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
-                $actual_name = Auth::user()->id;
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
-
-                $expFileName = explode('/', $fileName);
-
-                $request->filename->move($destinationPath, end($expFileName));
+                $extension = strtolower($request->file('filename')->getClientOriginalExtension());
 
                 if (! in_array($extension, $extensions)) {
                     return redirect()->back()->withInput()->with(
                         'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    );
+                }
+
+                $actual_name = Auth::user()->id;
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
+
+                $expFileName = explode('/', $fileName);
+                $storedFileName = end($expFileName);
+
+                $request->filename->move($destinationPath, $storedFileName);
+
+                $absolutePath = $this->resolveUploadedFilePath($destinationPath, $storedFileName);
+                if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                    File::delete($absolutePath);
+
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'The uploaded file appears to be invalid or corrupted.'
                     );
                 }
 
@@ -4825,19 +4902,29 @@ class LearnerController extends Controller
                 $oldManuscript = $assignmentManuscript->filename;
 
                 $destinationPath = 'storage/letter-to-editor'; // upload path
-                $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
-                $actual_name = time();
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
-                $expFileName = explode('/', $fileName);
-
                 $extensions = ['doc', 'docx', 'odt', 'pdf'];
+                $extension = strtolower($request->file('filename')->getClientOriginalExtension());
                 if (! in_array($extension, $extensions)) {
                     return redirect()->back()->withInput()->with(
                         'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF'
                     );
                 }
 
-                $request->filename->move($destinationPath, end($expFileName));
+                $actual_name = time();
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
+                $expFileName = explode('/', $fileName);
+                $storedFileName = end($expFileName);
+
+                $request->filename->move($destinationPath, $storedFileName);
+
+                $absolutePath = $this->resolveUploadedFilePath($destinationPath, $storedFileName);
+                if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                    File::delete($absolutePath);
+
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'The uploaded file appears to be invalid or corrupted.'
+                    );
+                }
 
                 // delete the old file from the server
                 if (File::exists(public_path($oldManuscript))) {
@@ -4884,12 +4971,24 @@ class LearnerController extends Controller
                 $time = time();
                 $destinationPath = 'storage/assignment-feedbacks/'; // upload path
                 $extensions = ['pdf', 'docx', 'odt'];
-                $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
+                $extension = strtolower($request->file('filename')->getClientOriginalExtension()); // getting document extension
+
+                if (! in_array($extension, $extensions)) {
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOCX, ODT'
+                    );
+                }
+
                 $fileName = $time.'.'.$extension; // rename document
                 $request->filename->move($destinationPath, $fileName);
 
-                if (! in_array($extension, $extensions)) {
-                    return redirect()->back();
+                $absolutePath = $this->resolveUploadedFilePath($destinationPath, $fileName);
+                if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                    File::delete($absolutePath);
+
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'The uploaded file appears to be invalid or corrupted.'
+                    );
                 }
 
                 $feedback->filenmae = '/'.$destinationPath.$fileName;
