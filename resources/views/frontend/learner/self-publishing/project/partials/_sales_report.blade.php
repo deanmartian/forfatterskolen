@@ -2,7 +2,7 @@
     <div class="panel-body">
         <div class="col-md-12">
             @foreach ([
-                'quantity-sold' => $quantitySoldCount, 
+                //'quantity-sold' => $quantitySoldCount, 
                 'turned-over' => $turnedOverCount, 
                 'free' => $freeCount, 
                 'commission' => $commissionCount, 
@@ -10,7 +10,8 @@
                 'defective' => $defectiveCount,
                 'corrections' => $correctionsCount,
                 'counts' => $countsCount,
-                'returns' => $returnsCount
+                'balance' => $balanceCount,
+                //'returns' => $returnsCount
             ] as $label => $count)
                 <div class="row">
                     <div class="col-xs-3">

@@ -2983,7 +2983,8 @@ class LearnerController extends Controller
 
         return view('frontend.learner.self-publishing.project.storage-details', compact('project', 'projectBook',
             'projectUserBook', 'totalBookSold', 'totalBookSale', 'inventoryPhysicalItems', 'inventoryDelivered',
-            'inventoryReturns', 'totalBalance', 'years', 'yearlyData', 'inventorySales', array_keys($categories)));
+            'inventoryReturns', 'totalBalance', 'balanceCount', 'years', 'yearlyData', 'inventorySales', 
+            array_keys($categories)));
     }
 
     public function countFileCharacters(Request $request)
