@@ -2888,6 +2888,8 @@ class LearnerController extends Controller
             }
         }
 
+        $inventoryTotal = $inventoryPhysicalItems + $inventoryDelivered + $inventoryReturns;
+
         $types = [
             'quantity-sold' => 'Quantity Sold',
             'turned-over' => 'Turned Over',
@@ -2899,32 +2901,6 @@ class LearnerController extends Controller
             'counts' => 'Counts',
             'returns' => 'Returns',
         ];
-
-        $baseQuery = ProjectBookSale::leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
-            ->where('project_registration_id', $registration_id)
-            ->where('project_id', $project_id);
-
-        $quantitySold = (clone $baseQuery)
-            ->when(request()->filled('year') && request('year') != 'all', function ($query) {
-                $query->whereYear('date', request('year'));
-            })
-            ->when(request()->filled('month') && request('month') != 'all', function ($query) {
-                $query->whereMonth('date', request('month'));
-            })
-            ->sum('quantity');
-
-        $dataMapper = function ($typeKey, $typeName, $field) use ($projectUserBook, $quantitySold) {
-            return [
-                'name' => $typeName,
-                'value' => $typeKey == 'quantity-sold'
-                    ? $quantitySold
-                    : ($projectUserBook ? $this->storageSalesByTypeArray($projectUserBook->id, $typeKey)[$field] : 0),
-            ];
-        };
-
-        $yearlyData = array_map(function ($key, $name) use ($dataMapper) {
-            return $dataMapper($key, $name, 'yearly');
-        }, array_keys($types), $types);
 
         $inventorySales = StorageSale::where('project_book_id', $projectUserBook->id)
             ->where('type', 'like', 'inventory_%')->get();
@@ -2949,9 +2925,65 @@ class LearnerController extends Controller
 
         extract($counts);
 
+        $baseQuery = ProjectBookSale::leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
+            ->where('project_registration_id', $registration_id)
+            ->where('project_id', $project_id);
+
+        $quantitySold = (clone $baseQuery)
+            ->when(request()->filled('year') && request('year') != 'all', function ($query) {
+                $query->whereYear('date', request('year'));
+            })
+            ->when(request()->filled('month') && request('month') != 'all', function ($query) {
+                $query->whereMonth('date', request('month'));
+            })
+            ->sum('quantity');
+
+        $totalQuantitySold = (clone $baseQuery)->sum('quantity');
+
+        $dataMapper = function ($typeKey, $typeName, $field) use ($projectUserBook, $quantitySold) {
+            return [
+                'name' => $typeName,
+                'value' => $typeKey == 'quantity-sold'
+                    ? $quantitySold
+                    : ($projectUserBook ? $this->storageSalesByTypeArray($projectUserBook->id, $typeKey)[$field] : 0),
+            ];
+        };
+
+        $yearlyData = array_map(function ($key, $name) use ($dataMapper) {
+            return $dataMapper($key, $name, 'yearly');
+        }, array_keys($types), $types);
+
+        $standardProject = Project::find($project_id);
+        $projectCentralDistributions = $standardProject->registrations()
+            ->where('field', 'central-distribution')
+            ->where('in_storage', 1)
+            ->get()
+            ->filter(function ($distribution) use ($standardProject) {
+                return $standardProject->registrations()
+                    ->where('field', 'ISBN')
+                    ->where('value', $distribution->value)
+                    ->whereIn('type', [1, 2])
+                    ->exists();
+            });
+        
+        $distribution = $projectCentralDistributions[0];
+
+        $overallData = array_map(function ($key, $name) use ($dataMapper) {
+            return $dataMapper($key, $name, 'overall');
+        }, array_keys($types), $types);
+
+        $calculatedBalance = array_reduce($overallData, function ($sum, $data) {
+            return ! in_array($data['name'], ['Quantity Sold']) ? $sum + $data['value'] : $sum;
+        }, 0);
+
+        $balanceCount = $this->salesReportCounter($distribution->id, 'balance');
+
+        $totalBalance = $balanceCount ? $balanceCount
+            : $inventoryTotal - ($calculatedBalance + $totalQuantitySold);
+
         return view('frontend.learner.self-publishing.project.storage-details', compact('project', 'projectBook',
             'projectUserBook', 'totalBookSold', 'totalBookSale', 'inventoryPhysicalItems', 'inventoryDelivered',
-            'inventoryReturns', 'years', 'yearlyData', 'inventorySales', array_keys($categories)));
+            'inventoryReturns', 'totalBalance', 'years', 'yearlyData', 'inventorySales', array_keys($categories)));
     }
 
     public function countFileCharacters(Request $request)

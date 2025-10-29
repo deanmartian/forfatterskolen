@@ -1660,8 +1660,8 @@ class ProjectController extends Controller
         $calculatedBalance -= $freeValue; */
         $balanceCount = $this->salesReportCounter($project_book_id, 'balance');
 
-        $totalBalance = $balanceCount; /* $balanceCount ? $balanceCount
-            : $inventoryTotal - ($calculatedBalance + $totalQuantitySold); */
+        $totalBalance = $balanceCount ? $balanceCount
+            : $inventoryTotal - ($calculatedBalance + $totalQuantitySold);
 
         /* $yearlyData = [
             [
