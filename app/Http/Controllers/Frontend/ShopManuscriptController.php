@@ -399,8 +399,11 @@ class ShopManuscriptController extends Controller
             $uploadedManuscript = $shopManuscriptService->uploadLearnerManuscript($request, (int) Auth::id());
             $word_count = (int) ($uploadedManuscript['word_count'] ?? 0);
             $manuscriptPath = $uploadedManuscript['manuscript_file'] ?? null;
+            $integrityPassed = (bool) ($uploadedManuscript['integrity_passed'] ?? false);
 
-            if (! $manuscriptPath || $word_count <= 0) {
+            if (! $manuscriptPath || $word_count <= 0 || ! $integrityPassed) {
+                $this->removeUploadedFile($uploadedManuscript);
+
                 return redirect()->back()->withInput()->with(
                     'manuscript_test_error', 'Kunne ikke lese denne filen. Prøv igjen med en gyldig fil.'
                 );
@@ -614,8 +617,11 @@ class ShopManuscriptController extends Controller
             $uploadedManuscript = $shopManuscriptService->uploadLearnerManuscript($request, (int) Auth::id());
             $word_count = (int) ($uploadedManuscript['word_count'] ?? 0);
             $manuscriptPath = $uploadedManuscript['manuscript_file'] ?? null;
+            $integrityPassed = (bool) ($uploadedManuscript['integrity_passed'] ?? false);
 
-            if (! $manuscriptPath || $word_count <= 0) {
+            if (! $manuscriptPath || $word_count <= 0 || ! $integrityPassed) {
+                $this->removeUploadedFile($uploadedManuscript);
+
                 return redirect()->back()->with(
                     'manuscript_test_error', 'Kunne ikke lese denne filen. Prøv igjen med en gyldig fil.'
                 );
@@ -766,8 +772,11 @@ class ShopManuscriptController extends Controller
             $uploadedManuscript = $shopManuscriptService->uploadLearnerManuscript($request, (int) Auth::id());
             $word_count = (int) ($uploadedManuscript['word_count'] ?? 0);
             $manuscriptPath = $uploadedManuscript['manuscript_file'] ?? null;
+            $integrityPassed = (bool) ($uploadedManuscript['integrity_passed'] ?? false);
 
-            if (! $manuscriptPath || $word_count <= 0) {
+            if (! $manuscriptPath || $word_count <= 0 || ! $integrityPassed) {
+                $this->removeUploadedFile($uploadedManuscript);
+
                 return redirect()->back()->with(
                     'manuscript_test_error', 'Kunne ikke lese denne filen. Prøv igjen med en gyldig fil.'
                 );
@@ -879,6 +888,19 @@ class ShopManuscriptController extends Controller
                 'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
                 'alert_type' => 'success',
             ]);
+        }
+    }
+
+    protected function removeUploadedFile(array $uploadedManuscript): void
+    {
+        $absolutePath = $uploadedManuscript['absolute_path'] ?? null;
+
+        if ($absolutePath && is_file($absolutePath)) {
+            try {
+                unlink($absolutePath);
+            } catch (\Throwable $throwable) {
+                // Ignore cleanup failures – file may have already been removed.
+            }
         }
     }
 
