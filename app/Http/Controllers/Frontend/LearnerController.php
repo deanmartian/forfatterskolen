@@ -2857,8 +2857,8 @@ class LearnerController extends Controller
         $turnedOverList = [];
 
         if ($projectBook && $projectBook->sales) {
-            $totalBookSold = $projectBook->sales()->sum('quantity');
-            $totalBookSale = $projectBook->sales()->sum('amount');
+            $totalBookSold = $projectBook->sales()->where('project_registration_id', $registration_id)->sum('quantity');
+            $totalBookSale = $projectBook->sales()->where('project_registration_id', $registration_id)->sum('amount');
 
             $years = range($currentYear, $currentYear - 1);
         }
