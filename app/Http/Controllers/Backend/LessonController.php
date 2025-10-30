@@ -8,15 +8,23 @@ use App\Http\Controllers\Controller;
 use App\Lesson;
 use App\LessonContent;
 use App\LessonDocuments;
+use App\Services\FileIntegrityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\UploadedFile;
 use Illuminate\View\View;
 
 class LessonController extends Controller
 {
+    protected FileIntegrityService $fileIntegrityService;
+
+    public function __construct(FileIntegrityService $fileIntegrityService)
+    {
+        $this->fileIntegrityService = $fileIntegrityService;
+    }
+
     public function index($course_id): View
     {
         $course = Course::findOrFail($course_id);
@@ -93,19 +101,24 @@ class LessonController extends Controller
 
         if ($request->hasFile('documents')) {
             $documents = $request->file('documents');
+            $this->validateUploadedFiles($documents, $extensions,
+                'Invalid file format. Allowed formats are PDF, DOCX, XLSX.',
+                'The uploaded document appears to be invalid or corrupted.');
+
             foreach ($documents as $key => $document) {
                 $document_name = $document->getClientOriginalName();
-                $extension = pathinfo($document_name, PATHINFO_EXTENSION);
+                $extension = strtolower($document->getClientOriginalExtension());
 
                 if (in_array($extension, $extensions)) {
                     $actual_name = pathinfo($document_name, PATHINFO_FILENAME);
                     $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
                     $expFileName = explode('/', $fileName);
-                    $document->move($destinationPath, end($expFileName));
+                    $fileBaseName = end($expFileName);
+                    $document->move($destinationPath, $fileBaseName);
 
                     $lesson_document = new LessonDocuments;
                     $lesson_document->lesson_id = $lesson->id;
-                    $lesson_document->name = end($expFileName);
+                    $lesson_document->name = $fileBaseName;
                     $lesson_document->document = $fileName;
                     $lesson_document->save();
                 }
@@ -162,19 +175,24 @@ class LessonController extends Controller
 
         if ($request->hasFile('documents')) {
             $documents = $request->file('documents');
+            $this->validateUploadedFiles($documents, $extensions,
+                'Invalid file format. Allowed formats are PDF, DOCX, XLSX.',
+                'The uploaded document appears to be invalid or corrupted.');
+
             foreach ($documents as $key => $document) {
                 $document_name = $document->getClientOriginalName();
-                $extension = pathinfo($document_name, PATHINFO_EXTENSION);
+                $extension = strtolower($document->getClientOriginalExtension());
 
                 if (in_array($extension, $extensions)) {
                     $actual_name = pathinfo($document_name, PATHINFO_FILENAME);
                     $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
                     $expFileName = explode('/', $fileName);
-                    $document->move($destinationPath, end($expFileName));
+                    $fileBaseName = end($expFileName);
+                    $document->move($destinationPath, $fileBaseName);
 
                     $lesson_document = new LessonDocuments;
                     $lesson_document->lesson_id = $lesson->id;
-                    $lesson_document->name = end($expFileName);
+                    $lesson_document->name = $fileBaseName;
                     $lesson_document->document = $fileName;
                     $lesson_document->save();
                 }
@@ -328,29 +346,65 @@ class LessonController extends Controller
         return response()->json(['error' => 'Opss. Something went wrong'], 500);
     }
 
+    protected function throwFileUploadError(string $message): void
+    {
+        throw new HttpResponseException(
+            redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag($message),
+                'alert_type' => 'warning',
+            ])
+        );
+    }
+
+    /**
+     * @param  UploadedFile[]|UploadedFile  $files
+     */
+    protected function validateUploadedFiles($files, array $allowedExtensions,
+        string $extensionErrorMessage = 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.',
+        string $integrityErrorMessage = 'The uploaded file appears to be invalid or corrupted.'): void
+    {
+        $files = is_array($files) ? $files : [$files];
+
+        foreach ($files as $file) {
+            if (! $file instanceof UploadedFile) {
+                continue;
+            }
+
+            if (! $file->isValid()) {
+                $this->throwFileUploadError('The uploaded file could not be processed. Please try again.');
+            }
+
+            $extension = strtolower($file->getClientOriginalExtension());
+
+            if (! in_array($extension, $allowedExtensions)) {
+                $this->throwFileUploadError($extensionErrorMessage);
+            }
+
+            if (! $this->fileIntegrityService->passes($file->getRealPath(), $extension)) {
+                $this->throwFileUploadError($integrityErrorMessage);
+            }
+        }
+    }
+
     private function uploadWholeFile(Request $request)
     {
         $wholeLessonFile = null;
 
         if ($request->hasFile('whole_lesson_file')) {
             $file = $request->file('whole_lesson_file');
-            $extension = $file->getClientOriginalExtension();
+            $this->validateUploadedFiles($file, ['pdf'],
+                'The whole lesson file must be a file of type: pdf',
+                'The whole lesson file appears to be invalid or corrupted.');
 
-            if (! in_array($extension, ['pdf'])) {
-                $customErrors = ['manuscript' => 'The whole lesson file must be a file of type: pdf'];
-                $validator = Validator::make([], []);
-                $validator->validate(); // Perform validation without rules
-                $validator->errors()->merge($customErrors);
-
-                throw new ValidationException($validator);
-            }
+            $extension = strtolower($file->getClientOriginalExtension());
 
             $destinationPath = 'storage/lesson-whole-file'; // upload path
             $document_name = $file->getClientOriginalName();
             $actual_name = pathinfo($document_name, PATHINFO_FILENAME);
             $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
             $expFileName = explode('/', $fileName);
-            $file->move($destinationPath, end($expFileName));
+            $fileBaseName = end($expFileName);
+            $file->move($destinationPath, $fileBaseName);
 
             $wholeLessonFile = $fileName;
         }
