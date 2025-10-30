@@ -76,12 +76,14 @@ class CourseEmailOut extends Command
                     $clauses = [];
 
                     if ($emailOut->send_to_learners_no_course) {
-                        $clauses[] = function ($q) {
-                            $q->doesntHave('coursesTakenNotOld')
-                            ->doesntHave('shopManuscriptsTaken')
-                            ->doesntHave('coachingTimers')
-                            ->doesntHave('invoices')
-                            ->whereNull('notes');
+                        $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
+                            ->whereHas('user')
+                            ->whereNull('renewed_at')
+                            ->where('is_free', 1)
+                            ->get()->pluck('user_id')->toArray();
+
+                        $clauses[] = function ($q) use ($coursesTaken) {
+                            $q->whereIn('id', $coursesTaken);
                         };
                     }
 
@@ -113,7 +115,11 @@ class CourseEmailOut extends Command
                             }
                         });
 
-                        $userList = $query->whereNotIn('id', $emailRecipients)->get();
+                        if ($emailOut->send_to_learners_with_unpaid_pay_later) {
+                            $query->whereNotIn('id', $emailRecipients);
+                        }
+
+                        $userList = $query->get();
                     }
 
                     // loop the result and send email
@@ -253,12 +259,18 @@ class CourseEmailOut extends Command
                     $clauses = [];
 
                     if ($emailOut->send_to_learners_no_course) {
-                        $clauses[] = function ($q) {
-                            $q->doesntHave('coursesTakenNotOld')
-                            ->doesntHave('shopManuscriptsTaken')
-                            ->doesntHave('coachingTimers')
-                            ->doesntHave('invoices')
-                            ->whereNull('notes');
+                        $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
+                            ->whereHas('user')
+                            ->where(function ($query) use ($emailDate) {
+                                $query->whereDate('started_at', '=', $emailDate);
+                                $query->orWhereDate('start_date', '=', $emailDate);
+                            })
+                            ->whereNull('renewed_at')
+                            ->where('is_free', 1)
+                            ->get()->pluck('user_id')->toArray();
+
+                        $clauses[] = function ($q) use ($coursesTaken) {
+                            $q->whereIn('id', $coursesTaken);
                         };
                     }
 
@@ -290,7 +302,11 @@ class CourseEmailOut extends Command
                             }
                         });
 
-                        $userList = $query->whereNotIn('id', $emailRecipients)->get();
+                        if ($emailOut->send_to_learners_with_unpaid_pay_later) {
+                            $query->whereNotIn('id', $emailRecipients);
+                        }
+
+                        $userList = $query->get();
                     }
 
                     // loop the result and send email
