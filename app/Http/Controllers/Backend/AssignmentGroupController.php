@@ -13,14 +13,65 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Jobs\AddMailToQueueJob;
 use App\User;
+use App\Services\FileIntegrityService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class AssignmentGroupController extends Controller
 {
+    protected FileIntegrityService $fileIntegrityService;
+
+    public function __construct(FileIntegrityService $fileIntegrityService)
+    {
+        $this->fileIntegrityService = $fileIntegrityService;
+    }
+
+    protected function buildRelativePath(string $destinationPath, string $fileName): string
+    {
+        $trimmedDestination = trim($destinationPath, '/');
+
+        return '/'.($trimmedDestination === '' ? $fileName : $trimmedDestination.'/'.$fileName);
+    }
+
+    protected function resolveAbsolutePath(?string $relativePath): ?string
+    {
+        if (! $relativePath) {
+            return null;
+        }
+
+        $normalized = ltrim($relativePath, '/');
+
+        $publicPath = public_path($normalized);
+        if (is_file($publicPath)) {
+            return $publicPath;
+        }
+
+        if (is_file($relativePath)) {
+            return $relativePath;
+        }
+
+        $basePath = base_path($normalized);
+        if (is_file($basePath)) {
+            return $basePath;
+        }
+
+        return null;
+    }
+
+    protected function throwFileUploadError(string $message): void
+    {
+        throw new HttpResponseException(
+            redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag($message),
+                'alert_type' => 'warning',
+            ])
+        );
+    }
+
     public function show($course_id, $assignment_id, $id)
     {
         $course = Course::findOrFail($course_id);
@@ -112,27 +163,39 @@ class AssignmentGroupController extends Controller
 
     public function getFiles($request, $learner_id)
     {
-        $filesWithPath = '';
-        if ($request->hasFile('filename')) {
-            $time = time();
-            $destinationPath = 'storage/assignment-feedbacks'; // upload path
-            $extensions = ['pdf', 'docx', 'odt', 'doc'];
+        if (! $request->hasFile('filename')) {
+            return null;
+        }
 
-            // loop through all the uploaded files
-            foreach ($request->file('filename') as $k => $file) {
-                $extension = pathinfo($_FILES['filename']['name'][$k], PATHINFO_EXTENSION);
-                $actual_name = $learner_id;
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension);
-                $filesWithPath .= '/'.AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension).', ';
+        $destinationPath = 'storage/assignment-feedbacks'; // upload path
+        $extensions = ['pdf', 'docx', 'odt', 'doc'];
+        $collected = [];
 
-                if (! in_array($extension, $extensions)) {
-                    return redirect()->back();
-                }
-                $file->move($destinationPath, $fileName);
+        foreach ($request->file('filename') as $file) {
+            $extension = strtolower($file->getClientOriginalExtension());
+            if (! in_array($extension, $extensions)) {
+                $this->throwFileUploadError('Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.');
             }
 
-            return $filesWithPath = trim($filesWithPath, ', ');
+            $fileNameWithPath = AdminHelpers::checkFileName($destinationPath, $learner_id.'f', $extension);
+            $storedFileName = basename($fileNameWithPath);
+            $file->move($destinationPath, $storedFileName);
+
+            $relativePath = $this->buildRelativePath($destinationPath, $storedFileName);
+            $absolutePath = $this->resolveAbsolutePath($relativePath);
+
+            if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                if ($absolutePath && file_exists($absolutePath)) {
+                    \File::delete($absolutePath);
+                }
+
+                $this->throwFileUploadError('The uploaded file appears to be invalid or corrupted.');
+            }
+
+            $collected[] = $relativePath;
         }
+
+        return implode(', ', $collected);
     }
 
     public function submit_feedback($group_id, $id, Request $request): RedirectResponse
@@ -285,26 +348,36 @@ class AssignmentGroupController extends Controller
         })->firstOrFail();
         if ($request->hasFile('filename') &&
             $request->file('filename')->isValid()) {
-            $time = time();
             $destinationPath = 'storage/assignment-feedbacks'; // upload path
             $extensions = ['pdf', 'docx', 'odt', 'doc'];
-            $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
-
-            $actual_name = AssignmentGroupLearner::find($id)->user_id;
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension); // rename document
-
-            // $fileName = $time.'.'.$extension; // rename document
-            $request->filename->move($destinationPath, $fileName);
+            $extension = strtolower($request->file('filename')->getClientOriginalExtension());
 
             if (! in_array($extension, $extensions)) {
-                return redirect()->back();
+                $this->throwFileUploadError('Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.');
             }
+
+            $actual_name = AssignmentGroupLearner::find($id)->user_id;
+            $fileNameWithPath = AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension);
+            $storedFileName = basename($fileNameWithPath);
+            $request->filename->move($destinationPath, $storedFileName);
+
+            $relativePath = $this->buildRelativePath($destinationPath, $storedFileName);
+            $absolutePath = $this->resolveAbsolutePath($relativePath);
+
+            if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                if ($absolutePath && file_exists($absolutePath)) {
+                    \File::delete($absolutePath);
+                }
+
+                $this->throwFileUploadError('The uploaded file appears to be invalid or corrupted.');
+            }
+
             AssignmentFeedback::where('assignment_group_learner_id', $id)->where('user_id', $request->learner_id)->delete();
 
             AssignmentFeedback::create([
                 'assignment_group_learner_id' => $id,
                 'user_id' => $request->learner_id,
-                'filename' => '/'.$fileName,
+                'filename' => $relativePath,
                 'is_active' => true,
                 'availability' => $request->availability,
             ]);
@@ -339,18 +412,30 @@ class AssignmentGroupController extends Controller
         $feedback = AssignmentFeedback::findOrFail($id);
         if ($request->hasFile('filename') &&
             $request->file('filename')->isValid()) {
-            $time = time();
             $destinationPath = 'storage/assignment-feedbacks/'; // upload path
             $extensions = ['pdf', 'docx', 'odt'];
-            $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
-            $fileName = $time.'.'.$extension; // rename document
-            $request->filename->move($destinationPath, $fileName);
-
+            $extension = strtolower($request->file('filename')->getClientOriginalExtension());
             if (! in_array($extension, $extensions)) {
-                return redirect()->back();
+                $this->throwFileUploadError('Invalid file format. Allowed formats are DOCX, ODT, PDF.');
             }
 
-            $feedback->filename = '/'.$destinationPath.$fileName;
+            $directory = rtrim($destinationPath, '/');
+            $fileNameWithPath = AdminHelpers::checkFileName($directory, time(), $extension);
+            $storedFileName = basename($fileNameWithPath);
+            $request->filename->move($directory, $storedFileName);
+
+            $relativePath = $this->buildRelativePath($directory, $storedFileName);
+            $absolutePath = $this->resolveAbsolutePath($relativePath);
+
+            if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                if ($absolutePath && file_exists($absolutePath)) {
+                    \File::delete($absolutePath);
+                }
+
+                $this->throwFileUploadError('The uploaded file appears to be invalid or corrupted.');
+            }
+
+            $feedback->filename = $relativePath;
         }
         $feedback->availability = $request->availability;
         $feedback->save();
@@ -364,18 +449,30 @@ class AssignmentGroupController extends Controller
         $feedback->availability = $request->availability;
         if ($request->hasFile('filename') &&
             $request->file('filename')->isValid()) {
-            $time = time();
             $destinationPath = 'storage/assignment-feedbacks/'; // upload path
             $extensions = ['pdf', 'docx', 'odt'];
-            $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
-            $fileName = $time.'.'.$extension; // rename document
-            $request->filename->move($destinationPath, $fileName);
-
+            $extension = strtolower($request->file('filename')->getClientOriginalExtension());
             if (! in_array($extension, $extensions)) {
-                return redirect()->back();
+                $this->throwFileUploadError('Invalid file format. Allowed formats are DOCX, ODT, PDF.');
             }
 
-            $feedback->filename = '/'.$destinationPath.$fileName;
+            $directory = rtrim($destinationPath, '/');
+            $fileNameWithPath = AdminHelpers::checkFileName($directory, time(), $extension);
+            $storedFileName = basename($fileNameWithPath);
+            $request->filename->move($directory, $storedFileName);
+
+            $relativePath = $this->buildRelativePath($directory, $storedFileName);
+            $absolutePath = $this->resolveAbsolutePath($relativePath);
+
+            if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                if ($absolutePath && file_exists($absolutePath)) {
+                    \File::delete($absolutePath);
+                }
+
+                $this->throwFileUploadError('The uploaded file appears to be invalid or corrupted.');
+            }
+
+            $feedback->filename = $relativePath;
         }
         $feedback->save();
 

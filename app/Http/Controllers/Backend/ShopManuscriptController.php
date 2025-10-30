@@ -26,21 +26,25 @@ use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use App\Services\FileIntegrityService;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Mail;
 use Validator;
 
 class ShopManuscriptController extends Controller
 {
     protected $saleService;
+    protected FileIntegrityService $fileIntegrityService;
 
     /**
      * ShopManuscriptController constructor.
      */
-    public function __construct(SaleService $saleService)
+    public function __construct(SaleService $saleService, FileIntegrityService $fileIntegrityService)
     {
         // middleware to check if admin have access to this page
         $this->middleware('checkPageAccess:9')->except('addFeedback');
         $this->saleService = $saleService;
+        $this->fileIntegrityService = $fileIntegrityService;
     }
 
     /* public static function middleware(): array
@@ -187,20 +191,81 @@ class ShopManuscriptController extends Controller
     {
         $files = [];
 
-        if ($request->hasFile('files')) {
+        if (! $request->hasFile('files')) {
+            return $files;
+        }
 
-            foreach ($request->file('files') as $file) {
-                $time = Str::random(10).'-'.time();
-                $destinationPath = 'storage/shop-manuscript-taken-feedbacks/'; // upload path
-                $extension = $file->getClientOriginalExtension(); // getting document extension
-                $fileName = $time.'.'.$extension; // rename document
-                $file->move($destinationPath, $fileName);
-                $files[] = '/'.$destinationPath.$fileName;
+        $destinationPath = 'storage/shop-manuscript-taken-feedbacks/';
+        $directory = rtrim($destinationPath, '/');
+        $extensions = ['pdf', 'docx', 'odt', 'doc'];
+
+        foreach ($request->file('files') as $file) {
+            $extension = strtolower($file->getClientOriginalExtension());
+            if (! in_array($extension, $extensions)) {
+                $this->throwFileUploadError('Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.');
             }
 
+            $time = Str::random(10).'-'.time();
+            $fileName = $time.'.'.$extension;
+            $file->move($directory, $fileName);
+
+            $relativePath = $this->buildRelativePath($directory, $fileName);
+            $absolutePath = $this->resolveAbsolutePath($relativePath);
+
+            if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                if ($absolutePath && file_exists($absolutePath)) {
+                    \File::delete($absolutePath);
+                }
+
+                $this->throwFileUploadError('The uploaded file appears to be invalid or corrupted.');
+            }
+
+            $files[] = $relativePath;
         }
 
         return $files;
+    }
+
+    protected function buildRelativePath(string $destinationPath, string $fileName): string
+    {
+        $trimmedDestination = trim($destinationPath, '/');
+
+        return '/'.($trimmedDestination === '' ? $fileName : $trimmedDestination.'/'.$fileName);
+    }
+
+    protected function resolveAbsolutePath(?string $relativePath): ?string
+    {
+        if (! $relativePath) {
+            return null;
+        }
+
+        $normalized = ltrim($relativePath, '/');
+
+        $publicPath = public_path($normalized);
+        if (is_file($publicPath)) {
+            return $publicPath;
+        }
+
+        if (is_file($relativePath)) {
+            return $relativePath;
+        }
+
+        $basePath = base_path($normalized);
+        if (is_file($basePath)) {
+            return $basePath;
+        }
+
+        return null;
+    }
+
+    protected function throwFileUploadError(string $message): void
+    {
+        throw new HttpResponseException(
+            redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag($message),
+                'alert_type' => 'warning',
+            ])
+        );
     }
 
     public function addFeedback($shopManuscriptTakenID, Request $request): RedirectResponse

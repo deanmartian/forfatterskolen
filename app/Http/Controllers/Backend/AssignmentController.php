@@ -20,12 +20,14 @@ use App\Helpers\Html2Text;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
+use App\Services\FileIntegrityService;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\AssignmentManuscriptEmailToList;
 use App\Mail\SubjectBodyEmail;
 use App\Package;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,9 +44,54 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class AssignmentController extends Controller
 {
-    public function __construct()
+    protected FileIntegrityService $fileIntegrityService;
+
+    public function __construct(FileIntegrityService $fileIntegrityService)
     {
         $this->middleware('checkPageAccess:5');
+        $this->fileIntegrityService = $fileIntegrityService;
+    }
+
+    protected function buildRelativePath(string $destinationPath, string $fileName): string
+    {
+        $trimmedDestination = trim($destinationPath, '/');
+
+        return '/'.($trimmedDestination === '' ? $fileName : $trimmedDestination.'/'.$fileName);
+    }
+
+    protected function resolveAbsolutePath(?string $relativePath): ?string
+    {
+        if (! $relativePath) {
+            return null;
+        }
+
+        $normalized = ltrim($relativePath, '/');
+
+        $publicPath = public_path($normalized);
+        if (is_file($publicPath)) {
+            return $publicPath;
+        }
+
+        if (is_file($relativePath)) {
+            return $relativePath;
+        }
+
+        $basePath = base_path($normalized);
+        if (is_file($basePath)) {
+            return $basePath;
+        }
+
+        return null;
+    }
+
+    protected function throwFileUploadError(string $message): void
+    {
+        throw new HttpResponseException(
+            redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag($message),
+                'alert_type' => 'warning',
+            ])
+        );
     }
 
     public function index(): View
@@ -340,35 +387,45 @@ class AssignmentController extends Controller
 
         if ($request->hasFile('filename') &&
             $request->file('filename')->isValid()) {
-            $time = time();
             $destinationPath = 'storage/assignment-manuscripts/'; // upload path
             $extensions = ['pdf', 'docx', 'odt', 'doc'];
-            $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
-            $actual_name = $learner->id;
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
-
-            $expFileName = explode('/', $fileName);
-            $request->filename->move($destinationPath, end($expFileName));
+            $extension = strtolower($request->file('filename')->getClientOriginalExtension());
 
             if (! in_array($extension, $extensions)) {
-                return redirect()->back();
+                $this->throwFileUploadError('Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.');
+            }
+
+            $fileNameWithPath = AdminHelpers::checkFileName($destinationPath, (string) $learner->id, $extension);
+            $storedFileName = basename($fileNameWithPath);
+            $request->filename->move($destinationPath, $storedFileName);
+
+            $relativePath = $this->buildRelativePath($destinationPath, $storedFileName);
+            $absolutePath = $this->resolveAbsolutePath($relativePath);
+
+            if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                if ($absolutePath && file_exists($absolutePath)) {
+                    \File::delete($absolutePath);
+                }
+
+                $this->throwFileUploadError('The uploaded file appears to be invalid or corrupted.');
             }
 
             // count words
             $word_count = 0;
+            $fullPath = $destinationPath.$storedFileName;
             if ($extension == 'pdf') {
-                $pdf = new \PdfToText($destinationPath.end($expFileName));
+                $pdf = new \PdfToText($fullPath);
                 $pdf_content = $pdf->Text;
                 $word_count = FrontendHelpers::get_num_of_words($pdf_content);
             } elseif ($extension == 'docx') {
-                $docObj = new \Docx2Text($destinationPath.end($expFileName));
+                $docObj = new \Docx2Text($fullPath);
                 $docText = $docObj->convertToText();
                 $word_count = FrontendHelpers::get_num_of_words($docText);
             } elseif ($extension == 'doc') {
-                $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
+                $docText = FrontendHelpers::readWord($fullPath);
                 $word_count = FrontendHelpers::get_num_of_words($docText);
             } elseif ($extension == 'odt') {
-                $doc = odt2text($destinationPath.end($expFileName));
+                $doc = odt2text($fullPath);
                 $word_count = FrontendHelpers::get_num_of_words($doc);
             }
 
@@ -376,7 +433,7 @@ class AssignmentController extends Controller
                 'assignment_id' => $assignment->id,
                 'user_id' => $learner->id,
                 'words' => $word_count,
-                'filename' => '/'.$fileName,
+                'filename' => $relativePath,
                 'join_group' => $request->join_group,
                 'editor_expected_finish' => $assignment->editor_expected_finish
                     ? strftime('%Y-%m-%d', strtotime($assignment->editor_expected_finish))
@@ -443,37 +500,46 @@ class AssignmentController extends Controller
 
         if ($assignmentManuscript) {
             if ($request->hasFile('filename') && $request->file('filename')->isValid()) {
-                $time = time();
                 $destinationPath = 'storage/assignment-manuscripts/'; // upload path
                 $extensions = ['pdf', 'docx', 'odt'];
-                $extension = pathinfo($_FILES['filename']['name'], PATHINFO_EXTENSION); // getting document extension
-                $actual_name = $assignmentManuscript->user_id;
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
-
-                $expFileName = explode('/', $fileName);
-                $request->filename->move($destinationPath, end($expFileName));
-
+                $extension = strtolower($request->file('filename')->getClientOriginalExtension());
                 if (! in_array($extension, $extensions)) {
-                    return redirect()->back();
+                    $this->throwFileUploadError('Invalid file format. Allowed formats are DOCX, ODT, PDF.');
+                }
+
+                $fileNameWithPath = AdminHelpers::checkFileName($destinationPath, (string) $assignmentManuscript->user_id, $extension);
+                $storedFileName = basename($fileNameWithPath);
+                $request->filename->move($destinationPath, $storedFileName);
+
+                $relativePath = $this->buildRelativePath($destinationPath, $storedFileName);
+                $absolutePath = $this->resolveAbsolutePath($relativePath);
+
+                if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                    if ($absolutePath && file_exists($absolutePath)) {
+                        \File::delete($absolutePath);
+                    }
+
+                    $this->throwFileUploadError('The uploaded file appears to be invalid or corrupted.');
                 }
 
                 // count words
                 $word_count = 0;
+                $fullPath = $destinationPath.$storedFileName;
                 if ($extension == 'pdf') {
-                    $pdf = new \PdfToText($destinationPath.end($expFileName));
+                    $pdf = new \PdfToText($fullPath);
                     $pdf_content = $pdf->Text;
                     $word_count = FrontendHelpers::get_num_of_words($pdf_content);
                 } elseif ($extension == 'docx') {
-                    $docObj = new \Docx2Text($destinationPath.end($expFileName));
+                    $docObj = new \Docx2Text($fullPath);
                     $docText = $docObj->convertToText();
                     $word_count = FrontendHelpers::get_num_of_words($docText);
                 } elseif ($extension == 'odt') {
-                    $doc = odt2text($destinationPath.end($expFileName));
+                    $doc = odt2text($fullPath);
                     $word_count = FrontendHelpers::get_num_of_words($doc);
                 }
 
                 $assignmentManuscript->words = $word_count;
-                $assignmentManuscript->filename = '/'.$destinationPath.end($expFileName);
+                $assignmentManuscript->filename = $relativePath;
                 $assignmentManuscript->type = $request->type;
                 $assignmentManuscript->manu_type = $request->manu_type;
                 $assignmentManuscript->save();
@@ -1148,25 +1214,39 @@ class AssignmentController extends Controller
 
     public function getFiles($request, $learner_id)
     {
-        if ($request->hasFile('filename')) {
-            $filesWithPath = '';
-            $time = time();
-            $destinationPath = 'storage/assignment-feedbacks'; // upload path
-            $extensions = ['pdf', 'docx', 'odt', 'doc'];
-            // loop through all the uploaded files
-            foreach ($request->file('filename') as $k => $file) {
-                $extension = pathinfo($_FILES['filename']['name'][$k], PATHINFO_EXTENSION);
-                $actual_name = $learner_id;
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension);
-                $filesWithPath .= '/'.AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension).', ';
-                if (! in_array($extension, $extensions)) {
-                    return redirect()->back();
-                }
-                $file->move($destinationPath, $fileName);
+        if (! $request->hasFile('filename')) {
+            return null;
+        }
+
+        $destinationPath = 'storage/assignment-feedbacks'; // upload path
+        $extensions = ['pdf', 'docx', 'odt', 'doc'];
+        $collected = [];
+
+        foreach ($request->file('filename') as $file) {
+            $extension = strtolower($file->getClientOriginalExtension());
+            if (! in_array($extension, $extensions)) {
+                $this->throwFileUploadError('Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.');
             }
 
-            return $filesWithPath = trim($filesWithPath, ', ');
+            $fileNameWithPath = AdminHelpers::checkFileName($destinationPath, $learner_id.'f', $extension);
+            $storedFileName = basename($fileNameWithPath);
+            $file->move($destinationPath, $storedFileName);
+
+            $relativePath = $this->buildRelativePath($destinationPath, $storedFileName);
+            $absolutePath = $this->resolveAbsolutePath($relativePath);
+
+            if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                if ($absolutePath && file_exists($absolutePath)) {
+                    \File::delete($absolutePath);
+                }
+
+                $this->throwFileUploadError('The uploaded file appears to be invalid or corrupted.');
+            }
+
+            $collected[] = $relativePath;
         }
+
+        return implode(', ', $collected);
     }
 
     public function approveFeedbackNoGroup($manuscript_id, $learner_id, Request $request): RedirectResponse
@@ -1235,28 +1315,10 @@ class AssignmentController extends Controller
             $assignmentManuscript->save();
 
             if ($request->hasFile('filename')) {
-                $time = time();
-                $destinationPath = 'storage/assignment-feedbacks'; // upload path
-                $extensions = ['pdf', 'docx', 'odt', 'doc'];
-                $filesWithPath = '';
-                // loop through all the uploaded files
-                foreach ($request->file('filename') as $k => $file) {
-                    $extension = pathinfo($_FILES['filename']['name'][$k], PATHINFO_EXTENSION);
-                    $actual_name = $learner_id;
-                    $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension);
-                    $filesWithPath .= '/'.AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension).', ';
-
-                    if (! in_array($extension, $extensions)) {
-                        return redirect()->back();
-                    }
-
-                    $file->move($destinationPath, $fileName);
-
+                $filesWithPath = $this->getFiles($request, $learner_id);
+                if ($filesWithPath) {
+                    $feedback->filename = $filesWithPath;
                 }
-
-                $filesWithPath = trim($filesWithPath, ', ');
-
-                $feedback->filename = $filesWithPath;
             }
             $feedback->assignment_manuscript_id = $manuscript_id;
             $feedback->learner_id = $learner_id;

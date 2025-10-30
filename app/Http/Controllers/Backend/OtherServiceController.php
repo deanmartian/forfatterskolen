@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\AddMailToQueueJob;
 use App\OtherServiceFeedback;
 use App\user;
+use App\Services\FileIntegrityService;
 use Carbon\Carbon;
 use File;
 use Illuminate\Http\RedirectResponse;
@@ -23,13 +24,58 @@ use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class OtherServiceController extends Controller
 {
+    protected FileIntegrityService $fileIntegrityService;
 
-    public function __construct()
+    public function __construct(FileIntegrityService $fileIntegrityService)
     {
         $this->middleware('checkPageAccess:13')->except('editorSetReplay');
+        $this->fileIntegrityService = $fileIntegrityService;
+    }
+
+    protected function buildRelativePath(string $destinationPath, string $fileName): string
+    {
+        $trimmedDestination = trim($destinationPath, '/');
+
+        return '/'.($trimmedDestination === '' ? $fileName : $trimmedDestination.'/'.$fileName);
+    }
+
+    protected function resolveAbsolutePath(?string $relativePath): ?string
+    {
+        if (! $relativePath) {
+            return null;
+        }
+
+        $normalized = ltrim($relativePath, '/');
+
+        $publicPath = public_path($normalized);
+        if (is_file($publicPath)) {
+            return $publicPath;
+        }
+
+        if (is_file($relativePath)) {
+            return $relativePath;
+        }
+
+        $basePath = base_path($normalized);
+        if (is_file($basePath)) {
+            return $basePath;
+        }
+
+        return null;
+    }
+
+    protected function throwFileUploadError(string $message): void
+    {
+        throw new HttpResponseException(
+            redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag($message),
+                'alert_type' => 'warning',
+            ])
+        );
     }
 
     public function index(): View
@@ -330,40 +376,52 @@ class OtherServiceController extends Controller
 
     public function getFiles($request)
     {
-        if ($request->hasFile('manuscript')) {
-            // new
-            $time = time();
-            $destinationPath = 'storage/other-service-feedback'; // upload path
-            $extensions = ['pdf', 'docx', 'odt', 'doc'];
-            $filesWithPath = '';
-            // loop through all the uploaded files
-            foreach ($request->file('manuscript') as $k => $file) {
-                $extension = pathinfo($_FILES['manuscript']['name'][$k], PATHINFO_EXTENSION);
-                $original_filename = $file->getClientOriginalName();
-                $filename = pathinfo($original_filename, PATHINFO_FILENAME);
+        if (! $request->hasFile('manuscript')) {
+            return null;
+        }
 
-                if ($request->has('project_id')) {
-                    $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id.'/other-service-feedback/';
-                    $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $original_filename);
-                    $expFileName = explode('/', $fileName);
-                    $dropboxFileName = end($expFileName);
+        $extensions = ['pdf', 'docx', 'odt', 'doc'];
+        $collected = [];
 
-                    $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
-                    $filesWithPath .= '/'.$destinationPath.$dropboxFileName.', ';
-                } else {
-                    $fileName = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
-                    $filesWithPath .= '/'.AdminHelpers::checkFileName($destinationPath, $filename, $extension).', ';
-
-                    if (! in_array($extension, $extensions)) {
-                        return redirect()->back();
-                    }
-
-                    $file->move($destinationPath, $fileName);
-                }
+        foreach ($request->file('manuscript') as $index => $file) {
+            $extension = strtolower($file->getClientOriginalExtension());
+            if (! in_array($extension, $extensions)) {
+                $this->throwFileUploadError('Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.');
             }
 
-            return $filesWithPath = trim($filesWithPath, ', ');
+            $original_filename = $file->getClientOriginalName();
+            $filename = pathinfo($original_filename, PATHINFO_FILENAME);
+
+            if ($request->has('project_id')) {
+                $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id.'/other-service-feedback/';
+                $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $original_filename);
+                $expFileName = explode('/', $fileName);
+                $dropboxFileName = end($expFileName);
+
+                $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
+                $collected[] = '/'.$destinationPath.$dropboxFileName;
+            } else {
+                $destinationPath = 'storage/other-service-feedback';
+                $fileNameWithPath = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
+                $storedFileName = basename($fileNameWithPath);
+                $file->move($destinationPath, $storedFileName);
+
+                $relativePath = $this->buildRelativePath($destinationPath, $storedFileName);
+                $absolutePath = $this->resolveAbsolutePath($relativePath);
+
+                if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                    if ($absolutePath && file_exists($absolutePath)) {
+                        File::delete($absolutePath);
+                    }
+
+                    $this->throwFileUploadError('The uploaded file appears to be invalid or corrupted.');
+                }
+
+                $collected[] = $relativePath;
+            }
         }
+
+        return implode(', ', $collected);
     }
 
     /**
