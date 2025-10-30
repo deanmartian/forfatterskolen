@@ -14,9 +14,9 @@ use App\OtherServiceFeedback;
 use App\user;
 use App\Services\FileIntegrityService;
 use Carbon\Carbon;
-use File;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
@@ -36,37 +36,6 @@ class OtherServiceController extends Controller
         $this->fileIntegrityService = $fileIntegrityService;
     }
 
-    protected function buildRelativePath(string $destinationPath, string $fileName): string
-    {
-        $trimmedDestination = trim($destinationPath, '/');
-
-        return '/'.($trimmedDestination === '' ? $fileName : $trimmedDestination.'/'.$fileName);
-    }
-
-    protected function resolveAbsolutePath(?string $relativePath): ?string
-    {
-        if (! $relativePath) {
-            return null;
-        }
-
-        $normalized = ltrim($relativePath, '/');
-
-        $publicPath = public_path($normalized);
-        if (is_file($publicPath)) {
-            return $publicPath;
-        }
-
-        if (is_file($relativePath)) {
-            return $relativePath;
-        }
-
-        $basePath = base_path($normalized);
-        if (is_file($basePath)) {
-            return $basePath;
-        }
-
-        return null;
-    }
 
     protected function throwFileUploadError(string $message): void
     {
@@ -76,6 +45,36 @@ class OtherServiceController extends Controller
                 'alert_type' => 'warning',
             ])
         );
+    }
+
+    /**
+     * @param  UploadedFile[]|UploadedFile  $files
+     */
+    protected function validateUploadedFiles($files, array $allowedExtensions,
+        string $extensionErrorMessage = 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.',
+        string $integrityErrorMessage = 'The uploaded file appears to be invalid or corrupted.'): void
+    {
+        $files = is_array($files) ? $files : [$files];
+
+        foreach ($files as $file) {
+            if (! $file instanceof UploadedFile) {
+                continue;
+            }
+
+            if (! $file->isValid()) {
+                $this->throwFileUploadError('The uploaded file could not be processed. Please try again.');
+            }
+
+            $extension = strtolower($file->getClientOriginalExtension());
+
+            if (! in_array($extension, $allowedExtensions)) {
+                $this->throwFileUploadError($extensionErrorMessage);
+            }
+
+            if (! $this->fileIntegrityService->passes($file->getRealPath(), $extension)) {
+                $this->throwFileUploadError($integrityErrorMessage);
+            }
+        }
     }
 
     public function index(): View
@@ -185,16 +184,10 @@ class OtherServiceController extends Controller
         }
 
         if ($request->hasFile('document') && $request->file('document')->isValid()) {
+            $this->validateUploadedFiles($request->file('document'), ['doc', 'docx', 'pdf'], 'Invalid file type.');
 
             $destinationPath = 'storage/coaching-timer-manuscripts'; // upload path
-            $extensions = ['doc', 'docx', 'pdf'];
-
-            $extension = pathinfo($_FILES['document']['name'], PATHINFO_EXTENSION); // getting document extension
-
-            if (! in_array($extension, $extensions)) {
-                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Invalid file type.'),
-                    'not-former-courses' => true]);
-            }
+            $extension = strtolower($request->file('document')->getClientOriginalExtension());
 
             $actual_name = pathinfo($request->document->getClientOriginalName(), PATHINFO_FILENAME);
             $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
@@ -234,16 +227,10 @@ class OtherServiceController extends Controller
         }
 
         if ($request->hasFile('document') && $request->file('document')->isValid()) {
+            $this->validateUploadedFiles($request->file('document'), ['doc', 'docx', 'pdf'], 'Invalid file type.');
 
             $destinationPath = 'storage/coaching-timer-manuscripts'; // upload path
-            $extensions = ['doc', 'docx', 'pdf'];
-
-            $extension = pathinfo($_FILES['document']['name'], PATHINFO_EXTENSION); // getting document extension
-
-            if (! in_array($extension, $extensions)) {
-                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Invalid file type.'),
-                    'not-former-courses' => true]);
-            }
+            $extension = strtolower($request->file('document')->getClientOriginalExtension());
 
             $actual_name = pathinfo($request->document->getClientOriginalName(), PATHINFO_FILENAME);
             $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension); // rename document
@@ -376,52 +363,40 @@ class OtherServiceController extends Controller
 
     public function getFiles($request)
     {
-        if (! $request->hasFile('manuscript')) {
-            return null;
-        }
+        if ($request->hasFile('manuscript')) {
+            // new
+            $time = time();
+            $destinationPath = 'storage/other-service-feedback'; // upload path
+            $extensions = ['pdf', 'docx', 'odt', 'doc'];
+            $filesWithPath = '';
+            // loop through all the uploaded files
+            foreach ($request->file('manuscript') as $k => $file) {
+                $extension = pathinfo($_FILES['manuscript']['name'][$k], PATHINFO_EXTENSION);
+                $original_filename = $file->getClientOriginalName();
+                $filename = pathinfo($original_filename, PATHINFO_FILENAME);
 
-        $extensions = ['pdf', 'docx', 'odt', 'doc'];
-        $collected = [];
+                if ($request->has('project_id')) {
+                    $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id.'/other-service-feedback/';
+                    $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $original_filename);
+                    $expFileName = explode('/', $fileName);
+                    $dropboxFileName = end($expFileName);
 
-        foreach ($request->file('manuscript') as $index => $file) {
-            $extension = strtolower($file->getClientOriginalExtension());
-            if (! in_array($extension, $extensions)) {
-                $this->throwFileUploadError('Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.');
-            }
+                    $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
+                    $filesWithPath .= '/'.$destinationPath.$dropboxFileName.', ';
+                } else {
+                    $fileName = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
+                    $filesWithPath .= '/'.AdminHelpers::checkFileName($destinationPath, $filename, $extension).', ';
 
-            $original_filename = $file->getClientOriginalName();
-            $filename = pathinfo($original_filename, PATHINFO_FILENAME);
-
-            if ($request->has('project_id')) {
-                $destinationPath = 'Forfatterskolen_app/project/project-'.$request->project_id.'/other-service-feedback/';
-                $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $original_filename);
-                $expFileName = explode('/', $fileName);
-                $dropboxFileName = end($expFileName);
-
-                $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
-                $collected[] = '/'.$destinationPath.$dropboxFileName;
-            } else {
-                $destinationPath = 'storage/other-service-feedback';
-                $fileNameWithPath = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
-                $storedFileName = basename($fileNameWithPath);
-                $file->move($destinationPath, $storedFileName);
-
-                $relativePath = $this->buildRelativePath($destinationPath, $storedFileName);
-                $absolutePath = $this->resolveAbsolutePath($relativePath);
-
-                if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
-                    if ($absolutePath && file_exists($absolutePath)) {
-                        File::delete($absolutePath);
+                    if (! in_array($extension, $extensions)) {
+                        return redirect()->back();
                     }
 
-                    $this->throwFileUploadError('The uploaded file appears to be invalid or corrupted.');
+                    $file->move($destinationPath, $fileName);
                 }
-
-                $collected[] = $relativePath;
             }
-        }
 
-        return implode(', ', $collected);
+            return $filesWithPath = trim($filesWithPath, ', ');
+        }
     }
 
     /**
@@ -433,7 +408,11 @@ class OtherServiceController extends Controller
     public function addFeedback($service_id, $service_type, Request $request)
     {
         $data = $request->except('_token');
-        $filesWithPath = $this->getFiles($request);
+        $filesWithPath = null;
+        if ($request->hasFile('manuscript')) {
+            $this->validateUploadedFiles($request->file('manuscript'), ['pdf', 'docx', 'odt', 'doc']);
+            $filesWithPath = $this->getFiles($request);
+        }
 
         if ($request->feedback_id) {
 
@@ -596,7 +575,11 @@ class OtherServiceController extends Controller
     public function approveFeedback($service_id, $service_type, Request $request): RedirectResponse
     {
         // replace feedback file
-        $filesWithPath = $this->getFiles($request);
+        $filesWithPath = null;
+        if ($request->hasFile('manuscript')) {
+            $this->validateUploadedFiles($request->file('manuscript'), ['pdf', 'docx', 'odt', 'doc']);
+            $filesWithPath = $this->getFiles($request);
+        }
         $otherServiceFeedback = OtherServiceFeedback::find($request->feedback_id);
         if ($filesWithPath && $otherServiceFeedback) {
             $otherServiceFeedback->manuscript = $filesWithPath;

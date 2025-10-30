@@ -21,6 +21,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
@@ -191,71 +192,20 @@ class ShopManuscriptController extends Controller
     {
         $files = [];
 
-        if (! $request->hasFile('files')) {
-            return $files;
-        }
+        if ($request->hasFile('files')) {
 
-        $destinationPath = 'storage/shop-manuscript-taken-feedbacks/';
-        $directory = rtrim($destinationPath, '/');
-        $extensions = ['pdf', 'docx', 'odt', 'doc'];
-
-        foreach ($request->file('files') as $file) {
-            $extension = strtolower($file->getClientOriginalExtension());
-            if (! in_array($extension, $extensions)) {
-                $this->throwFileUploadError('Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.');
+            foreach ($request->file('files') as $file) {
+                $time = Str::random(10).'-'.time();
+                $destinationPath = 'storage/shop-manuscript-taken-feedbacks/'; // upload path
+                $extension = $file->getClientOriginalExtension(); // getting document extension
+                $fileName = $time.'.'.$extension; // rename document
+                $file->move($destinationPath, $fileName);
+                $files[] = '/'.$destinationPath.$fileName;
             }
 
-            $time = Str::random(10).'-'.time();
-            $fileName = $time.'.'.$extension;
-            $file->move($directory, $fileName);
-
-            $relativePath = $this->buildRelativePath($directory, $fileName);
-            $absolutePath = $this->resolveAbsolutePath($relativePath);
-
-            if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
-                if ($absolutePath && file_exists($absolutePath)) {
-                    \File::delete($absolutePath);
-                }
-
-                $this->throwFileUploadError('The uploaded file appears to be invalid or corrupted.');
-            }
-
-            $files[] = $relativePath;
         }
 
         return $files;
-    }
-
-    protected function buildRelativePath(string $destinationPath, string $fileName): string
-    {
-        $trimmedDestination = trim($destinationPath, '/');
-
-        return '/'.($trimmedDestination === '' ? $fileName : $trimmedDestination.'/'.$fileName);
-    }
-
-    protected function resolveAbsolutePath(?string $relativePath): ?string
-    {
-        if (! $relativePath) {
-            return null;
-        }
-
-        $normalized = ltrim($relativePath, '/');
-
-        $publicPath = public_path($normalized);
-        if (is_file($publicPath)) {
-            return $publicPath;
-        }
-
-        if (is_file($relativePath)) {
-            return $relativePath;
-        }
-
-        $basePath = base_path($normalized);
-        if (is_file($basePath)) {
-            return $basePath;
-        }
-
-        return null;
     }
 
     protected function throwFileUploadError(string $message): void
@@ -268,9 +218,43 @@ class ShopManuscriptController extends Controller
         );
     }
 
+    /**
+     * @param  UploadedFile[]|UploadedFile  $files
+     */
+    protected function validateUploadedFiles($files, array $allowedExtensions,
+        string $extensionErrorMessage = 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.',
+        string $integrityErrorMessage = 'The uploaded file appears to be invalid or corrupted.'): void
+    {
+        $files = is_array($files) ? $files : [$files];
+
+        foreach ($files as $file) {
+            if (! $file instanceof UploadedFile) {
+                continue;
+            }
+
+            if (! $file->isValid()) {
+                $this->throwFileUploadError('The uploaded file could not be processed. Please try again.');
+            }
+
+            $extension = strtolower($file->getClientOriginalExtension());
+
+            if (! in_array($extension, $allowedExtensions)) {
+                $this->throwFileUploadError($extensionErrorMessage);
+            }
+
+            if (! $this->fileIntegrityService->passes($file->getRealPath(), $extension)) {
+                $this->throwFileUploadError($integrityErrorMessage);
+            }
+        }
+    }
+
     public function addFeedback($shopManuscriptTakenID, Request $request): RedirectResponse
     {
-        $files = $this->getFiles($request);
+        $files = [];
+        if ($request->hasFile('files')) {
+            $this->validateUploadedFiles($request->file('files'), ['pdf', 'docx', 'odt', 'doc']);
+            $files = $this->getFiles($request);
+        }
 
         if ($request->feedback_id) {
 
@@ -328,7 +312,11 @@ class ShopManuscriptController extends Controller
 
     public function approveFeedback($id, $learner_id, $feedback_id, Request $request): RedirectResponse
     {
-        $files = $this->getFiles($request);
+        $files = [];
+        if ($request->hasFile('files')) {
+            $this->validateUploadedFiles($request->file('files'), ['pdf', 'docx', 'odt', 'doc']);
+            $files = $this->getFiles($request);
+        }
         // update feedback
         $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::find($feedback_id);
         $shopManuscriptTakenFeedback->approved = 1;

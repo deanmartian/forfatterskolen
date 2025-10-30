@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
@@ -70,6 +71,36 @@ class AssignmentGroupController extends Controller
                 'alert_type' => 'warning',
             ])
         );
+    }
+
+    /**
+     * @param  UploadedFile[]|UploadedFile  $files
+     */
+    protected function validateUploadedFiles($files, array $allowedExtensions,
+        string $extensionErrorMessage = 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.',
+        string $integrityErrorMessage = 'The uploaded file appears to be invalid or corrupted.'): void
+    {
+        $files = is_array($files) ? $files : [$files];
+
+        foreach ($files as $file) {
+            if (! $file instanceof UploadedFile) {
+                continue;
+            }
+
+            if (! $file->isValid()) {
+                $this->throwFileUploadError('The uploaded file could not be processed. Please try again.');
+            }
+
+            $extension = strtolower($file->getClientOriginalExtension());
+
+            if (! in_array($extension, $allowedExtensions)) {
+                $this->throwFileUploadError($extensionErrorMessage);
+            }
+
+            if (! $this->fileIntegrityService->passes($file->getRealPath(), $extension)) {
+                $this->throwFileUploadError($integrityErrorMessage);
+            }
+        }
     }
 
     public function show($course_id, $assignment_id, $id)
@@ -163,45 +194,37 @@ class AssignmentGroupController extends Controller
 
     public function getFiles($request, $learner_id)
     {
-        if (! $request->hasFile('filename')) {
-            return null;
-        }
+        $filesWithPath = '';
+        if ($request->hasFile('filename')) {
+            $time = time();
+            $destinationPath = 'storage/assignment-feedbacks'; // upload path
+            $extensions = ['pdf', 'docx', 'odt', 'doc'];
 
-        $destinationPath = 'storage/assignment-feedbacks'; // upload path
-        $extensions = ['pdf', 'docx', 'odt', 'doc'];
-        $collected = [];
+            // loop through all the uploaded files
+            foreach ($request->file('filename') as $k => $file) {
+                $extension = pathinfo($_FILES['filename']['name'][$k], PATHINFO_EXTENSION);
+                $actual_name = $learner_id;
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension);
+                $filesWithPath .= '/'.AdminHelpers::checkFileName($destinationPath, $actual_name.'f', $extension).', ';
 
-        foreach ($request->file('filename') as $file) {
-            $extension = strtolower($file->getClientOriginalExtension());
-            if (! in_array($extension, $extensions)) {
-                $this->throwFileUploadError('Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.');
-            }
-
-            $fileNameWithPath = AdminHelpers::checkFileName($destinationPath, $learner_id.'f', $extension);
-            $storedFileName = basename($fileNameWithPath);
-            $file->move($destinationPath, $storedFileName);
-
-            $relativePath = $this->buildRelativePath($destinationPath, $storedFileName);
-            $absolutePath = $this->resolveAbsolutePath($relativePath);
-
-            if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
-                if ($absolutePath && file_exists($absolutePath)) {
-                    \File::delete($absolutePath);
+                if (! in_array($extension, $extensions)) {
+                    return redirect()->back();
                 }
-
-                $this->throwFileUploadError('The uploaded file appears to be invalid or corrupted.');
+                $file->move($destinationPath, $fileName);
             }
 
-            $collected[] = $relativePath;
+            return $filesWithPath = trim($filesWithPath, ', ');
         }
-
-        return implode(', ', $collected);
     }
 
     public function submit_feedback($group_id, $id, Request $request): RedirectResponse
     {
         $learner_id = AssignmentGroupLearner::find($id)->user_id;
-        $filesWithPath = $this->getFiles($request, $learner_id);
+        $filesWithPath = null;
+        if ($request->hasFile('filename')) {
+            $this->validateUploadedFiles($request->file('filename'), ['pdf', 'docx', 'odt', 'doc']);
+            $filesWithPath = $this->getFiles($request, $learner_id);
+        }
 
         if ($request->feedback_id) {
 
@@ -272,7 +295,11 @@ class AssignmentGroupController extends Controller
 
     public function approveFeedbackCourse($manuscript_id, $learner_id, $feedback_id, Request $request): RedirectResponse
     {
-        $filesWithPath = $this->getFiles($request, $learner_id);
+        $filesWithPath = null;
+        if ($request->hasFile('filename')) {
+            $this->validateUploadedFiles($request->file('filename'), ['pdf', 'docx', 'odt', 'doc']);
+            $filesWithPath = $this->getFiles($request, $learner_id);
+        }
 
         $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
         $assignmentManuscript->has_feedback = 1;
