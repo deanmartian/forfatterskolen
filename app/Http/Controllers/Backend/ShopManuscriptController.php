@@ -21,26 +21,31 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use App\Services\FileIntegrityService;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Mail;
 use Validator;
 
 class ShopManuscriptController extends Controller
 {
     protected $saleService;
+    protected FileIntegrityService $fileIntegrityService;
 
     /**
      * ShopManuscriptController constructor.
      */
-    public function __construct(SaleService $saleService)
+    public function __construct(SaleService $saleService, FileIntegrityService $fileIntegrityService)
     {
         // middleware to check if admin have access to this page
         $this->middleware('checkPageAccess:9')->except('addFeedback');
         $this->saleService = $saleService;
+        $this->fileIntegrityService = $fileIntegrityService;
     }
 
     /* public static function middleware(): array
@@ -203,9 +208,53 @@ class ShopManuscriptController extends Controller
         return $files;
     }
 
+    protected function throwFileUploadError(string $message): void
+    {
+        throw new HttpResponseException(
+            redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag($message),
+                'alert_type' => 'warning',
+            ])
+        );
+    }
+
+    /**
+     * @param  UploadedFile[]|UploadedFile  $files
+     */
+    protected function validateUploadedFiles($files, array $allowedExtensions,
+        string $extensionErrorMessage = 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF.',
+        string $integrityErrorMessage = 'The uploaded file appears to be invalid or corrupted.'): void
+    {
+        $files = is_array($files) ? $files : [$files];
+
+        foreach ($files as $file) {
+            if (! $file instanceof UploadedFile) {
+                continue;
+            }
+
+            if (! $file->isValid()) {
+                $this->throwFileUploadError('The uploaded file could not be processed. Please try again.');
+            }
+
+            $extension = strtolower($file->getClientOriginalExtension());
+
+            if (! in_array($extension, $allowedExtensions)) {
+                $this->throwFileUploadError($extensionErrorMessage);
+            }
+
+            if (! $this->fileIntegrityService->passes($file->getRealPath(), $extension)) {
+                $this->throwFileUploadError($integrityErrorMessage);
+            }
+        }
+    }
+
     public function addFeedback($shopManuscriptTakenID, Request $request): RedirectResponse
     {
-        $files = $this->getFiles($request);
+        $files = [];
+        if ($request->hasFile('files')) {
+            $this->validateUploadedFiles($request->file('files'), ['pdf', 'docx', 'odt', 'doc']);
+            $files = $this->getFiles($request);
+        }
 
         if ($request->feedback_id) {
 
@@ -263,7 +312,11 @@ class ShopManuscriptController extends Controller
 
     public function approveFeedback($id, $learner_id, $feedback_id, Request $request): RedirectResponse
     {
-        $files = $this->getFiles($request);
+        $files = [];
+        if ($request->hasFile('files')) {
+            $this->validateUploadedFiles($request->file('files'), ['pdf', 'docx', 'odt', 'doc']);
+            $files = $this->getFiles($request);
+        }
         // update feedback
         $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::find($feedback_id);
         $shopManuscriptTakenFeedback->approved = 1;
