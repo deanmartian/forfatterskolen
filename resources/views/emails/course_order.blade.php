@@ -100,10 +100,10 @@ $style = [
                                             </tr>
                                         </table>
 
-                                        <a href="{{ route('front.email-track', $track_code) }}" data-saferedirecturl="{{ route('front.email-track', $track_code) }}"
+                                        {{-- <a href="{{ route('front.email-track', $track_code) }}" data-saferedirecturl="{{ route('front.email-track', $track_code) }}"
                                            style="margin-top: 20px; display: block">
                                             Trykk her for å bekrefte at du har lest meldingen
-                                        </a>
+                                        </a> --}}
 
                                         <!-- Salutation -->
                                         <p style="{{ $style['paragraph'] }}">
