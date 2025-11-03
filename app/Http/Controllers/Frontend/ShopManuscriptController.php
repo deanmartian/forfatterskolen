@@ -76,7 +76,9 @@ class ShopManuscriptController extends Controller
         $originalPrice = $shopManuscript->full_payment_price;
         if (! Str::contains($shopManuscript->title, 'Start') && ! Str::contains($shopManuscript->title, '1')) {
             $extra_price = ($shopManuscript->max_words - 17500) * FrontendHelpers::manuscriptExcessPerWordPrice();
-            $originalPrice = $shopManuscript->full_payment_price + $extra_price;
+            //if (!session()->has('temp_uploaded_file')) {
+                $originalPrice = $shopManuscript->full_payment_price + $extra_price;
+            //}
         }
 
         return view('frontend.shop-manuscript.checkout-svea', compact('shopManuscript', 'user', 'assignmentTypes',
@@ -980,6 +982,14 @@ class ShopManuscriptController extends Controller
                 $price += $excess_words * $excessPerWordAmount;
             }
 
+            // check if manuscript start or manuscript 1
+            if (in_array($suggestedPlan->id, [3, 9])) {
+                $excess_words = $word_count > 5000 ? $word_count - 5000 : 0;
+                $excessPerWordAmount = 0.112;
+                $full_payment_price = 1500;
+                $price = $full_payment_price + ($excess_words * $excessPerWordAmount); // starting price
+            }
+
             $button_link = route($checkoutRoute, $suggestedPlan->id);
         }
 
@@ -997,8 +1007,16 @@ class ShopManuscriptController extends Controller
         }
 
         if ($uploadedManuscript && ! empty($uploadedManuscript['manuscript_file'])) {
-            $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
-            $excess_words = max($word_count - 17500, 0);
+            $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();            
+
+            // check if start or manuscript 1
+            if (in_array($suggestedPlan->id, [3, 9])) {
+                $basePrice = 1500;
+                $excessPerWordAmount = 0.112;
+            } else {
+                $excess_words = max($word_count - 17500, 0);
+                $basePrice = $suggestedPlan->full_payment_price;
+            }
 
             session([
                 'temp_uploaded_file' => [
@@ -1007,6 +1025,7 @@ class ShopManuscriptController extends Controller
                     'mime_type' => $uploadedManuscript['mime_type'],
                     'word_count' => $word_count,
                     'price' => $price,
+                    'basePrice' => $basePrice,
                     'excess_words_amount' => $excess_words > 0 ? $excess_words * $excessPerWordAmount : 0,
                 ],
             ]);

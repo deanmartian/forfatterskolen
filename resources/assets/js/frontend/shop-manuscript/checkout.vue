@@ -734,8 +734,9 @@ import FileUpload from '../../components/FileUpload.vue';
                 let price = basePrice + excessAmount;
                 const hasPaidCourse = this.hasPaidCourse === true;
                 const appliesVat = this.hasPaidCourse === false;
-                const totalDiscount = hasPaidCourse ? (basePrice * 0.05) : 0;
-
+                //const totalDiscount = hasPaidCourse ? (basePrice * 0.05) : 0;
+                const totalDiscount = 0; // set to 0 since discount is removed
+                
                 if (genreId === 10) {
                     price += (price - totalDiscount) * 0.50;
                 } else if (genreId === 17) {
@@ -1044,7 +1045,7 @@ import FileUpload from '../../components/FileUpload.vue';
             this.checkHasPaidCourse();
 
             if (this.tempFile) {
-                const tempPrice = parseFloat(this.tempFile.price);
+                const tempPrice = parseFloat(this.tempFile.basePrice);
                 if (Number.isFinite(tempPrice)) {
                     this.originalPrice = tempPrice;
                 }
