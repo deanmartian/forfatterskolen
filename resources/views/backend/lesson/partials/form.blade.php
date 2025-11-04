@@ -305,11 +305,11 @@ const methods = {
                                 <textarea class="form-control" name="description[]" rows="10" cols="10">${ description }</textarea>
                             </div>
                         </div>
-                        <div class="newStructureFormContainer">
-                            <div class="form-group row padding-left-15">
-                                <div class="col-xs-8" style="padding-left: 0">
+                        <div class="newStructureFormContainer row">
+                            <div class="form-group col-xs-6 padding-left-15">
+                                <div style="padding-left: 0">
                                 <label>${ video_text }</label>
-                                <textarea name="lesson_video[]" id="${ id }">${ content || '' }</textarea>
+                                <textarea class="form-control" name="lesson_video[]" id="${ id }" rows="5" cols="10">${ content || '' }</textarea>
                                 </div>
                             </div>
                         </div>
