@@ -1905,7 +1905,7 @@ class ShopController extends Controller
 
     }
 
-    public function thankyou(Request $request, CourseService $courseService): View
+    public function thankyou(Request $request, CourseService $courseService): View|RedirectResponse
     {
 
         // check if from svea payment
@@ -1913,6 +1913,10 @@ class ShopController extends Controller
 
             $order_id = $request->input('svea_ord') ?? $request->input('pl_ord');
             $order = Order::find($order_id);
+
+            if (! $order || ! auth()->check() || $order->user_id !== auth()->id()) {
+                return redirect()->route('front.home');
+            }
 
             Log::info('has svea_ord or pl_ord order_id = '.$order_id);
             if ($request->has('svea_ord')) {
@@ -1984,6 +1988,8 @@ class ShopController extends Controller
                 ], [
                     'is_ordered' => true,
                 ]);
+            } else {
+                return redirect()->route('learner.dashboard');
             }
         }
 
