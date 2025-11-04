@@ -1952,6 +1952,8 @@ class ShopController extends Controller
                         'order_id' => $order->id,
                         'learner_id' => $order->user_id,
                         'course_taken_id' => $courseTakenId,
+                        'file' => $exception->getFile(),
+                        'line' => $exception->getLine(),
                         'exception' => $exception->getMessage(),
                     ]);
 
@@ -1962,6 +1964,8 @@ class ShopController extends Controller
                             .'Learner ID: '.$order->user_id.'<br>'
                             .'Order ID: '.$order->id.'<br>'
                             .$courseTakenMessage
+                            .'File: '.$exception->getFile().'<br>'
+                            .'Line: '.$exception->getLine().'<br>'
                             .'Error: '.$exception->getMessage(),
                         'from_name' => 'Forfatterskolen',
                         'from_email' => 'post@forfatterskolen.no',
