@@ -320,7 +320,7 @@ const methods = {
 
         $("#content_container").prepend(form);
         $(".newStructureSaveChanges").removeClass('hidden');
-        this.loadEditor(id);
+        //this.loadEditor(id);
         if (!content_id) {
             toastr.success('Content form added.', "Success");
         }
