@@ -43,6 +43,7 @@ require app_path('/Http/PaypalIPN/PaypalIPN.php');
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use PaypalIPN;
 use PhpOffice\PhpWord\SimpleType\DocProtect;
 
@@ -1920,33 +1921,66 @@ class ShopController extends Controller
             }
 
             // add course to user
+            $courseTakenId = null;
+            $processingFailed = false;
+
             if (! $order->is_processed) {
+                try {
+                    DB::transaction(function () use ($courseService, $order, &$courseTakenId) {
+                        if ($order->type === 6) {
+                            $courseTaken = $courseService->upgradeCourseTaken($order);
+                            $courseTakenId = optional($courseTaken)->id;
+                            $courseService->notifyUserForUpgrade($order, $courseTaken);
+                        } else {
+                            $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
+                            $courseTakenId = optional($courseTaken)->id;
+                            $courseTaken->is_pay_later = $order->is_pay_later;
+                            $courseTaken->is_active = $order->is_pay_later ? 0 : 1;
+                            $courseTaken->save();
 
-                if ($order->type === 6) {
-                    $courseTaken = $courseService->upgradeCourseTaken($order);
-                    $courseService->notifyUserForUpgrade($order, $courseTaken);
-                } else {
-                    $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
-                    $courseTaken->is_pay_later = $order->is_pay_later;
-                    $courseTaken->is_active = $order->is_pay_later ? 0 : 1;
-                    $courseTaken->save();
+                            $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken, true, true);
+                        }
 
-                    $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken, true, true);
+                        $courseService->notifyAdmin($order->user_id, $order->package_id);
+
+                        $order->is_processed = 1;
+                        $order->save();
+                    });
+                } catch (\Throwable $exception) {
+                    $processingFailed = true;
+                    Log::error('Failed to process order on thankyou page.', [
+                        'order_id' => $order->id,
+                        'learner_id' => $order->user_id,
+                        'course_taken_id' => $courseTakenId,
+                        'exception' => $exception->getMessage(),
+                    ]);
+
+                    $courseTakenMessage = $courseTakenId ? 'Course taken ID: '.$courseTakenId.'<br>' : '';
+                    $emailData = [
+                        'email_subject' => 'Error processing course order',
+                        'email_message' => 'An error occurred while processing the course order.<br>'
+                            .'Learner ID: '.$order->user_id.'<br>'
+                            .'Order ID: '.$order->id.'<br>'
+                            .$courseTakenMessage
+                            .'Error: '.$exception->getMessage(),
+                        'from_name' => 'Forfatterskolen',
+                        'from_email' => 'post@forfatterskolen.no',
+                        'attach_file' => null,
+                    ];
+
+                    \Mail::to('elybutabara@gmail.com')->queue(new SubjectBodyEmail($emailData));
                 }
-
-                $courseService->notifyAdmin($order->user_id, $order->package_id);
             }
 
-            $order->is_processed = 1;
-            $order->save();
-
-            CheckoutLog::updateOrCreate([
-                'user_id' => \auth()->id(),
-                'parent' => 'course',
-                'parent_id' => $order->package->course_id,
-            ], [
-                'is_ordered' => true,
-            ]);
+            if (! $processingFailed) {
+                CheckoutLog::updateOrCreate([
+                    'user_id' => \auth()->id(),
+                    'parent' => 'course',
+                    'parent_id' => $order->package->course_id,
+                ], [
+                    'is_ordered' => true,
+                ]);
+            }
         }
 
         // check if fiken invoice url is set
