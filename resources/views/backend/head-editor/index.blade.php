@@ -677,7 +677,7 @@
 			</div>
 
 			<!-- My Coaching Timer -->
-			<div class="row">
+			{{-- <div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
 						<div class="panel-heading"><h4>{{ trans('site.my-coaching-timer') }}</h4></div>
@@ -725,7 +725,7 @@
 						</table>
 					</div>
 				</div>
-			</div>
+			</div> --}}
 
 		</div>
 	</div>
