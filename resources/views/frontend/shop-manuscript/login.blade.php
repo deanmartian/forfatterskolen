@@ -71,22 +71,18 @@
                                         </div>
                                     </div>
                             
-                                    <div class="d-flex align-items-center justify-content-between flex-wrap mt-4">
-                                        <div class="mb-3 mb-md-0">
-                                            <div class="login-text mb-2">Logg inn med:</div>
+                                    <button type="submit" class="btn site-btn-global pull-right">
+                                        {{ trans('site.front.form.login') }}
+                                    </button>
 
-                                            <div class="social-btn-container mb-0">
-                                                <a href="{{ route('auth.login.google') }}" class="newLoginBtn newLoginBtn--google btn">
-                                                    Google
-                                                </a>
-                                            </div>
-                                        </div>
+                                    <div class="clearfix"></div>
 
-                                        <div class="text-right">
-                                            <button type="submit" class="btn site-btn-global">
-                                                {{ trans('site.front.form.login') }}
-                                            </button>
-                                        </div>
+                                    <div class="login-text mt-4">Logg inn med:</div>
+
+                                    <div class="social-btn-container">
+                                        <a href="{{ route('auth.login.google') }}" class="newLoginBtn newLoginBtn--google btn">
+                                            Google
+                                        </a>
                                     </div>
                                 </form>
                             </div> <!-- end login-->
