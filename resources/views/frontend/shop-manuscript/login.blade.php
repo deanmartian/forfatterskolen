@@ -44,7 +44,7 @@
 
                                 <form id="checkoutLogin" action="{{ route('frontend.login.checkout.store') }}" method="POST">
                                     {{csrf_field()}}
-                            
+
                                     <div class="form-group">
                                         <label>
                                             {{ trans('site.front.form.email') }}
@@ -74,6 +74,16 @@
                                     <button type="submit" class="btn site-btn-global pull-right">
                                         {{ trans('site.front.form.login') }}
                                     </button>
+
+                                    <div class="clearfix"></div>
+
+                                    <div class="login-text mt-4">Logg inn med:</div>
+
+                                    <div class="social-btn-container">
+                                        <a href="{{ route('auth.login.google') }}" class="newLoginBtn newLoginBtn--google btn">
+                                            Google
+                                        </a>
+                                    </div>
                                 </form>
                             </div> <!-- end login-->
 
