@@ -246,10 +246,15 @@ class LoginController extends Controller
             ], 401);
 
         } else {
-            $request->validate([
+            $rules = [
                 'email' => 'required|email',
-                'g-recaptcha-response' => 'required|captcha',
-            ]);
+            ];
+
+            if ($request->boolean('shop_manuscript_login')) {
+                $rules['g-recaptcha-response'] = 'required|captcha';
+            }
+
+            $request->validate($rules);
 
             $user = User::where('email', $request->email)->where('role', 2)->first();
             if (! $user) {

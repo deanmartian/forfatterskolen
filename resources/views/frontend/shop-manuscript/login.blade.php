@@ -44,6 +44,7 @@
 
                                 <form id="checkoutLogin" action="{{ route('frontend.login.checkout.store') }}" method="POST">
                                     {{csrf_field()}}
+                                    <input type="hidden" name="shop_manuscript_login" value="1">
 
                                     <div class="form-group">
                                         <label>
