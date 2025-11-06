@@ -246,6 +246,11 @@ class LoginController extends Controller
             ], 401);
 
         } else {
+            $request->validate([
+                'email' => 'required|email',
+                'g-recaptcha-response' => 'required|captcha',
+            ]);
+
             $user = User::where('email', $request->email)->where('role', 2)->first();
             if (! $user) {
                 return redirect()->back()->withInput()->withErrors(['login_error' => 'Unknown email']);
