@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <title>Forfatterskolen | Sign In</title>
     @include('backend.partials.backend-css')

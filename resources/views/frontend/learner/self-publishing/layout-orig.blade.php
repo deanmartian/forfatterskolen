@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
     <head>
         <link rel="manifest" href="{{ asset('manifest.json') }}">
         <link rel="alternate" href="{{ config('app.url') }}" hreflang="no" />

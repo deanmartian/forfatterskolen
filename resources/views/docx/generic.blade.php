@@ -1,4 +1,4 @@
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <body>
 
 {!! $wholeBook->book_content !!}
