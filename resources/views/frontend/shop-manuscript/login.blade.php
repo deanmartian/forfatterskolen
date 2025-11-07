@@ -42,7 +42,8 @@
                                     {{ trans('site.front.checkout.login-or-register-note') }}
                                 </h3>
 
-                                <form id="checkoutLogin" action="{{ route('frontend.login.checkout.store') }}" method="POST">
+                                <form id="checkoutLogin" action="{{ route('frontend.login.checkout.store') }}" method="POST"
+                                onsubmit="disableSubmit(this)">
                                     {{csrf_field()}}
                                     <input type="hidden" name="shop_manuscript_login" value="1">
 
