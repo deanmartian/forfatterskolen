@@ -107,17 +107,17 @@
                         <div class="form-group">
                             <div class="file-upload" id="file-upload-application">
                                 <i class="fa fa-cloud-upload-alt"></i>
-                                <div class="file-upload-text">
+                                <div class="file-upload-text" id="file-upload-application-text">
                                     Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
                                 </div>
-                                <input type="file" class="form-control hidden input-file-upload" name="manuscript" 
-                                id="file-upload" accept="application/msword,
-                            application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-                            application/pdf, application/vnd.oasis.opendocument.text">
+                                <input type="file" class="form-control hidden input-file-upload" name="manuscript"
+                                id="file-upload" accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/x-iwork-pages-sffpages,.doc,.docx,.pdf,.odt,.pages">
                               </div>
                             <label class="file-label">
                                 * {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
                             </label>
+                            <p id="file-upload-application-conversion-message" class="text-info mt-2 d-none">Konverterer dokumentet… Vennligst vent.</p>
+                            <div id="file-upload-application-conversion-error" class="alert alert-danger d-none mt-2" role="alert"></div>
                         </div>
 
                         <div class="form-group">
@@ -138,7 +138,456 @@
 @section('scripts')
 <script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script>
-    setupGlobalFileUpload('file-upload-application');
+    $(document).ready(function () {
+        const fileUploadArea = document.getElementById('file-upload-application');
+        const fileInput = document.getElementById('file-upload');
+        const fileUploadText = document.getElementById('file-upload-application-text');
+        const submitButton = document.getElementById('submitOrder');
+        const conversionMessageElement = document.getElementById('file-upload-application-conversion-message');
+        const conversionErrorElement = document.getElementById('file-upload-application-conversion-error');
+        const conversionMessageText = 'Konverterer dokumentet… Vennligst vent.';
+        const defaultUploadText = fileUploadText ? fileUploadText.innerHTML : '';
+        let isConvertingApplicationFile = false;
+        let suppressChangeHandler = false;
+
+        const getFileExtension = (fileName) => {
+            if (!fileName) {
+                return '';
+            }
+
+            const match = fileName.toLowerCase().match(/\.([^.]+)$/);
+            return match ? match[1] : '';
+        };
+
+        const createDocxFileName = (originalName) => {
+            if (!originalName || typeof originalName !== 'string') {
+                return 'document.docx';
+            }
+
+            const dotIndex = originalName.lastIndexOf('.');
+
+            if (dotIndex <= 0) {
+                return originalName.toLowerCase().endsWith('.docx')
+                    ? originalName
+                    : `${originalName}.docx`;
+            }
+
+            const baseName = originalName.substring(0, dotIndex);
+            const extension = originalName.substring(dotIndex + 1).toLowerCase();
+
+            if (extension === 'docx') {
+                return originalName;
+            }
+
+            return `${baseName}.docx`;
+        };
+
+        const extractFilenameFromContentDisposition = (header) => {
+            if (!header || typeof header !== 'string') {
+                return null;
+            }
+
+            const utf8Match = header.match(/filename\*=UTF-8''([^;]+)/i);
+            if (utf8Match && utf8Match[1]) {
+                try {
+                    return decodeURIComponent(utf8Match[1]);
+                } catch (error) {
+                    console.error('Failed to decode UTF-8 filename', error);
+                }
+            }
+
+            const quotedMatch = header.match(/filename="?([^";]+)"?/i);
+            if (quotedMatch && quotedMatch[1]) {
+                return quotedMatch[1];
+            }
+
+            return null;
+        };
+
+        const parseErrorBlob = async (blob) => {
+            if (!blob || typeof blob.text !== 'function') {
+                return null;
+            }
+
+            const text = await blob.text();
+
+            if (!text) {
+                return null;
+            }
+
+            try {
+                return JSON.parse(text);
+            } catch (error) {
+                return { message: text };
+            }
+        };
+
+        const getCsrfToken = () => {
+            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+
+            if (!csrfMeta) {
+                return null;
+            }
+
+            const token = csrfMeta.getAttribute('content');
+
+            return typeof token === 'string' && token.trim() !== '' ? token : null;
+        };
+
+        const convertFileToDocx = async (file) => {
+            const formData = new FormData();
+            formData.append('document', file);
+
+            const csrfToken = getCsrfToken();
+
+            if (csrfToken) {
+                formData.append('_token', csrfToken);
+            }
+
+            const fallbackName = createDocxFileName(file && file.name ? file.name : null);
+            const mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+            if (window.axios) {
+                try {
+                    const response = await window.axios.post('/documents/convert-to-docx', formData, {
+                        responseType: 'blob',
+                        headers: csrfToken ? { 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' } : { 'X-Requested-With': 'XMLHttpRequest' },
+                    });
+
+                    const headers = response.headers || {};
+                    const contentDisposition = headers['content-disposition'] || headers['Content-Disposition'] || null;
+                    const filename = extractFilenameFromContentDisposition(contentDisposition) || fallbackName;
+                    const responseBlob = response.data instanceof Blob
+                        ? response.data
+                        : new Blob(response.data ? [response.data] : [], { type: mimeType });
+
+                    return new File([responseBlob], filename, { type: mimeType, lastModified: Date.now() });
+                } catch (error) {
+                    if (error && error.response && error.response.data instanceof Blob) {
+                        try {
+                            const parsed = await parseErrorBlob(error.response.data);
+                            if (parsed) {
+                                error.response.data = parsed;
+                            }
+                        } catch (parseError) {
+                            console.error('Failed to parse conversion error response', parseError);
+                        }
+                    }
+
+                    if (!error.response || !error.response.data) {
+                        error.response = error.response || {};
+                        error.response.data = {
+                            errors: {
+                                manuscript: ['Kunne ikke konvertere filen. Prøv igjen.'],
+                            },
+                            message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                        };
+                    }
+
+                    throw error;
+                }
+            }
+
+            const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+
+            if (csrfToken) {
+                headers['X-CSRF-TOKEN'] = csrfToken;
+            }
+
+            const response = await fetch('/documents/convert-to-docx', {
+                method: 'POST',
+                body: formData,
+                headers,
+            });
+
+            const contentDisposition = response.headers
+                ? (response.headers.get('content-disposition') || response.headers.get('Content-Disposition'))
+                : null;
+
+            if (!response.ok) {
+                const error = new Error('Kunne ikke konvertere filen. Prøv igjen.');
+                let errorData = null;
+
+                try {
+                    errorData = await response.clone().json();
+                } catch (jsonError) {
+                    try {
+                        errorData = { message: await response.text() };
+                    } catch (textError) {
+                        errorData = null;
+                    }
+                }
+
+                error.response = {
+                    status: response.status,
+                    data: errorData || {
+                        errors: {
+                            manuscript: ['Kunne ikke konvertere filen. Prøv igjen.'],
+                        },
+                        message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                    }
+                };
+
+                throw error;
+            }
+
+            const data = await response.blob();
+            const filename = extractFilenameFromContentDisposition(contentDisposition) || fallbackName;
+            const responseBlob = data instanceof Blob ? data : new Blob([data], { type: mimeType });
+
+            return new File([responseBlob], filename, { type: mimeType, lastModified: Date.now() });
+        };
+
+        const getErrorMessageFromConversion = (error) => {
+            if (!error) {
+                return 'Kunne ikke konvertere filen. Prøv igjen.';
+            }
+
+            if (error.response && error.response.data) {
+                const data = error.response.data;
+
+                if (data.errors && data.errors.manuscript && data.errors.manuscript.length) {
+                    return data.errors.manuscript[0];
+                }
+
+                if (typeof data.message === 'string' && data.message.trim() !== '') {
+                    return data.message;
+                }
+            }
+
+            if (error.message && error.message.trim() !== '') {
+                return error.message;
+            }
+
+            return 'Kunne ikke konvertere filen. Prøv igjen.';
+        };
+
+        const assignFilesToInput = (input, file) => {
+            if (!input || !file) {
+                return false;
+            }
+
+            const files = Array.isArray(file) ? file : [file];
+
+            try {
+                if (typeof DataTransfer !== 'undefined') {
+                    const dataTransfer = new DataTransfer();
+                    files.forEach((item) => dataTransfer.items.add(item));
+                    input.files = dataTransfer.files;
+                    return true;
+                }
+            } catch (error) {
+                console.warn('DataTransfer is not available for file assignment.', error);
+            }
+
+            try {
+                if (typeof ClipboardEvent !== 'undefined') {
+                    const clipboardEvent = new ClipboardEvent('');
+                    if (clipboardEvent.clipboardData) {
+                        files.forEach((item) => clipboardEvent.clipboardData.items.add(item));
+                        input.files = clipboardEvent.clipboardData.files;
+                        return true;
+                    }
+                }
+            } catch (error) {
+                console.warn('ClipboardEvent fallback failed for file assignment.', error);
+            }
+
+            return false;
+        };
+
+        const updateUploadText = (text) => {
+            if (fileUploadText) {
+                fileUploadText.innerHTML = text;
+            }
+        };
+
+        const resetUploadText = () => {
+            updateUploadText(defaultUploadText);
+        };
+
+        const clearConversionError = () => {
+            if (conversionErrorElement) {
+                conversionErrorElement.textContent = '';
+                conversionErrorElement.classList.add('d-none');
+            }
+        };
+
+        const showConversionError = (message) => {
+            if (conversionErrorElement) {
+                conversionErrorElement.textContent = message || 'Kunne ikke konvertere filen. Prøv igjen.';
+                conversionErrorElement.classList.remove('d-none');
+            }
+        };
+
+        const showConversionMessage = () => {
+            if (conversionMessageElement) {
+                conversionMessageElement.textContent = conversionMessageText;
+                conversionMessageElement.classList.remove('d-none');
+            }
+        };
+
+        const hideConversionMessage = () => {
+            if (conversionMessageElement) {
+                conversionMessageElement.classList.add('d-none');
+            }
+        };
+
+        const setConversionState = (state) => {
+            isConvertingApplicationFile = !!state;
+
+            if (submitButton) {
+                submitButton.disabled = !!state;
+            }
+        };
+
+        const clearFileSelection = () => {
+            if (fileInput) {
+                suppressChangeHandler = true;
+                fileInput.value = '';
+                window.setTimeout(() => {
+                    suppressChangeHandler = false;
+                }, 0);
+            }
+        };
+
+        const selectApplicationFile = async (files) => {
+            clearConversionError();
+
+            if (!files || !files.length) {
+                hideConversionMessage();
+                setConversionState(false);
+                resetUploadText();
+                return;
+            }
+
+            const [selectedFile] = files;
+
+            if (!selectedFile) {
+                hideConversionMessage();
+                setConversionState(false);
+                resetUploadText();
+                return;
+            }
+
+            updateUploadText(selectedFile.name);
+
+            const extension = getFileExtension(selectedFile.name);
+            let processedFile = selectedFile;
+            let conversionFailed = false;
+
+            if (extension !== 'docx') {
+                setConversionState(true);
+                showConversionMessage();
+
+                try {
+                    processedFile = await convertFileToDocx(selectedFile);
+                } catch (error) {
+                    conversionFailed = true;
+                    showConversionError(getErrorMessageFromConversion(error));
+                    clearFileSelection();
+                    resetUploadText();
+                } finally {
+                    hideConversionMessage();
+                    setConversionState(false);
+                }
+            } else {
+                hideConversionMessage();
+                setConversionState(false);
+            }
+
+            if (conversionFailed) {
+                return;
+            }
+
+            if (processedFile && processedFile.name) {
+                updateUploadText(processedFile.name);
+            }
+
+            if (fileInput) {
+                suppressChangeHandler = true;
+                const assigned = assignFilesToInput(fileInput, processedFile);
+                window.setTimeout(() => {
+                    suppressChangeHandler = false;
+                }, 0);
+
+                if (!assigned) {
+                    showConversionError('Kunne ikke legge til den konverterte filen automatisk. Prøv igjen i en annen nettleser eller kontakt oss.');
+                    clearFileSelection();
+                    resetUploadText();
+                    return;
+                }
+            }
+        };
+
+        if (fileUploadArea) {
+            const dragOverText = 'Release to upload';
+
+            fileUploadArea.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                fileUploadArea.classList.add('dragover');
+                updateUploadText(dragOverText);
+            });
+
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.classList.remove('dragover');
+                resetUploadText();
+            });
+
+            fileUploadArea.addEventListener('drop', async (event) => {
+                event.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+
+                const files = event.dataTransfer ? event.dataTransfer.files : null;
+
+                if (files && files.length) {
+                    await selectApplicationFile(files);
+                } else {
+                    resetUploadText();
+                }
+            });
+
+            fileUploadArea.addEventListener('click', (event) => {
+                if (event.target && typeof event.target.closest === 'function' && event.target.closest('input[type="file"]')) {
+                    return;
+                }
+
+                if (fileInput) {
+                    fileInput.click();
+                }
+            });
+
+            fileUploadArea.querySelectorAll('.file-upload-btn').forEach((button) => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault();
+
+                    if (fileInput) {
+                        fileInput.click();
+                    }
+                });
+            });
+        }
+
+        if (fileInput) {
+            fileInput.addEventListener('change', async (event) => {
+                if (suppressChangeHandler) {
+                    return;
+                }
+
+                await selectApplicationFile(event.target.files);
+            });
+        }
+
+        const formElement = document.getElementById('place_order_form');
+
+        if (formElement) {
+            formElement.addEventListener('submit', (event) => {
+                if (isConvertingApplicationFile) {
+                    event.preventDefault();
+                }
+            });
+        }
+    });
 
     let editor_config = {
         path_absolute: "{{ URL::to('/') }}",
