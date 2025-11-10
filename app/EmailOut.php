@@ -25,7 +25,7 @@ class EmailOut extends Model
      */
     protected $fillable = ['course_id', 'subject', 'message', 'delay', 'from_name', 'from_email', 'allowed_package',
         'attachment', 'attachment_hash', 'for_free_course', 'send_immediately', 'send_to_learners_no_course',
-        'send_to_learners_with_unpaid_pay_later'];
+        'send_to_learners_with_unpaid_pay_later', 'include_former_learners'];
 
     protected $appends = ['send_immediately_text'];
 

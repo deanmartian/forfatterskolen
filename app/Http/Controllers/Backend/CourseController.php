@@ -10,6 +10,7 @@ use App\CourseCertificate;
 use App\CourseExpiryReminder;
 use App\CoursesTaken;
 use App\EmailAttachment;
+use App\EmailOut;
 use App\EmailOutLog;
 use App\Exports\CourseLearnerExport;
 use App\Exports\GenericExport;
@@ -1124,6 +1125,27 @@ class CourseController extends Controller
         $excel = \App::make('excel');
 
         return $excel->download(new GenericExport($learners, $headers), 'Current Learners.xlsx');
+    }
+
+    public function exportCustomLearners()
+    {
+        $course = Course::find(102);
+        $coursesTaken = $course->learnersWithExpired->get();
+
+        $headers = ['learner id', 'name', 'email'];
+        $learners = [];
+
+        foreach ($coursesTaken as $courseTaken) {
+            $learners[] = [
+                $courseTaken->user->id, 
+                $courseTaken->user->first_name . " " . $courseTaken->user->last_name, 
+                $courseTaken->user->email
+            ];
+        }
+
+        $excel = \App::make('excel');
+
+        return $excel->download(new GenericExport($learners, $headers), 'Learners with Renewed Mentormøter.xlsx');
     }
 
     public function applicationDetails($application_id): View

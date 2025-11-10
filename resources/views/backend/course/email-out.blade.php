@@ -158,6 +158,13 @@
                         </div>
 
                         <div class="form-group">
+                            <label>Include former learners</label> <br>
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes"
+                                   data-off="No"
+                                   name="include_former_learners" data-width="84">
+                        </div>
+
+                        <div class="form-group">
                             <label>{{ trans('site.allowed-package') }}</label>
                             @foreach($course->packages as $package)
                                 <div class="form-check">
@@ -312,6 +319,13 @@
                }
 
                 if (field === 'send_to_learners_with_unpaid_pay_later') {
+                    emailModalForm.find('[name='+field+']').bootstrapToggle('off');
+                if (value) {
+                    emailModalForm.find('[name='+field+']').bootstrapToggle('on');
+                }
+               }
+
+               if (field === 'include_former_learners') {
                     emailModalForm.find('[name='+field+']').bootstrapToggle('off');
                 if (value) {
                     emailModalForm.find('[name='+field+']').bootstrapToggle('on');
