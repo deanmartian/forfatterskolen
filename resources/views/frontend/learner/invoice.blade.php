@@ -1093,7 +1093,7 @@
                                                                 <span class="receipt-summary-value" data-receipt-field="due-date"></span>
                                                         </div>
                                                         <div class="receipt-summary-row">
-                                                                <span class="receipt-summary-label">Account number</span>
+                                                                <span class="receipt-summary-label">{{ trans('site.learner.account-number') }}</span>
                                                                 <span class="receipt-summary-value" data-receipt-field="account-number"></span>
                                                         </div>
                                                         <div class="receipt-summary-row">
