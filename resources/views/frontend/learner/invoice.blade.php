@@ -1127,13 +1127,13 @@
                                                 <thead>
                                                         <tr>
 															<th>
-																Payment Date
+																Betalings dato
 															</th>
 															<th>
-																Amount
+																Beløp
 															</th>
 															<th>
-																Balance
+																Saldo
 															</th>
                                                                 {{-- <th>{{ trans('site.order-history.description') }}</th>
                                                                 <th class="text-right">Unit price</th>
