@@ -645,7 +645,7 @@
 												<th>{{ trans('site.learner.status') }}</th>
 												<th>{{ trans('site.learner.created') }}</th>
 												<th>{{ trans('site.learner.kid-number') }}</th>
-												<th>{{ trans('site.learner.account-number') }}</th>
+												<th>Account number</th>
 												<th>Credit Note</th>
 												<th></th>
 											</tr>
@@ -1058,7 +1058,7 @@
                                 <div class="receipt-document">
                                         <div class="receipt-header">
                                                 <div class="receipt-return">
-                                                        <div class="receipt-return-label">{{ trans('site.order-history.return-label') }}</div>
+                                                        <div class="receipt-return-label">Retur:</div>
                                                         <div class="receipt-return-address">
                                                                 <div>{{ trans('site.order-history.fs-name') }}</div>
                                                                 <div>{{ trans('site.order-history.fs-address1') }}</div>
@@ -1091,15 +1091,15 @@
                                                                 <span class="receipt-summary-value" data-receipt-field="due-date"></span>
                                                         </div>
                                                         <div class="receipt-summary-row">
-                                                                <span class="receipt-summary-label">{{ trans('site.order-history.account-number') }}</span>
+                                                                <span class="receipt-summary-label">Account number</span>
                                                                 <span class="receipt-summary-value" data-receipt-field="account-number"></span>
                                                         </div>
                                                         <div class="receipt-summary-row">
-                                                                <span class="receipt-summary-label">{{ trans('site.order-history.kid') }}</span>
+                                                                <span class="receipt-summary-label">KID</span>
                                                                 <span class="receipt-summary-value" data-receipt-field="kid-number"></span>
                                                         </div>
                                                         <div class="receipt-summary-row receipt-summary-row--emphasis">
-                                                                <span class="receipt-summary-label">{{ trans('site.order-history.amount-due') }}</span>
+                                                                <span class="receipt-summary-label">Å betale</span>
                                                                 <span class="receipt-summary-value" data-receipt-field="amount-due"></span>
                                                         </div>
                                                 </div>
@@ -1123,15 +1123,15 @@
                                                         <span class="receipt-info-value" data-receipt-field="customer-reference"></span>
                                                 </div>
                                         </div>
-                                        <div class="receipt-info-note">{{ trans('site.order-history.kid-note') }}</div>
+                                        <div class="receipt-info-note">Please include the KID when paying</div>
 
-                                        <div class="receipt-section-title">{{ trans('site.order-history.invoice-heading') }}</div>
+                                        <div class="receipt-section-title">FAKTURA</div>
 
                                         <table class="receipt-items-table">
                                                 <thead>
                                                         <tr>
                                                                 <th>{{ trans('site.order-history.description') }}</th>
-                                                                <th class="text-right">{{ trans('site.order-history.unit-price') }}</th>
+                                                                <th class="text-right">Unit price</th>
                                                                 <th class="text-right">{{ trans('site.order-history.quantity') }}</th>
                                                                 <th class="text-right">{{ trans('site.order-history.vat') }}</th>
                                                                 <th class="text-right">{{ trans('site.order-history.sum') }}</th>
@@ -1150,7 +1150,7 @@
 
                                         <div class="receipt-totals">
                                                 <div class="receipt-total-row">
-                                                        <span>{{ trans('site.order-history.net-total') }}</span>
+                                                        <span>Net</span>
                                                         <span data-receipt-field="net-total"></span>
                                                 </div>
                                                 <div class="receipt-total-row">
@@ -1161,7 +1161,7 @@
                                                         <span>{{ trans('site.order-history.sum') }}</span>
                                                         <span data-receipt-field="total-to-pay"></span>
                                                 </div>
-                                                <div class="receipt-total-note">{{ trans('site.order-history.currency-note') }}</div>
+                                                <div class="receipt-total-note">All amounts are stated in NOK</div>
                                         </div>
 
                                         <div class="receipt-footer">
