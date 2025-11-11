@@ -980,15 +980,18 @@
         const invoiceProcessingMessage = @json(trans('site.pay-later-invoice-processing'));
         const noPaymentPlanMessage = @json(__('No payment plans available for this purchase.'));
         const paymentPlanOptionSelector = '[data-payment-plan-option]';
-        const receiptUser = @json([
-            'id' => $user->id,
-            'full_name' => $user->full_name,
-            'address' => [
-                'street' => optional($user->address)->street,
-                'zip' => optional($user->address)->zip,
-                'city' => optional($user->address)->city,
-            ],
-        ]);
+        @php
+            $receiptUserAddress = optional($user->address);
+        @endphp
+        const receiptUser = {
+            id: {{ (int) $user->id }},
+            full_name: @json($user->full_name),
+            address: {
+                street: @json($receiptUserAddress->street),
+                zip: @json($receiptUserAddress->zip),
+                city: @json($receiptUserAddress->city),
+            },
+        };
         const receiptModal = $('#receiptModal');
         let invoiceSubmissionInProgress = false;
 
