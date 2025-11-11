@@ -32,7 +32,7 @@ class Invoice extends Model
      * @var array
      */
     protected $fillable = ['user_id', 'fiken_url', 'fiken_weblink', 'pdf_url', 'fiken_is_paid', 'fiken_balance', 'fiken_dueDate', 'balance',
-        'kid_number', 'invoice_number', 'fiken_invoice_id', 'fiken_issueDate', 'gross'];
+        'kid_number', 'invoice_number', 'fiken_invoice_id', 'fiken_issueDate', 'gross', 'fiken_sale_payment_date'];
 
     public function user(): BelongsTo
     {

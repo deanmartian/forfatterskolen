@@ -36,6 +36,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('dropbox:refresh-token')->hourly();
         $schedule->command('freecoursedelayedemail:command')->everyMinute()->withoutOverlapping();
         $schedule->command('coachingtimer:finalize')->dailyAt('01:00');
+        $schedule->command('checkfikenpaymentdate:command')->dailyAt('00:30');
     }
 
     /**

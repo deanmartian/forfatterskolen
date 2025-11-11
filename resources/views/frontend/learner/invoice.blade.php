@@ -752,7 +752,9 @@
         $receiptVatFormatted = \App\Http\FrontendHelpers::currencyFormat($receiptVatAmount);
         $receiptNetAmount = max($receiptAmount - $receiptVatAmount, 0);
         $receiptNetFormatted = \App\Http\FrontendHelpers::currencyFormat($receiptNetAmount);
-        $paymentDate = $invoice->updated_at ? \Carbon\Carbon::parse($invoice->updated_at)->format('d.m.Y') : null;
+        $paymentDate = $invoice->fiken_sale_payment_date 
+			? \Carbon\Carbon::parse($invoice->fiken_sale_payment_date)->format('d.m.Y') 
+			: \Carbon\Carbon::parse($invoice->updated_at)->format('d.m.Y');
 
         $receiptFields = [
                 'id' => $invoice->id,
