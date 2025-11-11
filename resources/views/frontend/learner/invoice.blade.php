@@ -143,24 +143,23 @@
 
         .receipt-summary {
                 background: #f2f5f5;
-                border-radius: 16px;
                 padding: 1.25rem 1.5rem;
                 min-width: 260px;
+				margin-bottom: 10px;
         }
 
         .receipt-summary-row {
                 display: flex;
                 justify-content: space-between;
                 align-items: baseline;
-                font-size: 0.95rem;
+                font-size: 1rem;
                 margin-bottom: 0.4rem;
         }
 
         .receipt-summary-label {
                 text-transform: uppercase;
                 letter-spacing: 0.05em;
-                color: #5f6a72;
-                font-size: 0.85rem;
+                font-weight: bold;
         }
 
         .receipt-summary-value {
@@ -185,8 +184,7 @@
         }
 
         .receipt-info-label {
-                display: block;
-                font-size: 0.9rem;
+                font-size: 1rem;
                 font-weight: 600;
                 letter-spacing: 0.04em;
                 text-transform: uppercase;
@@ -217,7 +215,7 @@
         }
 
         .receipt-items-table th {
-                font-size: 0.85rem;
+                font-size: 1rem;
                 font-weight: 600;
                 text-transform: uppercase;
                 color: #6b7378;
@@ -754,6 +752,7 @@
         $receiptVatFormatted = \App\Http\FrontendHelpers::currencyFormat($receiptVatAmount);
         $receiptNetAmount = max($receiptAmount - $receiptVatAmount, 0);
         $receiptNetFormatted = \App\Http\FrontendHelpers::currencyFormat($receiptNetAmount);
+        $paymentDate = $invoice->updated_at ? \Carbon\Carbon::parse($invoice->updated_at)->format('d.m.Y') : null;
 
         $receiptFields = [
                 'id' => $invoice->id,
@@ -774,6 +773,7 @@
                 'kid_number' => $invoice->kid_number,
                 'account_number' => '9015 18 00393',
                 'company' => null,
+				'payment_date' => $paymentDate
         ];
 @endphp
 
@@ -1056,8 +1056,8 @@
                         </div>
                         <div class="modal-body receipt-modal-body">
                                 <div class="receipt-document">
-                                        <div class="receipt-header">
-                                                <div class="receipt-return">
+                                        <div class="row">
+                                                <div class="col-sm-6" style="margin-bottom: 20px">
                                                         <div class="receipt-return-label">Retur:</div>
                                                         <div class="receipt-return-address">
                                                                 <div>{{ trans('site.order-history.fs-name') }}</div>
@@ -1066,13 +1066,13 @@
                                                                 <div>{{ trans('site.order-history.fs-country') }}</div>
                                                         </div>
                                                 </div>
-                                                <div class="receipt-branding">
+                                                <div class="col-sm-6">
                                                         <img src="{{ asset('images-new/logo-tagline.png') }}" alt="Forfatterskolen" class="receipt-branding-logo">
                                                 </div>
                                         </div>
 
-                                        <div class="receipt-customer-row">
-                                                <div class="receipt-customer">
+                                        <div class="row">
+                                                <div class="receipt-customer col-sm-6">
                                                         <div class="receipt-company-address d-none">
                                                                 <div data-receipt-field="company-name"></div>
                                                                 <div data-receipt-field="company-street"></div>
@@ -1085,7 +1085,7 @@
                                                                 <div data-receipt-field="customer-city"></div>
                                                         </div>
                                                 </div>
-                                                <div class="receipt-summary">
+                                                <div class="receipt-summary col-sm-6">
                                                         <div class="receipt-summary-row">
                                                                 <span class="receipt-summary-label">{{ trans('site.order-history.due-date') }}</span>
                                                                 <span class="receipt-summary-value" data-receipt-field="due-date"></span>
@@ -1105,50 +1105,58 @@
                                                 </div>
                                         </div>
 
-                                        <div class="receipt-info">
-                                                <div class="receipt-info-row">
-                                                        <span class="receipt-info-label">{{ trans('site.order-history.invoice-number') }}</span>
-                                                        <span class="receipt-info-value" data-receipt-field="invoice-number"></span>
-                                                </div>
-                                                <div class="receipt-info-row">
-                                                        <span class="receipt-info-label">{{ trans('site.order-history.invoice-date') }}</span>
-                                                        <span class="receipt-info-value" data-receipt-field="invoice-date"></span>
-                                                </div>
-                                                <div class="receipt-info-row">
-                                                        <span class="receipt-info-label">{{ trans('site.order-history.customer-number') }}</span>
-                                                        <span class="receipt-info-value" data-receipt-field="customer-number"></span>
-                                                </div>
-                                                <div class="receipt-info-row">
-                                                        <span class="receipt-info-label">{{ trans('site.order-history.customer-reference') }}</span>
-                                                        <span class="receipt-info-value" data-receipt-field="customer-reference"></span>
-                                                </div>
+                                        <div class="receipt-infos row">
+											<div class="col-sm-6"></div>
+											<div class="col-sm-6">
+												<div>
+													<span class="receipt-info-label">{{ trans('site.order-history.invoice-number') }}</span>
+													<span class="receipt-info-value" data-receipt-field="invoice-number"></span>
+												</div>
+												<div>
+													<span class="receipt-info-label">{{ trans('site.order-history.invoice-date') }}</span>
+													<span class="receipt-info-value" data-receipt-field="invoice-date"></span>
+												</div>
+											</div>
                                         </div>
-                                        <div class="receipt-info-note">Please include the KID when paying</div>
 
-                                        <div class="receipt-section-title">FAKTURA</div>
+                                        <div class="receipt-section-title">Kvittering</div>
 
                                         <table class="receipt-items-table">
                                                 <thead>
                                                         <tr>
-                                                                <th>{{ trans('site.order-history.description') }}</th>
+															<th>
+																Payment Date
+															</th>
+															<th>
+																Amount
+															</th>
+															<th>
+																Balance
+															</th>
+                                                                {{-- <th>{{ trans('site.order-history.description') }}</th>
                                                                 <th class="text-right">Unit price</th>
                                                                 <th class="text-right">{{ trans('site.order-history.quantity') }}</th>
                                                                 <th class="text-right">{{ trans('site.order-history.vat') }}</th>
-                                                                <th class="text-right">{{ trans('site.order-history.sum') }}</th>
+                                                                <th class="text-right">{{ trans('site.order-history.sum') }}</th> --}}
                                                         </tr>
                                                 </thead>
                                                 <tbody>
                                                         <tr>
-                                                                <td data-receipt-field="description"></td>
+															<td data-receipt-field="payment_date"></td>
+															<td class="text-left" data-receipt-field="price"></td>
+															<td class="text-left" data-receipt-field="balance">
+																0
+															</td>
+                                                                {{-- <td data-receipt-field="description"></td>
                                                                 <td class="text-right" data-receipt-field="price"></td>
                                                                 <td class="text-right" data-receipt-field="quantity"></td>
                                                                 <td class="text-right" data-receipt-field="vat"></td>
-                                                                <td class="text-right" data-receipt-field="sum"></td>
+                                                                <td class="text-right" data-receipt-field="sum"></td> --}}
                                                         </tr>
                                                 </tbody>
                                         </table>
 
-                                        <div class="receipt-totals">
+                                        {{-- <div class="receipt-totals">
                                                 <div class="receipt-total-row">
                                                         <span>Net</span>
                                                         <span data-receipt-field="net-total"></span>
@@ -1161,17 +1169,16 @@
                                                         <span>{{ trans('site.order-history.sum') }}</span>
                                                         <span data-receipt-field="total-to-pay"></span>
                                                 </div>
-                                                <div class="receipt-total-note">All amounts are stated in NOK</div>
-                                        </div>
+                                        </div> --}}
 
-                                        <div class="receipt-footer">
+                                        {{-- <div class="receipt-footer">
                                                 <div class="receipt-footer-address">
                                                         <div>{{ trans('site.order-history.fs-name') }}</div>
                                                         <div>{{ trans('site.order-history.fs-address1') }}</div>
                                                         <div>{{ trans('site.order-history.fs-address2') }}</div>
                                                         <div>{{ trans('site.order-history.fs-country') }} <span>{{ trans('site.order-history.organization') }}</span></div>
                                                 </div>
-                                        </div>
+                                        </div> --}}
                                 </div>
                         </div>
                 </div>
@@ -1316,6 +1323,7 @@
             }
 
             receiptModal.find('[data-receipt-field="description"]').text(data.description || '');
+            receiptModal.find('[data-receipt-field="payment_date"]').text(data.payment_date || '');
             if (typeof data.vat_percentage !== 'undefined' && data.vat_percentage !== null && data.vat_percentage !== '') {
                 receiptModal.find('[data-receipt-field="vat"]').text(data.vat_percentage);
             } else {
