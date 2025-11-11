@@ -489,14 +489,48 @@
 																<img src="{{ asset('images-new/betal-vipps.png') }}" 
 																class="mt-3">
 															</a>
-														@else
-															<button class="btn btn-info btn-xs receiptBtn" 
-															style="margin-top: 5px"
-																	data-toggle="modal"
-																	data-target="#receiptModal">
-																	Receipt
-															</button>
-														@endif
+                                                                                                                @else
+                                                                                                                        @php
+                                                                                                                            $receiptAmount = $invoice->gross ? $invoice->gross / 100 : 0;
+                                                                                                                            $receiptTotalFormatted = \App\Http\FrontendHelpers::currencyFormat($receiptAmount);
+                                                                                                                            $receiptIssueDate = $invoice->fiken_issueDate ? \Carbon\Carbon::parse($invoice->fiken_issueDate)->format('d.m.Y') : null;
+                                                                                                                            $receiptDueDate = $invoice->fiken_dueDate ? \Carbon\Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y') : null;
+                                                                                                                            $receiptPaymentPlan = optional($invoice->payment_plan)->plan;
+                                                                                                                            $receiptDescription = '';
+
+                                                                                                                            if ($invoice->package) {
+                                                                                                                                $receiptDescription = $invoice->package->variation ?: optional($invoice->package->course)->title;
+                                                                                                                            }
+
+                                                                                                                            if (! $receiptDescription) {
+                                                                                                                                $receiptDescription = trans('site.order-history.invoice-number').': '.($invoice->invoice_number ?? $invoice->id);
+                                                                                                                            }
+
+                                                                                                                            $receiptFields = [
+                                                                                                                                'id' => $invoice->id,
+                                                                                                                                'invoice_number' => $invoice->invoice_number,
+                                                                                                                                'issue_date_formatted' => $receiptIssueDate,
+                                                                                                                                'due_date_formatted' => $receiptDueDate,
+                                                                                                                                'payment_plan' => $receiptPaymentPlan,
+                                                                                                                                'price_formatted' => $receiptTotalFormatted,
+                                                                                                                                'total_formatted' => $receiptTotalFormatted,
+                                                                                                                                'total_vat_formatted' => $receiptTotalFormatted,
+                                                                                                                                'description' => $receiptDescription,
+                                                                                                                                'quantity_formatted' => '1 stk',
+                                                                                                                                'vat_percentage' => null,
+                                                                                                                                'customer_reference' => $user->full_name,
+                                                                                                                                'company' => null,
+                                                                                                                            ];
+                                                                                                                        @endphp
+
+                                                                                                                        <button class="btn btn-info btn-xs receiptBtn"
+                                                                                                                        style="margin-top: 5px"
+                                                                                                                               data-toggle="modal"
+                                                                                                                               data-target="#receiptModal"
+                                                                                                                               data-fields='@json($receiptFields)'>
+                                                                                                                               Receipt
+                                                                                                                        </button>
+                                                                                                                @endif
 													</td>
 												</tr>
 											@endforeach
@@ -758,21 +792,139 @@
 		</div>
 	</div>
 
-	<div id="receiptModal" class="modal fade" role="dialog">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title">
-						
-					</h4>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-				<div class="modal-body">
-					
-				</div>
-			</div>
-		</div>
-	</div>
+        <div id="receiptModal" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                                <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" style="padding: 2rem; font-size: 3rem">&times;</button>
+                                </div>
+                                <div class="modal-body receipt-modal-body">
+                                        <div class="row">
+                                                <div class="col-sm-6">
+                                                        <div class="receipt-logo-container">
+                                                                <img src="{{ asset('images-new/logo-tagline.png') }}" alt="Logo" class="w-100">
+                                                        </div>
+                                                </div>
+                                        </div>
+
+                                        <div class="row">
+                                                <div class="col-sm-6">
+                                                        <div class="receipt-papermoon-address">
+                                                                <span style="font-weight: 600;">{{ trans('site.order-history.fs-name') }}</span> <br>
+                                                                <span style="font-weight: 600;">{{ trans('site.order-history.fs-address1') }}</span> <br>
+                                                                <span>{{ trans('site.order-history.fs-address2') }}, {{ trans('site.order-history.fs-country') }}</span> <br>
+                                                                <span>{{ trans('site.order-history.fs-site') }}</span>
+                                                        </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                        <div class="customer-name-address receipt-company-address d-none">
+                                                                <span data-receipt-field="company-name"></span> <br>
+                                                                <span data-receipt-field="company-street"></span> <br>
+                                                                <span data-receipt-field="company-city"></span><br>
+                                                                <span data-receipt-field="company-number"></span>
+                                                        </div>
+                                                        <div class="customer-name-address receipt-customer-address">
+                                                                <span data-receipt-field="customer-name"></span> <br>
+                                                                <span data-receipt-field="customer-street"></span> <br>
+                                                                <span data-receipt-field="customer-city"></span>
+                                                        </div>
+                                                </div>
+                                        </div>
+
+                                        <div class="col-sm-12 mt-4" style="padding: 0px;">
+                                                <hr style="height: 1px; background-color: #4c8485; border: none;">
+                                                <div class="row ml-auto receipt-table">
+                                                        <div class="col-sm-6">
+                                                                <div>
+                                                                        <span>{{ trans('site.order-history.invoice-number') }}</span>
+                                                                        <span class="float-right" data-receipt-field="invoice-number"></span>
+                                                                </div>
+                                                                <div>
+                                                                        <span>{{ trans('site.order-history.customer-number') }}</span>
+                                                                        <span class="float-right" data-receipt-field="customer-number"></span>
+                                                                </div>
+                                                                <div>
+                                                                        <span>{{ trans('site.order-history.customer-reference') }}</span>
+                                                                        <span class="float-right" data-receipt-field="customer-reference"></span>
+                                                                </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                                <div>
+                                                                        <span>{{ trans('site.order-history.invoice-date') }}</span>
+                                                                        <span class="float-right" data-receipt-field="invoice-date"></span>
+                                                                </div>
+                                                                <div>
+                                                                        <span>{{ trans('site.order-history.payment-terms') }}</span>
+                                                                        <span class="float-right" data-receipt-field="payment-terms"></span>
+                                                                </div>
+                                                                <div>
+                                                                        <span>{{ trans('site.order-history.interest') }}</span>
+                                                                        <span class="float-right" data-receipt-field="interest"></span>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                                <hr style="height: 1px; background-color: #4c8485; border: none;">
+                                        </div>
+
+                                        <div class="row mt-4" style="padding: 0px;">
+                                                <div class="col-sm-4">
+                                                        <span>{{ trans('site.order-history.description') }}</span><br>
+                                                        <span style="font-weight: 600;" data-receipt-field="description"></span>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                        <span>{{ trans('site.order-history.vat') }}</span><br>
+                                                        <span data-receipt-field="vat"></span>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                        <span>{{ trans('site.order-history.quantity') }}</span><br>
+                                                        <span data-receipt-field="quantity"></span>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                        <span>{{ trans('site.order-history.price') }}</span><br>
+                                                        <span data-receipt-field="price"></span>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                        <span>{{ trans('site.order-history.sum') }}</span><br>
+                                                        <span data-receipt-field="sum"></span>
+                                                </div>
+                                        </div>
+
+                                        <br><br>
+                                        <div class="row">
+                                                <div class="col-sm-6"></div>
+                                                <div class="col-sm-6">
+                                                        <div>
+                                                                <span style="font-weight: 600;">{{ trans('site.order-history.total-vat') }}</span>
+                                                                <span style="font-weight: 600;" class="float-right" data-receipt-field="total-vat"></span>
+                                                        </div>
+                                                        <div>
+                                                                <span style="font-weight: 600;">{{ trans('site.order-history.total-to-pay') }}</span>
+                                                                <span style="font-weight: 600;" class="float-right" data-receipt-field="total-to-pay"></span>
+                                                        </div>
+                                                </div>
+                                        </div>
+
+                                        <br><br><br>
+                                        <div class="row mt-4 receipt-footer">
+                                                <div class="col-sm-6">
+                                                        <hr style="height: 1px; background-color: #4c8485; border: none;">
+                                                        <div class="row">
+                                                                <div class="col-sm-7">
+                                                                        <div>{{ trans('site.order-history.fs-name') }}</div>
+                                                                        <div>{{ trans('site.order-history.fs-address1') }}</div>
+                                                                        <div>{{ trans('site.order-history.fs-address2') }}</div>
+                                                                        <div>{{ trans('site.order-history.fs-country') }} <span>{{ trans('site.order-history.organization') }}</span></div>
+                                                                </div>
+                                                                <div class="col-sm-5">
+                                                                </div>
+                                                        </div>
+                                                        <hr style="height: 1px; background-color: #4c8485; border: none;">
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
 
 	<div id="createInvoiceModal" class="modal fade" role="dialog">
 		<div class="modal-dialog">
@@ -828,7 +980,98 @@
         const invoiceProcessingMessage = @json(trans('site.pay-later-invoice-processing'));
         const noPaymentPlanMessage = @json(__('No payment plans available for this purchase.'));
         const paymentPlanOptionSelector = '[data-payment-plan-option]';
+        const receiptUser = @json([
+            'id' => $user->id,
+            'full_name' => $user->full_name,
+            'address' => [
+                'street' => optional($user->address)->street,
+                'zip' => optional($user->address)->zip,
+                'city' => optional($user->address)->city,
+            ],
+        ]);
+        const receiptModal = $('#receiptModal');
         let invoiceSubmissionInProgress = false;
+
+        function receiptLeadingZeros(num) {
+            if (num === null || typeof num === 'undefined' || num === '') {
+                return '';
+            }
+
+            return String(num).padStart(6, '0');
+        }
+
+        function receiptFormatCity(address) {
+            if (!address) {
+                return '';
+            }
+
+            const segments = [];
+
+            if (address.zip) {
+                segments.push(address.zip);
+            }
+
+            if (address.city) {
+                segments.push(address.city);
+            }
+
+            return segments.join(' ');
+        }
+
+        function renderReceiptModal(fields) {
+            const data = fields || {};
+            const invoiceNumber = data.invoice_number || data.id;
+            const defaultCustomerNumber = receiptUser && receiptUser.id ? receiptLeadingZeros(receiptUser.id) : '';
+
+            receiptModal.find('[data-receipt-field="invoice-number"]').text(invoiceNumber ? receiptLeadingZeros(invoiceNumber) : '');
+            receiptModal.find('[data-receipt-field="customer-number"]').text(data.customer_number || defaultCustomerNumber);
+            receiptModal.find('[data-receipt-field="customer-reference"]').text(data.customer_reference || (receiptUser ? receiptUser.full_name : ''));
+            receiptModal.find('[data-receipt-field="invoice-date"]').text(data.issue_date_formatted || data.created_at_formatted || '');
+            receiptModal.find('[data-receipt-field="payment-terms"]').text(data.payment_plan || '');
+            receiptModal.find('[data-receipt-field="interest"]').text(data.interest || '12%');
+
+            const companyInfo = data.company;
+            const companyContainer = receiptModal.find('.receipt-company-address');
+            const customerContainer = receiptModal.find('.receipt-customer-address');
+
+            if (companyInfo && (companyInfo.company_name || companyInfo.street_address || companyInfo.post_number || companyInfo.place)) {
+                companyContainer.removeClass('d-none');
+                customerContainer.addClass('d-none');
+
+                companyContainer.find('[data-receipt-field="company-name"]').text(companyInfo.company_name || '');
+                companyContainer.find('[data-receipt-field="company-street"]').text(companyInfo.street_address || '');
+                const companyCity = [companyInfo.post_number, companyInfo.place].filter(Boolean).join(' ');
+                companyContainer.find('[data-receipt-field="company-city"]').text(companyCity);
+                companyContainer.find('[data-receipt-field="company-number"]').text(companyInfo.customer_number || '');
+                receiptModal.find('[data-receipt-field="customer-number"]').text(companyInfo.customer_number || defaultCustomerNumber);
+            } else {
+                companyContainer.addClass('d-none');
+                companyContainer.find('[data-receipt-field]').text('');
+                customerContainer.removeClass('d-none');
+
+                const address = receiptUser ? receiptUser.address : null;
+                receiptModal.find('[data-receipt-field="customer-name"]').text(receiptUser ? receiptUser.full_name : '');
+                receiptModal.find('[data-receipt-field="customer-street"]').text(address && address.street ? address.street : '');
+                receiptModal.find('[data-receipt-field="customer-city"]').text(receiptFormatCity(address));
+            }
+
+            receiptModal.find('[data-receipt-field="description"]').text(data.description || '');
+            if (typeof data.vat_percentage !== 'undefined' && data.vat_percentage !== null && data.vat_percentage !== '') {
+                receiptModal.find('[data-receipt-field="vat"]').text(data.vat_percentage);
+            } else {
+                receiptModal.find('[data-receipt-field="vat"]').text('');
+            }
+            receiptModal.find('[data-receipt-field="quantity"]').text(data.quantity_formatted || '1 stk');
+            receiptModal.find('[data-receipt-field="price"]').text(data.price_formatted || '');
+            receiptModal.find('[data-receipt-field="sum"]').text(data.total_formatted || '');
+            receiptModal.find('[data-receipt-field="total-vat"]').text(data.total_vat_formatted || data.total_formatted || '');
+            receiptModal.find('[data-receipt-field="total-to-pay"]').text(data.total_formatted || '');
+        }
+
+        $('.receiptBtn').on('click', function () {
+            const fields = $(this).data('fields');
+            renderReceiptModal(fields);
+        });
 
         function lockInvoiceModal(modal, submitButton) {
             if (!modal || !modal.length || invoiceSubmissionInProgress) {
