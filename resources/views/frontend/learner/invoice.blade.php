@@ -489,6 +489,13 @@
 																<img src="{{ asset('images-new/betal-vipps.png') }}" 
 																class="mt-3">
 															</a>
+														@else
+															<button class="btn btn-info btn-xs receiptBtn" 
+															style="margin-top: 5px"
+																	data-toggle="modal"
+																	data-target="#receiptModal">
+																	Receipt
+															</button>
 														@endif
 													</td>
 												</tr>
@@ -746,6 +753,22 @@
 				</div>
 				<div class="modal-body">
 
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="receiptModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">
+						
+					</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					
 				</div>
 			</div>
 		</div>
