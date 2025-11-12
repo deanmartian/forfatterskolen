@@ -328,6 +328,7 @@ Route::domain($front)->group(function () {
         Route::post('/redeem-gift', [Frontend\LearnerController::class, 'redeemGift'])->name('learner.redeem-gift');
         Route::post('learner/invoice/{id}/e-faktura', [Frontend\LearnerController::class, 'vippsEFaktura'])->name('learner.invoice.vipps-e-faktura');
         Route::post('learner/set-vipss-efaktura', [Frontend\LearnerController::class, 'setVippsEFaktura'])->name('learner.set-vipps-e-faktura');
+        Route::get('/invoice/{id}/receipt/download', [Frontend\LearnerController::class, 'downloadInvoiceReceipt'])->name('learner.invoice.receipt.download');
         Route::get('/invoice/{id}/download/{type}', [Frontend\LearnerController::class, 'downloadInvoiceByType'])->name('learner.invoice.download-by-type');
         Route::get('/publishing', [Frontend\LearnerController::class, 'publishing'])->name('learner.publishing'); // Publishers House Page
         Route::get('/writing-groups', [Frontend\LearnerController::class, 'writingGroups'])->name('learner.writing-groups'); // Writing Groups Page

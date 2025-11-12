@@ -1848,6 +1848,25 @@ class LearnerController extends Controller
         return $pdf->download($order->id.'.pdf');
     }
 
+    public function downloadInvoiceReceipt($id)
+    {
+        $invoice = Invoice::with(['transactions', 'package.course', 'payment_plan'])
+            ->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $user = Auth::user();
+
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->loadHTML(view('frontend.pdf.invoice-receipt', compact('invoice', 'user')));
+
+        $invoiceNumber = $invoice->invoice_number ?? $invoice->id;
+        $fileName = ($invoiceNumber ? str_pad($invoiceNumber, 6, '0', STR_PAD_LEFT) : $invoice->id).'-kvittering.pdf';
+
+        return $pdf->download($fileName);
+    }
+
     public function downloadCreditedOrder($order_id)
     {
         $order = Order::find($order_id);
