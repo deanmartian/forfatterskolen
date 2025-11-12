@@ -494,7 +494,7 @@
                                                                                                                         <a href="{{ route('learner.invoice.receipt.download', $invoice->id) }}"
                                                                                                                             class="btn btn-info btn-xs"
                                                                                                                             style="margin-top: 5px">
-                                                                                                                            Receipt
+                                                                                                                            Kvittering
                                                                                                                         </a>
                                                                                                                 @endif
 													</td>
