@@ -490,7 +490,8 @@
 																<img src="{{ asset('images-new/betal-vipps.png') }}" 
 																class="mt-3">
 															</a>
-                                                                                                                @else
+															@endif
+                                                                                                                @if($invoice->fiken_is_paid == 1)
                                                                                                                         <a href="{{ route('learner.invoice.receipt.download', $invoice->id) }}"
                                                                                                                             class="btn btn-info btn-xs"
                                                                                                                             style="margin-top: 5px">
