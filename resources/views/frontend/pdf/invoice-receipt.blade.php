@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('site.order-history.invoice-number') }}</title>
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/css/frontend/main.css') }}"/>
     <style>
         body {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            color: #1f1f1f;
             font-size: 14px;
             margin: 0;
             padding: 0;
@@ -37,7 +38,6 @@
         .receipt-return-label {
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
             margin-bottom: 6px;
         }
 
@@ -73,13 +73,11 @@
 
         .receipt-summary .label {
             text-transform: uppercase;
-            letter-spacing: 0.05em;
             font-weight: 700;
         }
 
         .receipt-summary .value {
             text-align: right;
-            font-weight: 600;
         }
 
         .receipt-summary .emphasis .value {
@@ -102,7 +100,6 @@
 
         .receipt-info .label {
             text-transform: uppercase;
-            letter-spacing: 0.04em;
             font-weight: 600;
             color: #5f6a72;
         }
@@ -115,7 +112,6 @@
         .receipt-section-title {
             font-size: 18px;
             font-weight: 700;
-            letter-spacing: 0.12em;
             margin: 36px 0 14px;
         }
 
@@ -126,8 +122,6 @@
 
         .receipt-items th {
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 600;
             color: #6b7378;
             border-bottom: 2px solid #e2e6e8;
             padding: 10px 0;
@@ -241,7 +235,7 @@
                     </div>
                 </td>
                 <td class="receipt-branding">
-                    <img src="{{ public_path('images-new/logo-tagline.png') }}" alt="Forfatterskolen">
+                    <img src="{{ url('/images-new/logo-tagline.png') }}" alt="Logo" style="width: 260px;">
                 </td>
             </tr>
         </table>
@@ -260,7 +254,7 @@
                         <div>{{ $companyNumber }}</div>
                     @endif
                 </td>
-                <td style="width: 260px;">
+                <td style="width: 360px;">
                     <div class="receipt-summary">
                         <table>
                             <tr>
@@ -287,20 +281,16 @@
 
         <table class="receipt-table receipt-info-table">
             <tr>
-                <td style="width: 50%;"></td>
+                <td style="width: 37%;"></td>
                 <td style="width: 50%;">
                     <table class="receipt-info">
                         <tr>
-                            <td class="label">{{ trans('site.order-history.invoice-number') }}</td>
+                            <td class="labels text-uppercase">{{ trans('site.order-history.invoice-number') }}</td>
                             <td class="value">{{ $invoiceNumberFormatted }}</td>
                         </tr>
                         <tr>
-                            <td class="label">{{ trans('site.order-history.invoice-date') }}</td>
+                            <td class="labels text-uppercase">{{ trans('site.order-history.invoice-date') }}</td>
                             <td class="value">{{ $issueDate }}</td>
-                        </tr>
-                        <tr>
-                            <td class="label">{{ trans('site.order-history.customer-reference') }}</td>
-                            <td class="value">{{ $customerReference }}</td>
                         </tr>
                     </table>
                 </td>
@@ -325,28 +315,6 @@
                 </tr>
             </tbody>
         </table>
-
-        <table class="receipt-totals">
-            <tr>
-                <td class="label">Netto</td>
-                <td class="value">{{ $netFormatted }}</td>
-            </tr>
-            <tr>
-                <td class="label">{{ trans('site.order-history.total-vat') }}</td>
-                <td class="value">{{ $vatFormatted }}</td>
-            </tr>
-            <tr class="emphasis">
-                <td class="label">{{ trans('site.order-history.total-to-pay') }}</td>
-                <td class="value">{{ $totalToPay }}</td>
-            </tr>
-        </table>
-
-        <div class="receipt-footer">
-            <div>{{ trans('site.order-history.fs-name') }}</div>
-            <div>{{ trans('site.order-history.fs-address1') }}</div>
-            <div>{{ trans('site.order-history.fs-address2') }}</div>
-            <div>{{ trans('site.order-history.fs-country') }} <span>{{ trans('site.order-history.organization') }}</span></div>
-        </div>
     </div>
 </div>
 </body>
