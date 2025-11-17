@@ -1044,8 +1044,14 @@ class LearnerController extends Controller
                 $assignmentDisabledLearners = $assignment->disabledLearners()->pluck('user_id')->toArray();
                 $package_id = $courseTaken->package->id;
                 $course = $courseTaken->package->course;
+                // assignment where user has manuscript but don't have any package for that assignment
+                // usually added on admin page
+                $assignmentsWithUserManuscript = $assignment->manuscripts()->where('user_id', Auth::user()->id)
+                    ->pluck('assignment_id')->toArray();
+
                 // check if the assignment is allowed on the learners package or there's no set package allowed
-                if ((! is_null($allowed_package) && in_array($package_id, $allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
+                if ((! is_null($allowed_package) && in_array($package_id, $allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)
+                    || in_array($assignment->id, $assignmentsWithUserManuscript)) {
                     if (! in_array($courseTaken->user_id, $assignmentDisabledLearners)) {
 
                         $assignmentManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
