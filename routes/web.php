@@ -677,6 +677,7 @@ Route::domain($admin)->group(function () {
         Route::get('/tests', [Backend\PageController::class, 'tests']);
         Route::get('head-editor/dashboard', [Backend\HeadEditorController::class, 'index'])->name('admin.head-editor-dashboard')->middleware('headEditor');
         Route::post('/update-expected-finish/{type}/{id}', [Backend\PageController::class, 'updateExpectedFinish'])->name('backend.update-expected-finish');
+        Route::get('/add-end-date-to-courses-taken', [Backend\PageController::class, 'updateCourseEndDatesFromPackage29']);
         Route::post('/self-publishing/feedback/{id}/approve', [Backend\HeadEditorController::class, 'approveSelfPublishingFeedback'])->name('head_editor.self-publishing-feedback.approve');
         Route::get('/svea-orders', [Backend\PageController::class, 'sveaOrders'])->name('admin.svea.orders');
         Route::post('/self-publishing-request/{id}/approve', [Backend\PageController::class, 'approveSelfPublishingRequest'])->name('admin.self-publishing-portal-request.approve');
