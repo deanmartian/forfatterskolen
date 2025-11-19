@@ -11,6 +11,7 @@ use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
 use App\CompetitionApplicant;
 use App\CopyEditingManuscript;
+use App\CronLog;
 use App\CorrectionManuscript;
 use App\Course;
 use App\CoursesTaken;
@@ -934,6 +935,73 @@ class PageController extends Controller
         $users->limit(50);
 
         return response()->json($users->get());
+    }
+
+    /**
+     * Copy the end_date from package 29 to every other course entry of the same learner that
+     * currently has no end_date.
+     */
+    public function updateCourseEndDatesFromPackage29(): JsonResponse
+    {
+        $packageId = 29;
+
+        $packageCourses = CoursesTaken::where('package_id', $packageId)
+            ->whereNotNull('end_date')
+            ->where('end_date', '!=', '0000-00-00')
+            ->orderBy('id', 'desc')
+            ->get(['id', 'user_id', 'end_date']);
+
+        $endDateByUser = $packageCourses->mapWithKeys(function (CoursesTaken $course) {
+            $rawEndDate = $course->getOriginal('end_date');
+
+            if (! $rawEndDate || $rawEndDate === '0000-00-00' || $rawEndDate === '0000-00-00 00:00:00') {
+                return [];
+            }
+
+            return [$course->user_id => Carbon::parse($rawEndDate)->toDateString()];
+        });
+
+        $usersProcessed = 0;
+        $coursesUpdated = 0;
+
+        CronLog::create(['activity' => 'Update course end date started']);
+
+        foreach ($endDateByUser as $userId => $endDate) {
+            if (! $endDate) {
+                continue;
+            }
+
+            $coursesMissingEndDate = CoursesTaken::where('user_id', $userId)
+                ->where(function ($query) {
+                    $query->whereNull('end_date')
+                        ->orWhere('end_date', '0000-00-00')
+                        ->orWhere('end_date', '0000-00-00 00:00:00');
+                })
+                ->get();
+
+            if ($coursesMissingEndDate->isEmpty()) {
+                continue;
+            }
+
+            foreach ($coursesMissingEndDate as $courseTaken) {
+                $courseTaken->end_date = $endDate;
+                $courseTaken->save();
+
+                CronLog::create(['activity' => 'Updated end date for course taken '.$courseTaken->id]);
+                $coursesUpdated++;
+            }
+
+            $usersProcessed++;
+        }
+
+        CronLog::create(['activity' => 'Update course end date ended']);
+
+        return response()->json([
+            'message' => 'Course end dates updated successfully.',
+            'package_id' => $packageId,
+            'users_processed' => $usersProcessed,
+            'courses_updated' => $coursesUpdated,
+        ]);
     }
 
     public function addCoachingTimeToCourseLearners($course_id)
