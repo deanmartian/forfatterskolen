@@ -14,6 +14,7 @@ use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\Course;
 use App\CoursesTaken;
+use App\CronLog;
 use App\CustomAction;
 use App\Exports\GenericExport;
 use App\FreeManuscript;
@@ -195,6 +196,71 @@ class PageController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function addEndDateToCoursesTaken(): JsonResponse
+    {
+        CronLog::create(['activity' => 'Adding end date to courses_taken']);
+
+        $coursesTaken = CoursesTaken::query()
+            ->where('package_id', 29)
+            ->whereNull('end_date')
+            ->whereNull('deleted_at')
+            ->get();
+
+        $updated = 0;
+
+        foreach ($coursesTaken as $courseTaken) {
+            $endDate = $this->resolveEndDateForCourseTaken($courseTaken);
+
+            if (! $endDate) {
+                continue;
+            }
+
+            $courseTaken->end_date = $endDate;
+            $courseTaken->save();
+
+            CronLog::create(['activity' => 'Added end_date to course taken id '.$courseTaken->id]);
+            $updated++;
+        }
+
+        CronLog::create(['activity' => 'Adding end date to courses_taken Finished']);
+
+        return response()->json([
+            'message' => 'Courses taken end_date update completed.',
+            'updated_records' => $updated,
+        ]);
+    }
+
+    protected function resolveEndDateForCourseTaken(CoursesTaken $courseTaken): ?string
+    {
+        $referenceCourse = CoursesTaken::withTrashed()
+            ->where('user_id', $courseTaken->user_id)
+            ->where('package_id', 29)
+            ->whereNotNull('end_date')
+            ->where('id', '!=', $courseTaken->id)
+            ->orderByDesc('end_date')
+            ->first();
+
+        if ($referenceCourse) {
+            return Carbon::parse($referenceCourse->getRawOriginal('end_date'))->format('Y-m-d');
+        }
+
+        $startedAt = $courseTaken->getRawOriginal('started_at');
+        if ($startedAt) {
+            return Carbon::parse($startedAt)
+                ->addYears($courseTaken->years ?? 1)
+                ->format('Y-m-d');
+        }
+
+        $startDate = $courseTaken->getRawOriginal('start_date');
+        if ($startDate) {
+            return Carbon::parse($startDate)
+                ->addYears($courseTaken->years ?? 1)
+                ->format('Y-m-d');
+        }
+
+        return null;
     }
 
     /**
