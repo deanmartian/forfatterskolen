@@ -947,11 +947,18 @@ class PageController extends Controller
 
         $packageCourses = CoursesTaken::where('package_id', $packageId)
             ->whereNotNull('end_date')
+            ->where('end_date', '!=', '0000-00-00')
             ->orderBy('id', 'desc')
             ->get(['id', 'user_id', 'end_date']);
 
         $endDateByUser = $packageCourses->mapWithKeys(function (CoursesTaken $course) {
-            return [$course->user_id => $course->getOriginal('end_date')];
+            $rawEndDate = $course->getOriginal('end_date');
+
+            if (! $rawEndDate || $rawEndDate === '0000-00-00' || $rawEndDate === '0000-00-00 00:00:00') {
+                return [];
+            }
+
+            return [$course->user_id => Carbon::parse($rawEndDate)->toDateString()];
         });
 
         $usersProcessed = 0;
@@ -965,7 +972,11 @@ class PageController extends Controller
             }
 
             $coursesMissingEndDate = CoursesTaken::where('user_id', $userId)
-                ->whereNull('end_date')
+                ->where(function ($query) {
+                    $query->whereNull('end_date')
+                        ->orWhere('end_date', '0000-00-00')
+                        ->orWhere('end_date', '0000-00-00 00:00:00');
+                })
                 ->get();
 
             if ($coursesMissingEndDate->isEmpty()) {
