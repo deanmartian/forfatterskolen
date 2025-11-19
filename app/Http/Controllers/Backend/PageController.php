@@ -11,6 +11,7 @@ use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
 use App\CompetitionApplicant;
 use App\CopyEditingManuscript;
+use App\CronLog;
 use App\CorrectionManuscript;
 use App\Course;
 use App\CoursesTaken;
@@ -956,20 +957,33 @@ class PageController extends Controller
         $usersProcessed = 0;
         $coursesUpdated = 0;
 
+        CronLog::create(['activity' => 'Update course end date started']);
+
         foreach ($endDateByUser as $userId => $endDate) {
             if (! $endDate) {
                 continue;
             }
 
-            $updated = CoursesTaken::where('user_id', $userId)
+            $coursesMissingEndDate = CoursesTaken::where('user_id', $userId)
                 ->whereNull('end_date')
-                ->update(['end_date' => $endDate]);
+                ->get();
 
-            if ($updated > 0) {
-                $usersProcessed++;
-                $coursesUpdated += $updated;
+            if ($coursesMissingEndDate->isEmpty()) {
+                continue;
             }
+
+            foreach ($coursesMissingEndDate as $courseTaken) {
+                $courseTaken->end_date = $endDate;
+                $courseTaken->save();
+
+                CronLog::create(['activity' => 'Updated end date for course taken '.$courseTaken->id]);
+                $coursesUpdated++;
+            }
+
+            $usersProcessed++;
         }
+
+        CronLog::create(['activity' => 'Update course end date ended']);
 
         return response()->json([
             'message' => 'Course end dates updated successfully.',
