@@ -202,26 +202,37 @@ class PageController extends Controller
     {
         CronLog::create(['activity' => 'Adding end date to courses_taken']);
 
-        $coursesTaken = CoursesTaken::query()
+        $coursesTakenByUser = CoursesTaken::query()
             ->where('package_id', 29)
-            ->whereNull('end_date')
             ->whereNull('deleted_at')
-            ->get();
+            ->where(function ($query) {
+                $query->whereNotNull('end_date')
+                    ->orWhereNotNull('started_at')
+                    ->orWhereNotNull('start_date');
+            })
+            ->get()
+            ->groupBy('user_id');
 
         $updated = 0;
 
-        foreach ($coursesTaken as $courseTaken) {
-            $endDate = $this->resolveEndDateForCourseTaken($courseTaken);
+        foreach ($coursesTakenByUser as $coursesTaken) {
+            $referenceCourse = $coursesTaken
+                ->sortByDesc(function (CoursesTaken $course) {
+                    return $course->getRawOriginal('end_date') ?? $course->getRawOriginal('started_at') ?? $course->getRawOriginal('start_date');
+                })
+                ->first();
+
+            if (! $referenceCourse) {
+                continue;
+            }
+
+            $endDate = $this->resolveEndDateForCourseTaken($referenceCourse);
 
             if (! $endDate) {
                 continue;
             }
 
-            $courseTaken->end_date = $endDate;
-            $courseTaken->save();
-
-            CronLog::create(['activity' => 'Added end_date to course taken id '.$courseTaken->id]);
-            $updated++;
+            $updated += $this->updateOtherCoursesTakenForUser($referenceCourse, $endDate);
         }
 
         CronLog::create(['activity' => 'Adding end date to courses_taken Finished']);
@@ -234,19 +245,9 @@ class PageController extends Controller
 
     protected function resolveEndDateForCourseTaken(CoursesTaken $courseTaken): ?string
     {
-        $referenceCourse = CoursesTaken::withTrashed()
-            ->where('user_id', $courseTaken->user_id)
-            ->where('package_id', 29)
-            ->whereNotNull('end_date')
-            ->where('id', '!=', $courseTaken->id)
-            ->orderByDesc('end_date')
-            ->first();
-
-        if ($referenceCourse) {
-            $endDate = Carbon::parse($referenceCourse->getRawOriginal('end_date'))->format('Y-m-d');
-            $this->updateOtherCoursesTakenForUser($courseTaken, $endDate);
-
-            return $endDate;
+        $endDate = $courseTaken->getRawOriginal('end_date');
+        if ($endDate) {
+            return Carbon::parse($endDate)->format('Y-m-d');
         }
 
         $startedAt = $courseTaken->getRawOriginal('started_at');
@@ -254,8 +255,9 @@ class PageController extends Controller
             $endDate = Carbon::parse($startedAt)
                 ->addYears($courseTaken->years ?? 1)
                 ->format('Y-m-d');
-
-            $this->updateOtherCoursesTakenForUser($courseTaken, $endDate);
+            $courseTaken->end_date = $endDate;
+            $courseTaken->save();
+            CronLog::create(['activity' => 'Added end_date to course taken id '.$courseTaken->id]);
 
             return $endDate;
         }
@@ -265,8 +267,9 @@ class PageController extends Controller
             $endDate = Carbon::parse($startDate)
                 ->addYears($courseTaken->years ?? 1)
                 ->format('Y-m-d');
-
-            $this->updateOtherCoursesTakenForUser($courseTaken, $endDate);
+            $courseTaken->end_date = $endDate;
+            $courseTaken->save();
+            CronLog::create(['activity' => 'Added end_date to course taken id '.$courseTaken->id]);
 
             return $endDate;
         }
@@ -274,15 +277,25 @@ class PageController extends Controller
         return null;
     }
 
-    protected function updateOtherCoursesTakenForUser(CoursesTaken $courseTaken, string $endDate): void
+    protected function updateOtherCoursesTakenForUser(CoursesTaken $courseTaken, string $endDate): int
     {
-        CoursesTaken::query()
+        $updated = 0;
+
+        $otherCourses = CoursesTaken::query()
             ->where('user_id', $courseTaken->user_id)
-            ->where('package_id', 29)
+            ->where('package_id', '!=', 29)
             ->whereNull('end_date')
             ->whereNull('deleted_at')
-            ->where('id', '!=', $courseTaken->id)
-            ->update(['end_date' => $endDate]);
+            ->get();
+
+        foreach ($otherCourses as $otherCourse) {
+            $otherCourse->end_date = $endDate;
+            $otherCourse->save();
+            CronLog::create(['activity' => 'Added end_date to course taken id '.$otherCourse->id]);
+            $updated++;
+        }
+
+        return $updated;
     }
 
     /**
