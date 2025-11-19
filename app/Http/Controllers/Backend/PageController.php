@@ -243,24 +243,46 @@ class PageController extends Controller
             ->first();
 
         if ($referenceCourse) {
-            return Carbon::parse($referenceCourse->getRawOriginal('end_date'))->format('Y-m-d');
+            $endDate = Carbon::parse($referenceCourse->getRawOriginal('end_date'))->format('Y-m-d');
+            $this->updateOtherCoursesTakenForUser($courseTaken, $endDate);
+
+            return $endDate;
         }
 
         $startedAt = $courseTaken->getRawOriginal('started_at');
         if ($startedAt) {
-            return Carbon::parse($startedAt)
+            $endDate = Carbon::parse($startedAt)
                 ->addYears($courseTaken->years ?? 1)
                 ->format('Y-m-d');
+
+            $this->updateOtherCoursesTakenForUser($courseTaken, $endDate);
+
+            return $endDate;
         }
 
         $startDate = $courseTaken->getRawOriginal('start_date');
         if ($startDate) {
-            return Carbon::parse($startDate)
+            $endDate = Carbon::parse($startDate)
                 ->addYears($courseTaken->years ?? 1)
                 ->format('Y-m-d');
+
+            $this->updateOtherCoursesTakenForUser($courseTaken, $endDate);
+
+            return $endDate;
         }
 
         return null;
+    }
+
+    protected function updateOtherCoursesTakenForUser(CoursesTaken $courseTaken, string $endDate): void
+    {
+        CoursesTaken::query()
+            ->where('user_id', $courseTaken->user_id)
+            ->where('package_id', 29)
+            ->whereNull('end_date')
+            ->whereNull('deleted_at')
+            ->where('id', '!=', $courseTaken->id)
+            ->update(['end_date' => $endDate]);
     }
 
     /**
