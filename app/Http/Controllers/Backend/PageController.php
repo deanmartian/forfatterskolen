@@ -936,6 +936,49 @@ class PageController extends Controller
         return response()->json($users->get());
     }
 
+    /**
+     * Copy the end_date from package 29 to every other course entry of the same learner that
+     * currently has no end_date.
+     */
+    public function updateCourseEndDatesFromPackage29(): JsonResponse
+    {
+        $packageId = 29;
+
+        $packageCourses = CoursesTaken::where('package_id', $packageId)
+            ->whereNotNull('end_date')
+            ->orderBy('id', 'desc')
+            ->get(['id', 'user_id', 'end_date']);
+
+        $endDateByUser = $packageCourses->mapWithKeys(function (CoursesTaken $course) {
+            return [$course->user_id => $course->getOriginal('end_date')];
+        });
+
+        $usersProcessed = 0;
+        $coursesUpdated = 0;
+
+        foreach ($endDateByUser as $userId => $endDate) {
+            if (! $endDate) {
+                continue;
+            }
+
+            $updated = CoursesTaken::where('user_id', $userId)
+                ->whereNull('end_date')
+                ->update(['end_date' => $endDate]);
+
+            if ($updated > 0) {
+                $usersProcessed++;
+                $coursesUpdated += $updated;
+            }
+        }
+
+        return response()->json([
+            'message' => 'Course end dates updated successfully.',
+            'package_id' => $packageId,
+            'users_processed' => $usersProcessed,
+            'courses_updated' => $coursesUpdated,
+        ]);
+    }
+
     public function addCoachingTimeToCourseLearners($course_id)
     {
 
