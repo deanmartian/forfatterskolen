@@ -99,16 +99,18 @@
                                     @endphp
                                     <tr class="align-top">
                                         <td class="font-weight-bold">{{$courseTaken->package->course->title}}</td>
-                                        <td class="course-details">
-                                            <div class="mb-2">
-                                                <a href="#viewPackageDescriptionModal" data-toggle="modal" class="viewPackageDescriptionBtn"
-                                                   data-description="{{ $courseTaken->package->description }}">
-                                                    {{ $courseTaken->package->variation }}
-                                                </a>
+                                        <td>
+                                            <div class="p-3 course-details">
+                                                <div class="mb-2">
+                                                    <a href="#viewPackageDescriptionModal" data-toggle="modal" class="viewPackageDescriptionBtn"
+                                                    data-description="{{ $courseTaken->package->description }}">
+                                                        {{ $courseTaken->package->variation }}
+                                                    </a>
+                                                </div>
+                                                <p class="text-muted small">
+                                                    {!! $courseTaken->package->description_with_check !!}
+                                                </p>
                                             </div>
-                                            <p class="text-muted small">
-                                                {!! $courseTaken->package->description_with_check !!}
-                                            </p>
                                         </td>
                                         <td>
                                             @if ($upgradeOptions->count())
