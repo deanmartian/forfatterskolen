@@ -1067,7 +1067,21 @@
             $('.invoice-submit-overlay').remove();
         });
 
-                $(".createInvoiceBtn").click(function() {
+        let createInvoiceReady = false;
+        const createInvoiceButtons = $(".createInvoiceBtn");
+
+        createInvoiceButtons.prop('disabled', true).addClass('disabled');
+
+        $(window).on('load', function () {
+                createInvoiceReady = true;
+                createInvoiceButtons.prop('disabled', false).removeClass('disabled');
+        });
+
+        $(".createInvoiceBtn").click(function() {
+                        if (!createInvoiceReady) {
+                                return;
+                        }
+
                         let action = $(this).data('action');
                         let modal = $("#createInvoiceModal");
                         let submitButton = modal.find('.submitInvoice');
