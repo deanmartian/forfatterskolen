@@ -102,10 +102,9 @@
                                         <td>
                                             <div class="p-3 course-details">
                                                 <div class="mb-2">
-                                                    <a href="#viewPackageDescriptionModal" data-toggle="modal" class="viewPackageDescriptionBtn"
-                                                    data-description="{{ $courseTaken->package->description }}">
+                                                    <span class="text-red font-weight-bold">
                                                         {{ $courseTaken->package->variation }}
-                                                    </a>
+                                                    </span>
                                                 </div>
                                                 <p class="text-muted small">
                                                     {!! $courseTaken->package->description_with_check !!}
