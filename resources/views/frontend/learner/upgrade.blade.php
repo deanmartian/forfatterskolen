@@ -7,6 +7,26 @@
 
 @section('styles')
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <style>
+        .course-details {
+            position: relative;
+        }
+
+        .course-details p {
+            padding-left: 25px;
+        }
+
+        .course-details i {
+            position: absolute;
+            left: 8px;
+            margin-top: 1px;
+            background-image: url(../images-new/icon/green-check.png);
+            background-size: 16px;
+            display: inline-block;
+            height: 16px;
+            width: 16px;
+        }
+    </style>
 @stop
 
 @section('heading')
@@ -79,21 +99,21 @@
                                     @endphp
                                     <tr class="align-top">
                                         <td class="font-weight-bold">{{$courseTaken->package->course->title}}</td>
-                                        <td>
+                                        <td class="course-details">
                                             <div class="mb-2">
                                                 <a href="#viewPackageDescriptionModal" data-toggle="modal" class="viewPackageDescriptionBtn"
                                                    data-description="{{ $courseTaken->package->description }}">
                                                     {{ $courseTaken->package->variation }}
                                                 </a>
                                             </div>
-                                            <div class="text-muted small">
-                                                {!! $courseTaken->package->description !!}
-                                            </div>
+                                            <p class="text-muted small">
+                                                {!! $courseTaken->package->description_with_check !!}
+                                            </p>
                                         </td>
                                         <td>
                                             @if ($upgradeOptions->count())
                                                 @foreach($upgradeOptions as $option)
-                                                    <div class="border rounded p-3 mb-3">
+                                                    <div class="border rounded p-3 mb-3 course-details">
                                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                                             <div>
                                                                 <div class="font-weight-bold">{{ $option['package']->variation }}</div>
@@ -108,9 +128,9 @@
                                                                 </a>
                                                             @endif
                                                         </div>
-                                                        <div class="text-muted small">
-                                                            {!! $option['package']->description !!}
-                                                        </div>
+                                                        <p class="text-muted small">
+                                                            {!! $option['package']->description_with_check !!}
+                                                        </p>
                                                     </div>
                                                 @endforeach
                                             @else
