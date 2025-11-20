@@ -1070,16 +1070,24 @@
         let createInvoiceReady = false;
         const createInvoiceButtons = $(".createInvoiceBtn");
 
-        createInvoiceButtons.prop('disabled', true).addClass('disabled');
+        createInvoiceButtons
+                .prop('disabled', true)
+                .addClass('disabled')
+                .css('pointer-events', 'none');
 
         $(window).on('load', function () {
                 createInvoiceReady = true;
-                createInvoiceButtons.prop('disabled', false).removeClass('disabled');
+                createInvoiceButtons
+                        .prop('disabled', false)
+                        .removeClass('disabled')
+                        .css('pointer-events', '');
         });
 
-        $(".createInvoiceBtn").click(function() {
+        $(".createInvoiceBtn").click(function(event) {
                         if (!createInvoiceReady) {
-                                return;
+                                event.preventDefault();
+                                event.stopImmediatePropagation();
+                                return false;
                         }
 
                         let action = $(this).data('action');
