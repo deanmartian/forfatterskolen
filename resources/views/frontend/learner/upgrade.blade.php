@@ -33,102 +33,88 @@
                             <tr>
                                 <th>{{ trans('site.front.course-text') }}</th>
                                 <th>{{ trans('site.learner.current-package-text') }}</th>
-                                <th>{{ trans('site.front.price') }}</th>
-                                <th></th>
+                                <th>{{ trans('site.learner.upgrade-to-text') }}</th>
                             </tr>
                             </thead>
                             <tbody>
                                 @foreach($coursesTaken as $key => $courseTaken)
                                     @php
                                         $currentCourseType = $courseTaken->package->course_type;
+                                        $upgradeOptions = collect($courseTaken->otherPackages ?? [])->map(function ($package) use ($courseTaken, $currentCourseType) {
+                                            $upgradePrice = 0;
+                                            $displayBtn = true;
+
+                                            if (in_array($package->course_type, [3, 2])) {
+                                                $upgradePrice = ($package->course_type == 3 && $currentCourseType == 2)
+                                                    ? $package->full_payment_standard_upgrade_price
+                                                    : $package->full_payment_upgrade_price;
+                                            }
+
+                                            $today = \Carbon\Carbon::today();
+                                            $disableUpgradeDate = \Carbon\Carbon::parse($package->disable_upgrade_price_date);
+                                            $orderDate = \Carbon\Carbon::parse($courseTaken->created_at);
+                                            $dateDiff = (int) round(\Carbon\Carbon::now()->diffInDays($orderDate, false));
+
+                                            if ($package->course->type == 'Single') {
+                                                $displayBtn = $dateDiff <= 14
+                                                    ? !($package->disable_upgrade_price_date
+                                                        && $package->disable_upgrade_price == 1
+                                                        && $today->gte($disableUpgradeDate))
+                                                        && !($package->disable_upgrade_price)
+                                                    : false;
+                                            } else {
+                                                $displayBtn = $package->disable_upgrade_price_date
+                                                    ? !($package->disable_upgrade_price == 1 || $today->gte($disableUpgradeDate))
+                                                    : !($package->disable_upgrade_price);
+                                            }
+
+                                            return [
+                                                'package' => $package,
+                                                'price' => $upgradePrice,
+                                                'can_display' => $displayBtn && $courseTaken->package->is_upgradeable,
+                                            ];
+                                        })->filter(function ($option) {
+                                            return $option['can_display'];
+                                        });
                                     @endphp
-                                    <tr>
-                                        <td> {{$courseTaken->package->course->title}}</td>
+                                    <tr class="align-top">
+                                        <td class="font-weight-bold">{{$courseTaken->package->course->title}}</td>
                                         <td>
-                                            <a href="#viewPackageDescriptionModal" data-toggle="modal" class="viewPackageDescriptionBtn"
-                                                data-description="{{ $courseTaken->package->description }}">
-                                                {{ $courseTaken->package->variation }}
-                                            </a>
+                                            <div class="mb-2">
+                                                <a href="#viewPackageDescriptionModal" data-toggle="modal" class="viewPackageDescriptionBtn"
+                                                   data-description="{{ $courseTaken->package->description }}">
+                                                    {{ $courseTaken->package->variation }}
+                                                </a>
+                                            </div>
+                                            <div class="text-muted small">
+                                                {!! $courseTaken->package->description !!}
+                                            </div>
                                         </td>
                                         <td>
-                                            @if (count($courseTaken->otherPackages))
-                                                @foreach($courseTaken->otherPackages as $package)
-                                                <?php
-                                                    $upgradePrice = 0;
-                                                    $displayBtn = true;
-    
-                                                    if (in_array($package->course_type, [3, 2])) {
-                                                        $upgradePrice = ($package->course_type == 3 && $currentCourseType == 2) 
-                                                            ? $package->full_payment_standard_upgrade_price 
-                                                            : $package->full_payment_upgrade_price;
-                                                    }
-    
-                                                    $today      = \Carbon\Carbon::today();
-                                                    $disableUpgradeDate = \Carbon\Carbon::parse($package->disable_upgrade_price_date);
-                                                    $orderDate =  \Carbon\Carbon::parse($courseTaken->created_at);
-                                                    //$dateDiff = $orderDate->diffInDays(\CarbonCarbon::now());
-                                                    $dateDiff = (int) round(\Carbon\Carbon::now()->diffInDays($orderDate, false));
-    
-                                                    if ($package->course->type == 'Single') {
-                                                        $displayBtn = $dateDiff <= 14
-                                                        ? !($package->disable_upgrade_price_date 
-                                                            && $package->disable_upgrade_price == 1 
-                                                            && $today->gte($disableUpgradeDate)) 
-                                                            && !($package->disable_upgrade_price)
-                                                        : false;
-                                                    } else { // group package
-                                                        $displayBtn = $package->disable_upgrade_price_date
-                                                        ? !($package->disable_upgrade_price == 1 || $today->gte($disableUpgradeDate))
-                                                        : !($package->disable_upgrade_price);
-                                                    }
-                                                ?>
-                                                    @if($displayBtn && $courseTaken->package->is_upgradeable)
-                                                        <span>{{ $package->variation }}:</span>
-                                                        {{ FrontendHelpers::currencyFormat($upgradePrice) }}
-                                                    @endif
+                                            @if ($upgradeOptions->count())
+                                                @foreach($upgradeOptions as $option)
+                                                    <div class="border rounded p-3 mb-3">
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <div>
+                                                                <div class="font-weight-bold">{{ $option['package']->variation }}</div>
+                                                                <div class="text-muted small">
+                                                                    {{ trans('site.front.price') }}: {{ FrontendHelpers::currencyFormat($option['price']) }}
+                                                                </div>
+                                                            </div>
+                                                            @if(!Auth::user()->isDisabled)
+                                                                <a href="{{ route('learner.get-upgrade-course', ['course_taken_id' => $courseTaken->id, 'package_id' => $option['package']->id]) }}"
+                                                                   class="btn btn-outline-primary">
+                                                                    {{ trans('site.learner.upgrade') }}
+                                                                </a>
+                                                            @endif
+                                                        </div>
+                                                        <div class="text-muted small">
+                                                            {!! $option['package']->description !!}
+                                                        </div>
+                                                    </div>
                                                 @endforeach
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if (count($courseTaken->otherPackages))
-                                                @foreach($courseTaken->otherPackages as $package)
-                                                <?php
-                                                    $upgradePrice = 0;
-                                                    $displayBtn = true;
-    
-                                                    if (in_array($package->course_type, [3, 2])) {
-                                                        $upgradePrice = ($package->course_type == 3 && $currentCourseType == 2) 
-                                                            ? $package->full_payment_standard_upgrade_price 
-                                                            : $package->full_payment_upgrade_price;
-                                                    }
-    
-                                                    $today      = \Carbon\Carbon::today();
-                                                    $disableUpgradeDate = \Carbon\Carbon::parse($package->disable_upgrade_price_date);
-                                                    $orderDate =  \Carbon\Carbon::parse($courseTaken->created_at);
-                                                    //$dateDiff = $orderDate->diffInDays(\Carbon\Carbon::now());
-                                                    $dateDiff = (int) round(\Carbon\Carbon::now()->diffInDays($orderDate, false));
-    
-                                                    if ($package->course->type == 'Single') {
-                                                        $displayBtn = $dateDiff <= 14
-                                                        ? !($package->disable_upgrade_price_date 
-                                                            && $package->disable_upgrade_price == 1 
-                                                            && $today->gte($disableUpgradeDate)) 
-                                                            && !($package->disable_upgrade_price)
-                                                        : false;
-                                                    } else { // group package
-                                                        $displayBtn = $package->disable_upgrade_price_date
-                                                        ? !($package->disable_upgrade_price == 1 || $today->gte($disableUpgradeDate))
-                                                        : !($package->disable_upgrade_price);
-                                                    }
-                                                ?>
-                                                    @if($displayBtn && $courseTaken->package->is_upgradeable && !Auth::user()->isDisabled)
-                                                        <a href="{{ route('learner.get-upgrade-course',
-                                                            ['course_taken_id' => $courseTaken->id, 'package_id' => $package->id]) }}"
-                                                            class="btn btn-outline-primary">
-                                                            {{ trans('site.learner.upgrade') }}
-                                                        </a> 
-                                                    @endif
-                                                @endforeach
+                                            @else
+                                                <span class="text-muted">{{ trans('site.learner.no-available-upgrades') }}</span>
                                             @endif
                                         </td>
                                     </tr>
