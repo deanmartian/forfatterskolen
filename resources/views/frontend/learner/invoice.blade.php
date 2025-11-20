@@ -313,13 +313,14 @@
 														<td>{{ $order->total_formatted }}</td>
 														<td>
 															@if ($order->package->course->payment_plan_ids)
-																<button class="btn btn-success btn-xs createInvoiceBtn" data-toggle="modal"
-																	data-target="#createInvoiceModal"
-																	data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
-																	data-plan-id="{{ optional($order->paymentPlan)->id }}"
-																	data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'>
-																	+ {{ trans('site.create-invoice') }}
-																</button>
+                                                                                                              <button class="btn btn-success btn-xs createInvoiceBtn disabled" data-toggle="modal"
+                                                                                                              data-target="#createInvoiceModal"
+                                                                                                              data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
+                                                                                                              data-plan-id="{{ optional($order->paymentPlan)->id }}"
+                                                                                                              data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'
+                                                                                                              disabled style="pointer-events: none;">
+                                                                                                                      + {{ trans('site.create-invoice') }}
+                                                                                                             </button>
 															@endif
 														</td>
 													</tr>
