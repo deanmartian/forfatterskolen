@@ -1047,6 +1047,7 @@ Route::domain($admin)->group(function () {
         Route::post('/admin-status', [Backend\AdminController::class, 'adminStatus'])->name('admin.admin.status');
         Route::post('/admin/type-change', [Backend\AdminController::class, 'adminTypeChange']);
         Route::get('/admin/clear/cache', [Backend\AdminController::class, 'clearCache'])->name('admin.clear.cache');
+        Route::get('/admin/{id}}/calendar', [Backend\AdminController::class, 'editorCalendar'])->name('admin.admin.calendar');
         Route::resource('/admin', Backend\AdminController::class, [
             'names' => [
                 'index' => 'admin.admin.index',

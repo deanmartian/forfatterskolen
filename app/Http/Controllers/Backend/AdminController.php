@@ -313,6 +313,12 @@ class AdminController extends Controller
         ]);
     }
 
+    public function editorCalendar($user_id)
+    {
+        $user = User::find($user_id);
+        return view('backend.admin.calendar');
+    }
+
     public function yearlyCalendar(): View
     {
         $editor = User::where(function ($query) {
