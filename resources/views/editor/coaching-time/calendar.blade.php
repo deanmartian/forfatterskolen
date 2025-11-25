@@ -81,13 +81,22 @@
                 let diffMinutes = (adjustedEnd - start) / 60000;
 
                 if (diffMinutes === 30) {
-                    const makeHour = confirm(
-                        `You selected a 30 min slot. Click OK to extend it to 1 hour, or Cancel to keep 30 minutes.\n\n${start.toLocaleString('no-NO', fmt)}`
-                    );
+                    const hourEnd = new Date(start.getTime() + 60 * 60000);
 
-                    if (makeHour) {
-                        adjustedEnd = new Date(start.getTime() + 60 * 60000);
-                        diffMinutes = 60;
+                    // Only offer 60 min if the extra 30 min block is free
+                    const hasOverlap = calendar.getEvents().some(ev => {
+                        return ev.start < hourEnd && ev.end > end;
+                    });
+
+                    if (!hasOverlap) {
+                        const makeHour = confirm(
+                            `You selected a 30 min slot. Click OK to extend it to 1 hour, or Cancel to keep 30 minutes.\n\n${start.toLocaleString('no-NO', fmt)}`
+                        );
+
+                        if (makeHour) {
+                            adjustedEnd = hourEnd;
+                            diffMinutes = 60;
+                        }
                     }
                 }
 
