@@ -104,7 +104,8 @@
                 };
 
                 let adjustedEnd = new Date(end);
-                let diffMinutes = (adjustedEnd - start) / 60000;
+                // Guard against floating-point precision issues by rounding to the nearest minute
+                let diffMinutes = Math.round((adjustedEnd - start) / 60000);
                 const hourEnd = new Date(start.getTime() + 60 * 60000);
 
                 // Offer a single confirmation with a built-in toggle to extend to 60 minutes
