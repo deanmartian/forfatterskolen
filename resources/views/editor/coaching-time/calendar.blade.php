@@ -105,15 +105,10 @@
                     return;
                 }
 
-                const toLocalISOString = (date) => {
-                    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-                    return local.toISOString().slice(0, 19);
-                };
-
                 fetch("{{ route('editor.coaching-time.time-slots.store') }}", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
-                    body: JSON.stringify({ start: toLocalISOString(start), end: toLocalISOString(adjustedEnd) })
+                    body: JSON.stringify({ start: start.toISOString(), end: adjustedEnd.toISOString() })
                 })
                 .then(r => r.json())
                 .then(data => {
