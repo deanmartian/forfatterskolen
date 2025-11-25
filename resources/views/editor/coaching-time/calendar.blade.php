@@ -43,6 +43,31 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="slotConfirmModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Create time slot</h4>
+            </div>
+            <div class="modal-body">
+                <p><strong>Time:</strong> <span id="slotConfirmRange"></span></p>
+                <div class="checkbox" id="slotConfirmExtendWrap">
+                    <label>
+                        <input type="checkbox" id="slotConfirmExtend">
+                        Make this a 1 hour slot
+                    </label>
+                    <div id="slotConfirmExtendNote" style="font-size: 12px; color: #777;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="slotConfirmCancel" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="slotConfirmSubmit">Create slot</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -80,29 +105,10 @@
 
                 let adjustedEnd = new Date(end);
                 let diffMinutes = (adjustedEnd - start) / 60000;
+                const hourEnd = new Date(start.getTime() + 60 * 60000);
 
-                if (diffMinutes === 30) {
-                    const hourEnd = new Date(start.getTime() + 60 * 60000);
-
-                    // Only offer 60 min if the extra 30 min block is free
-                    const hasOverlap = calendar.getEvents().some(ev => {
-                        return ev.start < hourEnd && ev.end > end;
-                    });
-
-                    if (!hasOverlap) {
-                        const makeHour = confirm(
-                            `You selected a 30 min slot. Click OK to extend it to 1 hour, or Cancel to keep 30 minutes.\n\n${start.toLocaleString('no-NO', fmt)}`
-                        );
-
-                        if (makeHour) {
-                            adjustedEnd = hourEnd;
-                            diffMinutes = 60;
-                        }
-                    }
-                }
-
-                const startTxt = start.toLocaleString('no-NO', fmt);
-                const endTxt   = adjustedEnd.toLocaleString('no-NO', fmt);
+                // Offer a single confirmation with a built-in toggle to extend to 60 minutes
+                const canExtend = diffMinutes === 30 && !calendar.getEvents().some(ev => ev.start < hourEnd && ev.end > end);
 
                 if (![30, 60].includes(diffMinutes)) {
                     alert("Please select exactly 30 minutes or 1 hour.");
@@ -110,23 +116,35 @@
                     return;
                 }
 
-                if (!confirm(`Create a ${diffMinutes} min slot:\n\n${startTxt} → ${endTxt}`)) {
-                    calendar.unselect();       // <- user clicked Cancel: remove highlighted selection
-                    return;
-                }
+                const startTxt = start.toLocaleString('no-NO', fmt);
+                const endTxt   = adjustedEnd.toLocaleString('no-NO', fmt);
+                const hourEndTxt = hourEnd.toLocaleString('no-NO', fmt);
 
-                fetch("{{ route('editor.coaching-time.time-slots.store') }}", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
-                    body: JSON.stringify({ start: start.toISOString(), end: adjustedEnd.toISOString() })
-                })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.success) {
-                        calendar.refetchEvents();
-                        toastr.success('Your time slot was successfully stored.', "Success");
-                    }
-                });
+                showSlotConfirmModal({ startTxt, endTxt, hourEndTxt, canExtend })
+                    .then(({ confirmed, extend }) => {
+                        if (!confirmed) {
+                            calendar.unselect();       // <- user canceled in the modal
+                            return;
+                        }
+
+                        if (extend) {
+                            adjustedEnd = hourEnd;
+                            diffMinutes = 60;
+                        }
+
+                        fetch("{{ route('editor.coaching-time.time-slots.store') }}", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                            body: JSON.stringify({ start: start.toISOString(), end: adjustedEnd.toISOString() })
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                calendar.refetchEvents();
+                                toastr.success('Your time slot was successfully stored.', "Success");
+                            }
+                        });
+                    });
             },
 
             eventContent: function(arg) {
@@ -225,6 +243,47 @@
             document.getElementById('slotHelpsWith').textContent = event.extendedProps.helps_with || '';
 
             $('#slotDetailsModal').modal('show');
+        }
+
+        function showSlotConfirmModal({ startTxt, endTxt, hourEndTxt, canExtend }) {
+            return new Promise(resolve => {
+                let resolved = false;
+                let modal = $('#slotConfirmModal');
+                let extendCheckbox = $('#slotConfirmExtend');
+                let note = $('#slotConfirmExtendNote');
+
+                $('#slotConfirmRange').text(`${startTxt} → ${endTxt}`);
+
+                extendCheckbox.prop('checked', canExtend);
+                extendCheckbox.prop('disabled', !canExtend);
+                $('#slotConfirmExtendWrap').toggleClass('disabled', !canExtend);
+                note.text(canExtend ? `Check to extend to ${hourEndTxt} (if available).` : 'Cannot extend to 1 hour because the next 30 minutes are unavailable.');
+
+                function finish(result) {
+                    if (resolved) return;
+                    resolved = true;
+                    cleanup();
+                    modal.modal('hide');
+                    resolve(result);
+                }
+
+                function cleanup() {
+                    modal.off('hidden.bs.modal', onCancel);
+                    $('#slotConfirmSubmit').off('click', onSubmit);
+                }
+
+                function onCancel() {
+                    finish({ confirmed: false, extend: false });
+                }
+
+                function onSubmit() {
+                    finish({ confirmed: true, extend: canExtend && extendCheckbox.is(':checked') });
+                }
+
+                $('#slotConfirmSubmit').one('click', onSubmit);
+                modal.one('hidden.bs.modal', onCancel);
+                modal.modal('show');
+            });
         }
 
         calendar.render();
