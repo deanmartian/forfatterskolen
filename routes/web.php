@@ -1047,7 +1047,12 @@ Route::domain($admin)->group(function () {
         Route::post('/admin-status', [Backend\AdminController::class, 'adminStatus'])->name('admin.admin.status');
         Route::post('/admin/type-change', [Backend\AdminController::class, 'adminTypeChange']);
         Route::get('/admin/clear/cache', [Backend\AdminController::class, 'clearCache'])->name('admin.clear.cache');
-        Route::get('/admin/{id}}/calendar', [Backend\AdminController::class, 'editorCalendar'])->name('admin.admin.calendar');
+        Route::prefix('/admin/{user}/calendar')->name('admin.admin.calendar.')->group(function () {
+            Route::get('/', [Backend\AdminController::class, 'editorCalendar'])->name('index');
+            Route::get('/time-slots', [Backend\AdminController::class, 'fetchEditorTimeSlots'])->name('time-slots.fetch');
+            Route::post('/time-slots', [Backend\AdminController::class, 'storeEditorTimeSlot'])->name('time-slots.store');
+            Route::delete('/time-slots/{slot}', [Backend\AdminController::class, 'destroyEditorTimeSlot'])->name('time-slots.destroy');
+        });
         Route::resource('/admin', Backend\AdminController::class, [
             'names' => [
                 'index' => 'admin.admin.index',
