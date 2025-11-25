@@ -254,7 +254,7 @@
 
                 $('#slotConfirmRange').text(`${startTxt} → ${endTxt}`);
 
-                extendCheckbox.prop('checked', canExtend);
+                extendCheckbox.prop('checked', false);
                 extendCheckbox.prop('disabled', !canExtend);
                 $('#slotConfirmExtendWrap').toggleClass('disabled', !canExtend);
                 note.text(canExtend ? `Check to extend to ${hourEndTxt} (if available).` : 'Cannot extend to 1 hour because the next 30 minutes are unavailable.');
