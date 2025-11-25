@@ -56,7 +56,8 @@
             initialView: 'timeGridWeek',
             timeZone: 'local', // 👈 force local time
             selectable: true,
-            selectMirror: true,
+            // Use the default highlight (no mirror event) to avoid overlapping text when selecting near existing events
+            selectMirror: false,
             allDaySlot: false,
             slotMinTime: "08:00:00",
             slotMaxTime: "20:00:00",
