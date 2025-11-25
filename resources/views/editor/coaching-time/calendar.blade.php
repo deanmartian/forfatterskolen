@@ -162,14 +162,15 @@
                 // container
                 let wrapper = document.createElement('div');
                 wrapper.style.display = "flex";
+                wrapper.style.alignItems = "center";
                 wrapper.style.justifyContent = "space-between";
+                wrapper.style.gap = "8px";
+                wrapper.style.fontSize = "12px";
+                wrapper.style.lineHeight = "1.2";
 
-                // left side (time + duration stacked)
-                let left = document.createElement('div');
-                left.innerHTML = `
-                    <div>${startTxt} – ${endTxt}</div>
-                    <div style="font-size: 12px;">${duration}min</div>
-                `;
+                // single-line label to avoid overflowing small (30min) slots
+                let left = document.createElement('span');
+                left.textContent = `${startTxt} – ${endTxt} (${duration}min)`;
 
                 wrapper.appendChild(left);
 
@@ -193,9 +194,8 @@
                     closeBtn.style.color = 'white';
                     closeBtn.style.fontWeight = 'bold';
 
-                    closeBtn.style.fontSize = '20px';
+                    closeBtn.style.fontSize = '16px';
                     closeBtn.style.lineHeight = '1';
-                    closeBtn.style.marginLeft = '10px';
                     closeBtn.style.userSelect = 'none';
 
                     closeBtn.title = 'Delete slot';
