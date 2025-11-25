@@ -76,10 +76,24 @@
                     minute:'2-digit',
                     hour12: false
                 };
-                const startTxt = start.toLocaleString('no-NO', fmt);
-                const endTxt   = end.toLocaleString('no-NO', fmt);
 
-                const diffMinutes = (end - start) / 60000;
+                let adjustedEnd = new Date(end);
+                let diffMinutes = (adjustedEnd - start) / 60000;
+
+                if (diffMinutes === 30) {
+                    const makeHour = confirm(
+                        `You selected a 30 min slot. Click OK to extend it to 1 hour, or Cancel to keep 30 minutes.\n\n${start.toLocaleString('no-NO', fmt)}`
+                    );
+
+                    if (makeHour) {
+                        adjustedEnd = new Date(start.getTime() + 60 * 60000);
+                        diffMinutes = 60;
+                    }
+                }
+
+                const startTxt = start.toLocaleString('no-NO', fmt);
+                const endTxt   = adjustedEnd.toLocaleString('no-NO', fmt);
+
                 if (![30, 60].includes(diffMinutes)) {
                     alert("Please select exactly 30 minutes or 1 hour.");
                     calendar.unselect();       // <- clear selection on invalid length
@@ -91,10 +105,15 @@
                     return;
                 }
 
+                const toLocalISOString = (date) => {
+                    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+                    return local.toISOString().slice(0, 19);
+                };
+
                 fetch("{{ route('editor.coaching-time.time-slots.store') }}", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
-                    body: JSON.stringify({ start: info.startStr, end: info.endStr })
+                    body: JSON.stringify({ start: toLocalISOString(start), end: toLocalISOString(adjustedEnd) })
                 })
                 .then(r => r.json())
                 .then(data => {
