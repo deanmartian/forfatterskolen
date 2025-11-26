@@ -204,17 +204,18 @@
                         e.stopPropagation();
 
                         if (confirm(`Delete this slot?\n${startTxt} – ${endTxt}`)) {
-                        fetch("{{ route('admin.admin.calendar.time-slots.destroy', [$user->id, 'slot' => '']) }}/" + arg.event.id, {
-                            method: "DELETE",
-                            headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" }
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                arg.event.remove();
-                                toastr.success('Your time slot was successfully deleted.', "Success");
-                            }
-                        });
+                            const destroyUrl = "{{ route('admin.admin.calendar.time-slots.destroy', ['user' => $user->id, 'slot' => ':slotId']) }}".replace(':slotId', arg.event.id);
+                            fetch(destroyUrl, {
+                                method: "DELETE",
+                                headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" }
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    arg.event.remove();
+                                    toastr.success('Your time slot was successfully deleted.', "Success");
+                                }
+                            });
                         }
                     };
 
