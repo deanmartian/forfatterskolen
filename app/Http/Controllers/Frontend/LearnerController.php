@@ -1735,10 +1735,12 @@ class LearnerController extends Controller
         $price = ($order->price - $order->discount) * 100;
         $dueDate = date('Y-m-d');
 
-        // always split the invoice
-        $request->merge([
-            'split_invoice' => 1
-        ]);
+        if ($paymentPlan->division > 1) {
+            // always split the invoice
+            $request->merge([
+                'split_invoice' => 1
+            ]);
+        }
 
         if (isset($request->split_invoice) && $request->split_invoice) {
             $division = $divisor * 100; // multiply the split count to get the correct value
