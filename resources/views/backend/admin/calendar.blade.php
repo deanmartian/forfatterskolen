@@ -12,7 +12,7 @@
 @section('content')
 <div class="container-fluid dashboard-left">
     <div class="panel panel-default" style="padding: 10px">
-        <a href="{{ route('admin.admin.show', $user->id) }}" class="btn btn-default margin-bottom">
+        <a href="{{ route('admin.admin.index') }}" class="btn btn-default margin-bottom">
             <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
         </a>
 
