@@ -924,13 +924,29 @@ class ShopManuscriptController extends Controller
     public function test_manuscript(Request $request, ShopManuscriptService $shopManuscriptService)/* : RedirectResponse */
     {
         $validator = FacadeValidator::make($request->all(), [
-            'manuscript' => ['required', 'file', 'mimes:pdf,doc,docx,odt'],
+            'manuscript' => [
+                'required',
+                'file',
+                // allow normal types + your server's "fallback" type
+                'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,application/octet-stream',
+            ],
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
+        }
+
+        // extra safety: enforce extension ourselves
+        if ($request->hasFile('manuscript')) {
+            $ext = strtolower($request->file('manuscript')->getClientOriginalExtension());
+
+            if (! in_array($ext, ['pdf', 'doc', 'docx', 'odt'])) {
+                return redirect()->back()
+                    ->withErrors(['manuscript' => 'Invalid file extension (only pdf, doc, docx, odt are allowed).'])
+                    ->withInput();
+            }
         }
 
         $uploadedManuscript = null;

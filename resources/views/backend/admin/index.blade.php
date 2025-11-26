@@ -532,7 +532,7 @@
                                                                                         <a href="{{ route('admin.admin.calendar.index', $admin->id) }}" class="btn btn-success btn-xs">
 												<i class="fa fa-calendar"></i>
 											</a>
-										@endif
+										@endif --}}
 										
 										<button class="btn btn-info btn-xs editAdminAccessPageBtn" data-action="{{ route('admin.admin.page-access', $admin->id) }}" data-toggle="modal" data-target="#editAdminAccessPageModal" data-fields="{{ json_encode($admin) }}"
 												data-pages="{{ json_encode($admin->pageAccess) }}"><i class="fa fa-clipboard"></i></button>
