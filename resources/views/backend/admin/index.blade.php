@@ -529,7 +529,7 @@
 											   data-id="{{$admin->id}}" data-size="mini" @if($admin->is_active) {{ 'checked' }} @endif>
 										
 										@if ($admin->role == 3 || $admin->admin_with_editor_access)
-											<a href="{{ route('admin.admin.calendar', $admin->id) }}" class="btn btn-success btn-xs">
+                                                                                        <a href="{{ route('admin.admin.calendar.index', $admin->id) }}" class="btn btn-success btn-xs">
 												<i class="fa fa-calendar"></i>
 											</a>
 										@endif
