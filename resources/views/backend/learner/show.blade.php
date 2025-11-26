@@ -1014,47 +1014,48 @@
 					        $assignments = [];
 					        $addOns = $learner->assignmentAddOns->pluck('assignment_id')->toArray();
 					        foreach( $learner->coursesTaken()->withTrashed()->get() as $courseTaken ) :
-					            foreach( $courseTaken->package->course->assignments as $assignment ) :
-                            		$allowed_package = json_decode($assignment->allowed_package);
-                            		$package_id = $courseTaken->package->id;
-                            		$course = $courseTaken->package->course;
+                                                    foreach( $courseTaken->package->course->assignments as $assignment ) :
+                                        $allowed_package = json_decode($assignment->allowed_package);
+                                        $package_id = $courseTaken->package->id;
+                                        $course = $courseTaken->package->course;
+                                        $submissionDate = $assignmentSubmissionDates[$assignment->id] ?? $assignment->submission_date;
 
-                            		$manuscript = $assignment->manuscripts->where('user_id', $learner->id)->first();
-									if ($manuscript) {
-										$assignments[] = $assignment;
-									} else {
-										// check if the assignment is allowed on the learners package or there's no set package allowed
-										if ((!is_null($allowed_package) && in_array($package_id,$allowed_package))
-							|| is_null($allowed_package) || in_array($assignment->id, $addOns)) {
-											// added the condition because of the update for submission date
-											// the original is the else
-											if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
-												$assignments[] = $assignment;
-												/*
-												disable this to always display assignment even if it's already finished
-												if ($course->type == 'Single' && $assignment->submission_date == '365') {
-													if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(\Carbon\Carbon::now())) {
-														$assignments[] = $assignment;
-													}
-												} else {
-													if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)->gt(\Carbon\Carbon::now())) {
-														$assignments[] = $assignment;
-													}
-												} */
-											} else {
-												if ($assignment->course_id === 17) {
-													if (\Carbon\Carbon::parse($assignment->submission_date)->greaterThan(\Carbon\Carbon::now()->subMonths(3))) {
-														$assignments[] = $assignment;
-													}
-												} else {
-													$assignments[] = $assignment;
-												}
-												/*
-												disable this to always display assignment even if it's already finished
-												if (\Carbon\Carbon::parse($assignment->submission_date)->gt(\Carbon\Carbon::now())) {
-													$assignments[] = $assignment;
-												} */
-											}
+                                        $manuscript = $assignment->manuscripts->where('user_id', $learner->id)->first();
+                                                                        if ($manuscript) {
+                                                                                $assignments[] = $assignment;
+                                                                        } else {
+                                                                                // check if the assignment is allowed on the learners package or there's no set package allowed
+                                                                                if ((!is_null($allowed_package) && in_array($package_id,$allowed_package))
+                                                        || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
+                                                                                        // added the condition because of the update for submission date
+                                                                                        // the original is the else
+                                                                                        if (!AdminHelpers::isDateWithFormat('M d, Y h:i A', $submissionDate)) {
+                                                                                                $assignments[] = $assignment;
+                                                                                                /*
+                                                                                                disable this to always display assignment even if it's already finished
+                                                                                                if ($course->type == 'Single' && $submissionDate == '365') {
+                                                                                                        if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(\Carbon\Carbon::now())) {
+                                                                                                                $assignments[] = $assignment;
+                                                                                                        }
+                                                                                                } else {
+                                                                                                        if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($submissionDate)->gt(\Carbon\Carbon::now())) {
+                                                                                                                $assignments[] = $assignment;
+                                                                                                        }
+                                                                                                } */
+                                                                                        } else {
+                                                                                                if ($assignment->course_id === 17) {
+                                                                                                        if (\Carbon\Carbon::parse($submissionDate)->greaterThan(\Carbon\Carbon::now()->subMonths(3))) {
+                                                                                                                $assignments[] = $assignment;
+                                                                                                        }
+                                                                                                } else {
+                                                                                                        $assignments[] = $assignment;
+                                                                                                }
+                                                                                                /*
+                                                                                                disable this to always display assignment even if it's already finished
+                                                                                                if (\Carbon\Carbon::parse($submissionDate)->gt(\Carbon\Carbon::now())) {
+                                                                                                        $assignments[] = $assignment;
+                                                                                                } */
+                                                                                        }
 										}
 									}
 
@@ -1062,11 +1063,12 @@
 					        endforeach;
 					        ?>
 							@foreach($assignments as $assignment)
-								<?php
-								$manuscript = $assignment->manuscripts->where('user_id', $learner->id)->first();
-								$assignmentCourse = $assignment->course;
+                                                                <?php
+                                                                $manuscript = $assignment->manuscripts->where('user_id', $learner->id)->first();
+                                                                $assignmentCourse = $assignment->course;
+                                                                $submissionDate = $assignmentSubmissionDates[$assignment->id] ?? $assignment->submission_date;
 
-								?>
+                                                                ?>
 								{{--@if( $manuscript )--}}
 								<?php $extension = $manuscript ? explode('.', basename($manuscript->filename)) : ''; ?>
 								<tr>
@@ -1128,11 +1130,22 @@
 											</a>
 										@endif
 									</td>
-									<td>
-										<a href="{{ route('admin.course.show', $assignment->course->id) }}">
-											{{ $assignment->course->title }}
-										</a>
-									</td>
+                                                                        <td>
+                                                                                <a href="{{ route('admin.course.show', $assignment->course->id) }}">
+                                                                                        {{ $assignment->course->title }}
+                                                                                </a>
+                                                                                @if($assignment->parent !== 'users')
+                                                                                        <button class="btn btn-link btn-xs editSubmissionDateBtn"
+                                                                                                        data-toggle="modal"
+                                                                                                        data-target="#editSubmissionDateModal"
+                                                                                                        data-action="{{ route('admin.learner.assignment.update-submission-date', [$learner->id, $assignment->id]) }}"
+                                                                                                        data-submission_date="{{ AdminHelpers::isDateWithFormat('M d, Y h:i A', $submissionDate)
+                                                                                                                ? strftime('%Y-%m-%dT%H:%M:%S', strtotime($submissionDate))
+                                                                                                                : null }}">
+                                                                                                Edit submission date
+                                                                                        </button>
+                                                                                @endif
+                                                                        </td>
 									<td>
 										@if ($manuscript)
 											{{ $manuscript->words }}

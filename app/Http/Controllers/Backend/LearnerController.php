@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Address;
 use App\Assignment;
 use App\AssignmentAddon;
+use App\AssignmentLearnerSubmissionDate;
 use App\AssignmentGroupLearner;
 use App\AssignmentManuscript;
 use App\AssignmentTemplate;
@@ -249,10 +250,13 @@ class LearnerController extends Controller
         $bookSale = new UserBookSale;
         $bookSaleTypes = $bookSale->saleTypes();
         $tasks = $learner->tasks()->get();
+        $assignmentSubmissionDates = AssignmentLearnerSubmissionDate::where('user_id', $learner->id)
+            ->pluck('submission_date', 'assignment_id');
 
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList',
-            'timeRegisters', 'projects', 'certificates', 'projects', 'bookSaleTypes', 'tasks'));
+            'timeRegisters', 'projects', 'certificates', 'projects', 'bookSaleTypes', 'tasks',
+            'assignmentSubmissionDates'));
     }
 
     public function update($id, Request $request)
@@ -2356,6 +2360,42 @@ class LearnerController extends Controller
         $editors = AdminHelpers::editorList();
 
         return view('backend.learner.assignment', compact('assignment', 'learner', 'editors', 'manuscript'));
+    }
+
+    public function updateAssignmentSubmissionDate($learner_id, $assignment_id, Request $request): RedirectResponse
+    {
+        $learner = User::find($learner_id);
+        $assignment = Assignment::find($assignment_id);
+
+        if (! $learner || ! $assignment) {
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Unable to update submission date.'),
+                'alert_type' => 'danger',
+                'not-former-courses' => true,
+            ]);
+        }
+
+        if ($assignment->parent === 'users') {
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Submission date can only be updated for course assignments.'),
+                'alert_type' => 'danger',
+                'not-former-courses' => true,
+            ]);
+        }
+
+        $learnerAssignmentSubmissionDate = AssignmentLearnerSubmissionDate::firstOrNew([
+            'assignment_id' => $assignment_id,
+            'user_id' => $learner_id,
+        ]);
+
+        $learnerAssignmentSubmissionDate->submission_date = $request->submission_date;
+        $learnerAssignmentSubmissionDate->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Submission date updated for the selected learner.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true,
+        ]);
     }
 
     /**
