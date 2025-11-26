@@ -1132,6 +1132,44 @@
 										<a href="{{ route('admin.course.show', $assignment->course->id) }}">
 											{{ $assignment->course->title }}
 										</a>
+
+										@php
+											$hasOverride    = isset($assignmentSubmissionDates[$assignment->id]);
+											$submissionDate = $hasOverride
+												? $assignmentSubmissionDates[$assignment->id]        // "2025-12-16T12:00"
+												: $assignment->submission_date;                      // "Nov 11, 2025 11:59 PM"
+
+											// value for data-submission_date (HTML datetime-local: Y-m-d\TH:i:s)
+											if ($hasOverride) {
+												// already in Y-m-d\TH:i, just add seconds
+												$dataSubmission = (strlen($submissionDate) === 16)
+													? $submissionDate . ':00'
+													: $submissionDate;
+											} else {
+												// convert pretty string to Y-m-d\TH:i:s
+												$dataSubmission = date('Y-m-d\TH:i:s', strtotime($submissionDate));
+											}
+
+											$label = $hasOverride
+												? FrontendHelpers::formatToYMDtoPrettyDate($submissionDate)
+												: 'Edit submission date';
+										@endphp
+
+										<br>
+
+										@if ($hasOverride)
+											{{ trans('site.submission-date') }}:<br>
+										@endif
+
+										<a href="#"
+											class="editSubmissionDateBtn"
+											data-toggle="modal"
+											data-target="#editSubmissionDateModal"
+											data-action="{{ route('admin.learner.assignment.update-submission-date', 
+											[$learner->id, $assignment->id]) }}"
+											data-submission_date="{{ $dataSubmission }}">
+												{{ $label }}
+										</a>
 									</td>
 									<td>
 										@if ($manuscript)
