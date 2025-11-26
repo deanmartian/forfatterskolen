@@ -6,6 +6,7 @@ use App\AssignmentManuscript;
 use App\AssignmentManuscriptEditorCanTake;
 use App\CoursesTaken;
 use App\CustomAction;
+use App\EditorTimeSlot;
 use App\EditorAssignmentPrices;
 use App\Exports\GenericExport;
 use App\Http\AdminHelpers;
@@ -315,8 +316,76 @@ class AdminController extends Controller
 
     public function editorCalendar($user_id)
     {
-        $user = User::find($user_id);
-        return view('backend.admin.calendar');
+        $user = User::findOrFail($user_id);
+
+        return view('backend.admin.calendar', compact('user'));
+    }
+
+    public function fetchEditorTimeSlots(User $user): JsonResponse
+    {
+        $slots = EditorTimeSlot::where('editor_id', $user->id)
+            ->with(['requests.manuscript.user'])
+            ->get();
+
+        $events = $slots->map(function ($slot) {
+            $startUtc = Carbon::parse("{$slot->date} {$slot->start_time}", 'UTC');
+            $endUtc   = (clone $startUtc)->addMinutes($slot->duration);
+
+            $event = [
+                'id'    => $slot->id,
+                'title' => $slot->duration . ' min',
+                'start' => $startUtc->toIso8601ZuluString(),
+                'end'   => $endUtc->toIso8601ZuluString(),
+            ];
+
+            $accepted = $slot->requests->firstWhere('status', 'accepted');
+            if ($accepted) {
+                $event['backgroundColor'] = '#28a745';
+                $event['borderColor'] = '#28a745';
+                $event['textColor'] = '#ffffff';
+                $event['extendedProps'] = [
+                    'booked'      => true,
+                    'student'     => $accepted->manuscript->user->full_name ?? null,
+                    'duration'    => $slot->duration,
+                    'helps_with'  => $accepted->manuscript->help_with,
+                ];
+            }
+
+            return $event;
+        });
+
+        return response()->json($events);
+    }
+
+    public function storeEditorTimeSlot(User $user, Request $request): JsonResponse
+    {
+        $start = Carbon::parse($request->start);
+        $end   = Carbon::parse($request->end);
+        $duration = $start->diffInMinutes($end);
+
+        if (! in_array($duration, [30, 60])) {
+            return response()->json(['success' => false, 'message' => 'Only 30 or 60 minute slots are allowed.'], 422);
+        }
+
+        $slot = EditorTimeSlot::create([
+            'editor_id'   => $user->id,
+            'date'        => $start->copy()->utc()->toDateString(),
+            'start_time'  => $start->copy()->utc()->toTimeString(),
+            'duration'    => $duration,
+        ]);
+
+        return response()->json(['success' => true, 'id' => $slot->id]);
+    }
+
+    public function destroyEditorTimeSlot(User $user, EditorTimeSlot $slot): JsonResponse
+    {
+        if ($slot->editor_id !== $user->id) {
+            abort(404);
+        }
+
+        $slot->delete();
+
+        return response()->json(['success' => true]);
     }
 
     public function yearlyCalendar(): View
