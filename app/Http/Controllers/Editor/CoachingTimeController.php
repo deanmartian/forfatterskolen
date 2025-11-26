@@ -105,7 +105,10 @@ class CoachingTimeController extends Controller
                 $event['textColor'] = '#ffffff';
                 $event['extendedProps'] = [
                     'booked'      => true,
+                    'studentnr'     => $accepted->manuscript->user->id ?? null,
                     'student'     => $accepted->manuscript->user->full_name ?? null,
+                    'email'     => $accepted->manuscript->user->email ?? null,
+                    'phone'     => $accepted->manuscript->user->address->phone ?? null,
                     'duration'    => $slot->duration,
                     'helps_with'  => $accepted->manuscript->help_with,
                 ];

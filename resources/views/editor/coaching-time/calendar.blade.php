@@ -30,11 +30,14 @@
                 <h4 class="modal-title">Coaching Time Details</h4>
             </div>
             <div class="modal-body">
-                <p><strong>Student:</strong> <span id="slotStudent"></span></p>
-                <p><strong>Start:</strong> <span id="slotStart"></span></p>
-                <p><strong>End:</strong> <span id="slotEnd"></span></p>
-                <p><strong>Duration:</strong> <span id="slotDuration"></span></p>
-                <p><strong>Helps with:</strong></p>
+                <p><strong>{{ trans('site.learner-id') }}:</strong> <span id="slotStudentNr"></span></p>
+                <p><strong>{{ trans('site.front.home.students') }}:</strong> <span id="slotStudent"></span></p>
+                <p><strong>{{ trans('site.front.form.email') }}:</strong> <span id="slotEmail"></span></p>
+                <p><strong>{{ trans('site.front.form.phone-number') }}:</strong> <span id="slotPhone"></span></p>
+                <p><strong>{{ trans('site.learner.date-start') }}:</strong> <span id="slotStart"></span></p>
+                <p><strong>{{ trans('site.end-date') }}:</strong> <span id="slotEnd"></span></p>
+                <p><strong>{{ trans('site.learner.duration-text') }}:</strong> <span id="slotDuration"></span></p>
+                <p><strong>{{ trans('site.front.coaching-timer.help-with-text') }}:</strong></p>
                 <pre id="slotHelpsWith"></pre>
             </div>
             <div class="modal-footer">
@@ -237,7 +240,10 @@
             let end   = new Date(event.end);
             let fmt = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
 
+            document.getElementById('slotStudentNr').textContent = event.extendedProps.studentnr || '';
             document.getElementById('slotStudent').textContent = event.extendedProps.student || '';
+            document.getElementById('slotEmail').textContent = event.extendedProps.email || '';
+            document.getElementById('slotPhone').textContent = event.extendedProps.phone || '';
             document.getElementById('slotStart').textContent = start.toLocaleString('no-NO', fmt);
             document.getElementById('slotEnd').textContent = end.toLocaleString('no-NO', fmt);
             document.getElementById('slotDuration').textContent = (event.extendedProps.duration || ((end - start)/60000)) + ' min';
