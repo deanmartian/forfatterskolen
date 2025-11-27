@@ -227,7 +227,7 @@
         {{-- unassigned shop-manuscript --}}
         <div class="panel">
             <div class="panel-body">
-                <h3>{{ trans('unassigned-shop-manuscript', ) }}</h3>
+                <h3>{{ trans('site.unassigned-shop-manuscript', ) }}</h3>
 
                 <div class="table-users table-responsive margin-top">
                     <table class="table dt-table">
