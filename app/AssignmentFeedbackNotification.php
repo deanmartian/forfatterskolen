@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AssignmentFeedbackNotification extends Model
 {
-    protected $fillable = ['user_id', 'assignment_feedback_id', 'availability'];
+    protected $fillable = ['user_id', 'assignment_feedback_id', 'availability', 'is_read'];
 
     public function user()
     {

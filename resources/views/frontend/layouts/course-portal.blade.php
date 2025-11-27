@@ -63,6 +63,32 @@
         </div>
     @endif
 
+    @php
+        $assignmentFeedbackNotification = null;
+
+        if (Auth::check()) {
+            $assignmentFeedbackNotification = \App\AssignmentFeedbackNotification::where('user_id', Auth::id())
+                ->where('is_read', '!=', 1)
+                ->whereDate('availability', '<=', \Carbon\Carbon::today())
+                ->latest()
+                ->first();
+        }
+    @endphp
+
+    @if($assignmentFeedbackNotification)
+        <div class="alert alert-info assignment-feedback-alert" role="alert"
+             id="assignment-feedback-alert"
+             data-mark-url="{{ route('learner.assignment-feedback-notification.mark-as-read', $assignmentFeedbackNotification->id) }}">
+            <a href="#" class="close assignment-feedback-alert__close" aria-label="close" title="close">×</a>
+            <span>
+                {{ __('New feedback is available for your assignment.') }}
+                <a href="{{ route('learner.assignment') }}" class="assignment-feedback-alert__link">
+                    {{ __('View assignment') }}
+                </a>
+            </span>
+        </div>
+    @endif
+
     <?php
         $shopManuscriptAdvisory = \App\Http\FrontendHelpers::getShopManuscriptAdvisory();
         $from_date              = \Carbon\Carbon::parse($shopManuscriptAdvisory->from_date);
@@ -152,6 +178,32 @@
             sidebar.addClass("sidebar-visible");
             mainContainer.addClass("enlarge");
         }
+    }
+
+    const assignmentFeedbackAlert = $('#assignment-feedback-alert');
+
+    if (assignmentFeedbackAlert.length) {
+        const markAssignmentFeedbackUrl = assignmentFeedbackAlert.data('mark-url');
+
+        function markAssignmentFeedbackNotification() {
+            if (! markAssignmentFeedbackUrl) {
+                return;
+            }
+
+            $.post(markAssignmentFeedbackUrl, {
+                _token: '{{ csrf_token() }}'
+            });
+        }
+
+        assignmentFeedbackAlert.find('.assignment-feedback-alert__close').on('click', function (event) {
+            event.preventDefault();
+            markAssignmentFeedbackNotification();
+            assignmentFeedbackAlert.alert('close');
+        });
+
+        assignmentFeedbackAlert.find('.assignment-feedback-alert__link').on('click', function () {
+            markAssignmentFeedbackNotification();
+        });
     }
 
     function disableSubmit(t) {

@@ -1299,7 +1299,8 @@ class AssignmentController extends Controller
             'user_id' => $assignmentManuscript->user_id,
             'assignment_feedback_id' => $assignmentFeedbackNoGroup->id
         ],[
-            'availability' => $request->availability
+            'availability' => $request->availability,
+            'is_read' => 0
         ]);
 
         // send an email

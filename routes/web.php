@@ -558,6 +558,7 @@ Route::domain($front)->group(function () {
         Route::get('/pilot-reader/profile/reader/view', [Frontend\PilotReaderAccountController::class, 'viewReaderProfile'])->name('learner.pilot-reader.account.reader-profile-view'); // Book Reader Author Import Book Page
         Route::post('/pilot-reader/profile/reader/set', [Frontend\PilotReaderAccountController::class, 'setReaderProfile'])->name('learner.pilot-reader.account.reader-profile-set');
         Route::post('/notification/{id}/mark-as-read', [Frontend\LearnerController::class, 'markNotificationAsRead'])->name('learner.notification.mark-as-read');
+        Route::post('/assignment-feedback-notification/{id}/mark-as-read', [Frontend\LearnerController::class, 'markAssignmentFeedbackNotificationAsRead'])->name('learner.assignment-feedback-notification.mark-as-read');
         Route::post('/notification/{id}/delete', [Frontend\LearnerController::class, 'deleteNotification'])->name('learner.notification.delete');
         Route::get('/private-groups', [Frontend\PrivateGroupsController::class, 'index'])->name('learner.private-groups.index');
         Route::get('/private-groups/{id}', [Frontend\PrivateGroupsController::class, 'show'])->name('learner.private-groups.show');

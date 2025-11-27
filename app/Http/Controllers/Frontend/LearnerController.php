@@ -7,6 +7,7 @@ use App\Assignment;
 use App\AssignmentAddon;
 use App\AssignmentFeedback;
 use App\AssignmentFeedbackNoGroup;
+use App\AssignmentFeedbackNotification;
 use App\AssignmentGroup;
 use App\AssignmentGroupLearner;
 use App\AssignmentLearnerSubmissionDate;
@@ -1034,6 +1035,11 @@ class LearnerController extends Controller
         $waitingForResponse = [];
         $waitingForResponseIDs = [];
         $noWordLimitAssignments = [];
+
+        AssignmentFeedbackNotification::where('user_id', Auth::id())
+            ->where('is_read', '!=', 1)
+            ->whereDate('availability', '<=', Carbon::today())
+            ->update(['is_read' => 1]);
 
         $assignmentGroupLearners = AssignmentGroupLearner::with(['group.assignment.course'])
             ->where('user_id', Auth::user()->id)->get();
@@ -5438,6 +5444,25 @@ class LearnerController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Mark notification as read
+     */
+    public function markAssignmentFeedbackNotificationAsRead($id): JsonResponse
+    {
+        $notification = AssignmentFeedbackNotification::where('user_id', Auth::id())
+            ->where('id', $id)
+            ->first();
+
+        if ($notification) {
+            $notification->is_read = 1;
+            $notification->save();
+
+            return response()->json(['success' => 'Notification marked as read.'], 200);
+        }
+
+        return response()->json(['error' => 'Opss. Something went wrong'], 500);
     }
 
     /**
