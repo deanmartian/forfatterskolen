@@ -6,6 +6,7 @@ use App\Assignment;
 use App\AssignmentAddon;
 use App\AssignmentDisabledLearner;
 use App\AssignmentFeedbackNoGroup;
+use App\AssignmentFeedbackNotification;
 use App\AssignmentGroup;
 use App\AssignmentGroupLearner;
 use App\AssignmentManuscript;
@@ -1270,7 +1271,7 @@ class AssignmentController extends Controller
         }
     }
 
-    public function approveFeedbackNoGroup($manuscript_id, $learner_id, Request $request): RedirectResponse
+    public function approveFeedbackNoGroup($manuscript_id, $learner_id, Request $request)/* : RedirectResponse */
     {
         // update feedback
         $assignmentFeedbackNoGroup = AssignmentFeedbackNoGroup::find($request->feedback_id);
@@ -1293,6 +1294,13 @@ class AssignmentController extends Controller
         $assignmentManuscript->status = 1;
         $assignmentManuscript->grade = $request->grade;
         $assignmentManuscript->save();
+
+        AssignmentFeedbackNotification::updateOrCreate([
+            'user_id' => $assignmentManuscript->user_id,
+            'assignment_feedback_id' => $assignmentFeedbackNoGroup->id
+        ],[
+            'availability' => $request->availability
+        ]);
 
         // send an email
         $email_content = $request->message;
