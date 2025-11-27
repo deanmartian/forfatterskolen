@@ -9,6 +9,7 @@ use App\AssignmentFeedback;
 use App\AssignmentFeedbackNoGroup;
 use App\AssignmentGroup;
 use App\AssignmentGroupLearner;
+use App\AssignmentLearnerSubmissionDate;
 use App\AssignmentManuscript;
 use App\CalendarNote;
 use App\EditorTimeSlot;
@@ -1037,6 +1038,9 @@ class LearnerController extends Controller
         $assignmentGroupLearners = AssignmentGroupLearner::with(['group.assignment.course'])
             ->where('user_id', Auth::user()->id)->get();
 
+        $assignmentSubmissionDates = AssignmentLearnerSubmissionDate::where('user_id', Auth::user()->id)
+            ->pluck('submission_date', 'assignment_id');
+
         foreach ($coursesTaken as $courseTaken) {
             foreach ($courseTaken->package->course->activeAssignments as $assignment) {
 
@@ -1084,8 +1088,10 @@ class LearnerController extends Controller
                                     }
                                 }
                             } else {
+                                $assignmentSubmissionDate = $assignmentSubmissionDates[$assignment->id] ??
+                                $assignment->submission_date;
                                 // added the && to check if the course taken is not yet expired
-                                if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now()->subDay()) &&
+                                if (\Carbon\Carbon::parse($assignmentSubmissionDate)->gt(Carbon::now()->subDay()) &&
                                     \Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
                                     if ($assignment->max_words === 0) {
                                         $noWordLimitAssignments[] = $assignment;
@@ -1245,7 +1251,8 @@ class LearnerController extends Controller
         $assignments = !Auth::user()->isDisabled ? $assignments : [];
 
         return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments',
-            'upcomingAssignments', 'waitingForResponse', 'assignmentGroupLearners', 'noWordLimitAssignments'));
+            'upcomingAssignments', 'waitingForResponse', 'assignmentGroupLearners', 'noWordLimitAssignments',
+            'assignmentSubmissionDates'));
     }
 
     protected function resolveUploadedFilePath(string $destinationPath, string $fileName): string

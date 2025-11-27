@@ -10,7 +10,8 @@
                     $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)
                         ->first();
                     $extension = $manuscript ? explode('.', basename($manuscript->filename)) : '';
-                    $submission_date_formatted = $assignment->submission_date;
+                    $submission_date_formatted = $assignmentSubmissionDates[$assignment->id] ??
+                                $assignment->submission_date;
                     if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', 
                     $assignment->submission_date)) {
                         $coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
