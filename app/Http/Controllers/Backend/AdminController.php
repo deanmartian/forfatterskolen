@@ -410,9 +410,7 @@ class AdminController extends Controller
         ->get();
 
         $unassignedShopManuscripts = ShopManuscriptsTaken::whereDoesntHave('admin')
-            ->whereDoesntHave('feedbacks', function ($query) {
-                $query->where('approved', 1);
-            })
+            ->whereNotNull('file')
             ->whereDate('created_at', '>', '2025-01-01')
             ->latest()->get();
         
