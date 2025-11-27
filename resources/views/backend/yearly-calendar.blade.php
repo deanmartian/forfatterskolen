@@ -160,6 +160,116 @@
             </div>
 
         @elseif(Request::input('tab') == 'unfinished-manuscript')
+        {{-- unassigned assignment --}}
+            <div class="panel">
+                <div class="panel-body">
+                    <h3>{{ trans('site.unassigned-assignments') }}</h3>
+
+                    <div class="table-users table-responsive margin-top">
+                        <table class="table dt-table">
+                            <thead>
+                                <tr>
+                                    <th>{{ trans_choice('site.assignments', 1) }}</th>
+                                    <th>{{ trans_choice('site.manuscripts', 1) }}</th>
+                                    <th>{{ trans_choice('site.learners', 1) }}</th>
+                                    <th>{{ trans('site.type') }}</th>
+                                    <th>{{ trans('site.where') }}</th>
+                                    <th>{{ trans_choice('site.words', 2) }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($unassignedAssignmentManuscripts as $unassignedAssignmentManuscript)
+                                    <tr>
+                                        <td>
+                                            @if ($unassignedAssignmentManuscript->assignment->course_id)
+                                                <a href="{{ route('admin.assignment.show',
+                                                [
+                                                    'course_id' => $unassignedAssignmentManuscript->assignment->course_id ,
+                                                    'assignment' => $unassignedAssignmentManuscript->assignment_id
+                                                ]) }}">
+                                                    {{$unassignedAssignmentManuscript->assignment->title}}
+                                                </a>
+                                            @else
+                                                <a href="{{ route('admin.learner.assignment',
+                                                [
+                                                    'user_id' => $unassignedAssignmentManuscript->user_id ,
+                                                    'id' => $unassignedAssignmentManuscript->assignment_id
+                                                ]) }}">
+                                                    {{$unassignedAssignmentManuscript->assignment->title}}
+                                                </a>
+                                            @endif
+                                            
+                                        </td>
+                                        <td>
+                                            {!! $unassignedAssignmentManuscript->file_link !!}
+                                        </td>
+                                        <td>
+                                            <a href="{{route('admin.learner.show', $unassignedAssignmentManuscript->user->id)}}">
+                                                {{ $unassignedAssignmentManuscript->user->full_name }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {{ $unassignedAssignmentManuscript->assignment_type }}
+                                        </td>
+                                        <td>
+                                            {{ $unassignedAssignmentManuscript->where_in_script }}
+                                        </td>
+                                        <td>
+                                            {{ $unassignedAssignmentManuscript->words }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+        
+        {{-- unassigned shop-manuscript --}}
+        <div class="panel">
+            <div class="panel-body">
+                <h3>{{ trans('unassigned-shop-manuscript', ) }}</h3>
+
+                <div class="table-users table-responsive margin-top">
+                    <table class="table dt-table">
+                        <thead>
+                            <tr>
+                                <th>{{ trans_choice('site.manuscripts', 1) }}</th>
+                                <th>{{ trans_choice('site.learners', 1) }}</th>
+                                <th>{{ trans('site.genre') }}</th>
+                                <th>{{ trans_choice('site.words', 2) }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($unassignedShopManuscripts as $unassignedShopManuscript)
+                                <tr>
+                                    <td>
+                                        <a href="{{ route('shop_manuscript_taken',
+                                        ['id' => $unassignedShopManuscript->user->id,
+                                        'shop_manuscript_taken_id' => $unassignedShopManuscript->id]) }}">
+                                            {{$unassignedShopManuscript->shop_manuscript->title}}
+                                        </a>
+                                    </td>
+                                    <td>
+                                    <a href="{{ route('admin.learner.show', $unassignedShopManuscript->user->id) }}">
+                                        {{ $unassignedShopManuscript->user->full_name }}
+                                    </a>
+                                    </td>
+                                    <td>
+                                        @if($unassignedShopManuscript->genre > 0)
+                                            {{ \App\Http\FrontendHelpers::assignmentType($unassignedShopManuscript->genre) }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{ $unassignedShopManuscript->words }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <!-- assignment -->
             <div class="panel">
                 <div class="panel-body">
