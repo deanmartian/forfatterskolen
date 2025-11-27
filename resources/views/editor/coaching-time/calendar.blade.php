@@ -88,7 +88,7 @@
             selectMirror: false,
             allDaySlot: false,
             slotMinTime: "08:00:00",
-            slotMaxTime: "20:00:00",
+            slotMaxTime: "23:00:00",
             slotDuration: "00:30:00", // grid step is 30 minutes
 
             events: "{{ route('editor.coaching-time.time-slots.fetch') }}", //fetch saved data
