@@ -70,6 +70,21 @@
                                 @endif
                             </div>
                         </div>
+
+                        @if ($assignment->editor_expected_finish)
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p>
+                                        {{ trans('site.expected-finish') }}:
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>
+                                        {{ $assignment->editor_expected_finish }}
+                                    </p>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div> <!-- end col-md-7 col-sm-12 -->
             </div> <!-- end assignment-container -->

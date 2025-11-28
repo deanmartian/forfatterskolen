@@ -1102,7 +1102,8 @@ class LearnerController extends Controller
                             }
                         }
 
-                        if ($assignmentManuscript && $assignmentManuscript->locked && ! $assignmentManuscript->has_feedback) {
+                        if ($assignmentManuscript && $assignmentManuscript->locked && ! $assignmentManuscript->has_feedback
+                            && !$assignment->for_editor) {
                             $waitingForResponse[] = $assignment;
                             $waitingForResponseIDs[] = $assignment->id;
                         }
