@@ -24,9 +24,9 @@
 						<li class="guide-inverse">{{ trans('site.learner.notes-text') }}</li>
                                                 <li class="guide-red">{{ trans('site.learner.coaching-time') }}</li>
                                         </ul>
-                                        <div class="text-end px-3">
+                                        <div class="px-3" style="text-align: right;">
                                                 <a href="{{ route('learner.calendar.export') }}" class="btn btn-primary" target="_blank" rel="noopener">
-                                                        {{ __('Export to Google Calendar') }}
+                                                        {{ __('Export Calendar') }}
                                                 </a>
                                         </div>
                                 </div>
