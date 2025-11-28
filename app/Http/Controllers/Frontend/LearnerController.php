@@ -885,6 +885,8 @@ class LearnerController extends Controller
             'X-WR-TIMEZONE:'.$timezone,
         ];
 
+        $lines = array_merge($lines, $this->buildVTimezoneComponent($timezone));
+
         foreach ($events as $event) {
             $start = $event['start'];
             $end = $event['end'];
@@ -1047,6 +1049,56 @@ class LearnerController extends Controller
     private function escapeIcsText(string $text): string
     {
         return str_replace(['\\', ';', ',', "\n", "\r"], ['\\\\', '\\;', '\\,', '\\n', ''], $text);
+    }
+
+    private function buildVTimezoneComponent(string $timezone): array
+    {
+        try {
+            $dateTimeZone = new \DateTimeZone($timezone);
+        } catch (\Throwable $exception) {
+            return [];
+        }
+
+        $from = Carbon::now($timezone)->subYear();
+        $to = Carbon::now($timezone)->addYears(3);
+        $transitions = $dateTimeZone->getTransitions($from->timestamp, $to->timestamp);
+
+        if (count($transitions) < 2) {
+            return [];
+        }
+
+        $lines = [
+            'BEGIN:VTIMEZONE',
+            'TZID:'.$timezone,
+            'X-LIC-LOCATION:'.$timezone,
+        ];
+
+        $previousOffset = $transitions[0]['offset'];
+
+        foreach (array_slice($transitions, 1) as $transition) {
+            $componentType = $transition['isdst'] ? 'DAYLIGHT' : 'STANDARD';
+
+            $lines[] = 'BEGIN:'.$componentType;
+            $lines[] = 'TZOFFSETFROM:'.$this->formatUtcOffset($previousOffset);
+            $lines[] = 'TZOFFSETTO:'.$this->formatUtcOffset($transition['offset']);
+            $lines[] = 'TZNAME:'.$transition['abbr'];
+            $lines[] = 'DTSTART='.Carbon::createFromTimestamp($transition['ts'], $timezone)->format('Ymd\THis');
+            $lines[] = 'END:'.$componentType;
+
+            $previousOffset = $transition['offset'];
+        }
+
+        $lines[] = 'END:VTIMEZONE';
+
+        return $lines;
+    }
+
+    private function formatUtcOffset(int $offset): string
+    {
+        $hours = intdiv($offset, 3600);
+        $minutes = abs(($offset % 3600) / 60);
+
+        return sprintf('%+03d%02d', $hours, $minutes);
     }
 
     public function documentConverter(): View
