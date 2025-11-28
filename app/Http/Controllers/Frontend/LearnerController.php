@@ -873,7 +873,6 @@ class LearnerController extends Controller
 
     public function exportCalendar(): Response
     {
-        $timezone = config('app.timezone');
         $events = $this->getCalendarEvents();
 
         $lines = [
@@ -896,8 +895,11 @@ class LearnerController extends Controller
                 $dtStart = 'DTSTART;VALUE=DATE:'.$start->format('Ymd');
                 $dtEnd = 'DTEND;VALUE=DATE:'.$end->copy()->addDay()->format('Ymd');
             } else {
-                $dtStart = 'DTSTART;TZID='.$timezone.':'.$start->format('Ymd\THis');
-                $dtEnd = 'DTEND;TZID='.$timezone.':'.$end->format('Ymd\THis');
+                $startUtc = $start->copy()->setTimezone('UTC');
+                $endUtc = $end->copy()->setTimezone('UTC');
+
+                $dtStart = 'DTSTART:'.$startUtc->format('Ymd\THis\Z');
+                $dtEnd = 'DTEND:'.$endUtc->format('Ymd\THis\Z');
             }
 
             $lines[] = 'BEGIN:VEVENT';
