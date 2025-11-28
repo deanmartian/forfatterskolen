@@ -893,15 +893,16 @@ class LearnerController extends Controller
             }
 
             if ($event['all_day']) {
-                $dtStart = 'DTSTART;VALUE=DATE='.$start->format('Ymd');
-                $dtEnd = 'DTEND;VALUE=DATE='.$end->copy()->addDay()->format('Ymd');
+                $dtStart = 'DTSTART;VALUE=DATE:'.$start->format('Ymd');
+                $dtEnd = 'DTEND;VALUE=DATE:'.$end->copy()->addDay()->format('Ymd');
             } else {
-                $dtStart = 'DTSTART;TZID='.$timezone.'='.$start->format('Ymd\THis');
-                $dtEnd = 'DTEND;TZID='.$timezone.'='.$end->format('Ymd\THis');
+                $dtStart = 'DTSTART;TZID='.$timezone.':'.$start->format('Ymd\THis');
+                $dtEnd = 'DTEND;TZID='.$timezone.':'.$end->format('Ymd\THis');
             }
 
             $lines[] = 'BEGIN:VEVENT';
             $lines[] = 'UID='.Str::uuid();
+            $lines[] = 'DTSTAMP='.Carbon::now('UTC')->format('Ymd\THis\Z');
             $lines[] = 'SUMMARY='.$this->escapeIcsText($event['title']);
             $lines[] = $dtStart;
             $lines[] = $dtEnd;
