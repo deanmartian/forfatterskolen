@@ -58,10 +58,11 @@
 	};
 
 $('#full-calendar').fullCalendar({
-		locale: 'nb',
+                locale: 'nb',
         header: { right: 'prev,today,next, month,agendaWeek,agendaDay',
-			/*center: 'title'*/}, // display the month title
-		buttonText: {
+                        /*center: 'title'*/}, // display the month title
+        displayEventTime: false,
+                buttonText: {
             today:	translations.today,
             month:	translations.month,
             week:	translations.week,
