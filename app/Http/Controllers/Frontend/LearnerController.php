@@ -928,10 +928,21 @@ class LearnerController extends Controller
 
         foreach (Auth::user()->coursesTaken as $courseTaken) {
             foreach ($courseTaken->package->course->lessons as $lesson) {
-                $availability = Carbon::parse(
-                    FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period),
-                    $timezone
-                )->startOfDay();
+                $availabilityText = FrontendHelpers::lessonAvailability(
+                    $courseTaken->started_at,
+                    $lesson->delay,
+                    $lesson->period
+                );
+
+                if ($availabilityText === 'Course not started') {
+                    continue;
+                }
+
+                try {
+                    $availability = Carbon::parse($availabilityText, $timezone)->startOfDay();
+                } catch (\Throwable $exception) {
+                    continue;
+                }
 
                 $events->push([
                     'id' => $lesson->course->id,
