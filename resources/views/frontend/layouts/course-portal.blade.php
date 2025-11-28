@@ -52,6 +52,15 @@
               integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     @yield('styles')
 
+    <style>
+        .assignment-feedback-alert {
+            position: absolute;
+            right: 10px;
+            bottom: 20px;
+            z-index: 1;
+        }
+    </style>
+
     @include('frontend.partials._learner_head_scripts')
 </head>
 <body>
@@ -81,9 +90,9 @@
              data-mark-url="{{ route('learner.assignment-feedback-notification.mark-as-read', $assignmentFeedbackNotification->id) }}">
             <a href="#" class="close assignment-feedback-alert__close" aria-label="close" title="close">×</a>
             <span>
-                {{ __('New feedback is available for your assignment.') }}
+                {{ trans('site.new-feedback-for-assignment') }}
                 <a href="{{ route('learner.assignment') }}" class="assignment-feedback-alert__link">
-                    {{ __('View assignment') }}
+                    {{ trans('site.view') }}
                 </a>
             </span>
         </div>
