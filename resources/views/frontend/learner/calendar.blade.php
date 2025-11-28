@@ -11,24 +11,29 @@
 @stop
 
 @section('content')
-	<div class="learner-container learner-calendar">
-		<div class="container">
-			<div class="row">
-				<div class="card w-100 rounded-0 py-4">
-					<ul class="calendar-guide">
+        <div class="learner-container learner-calendar">
+                <div class="container">
+                        <div class="row">
+                                <div class="card w-100 rounded-0 py-4">
+                                        <ul class="calendar-guide">
 						<li class="guide-blue">{{ trans('site.learner.script') }}</li>
 						<li class="guide-green">{{ trans('site.learner.assignment') }}</li>
 						<li class="guide-purple">{{ trans('site.learner.webinars') }}</li>
 						<li class="guide-pink">{{ trans('site.learner.modules') }}</li>
 						<li class="guide-orange">{{ trans('site.learner.webinars') }}</li> <!-- course-webinars -->
 						<li class="guide-inverse">{{ trans('site.learner.notes-text') }}</li>
-						<li class="guide-red">{{ trans('site.learner.coaching-time') }}</li>
-					</ul>
-				</div>
-			</div>
+                                                <li class="guide-red">{{ trans('site.learner.coaching-time') }}</li>
+                                        </ul>
+                                        <div class="text-end px-3">
+                                                <a href="{{ route('learner.calendar.export') }}" class="btn btn-primary" target="_blank" rel="noopener">
+                                                        {{ __('Export to Google Calendar') }}
+                                                </a>
+                                        </div>
+                                </div>
+                        </div>
 
-			<div class="row">
-				<div id="full-calendar"></div>
+                        <div class="row">
+                                <div id="full-calendar"></div>
 			</div>
 		</div>
 	</div>
