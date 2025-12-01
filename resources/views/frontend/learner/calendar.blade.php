@@ -62,6 +62,9 @@ $('#full-calendar').fullCalendar({
         header: { right: 'prev,today,next, month,agendaWeek,agendaDay',
                         /*center: 'title'*/}, // display the month title
         displayEventTime: false,
+        eventLimit: true,
+        eventLimitText: '{{ trans('site.view-more') }}',
+        eventLimitClick: 'popover',
                 buttonText: {
             today:	translations.today,
             month:	translations.month,
