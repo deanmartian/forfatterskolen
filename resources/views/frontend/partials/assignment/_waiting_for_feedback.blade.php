@@ -121,7 +121,7 @@
                                     <br>
 
                                     Tilbakemelding kommer dato:
-                                    {{ FrontendHelpers::formatDate($feedback->created_at) }}
+                                    {{ FrontendHelpers::formatDate($feedback->availability) }}
                                 @endif
                             </p>
 
