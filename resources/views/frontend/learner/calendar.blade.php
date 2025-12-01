@@ -8,6 +8,20 @@
 @section('styles')
 <link rel="stylesheet" href="{{asset('bootstrap-calendar/css/calendar.min.css')}}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.css">
+<style>
+    .fc-popover.fc-more-popover .fc-header .fc-title {
+        color: #000;
+    }
+
+    .fc-popover.fc-more-popover .fc-body {
+        max-height: 340px;
+        overflow-y: auto;
+    }
+
+    .fc-popover.fc-more-popover .fc-body .fc-title {
+        color: white;
+    }
+</style>
 @stop
 
 @section('content')
@@ -62,6 +76,9 @@ $('#full-calendar').fullCalendar({
         header: { right: 'prev,today,next, month,agendaWeek,agendaDay',
                         /*center: 'title'*/}, // display the month title
         displayEventTime: false,
+        eventLimit: true,
+        eventLimitText: '{{ trans('site.view-more') }}',
+        eventLimitClick: 'popover',
                 buttonText: {
             today:	translations.today,
             month:	translations.month,
