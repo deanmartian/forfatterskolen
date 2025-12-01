@@ -958,13 +958,14 @@ class LearnerController extends Controller
 
             foreach ($courseTaken->package->course->webinars as $webinar) {
                 $start = Carbon::parse($webinar->start_date, $timezone);
+                $end = $start->copy()->addHour();
 
                 $events->push([
                     'id' => $webinar->course->id,
                     'title' => 'Webinar: '.$webinar->title.' from '.$webinar->course->title,
                     'class' => 'event-warning',
                     'start' => $start->copy(),
-                    'end' => $start->copy(),
+                    'end' => $end,
                     'color' => '#ff9c00',
                     'all_day' => false,
                 ]);

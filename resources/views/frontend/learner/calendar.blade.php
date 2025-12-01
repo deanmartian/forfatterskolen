@@ -79,6 +79,17 @@ $('#full-calendar').fullCalendar({
         eventLimit: true,
         eventLimitText: '{{ trans('site.view-more') }}',
         eventLimitClick: 'popover',
+        eventDataTransform: function(eventData) {
+            // Ensure webinars (event-warning) are treated as timed events
+            if (eventData.class === 'event-warning') {
+                eventData.allDay = false;
+            }
+
+            // Normalize allDay values that may come through as strings
+            eventData.allDay = !!eventData.allDay;
+
+            return eventData;
+        },
                 buttonText: {
             today:	translations.today,
             month:	translations.month,
