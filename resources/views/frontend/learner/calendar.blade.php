@@ -11,24 +11,29 @@
 @stop
 
 @section('content')
-	<div class="learner-container learner-calendar">
-		<div class="container">
-			<div class="row">
-				<div class="card w-100 rounded-0 py-4">
-					<ul class="calendar-guide">
+        <div class="learner-container learner-calendar">
+                <div class="container">
+                        <div class="row">
+                                <div class="card w-100 rounded-0 py-4">
+                                        <ul class="calendar-guide">
 						<li class="guide-blue">{{ trans('site.learner.script') }}</li>
 						<li class="guide-green">{{ trans('site.learner.assignment') }}</li>
 						<li class="guide-purple">{{ trans('site.learner.webinars') }}</li>
 						<li class="guide-pink">{{ trans('site.learner.modules') }}</li>
 						<li class="guide-orange">{{ trans('site.learner.webinars') }}</li> <!-- course-webinars -->
 						<li class="guide-inverse">{{ trans('site.learner.notes-text') }}</li>
-						<li class="guide-red">{{ trans('site.learner.coaching-time') }}</li>
-					</ul>
-				</div>
-			</div>
+                                                <li class="guide-red">{{ trans('site.learner.coaching-time') }}</li>
+                                        </ul>
+                                        <div class="px-3" style="text-align: right;">
+                                                <a href="{{ route('learner.calendar.export') }}" class="btn btn-primary" target="_blank" rel="noopener">
+                                                        {{ __('Export Calendar') }}
+                                                </a>
+                                        </div>
+                                </div>
+                        </div>
 
-			<div class="row">
-				<div id="full-calendar"></div>
+                        <div class="row">
+                                <div id="full-calendar"></div>
 			</div>
 		</div>
 	</div>
@@ -53,10 +58,11 @@
 	};
 
 $('#full-calendar').fullCalendar({
-		locale: 'nb',
+                locale: 'nb',
         header: { right: 'prev,today,next, month,agendaWeek,agendaDay',
-			/*center: 'title'*/}, // display the month title
-		buttonText: {
+                        /*center: 'title'*/}, // display the month title
+        displayEventTime: false,
+                buttonText: {
             today:	translations.today,
             month:	translations.month,
             week:	translations.week,

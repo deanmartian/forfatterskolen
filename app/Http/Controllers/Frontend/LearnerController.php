@@ -856,110 +856,249 @@ class LearnerController extends Controller
 
     public function calendar(): View
     {
-        $events = [];
+        $events = $this->getCalendarEvents()->map(function (array $event) {
+            return [
+                'id' => $event['id'],
+                'title' => $event['title'],
+                'class' => $event['class'],
+                'start' => $this->formatCalendarDateTime($event['start'], $event['all_day']),
+                'end' => $this->formatCalendarDateTime($event['end'], $event['all_day']),
+                'color' => $event['color'],
+                'allDay' => $event['all_day'],
+            ];
+        });
+
+        return view('frontend.learner.calendar', ['events' => $events]);
+    }
+
+    public function exportCalendar(): Response
+    {
+        $events = $this->getCalendarEvents();
+        $timezone = config('app.timezone');
+
+        $lines = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//Forfatterskolen//Learner Calendar//EN',
+            'CALSCALE:GREGORIAN',
+            'METHOD:PUBLISH',
+            'X-WR-TIMEZONE:'.$timezone,
+        ];
+
+        $lines = array_merge($lines, $this->buildVTimezoneComponent($timezone));
+
+        foreach ($events as $event) {
+            $start = $event['start'];
+            $end = $event['end'];
+
+            if (! $event['all_day'] && $end->equalTo($start)) {
+                $end = $end->copy()->addHour();
+            }
+
+            if ($event['all_day']) {
+                $dtStart = 'DTSTART;VALUE=DATE:'.$start->format('Ymd');
+                $dtEnd = 'DTEND;VALUE=DATE:'.$end->copy()->addDay()->format('Ymd');
+            } else {
+                $dtStart = 'DTSTART;TZID='.$timezone.':'.$start->copy()->format('Ymd\THis');
+                $dtEnd = 'DTEND;TZID='.$timezone.':'.$end->copy()->format('Ymd\THis');
+            }
+
+            $lines[] = 'BEGIN:VEVENT';
+            $lines[] = 'UID='.Str::uuid();
+            $lines[] = 'DTSTAMP='.Carbon::now('UTC')->format('Ymd\THis\Z');
+            $lines[] = 'SUMMARY='.$this->escapeIcsText($event['title']);
+            $lines[] = $dtStart;
+            $lines[] = $dtEnd;
+            $lines[] = 'END:VEVENT';
+        }
+
+        $lines[] = 'END:VCALENDAR';
+
+        $icsContent = implode("\r\n", $lines);
+
+        return response($icsContent, 200, [
+            'Content-Type' => 'text/calendar; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="learner-calendar.ics"',
+        ]);
+    }
+
+    private function getCalendarEvents(): Collection
+    {
+        $events = collect();
+        $timezone = config('app.timezone');
 
         foreach (Auth::user()->coursesTaken as $courseTaken) {
-            // Course lessons
-            $token = str_random(10);
             foreach ($courseTaken->package->course->lessons as $lesson) {
-                $availability = strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)) * 1000;
-                $newAvailability = date('Y-m-d', strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)));
-                $events[] = [
+                $availabilityText = FrontendHelpers::lessonAvailability(
+                    $courseTaken->started_at,
+                    $lesson->delay,
+                    $lesson->period
+                );
+
+                if ($availabilityText === 'Course not started') {
+                    continue;
+                }
+
+                try {
+                    $availability = Carbon::parse($availabilityText, $timezone)->startOfDay();
+                } catch (\Throwable $exception) {
+                    continue;
+                }
+
+                $events->push([
                     'id' => $lesson->course->id,
                     'title' => 'Lesson: '.$lesson->title.' from '.$lesson->course->title,
                     'class' => 'event-important',
-                    'start' => $newAvailability, // $availability,
-                    'end' => $newAvailability, // $availability,
+                    'start' => $availability->copy(),
+                    'end' => $availability->copy(),
                     'color' => '#d95e66',
-                ];
+                    'all_day' => true,
+                ]);
             }
 
-            // Course webinars
-            $token = str_random(10);
             foreach ($courseTaken->package->course->webinars as $webinar) {
-                $events[] = [
+                $start = Carbon::parse($webinar->start_date, $timezone);
+
+                $events->push([
                     'id' => $webinar->course->id,
                     'title' => 'Webinar: '.$webinar->title.' from '.$webinar->course->title,
                     'class' => 'event-warning',
-                    'start' => date('Y-m-d', strtotime($webinar->start_date)), // strtotime($webinar->start_date) * 1000,
-                    'end' => date('Y-m-d', strtotime($webinar->start_date)), // strtotime($webinar->start_date) * 1000,
+                    'start' => $start->copy(),
+                    'end' => $start->copy(),
                     'color' => '#ff9c00',
-                ];
+                    'all_day' => $this->isAllDayEvent($start),
+                ]);
             }
 
-            // manuscripts
             foreach ($courseTaken->manuscripts as $manuscript) {
-                $events[] = [
+                $finishDate = Carbon::parse($manuscript->expected_finish, $timezone)->startOfDay();
+
+                $events->push([
                     'id' => $courseTaken->package->course->id,
                     'title' => 'Manus: '.basename($manuscript->filename).' from '.$courseTaken->package->course->title,
                     'class' => 'event-info',
-                    'start' => date('Y-m-d', strtotime($manuscript->expected_finish)), // strtotime($manuscript->expected_finish) * 1000,
-                    'end' => date('Y-m-d', strtotime($manuscript->expected_finish)), // strtotime($manuscript->expected_finish) * 1000,
+                    'start' => $finishDate->copy(),
+                    'end' => $finishDate->copy(),
                     'color' => '#29b5f5',
-                ];
+                    'all_day' => true,
+                ]);
             }
 
-            // assignments
             foreach ($courseTaken->package->course->assignments as $assignment) {
                 $allowedPackage = json_decode($assignment->allowed_package, true);
 
                 if (is_null($allowedPackage) || in_array($courseTaken->package_id, (array) $allowedPackage)) {
-                    $events[] = [
+                    $submissionDate = Carbon::parse($assignment->submission_date, $timezone)->startOfDay();
+
+                    $events->push([
                         'id'    => $assignment->course->id,
                         'title' => 'Oppgaver: ' . $assignment->title . ' from ' . $assignment->course->title,
                         'class' => 'event-success-new',
-                        'start' => date('Y-m-d', strtotime($assignment->submission_date)),
-                        'end'   => date('Y-m-d', strtotime($assignment->submission_date)),
+                        'start' => $submissionDate->copy(),
+                        'end'   => $submissionDate->copy(),
                         'color' => '#44af5e',
-                    ];
+                        'all_day' => true,
+                    ]);
                 }
             }
 
-            // get the calendar notes created by admin for certain course only
             foreach ($courseTaken->package->course->notes as $note) {
-                $events[] = [
+                $fromDate = Carbon::parse($note->from_date, $timezone)->startOfDay();
+                $toDate = Carbon::parse($note->to_date, $timezone)->startOfDay();
+
+                $events->push([
                     'id' => $note->id,
                     'title' => $note->note,
                     'class' => 'event-inverse',
-                    'start' => date('Y-m-d', strtotime($note->from_date)), // strtotime($note->date) * 1000,
-                    'end' => date('Y-m-d', strtotime($note->to_date)), // strtotime($note->date) * 1000,
-                    'color' => '#1b1b1b', // for full calendar
-                ];
+                    'start' => $fromDate->copy(),
+                    'end' => $toDate->copy(),
+                    'color' => '#1b1b1b',
+                    'all_day' => true,
+                ]);
             }
-
         }
-
-        // get the calendar notes created by admin
-        /*foreach(CalendarNote::all() as $calendar) :
-            $events[] = [
-                'id' => $calendar->id,
-                'title' => $calendar->note,
-                'class' => 'event-inverse',
-                'start' => strtotime($calendar->date) * 1000,
-                'end' => strtotime($calendar->date) * 1000,
-            ];
-        endforeach;*/
 
         $approved_coaching = Auth::user()->coachingTimers()->whereNotNull('approved_date')->get();
         foreach ($approved_coaching as $coaching) {
-            $events[] = [
+            $start = Carbon::parse($coaching->approved_date, $timezone);
+
+            $events->push([
                 'id' => $coaching->id,
                 'title' => 'Coaching Session at '.date('H:i A', strtotime($coaching->approved_date)),
                 'class' => 'event-inverse',
-                'start' => date('Y-m-d', strtotime($coaching->approved_date)), // strtotime($note->date) * 1000,
-                'end' => date('Y-m-d', strtotime($coaching->approved_date)), // strtotime($note->date) * 1000,
-                'color' => '#f00', // for full calendar
-            ];
+                'start' => $start->copy(),
+                'end' => $start->copy(),
+                'color' => '#f00',
+                'all_day' => $this->isAllDayEvent($start),
+            ]);
         }
 
-        $event_1 = [
-            'title' => 'Event 1',
-            'class' => 'event-important',
-            'start' => '1494259200000',
-            'end' => '1494259300000', 1503292298,
+        return $events;
+    }
+
+    private function formatCalendarDateTime(Carbon $dateTime, bool $allDay): string
+    {
+        return $allDay ? $dateTime->toDateString() : $dateTime->toIso8601String();
+    }
+
+    private function isAllDayEvent(Carbon $start): bool
+    {
+        return $start->isStartOfDay();
+    }
+
+    private function escapeIcsText(string $text): string
+    {
+        return str_replace(['\\', ';', ',', "\n", "\r"], ['\\\\', '\\;', '\\,', '\\n', ''], $text);
+    }
+
+    private function buildVTimezoneComponent(string $timezone): array
+    {
+        try {
+            $dateTimeZone = new \DateTimeZone($timezone);
+        } catch (\Throwable $exception) {
+            return [];
+        }
+
+        $from = Carbon::now($timezone)->subYear();
+        $to = Carbon::now($timezone)->addYears(3);
+        $transitions = $dateTimeZone->getTransitions($from->timestamp, $to->timestamp);
+
+        if (count($transitions) < 2) {
+            return [];
+        }
+
+        $lines = [
+            'BEGIN:VTIMEZONE',
+            'TZID:'.$timezone,
+            'X-LIC-LOCATION:'.$timezone,
         ];
 
-        return view('frontend.learner.calendar', compact('events'));
+        $previousOffset = $transitions[0]['offset'];
+
+        foreach (array_slice($transitions, 1) as $transition) {
+            $componentType = $transition['isdst'] ? 'DAYLIGHT' : 'STANDARD';
+
+            $lines[] = 'BEGIN:'.$componentType;
+            $lines[] = 'TZOFFSETFROM:'.$this->formatUtcOffset($previousOffset);
+            $lines[] = 'TZOFFSETTO:'.$this->formatUtcOffset($transition['offset']);
+            $lines[] = 'TZNAME:'.$transition['abbr'];
+            $lines[] = 'DTSTART='.Carbon::createFromTimestamp($transition['ts'], $timezone)->format('Ymd\THis');
+            $lines[] = 'END:'.$componentType;
+
+            $previousOffset = $transition['offset'];
+        }
+
+        $lines[] = 'END:VTIMEZONE';
+
+        return $lines;
+    }
+
+    private function formatUtcOffset(int $offset): string
+    {
+        $hours = intdiv($offset, 3600);
+        $minutes = abs(($offset % 3600) / 60);
+
+        return sprintf('%+03d%02d', $hours, $minutes);
     }
 
     public function documentConverter(): View
