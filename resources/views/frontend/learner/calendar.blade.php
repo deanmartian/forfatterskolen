@@ -8,6 +8,16 @@
 @section('styles')
 <link rel="stylesheet" href="{{asset('bootstrap-calendar/css/calendar.min.css')}}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.css">
+<style>
+    .fc-popover.fc-more-popover .fc-header .fc-title {
+        color: #000;
+    }
+
+    .fc-popover.fc-more-popover .fc-body {
+        max-height: 240px;
+        overflow-y: auto;
+    }
+</style>
 @stop
 
 @section('content')
