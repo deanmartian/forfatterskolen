@@ -966,7 +966,7 @@ class LearnerController extends Controller
                     'start' => $start->copy(),
                     'end' => $start->copy(),
                     'color' => '#ff9c00',
-                    'all_day' => $this->isAllDayEvent($start),
+                    'all_day' => false,
                 ]);
             }
 
