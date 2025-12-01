@@ -14,8 +14,12 @@
     }
 
     .fc-popover.fc-more-popover .fc-body {
-        max-height: 240px;
+        max-height: 340px;
         overflow-y: auto;
+    }
+
+    .fc-popover.fc-more-popover .fc-body .fc-title {
+        color: white;
     }
 </style>
 @stop
