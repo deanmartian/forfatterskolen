@@ -863,6 +863,7 @@ class LearnerController extends Controller
                 'class' => $event['class'],
                 'start' => $this->formatCalendarDateTime($event['start'], $event['all_day']),
                 'end' => $this->formatCalendarDateTime($event['end'], $event['all_day']),
+                'all_day' => $event['all_day'],
                 'color' => $event['color'],
                 //'allDay' => $event['all_day'],
             ];

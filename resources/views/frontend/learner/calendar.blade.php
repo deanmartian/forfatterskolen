@@ -115,6 +115,8 @@ $('#full-calendar').fullCalendar({
 
                 if (endMoment && endMoment.isValid()) {
                     eventData.end = endMoment.toDate();
+                } else if (startMoment.isValid()) {
+                    eventData.end = startMoment.clone().add(1, 'day').toDate();
                 }
             } else {
                 const startMoment = hasExplicitTime
