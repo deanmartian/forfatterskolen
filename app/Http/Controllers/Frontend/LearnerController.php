@@ -857,19 +857,15 @@ class LearnerController extends Controller
     public function calendar(): View
     {
         $events = $this->getCalendarEvents()->map(function (array $event) {
-            $payload = [
+            return [
                 'id' => $event['id'],
                 'title' => $event['title'],
                 'class' => $event['class'],
                 'start' => $this->formatCalendarDateTime($event['start'], $event['all_day']),
+                'end' => $this->formatCalendarDateTime($event['end'], $event['all_day']),
                 'color' => $event['color'],
+                //'allDay' => $event['all_day'],
             ];
-
-            if (! $event['all_day']) {
-                $payload['end'] = $this->formatCalendarDateTime($event['end'], false);
-            }
-
-            return $payload;
         });
 
         return view('frontend.learner.calendar', ['events' => $events]);

@@ -86,20 +86,15 @@ $('#full-calendar').fullCalendar({
         eventLimitText: '{{ trans('site.view-more') }}',
         eventLimitClick: 'popover',
         eventDataTransform: function(eventData) {
-            const hasExplicitTime = typeof eventData.start === 'string'
-                ? /\d{2}:\d{2}/.test(eventData.start)
-                : false;
-
-            // Normalize allDay values that may come through as strings or numbers,
-            // defaulting date-only entries to all-day when the flag is omitted.
-            const normalizedAllDay = eventData.allDay === true
+            // Normalize allDay values that may come through as strings or numbers
+            eventData.allDay = eventData.allDay === true
                 || eventData.allDay === 'true'
                 || eventData.allDay === 1
                 || eventData.allDay === '1';
 
-            eventData.allDay = typeof eventData.allDay === 'undefined'
-                ? !hasExplicitTime
-                : normalizedAllDay;
+            const hasExplicitTime = typeof eventData.start === 'string'
+                ? /\d{2}:\d{2}/.test(eventData.start)
+                : false;
 
             const startMoment = hasExplicitTime
                 ? moment.parseZone(eventData.start)
