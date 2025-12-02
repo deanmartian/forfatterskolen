@@ -86,35 +86,52 @@ $('#full-calendar').fullCalendar({
         eventLimitText: '{{ trans('site.view-more') }}',
         eventLimitClick: 'popover',
         eventDataTransform: function(eventData) {
-            // Normalize allDay values that may come through as strings or numbers
-            eventData.allDay = eventData.allDay === true
-                || eventData.allDay === 'true'
-                || eventData.allDay === 1
-                || eventData.allDay === '1';
+            // Normalize backend all_day flag and ensure it controls the view
+            const allDayValue = eventData.hasOwnProperty('all_day')
+                ? eventData.all_day
+                : eventData.allDay;
 
-            const hasExplicitTime = typeof eventData.start === 'string'
-                ? /\d{2}:\d{2}/.test(eventData.start)
-                : false;
+            eventData.allDay = allDayValue === true
+                || allDayValue === 'true'
+                || allDayValue === 1
+                || allDayValue === '1';
 
-            const startMoment = hasExplicitTime
-                ? moment.parseZone(eventData.start)
-                : moment(eventData.start);
-            const endMoment = eventData.end
-                ? (hasExplicitTime
-                    ? moment.parseZone(eventData.end)
-                    : moment(eventData.end))
-                : null;
-
-            if (eventData.class === 'event-warning' || hasExplicitTime) {
-                // Ensure webinars and other timed entries stay off the all-day row
+            // Webinars should always show at their scheduled time
+            if (eventData.class === 'event-warning') {
                 eventData.allDay = false;
             }
 
-            if (!eventData.allDay && startMoment.isValid()) {
-                eventData.start = startMoment.toDate();
-                eventData.end = endMoment && endMoment.isValid()
-                    ? endMoment.toDate()
-                    : startMoment.clone().add(1, 'hour').toDate();
+            const hasExplicitTime = !eventData.allDay && typeof eventData.start === 'string'
+                ? /\d{2}:\d{2}/.test(eventData.start)
+                : false;
+
+            if (eventData.allDay) {
+                const startMoment = moment(eventData.start).startOf('day');
+                const endMoment = eventData.end ? moment(eventData.end).startOf('day') : null;
+
+                if (startMoment.isValid()) {
+                    eventData.start = startMoment.toDate();
+                }
+
+                if (endMoment && endMoment.isValid()) {
+                    eventData.end = endMoment.toDate();
+                }
+            } else {
+                const startMoment = hasExplicitTime
+                    ? moment.parseZone(eventData.start)
+                    : moment(eventData.start);
+                const endMoment = eventData.end
+                    ? (hasExplicitTime
+                        ? moment.parseZone(eventData.end)
+                        : moment(eventData.end))
+                    : null;
+
+                if (startMoment.isValid()) {
+                    eventData.start = startMoment.toDate();
+                    eventData.end = endMoment && endMoment.isValid()
+                        ? endMoment.toDate()
+                        : startMoment.clone().add(1, 'hour').toDate();
+                }
             }
 
             return eventData;
