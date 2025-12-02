@@ -81,27 +81,31 @@ $('#full-calendar').fullCalendar({
         eventLimitText: '{{ trans('site.view-more') }}',
         eventLimitClick: 'popover',
         eventDataTransform: function(eventData) {
-            // Ensure webinars (event-warning) are treated as timed events with explicit duration
-            if (eventData.class === 'event-warning') {
-                eventData.allDay = false;
-                const start = moment(eventData.start, ['YYYY-MM-DD HH:mm:ss', moment.ISO_8601], true);
-                const end = eventData.end
-                    ? moment(eventData.end, ['YYYY-MM-DD HH:mm:ss', moment.ISO_8601], true)
-                    : null;
-
-                const normalizedStart = start.isValid() ? start : moment(eventData.start);
-
-                eventData.start = normalizedStart.toDate();
-                eventData.end = end && end.isValid()
-                    ? end.toDate()
-                    : normalizedStart.clone().add(1, 'hour').toDate();
-            }
-
             // Normalize allDay values that may come through as strings or numbers
             eventData.allDay = eventData.allDay === true
                 || eventData.allDay === 'true'
                 || eventData.allDay === 1
                 || eventData.allDay === '1';
+
+            const startMoment = moment.parseZone(eventData.start);
+            const endMoment = eventData.end ? moment.parseZone(eventData.end) : null;
+
+            if (eventData.class === 'event-warning') {
+                // Ensure webinars render as timed events with a concrete duration
+                eventData.allDay = false;
+                eventData.start = startMoment.isValid() ? startMoment.toDate() : new Date(eventData.start);
+                eventData.end = endMoment && endMoment.isValid()
+                    ? endMoment.toDate()
+                    : startMoment.clone().add(1, 'hour').toDate();
+                return eventData;
+            }
+
+            if (!eventData.allDay && startMoment.isValid()) {
+                eventData.start = startMoment.toDate();
+                eventData.end = endMoment && endMoment.isValid()
+                    ? endMoment.toDate()
+                    : startMoment.clone().add(1, 'hour').toDate();
+            }
 
             return eventData;
         },
