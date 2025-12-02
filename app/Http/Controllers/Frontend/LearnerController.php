@@ -957,7 +957,7 @@ class LearnerController extends Controller
             }
 
             foreach ($courseTaken->package->course->webinars as $webinar) {
-                $start = Carbon::parse($webinar->start_date, $timezone);
+                $start = Carbon::parse($webinar->start_date, 'UTC');
                 $end = $start->copy()->addHour();
 
                 $events->push([
@@ -1043,8 +1043,8 @@ class LearnerController extends Controller
             ? $dateTime->toDateString()
             : $dateTime
                 ->copy()
-                ->utc()
-                ->toIso8601String();
+                ->setTimezone('UTC')
+                ->format('Y-m-d\TH:i:sP');
     }
 
     private function isAllDayEvent(Carbon $start): bool
