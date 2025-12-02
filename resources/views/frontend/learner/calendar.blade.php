@@ -105,38 +105,35 @@ $('#full-calendar').fullCalendar({
             });
         },
         eventDataTransform: function(event) {
-            const allDayFlags = [event.allDay, event.all_day];
-            const isAllDay = allDayFlags.some(flag => flag === true || flag === 1 || flag === '1');
+            const explicitAllDay = event.allDay ?? event.all_day;
+            const startRaw = event.start;
+            const endRaw = event.end;
 
-            if (isAllDay) {
-                const start = moment(event.start, moment.ISO_8601, true).isValid()
-                    ? moment(event.start).startOf('day')
-                    : moment.parseZone(event.start).startOf('day');
-                const end = moment(event.end, moment.ISO_8601, true).isValid()
-                    ? moment(event.end).startOf('day')
-                    : moment.parseZone(event.end || event.start).startOf('day');
-
-                return {
-                    ...event,
-                    allDay: true,
-                    start: start.format('YYYY-MM-DD'),
-                    end: end.add(1, 'day').format('YYYY-MM-DD'),
-                };
-            }
-
-            const fallbackStart = moment(event.start, moment.ISO_8601, true);
-            const start = moment.parseZone(event.start).isValid()
-                ? moment.parseZone(event.start)
-                : fallbackStart;
-            let end = moment.parseZone(event.end).isValid()
-                ? moment.parseZone(event.end)
-                : moment(event.end, moment.ISO_8601, true);
+            const start = moment.parseZone(startRaw);
+            let end = moment.parseZone(endRaw);
 
             if (!start.isValid()) {
                 return null;
             }
 
-            if (!end || !end.isValid()) {
+            const hasExplicitAllDay = explicitAllDay !== undefined && explicitAllDay !== null;
+            const isAllDay = hasExplicitAllDay
+                ? Boolean(explicitAllDay)
+                : start.isValid() && !start.hasTime();
+
+            if (isAllDay) {
+                const allDayStart = start.clone().startOf('day');
+                const allDayEnd = end.isValid() ? end.clone().startOf('day') : allDayStart.clone();
+
+                return {
+                    ...event,
+                    allDay: true,
+                    start: allDayStart.format('YYYY-MM-DD'),
+                    end: allDayEnd.add(1, 'day').format('YYYY-MM-DD'),
+                };
+            }
+
+            if (!end.isValid()) {
                 end = start.clone().add(1, 'hour');
             }
 
