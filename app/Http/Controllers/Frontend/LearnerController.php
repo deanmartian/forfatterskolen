@@ -1039,7 +1039,9 @@ class LearnerController extends Controller
 
     private function formatCalendarDateTime(Carbon $dateTime, bool $allDay): string
     {
-        return $allDay ? $dateTime->toDateString() : $dateTime->toIso8601String();
+        return $allDay
+            ? $dateTime->toDateString()
+            : $dateTime->format('Y-m-d H:i:s');
     }
 
     private function isAllDayEvent(Carbon $start): bool

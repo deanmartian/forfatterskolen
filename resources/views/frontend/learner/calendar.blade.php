@@ -73,9 +73,10 @@
 
 $('#full-calendar').fullCalendar({
                 locale: 'nb',
+        timezone: 'local',
         header: { right: 'prev,today,next, month,agendaWeek,agendaDay',
                         /*center: 'title'*/}, // display the month title
-        displayEventTime: false,
+        displayEventTime: true,
         eventLimit: true,
         eventLimitText: '{{ trans('site.view-more') }}',
         eventLimitClick: 'popover',
@@ -83,17 +84,24 @@ $('#full-calendar').fullCalendar({
             // Ensure webinars (event-warning) are treated as timed events with explicit duration
             if (eventData.class === 'event-warning') {
                 eventData.allDay = false;
-                const start = moment(eventData.start);
-                const end = eventData.end ? moment(eventData.end) : null;
+                const start = moment(eventData.start, ['YYYY-MM-DD HH:mm:ss', moment.ISO_8601], true);
+                const end = eventData.end
+                    ? moment(eventData.end, ['YYYY-MM-DD HH:mm:ss', moment.ISO_8601], true)
+                    : null;
 
-                eventData.start = start.toDate();
+                const normalizedStart = start.isValid() ? start : moment(eventData.start);
+
+                eventData.start = normalizedStart.toDate();
                 eventData.end = end && end.isValid()
                     ? end.toDate()
-                    : start.clone().add(1, 'hour').toDate();
+                    : normalizedStart.clone().add(1, 'hour').toDate();
             }
 
-            // Normalize allDay values that may come through as strings
-            eventData.allDay = !!eventData.allDay;
+            // Normalize allDay values that may come through as strings or numbers
+            eventData.allDay = eventData.allDay === true
+                || eventData.allDay === 'true'
+                || eventData.allDay === 1
+                || eventData.allDay === '1';
 
             return eventData;
         },
