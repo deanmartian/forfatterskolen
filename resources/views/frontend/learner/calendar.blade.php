@@ -80,9 +80,16 @@ $('#full-calendar').fullCalendar({
         eventLimitText: '{{ trans('site.view-more') }}',
         eventLimitClick: 'popover',
         eventDataTransform: function(eventData) {
-            // Ensure webinars (event-warning) are treated as timed events
+            // Ensure webinars (event-warning) are treated as timed events with explicit duration
             if (eventData.class === 'event-warning') {
                 eventData.allDay = false;
+                const start = moment(eventData.start);
+                const end = eventData.end ? moment(eventData.end) : null;
+
+                eventData.start = start.toDate();
+                eventData.end = end && end.isValid()
+                    ? end.toDate()
+                    : start.clone().add(1, 'hour').toDate();
             }
 
             // Normalize allDay values that may come through as strings
