@@ -6,19 +6,117 @@
 @stop
 
 @section('styles')
-<link rel="stylesheet" href="{{asset('bootstrap-calendar/css/calendar.min.css')}}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
 <style>
-    .fc-popover.fc-more-popover .fc-header .fc-title {
+    .learner-calendar {
+        padding: 0;
+    }
+
+    .calendar-wrapper {
+        background: #f3f5f7;
+        padding: 0 20px 32px;
+    }
+
+    @media (min-width: 992px) {
+        .calendar-wrapper {
+            padding-left: 36px;
+            padding-right: 36px;
+        }
+    }
+
+    .calendar-header {
+        background: #ffffff;
+        border-radius: 6px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        padding: 18px 22px;
+        margin-bottom: 14px;
+    }
+
+    .calendar-header .calendar-guide {
+        margin-bottom: 0;
+    }
+
+    #full-calendar {
+        background: #ffffff;
+        border-radius: 6px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        padding: 16px;
+    }
+
+    .fc-theme-standard .fc-scrollgrid,
+    .fc-theme-standard th,
+    .fc-theme-standard td {
+        border-color: #e4e8ed;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 22px;
+        font-weight: 600;
+        color: #2e3a59;
+    }
+
+    .fc .fc-toolbar-chunk:last-child {
+        display: grid;
+        gap: 8px;
+        grid-auto-flow: column;
+        align-items: center;
+    }
+
+    .fc .fc-button-primary {
+        background-color: #7d1a29;
+        border-color: #7d1a29;
+        border-radius: 4px;
+        box-shadow: none;
+        text-transform: none;
+    }
+
+    .fc .fc-button-primary:not(:disabled).fc-button-active,
+    .fc .fc-button-primary:not(:disabled):active,
+    .fc .fc-button-primary:not(:disabled):focus,
+    .fc .fc-button-primary:hover {
+        background-color: #9a3141;
+        border-color: #9a3141;
+    }
+
+    .fc .fc-button-group .fc-button-primary {
+        background: #fff;
+        color: #2e3a59;
+        border: 1px solid #d6dbe1;
+    }
+
+    .fc .fc-button-group .fc-button-primary:not(:disabled).fc-button-active,
+    .fc .fc-button-group .fc-button-primary:not(:disabled):active,
+    .fc .fc-button-group .fc-button-primary:hover {
+        background: #eef2f6;
+        color: #7d1a29;
+        border-color: #d6dbe1;
+    }
+
+    .fc .fc-day-today {
+        background: #f9f1f1;
+    }
+
+    .fc .fc-daygrid-day-number {
+        color: #2e3a59;
+        font-weight: 600;
+    }
+
+    .fc .fc-event {
+        border-radius: 4px;
+        border: none;
+        padding: 4px 8px;
+    }
+
+    .fc .fc-popover.fc-more-popover .fc-header .fc-title {
         color: #000;
     }
 
-    .fc-popover.fc-more-popover .fc-body {
+    .fc .fc-popover.fc-more-popover .fc-body {
         max-height: 340px;
         overflow-y: auto;
     }
 
-    .fc-popover.fc-more-popover .fc-body .fc-title {
+    .fc .fc-popover.fc-more-popover .fc-body .fc-title {
         color: white;
     }
 </style>
@@ -26,28 +124,32 @@
 
 @section('content')
         <div class="learner-container learner-calendar">
-                <div class="container">
+                <div class="container-fluid calendar-wrapper">
                         <div class="row">
-                                <div class="card w-100 rounded-0 py-4">
-                                        <ul class="calendar-guide">
-                                                <li class="guide-blue">{{ trans('site.learner.script') }}</li>
-                                                <li class="guide-green">{{ trans('site.learner.assignment') }}</li>
-                                                <li class="guide-purple">{{ trans('site.learner.webinars') }}</li>
-                                                <li class="guide-pink">{{ trans('site.learner.modules') }}</li>
-                                                <li class="guide-orange">{{ trans('site.learner.webinars') }}</li> <!-- course-webinars -->
-                                                <li class="guide-inverse">{{ trans('site.learner.notes-text') }}</li>
-                                                <li class="guide-red">{{ trans('site.learner.coaching-time') }}</li>
-                                        </ul>
-                                        <div class="px-3" style="text-align: right;">
-                                                <a href="{{ route('learner.calendar.export') }}" class="btn btn-primary" target="_blank" rel="noopener">
-                                                        {{ __('Export Calendar') }}
-                                                </a>
+                                <div class="col-12">
+                                        <div class="calendar-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                                                <ul class="calendar-guide d-flex flex-wrap mb-0">
+                                                        <li class="guide-blue">{{ trans('site.learner.script') }}</li>
+                                                        <li class="guide-green">{{ trans('site.learner.assignment') }}</li>
+                                                        <li class="guide-purple">{{ trans('site.learner.webinars') }}</li>
+                                                        <li class="guide-pink">{{ trans('site.learner.modules') }}</li>
+                                                        <li class="guide-orange">{{ trans('site.learner.webinars') }}</li> <!-- course-webinars -->
+                                                        <li class="guide-inverse">{{ trans('site.learner.notes-text') }}</li>
+                                                        <li class="guide-red">{{ trans('site.learner.coaching-time') }}</li>
+                                                </ul>
+                                                <div class="d-flex justify-content-md-end w-100 w-md-auto">
+                                                        <a href="{{ route('learner.calendar.export') }}" class="btn btn-primary" target="_blank" rel="noopener">
+                                                                {{ __('Export Calendar') }}
+                                                        </a>
+                                                </div>
                                         </div>
                                 </div>
                         </div>
 
                         <div class="row">
-                                <div id="full-calendar"></div>
+                                <div class="col-12">
+                                        <div id="full-calendar"></div>
+                                </div>
                         </div>
                 </div>
         </div>
@@ -55,9 +157,6 @@
 
 
 @section('scripts')
-<script type="text/javascript" src="{{asset('js/underscore-min.js')}}"></script>
-<script type="text/javascript" src="{{asset('bootstrap-calendar/js/language/no-NO.js')}}"></script>
-<script type="text/javascript" src="{{asset('bootstrap-calendar/js/calendar.js')}}"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 <script type="text/javascript">
 
@@ -76,11 +175,10 @@ document.addEventListener('DOMContentLoaded', function() {
     var calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'nb',
         timeZone: 'local',
-        initialView: 'timeGridWeek',
+        initialView: 'dayGridMonth',
         headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            left: 'title',
+            right: 'prev today next dayGridMonth,timeGridWeek,timeGridDay'
         },
         buttonText: {
             today: translations.today,
@@ -100,32 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     calendar.render();
 });
-
-        let calendar = $("#calendar").calendar(
-                {
-                        language: 'no-NO',
-                        tmpl_path: "{{asset('bootstrap-calendar/tmpls')}}/",
-                        events_source: [
-                                @foreach($events as $event)
-                                {!! json_encode($event) !!},
-                                @endforeach
-                        ],
-                }
-        );
-
-        $('.btn-group button[data-calendar-nav]').each(function() {
-        let $this = $(this);
-                $this.click(function() {
-                        calendar.navigate($this.data('calendar-nav'));
-                });
-        });
-
-        $('.btn-group button[data-calendar-view]').each(function() {
-        let $this = $(this);
-                $this.click(function() {
-                        calendar.view($this.data('calendar-view'));
-                });
-        });
 
 </script>
 @stop
