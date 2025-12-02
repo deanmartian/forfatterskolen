@@ -857,13 +857,18 @@ class LearnerController extends Controller
     public function calendar(): View
     {
         $events = $this->getCalendarEvents()->map(function (array $event) {
+            $allDay = $event['all_day'];
+            $start = $event['start'];
+            $end = $event['end'];
+
             return [
                 'id' => $event['id'],
                 'title' => $event['title'],
                 'class' => $event['class'],
-                'start' => $this->formatCalendarDateTime($event['start'], $event['all_day']),
-                'end' => $this->formatCalendarDateTime($event['end'], $event['all_day']),
-                'all_day' => $event['all_day'],
+                'start' => $this->formatCalendarDateTime($start, $allDay),
+                'end' => $this->formatCalendarEnd($start, $end, $allDay),
+                'all_day' => $allDay,
+                'allDay' => $allDay,
                 'color' => $event['color'],
                 //'allDay' => $event['all_day'],
             ];
@@ -1044,8 +1049,22 @@ class LearnerController extends Controller
             ? $dateTime->toDateString()
             : $dateTime
                 ->copy()
-                ->utc()
                 ->toIso8601String();
+    }
+
+    private function formatCalendarEnd(Carbon $start, Carbon $end, bool $allDay): string
+    {
+        if ($allDay) {
+            return $end->copy()->addDay()->toDateString();
+        }
+
+        $adjustedEnd = $end->copy();
+
+        if ($adjustedEnd->lessThanOrEqualTo($start)) {
+            $adjustedEnd = $start->copy()->addHour();
+        }
+
+        return $adjustedEnd->toIso8601String();
     }
 
     private function isAllDayEvent(Carbon $start): bool

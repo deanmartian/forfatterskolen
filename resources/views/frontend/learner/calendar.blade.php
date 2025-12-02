@@ -85,52 +85,6 @@ $('#full-calendar').fullCalendar({
         eventLimit: true,
         eventLimitText: '{{ trans('site.view-more') }}',
         eventLimitClick: 'popover',
-        eventDataTransform: function(eventData) {
-            // Normalize backend all_day flag and ensure it controls the view
-            const allDayValue = eventData.hasOwnProperty('all_day')
-                ? eventData.all_day
-                : eventData.allDay;
-
-            eventData.allDay = allDayValue === true
-                || allDayValue === 'true'
-                || allDayValue === 1
-                || allDayValue === '1';
-
-            // Webinars should always show at their scheduled time
-            if (eventData.class === 'event-warning') {
-                eventData.allDay = false;
-            }
-
-            if (eventData.allDay) {
-                const startMoment = moment(eventData.start).startOf('day');
-                const endMoment = eventData.end ? moment(eventData.end).startOf('day') : null;
-
-                if (startMoment.isValid()) {
-                    eventData.start = startMoment.toDate();
-                }
-
-                if (endMoment && endMoment.isValid()) {
-                    eventData.end = endMoment.toDate();
-                } else if (startMoment.isValid()) {
-                    eventData.end = startMoment.clone().add(1, 'day').toDate();
-                }
-            } else {
-                const startMoment = moment.parseZone(eventData.start);
-                const endMoment = eventData.end ? moment.parseZone(eventData.end) : null;
-
-                if (startMoment.isValid()) {
-                    const hasValidEnd = endMoment && endMoment.isValid();
-                    const adjustedEnd = hasValidEnd && endMoment.isAfter(startMoment)
-                        ? endMoment
-                        : startMoment.clone().add(1, 'hour');
-
-                    eventData.start = startMoment.toDate();
-                    eventData.end = adjustedEnd.toDate();
-                }
-            }
-
-            return eventData;
-        },
                 buttonText: {
             today:	translations.today,
             month:	translations.month,
