@@ -101,10 +101,6 @@ $('#full-calendar').fullCalendar({
                 eventData.allDay = false;
             }
 
-            const hasExplicitTime = !eventData.allDay && typeof eventData.start === 'string'
-                ? /\d{2}:\d{2}/.test(eventData.start)
-                : false;
-
             if (eventData.allDay) {
                 const startMoment = moment(eventData.start).startOf('day');
                 const endMoment = eventData.end ? moment(eventData.end).startOf('day') : null;
@@ -119,20 +115,17 @@ $('#full-calendar').fullCalendar({
                     eventData.end = startMoment.clone().add(1, 'day').toDate();
                 }
             } else {
-                const startMoment = hasExplicitTime
-                    ? moment.parseZone(eventData.start)
-                    : moment(eventData.start);
-                const endMoment = eventData.end
-                    ? (hasExplicitTime
-                        ? moment.parseZone(eventData.end)
-                        : moment(eventData.end))
-                    : null;
+                const startMoment = moment.parseZone(eventData.start);
+                const endMoment = eventData.end ? moment.parseZone(eventData.end) : null;
 
                 if (startMoment.isValid()) {
+                    const hasValidEnd = endMoment && endMoment.isValid();
+                    const adjustedEnd = hasValidEnd && endMoment.isAfter(startMoment)
+                        ? endMoment
+                        : startMoment.clone().add(1, 'hour');
+
                     eventData.start = startMoment.toDate();
-                    eventData.end = endMoment && endMoment.isValid()
-                        ? endMoment.toDate()
-                        : startMoment.clone().add(1, 'hour').toDate();
+                    eventData.end = adjustedEnd.toDate();
                 }
             }
 
