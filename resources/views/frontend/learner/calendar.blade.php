@@ -104,12 +104,45 @@ $('#full-calendar').fullCalendar({
                 container: 'body'
             });
         },
-		events: [
-			@foreach($events as $event)
-			{!! json_encode($event) !!},
-			@endforeach
-		]
-	});
+        eventDataTransform: function(event) {
+            const isAllDay = Boolean(event.allDay ?? event.all_day);
+
+            if (isAllDay) {
+                const start = moment(event.start).startOf('day');
+                const end = event.end ? moment(event.end).startOf('day') : start.clone();
+
+                return {
+                    ...event,
+                    allDay: true,
+                    start: start.format('YYYY-MM-DD'),
+                    end: end.add(1, 'day').format('YYYY-MM-DD'),
+                };
+            }
+
+            let start = moment(event.start);
+            let end = event.end ? moment(event.end) : null;
+
+            if (!start.isValid()) {
+                start = moment(event.start, moment.ISO_8601, true);
+            }
+
+            if (!end || !end.isValid()) {
+                end = start.clone().add(1, 'hour');
+            }
+
+            if (!end.isAfter(start)) {
+                end = start.clone().add(1, 'hour');
+            }
+
+            return {
+                ...event,
+                allDay: false,
+                start: start.toISOString(true),
+                end: end.toISOString(true),
+            };
+        },
+        events: @json($events)
+        });
 
 	let calendar = $("#calendar").calendar(
 		{
