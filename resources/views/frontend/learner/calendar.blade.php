@@ -105,12 +105,16 @@ $('#full-calendar').fullCalendar({
             });
         },
         eventDataTransform: function(event) {
-            const rawAllDay = event.allDay ?? event.all_day;
-            const isAllDay = rawAllDay === true || rawAllDay === 1 || rawAllDay === '1';
+            const allDayFlags = [event.allDay, event.all_day];
+            const isAllDay = allDayFlags.some(flag => flag === true || flag === 1 || flag === '1');
 
             if (isAllDay) {
-                const start = moment.parseZone(event.start).startOf('day');
-                const end = event.end ? moment.parseZone(event.end).startOf('day') : start.clone();
+                const start = moment(event.start, moment.ISO_8601, true).isValid()
+                    ? moment(event.start).startOf('day')
+                    : moment.parseZone(event.start).startOf('day');
+                const end = moment(event.end, moment.ISO_8601, true).isValid()
+                    ? moment(event.end).startOf('day')
+                    : moment.parseZone(event.end || event.start).startOf('day');
 
                 return {
                     ...event,
@@ -120,11 +124,16 @@ $('#full-calendar').fullCalendar({
                 };
             }
 
-            let start = moment.parseZone(event.start);
-            let end = event.end ? moment.parseZone(event.end) : null;
+            const fallbackStart = moment(event.start, moment.ISO_8601, true);
+            const start = moment.parseZone(event.start).isValid()
+                ? moment.parseZone(event.start)
+                : fallbackStart;
+            let end = moment.parseZone(event.end).isValid()
+                ? moment.parseZone(event.end)
+                : moment(event.end, moment.ISO_8601, true);
 
             if (!start.isValid()) {
-                start = moment(event.start, moment.ISO_8601, true);
+                return null;
             }
 
             if (!end || !end.isValid()) {
@@ -138,8 +147,8 @@ $('#full-calendar').fullCalendar({
             return {
                 ...event,
                 allDay: false,
-                start: start.format(),
-                end: end.format(),
+                start: start.format('YYYY-MM-DD[T]HH:mm:ssZ'),
+                end: end.format('YYYY-MM-DD[T]HH:mm:ssZ'),
             };
         },
         events: @json($events)

@@ -857,7 +857,7 @@ class LearnerController extends Controller
     public function calendar(): View
     {
         $events = $this->getCalendarEvents()->map(function (array $event) {
-            $allDay = $event['all_day'];
+            $allDay = (bool) $event['all_day'];
             $start = $event['start'];
             $end = $event['end'];
 
