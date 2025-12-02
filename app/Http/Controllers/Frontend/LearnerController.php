@@ -1041,7 +1041,7 @@ class LearnerController extends Controller
     {
         return $allDay
             ? $dateTime->toDateString()
-            : $dateTime->format('Y-m-d H:i:s');
+            : $dateTime->toIso8601String();
     }
 
     private function isAllDayEvent(Carbon $start): bool

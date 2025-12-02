@@ -92,11 +92,11 @@ $('#full-calendar').fullCalendar({
                 : false;
 
             const startMoment = hasExplicitTime
-                ? moment(eventData.start, 'YYYY-MM-DD HH:mm:ss', true)
+                ? moment.parseZone(eventData.start)
                 : moment(eventData.start);
             const endMoment = eventData.end
                 ? (hasExplicitTime
-                    ? moment(eventData.end, 'YYYY-MM-DD HH:mm:ss', true)
+                    ? moment.parseZone(eventData.end)
                     : moment(eventData.end))
                 : null;
 
