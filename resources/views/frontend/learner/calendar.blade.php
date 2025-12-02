@@ -87,17 +87,22 @@ $('#full-calendar').fullCalendar({
                 || eventData.allDay === 1
                 || eventData.allDay === '1';
 
-            const startMoment = moment.parseZone(eventData.start);
-            const endMoment = eventData.end ? moment.parseZone(eventData.end) : null;
+            const hasExplicitTime = typeof eventData.start === 'string'
+                ? /\d{2}:\d{2}/.test(eventData.start)
+                : false;
 
-            if (eventData.class === 'event-warning') {
-                // Ensure webinars render as timed events with a concrete duration
+            const startMoment = hasExplicitTime
+                ? moment(eventData.start, 'YYYY-MM-DD HH:mm:ss', true)
+                : moment(eventData.start);
+            const endMoment = eventData.end
+                ? (hasExplicitTime
+                    ? moment(eventData.end, 'YYYY-MM-DD HH:mm:ss', true)
+                    : moment(eventData.end))
+                : null;
+
+            if (eventData.class === 'event-warning' || hasExplicitTime) {
+                // Ensure webinars and other timed entries stay off the all-day row
                 eventData.allDay = false;
-                eventData.start = startMoment.isValid() ? startMoment.toDate() : new Date(eventData.start);
-                eventData.end = endMoment && endMoment.isValid()
-                    ? endMoment.toDate()
-                    : startMoment.clone().add(1, 'hour').toDate();
-                return eventData;
             }
 
             if (!eventData.allDay && startMoment.isValid()) {
