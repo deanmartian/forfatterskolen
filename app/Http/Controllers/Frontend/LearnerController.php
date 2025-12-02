@@ -1043,8 +1043,8 @@ class LearnerController extends Controller
             ? $dateTime->toDateString()
             : $dateTime
                 ->copy()
-                ->setTimezone('UTC')
-                ->format('Y-m-d\TH:i:sP');
+                ->utc()
+                ->toIso8601String();
     }
 
     private function isAllDayEvent(Carbon $start): bool

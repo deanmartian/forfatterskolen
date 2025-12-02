@@ -7,7 +7,7 @@
 
 @section('styles')
 <link rel="stylesheet" href="{{asset('bootstrap-calendar/css/calendar.min.css')}}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.5/dist/fullcalendar.min.css">
 <style>
     .fc-popover.fc-more-popover .fc-header .fc-title {
         color: #000;
@@ -59,7 +59,7 @@
 <script type="text/javascript" src="{{asset('bootstrap-calendar/js/language/no-NO.js')}}"></script>
 <script type="text/javascript" src="{{asset('bootstrap-calendar/js/calendar.js')}}"></script>
 <script type="text/javascript" src="https://momentjs.com/downloads/moment-with-locales.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.5/dist/fullcalendar.min.js"></script>
 <script type="text/javascript">
 
     let translations = {
