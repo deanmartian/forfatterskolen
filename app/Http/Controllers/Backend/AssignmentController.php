@@ -574,6 +574,7 @@ class AssignmentController extends Controller
                 $assignmentManuscript->filename = $relativePath;
                 $assignmentManuscript->type = $request->type;
                 $assignmentManuscript->manu_type = $request->manu_type;
+                $assignmentManuscript->uploaded_at = now();
                 $assignmentManuscript->save();
             }
         }
