@@ -123,6 +123,12 @@
         padding: 4px 8px;
     }
 
+    .fc .fc-event.event-warning,
+    .fc .fc-event.event-warning .fc-event-main {
+        background-color: #f7d046;
+        color: #2e3a59;
+    }
+
     .fc .fc-popover.fc-more-popover .fc-header .fc-title {
         color: #000;
     }

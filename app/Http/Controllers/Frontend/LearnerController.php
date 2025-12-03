@@ -864,7 +864,7 @@ class LearnerController extends Controller
             return [
                 'id' => $event['id'],
                 'title' => $event['title'],
-                'class' => $event['class'],
+                'className' => $event['className'],
                 'start' => $this->formatCalendarDateTime($start, $allDay),
                 'end' => $this->formatCalendarEnd($start, $end, $allDay),
                 'all_day' => $allDay,
@@ -954,7 +954,7 @@ class LearnerController extends Controller
                 $events->push([
                     'id' => $lesson->course->id,
                     'title' => 'Lesson: '.$lesson->title.' from '.$lesson->course->title,
-                    'class' => 'event-important',
+                    'className' => 'event-important',
                     'start' => $availability->copy(),
                     'end' => $availability->copy(),
                     'color' => '#d95e66',
@@ -969,7 +969,7 @@ class LearnerController extends Controller
                 $events->push([
                     'id' => $webinar->course->id,
                     'title' => 'Webinar: '.$webinar->title.' from '.$webinar->course->title,
-                    'class' => 'event-warning',
+                    'className' => 'event-warning',
                     'start' => $start->copy(),
                     'end' => $end,
                     'color' => '#f7d046',
@@ -984,7 +984,7 @@ class LearnerController extends Controller
                 $events->push([
                     'id' => $courseTaken->package->course->id,
                     'title' => 'Manus: '.basename($manuscript->filename).' from '.$courseTaken->package->course->title,
-                    'class' => 'event-info',
+                    'className' => 'event-info',
                     'start' => $finishDate->copy(),
                     'end' => $finishDate->copy(),
                     'color' => '#29b5f5',
@@ -1001,7 +1001,7 @@ class LearnerController extends Controller
                     $events->push([
                         'id'    => $assignment->course->id,
                         'title' => 'Oppgaver: ' . $assignment->title . ' from ' . $assignment->course->title,
-                        'class' => 'event-success-new',
+                        'className' => 'event-success-new',
                         'start' => $submissionDate->copy(),
                         'end'   => $submissionDate->copy(),
                         'color' => '#44af5e',
@@ -1017,7 +1017,7 @@ class LearnerController extends Controller
                 $events->push([
                     'id' => $note->id,
                     'title' => $note->note,
-                    'class' => 'event-inverse',
+                    'className' => 'event-inverse',
                     'start' => $fromDate->copy(),
                     'end' => $toDate->copy(),
                     'color' => '#1b1b1b',
@@ -1033,7 +1033,7 @@ class LearnerController extends Controller
             $events->push([
                 'id' => $coaching->id,
                 'title' => 'Coaching Session at '.date('H:i A', strtotime($coaching->approved_date)),
-                'class' => 'event-inverse',
+                'className' => 'event-inverse',
                 'start' => $start->copy(),
                 'end' => $start->copy(),
                 'color' => '#f00',
@@ -5929,7 +5929,7 @@ class LearnerController extends Controller
                     $events[] = [
                         'id' => $lesson->course->id,
                         'title' => 'Leksjon: '.$lesson->title.' from '.$lesson->course->title,
-                        'class' => 'event-important',
+                        'className' => 'event-important',
                         'start' => $newAvailability, // $availability,
                         'end' => $newAvailability, // $availability,
                         'color' => '#d95e66',
@@ -5946,7 +5946,7 @@ class LearnerController extends Controller
                     $events[] = [
                         'id' => $webinar->course->id,
                         'title' => 'Webinar: '.$webinar->title.' from '.$webinar->course->title,
-                        'class' => 'event-warning',
+                        'className' => 'event-warning',
                         'start' => $start, // strtotime($webinar->start_date) * 1000,
                         'end' => $end, // strtotime($webinar->start_date) * 1000,
                         'color' => '#f7d046',
@@ -5964,7 +5964,7 @@ class LearnerController extends Controller
                     $events[] = [
                         'id' => $courseTaken->package->course->id,
                         'title' => 'Manus: '.basename($manuscript->filename).' from '.$courseTaken->package->course->title,
-                        'class' => 'event-info',
+                        'className' => 'event-info',
                         'start' => $start, // strtotime($manuscript->expected_finish) * 1000,
                         'end' => $end, // strtotime($manuscript->expected_finish) * 1000,
                         'color' => '#29b5f5',
@@ -5981,7 +5981,7 @@ class LearnerController extends Controller
                     $events[] = [
                         'id' => $assignment->course->id,
                         'title' => 'Oppgaver: '.$assignment->title.' from '.$assignment->course->title,
-                        'class' => 'event-success-new',
+                        'className' => 'event-success-new',
                         'start' => $start, // strtotime($assignment->submission_date) * 1000,
                         'end' => $end, // strtotime($assignment->submission_date) * 1000,
                         'color' => '#44af5e',
@@ -5998,7 +5998,7 @@ class LearnerController extends Controller
                     $events[] = [
                         'id' => $note->id,
                         'title' => $note->note,
-                        'class' => 'event-inverse',
+                        'className' => 'event-inverse',
                         'start' => $start, // strtotime($note->date) * 1000,
                         'end' => $end, // strtotime($note->date) * 1000,
                         'color' => '#1b1b1b', // for full calendar
