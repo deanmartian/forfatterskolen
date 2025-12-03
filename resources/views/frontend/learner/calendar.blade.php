@@ -215,6 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
             minute: '2-digit',
             hour12: false
         },
+        displayEventTime: false,
         events: @json($events)
     });
 
