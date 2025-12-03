@@ -124,6 +124,7 @@
     }
 
     .fc .fc-event.event-warning,
+    .fc .fc-event.event-warning:hover,
     .fc .fc-event.event-warning .fc-event-main {
         background-color: #f7d046;
         color: #fff;
@@ -154,6 +155,10 @@
 
     .fc .fc-popover.fc-more-popover .fc-body .fc-title {
         color: white;
+    }
+
+    .fc-daygrid-dot-event .fc-event-title {
+        font-weight: normal;
     }
 </style>
 @stop
