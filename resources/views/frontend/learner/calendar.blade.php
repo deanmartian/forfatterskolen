@@ -148,8 +148,12 @@
     .fc .fc-event.event-warning,
     .fc .fc-event.event-warning:hover,
     .fc .fc-event.event-warning .fc-event-main {
-        background-color: #f7d046;
+        background-color: #ff9c00;
         color: #fff;
+    }
+
+    .fc .fc-event.event-warning .fc-daygrid-event-dot {
+        display: none;
     }
 
     .fc-event-tooltip {
