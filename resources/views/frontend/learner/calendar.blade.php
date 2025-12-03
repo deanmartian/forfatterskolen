@@ -206,7 +206,7 @@
                                                 </ul>
                                                 <div class="d-flex justify-content-md-end w-100 w-md-auto">
                                                         <a href="{{ route('learner.calendar.export') }}" class="btn btn-primary" target="_blank" rel="noopener">
-                                                                {{ __('Export Calendar') }}
+                                                                {{ trans('site.export-calendar') }}
                                                         </a>
                                                 </div>
                                         </div>
