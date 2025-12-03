@@ -972,7 +972,8 @@ class LearnerController extends Controller
                     'class' => 'event-warning',
                     'start' => $start->copy(),
                     'end' => $end,
-                    'color' => '#ff9c00',
+                    'color' => '#f7d046',
+                    'textColor' => '#2e3a59',
                     'all_day' => false,
                 ]);
             }
@@ -5948,7 +5949,8 @@ class LearnerController extends Controller
                         'class' => 'event-warning',
                         'start' => $start, // strtotime($webinar->start_date) * 1000,
                         'end' => $end, // strtotime($webinar->start_date) * 1000,
-                        'color' => '#ff9c00',
+                        'color' => '#f7d046',
+                        'textColor' => '#2e3a59',
                     ];
                 }
             }
