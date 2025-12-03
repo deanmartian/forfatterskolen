@@ -84,6 +84,14 @@
         border: 1px solid #d6dbe1;
     }
 
+    .fc .fc-button-primary:disabled,
+    .fc .fc-button-primary.fc-button-disabled {
+        color: #2e3a59;
+        background: #fff;
+        border-color: #d6dbe1;
+        opacity: 1;
+    }
+
     .fc .fc-button-group .fc-button-primary:not(:disabled).fc-button-active,
     .fc .fc-button-group .fc-button-primary:not(:disabled):active,
     .fc .fc-button-group .fc-button-primary:hover {
