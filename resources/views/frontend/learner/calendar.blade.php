@@ -93,10 +93,9 @@
     }
 
     .fc .fc-today-button.fc-button-primary:disabled,
-    .fc .fc-today-button.fc-button-primary.fc-button-disabled {
-        background: #7d1a29;
-        border-color: #7d1a29;
-        color: #fff;
+    .fc .fc-today-button.fc-button-primary.fc-button-disabled,
+    .learner-calendar .fc-header-toolbar .fc-today-button {
+        color: #000000;
         opacity: 1;
     }
 
