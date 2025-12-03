@@ -129,6 +129,20 @@
         color: #fff;
     }
 
+    .fc-event-tooltip {
+        position: absolute;
+        z-index: 9999;
+        background: #fff;
+        color: #1b1b1b;
+        border-radius: 6px;
+        padding: 10px 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+        border: 1px solid #e4e8ed;
+        pointer-events: none;
+        max-width: 320px;
+        line-height: 1.4;
+    }
+
     .fc .fc-popover.fc-more-popover .fc-header .fc-title {
         color: #000;
     }
@@ -218,7 +232,50 @@ document.addEventListener('DOMContentLoaded', function() {
         displayEventTime: false,
         eventDidMount: function(info) {
             if (info.event && info.event.title) {
-                info.el.setAttribute('title', info.event.title);
+                info.el.removeAttribute('title');
+                info.el.setAttribute('data-event-title', info.event.title);
+            }
+        },
+        eventMouseEnter: function(info) {
+            if (!info.event || !info.event.title) {
+                return;
+            }
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'fc-event-tooltip';
+            tooltip.innerText = info.event.title;
+
+            document.body.appendChild(tooltip);
+
+            const rect = info.el.getBoundingClientRect();
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
+
+            let top = rect.top + scrollTop - tooltip.offsetHeight - 8;
+            const leftBoundary = scrollLeft + 8;
+            let left = rect.left + scrollLeft;
+
+            if (top < scrollTop) {
+                top = rect.bottom + scrollTop + 8;
+            }
+
+            if (left + tooltip.offsetWidth > scrollLeft + window.innerWidth) {
+                left = scrollLeft + window.innerWidth - tooltip.offsetWidth - 8;
+            }
+
+            if (left < leftBoundary) {
+                left = leftBoundary;
+            }
+
+            tooltip.style.top = `${top}px`;
+            tooltip.style.left = `${left}px`;
+
+            info.el._fcTooltip = tooltip;
+        },
+        eventMouseLeave: function(info) {
+            if (info.el && info.el._fcTooltip) {
+                info.el._fcTooltip.remove();
+                info.el._fcTooltip = null;
             }
         },
         events: @json($events)
