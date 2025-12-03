@@ -92,6 +92,14 @@
         opacity: 1;
     }
 
+    .fc .fc-today-button.fc-button-primary:disabled,
+    .fc .fc-today-button.fc-button-primary.fc-button-disabled {
+        background: #7d1a29;
+        border-color: #7d1a29;
+        color: #fff;
+        opacity: 1;
+    }
+
     .fc .fc-button-group .fc-button-primary:not(:disabled).fc-button-active,
     .fc .fc-button-group .fc-button-primary:not(:disabled):active,
     .fc .fc-button-group .fc-button-primary:hover {
@@ -101,7 +109,7 @@
     }
 
     .fc .fc-day-today {
-        background: #f9f1f1;
+        background: #fff7d1;
     }
 
     .fc .fc-daygrid-day-number {
