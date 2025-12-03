@@ -226,9 +226,14 @@ document.addEventListener('DOMContentLoaded', function() {
             next: translations.next
         },
         eventTimeFormat: {
-            hour: '2-digit',
+            hour: 'numeric',
             minute: '2-digit',
-            hour12: false
+            hour12: true
+        },
+        slotLabelFormat: {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
         },
         displayEventTime: false,
         eventDidMount: function(info) {
