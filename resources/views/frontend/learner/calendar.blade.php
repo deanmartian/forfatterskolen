@@ -126,7 +126,7 @@
     .fc .fc-event.event-warning,
     .fc .fc-event.event-warning .fc-event-main {
         background-color: #f7d046;
-        color: #2e3a59;
+        color: #fff;
     }
 
     .fc .fc-popover.fc-more-popover .fc-header .fc-title {
@@ -216,6 +216,11 @@ document.addEventListener('DOMContentLoaded', function() {
             hour12: false
         },
         displayEventTime: false,
+        eventDidMount: function(info) {
+            if (info.event && info.event.title) {
+                info.el.setAttribute('title', info.event.title);
+            }
+        },
         events: @json($events)
     });
 
