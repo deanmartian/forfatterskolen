@@ -148,7 +148,7 @@
     .fc .fc-event.event-warning,
     .fc .fc-event.event-warning:hover,
     .fc .fc-event.event-warning .fc-event-main {
-        background-color: #ff9c00;
+        background-color: #ff9c00 !important;
         color: #fff;
     }
 
