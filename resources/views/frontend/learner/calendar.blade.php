@@ -244,6 +244,7 @@ document.addEventListener('DOMContentLoaded', function() {
             left: 'title',
             right: 'prev today next dayGridMonth,timeGridWeek,timeGridDay'
         },
+        dayHeaderFormat: { weekday: 'long' },
         buttonText: {
             today: translations.today,
             month: translations.month,
