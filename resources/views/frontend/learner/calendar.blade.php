@@ -36,6 +36,29 @@
         margin-bottom: 0;
     }
 
+    .calendar-guide {
+        list-style: none;
+        padding: 0;
+        gap: 10px;
+    }
+
+    .calendar-guide li {
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 7px 14px;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .calendar-guide .guide-blue { background: #2496f2; }
+    .calendar-guide .guide-green { background: #3bb26f; }
+    .calendar-guide .guide-purple { background: #7662d8; }
+    .calendar-guide .guide-pink { background: #f269c0; }
+    .calendar-guide .guide-orange { background: #ffb322; }
+    .calendar-guide .guide-inverse { background: #2d2d2d; }
+    .calendar-guide .guide-red { background: #f44c3d; }
+
     #full-calendar {
         background: #ffffff;
         border-radius: 6px;
