@@ -93,10 +93,9 @@
     }
 
     .fc .fc-today-button.fc-button-primary:disabled,
-    .fc .fc-today-button.fc-button-primary.fc-button-disabled {
-        background: #7d1a29;
-        border-color: #7d1a29;
-        color: #fff;
+    .fc .fc-today-button.fc-button-primary.fc-button-disabled,
+    .learner-calendar .fc-header-toolbar .fc-today-button {
+        color: #000000;
         opacity: 1;
     }
 
@@ -124,6 +123,7 @@
     }
 
     .fc .fc-event.event-warning,
+    .fc .fc-event.event-warning:hover,
     .fc .fc-event.event-warning .fc-event-main {
         background-color: #f7d046;
         color: #fff;
@@ -147,13 +147,17 @@
         color: #000;
     }
 
-    .fc .fc-popover.fc-more-popover .fc-body {
+    .fc .fc-popover.fc-more-popover .fc-popover-body {
         max-height: 340px;
         overflow-y: auto;
     }
 
     .fc .fc-popover.fc-more-popover .fc-body .fc-title {
         color: white;
+    }
+
+    .fc-daygrid-dot-event .fc-event-title {
+        font-weight: normal;
     }
 </style>
 @stop
@@ -212,6 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
         locale: 'nb',
         timeZone: 'local',
         initialView: 'dayGridMonth',
+        dayMaxEventRows: 4,
         headerToolbar: {
             left: 'title',
             right: 'prev today next dayGridMonth,timeGridWeek,timeGridDay'
@@ -225,9 +230,14 @@ document.addEventListener('DOMContentLoaded', function() {
             next: translations.next
         },
         eventTimeFormat: {
-            hour: '2-digit',
+            hour: 'numeric',
             minute: '2-digit',
-            hour12: false
+            hour12: true
+        },
+        slotLabelFormat: {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
         },
         displayEventTime: false,
         eventDidMount: function(info) {
