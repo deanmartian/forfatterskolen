@@ -147,7 +147,7 @@
         color: #000;
     }
 
-    .fc .fc-popover.fc-more-popover .fc-body {
+    .fc .fc-popover.fc-more-popover .fc-popover-body {
         max-height: 340px;
         overflow-y: auto;
     }
