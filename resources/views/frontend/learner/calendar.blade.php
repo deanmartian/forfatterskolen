@@ -212,6 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
         locale: 'nb',
         timeZone: 'local',
         initialView: 'dayGridMonth',
+        dayMaxEventRows: 4,
         headerToolbar: {
             left: 'title',
             right: 'prev today next dayGridMonth,timeGridWeek,timeGridDay'
