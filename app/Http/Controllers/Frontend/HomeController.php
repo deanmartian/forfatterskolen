@@ -2640,7 +2640,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         }
 
         return redirect()->back()->with([
-            'errors' => AdminHelpers::createMessageBag('Invoice created successfully.'),
+            'errors' => AdminHelpers::createMessageBag(trans('site.invoice-create-success')),
             'alert_type' => 'success'
         ]);
     }

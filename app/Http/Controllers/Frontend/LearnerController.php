@@ -1982,7 +1982,7 @@ class LearnerController extends Controller
         $order->save();
 
         return redirect()->route('learner.invoice', ['tab' => 'pay-later'])->with([
-            'errors' => AdminHelpers::createMessageBag('Invoice created successfully.'),
+            'errors' => AdminHelpers::createMessageBag(trans('site.invoice-create-success')),
             'alert_type' => 'success'
         ]);
     }

@@ -385,7 +385,7 @@ class InvoiceController extends Controller
         }
 
         return redirect()->back()->with([
-            'errors' => AdminHelpers::createMessageBag('Invoice created successfully.'),
+            'errors' => AdminHelpers::createMessageBag(trans('site.invoice-create-success')),
             'alert_type' => 'success',
             'not-former-courses' => true,
         ]);
