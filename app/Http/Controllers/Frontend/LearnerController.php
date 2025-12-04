@@ -6403,7 +6403,12 @@ class LearnerController extends Controller
 
         $now = Carbon::now('UTC');
 
-        $editors = EditorTimeSlot::with(['editor', 'requests'])
+        $preferredEditors = UserPreferredEditor::where('user_id', Auth::id())
+            ->pluck('editor_id')
+            ->filter()
+            ->unique();
+
+        $editorsQuery = EditorTimeSlot::with(['editor', 'requests'])
             ->whereDoesntHave('requests', function ($q) {
                 $q->where('status', 'accepted');
             })
@@ -6413,8 +6418,13 @@ class LearnerController extends Controller
                         $q->where('date', $now->toDateString())
                             ->where('start_time', '>=', $now->toTimeString());
                     });
-            })
-            ->orderBy('date')
+            });
+
+        if ($preferredEditors->isNotEmpty()) {
+            $editorsQuery->whereIn('editor_id', $preferredEditors);
+        }
+
+        $editors = $editorsQuery->orderBy('date')
             ->orderBy('start_time')
             ->get()
             ->groupBy('editor_id');
