@@ -1903,7 +1903,8 @@ class LearnerController extends Controller
         $inputtedComment = '';
         $comment = '('.$inputtedComment.' ';
         $comment .= 'Betalingsmodus: '.$payment_mode.', ';
-        $comment .= 'Betalingsplan: '.$payment_plan.')';
+        $comment .= 'Betalingsplan: '.$payment_plan.', ';
+        $comment .= 'Kurs: '.$order->item.')';
 
         $product_ID = 884373255;
 
