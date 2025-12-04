@@ -234,6 +234,7 @@
         day : "{{ trans('site.learner.day-text') }}",
         prev : "{{ trans('site.learner.prev-text') }}",
         next : "{{ trans('site.learner.next-text') }}",
+        allDay : "{{ trans('site.all-day') }}",
         };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -249,6 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
             right: 'prev today next dayGridMonth,timeGridWeek,timeGridDay'
         },
         dayHeaderFormat: { weekday: 'long' },
+        allDayText: translations.allDay,
         buttonText: {
             today: translations.today,
             month: translations.month,
