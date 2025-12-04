@@ -54,7 +54,7 @@
 @section('content')
 <div class="learner-container coaching-time-wrapper">
     <div class="container">
-        <p style="color: red; font-weight:bold">Vennligst ikke bruk denne coaching funksjonen ennå.</p>
+        {{-- <p style="color: red; font-weight:bold">Vennligst ikke bruk denne coaching funksjonen ennå.</p> --}}
         <h1 class="page-title">
             {{ trans('site.coaching-timer-text') }}
         </h1>
