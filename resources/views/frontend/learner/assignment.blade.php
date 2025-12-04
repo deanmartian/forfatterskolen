@@ -537,7 +537,27 @@
 		}
 	});
 
+        let submitEditorManuscriptReady = false;
+        const submitEditorManuscriptButtons = $(".submitEditorManuscriptBtn");
+        submitEditorManuscriptButtons
+                .prop('disabled', true)
+                .addClass('disabled')
+                .css('pointer-events', 'none');
+
+        $(window).on('load', function () {
+                submitEditorManuscriptReady = true;
+                submitEditorManuscriptButtons
+                        .prop('disabled', false)
+                        .removeClass('disabled')
+                        .css('pointer-events', '');
+        });
+
     $('.submitEditorManuscriptBtn').click(function(){
+        if (!submitEditorManuscriptReady) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                return false;
+        }
         let form = $('#submitEditorManuscriptModal').find("form");
         let action = $(this).data('action');
         let show_group_question = $(this).data('show-group-question');

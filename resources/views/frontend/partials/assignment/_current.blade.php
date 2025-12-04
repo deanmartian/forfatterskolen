@@ -134,6 +134,7 @@
                                             data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
                                             data-show-group-question="{{ $assignment->show_join_group_question }}"
                                             data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
+                                            disabled style="pointer-events: none;"
                                             @if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))
                                             && $assignment->parent !== 'users') disabled @endif>
                                                 {{ trans('site.learner.upload-script') }}
