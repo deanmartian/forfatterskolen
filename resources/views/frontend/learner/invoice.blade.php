@@ -82,7 +82,7 @@
 							],
 							[
 								'name' => 'gift',
-								'label' => 'Gift Purchases'
+								'label' => trans('site.gift-purchases')
 							],
 							/* [
 								'name' => 'redeem',
@@ -132,10 +132,10 @@
 										<table class="table table-global">
 											<thead>
 												<tr>
-													<th>Item</th>
-													<th>Package</th>
-													<th>Credit Note</th>
-													<th>Date</th>
+													<th>{{ trans('site.item') }}</th>
+													<th>{{ trans_choice('site.packages', 1) }}</th>
+													<th>{{ trans('site.credit-note') }}</th>
+													<th>{{ trans('site.date') }}</th>
 													<th width="150"></th>
 												</tr>
 											</thead>
@@ -232,9 +232,9 @@
 										<table class="table table-global">
 											<thead>
 											<tr>
-												<th>Item</th>
-												<th>Redeem Code</th>
-												<th>Redeemed</th>
+												<th>{{ trans('site.item') }}</th>
+												<th>{{ trans('site.redeem-code') }}</th>
+												<th>{{ trans('site.redeemed') }}</th>
 											</tr>
 											</thead>
 											<tbody>
@@ -273,13 +273,13 @@
 												{{ csrf_field() }}
 
 												<div class="form-group mb-0">
-													<label>Redeem Code</label>
+													<label>{{ trans('site.redeem-code') }}</label>
 													<input type="text" name="redeem_code" class="form-control"
 														   style="text-transform: uppercase" required>
 												</div>
 
 												<button class="btn btn-success w-100" type="submit">
-													Submit
+													{{ trans('site.submit') }}
 												</button>
 											</form>
 										</div>
@@ -345,7 +345,7 @@
 										<table class="table table-global">
 											<thead>
 												<tr>
-													<th>Project</th>
+													<th>{{ trans('site.author-portal.project') }}</th>
 													<th>{{ trans('site.date') }}</th>
 													<th></th>
 												</tr>
@@ -404,8 +404,8 @@
 												<th>{{ trans('site.learner.status') }}</th>
 												<th>{{ trans('site.learner.created') }}</th>
 												<th>{{ trans('site.learner.kid-number') }}</th>
-												<th>Account number</th>
-												<th>Credit Note</th>
+												<th>{{ trans('site.learner.account-number') }}</th>
+												<th>{{ trans('site.credit-note') }}</th>
 												<th></th>
 											</tr>
 											</thead>
@@ -446,14 +446,20 @@
 															<span class="label label-danger">{{$status}}</span>
 														@endif
 													</td>
-													<td>{{date_format(date_create($invoice->created_at), 'M d, Y H.i')}}</td>
+													<td>
+														{{ ucfirst(
+																\Carbon\Carbon::parse($invoice->created_at)
+																	->locale('nb')
+																	->translatedFormat('M d, Y H.i')
+															) }}
+														{{-- {{date_format(date_create($invoice->created_at), 'M d, Y H.i')}} --}}</td>
 													<td> {{ $invoice->kid_number }} </td>
 													<td> 9015 18 00393 </td>
 													<td>
 														@if($invoice->credit_note_url)
 															<a href="{{ route('learner.download.credit-note', $invoice->id) }}" 
 																class="blue-outline-btn">
-																Credit Note
+																{{ trans('site.credit-note') }}
 															</a>
 														@endif
 													</td>
