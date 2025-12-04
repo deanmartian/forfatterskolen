@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
         slotLabelFormat: {
             hour: 'numeric',
             minute: '2-digit',
-            hour12: true
+            hour12: false
         },
         displayEventTime: false,
         eventDidMount: function(info) {
