@@ -22,11 +22,11 @@
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
-                    <th>ISBN</th>
-                    <th width="700">Type</th>
-                    <th>Book Price</th>
-                    <th>Mentor Book Base</th>
-                    <th>Upload files to mentor book base</th>
+                    <th>{{ trans('site.author-portal.isbn') }}</th>
+                    <th width="700">{{ trans('site.type') }}</th>
+                    <th>{{ trans('site.book-price') }}</th>
+                    <th>{{ trans('site.author-portal.mentor-book-base') }}</th>
+                    <th>{{ trans('site.author-portal.upload-files-mentor-book-base') }}</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
