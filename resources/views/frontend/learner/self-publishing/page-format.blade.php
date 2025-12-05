@@ -12,13 +12,13 @@
                 <div class="card global-card">
                     <div class="card-header">
                         <h1 class="d-inline-block">
-                            Page Format
+                            {{ trans('site.author-portal.page-format') }}
                         </h1>
 
                         @if ($standardProject)
                             <button type="button" class="btn btn-success pull-right bookFormattingBtn" data-toggle="modal" 
                             data-target="#bookFormattingModal">
-                                + Add Page Format
+                                + {{ trans('site.add-page-format') }}
                             </button>
                         @endif
                     </div>
@@ -26,7 +26,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Interior</th>
+                                    <th>{{ trans('site.author-portal.interior') }}</th>
                                     <th width="300"></th>
                                 </tr>
                             </thead>
@@ -59,7 +59,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">
-                    Book Formatting
+                    {{ trans('site.book-formatting') }}
                 </h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
@@ -69,22 +69,22 @@
                     {{ csrf_field() }}
                     <input type="hidden" name="id">
                     <div class="form-group">
-                        <label>Interior</label>
+                        <label>{{ trans('site.author-portal.interior') }}</label>
                         <input type="file" name="file[]" class="form-control"
                         accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                         multiple>
                     </div>
 
                     <div class="form-group">
-                        <label>Corporate Page</label>
+                        <label>{{ trans('site.corporate-page') }}</label>
                         <input type="file" name="corporate_page" class="form-control"
                         accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                     </div>
 
                     <div class="form-group">
-                        <label>Størrelse (optional)</label>
+                        <label>{{ trans('site.size-optional') }}</label>
                         <select class="form-control" name="format" id="format-select">
-                            <option value="">Valgfri størrelse</option>
+                            <option value="">{{ trans('site.size-options') }}</option>
                                 @foreach (AdminHelpers::projectFormats() as $format)
                                     <option value="{{ $format['id'] }}">
                                         {{ $format['option'] }}
@@ -94,25 +94,25 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Bredde (mm)</label>
+                        <label>{{ trans('site.author-portal.width-mm') }}</label>
                         <input type="text" class="form-control" name="width" id="width-input" 
                         onkeypress="return numeralsOnly(event)">
                     </div>
 
                     <div class="form-group">
-                        <label>Høyde (mm)</label>
+                        <label>{{ trans('site.author-portal.height-mm') }}</label>
                         <input type="text" class="form-control" name="height" id="height-input" 
                         onkeypress="return numeralsOnly(event)">
                     </div>
 
                     <div class="form-group format-image-container hide">
-                        <label>Format Image</label>
+                        <label>{{ trans('site.format-image') }}</label>
                         <input type="file" name="format_image" class="form-control"
                         accept="image/*">
                     </div>
 
                     <div class="form-group">
-                        <label>Description</label>
+                        <label>{{ trans('site.description') }}</label>
                         <textarea name="description" class="form-control" cols="30" rows="10"></textarea>
                     </div>
 
