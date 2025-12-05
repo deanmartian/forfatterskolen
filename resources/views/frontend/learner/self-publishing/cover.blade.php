@@ -16,13 +16,13 @@
                     <div class="card global-card">
                         <div class="card-header">
                             <h1 class="d-inline-block">
-                                Cover
+                                {{ trans('site.homepage.illustration-cover-design') }}
                             </h1>
 
                             @if ($standardProject)
                                 <button type="button" class="btn btn-success pull-right coverBtn" data-toggle="modal" 
                                 data-target="#coverModal" data-type="cover">
-                                    + Add Cover
+                                    + {{ trans('site.add-cover') }}
                                 </button>
                             @endif
                         </div>
@@ -31,8 +31,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Cover</th>
-                                    <th width="500">Print Ready</th>
+                                    <th>{{ trans('site.homepage.illustration-cover-design') }}</th>
+                                    <th width="500">{{ trans('site.author-portal.print-ready') }}</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
@@ -102,7 +102,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">
-                            Cover
+                            {{ trans('site.homepage.illustration-cover-design') }}
                         </h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
@@ -114,19 +114,19 @@
                         <input type="hidden" name="type" value="cover">
 
                             <div class="form-group">
-                                <label>Cover</label>
+                                <label>{{ trans('site.homepage.illustration-cover-design') }}</label>
                                 <input type="file" class="form-control" name="cover[]" accept="image/*" multiple>
                             </div>
                             
                             <div class="form-group">
-                                <label>Description</label>
+                                <label>{{ trans('site.description') }}</label>
                                 <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
                             </div>
 
                             <div class="form-group">
-                                <label>Størrelse</label>
+                                <label>{{ trans('site.size') }}</label>
                                 <select class="form-control" name="cover_format" id="cover-format-select">
-                                    <option value="">Valgfri størrelse</option>
+                                    <option value="">{{ trans('site.size-options') }}</option>
                                         @foreach (AdminHelpers::projectFormats() as $format)
                                             <option value="{{ $format['id'] }}">
                                                 {{ $format['option'] }}
@@ -136,21 +136,21 @@
                             </div>
 
                             <div class="form-group">
-                                <label>Bredde (mm)</label>
+                                <label>{{ trans('site.author-portal.width-mm') }}</label>
                                 <input type="text" class="form-control" name="cover_width" id="cover-width-input" 
                                 onkeypress="return numeralsOnly(event)">
                             </div>
         
                             <div class="form-group">
-                                <label>Høyde (mm)</label>
+                                <label>{{ trans('site.author-portal.height-mm') }}</label>
                                 <input type="text" class="form-control" name="cover_height" id="cover-height-input" 
                                 onkeypress="return numeralsOnly(event)">
                             </div>
 
                             <div class="form-group">
-                                <label>ISBN</label>
+                                <label>{{ trans('site.author-portal.isbn') }}</label>
                                 <select class="form-control" name="isbn_id" required>
-                                    <option value="" disabled selected>- Select ISBN -</option>
+                                    <option value="" disabled selected>- {{ trans('site.select-isbn') }} -</option>
                                     @foreach ($isbns as $isbn)
                                         <option value="{{ $isbn->id }}">
                                             {{ $isbn->value }}
@@ -160,7 +160,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label>Backside Text (optional)</label> <br>
+                                <label>{{ trans('site.backside-text-optional') }}</label> <br>
                                 <input type="checkbox" data-toggle="toggle" data-on="Text" data-off="Document"
                                     name="backside_type" data-width="100" class="backsideToggle" checked
                                     >
@@ -173,12 +173,12 @@
                             </div>
 
                             <div class="form-group">
-                                <label>Backside Image (optional)</label>
+                                <label>{{ trans('site.backside-image-optional') }}</label>
                                 <input type="file" class="form-control" name="backside_image[]" accept="image/*" multiple>
                             </div>
 
                             <div class="form-group">
-                                <label>Instruction (for graphic designer)</label>
+                                <label>{{ trans('site.instruction-for-graphic-designer') }}</label>
                                 <textarea name="instruction" cols="30" rows="10" class="form-control"></textarea>
                             </div>
 
