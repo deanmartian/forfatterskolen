@@ -17,7 +17,7 @@
 
                             @if ($standardProject)
                                 <a href="{{ route('learner.self-publishing.publishing.order') }}" class="btn btn-primary float-right">
-                                    Order
+                                    {{ trans('site.author-portal.order-text') }}
                                 </a>
                             @endif
                         </div>
