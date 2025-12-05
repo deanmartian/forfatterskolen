@@ -207,6 +207,11 @@
             let modal = $("#coverModal");
             let form = modal.find("form");
 
+            let translations = {
+                cover : "{{ trans('site.homepage.illustration-cover-design') }}",
+                printReady : "{{ trans('site.author-portal.print-ready') }}"
+            };
+
             let coverContainer = $(".cover-container");
             let descriptionContainer = $(".description-container");
 
@@ -215,12 +220,12 @@
 
             switch (type) {
                 case 'cover':
-                        modal.find('.modal-title').text('Cover');
+                        modal.find('.modal-title').text(translations.cover);
                         coverContainer.removeClass('hide');
                     break;
 
                 case 'cover-print-ready':
-                        modal.find('.modal-title').text('Print Ready');
+                        modal.find('.modal-title').text(translations.printReady);
                         descriptionContainer.removeClass('hide');
                     break;
             }
