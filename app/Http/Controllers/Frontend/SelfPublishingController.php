@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\PowerOffice;
 use App\Order;
 use App\PowerOfficeInvoice;
+use App\ProjectAudio;
 use App\ProjectBookFormatting;
 use App\ProjectGraphicWork;
 use App\ProjectRegistration;
@@ -320,6 +321,58 @@ class SelfPublishingController extends Controller
         $bookFormatting = ProjectBookFormatting::find($format_id);
 
         return view('frontend.learner.self-publishing.page-format-details', compact('bookFormatting'));
+    }
+
+    public function audio()
+    {
+        $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->id());
+
+        $files = ProjectAudio::files()->where('project_id', $standardProject->id)->get();
+        $covers = ProjectAudio::cover()->where('project_id', $standardProject->id)->get();
+
+        return view('frontend.learner.self-publishing.audio', compact('files', 'covers'));
+    }
+
+    public function saveAudio($project_id, Request $request, ProjectService $projectService)/* : RedirectResponse */
+    {
+        if ($request->type == 'files') {
+            $request->validate([
+                'files' => 'required'
+            ]);
+            $translationText = trans_choice('site.files', 2);
+        }
+
+        if ($request->type == 'cover') {
+            $request->validate([
+                'cover' => 'required'
+            ]);
+            $translationText = trans('homepage.illustration-cover-design');
+        }
+
+        $request->merge(['project_id' => $project_id]);
+
+        $projectService->saveAudio($request);
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag($translationText.' ' . trans('site.saved-successfully')),
+                'alert_type' => 'success']);
+    }
+
+    public function deleteAudio($project_id, $audio_id)
+    {
+        $audio = ProjectAudio::find($audio_id);
+        $type = $audio->type;
+        $audio->delete();
+
+        $translationText = trans('homepage.illustration-cover-design');
+
+        if ($audio->type == 'files') {
+            $translationText = trans_choice('site.files', 2);
+        }
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag($translationText.' ' . trans('site.deleted-successfully')),
+                'alert_type' => 'success']);
     }
 
     public function publishingOrder(): View

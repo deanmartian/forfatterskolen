@@ -6,21 +6,21 @@
 
 @section('content')
 <div class="page-toolbar">
-    <h3><i class="fa fa-file-text-o"></i> Audio</h3>
+    <h3><i class="fa fa-file-text-o"></i> {{ trans('site.audio') }}</h3>
     <a href="{{ $backRoute }}" class="btn btn-default">
-        <i class="fa fa-arrow-left"></i> Back
+        <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
     </a>
 </div>
 
 <div class="col-sm-12 margin-top">
     <section>
         <button type="button" class="btn btn-success audioBtn" data-toggle="modal" data-target="#audioModal"
-                data-type="files">+ Add Audio Files</button>
+                data-type="files">+ {{ trans('site.add-audio-files') }}</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
-                    <th>Audio</th>
+                    <th>{{ trans('site.audio') }}</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
@@ -110,12 +110,12 @@
                       <input type="hidden" name="type">
 
                     <div class="form-group files-container">
-                        <label>File</label>
+                        <label>{{ trans_choice('site.files',1) }}</label>
                         <input type="file" class="form-control" name="files">
                     </div>
 
                     <div class="form-group cover-container">
-                        <label>Cover</label>
+                        <label>{{ trans('site.homepage.illustration-cover-design') }}</label>
                         <input type="file" class="form-control" name="cover">
                     </div>
 
@@ -143,7 +143,7 @@
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
 
-                    <p>Are you sure you want to delete this record?</p>
+                    <p>{{ trans('site.delete-question') }}</p>
 
                     <button type="submit" class="btn btn-danger pull-right margin-top">
                         {{ trans('site.delete') }}
@@ -159,6 +159,12 @@
 
 @section('scripts')
 <script>
+    let translations = {
+        files : "{{ trans_choice('site.files',2) }}",
+        cover : "{{ trans('site.homepage.illustration-cover-design') }}",
+        delete: "{{ trans('site.delete') }}"
+        };
+
     $(".audioBtn").click(function() {
         let id = $(this).data('id');
         let type = $(this).data('type');
@@ -174,12 +180,12 @@
 
         switch (type) {
             case 'files':
-                modal.find('.modal-title').text('Files');
+                modal.find('.modal-title').text(translations.files);
                 filesContainer.removeClass('hide');
                 break;
 
             case 'cover':
-                modal.find('.modal-title').text('Cover');
+                modal.find('.modal-title').text(translations.cover);
                 coverContainer.removeClass('hide');
                 break;
         }
@@ -199,15 +205,15 @@
 
         switch (type) {
             case 'files':
-                pageTitle = 'Files';
+                pageTitle = translations.files;
                 break;
 
             case 'cover':
-                pageTitle = 'Cover';
+                pageTitle = translations.cover;
                 break;
         }
 
-        modal.find('.modal-title').text('Delete ' + pageTitle);
+        modal.find('.modal-title').text(translations.delete + ' ' + pageTitle);
         form.attr('action', action);
     });
 </script>

@@ -13,14 +13,12 @@ class ProjectAudio extends Model
 
     protected $appends = ['file_link'];
 
-    #[Scope]
-    protected function files($query)
+    protected function scopeFiles($query)
     {
         $query->where('type', 'files');
     }
 
-    #[Scope]
-    protected function cover($query)
+    protected function scopeCover($query)
     {
         $query->where('type', 'cover');
     }

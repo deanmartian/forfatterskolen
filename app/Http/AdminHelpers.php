@@ -1290,6 +1290,7 @@ class AdminHelpers
             // array( 'id' => 8, 'option' => 'Årshjul', 'route' => 'editor.yearly-calendar.index', 'request_name' => 'yearly_calendar')
             ['id' => 15, 'option' => 'Redaktørinnstruks', 'route' => 'editor.editors-note', 'request_name' => 'editors-note'],
             ['id' => 16, 'option' => 'Coaching Time', 'route' => 'editor.coaching-time.index', 'request_name' => 'editors-coaching-time'],
+            ['id' => 17, 'option' => 'Calendar', 'route' => 'editor.calendar', 'request_name' => 'editors-calendar'],
         ];
 
         if ($id > 0) {

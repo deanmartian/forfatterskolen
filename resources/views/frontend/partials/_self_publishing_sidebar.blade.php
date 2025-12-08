@@ -77,9 +77,9 @@
                         {{ trans('site.author-portal.page-format') }}
                     </a>
                 </li>
-                <li>
-                    <a href="#">
-                        Lydbok
+                <li class="@if(Request::is('account/self-publishing/audio')) active @endif">
+                    <a href="{{ route('learner.self-publishing.audio') }}">
+                        {{ trans('site.audio-book') }}
                     </a>
                 </li>
                 <li>

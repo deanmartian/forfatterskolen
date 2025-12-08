@@ -24,20 +24,17 @@ class SelfPublishingOrder extends Model
 
     protected $appends = ['service_name'];
 
-    #[Scope]
-    protected function active($query)
+    protected function scopeActive($query)
     {
         $query->where('status', 'active');
     }
 
-    #[Scope]
-    protected function paid($query)
+    protected function scopePaid($query)
     {
         $query->where('status', 'paid');
     }
 
-    #[Scope]
-    protected function quote($query)
+    protected function scopeQuote($query)
     {
         $query->where('status', 'quote');
     }
