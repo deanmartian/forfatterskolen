@@ -1950,6 +1950,7 @@ Route::domain($editor)->group(function () {
         Route::post('/assignment-manuscript/{id}/mark-finished', [Editor\PageController::class, 'assignmentManuscriptFinished'])->name('editor.assignment-manuscript.mark-finished');
         Route::get('/project/{id}', [Editor\PageController::class, 'projectDetails'])->name('editor.project.show');
         Route::post('/project/{id}/update-editor-hours', [Editor\PageController::class, 'projectEditorHours'])->name('editor.project.update-editor-hours');
+        Route::get('/calendar', [Editor\PageController::class, 'calendar'])->name('editor.calendar');
     });
 
     Route::middleware('editor')->group(function () {

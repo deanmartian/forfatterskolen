@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Editor;
 
 use App\Assignment;
 use App\AssignmentManuscript;
+use App\CoachingTimeRequest;
+use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\Course;
@@ -18,10 +20,13 @@ use App\SelfPublishingFeedback;
 use App\Settings;
 use App\ShopManuscriptsTaken;
 use App\TimeRegister;
+use App\WebinarEditor;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
@@ -410,6 +415,29 @@ class PageController extends Controller
         ]);
     }
 
+    public function calendar()
+    {
+        $events = $this->getCalendarEvents()->map(function (array $event) {
+            $allDay = (bool) $event['all_day'];
+            $start = $event['start'];
+            $end = $event['end'];
+
+            return [
+                'id' => $event['id'],
+                'title' => $event['title'],
+                'className' => $event['className'],
+                'start' => $this->formatCalendarDateTime($start, $allDay),
+                'end' => $this->formatCalendarEnd($start, $end, $allDay),
+                'all_day' => $allDay,
+                'allDay' => $allDay,
+                'color' => $event['color'],
+                //'allDay' => $event['all_day'],
+            ];
+        });
+
+        return view('editor.calendar', ['events' => $events]);
+    }
+
     private function filterAssignmentByCheckMaxWords($check_max_words)
     {
         return AssignmentManuscript::where('editor_id', Auth::user()->id) // assigned manuscript group / course
@@ -423,5 +451,137 @@ class PageController extends Controller
                 $query->where('check_max_words', $check_max_words);
             })
             ->get();
+    }
+
+    private function getCalendarEvents(): Collection
+    {
+        $events = collect();
+        $timezone = config('app.timezone');
+
+        $currentYear = now()->year;
+
+        $assignmentManuscripts = AssignmentManuscript::where('editor_id', Auth::id())->groupBy('assignment_id')->get();
+        foreach($assignmentManuscripts as $assignmentManuscript) {
+            $assignment = $assignmentManuscript->assignment;
+            $expectedFinish =
+                $assignmentManuscript->editor_expected_finish
+                ?? $assignmentManuscript->assignment->editor_expected_finish
+                ?? $assignmentManuscript->expected_finish;
+
+            $start = Carbon::parse($expectedFinish, $timezone)->startOfDay();
+
+            // ✅ Skip if expected finish is empty/null
+            if (!$expectedFinish) {
+                continue;
+            }
+
+            $events->push([
+                'id' => $assignmentManuscript->id,
+                'title' => trans('site.learner.assignment') . ': ' . $assignment->title . ' '.trans('site.from').' ' 
+                    . $assignment->course->title,
+                'className' => 'event-success-new',
+                'start' => $start->copy(),
+                'end' => $start->copy(),
+                'color' => '#44af5e',
+                'all_day' => true,
+            ]);
+        }
+
+        $shopManuscriptsTaken = ShopManuscriptsTaken::where('feedback_user_id', Auth::id())
+            ->whereYear(
+                DB::raw('COALESCE(editor_expected_finish, expected_finish)'),
+                '>=',
+                $currentYear
+            )->get();
+        foreach($shopManuscriptsTaken as $shopManuscript) {
+            $expectedFinish =
+                $shopManuscript->editor_expected_finish
+                ?? $shopManuscript->expected_finish;
+
+            $start = Carbon::parse($expectedFinish, $timezone)->startOfDay();
+
+            $events->push([
+                    'id' => $shopManuscript->id,
+                    'title' => trans('site.admin-menu.shop-manuscripts') .': '.basename($shopManuscript->file)
+                    .' '.trans('site.from').' '.$shopManuscript->shop_manuscript->title,
+                    'className' => 'event-info',
+                    'start' => $start->copy(),
+                    'end' => $start->copy(),
+                    'color' => '#2496f2',
+                    'all_day' => true,
+                ]);
+        }
+
+        $webinarEditors = WebinarEditor::where('editor_id', Auth::id())->get();
+        foreach($webinarEditors as $webinarEditor) {
+            $webinar = $webinarEditor->webinar;
+            $start = Carbon::parse($webinar->start_date, $timezone);
+            $end = $start->copy()->addHour();
+
+            $events->push([
+                'id' => $webinar->course->id,
+                'title' => trans('site.learner.webinar') .': '.$webinar->title.' from '.$webinar->course->title,
+                'className' => 'event-warning',
+                'start' => $start->copy(),
+                'end' => $end,
+                'color' => '#f7d046',
+                'all_day' => false,
+            ]);
+        }
+
+        $coachingBookings = CoachingTimeRequest::whereHas('slot', function ($q) {
+            $q->where('editor_id', Auth::id());
+        })
+            ->where('status', 'accepted')
+            ->whereHas('manuscript', function ($q) {
+                $q->where('status', '!=', CoachingTimerManuscript::STATUS_FINISHED);
+            })
+            ->with(['manuscript.user', 'slot'])
+            ->get();
+            
+            foreach($coachingBookings as $coachingBooking) {
+                $timeSlot = $coachingBooking->slot;
+                // add UTC since that is how it's stored in the db
+                $start = Carbon::parse($timeSlot->date." ".$timeSlot->start_time, 'UTC');
+                $end = $start->copy()->addMinutes($timeSlot->duration); 
+                $lengthTranslation = $timeSlot->duration == 60 ? trans('site.front.60-mins') : trans('site.front.30-mins');
+
+                $events->push([
+                    'id' => $coachingBooking->coaching_timer_manuscript_id,
+                    'title' => trans('site.learner.coaching-time') .': '.trans('site.learner.coaching-time').' '
+                        .$lengthTranslation,
+                    'className' => 'event-coaching',
+                    'start' => $start->copy(),
+                    'end' => $end,
+                    'color' => '#f44c3d',
+                    'all_day' => false,
+                ]);
+            }
+
+        return $events;
+    }
+
+    private function formatCalendarDateTime(Carbon $dateTime, bool $allDay): string
+    {
+        return $allDay
+            ? $dateTime->toDateString()
+            : $dateTime
+                ->copy()
+                ->toIso8601String();
+    }
+
+    private function formatCalendarEnd(Carbon $start, Carbon $end, bool $allDay): string
+    {
+        if ($allDay) {
+            return $end->copy()->addDay()->toDateString();
+        }
+
+        $adjustedEnd = $end->copy();
+
+        if ($adjustedEnd->lessThanOrEqualTo($start)) {
+            $adjustedEnd = $start->copy()->addHour();
+        }
+
+        return $adjustedEnd->toIso8601String();
     }
 }

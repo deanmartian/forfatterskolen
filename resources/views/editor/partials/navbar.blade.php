@@ -24,6 +24,8 @@ $urlList = array('pulse', 'board');
                 {{ trans('site.'.$page['request_name']) }}
             @elseif($page['request_name'] === 'editors-coaching-time')
                 {{ trans('site.coaching-timer-text') }}
+            @elseif($page['request_name'] === 'editors-calendar')
+                {{ trans('site.learner.nav.calendar') }}
             @else
                 {{ trans('site.admin-menu.'.$page['request_name']) }}
             @endif
