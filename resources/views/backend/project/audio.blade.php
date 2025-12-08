@@ -20,7 +20,7 @@
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
-                    <th>{{ trans('site.audio-book') }}</th>
+                    <th>{{ trans('site.audio') }}</th>
                     <th width="300"></th>
                 </tr>
                 </thead>

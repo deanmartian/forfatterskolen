@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-md-12 dashboard-course">
                 <h1 class="d-inline-block">
-                    {{ trans('site.audio') }}
+                    {{ trans('site.audio-book') }}
                 </h1>
 
                 <div class="card global-card">
