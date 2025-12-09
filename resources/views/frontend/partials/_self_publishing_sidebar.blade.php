@@ -83,7 +83,7 @@
                     </a>
                 </li>
                 <li class="@if(Request::is('account/self-publishing/e-book')) active @endif">
-                    <a href="#">{{-- {{ route('learner.self-publishing.ebook') }} --}}
+                    <a href="{{ route('learner.self-publishing.ebook') }}">
                         {{ trans('site.ebook') }}
                     </a>
                 </li>

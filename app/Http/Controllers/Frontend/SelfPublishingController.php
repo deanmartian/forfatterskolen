@@ -410,6 +410,30 @@ class SelfPublishingController extends Controller
                 'alert_type' => 'success']);
     }
 
+    public function deleteEbook($project_id, $ebook_id): RedirectResponse
+    {
+        $ebook = ProjectEbook::find($ebook_id);
+        $type = $ebook->type;
+        $ebook->delete();
+
+        if ($type == 'epub') {
+            $translationText = trans('site.epub');
+        }
+
+        if ($type == 'mobi') {
+            $translationText = trans('site.mobi');
+        }
+
+        if ($type == 'cover') {
+            $translationText = trans('site.homepage.illustration-cover-design');
+        }
+        
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag($translationText.' ' . trans('site.deleted-successfully')),
+                'alert_type' => 'success']);
+    }
+
     public function publishingOrder(): View
     {
         $shopManuscript = ShopManuscript::find(3); // manusutvikling 1

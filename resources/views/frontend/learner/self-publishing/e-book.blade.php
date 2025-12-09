@@ -58,6 +58,99 @@
                         </table>
                     </div>
                 </div>
+
+                <div class="card global-card mt-4">
+                    <div class="card-header">
+                        @if ($standardProject)
+                            <button type="button" class="btn btn-success pull-right ebookBtn" data-toggle="modal" 
+                                data-target="#ebookModal" data-type="mobi">+ {{ trans('site.add-mobi') }}</button>
+                        @endif
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-side-bordered table-white">
+                            <thead>
+                                <tr>
+                                    <th>{{ trans('site.mobi') }}</th>
+                                    <th width="300"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($mobis as $mobi)
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url('/dropbox/download/' . trim($mobi->value)) }}">
+                                                <i class="fa fa-download" aria-hidden="true"></i>
+                                            </a>&nbsp;
+
+                                            {!! $mobi->file_link !!}
+                                        </td>
+                                        <td>                      
+                                            <button class="btn btn-primary btn-xs ebookBtn" data-toggle="modal"
+                                                    data-target="#ebookModal"
+                                                    data-type="mobi" data-id="{{ $mobi->id }}"
+                                                    data-record="{{ json_encode($mobi) }}">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-xs deleteEbookBtn" data-toggle="modal"
+                                                    data-target="#deleteEbookModal" data-type="mobi"
+                                                    data-action="{{ route('learner.self-publishing.delete-ebook', 
+                                                    [$mobi->project_id, $mobi->id]) }}">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card global-card mt-4">
+                    <div class="card-header">
+                        @if ($standardProject)
+                            <button type="button" class="btn btn-success pull-right ebookBtn" data-toggle="modal" 
+                            data-target="#ebookModal" data-type="cover">+ {{ trans('site.add-cover') }}</button>
+                        @endif
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-side-bordered table-white">
+                            <thead>
+                                <tr>
+                                    <th>{{ trans('site.homepage.illustration-cover-design') }}</th>
+                                    <th width="300"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($covers as $cover)
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url('/dropbox/download/' . trim($cover->value)) }}">
+                                                <i class="fa fa-download" aria-hidden="true"></i>
+                                            </a>&nbsp;
+
+                                            {!! $cover->file_link !!}
+                                        </td>
+                                        <td>                      
+                                            <button class="btn btn-primary btn-xs ebookBtn" data-toggle="modal"
+                                                    data-target="#ebookModal"
+                                                    data-type="cover" data-id="{{ $cover->id }}"
+                                                    data-record="{{ json_encode($cover) }}">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-xs deleteEbookBtn" data-toggle="modal"
+                                                    data-target="#deleteEbookModal" data-type="cover"
+                                                    data-action="{{ route('learner.self-publishing.delete-ebook', 
+                                                    [$cover->project_id, $cover->id]) }}">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

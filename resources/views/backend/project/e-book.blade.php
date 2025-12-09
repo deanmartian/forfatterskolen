@@ -56,12 +56,12 @@
 
     <section>
         <button type="button" class="btn btn-success ebookBtn" data-toggle="modal" data-target="#ebookModal"
-                data-type="mobi">+ Add Mobi</button>
+                data-type="mobi">+ {{ trans('site.add-mobi') }}</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
-                    <th>Mobi</th>
+                    <th>{{ trans('site.mobi') }}</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
