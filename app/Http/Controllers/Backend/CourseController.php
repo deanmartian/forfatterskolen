@@ -1058,7 +1058,7 @@ class CourseController extends Controller
             CoachingTimerManuscript::create([
                 'user_id' => $coursesTaken->user_id,
                 'file' => null,
-                'plan_type' => 1
+                'plan_type' => $request->coaching_time
             ]);
 
             CoachingTimerTaken::create([
