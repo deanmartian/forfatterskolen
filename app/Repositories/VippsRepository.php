@@ -233,7 +233,7 @@ class VippsRepository
                 $order = Order::find($order_id);
                 // add shop manuscript to user
                 if (! $order->is_processed && $order->type === Order::MANUSCRIPT_TYPE) {
-                    $shopManuscriptService = new ShopManuscriptService;
+                    $shopManuscriptService = app(ShopManuscriptService::class);
                     $shopManuscriptService->createInvoiceFromOder($order);
                     $shopManuscriptTaken = $shopManuscriptService->addShopManuscriptToLearner($order);
                     $shopManuscriptService->notifyAdmin($order);
