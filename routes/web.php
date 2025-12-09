@@ -401,6 +401,9 @@ Route::domain($front)->group(function () {
         Route::get('/self-publishing/audio', [Frontend\SelfPublishingController::class, 'audio'])->name('learner.self-publishing.audio');
         Route::post('/self-publishing/{project_id}/save-audio', [Frontend\SelfPublishingController::class, 'saveAudio'])->name('learner.self-publishing.save-audio');
         Route::delete('/self-publishing/{project_id}/audio/{audio_id}/delete', [Frontend\SelfPublishingController::class, 'deleteAudio'])->name('learner.self-publishing.delete-audio');
+        Route::get('/self-publishing/e-book', [Frontend\SelfPublishingController::class, 'eBook'])->name('learner.self-publishing.ebook');
+        Route::post('/self-publishing/{id}/e-book/save', [Frontend\SelfPublishingController::class, 'saveEBook'])->name('learner.self-publishing.save-ebook');
+        Route::delete('/self-publishing/{id}/e-book/{ebook_id}/delete', [Frontend\SelfPublishingController::class, 'deleteEbook'])->name('learner.self-publishing.delete-ebook');
         Route::get('/self-publishing/publishing/order', [Frontend\SelfPublishingController::class, 'publishingOrder'])
             ->name('learner.self-publishing.publishing.order');
         Route::post('/self-publishing/publishing/order/validate', [Frontend\SelfPublishingController::class, 'validatePublishingOrder'])

@@ -11,20 +11,17 @@ class ProjectEbook extends Model
 
     protected $appends = ['file_link'];
 
-    #[Scope]
-    protected function epub($query)
+    protected function scopeEpub($query)
     {
         $query->where('type', 'epub');
     }
 
-    #[Scope]
-    protected function mobi($query)
+    protected function scopeMobi($query)
     {
         $query->where('type', 'mobi');
     }
 
-    #[Scope]
-    protected function cover($query)
+    protected function scopeCover($query)
     {
         $query->where('type', 'cover');
     }

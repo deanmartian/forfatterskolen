@@ -6,21 +6,21 @@
 
 @section('content')
 <div class="page-toolbar">
-    <h3><i class="fa fa-file-text-o"></i> Ebook</h3>
+    <h3><i class="fa fa-file-text-o"></i> {{ trans('site.e-book') }}</h3>
     <a href="{{ $backRoute }}" class="btn btn-default">
-        <i class="fa fa-arrow-left"></i> Back
+        <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
     </a>
 </div>
 
 <div class="col-sm-12 margin-top">
     <section>
         <button type="button" class="btn btn-success ebookBtn" data-toggle="modal" data-target="#ebookModal"
-                data-type="epub">+ Add Epub</button>
+                data-type="epub">+ {{ trans('site.add-epub') }}</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
-                    <th>Epub</th>
+                    <th>{{ trans('site.epub') }}</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
@@ -153,17 +153,17 @@
                       <input type="hidden" name="type">
 
                     <div class="form-group epub-container">
-                        <label>File</label>
+                        <label>{{ trans_choice('site.files', 1) }}</label>
                         <input type="file" class="form-control" name="epub">
                     </div>
 
                     <div class="form-group mobi-container">
-                        <label>File</label>
+                        <label>{{ trans_choice('site.files', 1) }}</label>
                         <input type="file" class="form-control" name="mobi">
                     </div>
 
                     <div class="form-group cover-container">
-                        <label>File</label>
+                        <label>{{ trans_choice('site.files', 1) }}</label>
                         <input type="file" class="form-control" name="cover">
                     </div>
 
@@ -191,7 +191,7 @@
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
 
-                    <p>Are you sure you want to delete this record?</p>
+                    <p>{{ trans('site.delete-question') }}</p>
 
                     <button type="submit" class="btn btn-danger pull-right margin-top">
                         {{ trans('site.delete') }}
@@ -207,6 +207,13 @@
 
 @section('scripts')
 <script>
+    let translations = {
+        epub : "{{ trans('site.epub') }}",
+        mobi : "{{ trans('site.mobi') }}",
+        cover : "{{ trans('site.homepage.illustration-cover-design') }}",
+        delete: "{{ trans('site.delete') }}"
+        };
+
     $(".ebookBtn").click(function() {
         let id = $(this).data('id');
         let type = $(this).data('type');
@@ -224,17 +231,17 @@
 
         switch (type) {
             case 'epub':
-                modal.find('.modal-title').text('Epub');
+                modal.find('.modal-title').text(translations.epub);
                 epubContainer.removeClass('hide');
                 break;
 
             case 'mobi':
-                modal.find('.modal-title').text('Mobi');
+                modal.find('.modal-title').text(translations.mobi);
                 mobiContainer.removeClass('hide');
                 break;
                 
             case 'cover':
-                modal.find('.modal-title').text('Cover');
+                modal.find('.modal-title').text(translations.cover);
                 coverContainer.removeClass('hide');
                 break;
         }
@@ -254,19 +261,19 @@
 
         switch (type) {
             case 'epub':
-                pageTitle = 'Epub';
+                pageTitle = translations.epub;
                 break;
 
             case 'mobi':
-                pageTitle = 'Mobi';
+                pageTitle = translations.mobi;
                 break;
 
             case 'cover':
-                pageTitle = 'Cover';
+                pageTitle = translations.cover;
                 break;
         }
 
-        modal.find('.modal-title').text('Delete ' + pageTitle);
+        modal.find('.modal-title').text(translations.delete + ' ' + pageTitle);
         form.attr('action', action);
     });
 </script>

@@ -82,9 +82,9 @@
                         {{ trans('site.audio-book') }}
                     </a>
                 </li>
-                <li>
-                    <a href="#">
-                        Ebok
+                <li class="@if(Request::is('account/self-publishing/e-book')) active @endif">
+                    <a href="#">{{-- {{ route('learner.self-publishing.ebook') }} --}}
+                        {{ trans('site.ebook') }}
                     </a>
                 </li>
             </ul>

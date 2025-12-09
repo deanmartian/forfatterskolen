@@ -12,6 +12,7 @@ use App\Order;
 use App\PowerOfficeInvoice;
 use App\ProjectAudio;
 use App\ProjectBookFormatting;
+use App\ProjectEbook;
 use App\ProjectGraphicWork;
 use App\ProjectRegistration;
 use App\PublishingService;
@@ -327,8 +328,8 @@ class SelfPublishingController extends Controller
     {
         $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->id());
 
-        $files = ProjectAudio::files()->where('project_id', $standardProject->id)->get();
-        $covers = ProjectAudio::cover()->where('project_id', $standardProject->id)->get();
+        $files = $standardProject ? ProjectAudio::files()->where('project_id', $standardProject->id)->get() : [];
+        $covers = $standardProject ? ProjectAudio::cover()->where('project_id', $standardProject->id)->get() : [];
 
         return view('frontend.learner.self-publishing.audio', compact('files', 'covers'));
     }
@@ -372,6 +373,40 @@ class SelfPublishingController extends Controller
 
         return redirect()->back()
             ->with(['errors' => AdminHelpers::createMessageBag($translationText.' ' . trans('site.deleted-successfully')),
+                'alert_type' => 'success']);
+    }
+
+    public function ebook()
+    {
+        $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->id());
+
+        $epubs = $standardProject ? ProjectEbook::epub()->where('project_id', $standardProject->id)->get() : [];
+        $mobis = $standardProject ? ProjectEbook::mobi()->where('project_id', $standardProject->id)->get() : [];
+        $covers = $standardProject ? ProjectEbook::cover()->where('project_id', $standardProject->id)->get() : [];
+
+        return view('frontend.learner.self-publishing.e-book', compact('epubs', 'mobis', 'covers'));
+    }
+
+    public function saveEbook($project_id, Request $request, ProjectService $projectService): RedirectResponse
+    {
+        $request->merge(['project_id' => $project_id]);
+
+        if ($request->type == 'epub') {
+            $translationText = trans('site.epub');
+        }
+
+        if ($request->type == 'mobi') {
+            $translationText = trans('site.mobi');
+        }
+
+        if ($request->type == 'cover') {
+            $translationText = trans('site.homepage.illustration-cover-design');
+        }
+
+        $projectService->saveEbook($request);
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag($translationText.' ' . trans('site.saved-successfully')),
                 'alert_type' => 'success']);
     }
 
