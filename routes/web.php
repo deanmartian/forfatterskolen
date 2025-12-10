@@ -1957,6 +1957,7 @@ Route::domain($editor)->group(function () {
         Route::get('/project/{id}', [Editor\PageController::class, 'projectDetails'])->name('editor.project.show');
         Route::post('/project/{id}/update-editor-hours', [Editor\PageController::class, 'projectEditorHours'])->name('editor.project.update-editor-hours');
         Route::get('/calendar', [Editor\PageController::class, 'calendar'])->name('editor.calendar');
+        Route::get('/calendar/export', [Editor\PageController::class, 'exportCalendar'])->name('editor.calendar.export');
     });
 
     Route::middleware('editor')->group(function () {

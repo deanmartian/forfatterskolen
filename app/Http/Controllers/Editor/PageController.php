@@ -27,6 +27,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
@@ -438,6 +439,57 @@ class PageController extends Controller
         return view('editor.calendar', ['events' => $events]);
     }
 
+    public function exportCalendar()
+    {
+        $events = $this->getCalendarEvents();
+        $timezone = config('app.timezone');
+
+        $lines = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//Forfatterskolen//Learner Calendar//EN',
+            'CALSCALE:GREGORIAN',
+            'METHOD:PUBLISH',
+            'X-WR-TIMEZONE:'.$timezone,
+        ];
+
+        $lines = array_merge($lines, $this->buildVTimezoneComponent($timezone));
+
+        foreach ($events as $event) {
+            $start = $event['start'];
+            $end = $event['end'];
+
+            if (! $event['all_day'] && $end->equalTo($start)) {
+                $end = $end->copy()->addHour();
+            }
+
+            if ($event['all_day']) {
+                $dtStart = 'DTSTART;VALUE=DATE:'.$start->format('Ymd');
+                $dtEnd = 'DTEND;VALUE=DATE:'.$end->copy()->addDay()->format('Ymd');
+            } else {
+                $dtStart = 'DTSTART;TZID='.$timezone.':'.$start->copy()->format('Ymd\THis');
+                $dtEnd = 'DTEND;TZID='.$timezone.':'.$end->copy()->format('Ymd\THis');
+            }
+
+            $lines[] = 'BEGIN:VEVENT';
+            $lines[] = 'UID='.Str::uuid();
+            $lines[] = 'DTSTAMP='.Carbon::now('UTC')->format('Ymd\THis\Z');
+            $lines[] = 'SUMMARY='.$this->escapeIcsText($event['title']);
+            $lines[] = $dtStart;
+            $lines[] = $dtEnd;
+            $lines[] = 'END:VEVENT';
+        }
+
+        $lines[] = 'END:VCALENDAR';
+
+        $icsContent = implode("\r\n", $lines);
+
+        return response($icsContent, 200, [
+            'Content-Type' => 'text/calendar; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="learner-calendar.ics"',
+        ]);
+    }
+
     private function filterAssignmentByCheckMaxWords($check_max_words)
     {
         return AssignmentManuscript::where('editor_id', Auth::user()->id) // assigned manuscript group / course
@@ -588,5 +640,60 @@ class PageController extends Controller
         }
 
         return $adjustedEnd->toIso8601String();
+    }
+
+    private function escapeIcsText(string $text): string
+    {
+        return str_replace(['\\', ';', ',', "\n", "\r"], ['\\\\', '\\;', '\\,', '\\n', ''], $text);
+    }
+
+    private function buildVTimezoneComponent(string $timezone): array
+    {
+        try {
+            $dateTimeZone = new \DateTimeZone($timezone);
+        } catch (\Throwable $exception) {
+            return [];
+        }
+
+        $from = Carbon::now($timezone)->subYear();
+        $to = Carbon::now($timezone)->addYears(3);
+        $transitions = $dateTimeZone->getTransitions($from->timestamp, $to->timestamp);
+
+        if (count($transitions) < 2) {
+            return [];
+        }
+
+        $lines = [
+            'BEGIN:VTIMEZONE',
+            'TZID:'.$timezone,
+            'X-LIC-LOCATION:'.$timezone,
+        ];
+
+        $previousOffset = $transitions[0]['offset'];
+
+        foreach (array_slice($transitions, 1) as $transition) {
+            $componentType = $transition['isdst'] ? 'DAYLIGHT' : 'STANDARD';
+
+            $lines[] = 'BEGIN:'.$componentType;
+            $lines[] = 'TZOFFSETFROM:'.$this->formatUtcOffset($previousOffset);
+            $lines[] = 'TZOFFSETTO:'.$this->formatUtcOffset($transition['offset']);
+            $lines[] = 'TZNAME:'.$transition['abbr'];
+            $lines[] = 'DTSTART='.Carbon::createFromTimestamp($transition['ts'], $timezone)->format('Ymd\THis');
+            $lines[] = 'END:'.$componentType;
+
+            $previousOffset = $transition['offset'];
+        }
+
+        $lines[] = 'END:VTIMEZONE';
+
+        return $lines;
+    }
+
+    private function formatUtcOffset(int $offset): string
+    {
+        $hours = intdiv($offset, 3600);
+        $minutes = abs(($offset % 3600) / 60);
+
+        return sprintf('%+03d%02d', $hours, $minutes);
     }
 }
