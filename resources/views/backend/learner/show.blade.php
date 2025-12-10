@@ -1092,6 +1092,23 @@
 										}
 
 										?>
+										@if ($assignment->id == 774 && $learner->id == 765)
+											@php
+												$hasOverrideMaxWords   = isset($assignmentMaxWords[$assignment->id]);
+												$dataMaxWords = $hasOverrideMaxWords ? $assignmentMaxWords[$assignment->id] 
+													: $assignment->max_words;
+											@endphp
+											<br>
+											<a href="#"
+												class="editMaxWordsBtn"
+												data-toggle="modal"
+												data-target="#editMaxWordsModal"
+												data-action="{{ route('admin.learner.assignment.update-max-words', 
+												[$learner->id, $assignment->id]) }}"
+												data-max_words="{{ $dataMaxWords }}">
+													{{ trans('site.edit-max-words') }}
+											</a>
+										@endif
 									</td>
 									<td>
 										@php
@@ -6067,14 +6084,28 @@ console.log(record);
 	});
 
     $(".editMaxWordsBtn").click(function() {
-        let max_words = $(this).data('max_words');
-        let allow_up_to = $(this).data('allow_up_to');
-        let modal = $('#editMaxWordsModal');
-        let action = $(this).data('action');
-        modal.find('form').attr('action', action);
-        modal.find('[name=max_words]').val(max_words);
-        modal.find('[name=allow_up_to]').val(allow_up_to);
-    });
+
+		let max_words = $(this).data('max_words');
+		let allow_up_to = $(this).data('allow_up_to');
+		let modal = $('#editMaxWordsModal');
+		let action = $(this).data('action');
+
+		modal.find('form').attr('action', action);
+		modal.find('[name=max_words]').val(max_words);
+
+		let group = modal.find('[name=allow_up_to]').closest('.form-group');
+
+		// If allow_up_to is undefined or null → HIDE the field
+		if (typeof allow_up_to === "undefined" || allow_up_to === null) {
+			group.addClass('hidden');
+			modal.find('[name=allow_up_to]').val('');
+		} else {
+			// Otherwise → SHOW the field and set value
+			group.removeClass('hidden');
+			modal.find('[name=allow_up_to]').val(allow_up_to);
+		}
+	});
+
 
 
 	$(document).on("change", ".disable-learner-toggle", function() {

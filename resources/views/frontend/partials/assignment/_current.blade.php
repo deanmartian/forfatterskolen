@@ -12,6 +12,7 @@
                     $extension = $manuscript ? explode('.', basename($manuscript->filename)) : '';
                     $submission_date_formatted = $assignmentSubmissionDates[$assignment->id] ??
                                 $assignment->submission_date;
+                    $max_words = $assignmentMaxWords[$assignment->id] ?? $assignment->max_words;
                     if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', 
                     $assignment->submission_date)) {
                         $coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
@@ -64,7 +65,7 @@
                             @if ($assignment->check_max_words)
                                 <div class="col-md-3">
                                     <div class="max-word-container">
-                                        {{ trans('site.max-words') }} {{ $assignment->max_words }}
+                                        {{ trans('site.max-words') }} {{ $max_words }}
                                     </div>
                                 </div>
                             @endif

@@ -9,6 +9,7 @@ use App\AssignmentFeedback;
 use App\AssignmentFeedbackNoGroup;
 use App\AssignmentGroup;
 use App\AssignmentGroupLearner;
+use App\AssignmentLearnerConfiguration;
 use App\AssignmentLearnerSubmissionDate;
 use App\AssignmentManuscript;
 use App\CalendarNote;
@@ -1208,6 +1209,9 @@ class LearnerController extends Controller
         $assignmentSubmissionDates = AssignmentLearnerSubmissionDate::where('user_id', Auth::user()->id)
             ->pluck('submission_date', 'assignment_id');
 
+        $assignmentMaxWords = AssignmentLearnerConfiguration::where('user_id', Auth::user()->id)
+            ->pluck('max_words', 'assignment_id');
+
         foreach ($coursesTaken as $courseTaken) {
             foreach ($courseTaken->package->course->activeAssignments as $assignment) {
 
@@ -1420,7 +1424,7 @@ class LearnerController extends Controller
 
         return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments',
             'upcomingAssignments', 'waitingForResponse', 'assignmentGroupLearners', 'noWordLimitAssignments',
-            'assignmentSubmissionDates'));
+            'assignmentSubmissionDates', 'assignmentMaxWords'));
     }
 
     protected function resolveUploadedFilePath(string $destinationPath, string $fileName): string
@@ -1508,6 +1512,13 @@ class LearnerController extends Controller
             $word_to_deduct = $word_count * 0.02;
             $new_word_count = ceil($word_count - $word_to_deduct);
             $assignment_max_words = $assignment->allow_up_to > 0 ? $assignment->allow_up_to : $assignment->max_words;
+
+            $assignmentConfigurator = AssignmentLearnerConfiguration::where('user_id', Auth::user()->id)
+                ->where('assignment_id', $assignment->id)->first();
+
+            if ($assignmentConfigurator) {
+                $assignment_max_words = $assignmentConfigurator->max_words;
+            }
 
             // check if the assignment is for editor only and if it meets the max word
             /* $assignment->for_editor && */
@@ -5037,6 +5048,13 @@ class LearnerController extends Controller
                 // $assignmentManuscript->assignment->for_editor &&
                 $assignment = $assignmentManuscript->assignment;
                 $assignment_max_words = $assignment->allow_up_to > 0 ? $assignment->allow_up_to : $assignment->max_words;
+
+                $assignmentConfigurator = AssignmentLearnerConfiguration::where('user_id', Auth::user()->id)
+                    ->where('assignment_id', $assignment->id)->first();
+
+                if ($assignmentConfigurator) {
+                    $assignment_max_words = $assignmentConfigurator->max_words;
+                }
 
                 if ($word_count > $assignment_max_words && $assignment->check_max_words) {
                     return redirect()->back()->with(['errorMaxWord' => true, 'editorMaxWord' => $assignmentManuscript->assignment->max_words]);

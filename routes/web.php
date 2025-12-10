@@ -1283,6 +1283,8 @@ Route::domain($admin)->group(function () {
         Route::post('assignment/{id}/update-submission-date', [Backend\AssignmentController::class, 'updateSubmissionDate'])->name('assignment.update-submission-date');
         Route::post('learner/{learner_id}/assignment/{assignment_id}/update-submission-date', [Backend\LearnerController::class, 'updateAssignmentSubmissionDate'])
             ->name('admin.learner.assignment.update-submission-date');
+        Route::post('learner/{learner_id}/assignment/{assignment_id}/update-max-words', [Backend\LearnerController::class, 'updateAssignmentMaxWords'])
+            ->name('admin.learner.assignment.update-max-words');
         Route::post('assignment/{id}/update-available-date', [Backend\AssignmentController::class, 'updateAvailableDate'])->name('assignment.update-available-date');
         Route::post('assignment/{id}/update-max-words', [Backend\AssignmentController::class, 'updateMaxWords'])->name('assignment.update-max-words');
         Route::post('assignment_manuscript/{id}/delete', [Backend\AssignmentController::class, 'deleteManuscript'])->name('assignment.group.delete_manuscript');
