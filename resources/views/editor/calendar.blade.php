@@ -313,7 +313,7 @@
                         </ul>
 
                         <div class="d-flex justify-content-md-end w-100 w-md-auto">
-                            <a href="#" class="btn btn-primary" target="_blank" rel="noopener">
+                            <a href="{{ route('editor.calendar.export') }}" class="btn btn-primary" target="_blank" rel="noopener">
                                     {{ trans('site.export-calendar') }}
                             </a>
                         </div>
