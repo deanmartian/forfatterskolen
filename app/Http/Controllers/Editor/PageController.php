@@ -475,10 +475,15 @@ class PageController extends Controller
                 continue;
             }
 
+            $eventTitle = $assignment->parent == 'users' 
+                ? trans('site.learner.assignment') . ': ' . $assignment->title . ' ' . trans('site.learner-id') . ' '
+                    . $assignment->parent_id
+                : trans('site.learner.assignment') . ': ' . $assignment->title . ' '.trans('site.from').' ' 
+                        . $assignment->course->title;
+
             $events->push([
                 'id' => $assignmentManuscript->id,
-                'title' => trans('site.learner.assignment') . ': ' . $assignment->title . ' '.trans('site.from').' ' 
-                    . $assignment->course->title,
+                'title' => $eventTitle,
                 'className' => 'event-success-new',
                 'start' => $start->copy(),
                 'end' => $start->copy(),
