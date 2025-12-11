@@ -118,7 +118,7 @@
                         <li>
                             <a href="{{ route('front.free-manuscript.index') }}" class="nav-link"
                             title="View manuscripts">
-                                {{ trans('site.free-feedback') }}Gratis tilbakemelding
+                                {{ trans('site.free-feedback') }}
                             </a>
                         </li>
                         <li>
