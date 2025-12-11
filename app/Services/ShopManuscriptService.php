@@ -524,6 +524,7 @@ class ShopManuscriptService
         $word_count = 0;
         $filePath = null;
         $synopsis = null;
+        $userId = (int) \Auth::id();
 
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) {
             /* $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
@@ -549,7 +550,8 @@ class ShopManuscriptService
                 $word_count = FrontendHelpers::get_num_of_words($doc);
             }
             $word_count = FrontendHelpers::wordCountByMargin((int) $word_count); */
-            $uploadedManuscript = $this->uploadManuscriptTest($request);
+            $uploadedManuscript = $this->uploadLearnerManuscript($request, $userId);
+
             $word_count = $uploadedManuscript['word_count'];
             $filePath = $uploadedManuscript['manuscript_file'];
         }
@@ -568,19 +570,21 @@ class ShopManuscriptService
             $tempFile = session('temp_uploaded_file');
             $fullPath = $tempFile['path'];
             $originalPath = Str::after($fullPath, 'storage/');
-            $newDirectory = 'shop-manuscripts';
-            $filename = basename($originalPath);
-            $newPath = $newDirectory . '/' . $filename;
+            $newDirectory = 'storage/shop-manuscripts/'; // need storage for checking unique name
+            $extension = pathinfo($originalPath, PATHINFO_EXTENSION);
+            $filename = AdminHelpers::checkFileName($newDirectory, $userId ?: time(), $extension);
+            $newPath = $newDirectory.basename($filename);
 
-            Storage::disk('public')->copy($originalPath, $newPath);
-            $filePath = 'storage/'.$newPath;
+            // remove storage for copying the file to new file name
+            Storage::disk('public')->copy($originalPath, Str::after($newPath, 'storage/'));
+            $filePath = '/'.$newPath;
             $word_count = $tempFile['word_count'];
         }
 
         OrderShopManuscript::create([
             'order_id' => $order_id,
             'genre' => $request->genre,
-            'file' => '/'.$filePath,
+            'file' => $filePath ? '/'.ltrim($filePath, '/') : null,
             'words' => $word_count,
             'description' => $request->description,
             'synopsis' => $synopsis,
