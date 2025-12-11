@@ -3,9 +3,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">
-                    <h3>Gratis skrivetips</h3>                    
+                    <h3>{{ trans('site.front.home.free-writing-tips') }}</h3>                    
                     <p>
-                        Rektor sine 66 beste tips 
+                        {{ trans('site.front.home.free-writing-tips-title') }}                        
                     </p>
                 </div>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -99,7 +99,7 @@
             <div class="col-md-6">
                 <div class="col-sm-4">
                     <p>
-                        Hva vil tilbyr
+                        {{ trans('site.homepage.what-we-offer') }}
                     </p>
 
                     <ul>
@@ -118,7 +118,7 @@
                         <li>
                             <a href="{{ route('front.free-manuscript.index') }}" class="nav-link"
                             title="View manuscripts">
-                                Gratis tilbakemelding
+                                {{ trans('site.free-feedback') }}Gratis tilbakemelding
                             </a>
                         </li>
                         <li>
@@ -143,27 +143,27 @@
                 </div>
                 <div class="col-sm-4">
                     <p>
-                        Informasjon
+                        {{ trans('site.information') }}
                     </p>
 
                     <ul>
                         <li>
                             <a href="{{ route('front.contact-us') }}" class="nav-link"
                             title="Hvem er vi">
-                                Hvem er vi
+                                {{ trans('site.who-are-we') }}
                             </a>
                         </li>
                         <li>
                             <a href="/terms/all" class="nav-link"
-                            title="Vilkår og betingelser">
-                                Vilkår og betingelser
+                            title="{{ trans('site.terms-and-conditions') }}">
+                                {{ trans('site.terms-and-conditions') }}
                             </a>
                         </li>
                     </ul>
                 </div>
                 <div class="col-sm-4">
                     <p>
-                        Sosiale medier
+                        {{ trans('site.social-media') }}
                     </p>
 
                     <ul>
@@ -196,33 +196,33 @@
 
         <div class="row mt-5">
             <div class="col-md-3">
-                <p>Adresse</p>
+                <p>{{ trans('site.learner.address') }}</p>
 
                 <h2>
-                    Lihagen 21, 3029 DRAMMEN
+                    {{ trans('site.front.contact-us.address') }}
                 </h2>
             </div>
             <div class="col-md-3">
                 <p>
-                    E-post
+                    {!! trans_choice('site.emails', 1) !!}
                 </p>
 
                 <h2>
-                    post@forfatterskolen.no
+                    {{ trans('site.front.contact-us.mail') }}
                 </h2>
             </div>
             <div class="col-md-3">
                 <p>
-                    Telefon
+                    {{ trans('site.learner.telephone') }}
                 </p>
 
                 <h2>
-                    +47 411 23 555
+                    {{ trans('site.front.contact-us.company-number') }}
                 </h2>
             </div>
             <div class="col-md-3 text-right justify-content-center d-flex">
                 <button class="btn site-btn-global" data-toggle="modal" data-target="#writingPlanModal">
-                    Meld meg på nyhetsbrev
+                    {{ trans('site.sign-up-for-newsletter') }}
                 </button>
             </div>
         </div> <!-- end row -->
@@ -230,7 +230,7 @@
         <div class="row footer-bottom pb-0 mt-5">
             <div class="col-md-12">
                 <p>
-                    Copyright © 2022 Forfatterskolen, All Rights Reserved
+                    {{ trans('site.front.contact-us.copyright') }}
                 </p>
             </div>
         </div>

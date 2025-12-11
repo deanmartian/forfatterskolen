@@ -25,22 +25,22 @@
 								<?php
 									switch ($data->setting_name) {
 									    case 'course-terms';
-									    	$termsTitle = 'Kjøpsvilkår kurs';
+									    	$termsTitle = trans('site.purchase-condition-course');
 									    	break;
 										case 'manuscript-terms';
-                                            $termsTitle = 'Kjøpsvilkår manus';
+                                            $termsTitle = trans('site.purchase-condition-script');
 											break;
                                         case 'workshop-terms';
-                                            $termsTitle = 'Kjøpsvilkår skriveverksted';
+                                            $termsTitle = trans('site.purchase-condition-writing-workshop');
                                             break;
                                         case 'coaching-terms';
-                                            $termsTitle = 'Kjøpsvilkår coaching timer';
+                                            $termsTitle = trans('site.purchase-condition-coaching-time');
                                             break;
                                         case 'privacy-policy-terms';
-                                            $termsTitle = 'Privacy Policy';
+                                            $termsTitle = trans('site.privacy-policy');
                                             break;
 										default:
-                                            $termsTitle = 'Vilkår';
+                                            $termsTitle = trans('site.terms');
                                             break;
 									}
 								?>

@@ -68,7 +68,7 @@
                 </a>
 
                 <a href="{{ route('front.gift.shop-manuscript') }}" class="btn site-btn-global">
-                    Buy Manuscript
+                    {{ trans('site.gift-card.buy-manuscript') }}
                 </a>
             </div>
         </div>
