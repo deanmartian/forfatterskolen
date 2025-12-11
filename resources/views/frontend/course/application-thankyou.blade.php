@@ -11,12 +11,12 @@
 			<div class="row">
 				<div class="col-sm-6 left-container">
 					{{-- <img src="{{ asset('images-new/thumb-icon.png') }}" alt="" class="thumb"> --}}
-					<h1>Takk for din søknad!</h1>
+					<h1>{{ trans('site.application-thankyou-title') }}</h1>
 					<p>
-						Vi gleder oss å lese søknaden din, vi tar kontakt i løpet av desember
+						{{ trans('site.application-thankyou-description') }}
 					</p>
 					<a class="btn buy-btn" href="{{ route('learner.course') }}'">
-                    <i class="fa fa-graduation-cap"></i>&nbsp;&nbsp;&nbsp;Se på mine kurs</a>
+                    <i class="fa fa-graduation-cap"></i>&nbsp;&nbsp;&nbsp;{{ trans('site.view-my-courses') }}</a>
 				</div>
 
 				<div class="col-sm-6 right-container">

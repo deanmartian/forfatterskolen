@@ -23,7 +23,7 @@
             <div class="col-md-8 col-sm-offset-2">
                 <div class="form-wrapper">
                     <h3 class="price">
-                        {{ $price }} kroner
+                        {{ $price }} {{ trans('site.currency-text') }}
                     </h3>
 
                     <form class="form-theme" method="POST" action="{{ route('front.course.process-application', $course->id) }}"
@@ -89,26 +89,20 @@
 
                         <div class="form-group">
                             <b>
-                                Last opp ett dokument som inneholder:
+                                {{ trans('site.application-instruction-title') }}
                             </b>
-                            <ul>
-                                <li>
-                                    en kort redegjørelse for din motivasjon for kurset
-                                </li>
-                                <li>
-                                    en kort beskrivelse av prosjektet ditt (blant annet sjanger og hva du skriver om)
-                                </li>
-                                <li>
-                                    500-1000 ord av prosjektet du planlegger å jobbe med på kurset
-                                </li>
-                            </ul>
+                            {{-- ul and li stored in translation --}}
+                            {!! trans('site.application-instruction-details') !!}
                         </div>
 
                         <div class="form-group">
                             <div class="file-upload" id="file-upload-application">
                                 <i class="fa fa-cloud-upload-alt"></i>
                                 <div class="file-upload-text" id="file-upload-application-text">
-                                    Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
+                                    {{ trans('site.drag-and-drop-files') }} {{ trans('site.or-text') }} 
+                                    <a href="javascript:void(0)" class="file-upload-btn">
+                                        {{ trans('site.click-here') }}
+                                    </a>
                                 </div>
                                 <input type="file" class="form-control hidden input-file-upload" name="manuscript"
                                 id="file-upload" accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/x-iwork-pages-sffpages,.doc,.docx,.pdf,.odt,.pages">
@@ -116,13 +110,15 @@
                             <label class="file-label">
                                 * {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
                             </label>
-                            <p id="file-upload-application-conversion-message" class="text-info mt-2 d-none">Konverterer dokumentet… Vennligst vent.</p>
+                            <p id="file-upload-application-conversion-message" class="text-info mt-2 d-none">
+                                {{ trans('site.converting-document-please-wait') }}
+                            </p>
                             <div id="file-upload-application-conversion-error" class="alert alert-danger d-none mt-2" role="alert"></div>
                         </div>
 
                         <div class="form-group">
                             <button type="submit" class="btn site-btn-global pull-right" id="submitOrder">
-                                Lever søknad
+                                {{ trans('site.submit-application') }}
                             </button>
                         </div>
 
@@ -138,6 +134,13 @@
 @section('scripts')
 <script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script>
+    let translations = {
+        convertingPleaseWait : "{{ trans('site.converting-document-please-wait') }}",
+        couldNotConvertTryAgain : "{{ trans('site.could-not-convert-file-please-try-again') }}",
+        releaseToUpload : "{{ trans('site.release-to-upload') }}",
+               
+    };
+
     $(document).ready(function () {
         const fileUploadArea = document.getElementById('file-upload-application');
         const fileInput = document.getElementById('file-upload');
@@ -145,7 +148,7 @@
         const submitButton = document.getElementById('submitOrder');
         const conversionMessageElement = document.getElementById('file-upload-application-conversion-message');
         const conversionErrorElement = document.getElementById('file-upload-application-conversion-error');
-        const conversionMessageText = 'Konverterer dokumentet… Vennligst vent.';
+        const conversionMessageText = translations.convertingPleaseWait;
         const defaultUploadText = fileUploadText ? fileUploadText.innerHTML : '';
         let isConvertingApplicationFile = false;
         let suppressChangeHandler = false;
@@ -278,9 +281,9 @@
                         error.response = error.response || {};
                         error.response.data = {
                             errors: {
-                                manuscript: ['Kunne ikke konvertere filen. Prøv igjen.'],
+                                manuscript: [translations.couldNotConvertTryAgain],
                             },
-                            message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                            message: translations.couldNotConvertTryAgain
                         };
                     }
 
@@ -305,7 +308,7 @@
                 : null;
 
             if (!response.ok) {
-                const error = new Error('Kunne ikke konvertere filen. Prøv igjen.');
+                const error = new Error(translations.couldNotConvertTryAgain);
                 let errorData = null;
 
                 try {
@@ -322,9 +325,9 @@
                     status: response.status,
                     data: errorData || {
                         errors: {
-                            manuscript: ['Kunne ikke konvertere filen. Prøv igjen.'],
+                            manuscript: [translations.couldNotConvertTryAgain],
                         },
-                        message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                        message: translations.couldNotConvertTryAgain
                     }
                 };
 
@@ -340,7 +343,7 @@
 
         const getErrorMessageFromConversion = (error) => {
             if (!error) {
-                return 'Kunne ikke konvertere filen. Prøv igjen.';
+                return translations.couldNotConvertTryAgain;
             }
 
             if (error.response && error.response.data) {
@@ -359,7 +362,7 @@
                 return error.message;
             }
 
-            return 'Kunne ikke konvertere filen. Prøv igjen.';
+            return translations.couldNotConvertTryAgain;
         };
 
         const assignFilesToInput = (input, file) => {
@@ -415,7 +418,7 @@
 
         const showConversionError = (message) => {
             if (conversionErrorElement) {
-                conversionErrorElement.textContent = message || 'Kunne ikke konvertere filen. Prøv igjen.';
+                conversionErrorElement.textContent = message || translations.couldNotConvertTryAgain;
                 conversionErrorElement.classList.remove('d-none');
             }
         };
@@ -521,7 +524,7 @@
         };
 
         if (fileUploadArea) {
-            const dragOverText = 'Release to upload';
+            const dragOverText = translations.releaseToUpload;
 
             fileUploadArea.addEventListener('dragover', (event) => {
                 event.preventDefault();

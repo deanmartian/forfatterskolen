@@ -72,7 +72,7 @@
 							@if ($course->for_sale && !$course->is_free && !$course->hide_price)
 								@if ($course->pay_later_with_application)
 									<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
-										Søk kurset
+										{{ trans('site.apply-for-the-course') }}
 									</a>
 								@else
 									<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
@@ -93,7 +93,7 @@
 								@if ($course->for_sale && !$course->is_free && !$course->hide_price)
 									@if ($course->pay_later_with_application)
 										<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
-											Søk kurset
+											{{ trans('site.apply-for-the-course') }}
 										</a>
 									@else
 										@if (Auth::user()->could_buy_course)
@@ -303,7 +303,7 @@
 
 											@if ($canBuy)
 												<a href="{{ route($checkoutRoute, ['id' => $course->id]) }}" class="btn course-price w-100">
-													{{ $course->pay_later_with_application ? 'Søk kurset' : str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
+													{{ $course->pay_later_with_application ? trans('site.apply-for-the-course') : str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
 												</a>
 											@endif
 										@endif
@@ -476,7 +476,7 @@
 
 											@if ($course->course_plan_data)
 												<button class="btn buy-btn" data-toggle="modal" data-target="#coursePlanDataModal">
-													View Schedule
+													{{ trans('site.view-schedule') }}
 												</button>
 											@endif
 										</div>

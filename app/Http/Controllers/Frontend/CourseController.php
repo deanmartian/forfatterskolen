@@ -145,7 +145,7 @@ class CourseController extends Controller
 
         $courseApplication = CourseApplication::where('user_id', $user_id)->where('package_id', $package_id)->first();
         if ($courseApplication) {
-            $customErrors = ['user' => 'You already sent an application for this course.'];
+            $customErrors = ['user' => trans('site.duplicate-application-message')];
             $validator = Validator::make([], []);
             $validator->validate(); // Perform validation without rules
             $validator->errors()->merge($customErrors);

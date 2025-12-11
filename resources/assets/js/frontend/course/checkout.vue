@@ -52,7 +52,7 @@
 
                                     <div class="mt-3">
                                         <h3 class="font-weight-bold">
-                                            Rabattkupong:
+                                            {{ trans('site.front.form.discount-coupon') }}:
                                         </h3>
                                         <input type="text" name="coupon" class="form-control w-50"
                                                v-model="orderForm.coupon"
