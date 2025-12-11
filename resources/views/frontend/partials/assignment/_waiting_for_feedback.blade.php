@@ -5,6 +5,10 @@
             $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first();
             $extension = $manuscript ? explode('.', basename($manuscript->filename)) : '';
             $submission_date_formatted = $assignment->submission_date;
+            $expected_finish =
+                                $manuscript->editor_expected_finish
+                                ?? $assignment->editor_expected_finish
+                                ?? $manuscript->expected_finish;
             if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
                 $coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
                 $allowed_packages = $assignment->allowed_package ?
@@ -71,7 +75,7 @@
                             </div>
                         </div>
 
-                        @if ($assignment->editor_expected_finish)
+                        @if ($expected_finish)
                             <div class="row">
                                 <div class="col-md-6">
                                     <p>
@@ -80,7 +84,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <p>
-                                        {{ $assignment->editor_expected_finish }}
+                                        {{ $expected_finish }}
                                     </p>
                                 </div>
                             </div>
