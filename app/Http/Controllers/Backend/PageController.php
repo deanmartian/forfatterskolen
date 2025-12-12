@@ -845,6 +845,54 @@ class PageController extends Controller
         return $excel->download(new GenericExport($userList, $headers), 'Learners no record.xlsx');
     }
 
+    public function exportEditorAssignedAssignments($editor_id)
+    {
+        $assignmentManuscripts = AssignmentManuscript::where('editor_id', $editor_id)->groupBy('assignment_id')
+            ->get()->pluck('assignment_id');
+        /* $assignments = Assignment::where(function($query) use ($assignmentManuscripts, $editor_id){
+            $query->whereIn('id', $assignmentManuscripts)
+                ->orWhere('editor_id', $editor_id);
+        })->get(); */
+        $today = now()->startOfDay();
+
+        $assignments = Assignment::query()
+            ->leftJoin('assignment_manuscripts', 'assignment_manuscripts.assignment_id', '=', 'assignments.id')
+            ->where(function($query) use ($assignmentManuscripts, $editor_id) {
+                $query->whereIn('assignments.id', $assignmentManuscripts)
+                    ->orWhere('assignments.editor_id', $editor_id);
+            })
+            ->where(function($query) use ($today) {
+                $query->whereDate('assignments.submission_date', '>=', $today)
+                    ->orWhereDate('assignment_manuscripts.editor_expected_finish', '>=', $today);
+            })
+            ->select('assignments.*', 'assignment_manuscripts.editor_expected_finish', 
+                'assignment_manuscripts.user_id as manuscript_user_id') // important, removes duplicate rows
+            ->distinct()
+            ->get();
+        
+        $assignmentList = [];
+        foreach ($assignments as $assignment) {
+            if ($assignment->submission_date === '365') {
+                continue;
+            }
+            $finalDate =
+                $assignment->editor_expected_finish
+                ?? $assignment->submission_date;
+
+            $assignmentList[] = [
+                'id' => $assignment->id,
+                'name' => $assignment->title,
+                'submission_date' => $finalDate
+            ];
+        }
+
+        $headers = ['id', 'name', 'submission date', 'student_id'];
+
+        $excel = \App::make('excel');
+
+        return $excel->download(new GenericExport($assignmentList, $headers), 'Editor Assigned Assignments.xlsx');
+    }
+
     public function deleteLearnersWithNoPaidRecords()
     {
         $users = $this->learnersWithNoPaidRecords();

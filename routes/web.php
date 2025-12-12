@@ -693,6 +693,8 @@ Route::domain($admin)->group(function () {
         Route::get('/learner-avail-course/{year}', [Backend\PageController::class, 'learnerAvailedCourseYear']);
         Route::get('/learner-with-no-paid-records/export', [Backend\PageController::class, 'exportLearnersWithNoPaidRecords']);
         Route::get('/learner-with-no-paid-records/delete', [Backend\PageController::class, 'deleteLearnersWithNoPaidRecords']);
+        Route::get('/assignment-assignments-to-editor/{editor_id}', [Backend\PageController::class, 'exportEditorAssignedAssignments']);
+        Route::get('/assigned-shop-manuscripts-to-editor/{editor_id}', [Backend\PageController::class, 'exportEditorAssignedShopManuscripts']);
         Route::post('/send-email-to-queue', [Backend\PageController::class, 'sendEmailToQueue'])->name('admin.send-email-to-queue');
         Route::get('/learners/search', [Backend\PageController::class, 'searchLearners']);
         Route::get('/course/{id}/add-coaching-time-to-learners', [Backend\PageController::class, 'addCoachingTimeToCourseLearners']);
