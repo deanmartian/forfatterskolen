@@ -235,7 +235,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Help With</h4>
+                    <h4 class="modal-title">{{ trans('site.learner.help-with-text') }}</h4>
                 </div>
                 <div class="modal-body">
                     <pre></pre>

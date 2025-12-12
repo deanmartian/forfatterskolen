@@ -27,7 +27,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Coaching Time Details</h4>
+                <h4 class="modal-title">
+                    {{ trans('site.coaching-time-details') }}
+                </h4>
             </div>
             <div class="modal-body">
                 <p><strong>{{ trans('site.learner-id') }}:</strong> <span id="slotStudentNr"></span></p>
@@ -41,7 +43,9 @@
                 <pre id="slotHelpsWith"></pre>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    {{ trans('site.learner.close') }}
+                </button>
             </div>
         </div>
     </div>
@@ -52,21 +56,24 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Create time slot</h4>
+                <h4 class="modal-title">{{ trans('site.create-time-slot') }}</h4>
             </div>
             <div class="modal-body">
-                <p><strong>Time:</strong> <span id="slotConfirmRange"></span></p>
+                <p><strong>{{ trans('site.time') }}:</strong> <span id="slotConfirmRange"></span></p>
                 <div class="checkbox" id="slotConfirmExtendWrap">
                     <label>
                         <input type="checkbox" id="slotConfirmExtend">
-                        Make this a 1 hour slot
+                        {{ trans('site.make-1hr-slot') }}
                     </label>
                     <div id="slotConfirmExtendNote" style="font-size: 12px; color: #777;"></div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" id="slotConfirmCancel" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="slotConfirmSubmit">Create slot</button>
+                <button type="button" class="btn btn-default" id="slotConfirmCancel" data-dismiss="modal">
+                    {{ trans('site.cancel') }}
+                </button>
+                <button type="button" class="btn btn-primary" id="slotConfirmSubmit">
+                    {{ trans('site.create-slot') }}</button>
             </div>
         </div>
     </div>
@@ -77,6 +84,17 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 <script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
 <script>
+    let translations = {
+        pleaseSelect30min1hr : "{{ trans('site.please-select-30min-1hr') }}",
+        timeSlotStoredSuccess : "{{ trans('site.time-slot-stored-success') }}",
+        view : "{{ trans('site.view') }}",
+        deleteSlot : "{{ trans('site.delete-slot') }}",
+        deleteThisSlot : "{{ trans('site.delete-this-slot') }}",
+        deleteSlotSuccess : "{{ trans('site.delete-slot-success') }}",
+        checkToExtendTime : "{{ trans('site.check-to-extend-time') }}",
+        cannotExtendTo1hr : "{{ trans('site.cannot-extend-to-1hr') }}",
+    }
+    
     document.addEventListener('DOMContentLoaded', function() {
         let calendarEl = document.getElementById('calendar');
 
@@ -115,7 +133,7 @@
                 const canExtend = diffMinutes === 30 && !calendar.getEvents().some(ev => ev.start < hourEnd && ev.end > end);
 
                 if (![30, 60].includes(diffMinutes)) {
-                    alert("Please select exactly 30 minutes or 1 hour.");
+                    alert(translations.pleaseSelect30min1hr);
                     calendar.unselect();       // <- clear selection on invalid length
                     return;
                 }
@@ -145,7 +163,7 @@
                         .then(data => {
                             if (data.success) {
                                 calendar.refetchEvents();
-                                toastr.success('Your time slot was successfully stored.', "Success");
+                                toastr.success(translations.timeSlotStoredSuccess, "Success");
                             }
                         });
                     });
@@ -179,7 +197,7 @@
 
                 if (arg.event.extendedProps.booked) {
                     let viewBtn = document.createElement('span');
-                    viewBtn.innerHTML = 'Se';
+                    viewBtn.innerHTML = translations.view;
                     viewBtn.style.cursor = 'pointer';
                     viewBtn.style.color = 'white';
                     viewBtn.style.fontSize = '12px';
@@ -201,12 +219,12 @@
                     closeBtn.style.lineHeight = '1';
                     closeBtn.style.userSelect = 'none';
 
-                    closeBtn.title = 'Delete slot';
+                    closeBtn.title = translations.deleteSlot;
 
                     closeBtn.onclick = function(e) {
                         e.stopPropagation();
 
-                        if (confirm(`Delete this slot?\n${startTxt} – ${endTxt}`)) {
+                        if (confirm(translations.deleteThisSlot+`\n${startTxt} – ${endTxt}`)) {
                         fetch("{{ url('/coaching-time/time-slots') }}/" + arg.event.id, {
                             method: "DELETE",
                             headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" }
@@ -215,7 +233,7 @@
                         .then(data => {
                             if (data.success) {
                                 arg.event.remove();
-                                toastr.success('Your time slot was successfully deleted.', "Success");
+                                toastr.success(translations.deleteSlotSuccess, "Success");
                             }
                         });
                         }
@@ -264,7 +282,8 @@
                 extendCheckbox.prop('checked', false);
                 extendCheckbox.prop('disabled', !canExtend);
                 $('#slotConfirmExtendWrap').toggleClass('disabled', !canExtend);
-                note.text(canExtend ? `Check to extend to ${hourEndTxt} (if available).` : 'Cannot extend to 1 hour because the next 30 minutes are unavailable.');
+                note.text(canExtend ? translations.checkToExtendTime.replace(':time', hourEndTxt) 
+                    : translations.cannotExtendTo1hr);
 
                 function finish(result) {
                     if (resolved) return;
