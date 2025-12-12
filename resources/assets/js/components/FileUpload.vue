@@ -21,7 +21,8 @@
 				</template>
 				<template v-else>
 					<i class="fa fa-cloud-upload-alt"></i>
-					Dra og slipp filen eller <a href='javascript:void(0)' @click.stop="triggerFileInput">søk i maskinen</a>
+					<span v-html="translatedDropOrSearch"></span>
+					<!-- Dra og slipp filen eller <a href='javascript:void(0)' @click.stop="triggerFileInput">søk i maskinen</a> -->
 				</template>
 				
 			</div>
@@ -51,6 +52,15 @@ export default {
 			isDragging: false,
 			files: null,
 		};
+	},
+	computed: {
+		translatedDropOrSearch() {
+			const text = i18n['site']['drop-or-search']; // using vue-i18n OR your adapter
+			
+			return text
+				.replace('_start_link_', "<a href='javascript:void(0)' @click.stop=\"triggerFileInput\">")
+				.replace('_end_link_', "</a>");
+		}
 	},
 	methods: {
 		openFileInput() {

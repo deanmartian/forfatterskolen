@@ -459,7 +459,7 @@ import FileUpload from '../../components/FileUpload.vue';
                 isLoading: false,
                 isLoadingSubmit: false,
                 isConvertingManuscript: false,
-                conversionMessage: 'Konverterer dokumentet… Vennligst vent.',
+                conversionMessage: i18n.site['converting-document-please-wait'],
                 wizardProps: {},
                 requestUrl: '/shop-manuscript/'+this.shopManuscript.id,
                 documentAcceptTypes: [
@@ -637,7 +637,7 @@ import FileUpload from '../../components/FileUpload.vue';
                 });
 
                 this.isLoading = true;
-                console.log("vipps checkout here");
+                
                 return axios.post(this.requestUrl+'/checkout/vipps', formData).then(response => {
                     console.log(response);
 
@@ -763,7 +763,7 @@ import FileUpload from '../../components/FileUpload.vue';
 
                     if (extension !== 'docx') {
                         this.isConvertingManuscript = true;
-                        this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
+                        this.conversionMessage = i18n.site['converting-document-please-wait'];
                         conversionStarted = true;
                         try {
                             manuscriptFile = await this.convertFileToDocx(file);
@@ -773,13 +773,13 @@ import FileUpload from '../../components/FileUpload.vue';
                             this.orderForm.manuscript = null;
                             this.orderForm.word_count = null;
                             this.isConvertingManuscript = false;
-                            this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
+                            this.conversionMessage = i18n.site['converting-document-please-wait'];
 
                             if (error && error.response) {
                                 this.processError(error);
                             } else {
                                 this.$toasted.global.showErrorMsg({
-                                    message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                                    message: i18n.site['could-not-convert-file-please-try-again']
                                 });
                             }
 
@@ -812,7 +812,7 @@ import FileUpload from '../../components/FileUpload.vue';
                     } finally {
                         if (conversionStarted) {
                             this.isConvertingManuscript = false;
-                            this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
+                            this.conversionMessage = i18n.site['converting-document-please-wait'];
                         }
                     }
                 }
@@ -852,7 +852,7 @@ import FileUpload from '../../components/FileUpload.vue';
                     this.orderForm.excess_words_amount = 0;
                     this.updatePriceTotals();
                     this.isConvertingManuscript = false;
-                    this.conversionMessage = 'Konverterer dokumentet… Vennligst vent.';
+                    this.conversionMessage = i18n.site['converting-document-please-wait'];
                 });
             },
 
@@ -900,9 +900,9 @@ import FileUpload from '../../components/FileUpload.vue';
                         error.response = error.response || {};
                         error.response.data = {
                             errors: {
-                                manuscript: ['Kunne ikke konvertere filen. Prøv igjen.']
+                                manuscript: [i18n.site['could-not-convert-file-please-try-again']]
                             },
-                            message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                            message: i18n.site['could-not-convert-file-please-try-again']
                         };
                     }
 

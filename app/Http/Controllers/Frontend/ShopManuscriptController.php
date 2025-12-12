@@ -129,7 +129,7 @@ class ShopManuscriptController extends Controller
         }
 
         if ($word_count == 0) {
-            $customErrors = ['manuscript' => ['The manuscript word count is invalid.']];
+            $customErrors = ['manuscript' => [trans('site.invalid-manuscript-word-count')]];
             $validator = FacadeValidator::make([], []);
             $validator->validate(); // Perform validation without rules
             $validator->errors()->merge($customErrors);
@@ -612,7 +612,7 @@ class ShopManuscriptController extends Controller
 
             if (! in_array($extension, $extensions)) {
                 return redirect()->back()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    'manuscript_test_error', trans('site.invalid-file-format')
                 );
             }
 
@@ -625,7 +625,7 @@ class ShopManuscriptController extends Controller
                 $this->removeUploadedFile($uploadedManuscript);
 
                 return redirect()->back()->with(
-                    'manuscript_test_error', 'Kunne ikke lese denne filen. Prøv igjen med en gyldig fil.'
+                    'manuscript_test_error', trans('site.could-not-read-file-try-again')
                 );
             }
 
@@ -638,7 +638,7 @@ class ShopManuscriptController extends Controller
 
             if (! in_array($extension, $extensions)) {
                 return redirect()->back()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    'manuscript_test_error', trans('site.invalid-file-format')
                 );
             }
 
@@ -732,7 +732,7 @@ class ShopManuscriptController extends Controller
 
             if (! in_array($extension, $extensions)) {
                 return redirect()->back()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    'manuscript_test_error', trans('site.invalid-file-format')
                 );
             }
 
@@ -767,7 +767,7 @@ class ShopManuscriptController extends Controller
 
             if (! in_array($extension, $extensions)) {
                 return redirect()->back()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    'manuscript_test_error', trans('site.invalid-file-format')
                 );
             }
 
@@ -780,7 +780,7 @@ class ShopManuscriptController extends Controller
                 $this->removeUploadedFile($uploadedManuscript);
 
                 return redirect()->back()->with(
-                    'manuscript_test_error', 'Kunne ikke lese denne filen. Prøv igjen med en gyldig fil.'
+                    'manuscript_test_error', trans('site.could-not-read-file-try-again')
                 );
             }
 
@@ -795,7 +795,7 @@ class ShopManuscriptController extends Controller
 
             if (! in_array($extension, $extensions)) {
                 return redirect()->back()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    'manuscript_test_error', trans('site.invalid-file-format')
                 );
             }
 
@@ -944,7 +944,7 @@ class ShopManuscriptController extends Controller
 
             if (! in_array($ext, ['pdf', 'doc', 'docx', 'odt'])) {
                 return redirect()->back()
-                    ->withErrors(['manuscript' => 'Invalid file extension (only pdf, doc, docx, odt are allowed).'])
+                    ->withErrors(['manuscript' => trans('site.invalid-file-format')])
                     ->withInput();
             }
         }
@@ -960,7 +960,7 @@ class ShopManuscriptController extends Controller
 
             if ($extractedWordCount <= 0) {
                 $fileValidator = FacadeValidator::make([], []);
-                $fileValidator->errors()->add('manuscript', 'Kunne ikke lese denne filen. Prøv igjen med en annen fil.');
+                $fileValidator->errors()->add('manuscript', trans('site.could-not-read-file-try-again'));
 
                 throw new ValidationException($fileValidator);
             }
@@ -970,7 +970,7 @@ class ShopManuscriptController extends Controller
 
         if ($word_count === null || $word_count <= 0) {
             $fallbackValidator = FacadeValidator::make([], []);
-            $fallbackValidator->errors()->add('manuscript', 'Kunne ikke beregne antall ord. Prøv igjen med en annen fil.');
+            $fallbackValidator->errors()->add('manuscript', trans('site.could-not-read-file-try-again'));
 
             throw new ValidationException($fallbackValidator);
         }
@@ -1066,7 +1066,7 @@ class ShopManuscriptController extends Controller
 
         if (! in_array($extension, $extensions)) {
             $validator = FacadeValidator::make([], []);
-            $validator->errors()->add('manuscript', 'Ugyldig filformat. Tillatte formater er PDF, DOC, DOCX og ODT.');
+            $validator->errors()->add('manuscript', trans('site.invalid-file-format'));
 
             throw new ValidationException($validator);
         }
@@ -1075,7 +1075,7 @@ class ShopManuscriptController extends Controller
 
         if (empty($uploadedManuscript['word_count'])) {
             $validator = FacadeValidator::make([], []);
-            $validator->errors()->add('manuscript', 'Kunne ikke lese denne filen. Prøv igjen med en gyldig fil.');
+            $validator->errors()->add('manuscript', trans('site.could-not-read-file-try-again'));
 
             throw new ValidationException($validator);
         }
@@ -1254,7 +1254,7 @@ class ShopManuscriptController extends Controller
 
             if (! in_array($extension, $extensions)) {
                 return redirect()->back()->withInput()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    'manuscript_test_error', trans('site.invalid-file-format')
                 );
             }
 
@@ -1390,16 +1390,23 @@ class ShopManuscriptController extends Controller
 
         if ($wordcount > 500) {
             return redirect()->back()->withInput()->with([
-                'errors' => AdminHelpers::createMessageBag('The content may not be greater than 500 words.'),
+                'errors' => AdminHelpers::createMessageBag(trans('site.content-max-500-words')),
             ]);
         }
 
         $existing_emails = FreeManuscript::all()->pluck('email')->toArray();
+
+
+        $existingMessage = str_replace(
+            ['_start_link_', '_end_link_'],
+            ['<a href="mailto:post@forfatterskolen.no">', '</a>'],
+            trans('site.already-avail-free-manuscript-message')
+        );
+
         // prevent user from sending multiple manuscript
         if (in_array($request->email, $existing_emails)) {
             return redirect()->back()->withInput()->with([
-                'errors' => AdminHelpers::createMessageBag('Beklager, men du har allerede benyttet deg av dette gratistilbudet
-Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">post@forfatterskolen.no</a>'),
+                'errors' => AdminHelpers::createMessageBag($existingMessage),
             ]);
         }
 
