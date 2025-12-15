@@ -2017,10 +2017,13 @@ class LearnerController extends Controller
             ->orderBy('start_time')
             ->get()
             ->map(function ($slot) {
+                $slotStart = Carbon::parse("{$slot->date} {$slot->start_time}", 'UTC')
+                    ->setTimezone(config('app.timezone'));
+
                 return [
                     'id' => $slot->id,
-                    'date' => Carbon::parse($slot->date)->format('Y-m-d'),
-                    'time' => Carbon::parse($slot->start_time)->format('H:i'),
+                    'date' => $slotStart->format('Y-m-d'),
+                    'time' => $slotStart->format('H:i'),
                     'duration' => $slot->duration,
                 ];
             });
