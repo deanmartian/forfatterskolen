@@ -1796,18 +1796,27 @@
 										   data-action="{{ route('admin.other-service.coaching-timer.suggestDate', $coachingTimer->id) }}">{{ trans('site.suggest-different-dates') }}</a>
 									@endif
 								</td>-->
-								<td>
-									{{ $coachingTimer->approved_date ?
-                                    \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
-                                     : ''}}
+                                                                <td>
+                                                                        @if ($coachingTimer->timeSlot)
+                                                                                @php
+                                                                                        $slotStart = \Carbon\Carbon::parse(
+                                                                                                "{$coachingTimer->timeSlot->date} {$coachingTimer->timeSlot->start_time}",
+                                                                                                'UTC'
+                                                                                        )->setTimezone(config('app.timezone'));
+                                                                                @endphp
 
-									<button data-target="#setCoachingApprovedDateModal" class="btn btn-success btn-xs setCoachingApprovedDateBtn"
-									   data-toggle="modal" data-approved_date="{{ $coachingTimer->approved_date }}"
-									   data-action="{{ route('admin.other-service.coaching-timer.set-coaching-approve-date', $coachingTimer->id) }}"
-									style="display: block">
-										Set approve date
-									</button>
-								</td>
+                                                                                {{ $slotStart->format('Y-m-d H:i') }} ({{ $coachingTimer->timeSlot->duration }} min)
+                                                                        @elseif($coachingTimer->approved_date)
+                                                                                {{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date) }}
+                                                                        @endif
+
+                                                                        <button data-target="#setCoachingApprovedDateModal" class="btn btn-success btn-xs setCoachingApprovedDateBtn"
+                                                                           data-toggle="modal" data-approved_date="{{ $coachingTimer->approved_date }}"
+                                                                           data-action="{{ route('admin.other-service.coaching-timer.set-coaching-approve-date', $coachingTimer->id) }}"
+                                                                        style="display: block">
+                                                                                Set approve date
+                                                                        </button>
+                                                                </td>
 								<td>
 									@php
 										$activeEditors = AdminHelpers::editorList()->pluck('id')->toArray();
