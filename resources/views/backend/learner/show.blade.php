@@ -4413,27 +4413,32 @@
 							   application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
 					
-					<div class="form-group">
-						<label>{{ trans('site.session-length') }}</label>
-						<select name="plan_type" class="form-control" required>
-							<option value="" disabled="" selected>-- Select --</option>
-							<option value="2">30 min</option>
-							<option value="1">1 hr</option>
-						</select>
-					</div>
+                                        <div class="form-group">
+                                                <label>{{ trans('site.session-length') }}</label>
+                                                <select name="plan_type" class="form-control" required>
+                                                        <option value="" disabled="" selected>-- Select --</option>
+                                                        <option value="2">30 min</option>
+                                                        <option value="1">1 hr</option>
+                                                </select>
+                                        </div>
 
-					<div class="form-group">
-						<label>{{ ucwords(trans('site.assign-to')) }}</label>
-						<select name="editor_id" class="form-control select2">
-							<option value="" disabled="" selected>-- Select Editor --</option>
-							@foreach( AdminHelpers::editorList() as $editor )
-								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
-							@endforeach
-						</select>
-					</div>
+                                        <div class="form-group">
+                                                <label>{{ ucwords(trans('site.assign-to')) }}</label>
+                                                <select name="editor_id" class="form-control select2" id="coaching-editor-select">
+                                                        <option value="" disabled="" selected>-- Select Editor --</option>
+                                                        @foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
+                                                                <option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+                                                        @endforeach
+                                                </select>
+                                        </div>
 
-					<div class="form-group">
-						<label>{{ trans('site.send-invoice') }}</label> <br>
+                                        <div class="form-group d-none" id="editor-time-slots-container">
+                                                <label>Available Time Slots</label>
+                                                <div id="editor-time-slots"></div>
+                                        </div>
+
+                                        <div class="form-group">
+                                                <label>{{ trans('site.send-invoice') }}</label> <br>
 						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
 							   name="send_invoice">
 					</div>
@@ -5225,14 +5230,90 @@
         delete_course : "{!! trans('site.delete-from-webinar-pakke-question') !!}"
     };
 
-	jQuery(document).ready(function(){
+        jQuery(document).ready(function(){
 
         // tinymce editor config and intitalization
 
-		$(".showEmailBtn").click(function(){
-		   let modal = $("#showEmailModal");
-		   let message = $(this).data('message');
-		   modal.find('.modal-body').html(message);
+        const timeSlotsContainer = $('#editor-time-slots-container');
+        const timeSlotsList = $('#editor-time-slots');
+        const planTypeSelect = $('#addCoachingSessionModal select[name=plan_type]');
+        const editorSelect = $('#coaching-editor-select');
+        const slotsBaseUrl = '{{ url('/admin/coaching-timer/editor') }}';
+
+        function showSlotMessage(message, isError = false) {
+            timeSlotsContainer.removeClass('d-none');
+            const cssClass = isError ? 'text-danger' : 'text-muted';
+            timeSlotsList.html('<p class="' + cssClass + '">' + message + '</p>');
+        }
+
+        function loadEditorSlots() {
+            const editorId = editorSelect.val();
+            const planType = planTypeSelect.val();
+
+            timeSlotsList.empty();
+
+            if (!editorId) {
+                timeSlotsContainer.addClass('d-none');
+                timeSlotsList.empty();
+                return;
+            }
+
+            if (!planType) {
+                showSlotMessage('Select a session length to see available time slots.');
+                return;
+            }
+
+            showSlotMessage('Loading...');
+
+            $.getJSON(slotsBaseUrl + '/' + editorId + '/available-slots', { plan_type: planType })
+                .done(function(response) {
+                    timeSlotsList.empty();
+
+                    if (!response.slots.length) {
+                        showSlotMessage('No available time slots for this editor.');
+                        return;
+                    }
+
+                    timeSlotsContainer.removeClass('d-none');
+
+                    $.each(response.slots, function(index, slot) {
+                        const slotId = 'editor-slot-' + slot.id;
+                        const radio = [
+                            '<div class="radio">',
+                                '<label for="' + slotId + '">',
+                                    '<input type="radio" name="editor_time_slot_id" id="' + slotId + '" value="' + slot.id + '"> ',
+                                    slot.date + ' ' + slot.time + ' (' + slot.duration + ' min)',
+                                '</label>',
+                            '</div>'
+                        ].join('');
+
+                        timeSlotsList.append(radio);
+                    });
+                })
+                .fail(function() {
+                    showSlotMessage('Unable to load available time slots.', true);
+                });
+        }
+
+        planTypeSelect.on('change', function() {
+            loadEditorSlots();
+        });
+
+        editorSelect.on('change', function() {
+            loadEditorSlots();
+        });
+
+        $('#addCoachingSessionModal').on('hidden.bs.modal', function () {
+            editorSelect.val(null).trigger('change');
+            planTypeSelect.val('');
+            timeSlotsList.empty();
+            timeSlotsContainer.addClass('d-none');
+        });
+
+                $(".showEmailBtn").click(function(){
+                   let modal = $("#showEmailModal");
+                   let message = $(this).data('message');
+                   modal.find('.modal-body').html(message);
 		});
 
 		$('.defaultAllowAccessBtn').click(function(){
