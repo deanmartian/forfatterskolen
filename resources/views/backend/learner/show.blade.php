@@ -1805,17 +1805,19 @@
                                                                                         )->setTimezone(config('app.timezone'));
                                                                                 @endphp
 
-                                                                                {{ $slotStart->format('Y-m-d H:i') }} ({{ $coachingTimer->timeSlot->duration }} min)
+                                                                                {{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($slotStart) }} ({{ $coachingTimer->timeSlot->duration }} min)
                                                                         @elseif($coachingTimer->approved_date)
                                                                                 {{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date) }}
                                                                         @endif
 
+                                                                        {{--
                                                                         <button data-target="#setCoachingApprovedDateModal" class="btn btn-success btn-xs setCoachingApprovedDateBtn"
                                                                            data-toggle="modal" data-approved_date="{{ $coachingTimer->approved_date }}"
                                                                            data-action="{{ route('admin.other-service.coaching-timer.set-coaching-approve-date', $coachingTimer->id) }}"
                                                                         style="display: block">
                                                                                 Set approve date
                                                                         </button>
+                                                                        --}}
                                                                 </td>
 								<td>
 									@php
