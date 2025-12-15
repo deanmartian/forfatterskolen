@@ -5238,7 +5238,7 @@
         const timeSlotsList = $('#editor-time-slots');
         const planTypeSelect = $('#addCoachingSessionModal select[name=plan_type]');
         const editorSelect = $('#coaching-editor-select');
-        const slotsBaseUrl = '{{ url('/admin/coaching-timer/editor') }}';
+        const slotsBaseUrl = '{{ url('/coaching-timer/editor') }}';
 
         function showSlotMessage(message, isError = false) {
             timeSlotsContainer.removeClass('d-none');
