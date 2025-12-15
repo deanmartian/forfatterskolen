@@ -5291,6 +5291,8 @@
         delete_course : "{!! trans('site.delete-from-webinar-pakke-question') !!}"
     };
 
+    const coachingModals = {};
+
         jQuery(document).ready(function(){
 
         // tinymce editor config and intitalization
@@ -5381,7 +5383,6 @@
             return loadEditorSlots;
         }
 
-        const coachingModals = {};
         $('.coaching-session-modal').each(function () {
             const modal = $(this);
             coachingModals[modal.attr('id')] = initCoachingModal(modal);
