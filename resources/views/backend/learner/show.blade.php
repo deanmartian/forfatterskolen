@@ -4254,11 +4254,8 @@
 
                                         <div class="form-group">
                                                 <label>{{ trans('site.session-length') }}</label>
-                                                <select name="plan_type" class="form-control" required>
-                                                        <option value="" disabled selected>-- Select --</option>
-                                                        <option value="2">30 min</option>
-                                                        <option value="1">1 hr</option>
-                                                </select>
+                                                <p class="form-control-static plan-type-label text-capitalize"></p>
+                                                <input type="hidden" name="plan_type" value="">
                                         </div>
 
                                         <div class="form-group">
@@ -5303,7 +5300,8 @@
         function initCoachingModal(modal) {
             const timeSlotsContainer = modal.find('.editor-time-slots-container');
             const timeSlotsList = modal.find('.editor-time-slots');
-            const planTypeSelect = modal.find('select[name=plan_type]');
+            const planTypeInput = modal.find('[name=plan_type]');
+            const planTypeLabel = modal.find('.plan-type-label');
             const editorSelect = modal.find('select[name=editor_id]');
 
             function showSlotMessage(message, isError = false) {
@@ -5314,7 +5312,7 @@
 
             function loadEditorSlots(selectedSlotId = null) {
                 const editorId = editorSelect.val();
-                const planType = planTypeSelect.val();
+                const planType = planTypeInput.val();
 
                 timeSlotsList.empty();
 
@@ -5363,10 +5361,6 @@
                     });
             }
 
-            planTypeSelect.on('change', function() {
-                loadEditorSlots(modal.data('selectedSlotId'));
-            });
-
             editorSelect.on('change', function() {
                 loadEditorSlots(modal.data('selectedSlotId'));
             });
@@ -5378,7 +5372,8 @@
             modal.on('hidden.bs.modal', function () {
                 modal.removeData('selectedSlotId');
                 editorSelect.val(null).trigger('change');
-                planTypeSelect.val('');
+                planTypeInput.val('');
+                planTypeLabel.text('');
                 timeSlotsList.empty();
                 timeSlotsContainer.addClass('d-none');
             });
@@ -5765,11 +5760,13 @@
         const action = button.data('action');
         const planType = button.data('plan-type') || '';
         const modal = $('#assignCoachingSessionModal');
+        const planTypeText = planType === 1 || planType === '1' ? '1 hr' : planType === 2 || planType === '2' ? '30 min' : '';
 
         modal.find('form').attr('action', action);
         modal.data('selectedSlotId', button.data('selected-slot'));
 
-        modal.find('select[name=plan_type]').val(planType).trigger('change');
+        modal.find('[name=plan_type]').val(planType);
+        modal.find('.plan-type-label').text(planTypeText);
         modal.find('select[name=editor_id]').val(button.data('editor-id') || '').trigger('change');
 
         if (coachingModals[modal.attr('id')]) {
