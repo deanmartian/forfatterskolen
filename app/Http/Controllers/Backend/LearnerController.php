@@ -1802,6 +1802,7 @@ class LearnerController extends Controller
                 'editor_time_slot_id'  => 'nullable|exists:editor_time_slots,id',
                 'send_invoice'         => 'nullable',
             ]);
+            $data['editor_id'] = $data['editor_id'] ?? null;
             $data['price'] = 1690;
 
             if ($data['editor_id']) {
