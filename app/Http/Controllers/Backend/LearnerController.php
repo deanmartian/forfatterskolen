@@ -1805,6 +1805,14 @@ class LearnerController extends Controller
             $data['editor_id'] = $data['editor_id'] ?? null;
             $data['price'] = 1690;
 
+            if ($data['editor_id'] && empty($data['editor_time_slot_id'])) {
+                return redirect()->back()->with([
+                    'errors' => AdminHelpers::createMessageBag('Please select a time slot for the chosen editor.'),
+                    'alert_type' => 'danger',
+                    'not-former-courses' => true,
+                ]);
+            }
+
             if ($data['editor_id']) {
                 $editor = User::find($data['editor_id']);
                 if (! in_array($editor->role, [1, 3])) {
