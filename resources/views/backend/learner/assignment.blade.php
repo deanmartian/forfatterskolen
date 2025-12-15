@@ -311,6 +311,13 @@
                         </div>
 
                         <div class="form-group">
+                            <label>{{ trans('site.editor-expected-finish') }}</label>
+                            <input type="date" class="form-control" name="editor_expected_finish"
+                            @if( $assignment->editor_expected_finish )
+                                   value="{{ strftime('%Y-%m-%d', strtotime($assignment->editor_expected_finish)) }}" @endif>
+                        </div>
+
+                        <div class="form-group">
                             <label>{{ trans('site.max-words') }}</label>
                             <input type="number" class="form-control" name="max_words"
                                    value="{{ $assignment->max_words }}">
