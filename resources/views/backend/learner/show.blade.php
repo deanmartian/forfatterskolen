@@ -1805,7 +1805,7 @@
                                                                                         )->setTimezone(config('app.timezone'));
                                                                                 @endphp
 
-                                                                                {{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($slotStart) }} ({{ $coachingTimer->timeSlot->duration }} min)
+                                                                                {{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($slotStart) }}
                                                                         @elseif($coachingTimer->approved_date)
                                                                                 {{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date) }}
                                                                         @endif
