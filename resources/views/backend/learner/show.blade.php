@@ -1092,23 +1092,21 @@
 										}
 
 										?>
-										@if ($assignment->id == 774 && $learner->id == 765)
-											@php
-												$hasOverrideMaxWords   = isset($assignmentMaxWords[$assignment->id]);
-												$dataMaxWords = $hasOverrideMaxWords ? $assignmentMaxWords[$assignment->id] 
-													: $assignment->max_words;
-											@endphp
-											<br>
-											<a href="#"
-												class="editMaxWordsBtn"
-												data-toggle="modal"
-												data-target="#editMaxWordsModal"
-												data-action="{{ route('admin.learner.assignment.update-max-words', 
-												[$learner->id, $assignment->id]) }}"
-												data-max_words="{{ $dataMaxWords }}">
-													{{ trans('site.edit-max-words') }}
-											</a>
-										@endif
+										@php
+											$hasOverrideMaxWords   = isset($assignmentMaxWords[$assignment->id]);
+											$dataMaxWords = $hasOverrideMaxWords ? $assignmentMaxWords[$assignment->id] 
+												: $assignment->max_words;
+										@endphp
+										<br>
+										<a href="#"
+											class="editMaxWordsBtn"
+											data-toggle="modal"
+											data-target="#editMaxWordsModal"
+											data-action="{{ route('admin.learner.assignment.update-max-words', 
+											[$learner->id, $assignment->id]) }}"
+											data-max_words="{{ $dataMaxWords }}">
+												{{ trans('site.edit-max-words') }}
+										</a>
 									</td>
 									<td>
 										@php
