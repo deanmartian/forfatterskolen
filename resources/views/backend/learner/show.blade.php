@@ -1203,8 +1203,23 @@
 											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
 											@endif
 
+											@php
+												$editorExpectedFinish = $manuscript->editor_expected_finish
+													?? $assignment->editor_expected_finish;
+
+											@endphp
+
 												<a href="{{ $manuscript->filename }}" download>
 													<i class="fa fa-download"></i>
+												</a> <br>
+												<a href="#" 
+												class="editEditorExpectedFinishBtn"
+												data-toggle="modal" 
+												data-target="#editEditorExpectedFinishModal"
+												data-action="{{ route('backend.assignment.edit-dates', $manuscript->id) }}"
+												data-editor_expected_finish="{{ $editorExpectedFinish 
+												? \Carbon\Carbon::parse($editorExpectedFinish)->format('Y-m-d') : '' }}">
+													{{ trans('site.edit-editor-expected-finish') }}
 												</a>
 										@endif
 									</td>
@@ -4165,6 +4180,31 @@
 	</div>
 </div>
 
+<div id="editEditorExpectedFinishModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					{{ trans('site.editor-expected-finish') }}
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.editor-expected-finish') }}</label>
+						<input type="date" name="editor_expected_finish" class="form-control" required>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 
 <div id="editAvailableDateModal" class="modal fade" role="dialog" data-backdrop="static">
 	<div class="modal-dialog modal-sm">
@@ -6249,6 +6289,14 @@ console.log(record);
         let action = $(this).data('action');
         modal.find('form').attr('action', action);
         modal.find('[name=submission_date]').val(submission_date);
+	});
+
+	$(".editEditorExpectedFinishBtn").click(function(){
+		let editor_expected_finish = $(this).data('editor_expected_finish');
+        let modal = $('#editEditorExpectedFinishModal');
+        let action = $(this).data('action');
+        modal.find('form').attr('action', action);
+        modal.find('[name=editor_expected_finish]').val(editor_expected_finish);
 	});
 
     $(".editAvailableDateBtn").click(function() {
