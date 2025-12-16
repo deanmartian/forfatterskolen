@@ -1751,9 +1751,91 @@ class LearnerController extends Controller
             }
 
             if ($service_type == 3) {
-                $correction = CoachingTimerManuscript::find($service_id);
-                $correction->editor_id = $request->editor_id;
-                $correction->save();
+                $data = $request->validate([
+                    'editor_id'            => 'required|exists:users,id',
+                    'plan_type'            => 'required|in:1,2',
+                    'editor_time_slot_id'  => 'required|exists:editor_time_slots,id',
+                ]);
+
+                $timer = CoachingTimerManuscript::find($service_id);
+
+                if (! $timer) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag('Coaching session not found.'),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
+
+                $editor = User::find($data['editor_id']);
+                if (! $editor || ! in_array($editor->role, [1, 3])) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag('Selected user is not an editor.'),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
+
+                $selectedSlot = EditorTimeSlot::with(['requests' => function ($q) {
+                    $q->where('status', 'accepted');
+                }])->find($data['editor_time_slot_id']);
+
+                $requiredDuration = $data['plan_type'] == 1 ? 60 : 30;
+
+                if (! $selectedSlot || $selectedSlot->editor_id != $editor->id) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag('Selected time slot does not belong to the chosen editor.'),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
+
+                if ($selectedSlot->duration != $requiredDuration) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag('Selected time slot duration does not match the plan type.'),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
+
+                try {
+                    \DB::transaction(function () use ($timer, $selectedSlot, $data) {
+                        $slotTaken = CoachingTimeRequest::where('editor_time_slot_id', $selectedSlot->id)
+                            ->where('status', 'accepted')
+                            ->lockForUpdate()
+                            ->exists();
+
+                        if ($slotTaken) {
+                            throw new \RuntimeException('Selected time slot is no longer available.');
+                        }
+
+                        $requestRecord = CoachingTimeRequest::create([
+                            'coaching_timer_manuscript_id' => $timer->id,
+                            'editor_time_slot_id' => $selectedSlot->id,
+                            'status' => 'accepted',
+                        ]);
+
+                        CoachingTimeRequest::where('coaching_timer_manuscript_id', $timer->id)
+                            ->where('id', '!=', $requestRecord->id)
+                            ->delete();
+
+                        CoachingTimeRequest::where('editor_time_slot_id', $selectedSlot->id)
+                            ->where('id', '!=', $requestRecord->id)
+                            ->where('status', 'pending')
+                            ->update(['status' => 'declined']);
+
+                        $timer->plan_type = $data['plan_type'];
+                        $timer->editor_id = $data['editor_id'];
+                        $timer->editor_time_slot_id = $selectedSlot->id;
+                        $timer->save();
+                    });
+                } catch (\RuntimeException $e) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag($e->getMessage()),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
             }
 
             return redirect()->back()->with([
