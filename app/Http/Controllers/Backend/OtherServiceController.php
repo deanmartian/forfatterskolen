@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
+use App\EditorTimeSlot;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\CoursesTaken;
@@ -251,6 +252,16 @@ class OtherServiceController extends Controller
 
     public function deleteCoaching(CoachingTimerManuscript $id): RedirectResponse
     {
+        if ($id->editor_time_slot_id) {
+            $slot = $id->timeSlot;
+
+            if ($slot) {
+                $slot->delete();
+            } else {
+                EditorTimeSlot::whereKey($id->editor_time_slot_id)->delete();
+            }
+        }
+
         $id->delete();
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Coaching session deleted successfully.'),
