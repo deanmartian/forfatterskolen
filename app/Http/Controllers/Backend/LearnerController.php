@@ -10,12 +10,14 @@ use App\AssignmentLearnerConfiguration;
 use App\AssignmentLearnerSubmissionDate;
 use App\AssignmentManuscript;
 use App\AssignmentTemplate;
+use App\CoachingTimeRequest;
 use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\Course;
 use App\CourseCertificate;
 use App\CoursesTaken;
+use App\EditorTimeSlot;
 use App\Diploma;
 use App\EmailHistory;
 use App\EmailTemplate;
@@ -1749,9 +1751,91 @@ class LearnerController extends Controller
             }
 
             if ($service_type == 3) {
-                $correction = CoachingTimerManuscript::find($service_id);
-                $correction->editor_id = $request->editor_id;
-                $correction->save();
+                $data = $request->validate([
+                    'editor_id'            => 'required|exists:users,id',
+                    'plan_type'            => 'required|in:1,2',
+                    'editor_time_slot_id'  => 'required|exists:editor_time_slots,id',
+                ]);
+
+                $timer = CoachingTimerManuscript::find($service_id);
+
+                if (! $timer) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag('Coaching session not found.'),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
+
+                $editor = User::find($data['editor_id']);
+                if (! $editor || ! in_array($editor->role, [1, 3])) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag('Selected user is not an editor.'),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
+
+                $selectedSlot = EditorTimeSlot::with(['requests' => function ($q) {
+                    $q->where('status', 'accepted');
+                }])->find($data['editor_time_slot_id']);
+
+                $requiredDuration = $data['plan_type'] == 1 ? 60 : 30;
+
+                if (! $selectedSlot || $selectedSlot->editor_id != $editor->id) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag('Selected time slot does not belong to the chosen editor.'),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
+
+                if ($selectedSlot->duration != $requiredDuration) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag('Selected time slot duration does not match the plan type.'),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
+
+                try {
+                    \DB::transaction(function () use ($timer, $selectedSlot, $data) {
+                        $slotTaken = CoachingTimeRequest::where('editor_time_slot_id', $selectedSlot->id)
+                            ->where('status', 'accepted')
+                            ->lockForUpdate()
+                            ->exists();
+
+                        if ($slotTaken) {
+                            throw new \RuntimeException('Selected time slot is no longer available.');
+                        }
+
+                        $requestRecord = CoachingTimeRequest::create([
+                            'coaching_timer_manuscript_id' => $timer->id,
+                            'editor_time_slot_id' => $selectedSlot->id,
+                            'status' => 'accepted',
+                        ]);
+
+                        CoachingTimeRequest::where('coaching_timer_manuscript_id', $timer->id)
+                            ->where('id', '!=', $requestRecord->id)
+                            ->delete();
+
+                        CoachingTimeRequest::where('editor_time_slot_id', $selectedSlot->id)
+                            ->where('id', '!=', $requestRecord->id)
+                            ->where('status', 'pending')
+                            ->update(['status' => 'declined']);
+
+                        $timer->plan_type = $data['plan_type'];
+                        $timer->editor_id = $data['editor_id'];
+                        $timer->editor_time_slot_id = $selectedSlot->id;
+                        $timer->save();
+                    });
+                } catch (\RuntimeException $e) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag($e->getMessage()),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
             }
 
             return redirect()->back()->with([
@@ -1793,8 +1877,71 @@ class LearnerController extends Controller
     public function addCoachingTimer($user_id, Request $request): RedirectResponse
     {
         if ($user = User::find($user_id)) {
-            $data = $request->except('_token');
+            $data = $request->validate([
+                'manuscript'           => 'nullable|file',
+                'plan_type'            => 'required|in:1,2',
+                'editor_id'            => 'nullable|exists:users,id',
+                'editor_time_slot_id'  => 'nullable|exists:editor_time_slots,id',
+                'send_invoice'         => 'nullable',
+            ]);
+            $data['editor_id'] = $data['editor_id'] ?? null;
             $data['price'] = 1690;
+
+            if ($data['editor_id'] && empty($data['editor_time_slot_id'])) {
+                return redirect()->back()->with([
+                    'errors' => AdminHelpers::createMessageBag('Please select a time slot for the chosen editor.'),
+                    'alert_type' => 'danger',
+                    'not-former-courses' => true,
+                ]);
+            }
+
+            if ($data['editor_id']) {
+                $editor = User::find($data['editor_id']);
+                if (! in_array($editor->role, [1, 3])) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag('Selected user is not an editor.'),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
+            }
+
+            $selectedSlot = null;
+            if ($data['editor_time_slot_id'] ?? false) {
+                $selectedSlot = EditorTimeSlot::with(['requests' => function ($q) {
+                    $q->where('status', 'accepted');
+                }])->find($data['editor_time_slot_id']);
+
+                $requiredDuration = $data['plan_type'] == 1 ? 60 : 30;
+
+                if (! $selectedSlot || ($data['editor_id'] && $selectedSlot->editor_id != $data['editor_id'])) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag('Selected time slot does not belong to the chosen editor.'),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
+
+                if (! $data['editor_id']) {
+                    $data['editor_id'] = $selectedSlot->editor_id;
+                }
+
+                if ($selectedSlot->duration != $requiredDuration) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag('Selected time slot duration does not match the plan type.'),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
+
+                if ($selectedSlot->requests->isNotEmpty()) {
+                    return redirect()->back()->with([
+                        'errors' => AdminHelpers::createMessageBag('Selected time slot is no longer available.'),
+                        'alert_type' => 'danger',
+                        'not-former-courses' => true,
+                    ]);
+                }
+            }
             /*$suggested_dates = $data['suggested_date'];
             // format the sent suggested dates
             foreach ($suggested_dates as $k => $suggested_date) {
@@ -1891,14 +2038,23 @@ class LearnerController extends Controller
                 $invoice->create_invoice($invoice_fields);
             }
 
-            CoachingTimerManuscript::create([
+            $manuscript = CoachingTimerManuscript::create([
                 'user_id' => $user_id,
                 'file' => $file,
                 'payment_price' => $data['price'],
                 'plan_type' => $data['plan_type'],
                 'editor_id' => $request->exists('editor_id') ? $data['editor_id'] : null,
+                'editor_time_slot_id' => $selectedSlot ? $selectedSlot->id : null,
                 'is_approved' => 1,
             ]);
+
+            if ($selectedSlot) {
+                CoachingTimeRequest::create([
+                    'coaching_timer_manuscript_id' => $manuscript->id,
+                    'editor_time_slot_id' => $selectedSlot->id,
+                    'status' => 'accepted',
+                ]);
+            }
 
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Coaching session added successfully.'),
@@ -1909,6 +2065,52 @@ class LearnerController extends Controller
         }
 
         return redirect()->route('admin.learner.index');
+    }
+
+    public function editorAvailableSlots(User $editor, Request $request)
+    {
+        if (! in_array($editor->role, [1, 3])) {
+            abort(404);
+        }
+
+        $now = Carbon::now('UTC');
+        $planType = $request->input('plan_type');
+
+        $slotsQuery = EditorTimeSlot::with(['requests' => function ($q) {
+            $q->where('status', 'accepted');
+        }])
+            ->where('editor_id', $editor->id)
+            ->whereDoesntHave('requests', function ($q) {
+                $q->where('status', 'accepted');
+            })
+            ->where(function ($q) use ($now) {
+                $q->where('date', '>', $now->toDateString())
+                    ->orWhere(function ($q) use ($now) {
+                        $q->where('date', $now->toDateString())
+                            ->where('start_time', '>=', $now->toTimeString());
+                    });
+            });
+
+        if ($planType) {
+            $slotsQuery->where('duration', $planType == 1 ? 60 : 30);
+        }
+
+        $slots = $slotsQuery->orderBy('date')
+            ->orderBy('start_time')
+            ->get()
+            ->map(function ($slot) {
+                $slotStart = Carbon::parse("{$slot->date} {$slot->start_time}", 'UTC')
+                    ->setTimezone(config('app.timezone'));
+
+                return [
+                    'id' => $slot->id,
+                    'date' => $slotStart->format('Y-m-d'),
+                    'time' => $slotStart->format('H:i'),
+                    'duration' => $slot->duration,
+                ];
+            });
+
+        return response()->json(['slots' => $slots]);
     }
 
     /**

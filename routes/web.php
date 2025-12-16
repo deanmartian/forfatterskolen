@@ -766,6 +766,7 @@ Route::domain($admin)->group(function () {
         Route::post('other-service/{id}/assign-editor/{type}', [Backend\LearnerController::class, 'otherServiceAssignEditor'])->name('admin.other-service.assign-editor');
         Route::post('other-service/{id}/delete/{type}', [Backend\LearnerController::class, 'deleteOtherService'])->name('admin.other-service.delete');
         Route::post('coaching-timer/{id}/approve', [Backend\LearnerController::class, 'approveCoachingTimer'])->name('admin.coaching-timer.approve');
+        Route::get('coaching-timer/editor/{editor}/available-slots', [Backend\LearnerController::class, 'editorAvailableSlots'])->name('admin.coaching-time.editor-available-slots');
         Route::post('learner/{id}/add-coaching-timer', [Backend\LearnerController::class, 'addCoachingTimer'])->name('admin.learner.add-coaching-timer');
         Route::post('learner/{id}/add-diploma', [Backend\LearnerController::class, 'addDiploma'])->name('admin.learner.add-diploma');
         Route::post('diploma/{id}/edit', [Backend\LearnerController::class, 'editDiploma'])->name('admin.learner.edit-diploma');

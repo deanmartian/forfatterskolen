@@ -1796,28 +1796,45 @@
 										   data-action="{{ route('admin.other-service.coaching-timer.suggestDate', $coachingTimer->id) }}">{{ trans('site.suggest-different-dates') }}</a>
 									@endif
 								</td>-->
-								<td>
-									{{ $coachingTimer->approved_date ?
-                                    \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
-                                     : ''}}
+                                                                <td>
+                                                                        @if ($coachingTimer->timeSlot)
+                                                                                @php
+                                                                                        $slotStart = \Carbon\Carbon::parse(
+                                                                                                "{$coachingTimer->timeSlot->date} {$coachingTimer->timeSlot->start_time}",
+                                                                                                'UTC'
+                                                                                        )->setTimezone(config('app.timezone'));
+                                                                                @endphp
 
-									<button data-target="#setCoachingApprovedDateModal" class="btn btn-success btn-xs setCoachingApprovedDateBtn"
-									   data-toggle="modal" data-approved_date="{{ $coachingTimer->approved_date }}"
-									   data-action="{{ route('admin.other-service.coaching-timer.set-coaching-approve-date', $coachingTimer->id) }}"
-									style="display: block">
-										Set approve date
-									</button>
-								</td>
+                                                                                {{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($slotStart) }}
+                                                                        @elseif($coachingTimer->approved_date)
+                                                                                {{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date) }}
+                                                                        @endif
+
+                                                                        {{--
+                                                                        <button data-target="#setCoachingApprovedDateModal" class="btn btn-success btn-xs setCoachingApprovedDateBtn"
+                                                                           data-toggle="modal" data-approved_date="{{ $coachingTimer->approved_date }}"
+                                                                           data-action="{{ route('admin.other-service.coaching-timer.set-coaching-approve-date', $coachingTimer->id) }}"
+                                                                        style="display: block">
+                                                                                Set approve date
+                                                                        </button>
+                                                                        --}}
+                                                                </td>
 								<td>
 									@php
 										$activeEditors = AdminHelpers::editorList()->pluck('id')->toArray();
 									@endphp
-									@if ($coachingTimer->editor_id && in_array($coachingTimer->editor_id, $activeEditors))
-										{{ $coachingTimer->editor->full_name }}
-									@else
-										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">{{ trans('site.assign-editor') }}</button>
-									@endif
-								</td>
+                                                                        @if ($coachingTimer->editor_id && in_array($coachingTimer->editor_id, $activeEditors))
+                                                                                {{ $coachingTimer->editor->full_name }}
+                                                                        @else
+                                                                                <button class="btn btn-xs btn-warning assignCoachingSessionBtn"
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#assignCoachingSessionModal"
+                                                                                        data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}"
+                                                                                        data-plan-type="{{ $coachingTimer->plan_type }}">
+                                                                                        {{ trans('site.assign-editor') }}
+                                                                                </button>
+                                                                        @endif
+                                                                </td>
 								<td>
 									@if ($coachingTimer->replay_link)
 										<a href="{{ $coachingTimer->replay_link }}" target="_blank">
@@ -4201,10 +4218,10 @@
 </div>
 
 <div id="assignEditorModal" class="modal fade" role="dialog">
-	<div class="modal-dialog modal-sm">
-		<div class="modal-content">
-			<div class="modal-body">
-				<form method="POST" action="" onsubmit="disableSubmit(this)">
+        <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                        <div class="modal-body">
+                                <form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>Assign editor</label>
@@ -4219,9 +4236,53 @@
 						<button class="btn btn-primary" type="submit">Save</button>
 					</div>
 				</form>
-			</div>
-		</div>
-	</div>
+                        </div>
+                </div>
+        </div>
+</div>
+
+<div id="assignCoachingSessionModal" class="modal fade coaching-session-modal" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">{{ trans('site.assign-editor') }}</h4>
+                        </div>
+                        <div class="modal-body">
+                                <form method="POST" action="" onsubmit="disableSubmit(this)">
+                                        {{ csrf_field() }}
+
+                                        <div class="form-group">
+                                                <label>{{ trans('site.session-length') }}</label>
+                                                <p class="form-control-static plan-type-label text-capitalize"></p>
+                                                <input type="hidden" name="plan_type" value="">
+                                        </div>
+
+                                        <div class="form-group">
+                                                <label>{{ ucwords(trans('site.assign-to')) }}</label>
+                                                <select name="editor_id" class="form-control select2" required>
+                                                        <option value="" disabled selected>-- Select Editor --</option>
+                                                        @foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
+                                                                <option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+                                                        @endforeach
+                                                </select>
+                                        </div>
+
+                                        <div class="form-group d-none editor-time-slots-container">
+                                                <label>Available Time Slots</label>
+                                                <div class="editor-time-slots"></div>
+                                        </div>
+
+                                        <div class="text-right margin-top">
+                                                <button type="submit" class="btn btn-success">{{ trans('site.submit') }}</button>
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
+                                        </div>
+                                </form>
+                        </div>
+
+                </div>
+
+        </div>
 </div>
 
 <div id="setReplayModal" class="modal fade" role="dialog">
@@ -4394,7 +4455,7 @@
 	</div>
 </div>
 
-<div id="addCoachingSessionModal" class="modal fade" role="dialog" data-backdrop="static">
+<div id="addCoachingSessionModal" class="modal fade coaching-session-modal" role="dialog" data-backdrop="static">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -4413,27 +4474,32 @@
 							   application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
 					
-					<div class="form-group">
-						<label>{{ trans('site.session-length') }}</label>
-						<select name="plan_type" class="form-control" required>
-							<option value="" disabled="" selected>-- Select --</option>
-							<option value="2">30 min</option>
-							<option value="1">1 hr</option>
-						</select>
-					</div>
+                                        <div class="form-group">
+                                                <label>{{ trans('site.session-length') }}</label>
+                                                <select name="plan_type" class="form-control" required>
+                                                        <option value="" disabled="" selected>-- Select --</option>
+                                                        <option value="2">30 min</option>
+                                                        <option value="1">1 hr</option>
+                                                </select>
+                                        </div>
 
-					<div class="form-group">
-						<label>{{ ucwords(trans('site.assign-to')) }}</label>
-						<select name="editor_id" class="form-control select2">
-							<option value="" disabled="" selected>-- Select Editor --</option>
-							@foreach( AdminHelpers::editorList() as $editor )
-								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
-							@endforeach
-						</select>
-					</div>
+                                        <div class="form-group">
+                                                <label>{{ ucwords(trans('site.assign-to')) }}</label>
+                                                <select name="editor_id" class="form-control select2" id="coaching-editor-select">
+                                                        <option value="" disabled="" selected>-- Select Editor --</option>
+                                                        @foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
+                                                                <option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+                                                        @endforeach
+                                                </select>
+                                        </div>
 
-					<div class="form-group">
-						<label>{{ trans('site.send-invoice') }}</label> <br>
+                                        <div class="form-group d-none editor-time-slots-container" id="editor-time-slots-container">
+                                                <label>Available Time Slots</label>
+                                                <div class="editor-time-slots" id="editor-time-slots"></div>
+                                        </div>
+
+                                        <div class="form-group">
+                                                <label>{{ trans('site.send-invoice') }}</label> <br>
 						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
 							   name="send_invoice">
 					</div>
@@ -5225,14 +5291,107 @@
         delete_course : "{!! trans('site.delete-from-webinar-pakke-question') !!}"
     };
 
-	jQuery(document).ready(function(){
+    const coachingModals = {};
+
+        jQuery(document).ready(function(){
 
         // tinymce editor config and intitalization
 
-		$(".showEmailBtn").click(function(){
-		   let modal = $("#showEmailModal");
-		   let message = $(this).data('message');
-		   modal.find('.modal-body').html(message);
+        const slotsBaseUrl = '{{ url('/coaching-timer/editor') }}';
+
+        function initCoachingModal(modal) {
+            const timeSlotsContainer = modal.find('.editor-time-slots-container');
+            const timeSlotsList = modal.find('.editor-time-slots');
+            const planTypeInput = modal.find('[name=plan_type]');
+            const planTypeLabel = modal.find('.plan-type-label');
+            const editorSelect = modal.find('select[name=editor_id]');
+
+            function showSlotMessage(message, isError = false) {
+                timeSlotsContainer.removeClass('d-none');
+                const cssClass = isError ? 'text-danger' : 'text-muted';
+                timeSlotsList.html('<p class="' + cssClass + '">' + message + '</p>');
+            }
+
+            function loadEditorSlots(selectedSlotId = null) {
+                const editorId = editorSelect.val();
+                const planType = planTypeInput.val();
+
+                timeSlotsList.empty();
+
+                if (!editorId) {
+                    timeSlotsContainer.addClass('d-none');
+                    timeSlotsList.empty();
+                    return;
+                }
+
+                if (!planType) {
+                    showSlotMessage('Select a session length to see available time slots.');
+                    return;
+                }
+
+                showSlotMessage('Loading...');
+
+                $.getJSON(slotsBaseUrl + '/' + editorId + '/available-slots', { plan_type: planType })
+                    .done(function(response) {
+                        timeSlotsList.empty();
+
+                        if (!response.slots.length) {
+                            showSlotMessage('No available time slots for this editor.');
+                            return;
+                        }
+
+                        timeSlotsContainer.removeClass('d-none');
+
+                        $.each(response.slots, function(index, slot) {
+                            const slotId = 'editor-slot-' + modal.attr('id') + '-' + slot.id;
+                            const isSelected = selectedSlotId && parseInt(selectedSlotId, 10) === slot.id ? ' checked' : '';
+                            const radio = [
+                                '<div class="radio">',
+                                    '<label for="' + slotId + '">',
+                                        '<input type="radio" name="editor_time_slot_id" id="' + slotId + '" value="' + slot.id + '"' + isSelected + '>',
+                                        ' ',
+                                        slot.date + ' ' + slot.time + ' (' + slot.duration + ' min)',
+                                    '</label>',
+                                '</div>'
+                            ].join('');
+
+                            timeSlotsList.append(radio);
+                        });
+                    })
+                    .fail(function() {
+                        showSlotMessage('Unable to load available time slots.', true);
+                    });
+            }
+
+            editorSelect.on('change', function() {
+                loadEditorSlots(modal.data('selectedSlotId'));
+            });
+
+            modal.on('show.bs.modal', function () {
+                loadEditorSlots(modal.data('selectedSlotId'));
+            });
+
+            modal.on('hidden.bs.modal', function () {
+                modal.removeData('selectedSlotId');
+                editorSelect.val(null).trigger('change');
+                planTypeInput.val('');
+                planTypeLabel.text('');
+                timeSlotsList.empty();
+                timeSlotsContainer.addClass('d-none');
+            });
+
+            return loadEditorSlots;
+        }
+
+        $('.coaching-session-modal').each(function () {
+            const modal = $(this);
+            coachingModals[modal.attr('id')] = initCoachingModal(modal);
+        });
+
+                $(".showEmailBtn").click(function(){
+                   let modal = $("#showEmailModal");
+                   let message = $(this).data('message');
+                   modal.find('.modal-body').html(message);
 		});
 
 		$('.defaultAllowAccessBtn').click(function(){
@@ -5592,9 +5751,28 @@
         modal.find('select').val(editor);
         modal.find('form').attr('action', action);
 
-		if (editor) {
-			modal.find('form').find('select[name=editor_id]').val(editor.id).trigger('change');
-		}
+                if (editor) {
+                        modal.find('form').find('select[name=editor_id]').val(editor.id).trigger('change');
+                }
+    });
+
+    $('.assignCoachingSessionBtn').click(function(){
+        const button = $(this);
+        const action = button.data('action');
+        const planType = button.data('plan-type') || '';
+        const modal = $('#assignCoachingSessionModal');
+        const planTypeText = planType === 1 || planType === '1' ? '1 hr' : planType === 2 || planType === '2' ? '30 min' : '';
+
+        modal.find('form').attr('action', action);
+        modal.data('selectedSlotId', button.data('selected-slot'));
+
+        modal.find('[name=plan_type]').val(planType);
+        modal.find('.plan-type-label').text(planTypeText);
+        modal.find('select[name=editor_id]').val(button.data('editor-id') || '').trigger('change');
+
+        if (coachingModals[modal.attr('id')]) {
+            coachingModals[modal.attr('id')](modal.data('selectedSlotId'));
+        }
     });
 
     $(".setReplayBtn").click(function(){
