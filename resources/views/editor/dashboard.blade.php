@@ -170,7 +170,13 @@
 										@if( $shopManuscript->status == 'Started' || $shopManuscript->status == 'Pending' )
 											<tr>
 												<td>
-													<a href="{{ route('editor.backend.download_shop_manuscript', $shopManuscript->id) }}"><i class="fa fa-download" aria-hidden="true"></i>
+													@php
+														$fileRel = trim($shopManuscript->file);
+														$fileAbs = public_path($fileRel);
+														$v = is_file($fileAbs) ? filemtime($fileAbs) : time();
+													@endphp
+													<a href="{{ route('editor.backend.download_shop_manuscript', 
+													['id' => $shopManuscript->id, 'v' => $v]) }}"><i class="fa fa-download" aria-hidden="true"></i>
 													</a>&nbsp;
 													@if($shopManuscript->is_active)
 														<a href="{{ route('editor.shop_manuscript_taken', ['id' => $shopManuscript->user->id, 'shop_manuscript_taken_id' => $shopManuscript->id]) }}">{{$shopManuscript->shop_manuscript->title}}</a>
