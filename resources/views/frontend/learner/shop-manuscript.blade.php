@@ -150,7 +150,7 @@
                                 accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                 application/pdf, application/vnd.oasis.opendocument.text, application/vnd.apple.pages, .doc, .docx, .pdf, .odt, .pages">
                         <input type="hidden" name="word_count" value="">
-                                <p class="text-info manuscript-conversion-message d-none mt-2">Konverterer dokumentet… Vennligst vent.</p>
+                                <p class="text-info manuscript-conversion-message d-none mt-2">{{ trans('site.converting-document-please-wait') }}</p>
                                 <p class="text-danger manuscript-conversion-error d-none mt-2"></p>
                 </div>
 			<div class="form-group">
@@ -197,7 +197,7 @@
                                                 accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                                 application/pdf, application/vnd.oasis.opendocument.text, application/vnd.apple.pages, .doc, .docx, .pdf, .odt, .pages">
                                                 <input type="hidden" name="word_count" value="">
-                                                <p class="text-info manuscript-conversion-message d-none mt-2">Konverterer dokumentet… Vennligst vent.</p>
+                                                <p class="text-info manuscript-conversion-message d-none mt-2">{{ trans('site.converting-document-please-wait') }}</p>
                                                 <p class="text-danger manuscript-conversion-error d-none mt-2"></p>
                                         </div>
 					<div class="form-group">
@@ -312,6 +312,11 @@
         <script src="https://unpkg.com/mammoth@1.4.21/mammoth.browser.min.js"></script>
 <script>
         var has_exceed = $("input[name=exceed]").length;
+        let translations = {
+            convertingPleaseWait : "{{ trans('site.converting-document-please-wait') }}",
+            couldNotConvertTryAgain : "{{ trans('site.could-not-convert-file-please-try-again') }}",
+            releaseToUpload : "{{ trans('site.release-to-upload') }}",    
+        };
 
 	if (has_exceed) {
 	    $(".exceedBtn").trigger('click');
@@ -542,9 +547,9 @@
                         error.response = error.response || {};
                         error.response.data = {
                             errors: {
-                                manuscript: ['Kunne ikke konvertere filen. Prøv igjen.'],
+                                manuscript: [translations.couldNotConvertTryAgain],
                             },
-                            message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                            message: translations.couldNotConvertTryAgain
                         };
                     }
 
@@ -569,7 +574,7 @@
                 : null;
 
             if (!response.ok) {
-                const error = new Error('Kunne ikke konvertere filen. Prøv igjen.');
+                const error = new Error(translations.couldNotConvertTryAgain);
                 let errorData = null;
 
                 try {
@@ -586,9 +591,9 @@
                     status: response.status,
                     data: errorData || {
                         errors: {
-                            manuscript: ['Kunne ikke konvertere filen. Prøv igjen.'],
+                            manuscript: [translations.couldNotConvertTryAgain],
                         },
-                        message: 'Kunne ikke konvertere filen. Prøv igjen.'
+                        message: translations.couldNotConvertTryAgain
                     }
                 };
 
@@ -613,7 +618,7 @@
 
         const getErrorMessageFromConversion = (error) => {
             if (!error) {
-                return 'Kunne ikke konvertere filen. Prøv igjen.';
+                return translations.couldNotConvertTryAgain;
             }
 
             if (error.response && error.response.data) {
@@ -632,7 +637,7 @@
                 return error.message;
             }
 
-            return 'Kunne ikke konvertere filen. Prøv igjen.';
+            return translations.couldNotConvertTryAgain;
         };
 
         const assignFilesToInput = (input, file) => {
