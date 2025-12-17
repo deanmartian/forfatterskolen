@@ -101,7 +101,7 @@
                                                     <td>{{ trans('site.date') }}</td>
                                                     <td>{{ trans('site.title') }}</td>
                                                     <td width="400">{{ trans('site.description') }}</td>
-                                                    <td width="150">Link</td>
+                                                    <td width="150">{{ trans('site.link-text') }}</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -234,7 +234,8 @@
                                                                                 <a class="btn light-red-btn w-100" 
                                                                                 href="{{ $coursesTaken && $coursesTaken->hasEnded
                                                                                     ? 'javascript:void(0)' : $webinar->link }}" 
-                                                                                    target="_blank">Repriser
+                                                                                    target="_blank">
+                                                                                    {{ trans('site.learner.replay') }}
                                                                                 </a>
                                                                             @else
                                                                                 @if($webinar->set_as_replay)
@@ -249,7 +250,7 @@
                                                                                         href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL(
                                                                                             $webinar->id, Auth::user()->id) }}">
                                                                                             @if ($now->diffInMinutes($start_date, false) <= 90)
-                                                                                                Se Webinar
+                                                                                                {{ trans('site.see-webinar') }}
                                                                                             @else
                                                                                                 {{ trans('site.learner.signed') }}
                                                                                             @endif
@@ -268,7 +269,7 @@
                                                                                             <a href="javascript:void(0)"
                                                                                             class="btn w-100 rounded-0 btn-success disabled" 
                                                                                             disabled>
-                                                                                                Påmelding kommer
+                                                                                                {{ trans('site.registration-is-coming') }}
                                                                                             </a>
                                                                                         @endif
                                                                                     @endif
@@ -340,10 +341,13 @@
 
 @section('scripts')
     <script>
+        let translations = {
+            pleaseWait : "{{ trans('site.please-wait') }}"   
+        };
         $(".webinarRegister").click(function(){
             let register_btn = $(this);
             register_btn.text('');
-            register_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+            register_btn.append('<i class="fa fa-spinner fa-pulse"></i> ' + translations.pleaseWait);
             register_btn.attr('disabled', 'disabled');
         });
 
