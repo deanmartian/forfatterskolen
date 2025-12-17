@@ -67,7 +67,7 @@
 
     <div class="clearfix"></div>
 
-    <div class="login-text">Logg inn med:</div>
+    <div class="login-text">{{ trans('site.login-with') }}:</div>
 
     <div class="social-btn-container">
         <a href="{{ route('auth.login.google') }}" class="newLoginBtn newLoginBtn--google btn">

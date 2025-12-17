@@ -29,7 +29,7 @@ class LoginController extends Controller
         $user = User::where('email', $request->email)->whereIn('role', [1])->first();
 
         if (! $user) {
-            return redirect()->back()->withErrors('Unknown email');
+            return redirect()->back()->withErrors(trans('site.unknown-email'));
         }
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 1])) {
@@ -37,7 +37,7 @@ class LoginController extends Controller
             return redirect()->back();
         }
 
-        return redirect()->back()->withInput()->withErrors('Feil passord');
+        return redirect()->back()->withInput()->withErrors(trans('site.wrong-password'));
     }
 
     public function editorLogin(LoginRequest $request): RedirectResponse
@@ -48,11 +48,11 @@ class LoginController extends Controller
             })->first();
 
         if (! $user) {
-            return redirect()->back()->withErrors('Unknown email');
+            return redirect()->back()->withErrors(trans('site.unknown-email'));
         }
 
         if ($user->is_active != 1) {
-            return redirect()->back()->withErrors('Invalid User');
+            return redirect()->back()->withErrors(trans('site.invalid-user'));
         }
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 3])) {
@@ -63,7 +63,7 @@ class LoginController extends Controller
             return redirect()->back();
         }
 
-        return redirect()->back()->withInput()->withErrors('Feil passord');
+        return redirect()->back()->withInput()->withErrors(trans('site.wrong-password'));
     }
 
     public function giutbokLogin(LoginRequest $request): RedirectResponse
@@ -74,11 +74,11 @@ class LoginController extends Controller
             })->first();
 
         if (! $user) {
-            return redirect()->back()->withErrors('Unknown email');
+            return redirect()->back()->withErrors(trans('site.unknown-email'));
         }
 
         if ($user->is_active != 1) {
-            return redirect()->back()->withErrors('Invalid User');
+            return redirect()->back()->withErrors(trans('site.invalid-user'));
         }
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 4])) {
@@ -89,7 +89,7 @@ class LoginController extends Controller
             return redirect()->back();
         }
 
-        return redirect()->back()->withInput()->withErrors('Feil passord');
+        return redirect()->back()->withInput()->withErrors(trans('site.wrong-password'));
     }
 
     public function giutbokEmailLoginRedirect($email, $redirect_link): RedirectResponse
@@ -135,7 +135,7 @@ class LoginController extends Controller
         $secondaryEmail = UserEmail::where('email', $request->email)->first();
 
         if (! $user && ! $secondaryEmail) {
-            return redirect()->back()->withErrors('Unknown email');
+            return redirect()->back()->withErrors(trans('site.unknown-email'));
         }
         if ($secondaryEmail) {
             $user = $secondaryEmail->users->first();
@@ -162,7 +162,7 @@ class LoginController extends Controller
             return redirect(route('learner.dashboard'));
         }
 
-        return redirect()->route('auth.login.show')->withInput()->withErrors('Feil passord');
+        return redirect()->route('auth.login.show')->withInput()->withErrors(trans('site.wrong-password'));
     }
 
     public function selfPublishingLogin(LoginRequest $request): RedirectResponse
@@ -175,7 +175,7 @@ class LoginController extends Controller
         $secondaryEmail = UserEmail::where('email', $request->email)->first();
 
         if (! $user && ! $secondaryEmail) {
-            return redirect()->back()->withErrors('Unknown email');
+            return redirect()->back()->withErrors(trans('site.unknown-email'));
         }
         if ($secondaryEmail) {
             $user = $secondaryEmail->users->first();
@@ -203,7 +203,7 @@ class LoginController extends Controller
             return redirect(route('learner.dashboard'));
         }
 
-        return redirect()->route('auth.login.show')->withInput()->withErrors('Feil passord');
+        return redirect()->route('auth.login.show')->withInput()->withErrors(trans('site.wrong-password'));
     }
 
     public function checkoutLogin(LoginRequest $request)
@@ -238,11 +238,11 @@ class LoginController extends Controller
                     }
                 }
 
-                return response()->json(['success' => 'You successfully log in', 'user' => $user], 200);
+                return response()->json(['success' => trans('site.successfully-login'), 'user' => $user], 200);
             }
 
             return response()->json([
-                'error' => 'Feil passord',
+                'error' => trans('site.wrong-password'),
             ], 401);
 
         } else {
@@ -258,7 +258,7 @@ class LoginController extends Controller
 
             $user = User::where('email', $request->email)->where('role', 2)->first();
             if (! $user) {
-                return redirect()->back()->withInput()->withErrors(['login_error' => 'Unknown email']);
+                return redirect()->back()->withInput()->withErrors(['login_error' => trans('site.unknown-email')]);
             }
 
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 2])) {
@@ -266,7 +266,7 @@ class LoginController extends Controller
                 return redirect()->back();
             }
 
-            return redirect()->back()->withInput()->withErrors(['login_error' => 'Feil passord']);
+            return redirect()->back()->withInput()->withErrors(['login_error' => trans('site.wrong-password')]);
         }
     }
 

@@ -3,12 +3,12 @@
 <ul class="nav global-gray-tabs justify-content-center">
     <li>
         <a href="?tab=main" @if( Request::input('tab') == 'main' || Request::input('tab') == '') class="active" @endif>
-            Min Side
+            {{ trans('site.my-side') }}
         </a>
     </li>
     <li>
         <a href="?tab=self-publishing" @if( Request::input('tab') == 'self-publishing' ) class="active" @endif>
-            Selvpubliseringsportal
+            {{ trans('site.self-publishing-portal') }}
         </a>
     </li>
 </ul>
@@ -54,7 +54,7 @@
 
         <div class="clearfix"></div>
 
-        <div class="login-text">Logg inn med:</div>
+        <div class="login-text">{{ trans('site.login-with') }}:</div>
 
         <div class="social-btn-container">
             <a href="{{ route('auth.login.google') }}" class="newLoginBtn newLoginBtn--google btn">
