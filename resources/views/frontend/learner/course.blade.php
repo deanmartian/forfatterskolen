@@ -33,11 +33,11 @@
 												$statusText = trans('site.learner.renew-subscription');
 											} else {
 												$status = 'active';
-												$statusText = 'fortsette kurset';
+												$statusText = trans('site.front.our-course.show.continue-course');
 											}
 										} else {
 											$status = 'start';
-											$statusText = 'Start kurset';
+											$statusText = trans('site.learner.start-course');
 										}
 									} else {
 										$status = 'on-hold';
