@@ -14,7 +14,7 @@
     <div class="learner-container learner-dashboard-wrapper">
         <div class="container">
             <h1 class="page-title">
-                Dashboard
+                {{ trans('site.author-portal-menu.dashboard') }}
             </h1>
             <div class="row">
                 <div class="col-lg-8">
@@ -140,14 +140,15 @@
                                                     </span>
                                                 @elseif($invoice->fiken_is_paid === 2)
                                                     <span class="label label-warning text-uppercase label-rounded">
-                                                        {{ strtoupper('sendt til inkasso')  }}
+                                                        {{ strtoupper(trans('site.send-to-debt-collection'))  }}
                                                     </span>
                                                 @elseif($invoice->fiken_is_paid === 3)
                                                     <span class="label label-violet text-uppercase">
-                                                        {{ strtoupper('Kreditert')  }}
+                                                        {{ strtoupper(trans('site.credited'))  }}
                                                     </span>
                                                 @else
-                                                    <span class="label label-danger label-rounded">UBETALT</span>
+                                                    <span class="label label-danger label-rounded">
+                                                        {{ strtoupper(trans('site.learner.unpaid'))  }}</span>
                                                 @endif
                                             </td>
                                         </tr>
@@ -224,12 +225,12 @@
                     <div class="global-card">
                         <div class="card-header">
                             <h2>
-                                Logg inn til:
+                                {{ trans('site.login-to') }}:
                             </h2>
                         </div>
                         <div class="card-body pb-0">
                             <a href="https://www.facebook.com/groups/272814062884940" class="btn site-btn-global w-100">
-                                <b>Forum</b>
+                                <b>{{ trans('site.forum') }}</b>
                                 <i class="fa fa-key"></i>
                             </a>
                         </div>
@@ -477,7 +478,7 @@
                                                         @else
                                                             <a href="javascript:void(0)"
                                                             class="btn w-100 rounded-0 btn-success disabled" disabled>
-                                                                Påmelding kommer
+                                                                {{ trans('site.registration-is-coming') }}
                                                             </a>
                                                         @endif
                                                     @endif
@@ -594,7 +595,7 @@
                                                         @else
                                                             <a href="javascript:void(0)"
                                                             class="btn w-100 rounded-0 btn-success disabled" disabled>
-                                                                Påmelding kommer
+                                                                {{ trans('site.registration-is-coming') }}
                                                             </a>
                                                         @endif
                                                     @endif
