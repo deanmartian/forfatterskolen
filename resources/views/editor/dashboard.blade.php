@@ -712,7 +712,6 @@
 															{{ basename($copyEditing->file) }}
 														</a>
 													@else
-													else
                                                                                                                 <a href="{{ route('editor.other-service.download-doc', ['id' => $copyEditing->id, 'type' => 1, 'v' => $cacheBuster]) }}"
 															download>
 															<i class="fa fa-download" aria-hidden="true"></i>
