@@ -115,6 +115,7 @@
                                     <th>{{ trans('site.front.form.email') }}</th>
                                     <th>{{ trans('site.front.form.phone-number') }}</th>
                                     <th>{{ trans_choice('site.learners', 1) }}</th>
+                                    <th>{{ trans('site.call-type') }}</th>
                                     <th>{{ trans('site.learner.duration-text') }}</th>
                                 </tr>
                             </thead>
@@ -156,6 +157,7 @@
                                                 </a>
                                             @endif
                                         </td>
+                                        <td>{{ $booking->manuscript->call_type_label }}</td>
                                         <td>{{ $booking->slot->duration }} min</td>
                                     </tr>
                                 @empty

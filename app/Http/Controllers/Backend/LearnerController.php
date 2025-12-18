@@ -1848,6 +1848,25 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
+    public function otherServiceChangeCallType($service_id, $service_type, Request $request)
+    {
+        if ($service_type == 1 || $service_type == 2 || $service_type == 3) {
+            if ($service_type == 3) {
+                $timer = CoachingTimerManuscript::find($service_id);
+                $timer->call_type = $request->call_type;
+                $timer->save();
+            }
+
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag(trans('site.call-type-updated-success')),
+                'alert_type' => 'success',
+                'not-former-courses' => true,
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
     public function deleteOtherService($service_id, $service_type): RedirectResponse
     {
         if ($service_type == 1 || $service_type == 2 || $service_type == 3) {
@@ -1882,6 +1901,7 @@ class LearnerController extends Controller
                 'plan_type'            => 'required|in:1,2',
                 'editor_id'            => 'nullable|exists:users,id',
                 'editor_time_slot_id'  => 'nullable|exists:editor_time_slots,id',
+                'call_type'            => 'required',
                 'send_invoice'         => 'nullable',
             ]);
             $data['editor_id'] = $data['editor_id'] ?? null;
@@ -2043,6 +2063,7 @@ class LearnerController extends Controller
                 'file' => $file,
                 'payment_price' => $data['price'],
                 'plan_type' => $data['plan_type'],
+                'call_type' => $data['call_type'],
                 'editor_id' => $request->exists('editor_id') ? $data['editor_id'] : null,
                 'editor_time_slot_id' => $selectedSlot ? $selectedSlot->id : null,
                 'is_approved' => 1,

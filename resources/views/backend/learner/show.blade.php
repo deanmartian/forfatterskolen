@@ -1701,6 +1701,7 @@
 							{{--<th>{{ trans('site.learner-suggestion') }}</th>
 							<th>{{ trans('site.admin-suggestion') }}</th>--}}
 							<th>{{ trans('site.approved-date') }}</th>
+							<th>{{ trans('site.call-type') }}</th>
 							<th>{{ trans('site.assigned-to') }}</th>
 							<th>{{ trans('site.replay') }}</th>
 							<th>{{ trans('site.status') }}</th>
@@ -1834,6 +1835,15 @@
                                                                         </button>
                                                                         --}}
                                                                 </td>
+								<td>
+									{{ $coachingTimer->call_type_label }} <br>
+									<button class="btn btn-xs btn-primary editCallTypeBtn" data-toggle="modal" 
+										data-target="#editCallTypeModal"
+										data-action="{{ route('admin.other-service.change-call-type', ['id' => $coachingTimer->id, 'type' => 3]) }}"
+										data-call_type="{{ $coachingTimer->call_type }}">
+										{{ trans('site.edit') }}
+									</button>
+								</td>
 								<td>
 									@php
 										$activeEditors = AdminHelpers::editorList()->pluck('id')->toArray();
@@ -4281,6 +4291,30 @@
         </div>
 </div>
 
+<div id="editCallTypeModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.call-type') }}</label>
+						<select name="call_type" class="form-control" required>
+							<option value="phone">{{ trans('site.phone-call') }}</option>
+							<option value="video">{{ trans('site.video-call') }}</option>
+						</select>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">
+							{{ trans('site.save') }}
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="assignCoachingSessionModal" class="modal fade coaching-session-modal" role="dialog" data-backdrop="static">
         <div class="modal-dialog">
                 <div class="modal-content">
@@ -4522,6 +4556,14 @@
                                                         <option value="1">1 hr</option>
                                                 </select>
                                         </div>
+
+					<div class="form-group">
+						<label>{{ trans('site.call-type') }}</label>
+						<select name="call_type" class="form-control" required>
+							<option value="phone">{{ trans('site.phone-call') }}</option>
+							<option value="video">{{ trans('site.video-call') }}</option>
+						</select>
+					</div>
 
                                         <div class="form-group">
                                                 <label>{{ ucwords(trans('site.assign-to')) }}</label>
@@ -5795,6 +5837,15 @@
                         modal.find('form').find('select[name=editor_id]').val(editor.id).trigger('change');
                 }
     });
+
+	$(".editCallTypeBtn").click(function(){
+		let action = $(this).data('action');
+        let callType = $(this).data('call_type');
+        let modal = $('#editCallTypeModal');
+
+		modal.find('select').val(callType);
+        modal.find('form').attr('action', action);
+	});
 
     $('.assignCoachingSessionBtn').click(function(){
         const button = $(this);

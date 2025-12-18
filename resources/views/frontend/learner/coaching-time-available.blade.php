@@ -134,6 +134,16 @@
                             <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
                             <input type="hidden" name="editor_time_slot_id" value="">
                             <textarea name="help_with" cols="30" rows="10" class="form-control"></textarea>
+
+                            <div class="form-group">
+                                <label>
+                                    {{ trans('site.call-type') }}
+                                </label>
+                                <select name="call_type" class="form-control" required>
+                                    <option value="phone">{{ trans('site.phone-call') }}</option>
+                                    <option value="video">{{ trans('site.video-call') }}</option>
+                                </select>
+                            </div>
                             <div class="text-right mt-4">
                                 <button type="submit" class="btn btn-primary">
                                     {{ trans('site.coaching-time-book') }}

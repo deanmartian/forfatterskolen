@@ -23,7 +23,12 @@ class CoachingTimerManuscript extends Model
     protected $table = 'coaching_timer_manuscripts';
 
     protected $fillable = ['user_id', 'file', 'payment_price', 'plan_type', 'help_with', 'suggested_date', 'approved_date',
-        'suggested_date_admin', 'editor_id', 'editor_time_slot_id', 'replay_link', 'comment', 'document', 'status', 'is_approved', 'hours_worked'];
+        'suggested_date_admin', 'editor_id', 'editor_time_slot_id', 'call_type', 'replay_link', 'comment', 'document', 
+        'status', 'is_approved', 'hours_worked'];
+
+    protected $appends = [
+        'call_type_label',
+    ];
 
     public function user(): BelongsTo
     {
@@ -43,5 +48,21 @@ class CoachingTimerManuscript extends Model
     public function requests(): HasMany
     {
         return $this->hasMany(CoachingTimeRequest::class, 'coaching_timer_manuscript_id');
+    }
+
+    public function getCallTypeLabelAttribute()
+    {
+        $callType = $this->attributes['call_type'];
+        $label = '';
+
+        if ($callType == 'video') {
+            $label = trans('site.video-call');
+        }
+
+        if ($callType == 'phone') {
+            $label = trans('site.phone-call');
+        }
+
+        return $label;
     }
 }

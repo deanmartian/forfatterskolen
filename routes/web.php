@@ -763,6 +763,7 @@ Route::domain($admin)->group(function () {
         Route::get('learner/login_activity/{id}', [Backend\LearnerController::class, 'loginActivity'])->name('admin.learner.login_activity');
         Route::get('/word-written-goal/{id}/statistic', [Backend\LearnerController::class, 'goalStatistic'])->name('admin.learner.goal-statistic');
         Route::post('learner/{id}/add-other-service', [Backend\LearnerController::class, 'addOtherService'])->name('admin.learner.add-other-service');
+        Route::post('other-service/{id}/change-call-type/{type}', [Backend\LearnerController::class, 'otherServiceChangeCallType'])->name('admin.other-service.change-call-type');
         Route::post('other-service/{id}/assign-editor/{type}', [Backend\LearnerController::class, 'otherServiceAssignEditor'])->name('admin.other-service.assign-editor');
         Route::post('other-service/{id}/delete/{type}', [Backend\LearnerController::class, 'deleteOtherService'])->name('admin.other-service.delete');
         Route::post('coaching-timer/{id}/approve', [Backend\LearnerController::class, 'approveCoachingTimer'])->name('admin.coaching-timer.approve');

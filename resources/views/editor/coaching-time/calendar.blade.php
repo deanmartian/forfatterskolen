@@ -38,6 +38,7 @@
                 <p><strong>{{ trans('site.front.form.phone-number') }}:</strong> <span id="slotPhone"></span></p>
                 <p><strong>{{ trans('site.learner.date-start') }}:</strong> <span id="slotStart"></span></p>
                 <p><strong>{{ trans('site.end-date') }}:</strong> <span id="slotEnd"></span></p>
+                <p><strong>{{ trans('site.call-type') }}:</strong> <span id="slotCallType"></span></p>
                 <p><strong>{{ trans('site.learner.duration-text') }}:</strong> <span id="slotDuration"></span></p>
                 <p><strong>{{ trans('site.front.coaching-timer.help-with-text') }}:</strong></p>
                 <pre id="slotHelpsWith"></pre>
@@ -264,6 +265,7 @@
             document.getElementById('slotPhone').textContent = event.extendedProps.phone || '';
             document.getElementById('slotStart').textContent = start.toLocaleString('no-NO', fmt);
             document.getElementById('slotEnd').textContent = end.toLocaleString('no-NO', fmt);
+            document.getElementById('slotCallType').textContent = event.extendedProps.call_type;
             document.getElementById('slotDuration').textContent = (event.extendedProps.duration || ((end - start)/60000)) + ' min';
             document.getElementById('slotHelpsWith').textContent = event.extendedProps.helps_with || '';
 

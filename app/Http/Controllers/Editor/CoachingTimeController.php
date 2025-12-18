@@ -109,6 +109,7 @@ class CoachingTimeController extends Controller
                     'student'     => $accepted->manuscript->user->full_name ?? null,
                     'email'     => $accepted->manuscript->user->email ?? null,
                     'phone'     => $accepted->manuscript->user->address->phone ?? null,
+                    'call_type'     => $accepted->manuscript->call_type_label,
                     'duration'    => $slot->duration,
                     'helps_with'  => $accepted->manuscript->help_with,
                 ];
