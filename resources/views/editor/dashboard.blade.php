@@ -490,10 +490,12 @@
 									<tbody>
 									@foreach($coachingTimers as $coachingTimer)
 										<?php $extension = explode('.', basename($coachingTimer->file)); ?>
-										<tr>
-											<td>
-                                                                                            <a href="{{ $coachingTimer->file }}?v={{ $cacheBuster }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
-												{{ $coachingTimer->user->id }}
+                                                                                <tr>
+                                                                                        <td>
+                                                                                                @if ($coachingTimer->file)
+                                                                                                        <a href="{{ $coachingTimer->file }}?v={{ $cacheBuster }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
+                                                                                                @endif
+                                                                                                {{ $coachingTimer->user->id }}
 
 												@if ($coachingTimer->help_with)
 													<br>
