@@ -125,7 +125,7 @@
 											<button type="button" class="btn btn-xs btn-danger btn-delete-feedback pull-right" data-action="{{ route('admin.shop-manuscript-taken-feedback.delete', $feedback->id) }}" data-toggle="modal" data-target="#deleteFeedbackModal"><i class="fa fa-trash"></i></button>
 											<strong>{{ trans_choice('site.files', 2) }}:</strong>
 												@foreach( $feedback->filename as $filename )<br />
-												<a href="{{ $filename }}" target="_blank">{{ basename($filename) }}</a>
+												<a href="{{ $filename }}" target="_blank" download>{{ basename($filename) }}</a>
 												@endforeach
 											<br />
 											<strong>{{ trans_choice('site.notes', 2) }}:</strong> {{ $feedback->notes }} <br />
