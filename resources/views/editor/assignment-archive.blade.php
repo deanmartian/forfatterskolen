@@ -15,6 +15,7 @@
 @stop
 
 @section('content')
+@php($cacheBuster = now()->timestamp)
 <div class="col-sm-12 dashboard-left">
 	<div class="row">
 		<div class="col-sm-12">
@@ -58,8 +59,8 @@
 								<tr>
 									<td>
 										
-										<a href="{{ $assignedManuscript->filename }}"
-										   download>
+                                                                                <a href="{{ $assignedManuscript->filename }}?v={{ $cacheBuster }}"
+                                                                                   download>
 										   <i class="fa fa-download" aria-hidden="true"></i>
 										</a>
                                         &nbsp;
@@ -141,7 +142,7 @@
 								@if( $shopManuscript->status != 'Started' & $shopManuscript->status != 'Pending' )
 									<tr>
 										<td>
-                                            <a href="{{ route('editor.backend.download_shop_manuscript', $shopManuscript->id) }}">
+                                            <a href="{{ route('editor.backend.download_shop_manuscript', ['id' => $shopManuscript->id, 'v' => $cacheBuster]) }}">
                                                 <i class="fa fa-download" aria-hidden="true"></i> 
                                             </a>&nbsp;
                                             {{$shopManuscript->shop_manuscript->title}}
@@ -225,7 +226,7 @@
                                         }
                                     ?>
 									<td>
-                                        <a href="{{ route('editor.backend.download_assigned_manuscript', $assignedAssignment->id) }}">
+                                        <a href="{{ route('editor.backend.download_assigned_manuscript', ['id' => $assignedAssignment->id, 'v' => $cacheBuster]) }}">
                                             <i class="fa fa-download" aria-hidden="true"></i> 
                                         </a>&nbsp;
 										@if($assignedAssignment->assignment->course)
@@ -310,7 +311,7 @@
                                 <?php $extension = explode('.', basename($coachingTimer->file)); ?>
 								<tr>
 									<td>
-                                        <a href="{{ $coachingTimer->file }}" download>
+                                        <a href="{{ $coachingTimer->file }}?v={{ $cacheBuster }}" download>
                                         <i class="fa fa-download" aria-hidden="true"></i>
                                         </a>&nbsp;
 										{{ $coachingTimer->user->id }}
@@ -392,7 +393,7 @@
                                 <?php $extension = explode('.', basename($correction->file)); ?>
 								<tr>
 									<td>
-                                        <a href="{{ route('editor.other-service.download-doc', ['id' => $correction->id, 'type' => 2]) }}">
+                                        <a href="{{ route('editor.other-service.download-doc', ['id' => $correction->id, 'type' => 2, 'v' => $cacheBuster]) }}">
                                             <i class="fa fa-download" aria-hidden="true"></i>
                                         </a>&nbsp;
 										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
@@ -457,7 +458,7 @@
                                 <?php $extension = explode('.', basename($copyEditing->file)); ?>
 								<tr>
 									<td>
-                                        <a href="{{ route('editor.other-service.download-doc', ['id' => $copyEditing->id, 'type' => 1]) }}">
+                                        <a href="{{ route('editor.other-service.download-doc', ['id' => $copyEditing->id, 'type' => 1, 'v' => $cacheBuster]) }}">
                                             <i class="fa fa-download" aria-hidden="true"></i>
                                         </a>&nbsp;
 										@if( end($extension) == 'pdf' || end($copyEditing) == 'odt' )
@@ -647,6 +648,7 @@
 @section('scripts')
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script>
+        var cacheBuster = '{{ $cacheBuster }}';
         $('.personalAssignmentShowFeedbackBtn').click(function(){
             var feedbackFileName =  $(this).data('feedback_file');
             var feedbackGrade =  $(this).data('feedback_grade');
@@ -658,7 +660,7 @@
             var feedbackArray = feedbackFileName.split(",");
             modal.find('#feedbackFileAppend').html('');
             feedbackArray.forEach(function (item, index){
-                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+                modal.find('#feedbackFileAppend').append('<a href="'+ item + '?v=' + cacheBuster +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 
             modal.find('#feedback_date').text(feedbackDate);
@@ -676,7 +678,7 @@
             var feedbackArray = feedbackFileName.split(",");
             modal.find('#feedbackFileAppend').html('');
             feedbackArray.forEach(function (item, index){
-                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+                modal.find('#feedbackFileAppend').append('<a href="'+ item + '?v=' + cacheBuster +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 
             modal.find('#notes').text(feedbackNotes);
@@ -693,7 +695,7 @@
             var feedbackArray = feedbackFileName.split(",");
             modal.find('#feedbackFileAppend').html('');
             feedbackArray.forEach(function (item, index){
-                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+                modal.find('#feedbackFileAppend').append('<a href="'+ item + '?v=' + cacheBuster +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 
             modal.find('#grade').text(feedbackGrade);
@@ -706,7 +708,8 @@
             var Document = $(this).data('document');
 
             let modal = $('#coachingTimerFeedbackModal');
-            modal.find('[name=document]').attr("href", Document);
+            var documentUrl = Document + '?v=' + cacheBuster;
+            modal.find('[name=document]').attr("href", documentUrl);
             modal.find('[name=document]').text(Document);
             modal.find('#comment').text(comment);
             modal.find('#replay_link').text(replayLink);
@@ -721,7 +724,7 @@
             var feedbackArray = feedbackFileName.split(",");
             modal.find('#feedbackFileAppend').html('');
             feedbackArray.forEach(function (item, index){
-                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+                modal.find('#feedbackFileAppend').append('<a href="'+ item + '?v=' + cacheBuster +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 
             modal.find('#created_at').text(created_at);

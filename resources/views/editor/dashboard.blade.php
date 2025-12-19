@@ -15,6 +15,7 @@
 @stop
 
 @section('content')
+@php($cacheBuster = now()->timestamp)
 <div class="col-sm-12 dashboard-left">
 	<div class="row">
 		<div class="col-sm-12">
@@ -52,8 +53,8 @@
 										?>
 										<tr>
 											<td>
-												<a href="{{ $assignedManuscript->filename }}"
-												download>
+                                                                                                <a href="{{ $assignedManuscript->filename }}?v={{ $cacheBuster }}"
+                                                                                                download>
 												<i class="fa fa-download" aria-hidden="true"></i>
 												</a> &nbsp;
 
@@ -69,7 +70,7 @@
 											</td>
 											<td>
 												@if ($assignedManuscript->letter_to_editor)
-													<a href="{{ route('editor.assignment.manuscript.download_letter', $assignedManuscript->id) }}">
+                                                                                                        <a href="{{ route('editor.assignment.manuscript.download_letter', ['id' => $assignedManuscript->id, 'v' => $cacheBuster]) }}">
 														<i class="fa fa-download" aria-hidden="true"></i>
 													</a>&nbsp;
 													{{ basename($assignedManuscript->letter_to_editor) }}
@@ -170,13 +171,8 @@
 										@if( $shopManuscript->status == 'Started' || $shopManuscript->status == 'Pending' )
 											<tr>
 												<td>
-													@php
-														$fileRel = trim($shopManuscript->file);
-														$fileAbs = public_path($fileRel);
-														$v = is_file($fileAbs) ? filemtime($fileAbs) : time();
-													@endphp
-													<a href="{{ route('editor.backend.download_shop_manuscript', 
-													['id' => $shopManuscript->id, 'v' => $v]) }}"><i class="fa fa-download" aria-hidden="true"></i>
+                                                                                                        <a href="{{ route('editor.backend.download_shop_manuscript',
+                                                                                                        ['id' => $shopManuscript->id, 'v' => $cacheBuster]) }}"><i class="fa fa-download" aria-hidden="true"></i>
 													</a>&nbsp;
 													@if($shopManuscript->is_active)
 														<a href="{{ route('editor.shop_manuscript_taken', ['id' => $shopManuscript->user->id, 'shop_manuscript_taken_id' => $shopManuscript->id]) }}">{{$shopManuscript->shop_manuscript->title}}</a>
@@ -230,7 +226,7 @@
 										@if($request->manuscript)
 											<tr style="background-color: beige;">
 												<td>
-													<a href="{{ route('editor.backend.download_shop_manuscript', $request->manuscript_id) }}"><i class="fa fa-download" aria-hidden="true"></i>
+                                                                                                        <a href="{{ route('editor.backend.download_shop_manuscript', ['id' => $request->manuscript_id, 'v' => $cacheBuster]) }}"><i class="fa fa-download" aria-hidden="true"></i>
 													</a>&nbsp;
 													@if($request->manuscript->is_active)
 														<a href="{{ route('editor.shop_manuscript_taken', ['id' => $request->manuscript->user->id, 'shop_manuscript_taken_id' => $request->manuscript_id]) }}">{{$request->manuscript->shop_manuscript->title}}</a>
@@ -298,7 +294,7 @@
 									@foreach ($assignedAssignments as $assignedAssignment)
 										<tr>
 											<td>
-												<a href="{{ route('editor.backend.download_assigned_manuscript', $assignedAssignment->id) }}"><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
+                                                                                            <a href="{{ route('editor.backend.download_assigned_manuscript', ['id' => $assignedAssignment->id, 'v' => $cacheBuster]) }}"><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
 												@if($assignedAssignment->assignment->course)
 														{{ $assignedAssignment->assignment->course->title }}
 												@else
@@ -307,7 +303,7 @@
 											</td>
 											<td>
 												@if ($assignedAssignment->letter_to_editor)
-													<a href="{{ route('assignment.manuscript.download_letter', $assignedAssignment->id) }}">
+                                                                                                    <a href="{{ route('assignment.manuscript.download_letter', ['id' => $assignedAssignment->id, 'v' => $cacheBuster]) }}">
 														<i class="fa fa-download" aria-hidden="true"></i>
 													</a>&nbsp;
 													{{ basename($assignedAssignment->letter_to_editor) }}
@@ -459,7 +455,7 @@
 													{{ $freeManuscript->deadline_date }}
 												</td>
 												<td>
-													<a href="{{ route('editor.free-manuscript.download', $freeManuscript->id) }}"
+                                                                                                    <a href="{{ route('editor.free-manuscript.download', ['id' => $freeManuscript->id, 'v' => $cacheBuster]) }}"
 													   class="btn btn-primary btn-xs">
 														<i class="fa fa-download"></i>
 														{{ trans('site.download') }}
@@ -494,10 +490,12 @@
 									<tbody>
 									@foreach($coachingTimers as $coachingTimer)
 										<?php $extension = explode('.', basename($coachingTimer->file)); ?>
-										<tr>
-											<td>
-												<a href="{{ $coachingTimer->file }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
-												{{ $coachingTimer->user->id }}
+                                                                                <tr>
+                                                                                        <td>
+                                                                                                @if ($coachingTimer->file)
+                                                                                                        <a href="{{ $coachingTimer->file }}?v={{ $cacheBuster }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
+                                                                                                @endif
+                                                                                                {{ $coachingTimer->user->id }}
 
 												@if ($coachingTimer->help_with)
 													<br>
@@ -553,7 +551,7 @@
 												{{ $publishing->title }}
 											</td>
 											<td>
-												<a href="{{ route('editor.self-publishing.download-manuscript', $publishing->id) }}">
+                                                                                            <a href="{{ route('editor.self-publishing.download-manuscript', ['id' => $publishing->id, 'v' => $cacheBuster]) }}">
 													<i class="fa fa-download" aria-hidden="true"></i>
 												</a> &nbsp; {!! $publishing->file_link !!}
 											</td>
@@ -602,7 +600,7 @@
 										<tr>
 											<td>
 												@if (strpos($correction->file, 'project-'))
-                                                    <a href="{{ route('dropbox.download_file', trim($correction->file)) }}">
+                                                    <a href="{{ route('dropbox.download_file', trim($correction->file)) }}?v={{ $cacheBuster }}">
                                                         <i class="fa fa-download" aria-hidden="true"></i>
                                                     </a>&nbsp;
                                                     <a href="{{ route('dropbox.shared_link', trim($correction->file)) }}" target="_blank">
@@ -610,7 +608,7 @@
                                                     </a>
 												@else
 													@if ($correction->file)
-														<a href="{{ route('editor.other-service.download-doc', ['id' => $correction->id, 'type' => 2]) }}" download>
+                                                                                                                <a href="{{ route('editor.other-service.download-doc', ['id' => $correction->id, 'type' => 2, 'v' => $cacheBuster]) }}" download>
 															<i class="fa fa-download" aria-hidden="true"></i>
 														</a>&nbsp;
 														@if( end($extension) == 'pdf' || end($extension) == 'odt' )
@@ -707,15 +705,14 @@
 											<td>
 												@if ($copyEditing->file)
 													@if (strpos($copyEditing->file, 'project-'))
-														<a href="{{ route('editor.dropbox.download_file', trim($copyEditing->file)) }}">
+                                                                                                                <a href="{{ route('editor.dropbox.download_file', trim($copyEditing->file)) }}?v={{ $cacheBuster }}">
 															<i class="fa fa-download" aria-hidden="true"></i>
 														</a>&nbsp;
 														<a href="{{ route('editor.dropbox.shared_link', trim($copyEditing->file)) }}" target="_blank">
 															{{ basename($copyEditing->file) }}
 														</a>
 													@else
-													else
-														<a href="{{ route('editor.other-service.download-doc', ['id' => $copyEditing->id, 'type' => 1]) }}"
+                                                                                                                <a href="{{ route('editor.other-service.download-doc', ['id' => $copyEditing->id, 'type' => 1, 'v' => $cacheBuster]) }}"
 															download>
 															<i class="fa fa-download" aria-hidden="true"></i>
 														</a>&nbsp;
@@ -814,7 +811,7 @@
 									@foreach ($editingAssignments as $assignedAssignment)
 										<tr>
 											<td>
-												<a href="{{ route('editor.backend.download_assigned_manuscript', $assignedAssignment->id) }}"><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
+                                                                                                <a href="{{ route('editor.backend.download_assigned_manuscript', ['id' => $assignedAssignment->id, 'v' => $cacheBuster]) }}"><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
 												@if($assignedAssignment->assignment->course)
 														{{ $assignedAssignment->assignment->course->title }}
 												@else
@@ -823,7 +820,7 @@
 											</td>
 											<td>
 												@if ($assignedAssignment->letter_to_editor)
-													<a href="{{ route('assignment.manuscript.download_letter', $assignedAssignment->id) }}">
+                                                                                                        <a href="{{ route('assignment.manuscript.download_letter', ['id' => $assignedAssignment->id, 'v' => $cacheBuster]) }}">
 														<i class="fa fa-download" aria-hidden="true"></i>
 													</a>&nbsp;
 													{{ basename($assignedAssignment->letter_to_editor) }}
@@ -1658,9 +1655,10 @@
 @stop
 
 @section('scripts')
-	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
-	$('.viewManuscriptBtn').click(function(){
+        var cacheBuster = '{{ $cacheBuster }}';
+        $('.viewManuscriptBtn').click(function(){
 		var fields = $(this).data('fields');
 		var modal = $('#viewManuscriptModal');
 		modal.find('#name').text(fields.name);
@@ -1731,7 +1729,7 @@
 			var feedbackArray = feedbackFileName.split(",");
 			modal.find('#feedbackFileAppend').append('<label>Manuscript</label><br>')
             feedbackArray.forEach(function (item, index){
-                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+                modal.find('#feedbackFileAppend').append('<a href="'+ item + '?v=' + cacheBuster +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 			modal.find('#feedbackFileAppend').append('<br>');
 
@@ -1779,7 +1777,7 @@
 			var feedbackArray = feedbackFileName.split(",");
 			modal.find('#feedbackFileAppend').append('<label>Manuscript</label><br>')
             feedbackArray.forEach(function (item, index){
-                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+                modal.find('#feedbackFileAppend').append('<a href="'+ item + '?v=' + cacheBuster +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 			modal.find('#feedbackFileAppend').append('<br>');
 
@@ -1885,7 +1883,7 @@
 			var feedbackArray = feedbackFileName.split(",");
 			modal.find('#feedbackFileAppend').append('<label>Manuscript</label><br>')
             feedbackArray.forEach(function (item, index){
-                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+                modal.find('#feedbackFileAppend').append('<a href="'+ item + '?v=' + cacheBuster +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 			modal.find('#feedbackFileAppend').append('<br>');
 			modal.find('[name=manuscriptLabel]').hide();
@@ -1935,7 +1933,7 @@
 			var feedbackArray = feedbackFileName.split(",");
 			modal.find('#feedbackFileAppend').append('<label>Manuscript</label><br>')
             feedbackArray.forEach(function (item, index){
-                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+                modal.find('#feedbackFileAppend').append('<a href="'+ item + '?v=' + cacheBuster +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 			modal.find('#feedbackFileAppend').append('<br>');
 			modal.find('[name=manuscriptLabel]').hide();
@@ -2054,7 +2052,7 @@
 			var feedbackArray = feedbackFileName.split(",");
 			modal.find('#feedbackFileAppend').append('<label>Manuscript</label><br>')
             feedbackArray.forEach(function (item, index){
-                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+                modal.find('#feedbackFileAppend').append('<a href="'+ item + '?v=' + cacheBuster +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 			modal.find('#feedbackFileAppend').append('<br>');
 
