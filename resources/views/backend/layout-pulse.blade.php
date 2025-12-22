@@ -78,6 +78,97 @@
     </div>
 
     @include('backend.partials.scripts')
+    <script>
+        window.backendCacheBuster = '{{ now()->timestamp }}';
+        (function () {
+            var cacheBuster = window.backendCacheBuster;
+            if (!cacheBuster) {
+                return;
+            }
+
+            function isDownloadLink(link) {
+                if (!link || !link.getAttribute) {
+                    return false;
+                }
+
+                if (link.hasAttribute('download')) {
+                    return true;
+                }
+
+                var href = link.getAttribute('href') || '';
+                return /download/i.test(href);
+            }
+
+            function addCacheBuster(href) {
+                if (!href || href.indexOf('javascript:') === 0 || href.indexOf('mailto:') === 0) {
+                    return href;
+                }
+
+                var hashIndex = href.indexOf('#');
+                var hash = '';
+                var baseHref = href;
+                if (hashIndex !== -1) {
+                    hash = href.slice(hashIndex);
+                    baseHref = href.slice(0, hashIndex);
+                }
+
+                if (baseHref.indexOf('v=') !== -1) {
+                    return href;
+                }
+
+                var separator = baseHref.indexOf('?') === -1 ? '?' : '&';
+                return baseHref + separator + 'v=' + encodeURIComponent(cacheBuster) + hash;
+            }
+
+            function updateLink(link) {
+                if (!isDownloadLink(link)) {
+                    return;
+                }
+
+                if (link.dataset && link.dataset.cacheBusterApplied === 'true') {
+                    return;
+                }
+
+                var href = link.getAttribute('href');
+                var updated = addCacheBuster(href);
+                if (updated && updated !== href) {
+                    link.setAttribute('href', updated);
+                }
+
+                if (link.dataset) {
+                    link.dataset.cacheBusterApplied = 'true';
+                }
+            }
+
+            document.addEventListener('click', function (event) {
+                var link = event.target.closest ? event.target.closest('a') : null;
+                if (!link) {
+                    return;
+                }
+                updateLink(link);
+            }, true);
+
+            document.querySelectorAll('a').forEach(updateLink);
+
+            var observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    mutation.addedNodes.forEach(function (node) {
+                        if (node.nodeType !== 1) {
+                            return;
+                        }
+                        if (node.tagName && node.tagName.toLowerCase() === 'a') {
+                            updateLink(node);
+                        }
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('a').forEach(updateLink);
+                        }
+                    });
+                });
+            });
+
+            observer.observe(document.body, { childList: true, subtree: true });
+        })();
+    </script>
     @yield('scripts')
 
     </body>
