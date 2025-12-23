@@ -95,7 +95,7 @@
 															$feedback = $shopManuscriptTaken->feedbacks()->first();
 														?>
 														<a href="{{ route('learner.shop-manuscript.download-feedback',
-														 [$shopManuscriptTaken->id, $feedback->id]) }}" 
+														 [$shopManuscriptTaken->id, $feedback->id]) }}?v={{ time() }}" 
 														 class="btn blue-btn rounded-20 px-4 ml-2">
 															{{ trans('site.learner.download-feedback') }}
 															<i class="fa fa-download"></i>
@@ -877,4 +877,3 @@
 
 </script>
 @stop
-

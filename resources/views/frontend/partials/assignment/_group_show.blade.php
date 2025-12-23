@@ -39,7 +39,7 @@
                                         Forhåndsvisning
                                     </a>
                                 @else
-                                    <a href="{{route('learner.assignment.manuscript.download', $manuscript->id)}}" 
+                                    <a href="{{route('learner.assignment.manuscript.download', $manuscript->id)}}?v={{ time() }}" 
                                         class="btn blue-outline-btn" download>
                                         {{ trans('site.learner.download-text') }}
                                         <i class="fa fa-download"></i>

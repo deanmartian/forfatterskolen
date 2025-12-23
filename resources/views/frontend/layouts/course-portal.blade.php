@@ -115,6 +115,45 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 @yield('scripts')
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cacheValue = Date.now().toString();
+        const links = document.querySelectorAll('a[href]');
+
+        links.forEach((link) => {
+            const href = link.getAttribute('href');
+
+            if (!href || href.startsWith('#')) {
+                return;
+            }
+
+            const lowerHref = href.toLowerCase();
+            if (
+                lowerHref.startsWith('mailto:') ||
+                lowerHref.startsWith('tel:') ||
+                lowerHref.startsWith('javascript:')
+            ) {
+                return;
+            }
+
+            const hasDownloadAttr = link.hasAttribute('download');
+            const hasDownloadClass = String(link.className || '').toLowerCase().includes('download');
+            const isDownloadHref =
+                lowerHref.includes('/download') ||
+                lowerHref.includes('dropbox/download') ||
+                lowerHref.includes('/storage/') ||
+                /\.[a-z0-9]{2,5}([?#]|$)/i.test(lowerHref);
+
+            if (!hasDownloadAttr && !hasDownloadClass && !isDownloadHref) {
+                return;
+            }
+
+            const url = new URL(href, window.location.origin);
+            url.searchParams.set('v', cacheValue);
+            link.href = url.toString();
+        });
+    });
+</script>
+<script>
 
     var sidebar = $("#sidebar");
     var mainContainer = $("#main-container");

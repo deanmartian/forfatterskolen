@@ -213,7 +213,7 @@
 															{{ basename($orderAttachment->file_path) }}
 														</p>
 
-														<a href="{{ $orderAttachment->file_path }}" class="pull-right blue-link"
+														<a href="{{ $orderAttachment->file_path }}?v={{ time() }}" class="pull-right blue-link"
 															download>
 															<i class="fa fa-download"></i>
 														</a>
@@ -464,7 +464,7 @@
 														@endif
 													</td>
 													<td class="invoice-actions">
-														<a href="{{route('learner.download.invoice', $invoice->id)}}" 
+														<a href="{{route('learner.download.invoice', $invoice->id)}}?v={{ time() }}" 
 															class="blue-outline-btn d-inline-block">
 															{{ trans('site.learner.download-invoice') }}
 														</a>
@@ -941,7 +941,7 @@
             let fields = $(this).data('fields');
             let type = fields.svea_invoice_id ? 'invoice' : 'receipt';
             const link = document.createElement('a');
-            link.href = '/account/invoice/' + fields.id + '/download/' + type;
+            link.href = '/account/invoice/' + fields.id + '/download/' + type + '?v=' + Date.now();
             // link.setAttribute('download', 'test.doc');
             document.body.appendChild(link);
             link.click();

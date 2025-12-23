@@ -148,7 +148,7 @@
 									</a>
 								@else
 									<a class="download-lesson-btn" href="{{ route('learner.course.download-lesson', 
-									['course_id' => $course->id, 'id' => $lesson->id]) }}"
+									['course_id' => $course->id, 'id' => $lesson->id]) }}?v={{ time() }}"
 									onclick="disableButton(this)">
 										<i class="fa fa-arrow-down"></i> {{ trans('site.learner.download-pdf-of-lesson') }}
 									</a>
@@ -160,7 +160,7 @@
 									{{ trans('site.learner.documents-and-forms-text') }}
 								</h2>
 								@foreach($lesson->documents as $document)
-									<a href="{{ route('learner.lesson.download-lesson-document', $document->id) }}"
+									<a href="{{ route('learner.lesson.download-lesson-document', $document->id) }}?v={{ time() }}"
 										class="download-file-btn">
 										<i class="fa fa-download"></i> {{ $document->name }}
 									</a>

@@ -35,6 +35,7 @@
                         && (!$feedback->availability ||  date('Y-m-d') >= $feedback->availability)
                         && $feedback->manuscript->status)
                             @php
+                                $cacheBuster = time();
                                 $files = explode(',',$feedback->filename);
                                 $title = $feedback->manuscript->assignment->course 
                                         ? $feedback->manuscript->assignment->course->title
@@ -45,6 +46,16 @@
 
                                 $filesDisplay = $feedback->manuscript->assignment->title 
                                     .' <br/> ' . $titleLabel . ': '. $title;
+
+                                $fileLinkWithDownload = preg_replace_callback(
+                                    '/href="([^"]+)"/',
+                                    function ($matches) use ($cacheBuster) {
+                                        $url = $matches[1];
+                                        $separator = parse_url($url, PHP_URL_QUERY) ? '&' : '?';
+                                        return 'href="' . $url . $separator . 'v=' . $cacheBuster . '"';
+                                    },
+                                    $feedback->manuscript->file_link_with_download
+                                );
                             @endphp
                             <tr>
                                 <td>
@@ -59,13 +70,13 @@
                                     @endif
                                 </td>
                                 <td>
-                                    {!! $feedback->manuscript->file_link_with_download !!}
+                                    {!! $fileLinkWithDownload !!}
                                 </td>
                                 <td class="td-date">
                                     {{ \App\Http\FrontendHelpers::formatDate($feedback->availability) }}
                                 </td>
                                 <td>
-                                    <a href="{{route('learner.assignment.no-group-feedback.download', $feedback->id)}}"
+                                    <a href="{{route('learner.assignment.no-group-feedback.download', $feedback->id)}}?v={{ $cacheBuster }}"
                                         class="w-100 btn download-feedback">
                                         {{ trans('site.learner.download-feedback') }}
                                         <i class="fas fa-download"></i>
