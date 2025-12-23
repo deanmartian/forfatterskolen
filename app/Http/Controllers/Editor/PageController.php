@@ -43,7 +43,12 @@ class PageController extends Controller
     {
         $assigned_shop_manuscripts = ShopManuscriptsTaken::where('feedback_user_id', Auth::user()->id)->get();
         $assignedAssignments = $this->filterAssignmentByCheckMaxWords(1);
-        $coachingTimers = Auth::user()->assignedCoachingTimers()->where('status', 0)->get();
+        $coachingTimers = Auth::user()->assignedCoachingTimers()
+            ->where('status', 0)
+            ->whereHas('timeSlot', function ($query) {
+                $query->whereDate('date', '>=', Carbon::today());
+            })
+            ->get();
         $corrections = Auth::user()->assignedCorrections;
         $copyEditings = Auth::user()->assignedCopyEditing;
         $singleCourses = Course::where('type', 'Single')
