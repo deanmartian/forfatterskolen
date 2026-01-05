@@ -57,14 +57,14 @@
 								<span class="note-color d-block font-15">
 									{{ trans('site.learner.facebook') }}
 								</span>
-								{{ Auth::user()->social->facebook ?: 'None' }}
+								{{ Auth::user()->social->facebook ?: trans('site.none') }}
 							</h3>
 
 							<h3 class="font-weight-normal font-barlow-regular mt-3">
 								<span class="note-color d-block font-15">
 									{{ trans('site.learner.instagram') }}
 								</span>
-								{{ Auth::user()->social->instagram ?: 'None' }}
+								{{ Auth::user()->social->instagram ?: trans('site.none') }}
 							</h3>
 						</div> <!-- end card-body -->
 					</div> <!-- end card -->
@@ -383,15 +383,19 @@
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-							<h3 class="modal-title">Save Changes</h3>
+							<h3 class="modal-title">{{ trans('site.save-changes') }}</h3>
 							<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 					<div class="modal-body">
-							<p>Do you want to save the new information?</p>
+							<p>{{ trans('site.save-new-information-question') }}</p>
 					</div>
 					<div class="modal-footer">
-							<button type="button" class="btn btn-primary save-changes">Yes</button>
-							<button type="button" class="btn btn-secondary discard-changes" data-dismiss="modal">No</button>
+							<button type="button" class="btn btn-primary save-changes">
+								{{ trans('site.front.yes') }}
+							</button>
+							<button type="button" class="btn btn-secondary discard-changes" data-dismiss="modal">
+								{{ trans('site.front.no') }}
+							</button>
 					</div>
 				</div>
 			</div>
