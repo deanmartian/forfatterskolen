@@ -955,7 +955,7 @@ class LearnerController extends Controller
 
                 $events->push([
                     'id' => $lesson->course->id,
-                    'title' => trans('site.learner.lesson') . ': '.$lesson->title.' from '.$lesson->course->title,
+                    'title' => trans('site.learner.lesson') . ': '.$lesson->title.' fra '.$lesson->course->title,
                     'className' => 'event-important',
                     'start' => $availability->copy(),
                     'end' => $availability->copy(),
@@ -970,7 +970,7 @@ class LearnerController extends Controller
 
                 $events->push([
                     'id' => $webinar->course->id,
-                    'title' => trans('site.learner.webinar') .': '.$webinar->title.' from '.$webinar->course->title,
+                    'title' => trans('site.learner.webinar') .': '.$webinar->title.' fra '.$webinar->course->title,
                     'className' => 'event-warning',
                     'start' => $start->copy(),
                     'end' => $end,
@@ -985,7 +985,7 @@ class LearnerController extends Controller
 
                 $events->push([
                     'id' => $courseTaken->package->course->id,
-                    'title' => trans('site.learner.script') .': '.basename($manuscript->filename).' from '.$courseTaken->package->course->title,
+                    'title' => trans('site.learner.script') .': '.basename($manuscript->filename).' fra '.$courseTaken->package->course->title,
                     'className' => 'event-info',
                     'start' => $finishDate->copy(),
                     'end' => $finishDate->copy(),
@@ -1002,7 +1002,7 @@ class LearnerController extends Controller
 
                     $events->push([
                         'id'    => $assignment->course->id,
-                        'title' => trans('site.learner.assignment') . ': ' . $assignment->title . ' from ' . $assignment->course->title,
+                        'title' => trans('site.learner.assignment') . ': ' . $assignment->title . ' fra ' . $assignment->course->title,
                         'className' => 'event-success-new',
                         'start' => $submissionDate->copy(),
                         'end'   => $submissionDate->copy(),
