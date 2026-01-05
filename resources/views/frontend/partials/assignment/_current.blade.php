@@ -171,7 +171,7 @@
     <div class="col-lg-4">
         <div class="upcoming-assignment-container">
             <h2>
-                Kommende Oppgaver
+                {{ trans('site.upcoming-assignment') }}
             </h2>
 
             @foreach($upcomingAssignments as $assignment)

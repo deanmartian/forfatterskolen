@@ -923,7 +923,7 @@
                 const fileInput = fileUploadArea.querySelector('.input-file-upload');
                 const fileUploadText = fileUploadArea.querySelector('.file-upload-text');
                 const form = fileUploadArea.closest('form');
-                const textWithBrowseButton = 'Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>';
+                const textWithBrowseButton = 'Dra og slipp filer eller <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>';
 
                 const openFileInput = () => {
                         if (fileInput) {
