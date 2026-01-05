@@ -1568,6 +1568,11 @@ class AdminHelpers
                 'number' => '1052',
             ],
             [
+                'label' => 'weight_books_return',
+                'value' => 'Vekt retur/kred',
+                'number' => '1052',
+            ],
+            [
                 'label' => 'storage_fee_per_isbn_no',
                 'value' => 'Lagerholdsavgift pr ISBN-nr',
                 'number' => '1061',

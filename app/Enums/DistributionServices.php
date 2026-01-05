@@ -20,6 +20,8 @@ class DistributionServices
 
     const weight_books_credit = 'Vekt bøker kredit';
 
+    const weight_books_return = 'Vekt retur/kred';
+
     const storage_fee_per_isbn_no = 'Lagerholdsavgift pr ISBN-nr';
 
     const title_fee_per_isbn_no = 'Tittelavgift pr ISBN-nr';
