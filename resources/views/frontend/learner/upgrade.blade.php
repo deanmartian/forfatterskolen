@@ -30,7 +30,7 @@
 @stop
 
 @section('heading')
-    Oppgraderinger
+    {{ trans('site.learner.upgrades-text') }}
 @stop
 
 @section('content')
@@ -398,18 +398,18 @@
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title text-center">Success</h3>
+                <h3 class="modal-title text-center">{{ trans('site.success-text') }}</h3>
             </div>
             <div class="modal-body text-center">
                 <img src="{{ asset('images-new/icon/big-green-check.png') }}" alt="">
 
                 <h3>
-                    You have successfully renewed!
+                    {{ trans('site.renewed-success-message') }}
                 </h3>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default w-100" data-dismiss="modal">
-                    Exit
+                    {{ trans('site.exit') }}
                 </button>
             </div>
         </div>
