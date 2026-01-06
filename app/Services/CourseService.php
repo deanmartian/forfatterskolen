@@ -552,10 +552,16 @@ class CourseService
         // Check for shop manuscripts
         if ($package->shop_manuscripts->count() > 0) {
             foreach ($package->shop_manuscripts as $shop_manuscript) {
-                $shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => $order->user_id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
+                /* $shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => $order->user_id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
                 $shopManuscriptTaken->user_id = $order->user_id;
                 $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
                 $shopManuscriptTaken->is_active = false;
+                $shopManuscriptTaken->save(); */
+                $shopManuscriptTaken = new ShopManuscriptsTaken;
+                $shopManuscriptTaken->user_id = $order->user_id;
+                $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
+                $shopManuscriptTaken->is_active = false;
+                $shopManuscriptTaken->package_shop_manuscripts_id = $package->shop_manuscripts[0]->id;
                 $shopManuscriptTaken->save();
             }
         }
