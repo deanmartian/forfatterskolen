@@ -534,7 +534,7 @@
         }
     })
 
-    $(".deleteBtn").click(function() {
+    $(document).on('click', '.deleteBtn', function(){
         let modal = $("#deleteModal");
         let action = $(this).data('action');
 
