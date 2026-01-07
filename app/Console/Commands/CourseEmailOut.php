@@ -14,6 +14,7 @@ use App\Order;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class CourseEmailOut extends Command
 {
@@ -76,7 +77,7 @@ class CourseEmailOut extends Command
                     $clauses = [];
 
                     if ($emailOut->send_to_learners_no_course) {
-                        $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
+                        /* $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
                             ->whereHas('user')
                             //->whereNull('renewed_at')
                             ->where('is_free', 1)
@@ -84,6 +85,42 @@ class CourseEmailOut extends Command
 
                         $clauses[] = function ($q) use ($coursesTaken) {
                             $q->whereIn('id', $coursesTaken);
+                        }; */
+
+                        $coursesTakenUserIds = CoursesTaken::query()
+                            ->withoutGlobalScopes()                // ✅ removes "courses_taken.deleted_at is null"
+                            ->from('courses_taken as ct')
+                            ->whereNull('ct.deleted_at')           // ✅ re-apply using alias
+
+                            ->whereIn('ct.package_id', $packages)
+
+                            ->whereExists(function ($q) {
+                                $q->select(DB::raw(1))
+                                ->from('users')
+                                ->whereColumn('users.id', 'ct.user_id')
+                                ->whereNull('users.deleted_at');
+                            })
+
+                            ->where('ct.is_free', 1)
+
+                            ->whereNotExists(function ($q) use ($today) {
+                                $q->select(DB::raw(1))
+                                ->from('courses_taken as ct2')
+                                ->whereColumn('ct2.user_id', 'ct.user_id')
+                                ->whereColumn('ct2.id', '!=', 'ct.id')
+                                ->whereNull('ct2.deleted_at') // ✅ ignore soft-deleted "other records" too
+                                ->where(function ($qq) use ($today) {
+                                    $qq->whereNull('ct2.end_date')
+                                        ->orWhereDate('ct2.end_date', '>', $today);
+                                });
+                            })
+
+                            ->distinct()
+                            ->pluck('ct.user_id')
+                            ->toArray();
+
+                        $clauses[] = function ($q) use ($coursesTakenUserIds) {
+                            $q->whereIn('id', $coursesTakenUserIds);
                         };
                     }
 
@@ -264,7 +301,7 @@ class CourseEmailOut extends Command
                     $clauses = [];
 
                     if ($emailOut->send_to_learners_no_course) {
-                        $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
+                        /* $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
                             ->whereHas('user')
                             ->where(function ($query) use ($emailDate) {
                                 $query->whereDate('started_at', '=', $emailDate);
@@ -276,6 +313,49 @@ class CourseEmailOut extends Command
 
                         $clauses[] = function ($q) use ($coursesTaken) {
                             $q->whereIn('id', $coursesTaken);
+                        }; */
+
+                        $today = now()->toDateString();
+
+                        $coursesTakenUserIds = CoursesTaken::query()
+                            ->withoutGlobalScopes()                // ✅ removes "courses_taken.deleted_at is null"
+                            ->from('courses_taken as ct')
+                            ->whereNull('ct.deleted_at')           // ✅ re-apply using alias
+
+                            ->whereIn('ct.package_id', $packages)
+
+                            ->whereExists(function ($q) {
+                                $q->select(DB::raw(1))
+                                ->from('users')
+                                ->whereColumn('users.id', 'ct.user_id')
+                                ->whereNull('users.deleted_at');
+                            })
+
+                            ->where(function ($query) use ($emailDate) {
+                                $query->whereDate('ct.started_at', $emailDate)
+                                    ->orWhereDate('ct.start_date', $emailDate);
+                            })
+
+                            ->where('ct.is_free', 1)
+
+                            ->whereNotExists(function ($q) use ($today) {
+                                $q->select(DB::raw(1))
+                                ->from('courses_taken as ct2')
+                                ->whereColumn('ct2.user_id', 'ct.user_id')
+                                ->whereColumn('ct2.id', '!=', 'ct.id')
+                                ->whereNull('ct2.deleted_at') // ✅ ignore soft-deleted "other records" too
+                                ->where(function ($qq) use ($today) {
+                                    $qq->whereNull('ct2.end_date')
+                                        ->orWhereDate('ct2.end_date', '>', $today);
+                                });
+                            })
+
+                            ->distinct()
+                            ->pluck('ct.user_id')
+                            ->toArray();
+
+                        $clauses[] = function ($q) use ($coursesTakenUserIds) {
+                            $q->whereIn('id', $coursesTakenUserIds);
                         };
                     }
 
