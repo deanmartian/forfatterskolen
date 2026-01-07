@@ -109,6 +109,7 @@ class CourseEmailOut extends Command
                                 ->whereColumn('ct2.user_id', 'ct.user_id')
                                 ->whereColumn('ct2.id', '!=', 'ct.id')
                                 ->whereNull('ct2.deleted_at') // ✅ ignore soft-deleted "other records" too
+                                ->where('ct2.package_id', 29) // ✅ only check package 29
                                 ->where(function ($qq) use ($today) {
                                     $qq->whereNull('ct2.end_date')
                                         ->orWhereDate('ct2.end_date', '>', $today);
@@ -318,9 +319,9 @@ class CourseEmailOut extends Command
                         $today = now()->toDateString();
 
                         $coursesTakenUserIds = CoursesTaken::query()
-                            ->withoutGlobalScopes()                // ✅ removes "courses_taken.deleted_at is null"
+                            ->withoutGlobalScopes()
                             ->from('courses_taken as ct')
-                            ->whereNull('ct.deleted_at')           // ✅ re-apply using alias
+                            ->whereNull('ct.deleted_at')
 
                             ->whereIn('ct.package_id', $packages)
 
@@ -338,12 +339,14 @@ class CourseEmailOut extends Command
 
                             ->where('ct.is_free', 1)
 
+                            // ✅ exclude ONLY if user has an ACTIVE package_id=29
                             ->whereNotExists(function ($q) use ($today) {
                                 $q->select(DB::raw(1))
                                 ->from('courses_taken as ct2')
                                 ->whereColumn('ct2.user_id', 'ct.user_id')
                                 ->whereColumn('ct2.id', '!=', 'ct.id')
-                                ->whereNull('ct2.deleted_at') // ✅ ignore soft-deleted "other records" too
+                                ->whereNull('ct2.deleted_at')
+                                ->where('ct2.package_id', 29) // ✅ only check package 29
                                 ->where(function ($qq) use ($today) {
                                     $qq->whereNull('ct2.end_date')
                                         ->orWhereDate('ct2.end_date', '>', $today);
