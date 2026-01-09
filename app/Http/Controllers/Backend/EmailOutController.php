@@ -50,6 +50,7 @@ class EmailOutController extends Controller
         $data['send_to_learners_no_course'] = boolval($request->has('send_to_learners_no_course'));
         $data['send_to_learners_with_unpaid_pay_later'] = boolval($request->has('send_to_learners_with_unpaid_pay_later'));
         $data['include_former_learners'] = boolval($request->has('include_former_learners'));
+        $data['exclude_free_manuscript_learners'] = boolval($request->has('exclude_free_manuscript_learners'));
         $data['allowed_package'] = isset($request->allowed_package) ? json_encode($request->allowed_package) : null;
 
         if ($request->hasFile('attachment')) {
@@ -170,6 +171,7 @@ class EmailOutController extends Controller
         $data['send_to_learners_no_course'] = boolval($request->has('send_to_learners_no_course'));
         $data['send_to_learners_with_unpaid_pay_later'] = boolval($request->has('send_to_learners_with_unpaid_pay_later'));
         $data['include_former_learners'] = boolval($request->has('include_former_learners'));
+        $data['exclude_free_manuscript_learners'] = boolval($request->has('exclude_free_manuscript_learners'));
         $data['allowed_package'] = isset($request->allowed_package) ? json_encode($request->allowed_package) : null;
 
         if ($request->hasFile('attachment')) {
