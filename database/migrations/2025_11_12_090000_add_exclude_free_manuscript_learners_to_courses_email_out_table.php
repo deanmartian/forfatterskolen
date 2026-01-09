@@ -9,7 +9,7 @@ class AddExcludeFreeManuscriptLearnersToCoursesEmailOutTable extends Migration
     public function up()
     {
         Schema::table('courses_email_out', function (Blueprint $table) {
-            $table->boolean('exclude_free_manuscript_learners')->default(false);
+            $table->boolean('exclude_free_manuscript_learners')->default(false)->after('include_former_learners');
         });
     }
 
