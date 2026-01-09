@@ -153,6 +153,12 @@ class CourseEmailOut extends Command
                             }
                         });
 
+                        if ($emailOut->exclude_free_manuscript_learners) {
+                            $query->whereNotIn('email', function ($subquery) {
+                                $subquery->select('email')->from('free_manuscripts');
+                            });
+                        }
+
                         if ($emailOut->send_to_learners_with_unpaid_pay_later) {
                             $query->whereNotIn('id', $emailRecipients);
                         }
@@ -211,10 +217,24 @@ class CourseEmailOut extends Command
                 } else {
                     if ($emailOut->include_former_learners) {
                         $course = Course::find($emailOut->course_id);
-                        $coursesTaken = $course->learnersWithExpired->get();
+                        $coursesTakenQuery = $course->learnersWithExpired;
+                        if ($emailOut->exclude_free_manuscript_learners) {
+                            $coursesTakenQuery->whereHas('user', function ($query) {
+                                $query->whereNotIn('email', function ($subquery) {
+                                    $subquery->select('email')->from('free_manuscripts');
+                                });
+                            });
+                        }
+                        $coursesTaken = $coursesTakenQuery->get();
                     } else {
                         $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
-                        ->whereHas('user')
+                        ->whereHas('user', function ($query) use ($emailOut) {
+                            if ($emailOut->exclude_free_manuscript_learners) {
+                                $query->whereNotIn('email', function ($subquery) {
+                                    $subquery->select('email')->from('free_manuscripts');
+                                });
+                            }
+                        })
                         //->whereNull('renewed_at')
                         ->whereNotIn('user_id', $emailRecipients)
                         ->where('can_receive_email', 1)
@@ -390,6 +410,12 @@ class CourseEmailOut extends Command
                             }
                         });
 
+                        if ($emailOut->exclude_free_manuscript_learners) {
+                            $query->whereNotIn('email', function ($subquery) {
+                                $subquery->select('email')->from('free_manuscripts');
+                            });
+                        }
+
                         if ($emailOut->send_to_learners_with_unpaid_pay_later) {
                             $query->whereNotIn('id', $emailRecipients);
                         }
@@ -448,10 +474,24 @@ class CourseEmailOut extends Command
                 } else {
                     if ($emailOut->include_former_learners) {
                         $course = Course::find($emailOut->course_id);
-                        $coursesTaken = $course->learnersWithExpired->get();
+                        $coursesTakenQuery = $course->learnersWithExpired;
+                        if ($emailOut->exclude_free_manuscript_learners) {
+                            $coursesTakenQuery->whereHas('user', function ($query) {
+                                $query->whereNotIn('email', function ($subquery) {
+                                    $subquery->select('email')->from('free_manuscripts');
+                                });
+                            });
+                        }
+                        $coursesTaken = $coursesTakenQuery->get();
                     } else {
                         $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
-                        ->whereHas('user')
+                        ->whereHas('user', function ($query) use ($emailOut) {
+                            if ($emailOut->exclude_free_manuscript_learners) {
+                                $query->whereNotIn('email', function ($subquery) {
+                                    $subquery->select('email')->from('free_manuscripts');
+                                });
+                            }
+                        })
                         ->where(function ($query) use ($emailDate) {
                             $query->whereDate('started_at', '=', $emailDate);
                             $query->orWhereDate('start_date', '=', $emailDate);

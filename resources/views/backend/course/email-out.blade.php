@@ -165,6 +165,13 @@
                         </div>
 
                         <div class="form-group">
+                            <label>Do not send to learners with free manuscript</label> <br>
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes"
+                                   data-off="No"
+                                   name="exclude_free_manuscript_learners" data-width="84">
+                        </div>
+
+                        <div class="form-group">
                             <label>{{ trans('site.allowed-package') }}</label>
                             @foreach($course->packages as $package)
                                 <div class="form-check">
@@ -245,6 +252,7 @@
             });
 
             $("[name=for_free_course]").attr('checked', false);
+            emailModalForm.find('[name=exclude_free_manuscript_learners]').bootstrapToggle('off');
         });
 
         $(".sendEmailBtn").click(function(){
@@ -326,6 +334,13 @@
                }
 
                if (field === 'include_former_learners') {
+                    emailModalForm.find('[name='+field+']').bootstrapToggle('off');
+                if (value) {
+                    emailModalForm.find('[name='+field+']').bootstrapToggle('on');
+                }
+               }
+
+               if (field === 'exclude_free_manuscript_learners') {
                     emailModalForm.find('[name='+field+']').bootstrapToggle('off');
                 if (value) {
                     emailModalForm.find('[name='+field+']').bootstrapToggle('on');
