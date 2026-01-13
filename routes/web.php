@@ -1239,6 +1239,8 @@ Route::domain($admin)->group(function () {
         Route::post('/project/{id}/storage', [Backend\ProjectController::class, 'storage']);
         Route::get('/project/{id}/storage/{registration_id}/details', [Backend\ProjectController::class, 'storageDetails'])
             ->name('admin.project.storage-details');
+        Route::get('/project/{id}/storage/{registration_id}/royalties', [Backend\ProjectController::class, 'storageRoyalties'])
+            ->name('admin.project.storage-royalties');
         Route::post('/project/{id}/storage/save-book', [Backend\ProjectController::class, 'saveStorageBook'])->name('admin.project.storage.save-book');
         Route::delete('/project/{id}/storage/delete', [Backend\ProjectController::class, 'deleteStorageBook'])->name('admin.project.storage.delete-book');
         Route::post('project/{id}/storage/save-book-sales', [Backend\ProjectController::class, 'saveBookSales'])->name('admin.project.storage.save-book-sales');

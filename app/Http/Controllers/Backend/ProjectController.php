@@ -1510,6 +1510,24 @@ class ProjectController extends Controller
 
     public function storageDetails($projectId, $registration_id)
     {
+        $data = $this->storageDetailsData($projectId, $registration_id);
+
+        return view('backend.project.storage-details', $data);
+    }
+
+    public function storageRoyalties($projectId, $registration_id)
+    {
+        $data = $this->storageDetailsData($projectId, $registration_id);
+
+        $data['backRoute'] = AdminHelpers::isGiutbokPage()
+            ? route('g-admin.project.storage', $projectId)
+            : route('admin.project.storage-details', [$projectId, $registration_id]);
+
+        return view('backend.project.storage-royalties', $data);
+    }
+
+    private function storageDetailsData($projectId, $registration_id)
+    {
         $layout = 'backend.layout';
         $backRoute = route('admin.project.storage', $projectId);
         $saveBookRoute = 'admin.project.storage.save-book';
@@ -1794,14 +1812,14 @@ class ProjectController extends Controller
 
         $payouts = StoragePayout::where('project_registration_id', $registration_id)->get()->groupBy(['year', 'quarter']);
 
-        return view('backend.project.storage-details', compact('backRoute', 'layout', 'projectId', 'project',
+        return compact('backRoute', 'layout', 'projectId', 'project',
             'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData', 'saveBookRoute',
             'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
             'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'importBookSaleRoute', 'deleteBookSaleRoute',
             'centralISBNs', 'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories),
             'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns', 'totalBalance', 'inventoryTotal', 'quantitySold',
             'totalQuantitySold', 'storageCosts', 'registration_id', 'projectBookSales', 'paidDistributionYears', 'balanceCount',
-            'payouts'));
+            'payouts');
     }
 
     public function saveStorageBook($projectId, Request $request)
