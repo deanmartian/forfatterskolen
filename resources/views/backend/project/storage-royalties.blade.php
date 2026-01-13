@@ -15,6 +15,7 @@
     <div class="col-sm-12 margin-top">
         <div class="alert alert-info">
             Review quarterly book sales, storage costs, and royalty payouts for this author in one place.
+            Use the payout checkboxes to mark paid quarters and save them per year.
         </div>
 
         @if($projectUserBook)
@@ -56,7 +57,137 @@
                 </div>
             </div>
 
-            @include('backend.project.partials._storage_cost')
+            <div class="panel">
+                <div class="panel-header" style="padding: 10px">
+                    <em><b>Royalty Payouts</b></em>
+                </div>
+                <div class="panel-body table-users">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Q1</th>
+                                <th>Q2</th>
+                                <th>Q3</th>
+                                <th>Q4</th>
+                                <th>Sales</th>
+                                <th>Total Storage Cost</th>
+                                <th>Payout</th>
+                                <th>Payout Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($storageCosts as $storageCost)
+                                @php
+                                    $year = $storageCost['year'];
+                                    $payoutLogs = AdminHelpers::storagePayoutLogs($registration_id, $year);
+                                @endphp
+                                <tr>
+                                    <td>
+                                        {{ $storageCost['year'] }}
+                                    </td>
+                                    <td>
+                                        <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q1_sales']) }} <br>
+                                        <b>Storage Cost:</b> {{ FrontendHelpers::currencyFormat($storageCost['q1_distributions']) }} <br>
+                                        <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                                            ($storageCost['q1_sales'] - $storageCost['q1_distributions'])
+                                            ) }}
+                                    </td>
+                                    <td>
+                                        <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q2_sales']) }} <br>
+                                        <b>Storage Cost:</b> {{ FrontendHelpers::currencyFormat($storageCost['q2_distributions']) }} <br>
+                                        <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                                            ($storageCost['q2_sales'] - $storageCost['q2_distributions'])
+                                            ) }}
+                                    </td>
+                                    <td>
+                                        <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q3_sales']) }} <br>
+                                        <b>Storage Cost:</b> {{ FrontendHelpers::currencyFormat($storageCost['q3_distributions']) }} <br>
+                                        <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                                            ($storageCost['q3_sales'] - $storageCost['q3_distributions'])
+                                            ) }}
+                                    </td>
+                                    <td>
+                                        <b>Sales:</b> {{ FrontendHelpers::currencyFormat($storageCost['q4_sales']) }} <br>
+                                        <b>Storage Cost:</b> {{ FrontendHelpers::currencyFormat($storageCost['q4_distributions']) }} <br>
+                                        <b>Payout:</b> {{ FrontendHelpers::currencyFormat(
+                                            ($storageCost['q4_sales'] - $storageCost['q4_distributions'])
+                                            ) }}
+                                    </td>
+                                    <td>
+                                        {{ FrontendHelpers::currencyFormat($storageCost['total_sales']) }}
+                                    </td>
+                                    <td>
+                                        {{ FrontendHelpers::currencyFormat($storageCost['total_distributions']) }}
+                                    </td>
+                                    <td>
+                                        {{ FrontendHelpers::currencyFormat($storageCost['payout']) }}
+                                    </td>
+                                    <td>
+                                        <div class="payout-status" data-year="{{ $year }}">
+                                            @foreach([1, 2, 3, 4] as $q)
+                                                @php
+                                                    $payoutEntry = isset($payouts[$year][$q]) ? $payouts[$year][$q]->first() : null;
+                                                    $paid = $payoutEntry ? $payoutEntry->is_paid : false;
+                                                    $payoutId = $payoutEntry ? $payoutEntry->id : null;
+                                                @endphp
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox"
+                                                            class="quarter-toggle"
+                                                            data-quarter="{{ $q }}"
+                                                            data-payout-id="{{ $payoutId }}"
+                                                            {{ $paid ? 'checked' : '' }}>
+                                                        Q{{ $q }}
+                                                    </label>
+                                                    <input type="hidden" class="hidden-quarter"
+                                                        name="quarter_{{ $q }}" value="{{ $paid }}">
+                                                </div>
+                                            @endforeach
+                                            <button type="button"
+                                                class="btn btn-primary btn-xs payout-save-btn"
+                                                data-year="{{ $year }}">
+                                                Save payout status
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ route('admin.project.storage-cost.export',
+                                                [$project->id, $registration_id, $storageCost['year']]) }}"
+                                                class="btn btn-primary btn-xs">
+                                                Download PDF
+                                            </a>
+                                            <a href="{{ route('admin.project.storage-cost.export-excel',
+                                                [$project->id, $registration_id, $storageCost['year']]) }}"
+                                                class="btn btn-success btn-xs">
+                                                Download Excel
+                                            </a>
+                                            <button data-action="{{ route('admin.project.storage-cost.send',
+                                                [$project->id, $registration_id, $storageCost['year']]) }}"
+                                                data-toggle="modal"
+                                                data-target="#sendStorageCostModal"
+                                                class="btn btn-info btn-xs sendStorageCostBtn">
+                                                Send Email
+                                            </button>
+                                            @if ($payoutLogs->count())
+                                                <button class="btn btn-default btn-xs"
+                                                    data-toggle="modal"
+                                                    data-target="#payoutHistoryModal"
+                                                    data-record="{{ json_encode($payoutLogs) }}"
+                                                    onclick="payoutHistoryView(this)">
+                                                    View History
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         @else
             <div class="alert alert-warning">
                 No storage book record is available for this project registration yet.
@@ -145,6 +276,40 @@
 
 @section('scripts')
 <script>
+    const payoutStoreUrl = "{{ route('admin.quarterly-payouts.store') }}";
+    const payoutCsrf = "{{ csrf_token() }}";
+
+    $(".payout-save-btn").click(function () {
+        const $container = $(this).closest(".payout-status");
+        const year = $(this).data("year");
+
+        $container.find(".quarter-toggle").each(function () {
+            const $toggle = $(this);
+            const quarter = $toggle.data("quarter");
+            const payoutId = $toggle.data("payout-id");
+            const isPaid = $toggle.is(":checked") ? 1 : 0;
+
+            $.ajax({
+                type: "POST",
+                url: payoutStoreUrl,
+                headers: { "X-CSRF-TOKEN": payoutCsrf },
+                data: {
+                    id: payoutId,
+                    project_registration_id: "{{ $registration_id }}",
+                    year: year,
+                    quarter: quarter,
+                    is_paid: isPaid ? "on" : null
+                }
+            });
+        });
+    });
+
+    $(document).on("change", ".quarter-toggle", function () {
+        const $checkbox = $(this);
+        const $wrapper = $checkbox.closest(".checkbox");
+        $wrapper.find(".hidden-quarter").val($checkbox.is(":checked") ? "1" : "0");
+    });
+
     $(".sendStorageCostBtn").click(function () {
         let modal = $("#sendStorageCostModal");
         let action = $(this).data('action');
