@@ -289,6 +289,10 @@
             const payoutId = $toggle.data("payout-id");
             const isPaid = $toggle.is(":checked");
 
+            if (!isPaid && !payoutId) {
+                return;
+            }
+
             const payload = {
                 id: payoutId,
                 project_registration_id: "{{ $registration_id }}",
