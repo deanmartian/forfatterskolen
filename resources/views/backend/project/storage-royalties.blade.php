@@ -287,19 +287,24 @@
             const $toggle = $(this);
             const quarter = $toggle.data("quarter");
             const payoutId = $toggle.data("payout-id");
-            const isPaid = $toggle.is(":checked") ? 1 : 0;
+            const isPaid = $toggle.is(":checked");
+
+            const payload = {
+                id: payoutId,
+                project_registration_id: "{{ $registration_id }}",
+                year: year,
+                quarter: quarter
+            };
+
+            if (isPaid) {
+                payload.is_paid = "on";
+            }
 
             $.ajax({
                 type: "POST",
                 url: payoutStoreUrl,
                 headers: { "X-CSRF-TOKEN": payoutCsrf },
-                data: {
-                    id: payoutId,
-                    project_registration_id: "{{ $registration_id }}",
-                    year: year,
-                    quarter: quarter,
-                    is_paid: isPaid ? "on" : null
-                }
+                data: payload
             });
         });
     });
