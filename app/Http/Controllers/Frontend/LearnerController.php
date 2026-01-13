@@ -998,7 +998,7 @@ class LearnerController extends Controller
                 $allowedPackage = json_decode($assignment->allowed_package, true);
 
                 if (is_null($allowedPackage) || in_array($courseTaken->package_id, (array) $allowedPackage)) {
-                    $submissionDate = Carbon::parse($assignment->submission_date, $timezone)->startOfDay();
+                    $submissionDate = Carbon::parse((int) $assignment->submission_date, $timezone)->startOfDay();
 
                     $events->push([
                         'id'    => $assignment->course->id,
