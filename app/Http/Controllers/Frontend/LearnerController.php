@@ -593,7 +593,8 @@ class LearnerController extends Controller
             ->leftJoin('lessons', 'lesson_contents.lesson_id', '=', 'lessons.id')
             ->leftJoin('courses', 'lessons.course_id', '=', 'courses.id')
             ->where('courses.id', '=', 17)
-            ->whereIn('courses.id', $courses);
+            ->whereIn('courses.id', $courses)
+            ->whereYear('date', now()->year);
 
         if ($request->exists('search_replay')) {
             $replayWebinars = $replayWebinars->where(function ($query) use ($request) {
