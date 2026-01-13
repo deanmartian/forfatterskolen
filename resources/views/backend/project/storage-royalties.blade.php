@@ -59,6 +59,56 @@
 
             <div class="panel">
                 <div class="panel-header" style="padding: 10px">
+                    <em><b>Payout Overview</b></em>
+                </div>
+                <div class="panel-body table-users">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Paid Quarters</th>
+                                <th>Unpaid Quarters</th>
+                                <th>Total Payout</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($storageCosts as $storageCost)
+                                @php
+                                    $year = $storageCost['year'];
+                                    $paidQuarters = [];
+                                    $unpaidQuarters = [];
+
+                                    foreach ([1, 2, 3, 4] as $q) {
+                                        $payoutEntry = isset($payouts[$year][$q]) ? $payouts[$year][$q]->first() : null;
+                                        if ($payoutEntry && $payoutEntry->is_paid) {
+                                            $paidQuarters[] = "Q{$q}";
+                                        } else {
+                                            $unpaidQuarters[] = "Q{$q}";
+                                        }
+                                    }
+                                @endphp
+                                <tr>
+                                    <td>{{ $year }}</td>
+                                    <td>{{ $paidQuarters ? implode(', ', $paidQuarters) : '-' }}</td>
+                                    <td>{{ $unpaidQuarters ? implode(', ', $unpaidQuarters) : '-' }}</td>
+                                    <td>{{ FrontendHelpers::currencyFormat($storageCost['payout']) }}</td>
+                                    <td>
+                                        @if (count($unpaidQuarters) === 0)
+                                            <span class="label label-success">All paid</span>
+                                        @else
+                                            <span class="label label-warning">Pending</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header" style="padding: 10px">
                     <em><b>Royalty Payouts</b></em>
                 </div>
                 <div class="panel-body table-users">
