@@ -5057,7 +5057,7 @@ class LearnerController extends Controller
                 }
 
                 if ($word_count > $assignment_max_words && $assignment->check_max_words) {
-                    return redirect()->back()->with(['errorMaxWord' => true, 'editorMaxWord' => $assignmentManuscript->assignment->max_words]);
+                    return redirect()->back()->with(['errorMaxWord' => true, 'editorMaxWord' => $assignment_max_words]);
                 }
 
                 $assignmentManuscript->filename = '/'.$fileName;
