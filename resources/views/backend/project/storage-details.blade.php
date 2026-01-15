@@ -25,7 +25,7 @@
         <a href="{{ $backRoute }}" class="btn btn-default">
             <i class="fa fa-arrow-left"></i> Back
         </a>
-        <a href="{{ route('admin.project.storage-royalties', [$projectId, $registration_id]) }}" class="btn btn-primary">
+        <a href="{{ route('admin.royalties.index') }}" class="btn btn-primary">
             <i class="fa fa-line-chart"></i> Royalty Payouts
         </a>
         <h3><i class="fa fa-file-text-o"></i> Storage Details</h3>

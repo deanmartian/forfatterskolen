@@ -1274,6 +1274,9 @@ Route::domain($admin)->group(function () {
         Route::get('/project/{id}/print', [Backend\ProjectController::class, 'print'])->name('admin.project.print');
         Route::post('/project/{id}/print/save', [Backend\ProjectController::class, 'savePrint'])->name('admin.project.save-print');
         Route::get('/project/{id}/notes', [Backend\ProjectController::class, 'showNotes'])->name('admin.project.notes');
+        Route::get('/royalties', [Backend\RoyaltyController::class, 'index'])->name('admin.royalties.index');
+        Route::get('/royalties/{user}', [Backend\RoyaltyController::class, 'show'])->name('admin.royalties.show');
+        Route::post('/royalties/{user}/payout', [Backend\RoyaltyController::class, 'storePayout'])->name('admin.royalties.payout');
         Route::get('/project', [Backend\ProjectController::class, 'index'])->name('admin.project.index');
         Route::post('/project/save', [Backend\ProjectController::class, 'saveProject']);
         Route::get('/project/{id}', [Backend\ProjectController::class, 'show'])->name('admin.project.show');
