@@ -28,6 +28,10 @@
             Storage Books
         </a>
 
+        <a href="/admin/royalty/authors" class="btn btn-sm btn-success margin-top">
+            Author Royalties
+        </a>
+
         <div class="form-group margin-top" style="width: 100px">
             <label>Filter</label>
             <select name="filter" class="form-control" v-model="filter">
