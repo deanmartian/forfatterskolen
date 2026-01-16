@@ -34,6 +34,9 @@
 
     <div class="page-toolbar">
         <h3><i class="fa fa-file-text-o"></i> Projects</h3>
+        <a href="{{ route('admin.royalty.authors.index') }}" class="btn btn-primary pull-right">
+            <i class="fa fa-money"></i> Author Royalties
+        </a>
         <div class="clearfix"></div>
     </div>
 
