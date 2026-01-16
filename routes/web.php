@@ -28,6 +28,12 @@ if (config('app.app_site') == 'no') {
 $locale = App::getLocale();
 App::setLocale($locale);
 
+Route::get('/sitemap.xml', function () {
+    return response()->file(public_path('sitemap.xml'), [
+        'Content-Type' => 'application/xml',
+    ]);
+});
+
 /**
  * Front End Routes
  */
