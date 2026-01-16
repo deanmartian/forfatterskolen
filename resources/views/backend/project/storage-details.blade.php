@@ -25,9 +25,6 @@
         <a href="{{ $backRoute }}" class="btn btn-default">
             <i class="fa fa-arrow-left"></i> Back
         </a>
-        <a href="{{ route('admin.royalty.authors.index') }}" class="btn btn-primary">
-            <i class="fa fa-money"></i> Author Royalties
-        </a>
         <h3><i class="fa fa-file-text-o"></i> Storage Details</h3>
     </div>
     <div class="col-sm-12 margin-top">
