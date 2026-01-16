@@ -28,7 +28,7 @@
             Storage Books
         </a>
 
-        <a href="/admin/royalty/authors" class="btn btn-sm btn-success margin-top">
+        <a href="/royalty/authors" class="btn btn-sm btn-success margin-top">
             Author Royalties
         </a>
 
