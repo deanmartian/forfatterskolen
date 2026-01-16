@@ -15,7 +15,7 @@ class RoyaltyController extends Controller
         $currentYear = now()->year;
 
         $validated = $request->validate([
-            'year' => 'required|integer|min:2000|max:'.($currentYear + 1),
+            'year' => 'nullable|integer|min:2000|max:'.($currentYear + 1),
             'quarter' => 'nullable|integer|min:1|max:4',
             'status' => 'nullable|in:payable,paid,negative,no-sales',
             'search' => 'nullable|string',
@@ -60,7 +60,7 @@ class RoyaltyController extends Controller
         $currentYear = now()->year;
 
         $validated = $request->validate([
-            'year' => 'required|integer|min:2000|max:'.($currentYear + 1),
+            'year' => 'nullable|integer|min:2000|max:'.($currentYear + 1),
             'quarter' => 'nullable|integer|min:1|max:4',
         ]);
 
