@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Http\Controllers\Backend;
+
+use App\Http\Controllers\Controller;
+use App\Services\RoyaltyService;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\View\View;
+
+class RoyaltyController extends Controller
+{
+    public function index(Request $request, RoyaltyService $royaltyService): View
+    {
+        $currentYear = now()->year;
+
+        $validated = $request->validate([
+            'year' => 'nullable|integer|min:2000|max:'.($currentYear + 1),
+            'quarter' => 'nullable|integer|min:1|max:4',
+            'status' => 'nullable|in:payable,paid,negative,no-sales',
+            'search' => 'nullable|string',
+        ]);
+
+        $year = (int) ($validated['year'] ?? $currentYear);
+        $quarter = isset($validated['quarter']) ? (int) $validated['quarter'] : null;
+        $status = $validated['status'] ?? null;
+        $search = $validated['search'] ?? null;
+
+        $authors = $royaltyService->getAuthorSummary($year, $quarter, $status, $search);
+
+        $perPage = 25;
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $paginatedAuthors = new LengthAwarePaginator(
+            $authors->forPage($page, $perPage)->values(),
+            $authors->count(),
+            $perPage,
+            $page,
+            [
+                'path' => LengthAwarePaginator::resolveCurrentPath(),
+                'query' => $request->query(),
+            ]
+        );
+
+        $years = range(2024, $currentYear);
+        $quarters = [1, 2, 3, 4];
+
+        return view('backend.royalty.authors.index', [
+            'authors' => $paginatedAuthors,
+            'year' => $year,
+            'quarter' => $quarter,
+            'status' => $status,
+            'search' => $search,
+            'years' => $years,
+            'quarters' => $quarters,
+        ]);
+    }
+
+    public function show(Request $request, int $userId, RoyaltyService $royaltyService): View
+    {
+        $currentYear = now()->year;
+
+        $validated = $request->validate([
+            'year' => 'nullable|integer|min:2000|max:'.($currentYear + 1),
+            'quarter' => 'nullable|integer|min:1|max:4',
+        ]);
+
+        $year = (int) ($validated['year'] ?? $currentYear);
+        $quarter = isset($validated['quarter']) ? (int) $validated['quarter'] : null;
+
+        $details = $royaltyService->getAuthorDetails($userId, $year, $quarter);
+        $years = range(2024, $currentYear);
+        $quarters = [1, 2, 3, 4];
+
+        return view('backend.royalty.authors.show', [
+            'author' => $details['user'],
+            'registrations' => $details['registrations'],
+            'totals' => $details['totals'],
+            'year' => $year,
+            'quarter' => $quarter,
+            'years' => $years,
+            'quarters' => $quarters,
+        ]);
+    }
+}
