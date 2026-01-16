@@ -21,6 +21,6 @@ class StorageDistributionCost extends Model
 
     public function getLearnerAmountAttribute()
     {
-        return $this->attributes['amount'] * 1.2;
+        return $this->attributes['amount'] * config('royalties.storage_distribution_multiplier');
     }
 }

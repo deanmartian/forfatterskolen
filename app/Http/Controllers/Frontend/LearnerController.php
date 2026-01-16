@@ -2572,6 +2572,7 @@ class LearnerController extends Controller
                 ->where('project_id', $standardProject->id)->first();
 
             $projectUserBook = ProjectRegistration::find($registration->id);
+            $distributionMultiplier = config('royalties.storage_distribution_multiplier');
 
             $startYear = 2024; // Change if needed
             $currentYear = Carbon::now()->year;
@@ -2611,7 +2612,7 @@ class LearnerController extends Controller
                 ->groupBy('year'); // Store results by year for easy lookup
 
             // Merge Data for Year and Quarter
-            $storageCosts = collect($years)->map(function ($year) use ($salesData, $distributionsData, $quarters, $selectedQuarters) {
+            $storageCosts = collect($years)->map(function ($year) use ($salesData, $distributionsData, $quarters, $selectedQuarters, $distributionMultiplier) {
                 // $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
                 $allSales = [];
                 $allDistributions = [];
@@ -2622,7 +2623,7 @@ class LearnerController extends Controller
                         : 0;
 
                     $distribution = isset($distributionsData[$year])
-                        ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
+                        ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * $distributionMultiplier
                         : 0;
 
                     $allSales[$quarter] = $sales;
@@ -2671,6 +2672,7 @@ class LearnerController extends Controller
     {
         $quarters = [1, 2, 3, 4];
         $selectedQuarters = [1, 2, 3, 4];
+        $distributionMultiplier = config('royalties.storage_distribution_multiplier');
 
         $projectBook = ProjectBook::where('project_id', $project_id)->first();
         $bookName = $projectBook?->book_name;
@@ -2703,7 +2705,7 @@ class LearnerController extends Controller
             ->groupBy('year');
 
         // Process data
-        $data = collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters, $selectedQuarters) {
+        $data = collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters, $selectedQuarters, $distributionMultiplier) {
             // $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
             $allSales = [];
             $allDistributions = [];
@@ -2714,7 +2716,7 @@ class LearnerController extends Controller
                     : 0;
 
                 $distribution = isset($distributionsData[$year])
-                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
+                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * $distributionMultiplier
                     : 0;
 
                 $allSales[$quarter] = $sales;

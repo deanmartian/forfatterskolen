@@ -1287,6 +1287,9 @@ Route::domain($admin)->group(function () {
 
         Route::get('/storage-books', [Backend\StorageBookController::class, 'index'])->name('admin.storage-books.index');
 
+        Route::get('/royalty/authors', [Backend\RoyaltyController::class, 'index'])->name('admin.royalty.authors.index');
+        Route::get('/royalty/authors/{user_id}', [Backend\RoyaltyController::class, 'show'])->name('admin.royalty.authors.show');
+
         Route::post('generate_assignment_group/{id}', [Backend\AssignmentController::class, 'generateGroup'])->name('assignment.generate_assignment_group');
         Route::post('assignment/{id}/uploadManuscript', [Backend\AssignmentController::class, 'uploadManuscript'])->name('assignment.group.upload_manuscript');
         Route::post('assignment/{id}/add-on-for-learner', [Backend\AssignmentController::class, 'addOnForLearner'])->name('assignment.add-on-for-learner');

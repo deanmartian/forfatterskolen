@@ -1706,6 +1706,7 @@ class ProjectController extends Controller
         $currentYear = Carbon::now()->year;
         $years = range($startYear, $currentYear);
         $quarters = [1, 2, 3, 4]; // Define quarters
+        $distributionMultiplier = config('royalties.storage_distribution_multiplier');
 
         // Get Total Sales by Year and Quarter
         $salesData = DB::table('project_books as books')
@@ -1740,7 +1741,7 @@ class ProjectController extends Controller
             ->groupBy('year'); // Store results by year for easy lookup
 
         // Merge Data for Year and Quarter
-        $storageCosts = collect($years)->map(function ($year) use ($salesData, $distributionsData, $quarters) {
+        $storageCosts = collect($years)->map(function ($year) use ($salesData, $distributionsData, $quarters, $distributionMultiplier) {
             // $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
             $distributions = [];
             $quarterSales = [];
@@ -1748,7 +1749,7 @@ class ProjectController extends Controller
             // Initialize distribution values for all quarters
             foreach ($quarters as $quarter) {
                 $distributions[$quarter] = isset($distributionsData[$year])
-                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
+                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * $distributionMultiplier
                     : 0;
                 $quarterSales[$quarter] = isset($salesData[$year])
                     ? (collect($salesData[$year])->firstWhere('quarter', $quarter)->total_sales ?? 0)
@@ -2185,6 +2186,7 @@ class ProjectController extends Controller
     private function exportStorageCostData($project_id, $registration_id, $selectedYear)
     {
         $quarters = [1, 2, 3, 4];
+        $distributionMultiplier = config('royalties.storage_distribution_multiplier');
 
         // Fetch sales data
         $salesData = DB::table('project_books as books')
@@ -2211,13 +2213,13 @@ class ProjectController extends Controller
             ->groupBy('year');
 
         // Process data
-        return collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters) {
+        return collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters, $distributionMultiplier) {
             $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
             $distributions = [];
 
             foreach ($quarters as $quarter) {
                 $distributions[$quarter] = isset($distributionsData[$year])
-                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
+                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * $distributionMultiplier
                     : 0;
             }
 
@@ -2237,6 +2239,7 @@ class ProjectController extends Controller
     private function exportStorageCostWithSales($project_id, $registration_id, $selectedYear, $selectedQuarters = [1, 2, 3, 4])
     {
         $quarters = [1, 2, 3, 4];
+        $distributionMultiplier = config('royalties.storage_distribution_multiplier');
 
         // Fetch sales data
         $salesData = DB::table('project_books as books')
@@ -2266,7 +2269,7 @@ class ProjectController extends Controller
             ->groupBy('year');
 
         // Process data
-        return collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters, $selectedQuarters) {
+        return collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters, $selectedQuarters, $distributionMultiplier) {
             // $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
             $allSales = [];
             $allDistributions = [];
@@ -2277,7 +2280,7 @@ class ProjectController extends Controller
                     : 0;
 
                 $distribution = isset($distributionsData[$year])
-                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * 1.2
+                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0) * $distributionMultiplier
                     : 0;
 
                 $allSales[$quarter] = $sales;
