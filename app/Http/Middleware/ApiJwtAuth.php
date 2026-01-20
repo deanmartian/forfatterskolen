@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\User;
 use Closure;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,7 +25,7 @@ class ApiJwtAuth
         }
 
         try {
-            $payload = JWT::decode($token, config('services.jwt.secret'), ['HS256']);
+            $payload = JWT::decode($token, new Key(config('services.jwt.secret'), 'HS256'));
         } catch (\Exception $exception) {
             return response()->json([
                 'error' => [
