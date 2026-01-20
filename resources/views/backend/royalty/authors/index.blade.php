@@ -75,11 +75,16 @@
                 <button type="submit" class="btn btn-success" id="mark-paid-button">
                     Mark as paid
                 </button>
-                @if (! $quarter)
-                    <span class="text-muted" style="margin-left: 10px;">
-                        Select a quarter to enable payouts.
-                    </span>
-                @endif
+                <div class="form-group" style="margin-left: 10px;">
+                    <label for="payout-scope">Payout period</label>
+                    <select name="payout_scope" id="payout-scope" class="form-control">
+                        <option value="quarter" selected>Quarter</option>
+                        <option value="year">Full year</option>
+                    </select>
+                </div>
+                <span class="text-muted" id="mark-paid-hint" style="margin-left: 10px;">
+                    Select a quarter to enable payouts.
+                </span>
             </div>
 
             <div class="table-responsive">
@@ -152,6 +157,8 @@
             var button = document.getElementById('mark-paid-button');
             var quarterInput = document.getElementById('mark-paid-quarter');
             var noteInput = document.getElementById('mark-paid-note');
+            var payoutScopeInput = document.getElementById('payout-scope');
+            var hint = document.getElementById('mark-paid-hint');
 
             function selectedCount() {
                 return document.querySelectorAll('.author-select:checked').length;
@@ -161,7 +168,12 @@
                 if (!button) {
                     return;
                 }
-                button.disabled = !quarterInput.value || selectedCount() === 0;
+                var requiresQuarter = payoutScopeInput && payoutScopeInput.value === 'quarter';
+                var missingQuarter = requiresQuarter && !quarterInput.value;
+                button.disabled = missingQuarter || selectedCount() === 0;
+                if (hint) {
+                    hint.style.display = missingQuarter ? 'inline' : 'none';
+                }
             }
 
             if (selectAll) {
@@ -177,9 +189,14 @@
                 checkbox.addEventListener('change', toggleButton);
             });
 
+            if (payoutScopeInput) {
+                payoutScopeInput.addEventListener('change', toggleButton);
+            }
+
             if (form) {
                 form.addEventListener('submit', function (event) {
-                    if (!quarterInput.value) {
+                    var requiresQuarter = payoutScopeInput && payoutScopeInput.value === 'quarter';
+                    if (requiresQuarter && !quarterInput.value) {
                         event.preventDefault();
                         alert('Select a quarter before marking payouts as paid.');
                         return;
