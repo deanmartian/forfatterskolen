@@ -89,14 +89,16 @@ class RoyaltyController extends Controller
 
         $validated = $request->validate([
             'year' => 'required|integer|min:2000|max:'.($currentYear + 1),
-            'quarter' => 'required|integer|min:1|max:4',
+            'quarter' => 'nullable|required_if:payout_scope,quarter|integer|min:1|max:4',
+            'payout_scope' => 'required|in:quarter,year',
             'author_ids' => 'required|array',
             'author_ids.*' => 'integer',
             'note' => 'nullable|string|max:500',
         ]);
 
         $year = (int) $validated['year'];
-        $quarter = (int) $validated['quarter'];
+        $quarter = isset($validated['quarter']) ? (int) $validated['quarter'] : null;
+        $payoutScope = $validated['payout_scope'];
         $note = $validated['note'] ?? null;
         $paidByUserId = (int) $request->user()->id;
 
@@ -106,29 +108,34 @@ class RoyaltyController extends Controller
         $notPayable = 0;
         $total = 0.0;
 
+        $quarters = $payoutScope === 'year' ? [1, 2, 3, 4] : [$quarter];
+
         foreach ($validated['author_ids'] as $authorId) {
-            $result = $royaltyService->createOrUpdateAuthorPayout(
-                (int) $authorId,
-                $year,
-                $quarter,
-                $note,
-                $paidByUserId
-            );
+            foreach ($quarters as $quarterValue) {
+                $result = $royaltyService->createOrUpdateAuthorPayout(
+                    (int) $authorId,
+                    $year,
+                    $quarterValue,
+                    $note,
+                    $paidByUserId
+                );
 
-            $total += $result['total'];
+                $total += $result['total'];
 
-            if ($result['status'] === 'created') {
-                $created++;
-            } elseif ($result['status'] === 'updated') {
-                $updated++;
-            } elseif ($result['status'] === 'not_payable') {
-                $notPayable++;
-            } else {
-                $alreadyPaid++;
+                if ($result['status'] === 'created') {
+                    $created++;
+                } elseif ($result['status'] === 'updated') {
+                    $updated++;
+                } elseif ($result['status'] === 'not_payable') {
+                    $notPayable++;
+                } else {
+                    $alreadyPaid++;
+                }
             }
         }
 
-        $message = 'Author payouts processed. '
+        $periodLabel = $payoutScope === 'year' ? 'full year' : 'Q'.$quarter;
+        $message = 'Author payouts processed for '.$year.' '.$periodLabel.'. '
             .'Created: '.$created.'. Updated: '.$updated.'. Already paid: '.$alreadyPaid.'. '
             .'Not payable (zero/negative): '.$notPayable.'. '
             .'Total payout: '.number_format($total, 2);
@@ -138,11 +145,16 @@ class RoyaltyController extends Controller
         }
         session()->flash('message.content', $message);
 
-        return redirect()->route('admin.royalty.authors.index', [
+        $redirectParams = [
             'year' => $year,
-            'quarter' => $quarter,
             'status' => $request->input('status'),
             'search' => $request->input('search'),
-        ]);
+        ];
+
+        if ($payoutScope !== 'year' && $quarter) {
+            $redirectParams['quarter'] = $quarter;
+        }
+
+        return redirect()->route('admin.royalty.authors.index', $redirectParams);
     }
 }
