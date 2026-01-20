@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('author_payouts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedInteger('user_id');
             $table->integer('year');
             $table->tinyInteger('quarter');
             $table->decimal('amount_total', 10, 2)->default(0);
             $table->timestamp('paid_at')->nullable();
-            $table->unsignedBigInteger('paid_by_user_id')->nullable();
+            $table->unsignedInteger('paid_by_user_id')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
 
