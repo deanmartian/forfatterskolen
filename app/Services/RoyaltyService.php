@@ -221,14 +221,6 @@ class RoyaltyService
             $computed = $this->computeAuthorPayout($userId, $year, $quarter);
             $amountTotal = round($computed['total'], 2);
 
-            if ($amountTotal <= 0.0) {
-                return [
-                    'status' => 'not_payable',
-                    'payout' => $payout,
-                    'total' => $amountTotal,
-                ];
-            }
-
             if (! $payout) {
                 $payout = AuthorPayout::create([
                     'user_id' => $userId,
@@ -484,7 +476,7 @@ class RoyaltyService
         }
 
         if (empty($activityQuarters)) {
-            return false;
+            return ! empty($paidByAuthorQuarter[$userId]);
         }
 
         foreach ($activityQuarters as $activityQuarter) {
@@ -498,16 +490,16 @@ class RoyaltyService
 
     private function authorStatus(float $sales, float $costs, float $net, bool $paid): string
     {
+        if ($paid) {
+            return 'paid';
+        }
+
         if ($sales == 0.0 && $costs == 0.0) {
             return 'no-sales';
         }
 
         if ($net < 0.0) {
             return 'negative';
-        }
-
-        if ($paid) {
-            return 'paid';
         }
 
         return 'payable';
