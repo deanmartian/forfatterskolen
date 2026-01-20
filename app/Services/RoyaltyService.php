@@ -221,6 +221,14 @@ class RoyaltyService
             $computed = $this->computeAuthorPayout($userId, $year, $quarter);
             $amountTotal = round($computed['total'], 2);
 
+            if ($amountTotal <= 0.0) {
+                return [
+                    'status' => 'not_payable',
+                    'payout' => $payout,
+                    'total' => $amountTotal,
+                ];
+            }
+
             if (! $payout) {
                 $payout = AuthorPayout::create([
                     'user_id' => $userId,

@@ -11,7 +11,10 @@
 
     <div class="col-md-12 margin-top">
         @if ($flash = session('message.content'))
-            <div class="alert alert-success">
+            @php
+                $alertType = session('alert_type', 'success');
+            @endphp
+            <div class="alert alert-{{ $alertType }}">
                 {{ $flash }}
             </div>
         @endif

@@ -18,6 +18,9 @@ The payout ledger totals are computed using the same royalty logic as Phase 1:
 2. **Prevent duplicates**
    - Repeat **Mark as paid** for the same author/year/quarter.
    - Verify the UI reports **Already paid** and no duplicate payout rows are created.
-3. **Totals match Phase 1**
+3. **Negative/zero handling**
+   - Attempt to mark an author with zero or negative net payout as paid.
+   - Verify the action is blocked and the summary shows **Not payable (zero/negative)**.
+4. **Totals match Phase 1**
    - Compare the stored `author_payouts.amount_total` with the **Net Payout** shown in the Phase 1 author details view for the same year/quarter.
    - Confirm each `author_payout_items.amount` equals the per-registration net shown in the details list.

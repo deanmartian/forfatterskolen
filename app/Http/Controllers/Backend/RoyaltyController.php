@@ -103,6 +103,7 @@ class RoyaltyController extends Controller
         $created = 0;
         $updated = 0;
         $alreadyPaid = 0;
+        $notPayable = 0;
         $total = 0.0;
 
         foreach ($validated['author_ids'] as $authorId) {
@@ -120,6 +121,8 @@ class RoyaltyController extends Controller
                 $created++;
             } elseif ($result['status'] === 'updated') {
                 $updated++;
+            } elseif ($result['status'] === 'not_payable') {
+                $notPayable++;
             } else {
                 $alreadyPaid++;
             }
@@ -127,8 +130,12 @@ class RoyaltyController extends Controller
 
         $message = 'Author payouts processed. '
             .'Created: '.$created.'. Updated: '.$updated.'. Already paid: '.$alreadyPaid.'. '
+            .'Not payable (zero/negative): '.$notPayable.'. '
             .'Total payout: '.number_format($total, 2);
 
+        if ($notPayable > 0) {
+            session()->flash('alert_type', 'danger');
+        }
         session()->flash('message.content', $message);
 
         return redirect()->route('admin.royalty.authors.index', [
