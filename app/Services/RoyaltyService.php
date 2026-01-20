@@ -490,16 +490,16 @@ class RoyaltyService
 
     private function authorStatus(float $sales, float $costs, float $net, bool $paid): string
     {
+        if ($paid) {
+            return 'paid';
+        }
+
         if ($sales == 0.0 && $costs == 0.0) {
             return 'no-sales';
         }
 
         if ($net < 0.0) {
             return 'negative';
-        }
-
-        if ($paid) {
-            return 'paid';
         }
 
         return 'payable';

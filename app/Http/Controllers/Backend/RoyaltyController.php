@@ -105,7 +105,6 @@ class RoyaltyController extends Controller
         $created = 0;
         $updated = 0;
         $alreadyPaid = 0;
-        $notPayable = 0;
         $total = 0.0;
 
         $quarters = $payoutScope === 'year' ? [1, 2, 3, 4] : [$quarter];
@@ -126,8 +125,6 @@ class RoyaltyController extends Controller
                     $created++;
                 } elseif ($result['status'] === 'updated') {
                     $updated++;
-                } elseif ($result['status'] === 'not_payable') {
-                    $notPayable++;
                 } else {
                     $alreadyPaid++;
                 }
@@ -137,12 +134,8 @@ class RoyaltyController extends Controller
         $periodLabel = $payoutScope === 'year' ? 'full year' : 'Q'.$quarter;
         $message = 'Author payouts processed for '.$year.' '.$periodLabel.'. '
             .'Created: '.$created.'. Updated: '.$updated.'. Already paid: '.$alreadyPaid.'. '
-            .'Not payable (zero/negative): '.$notPayable.'. '
             .'Total payout: '.number_format($total, 2);
 
-        if ($notPayable > 0) {
-            session()->flash('alert_type', 'danger');
-        }
         session()->flash('message.content', $message);
 
         $redirectParams = [
