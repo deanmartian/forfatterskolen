@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\RoyaltyService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class RoyaltyController extends Controller
@@ -79,6 +80,69 @@ class RoyaltyController extends Controller
             'quarter' => $quarter,
             'years' => $years,
             'quarters' => $quarters,
+        ]);
+    }
+
+    public function markPaid(Request $request, RoyaltyService $royaltyService): RedirectResponse
+    {
+        $currentYear = now()->year;
+
+        $validated = $request->validate([
+            'year' => 'required|integer|min:2000|max:'.($currentYear + 1),
+            'quarter' => 'required|integer|min:1|max:4',
+            'author_ids' => 'required|array',
+            'author_ids.*' => 'integer',
+            'note' => 'nullable|string|max:500',
+        ]);
+
+        $year = (int) $validated['year'];
+        $quarter = (int) $validated['quarter'];
+        $note = $validated['note'] ?? null;
+        $paidByUserId = (int) $request->user()->id;
+
+        $created = 0;
+        $updated = 0;
+        $alreadyPaid = 0;
+        $notPayable = 0;
+        $total = 0.0;
+
+        foreach ($validated['author_ids'] as $authorId) {
+            $result = $royaltyService->createOrUpdateAuthorPayout(
+                (int) $authorId,
+                $year,
+                $quarter,
+                $note,
+                $paidByUserId
+            );
+
+            $total += $result['total'];
+
+            if ($result['status'] === 'created') {
+                $created++;
+            } elseif ($result['status'] === 'updated') {
+                $updated++;
+            } elseif ($result['status'] === 'not_payable') {
+                $notPayable++;
+            } else {
+                $alreadyPaid++;
+            }
+        }
+
+        $message = 'Author payouts processed. '
+            .'Created: '.$created.'. Updated: '.$updated.'. Already paid: '.$alreadyPaid.'. '
+            .'Not payable (zero/negative): '.$notPayable.'. '
+            .'Total payout: '.number_format($total, 2);
+
+        if ($notPayable > 0) {
+            session()->flash('alert_type', 'danger');
+        }
+        session()->flash('message.content', $message);
+
+        return redirect()->route('admin.royalty.authors.index', [
+            'year' => $year,
+            'quarter' => $quarter,
+            'status' => $request->input('status'),
+            'search' => $request->input('search'),
         ]);
     }
 }
