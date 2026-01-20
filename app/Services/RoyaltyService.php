@@ -18,8 +18,13 @@ class RoyaltyService
         $authors = collect();
         $quarters = $this->quartersForPeriod($quarter);
 
+        $salesByProjectId = [];
+
         foreach ($data['registrations'] as $registration) {
             $salesTotals = $this->sumSalesForProject($data['salesByProjectQuarter'], $registration->project_id, $quarters);
+            if (($salesByProjectId[$registration->project_id] ?? false) === true) {
+                $salesTotals = 0.0;
+            }
             $costsTotals = $this->sumCostsForRegistration($data['costsByRegistrationQuarter'], $registration->project_registration_id, $quarters);
             $net = $salesTotals - $costsTotals;
 
@@ -65,6 +70,8 @@ class RoyaltyService
                 'quarters_with_activity' => $quartersWithActivity,
                 'paid' => $isPaid,
             ];
+            $salesByProjectId[$registration->project_id] = true;
+
             $author['activity_quarters'] = array_values(array_unique(array_merge(
                 $author['activity_quarters'],
                 $quartersWithActivity
@@ -98,8 +105,13 @@ class RoyaltyService
         $data = $this->buildRoyaltyData($year, $quarter, null, $userId);
         $quarters = $this->quartersForPeriod($quarter);
 
-        $registrations = $data['registrations']->map(function ($registration) use ($data, $quarters) {
+        $salesByProjectId = [];
+
+        $registrations = $data['registrations']->map(function ($registration) use ($data, $quarters, &$salesByProjectId) {
             $salesTotals = $this->sumSalesForProject($data['salesByProjectQuarter'], $registration->project_id, $quarters);
+            if (($salesByProjectId[$registration->project_id] ?? false) === true) {
+                $salesTotals = 0.0;
+            }
             $costsTotals = $this->sumCostsForRegistration($data['costsByRegistrationQuarter'], $registration->project_registration_id, $quarters);
             $net = $salesTotals - $costsTotals;
             $quartersWithActivity = $this->quartersWithActivity(
@@ -109,6 +121,8 @@ class RoyaltyService
                 $registration->project_registration_id,
                 $quarters
             );
+
+            $salesByProjectId[$registration->project_id] = true;
 
             return [
                 'project_registration_id' => $registration->project_registration_id,
@@ -147,8 +161,13 @@ class RoyaltyService
         $items = [];
         $total = 0.0;
 
+        $salesByProjectId = [];
+
         foreach ($data['registrations'] as $registration) {
             $salesTotals = $this->sumSalesForProject($data['salesByProjectQuarter'], $registration->project_id, $quarters);
+            if (($salesByProjectId[$registration->project_id] ?? false) === true) {
+                $salesTotals = 0.0;
+            }
             $costsTotals = $this->sumCostsForRegistration($data['costsByRegistrationQuarter'], $registration->project_registration_id, $quarters);
 
             if ($salesTotals == 0.0 && $costsTotals == 0.0) {
@@ -168,6 +187,7 @@ class RoyaltyService
             ];
 
             $total += $net;
+            $salesByProjectId[$registration->project_id] = true;
         }
 
         return [
