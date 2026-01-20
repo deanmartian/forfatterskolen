@@ -117,8 +117,7 @@ class RoyaltyController extends Controller
                     $year,
                     $quarterValue,
                     $note,
-                    $paidByUserId,
-                    $payoutScope === 'year'
+                    $paidByUserId
                 );
 
                 $total += $result['total'];

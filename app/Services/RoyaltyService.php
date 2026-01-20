@@ -201,10 +201,9 @@ class RoyaltyService
         int $year,
         int $quarter,
         ?string $note,
-        int $paidByUserId,
-        bool $allowNegative = false
+        int $paidByUserId
     ): array {
-        $handler = function () use ($userId, $year, $quarter, $note, $paidByUserId, $allowNegative) {
+        $handler = function () use ($userId, $year, $quarter, $note, $paidByUserId) {
             $payout = AuthorPayout::where('user_id', $userId)
                 ->where('year', $year)
                 ->where('quarter', $quarter)
@@ -221,14 +220,6 @@ class RoyaltyService
 
             $computed = $this->computeAuthorPayout($userId, $year, $quarter);
             $amountTotal = round($computed['total'], 2);
-
-            if ($amountTotal <= 0.0 && ! ($allowNegative && $amountTotal < 0.0)) {
-                return [
-                    'status' => 'not_payable',
-                    'payout' => $payout,
-                    'total' => $amountTotal,
-                ];
-            }
 
             if (! $payout) {
                 $payout = AuthorPayout::create([
