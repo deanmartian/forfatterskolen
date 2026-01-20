@@ -15,6 +15,7 @@
                 $alertType = session('alert_type', 'success');
             @endphp
             <div class="alert alert-{{ $alertType }}">
+                <button type="button" class="close" data-dismiss="alert" aria-label="close">&times;</button>
                 {{ $flash }}
             </div>
         @endif
