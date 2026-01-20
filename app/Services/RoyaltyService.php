@@ -476,7 +476,7 @@ class RoyaltyService
         }
 
         if (empty($activityQuarters)) {
-            return false;
+            return ! empty($paidByAuthorQuarter[$userId]);
         }
 
         foreach ($activityQuarters as $activityQuarter) {
