@@ -10,6 +10,12 @@
     </div>
 
     <div class="col-md-12 margin-top">
+        @if ($flash = session('message.content'))
+            <div class="alert alert-success">
+                {{ $flash }}
+            </div>
+        @endif
+
         <form method="GET" class="form-inline" style="margin-bottom: 15px;">
             <div class="form-group">
                 <label for="year">Year</label>
@@ -53,59 +59,144 @@
             <button type="submit" class="btn btn-default" style="margin-left: 10px;">Filter</button>
         </form>
 
-        <div class="table-responsive">
-            <table class="table table-striped table-border">
-                <thead>
-                    <tr>
-                        <th>Author</th>
-                        <th>Total Sales</th>
-                        <th>Total Costs</th>
-                        <th>Net Payout</th>
-                        <th>Status</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($authors as $author)
+        <form method="POST" action="{{ route('admin.royalty.authors.mark-paid') }}" id="mark-paid-form">
+            @csrf
+            <input type="hidden" name="year" value="{{ $year }}">
+            <input type="hidden" name="quarter" id="mark-paid-quarter" value="{{ $quarter }}">
+            <input type="hidden" name="status" value="{{ $status }}">
+            <input type="hidden" name="search" value="{{ $search }}">
+            <input type="hidden" name="note" id="mark-paid-note">
+
+            <div class="form-inline" style="margin-bottom: 10px;">
+                <button type="submit" class="btn btn-success" id="mark-paid-button">
+                    Mark as paid
+                </button>
+                @if (! $quarter)
+                    <span class="text-muted" style="margin-left: 10px;">
+                        Select a quarter to enable payouts.
+                    </span>
+                @endif
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-border">
+                    <thead>
                         <tr>
-                            <td>
-                                <strong>{{ $author['name'] }}</strong><br>
-                                <small>{{ $author['email'] }}</small>
-                            </td>
-                            <td>{{ FrontendHelpers::currencyFormat($author['total_sales']) }}</td>
-                            <td>{{ FrontendHelpers::currencyFormat($author['total_costs']) }}</td>
-                            <td>{{ FrontendHelpers::currencyFormat($author['net_payout']) }}</td>
-                            <td>
-                                @php
-                                    $statusClasses = [
-                                        'payable' => 'label label-warning',
-                                        'paid' => 'label label-success',
-                                        'negative' => 'label label-danger',
-                                        'no-sales' => 'label label-default',
-                                    ];
-                                @endphp
-                                <span class="{{ $statusClasses[$author['status']] ?? 'label label-default' }}">
-                                    {{ ucwords(str_replace('-', ' ', $author['status'])) }}
-                                </span>
-                            </td>
-                            <td class="text-right">
-                                <a class="btn btn-xs btn-primary" href="{{ route('admin.royalty.authors.show', $author['user_id']) }}?year={{ $year }}@if ($quarter)&quarter={{ $quarter }}@endif">
-                                    View Details
-                                </a>
-                            </td>
+                            <th>
+                                <input type="checkbox" id="select-all-authors">
+                            </th>
+                            <th>Author</th>
+                            <th>Total Sales</th>
+                            <th>Total Costs</th>
+                            <th>Net Payout</th>
+                            <th>Status</th>
+                            <th></th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6">No authors found for the selected period.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        @forelse ($authors as $author)
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="author_ids[]" value="{{ $author['user_id'] }}" class="author-select">
+                                </td>
+                                <td>
+                                    <strong>{{ $author['name'] }}</strong><br>
+                                    <small>{{ $author['email'] }}</small>
+                                </td>
+                                <td>{{ FrontendHelpers::currencyFormat($author['total_sales']) }}</td>
+                                <td>{{ FrontendHelpers::currencyFormat($author['total_costs']) }}</td>
+                                <td>{{ FrontendHelpers::currencyFormat($author['net_payout']) }}</td>
+                                <td>
+                                    @php
+                                        $statusClasses = [
+                                            'payable' => 'label label-warning',
+                                            'paid' => 'label label-success',
+                                            'negative' => 'label label-danger',
+                                            'no-sales' => 'label label-default',
+                                        ];
+                                    @endphp
+                                    <span class="{{ $statusClasses[$author['status']] ?? 'label label-default' }}">
+                                        {{ ucwords(str_replace('-', ' ', $author['status'])) }}
+                                    </span>
+                                </td>
+                                <td class="text-right">
+                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.royalty.authors.show', $author['user_id']) }}?year={{ $year }}@if ($quarter)&quarter={{ $quarter }}@endif">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7">No authors found for the selected period.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </form>
 
         <div class="pull-right">
             {{ $authors->appends(request()->query())->render() }}
         </div>
         <div class="clearfix"></div>
     </div>
+
+    <script>
+        (function () {
+            var selectAll = document.getElementById('select-all-authors');
+            var form = document.getElementById('mark-paid-form');
+            var button = document.getElementById('mark-paid-button');
+            var quarterInput = document.getElementById('mark-paid-quarter');
+            var noteInput = document.getElementById('mark-paid-note');
+
+            function selectedCount() {
+                return document.querySelectorAll('.author-select:checked').length;
+            }
+
+            function toggleButton() {
+                if (!button) {
+                    return;
+                }
+                button.disabled = !quarterInput.value || selectedCount() === 0;
+            }
+
+            if (selectAll) {
+                selectAll.addEventListener('change', function () {
+                    document.querySelectorAll('.author-select').forEach(function (checkbox) {
+                        checkbox.checked = selectAll.checked;
+                    });
+                    toggleButton();
+                });
+            }
+
+            document.querySelectorAll('.author-select').forEach(function (checkbox) {
+                checkbox.addEventListener('change', toggleButton);
+            });
+
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!quarterInput.value) {
+                        event.preventDefault();
+                        alert('Select a quarter before marking payouts as paid.');
+                        return;
+                    }
+
+                    if (selectedCount() === 0) {
+                        event.preventDefault();
+                        alert('Select at least one author to mark as paid.');
+                        return;
+                    }
+
+                    var note = prompt('Optional note/reference for this payout:', '');
+                    if (note === null) {
+                        event.preventDefault();
+                        return;
+                    }
+                    noteInput.value = note;
+                });
+            }
+
+            toggleButton();
+        })();
+    </script>
 @endsection

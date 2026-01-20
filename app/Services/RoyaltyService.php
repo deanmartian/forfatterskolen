@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use App\AuthorPayout;
+use App\AuthorPayoutItem;
 use App\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -42,7 +45,8 @@ class RoyaltyService
                     'total_costs' => 0.0,
                     'net_payout' => 0.0,
                     'registrations' => [],
-                    'paid' => true,
+                    'paid' => false,
+                    'activity_quarters' => [],
                 ]);
             }
 
@@ -61,15 +65,21 @@ class RoyaltyService
                 'quarters_with_activity' => $quartersWithActivity,
                 'paid' => $isPaid,
             ];
-
-            if (! empty($quartersWithActivity)) {
-                $author['paid'] = $author['paid'] && $isPaid;
-            }
+            $author['activity_quarters'] = array_values(array_unique(array_merge(
+                $author['activity_quarters'],
+                $quartersWithActivity
+            )));
 
             $authors->put($registration->user_id, $author);
         }
 
-        $authors = $authors->values()->map(function (array $author) {
+        $authors = $authors->values()->map(function (array $author) use ($data, $quarter) {
+            $author['paid'] = $this->authorPaidStatus(
+                $data['paidByAuthorQuarter'],
+                $author['user_id'],
+                $quarter,
+                $author['activity_quarters']
+            );
             $author['status'] = $this->authorStatus($author['total_sales'], $author['total_costs'], $author['net_payout'], $author['paid']);
 
             return $author;
@@ -127,6 +137,121 @@ class RoyaltyService
                 'net_payout' => $registrations->sum('net_payout'),
             ],
         ];
+    }
+
+    public function computeAuthorPayout(int $userId, int $year, int $quarter): array
+    {
+        $data = $this->buildRoyaltyData($year, $quarter, null, $userId);
+        $quarters = $this->quartersForPeriod($quarter);
+
+        $items = [];
+        $total = 0.0;
+
+        foreach ($data['registrations'] as $registration) {
+            $salesTotals = $this->sumSalesForProject($data['salesByProjectQuarter'], $registration->project_id, $quarters);
+            $costsTotals = $this->sumCostsForRegistration($data['costsByRegistrationQuarter'], $registration->project_registration_id, $quarters);
+
+            if ($salesTotals == 0.0 && $costsTotals == 0.0) {
+                continue;
+            }
+
+            $net = $salesTotals - $costsTotals;
+
+            $items[] = [
+                'project_registration_id' => $registration->project_registration_id,
+                'project_id' => $registration->project_id,
+                'project_name' => $registration->project_name,
+                'book_name' => $registration->book_name,
+                'sales' => $salesTotals,
+                'costs' => $costsTotals,
+                'net_payout' => $net,
+            ];
+
+            $total += $net;
+        }
+
+        return [
+            'total' => $total,
+            'items' => $items,
+        ];
+    }
+
+    public function createOrUpdateAuthorPayout(
+        int $userId,
+        int $year,
+        int $quarter,
+        ?string $note,
+        int $paidByUserId
+    ): array {
+        $handler = function () use ($userId, $year, $quarter, $note, $paidByUserId) {
+            $payout = AuthorPayout::where('user_id', $userId)
+                ->where('year', $year)
+                ->where('quarter', $quarter)
+                ->lockForUpdate()
+                ->first();
+
+            if ($payout && $payout->paid_at) {
+                return [
+                    'status' => 'already_paid',
+                    'payout' => $payout,
+                    'total' => (float) $payout->amount_total,
+                ];
+            }
+
+            $computed = $this->computeAuthorPayout($userId, $year, $quarter);
+            $amountTotal = round($computed['total'], 2);
+
+            if (! $payout) {
+                $payout = AuthorPayout::create([
+                    'user_id' => $userId,
+                    'year' => $year,
+                    'quarter' => $quarter,
+                    'amount_total' => $amountTotal,
+                    'paid_at' => now(),
+                    'paid_by_user_id' => $paidByUserId,
+                    'note' => $note,
+                ]);
+            } else {
+                $payout->fill([
+                    'amount_total' => $amountTotal,
+                    'paid_at' => now(),
+                    'paid_by_user_id' => $paidByUserId,
+                    'note' => $note,
+                ]);
+                $payout->save();
+                $payout->items()->delete();
+            }
+
+            $items = collect($computed['items'])->map(function (array $item) use ($payout) {
+                return [
+                    'author_payout_id' => $payout->id,
+                    'project_registration_id' => $item['project_registration_id'],
+                    'amount' => round($item['net_payout'], 2),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            });
+
+            if ($items->isNotEmpty()) {
+                AuthorPayoutItem::insert($items->all());
+            }
+
+            return [
+                'status' => $payout->wasRecentlyCreated ? 'created' : 'updated',
+                'payout' => $payout,
+                'total' => $amountTotal,
+            ];
+        };
+
+        try {
+            return DB::transaction($handler);
+        } catch (QueryException $exception) {
+            if ($this->isDuplicatePayoutException($exception)) {
+                return DB::transaction($handler);
+            }
+
+            throw $exception;
+        }
     }
 
     private function buildRoyaltyData(int $year, ?int $quarter, ?string $search, ?int $userId): array
@@ -210,11 +335,20 @@ class RoyaltyService
             })
             ->get();
 
+        $authorPayoutsData = DB::table('author_payouts')
+            ->select('user_id', 'quarter', 'paid_at')
+            ->where('year', $year)
+            ->when($quarter, function ($query) use ($quarter) {
+                $query->where('quarter', $quarter);
+            })
+            ->get();
+
         return [
             'registrations' => $registrations,
             'salesByProjectQuarter' => $this->groupSales($salesData),
             'costsByRegistrationQuarter' => $this->groupCosts($costsData),
             'paidByRegistrationQuarter' => $this->groupPayouts($payoutsData),
+            'paidByAuthorQuarter' => $this->groupAuthorPayouts($authorPayoutsData),
         ];
     }
 
@@ -241,6 +375,15 @@ class RoyaltyService
         return $payoutsData->groupBy('project_registration_id')->map(function ($rows) {
             return $rows->keyBy('quarter')->map(function ($row) {
                 return (bool) $row->is_paid;
+            })->toArray();
+        })->toArray();
+    }
+
+    private function groupAuthorPayouts(Collection $payoutsData): array
+    {
+        return $payoutsData->groupBy('user_id')->map(function ($rows) {
+            return $rows->keyBy('quarter')->map(function ($row) {
+                return $row->paid_at !== null;
             })->toArray();
         })->toArray();
     }
@@ -306,6 +449,25 @@ class RoyaltyService
         return true;
     }
 
+    private function authorPaidStatus(array $paidByAuthorQuarter, int $userId, ?int $quarter, array $activityQuarters): bool
+    {
+        if ($quarter) {
+            return $paidByAuthorQuarter[$userId][$quarter] ?? false;
+        }
+
+        if (empty($activityQuarters)) {
+            return false;
+        }
+
+        foreach ($activityQuarters as $activityQuarter) {
+            if (! ($paidByAuthorQuarter[$userId][$activityQuarter] ?? false)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private function authorStatus(float $sales, float $costs, float $net, bool $paid): string
     {
         if ($sales == 0.0 && $costs == 0.0) {
@@ -321,5 +483,11 @@ class RoyaltyService
         }
 
         return 'payable';
+    }
+
+    private function isDuplicatePayoutException(QueryException $exception): bool
+    {
+        return (string) $exception->getCode() === '23000'
+            || str_contains($exception->getMessage(), 'Duplicate entry');
     }
 }
