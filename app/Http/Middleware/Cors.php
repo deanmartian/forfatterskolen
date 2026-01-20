@@ -13,8 +13,21 @@ class Cors
      */
     public function handle(Request $request, Closure $next): Response
     {
-        header('Access-Control-Allow-Origin: https://apitest.vipps.no');
-        header('Access-Control-Allow-Origin: https://api.vipps.no');
+        $allowedOrigins = array_filter(array_map('trim', explode(',', config('api.cors.lovable_origins'))));
+        $origin = $request->headers->get('Origin');
+
+        if ($origin && in_array($origin, $allowedOrigins, true)) {
+            header('Access-Control-Allow-Origin: '.$origin);
+        }
+
+        header('Vary: Origin');
+        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+        header('Access-Control-Allow-Headers: Authorization, Content-Type, Accept');
+        header('Access-Control-Allow-Credentials: true');
+
+        if ($request->getMethod() === 'OPTIONS') {
+            return response('', 204);
+        }
 
         return $next($request);
     }
