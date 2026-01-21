@@ -113,3 +113,160 @@ Authorization: Bearer <access_token>
   ]
 }
 ```
+
+## GET /dashboard
+
+Returns a lightweight dashboard summary for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/dashboard
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "courses_taken_total": 2,
+  "courses_taken": [
+    {
+      "id": 551,
+      "course_id": 12,
+      "package_id": 88,
+      "is_active": true,
+      "started_at": "Jan 02, 2024 10:45 am",
+      "start_date": "Jan 02, 2024",
+      "end_date": "Jan 02, 2025",
+      "access_lessons": [
+        1,
+        2,
+        3
+      ],
+      "years": 1,
+      "is_free": false,
+      "course": {
+        "id": 12,
+        "title": "Creative Writing",
+        "description": "Build your writing practice.",
+        "description_simplemde": null,
+        "course_image": "/images/courses/creative-writing.jpg",
+        "type": "Single",
+        "instructor": "Ada Lovelace",
+        "start_date": "2024-01-02",
+        "end_date": "2024-12-31",
+        "is_free": false
+      }
+    }
+  ]
+}
+```
+
+## GET /courses/taken
+
+Returns all courses taken for the authenticated user.
+
+**Request**
+```http
+GET /api/v1/courses/taken
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": [
+    {
+      "id": 551,
+      "course_id": 12,
+      "package_id": 88,
+      "is_active": true,
+      "started_at": "Jan 02, 2024 10:45 am",
+      "start_date": "Jan 02, 2024",
+      "end_date": "Jan 02, 2025",
+      "access_lessons": [
+        1,
+        2,
+        3
+      ],
+      "years": 1,
+      "is_free": false,
+      "course": {
+        "id": 12,
+        "title": "Creative Writing",
+        "description": "Build your writing practice.",
+        "description_simplemde": null,
+        "course_image": "/images/courses/creative-writing.jpg",
+        "type": "Single",
+        "instructor": "Ada Lovelace",
+        "start_date": "2024-01-02",
+        "end_date": "2024-12-31",
+        "is_free": false
+      }
+    }
+  ]
+}
+```
+
+## GET /courses/{id}/lessons
+
+Returns lessons for a course owned by the authenticated user.
+
+**Request**
+```http
+GET /api/v1/courses/12/lessons
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "course_id": 12,
+      "title": "Lesson 1: Start Here",
+      "content": "<p>Welcome to the course.</p>",
+      "description": null,
+      "description_simplemde": null,
+      "whole_lesson_file": null,
+      "delay": "0",
+      "period": "days",
+      "order": 1,
+      "allow_lesson_download": false,
+      "created_at": "Feb 01, 2024 09:15 am",
+      "updated_at": "Feb 01, 2024 09:15 am"
+    }
+  ]
+}
+```
+
+## GET /lessons/{id}
+
+Returns a single lesson for a course owned by the authenticated user.
+
+**Request**
+```http
+GET /api/v1/lessons/1
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 1,
+    "course_id": 12,
+    "title": "Lesson 1: Start Here",
+    "content": "<p>Welcome to the course.</p>",
+    "description": null,
+    "description_simplemde": null,
+    "whole_lesson_file": null,
+    "delay": "0",
+    "period": "days",
+    "order": 1,
+    "allow_lesson_download": false,
+    "created_at": "Feb 01, 2024 09:15 am",
+    "updated_at": "Feb 01, 2024 09:15 am"
+  }
+}
+```
