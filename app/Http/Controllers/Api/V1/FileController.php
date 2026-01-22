@@ -7,7 +7,7 @@ use App\Http\Requests\Api\V1\SignedUploadRequest;
 use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -112,7 +112,7 @@ class FileController extends ApiController
         ]);
     }
 
-    public function download(ApiFile $file): Response
+    public function download(ApiFile $file): BinaryFileResponse
     {
         if (! $file->storage_path) {
             abort(404);
