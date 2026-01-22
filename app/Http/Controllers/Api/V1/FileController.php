@@ -118,11 +118,11 @@ class FileController extends ApiController
             abort(404);
         }
 
-        if (! Storage::disk('local')->exists($file->storage_path)) {
+        if (! Storage::disk('public')->exists($file->storage_path)) {
             abort(404);
         }
 
-        $absolutePath = Storage::disk('local')->path($file->storage_path);
+        $absolutePath = Storage::disk('public')->path($file->storage_path);
 
         return response()->download($absolutePath, $file->original_filename, [
             'Content-Type' => $file->mime_type,
@@ -136,7 +136,7 @@ class FileController extends ApiController
         $path = "api-files/{$userId}";
         $fullName = $extension ? "{$filename}.{$extension}" : $filename;
 
-        return $uploadedFile->storeAs($path, $fullName, 'local');
+        return $uploadedFile->storeAs($path, $fullName, 'public');
     }
 
     private function canAccessFile(User $user, ApiFile $file): bool
