@@ -270,3 +270,88 @@ Authorization: Bearer <access_token>
   }
 }
 ```
+
+## Files (Upload + Download)
+
+File uploads are a two-step flow:
+1) Request a signed upload instruction.
+2) Upload the file using the provided URL.
+
+Downloads are also signed and time-limited.
+
+### Constraints
+- `filename` must be a plain file name (no `/` or `\`) and <= 255 chars.
+- `mime_type` is required.
+- `size` is required (bytes) and must be <= 25 MB (26214400 bytes).
+- Access is restricted to the file owner or admins. Cross-user access returns **403**.
+
+## POST /files/signed-upload
+
+**Request**
+```http
+POST /api/v1/files/signed-upload
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "filename": "notes.pdf",
+  "mime_type": "application/pdf",
+  "size": 123456
+}
+```
+
+**Response (200)**
+```json
+{
+  "file_id": 101,
+  "upload": {
+    "method": "POST",
+    "url": "https://<your-domain>/api/v1/files/101/upload?expires=...&signature=...",
+    "headers": {
+      "Authorization": "Bearer <access_token>"
+    },
+    "expires_in": 600
+  }
+}
+```
+
+## POST /files/{id}/upload
+
+Upload the file to the signed URL. This endpoint expects a multipart payload with a `file` field.
+
+**Request**
+```bash
+curl -X POST "https://<your-domain>/api/v1/files/101/upload?expires=...&signature=..." \
+  -H "Authorization: Bearer <access_token>" \
+  -F "file=@./notes.pdf"
+```
+
+**Response (200)**
+```json
+{
+  "uploaded": true,
+  "file_id": 101
+}
+```
+
+## GET /files/{id}/signed-download
+
+**Request**
+```http
+GET /api/v1/files/101/signed-download
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "file_id": 101,
+  "download_url": "https://<your-domain>/api/v1/files/101/download?expires=...&signature=...",
+  "expires_in": 600
+}
+```
+
+Use the `download_url` to retrieve the file:
+```bash
+curl -L "https://<your-domain>/api/v1/files/101/download?expires=...&signature=..." -o notes.pdf
+```
