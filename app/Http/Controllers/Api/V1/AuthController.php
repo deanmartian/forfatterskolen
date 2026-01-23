@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\ApiRefreshToken;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\LoginRequest;
 use App\Http\Requests\Api\V1\RefreshRequest;
 use App\User;
@@ -14,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class AuthController extends Controller
+class AuthController extends ApiController
 {
     public function login(LoginRequest $request): JsonResponse
     {
@@ -152,13 +151,4 @@ class AuthController extends Controller
         return $roles;
     }
 
-    private function errorResponse(string $message, string $code, int $status): JsonResponse
-    {
-        return response()->json([
-            'error' => [
-                'message' => $message,
-                'code' => $code,
-            ],
-        ], $status);
-    }
 }
