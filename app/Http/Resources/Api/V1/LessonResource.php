@@ -20,8 +20,8 @@ class LessonResource extends JsonResource
             'period' => $this->period,
             'order' => $this->order,
             'allow_lesson_download' => (bool) $this->allow_lesson_download,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
         ];
     }
 }
