@@ -231,6 +231,7 @@ class ShopManuscriptController extends Controller
                 'manuscript_file' => $validatedOrder['manuscript_file'],
                 'word_count' => $validatedOrder['word_count'],
                 'synopsis_file' => $shopManuscriptService->uploadSynopsis($request),
+                'price' => $validatedOrder['price'] + $validatedOrder['excess_words_amount']
             ]);
             $data = $request->except('_token', 'synopsis', 'manuscript');
 
@@ -269,7 +270,7 @@ class ShopManuscriptController extends Controller
 
         }
 
-        $price = $orderRecord->price - $orderRecord->discount;
+        $price = ($orderRecord->price + $orderRecord->additional) - $orderRecord->discount;
         $user = Auth::user();
 
         $vippsData = [
