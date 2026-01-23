@@ -30,7 +30,7 @@ Route::prefix('cross-domain')->group(function () {
 });
 
 Route::prefix('v1')->middleware(['cors'])->group(function () {
-    Route::prefix('auth-test')->group(function () {
+    Route::prefix('test')->group(function () {
         Route::post('/login', [AuthController::class, 'login']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::post('/logout', [AuthController::class, 'logout']);
