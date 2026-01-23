@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Routing\Exceptions\InvalidSignatureException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -48,6 +49,12 @@ class Handler extends ExceptionHandler
         /* if ($exception instanceof QueryException) {
             return response()->view('errors.500');
         } */
+        if ($exception instanceof InvalidSignatureException && ($request->expectsJson() || $request->is('api/*'))) {
+            return response()->json([
+                'error' => 'Invalid signature.',
+                'error_code' => 'invalid_signature',
+            ], 403);
+        }
 
         return parent::render($request, $exception);
     }
