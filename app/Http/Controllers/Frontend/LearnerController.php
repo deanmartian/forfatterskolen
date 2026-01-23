@@ -119,7 +119,7 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-require app_path('/Http/PaypalIPN/PaypalIPN.php');
+require_once app_path('/Http/PaypalIPN/PaypalIPN.php');
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
