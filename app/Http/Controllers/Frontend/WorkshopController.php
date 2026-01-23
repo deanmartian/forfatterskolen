@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Validator;
 
-require app_path('/Http/PaypalIPN/PaypalIPN.php');
+require_once app_path('/Http/PaypalIPN/PaypalIPN.php');
 use App\Http\FikenInvoice;
 
 class WorkshopController extends Controller

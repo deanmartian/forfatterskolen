@@ -38,7 +38,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-require app_path('/Http/PaypalIPN/PaypalIPN.php');
+require_once app_path('/Http/PaypalIPN/PaypalIPN.php');
 
 use Carbon\Carbon;
 use Illuminate\Http\Response;
