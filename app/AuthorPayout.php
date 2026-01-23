@@ -14,6 +14,7 @@ class AuthorPayout extends Model
         'paid_at',
         'paid_by_user_id',
         'note',
+        'statement_path',
     ];
 
     protected $casts = [

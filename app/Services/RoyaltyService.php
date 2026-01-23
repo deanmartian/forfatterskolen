@@ -4,15 +4,21 @@ namespace App\Services;
 
 use App\AuthorPayout;
 use App\AuthorPayoutItem;
+use App\RoyaltySummary;
 use App\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class RoyaltyService
 {
     public function getAuthorSummary(int $year, ?int $quarter, ?string $status, ?string $search): Collection
     {
+        if ($this->summariesAvailable($year, $quarter)) {
+            return $this->getAuthorSummaryFromSummaries($year, $quarter, $status, $search);
+        }
+
         $data = $this->buildRoyaltyData($year, $quarter, $search, null);
 
         $authors = collect();
@@ -35,9 +41,9 @@ class RoyaltyService
                 $registration->project_registration_id,
                 $quarters
             );
-            $isPaid = $this->registrationPaidStatus(
-                $data['paidByRegistrationQuarter'],
-                $registration->project_registration_id,
+            $isPaid = $this->registrationPaidStatusByAuthor(
+                $data['paidByAuthorQuarter'],
+                $registration->user_id,
                 $quartersWithActivity
             );
 
@@ -102,6 +108,10 @@ class RoyaltyService
     public function getAuthorDetails(int $userId, int $year, ?int $quarter): array
     {
         $user = User::findOrFail($userId);
+        if ($this->summariesAvailable($year, $quarter)) {
+            return $this->getAuthorDetailsFromSummaries($user, $year, $quarter);
+        }
+
         $data = $this->buildRoyaltyData($year, $quarter, null, $userId);
         $quarters = $this->quartersForPeriod($quarter);
 
@@ -132,9 +142,9 @@ class RoyaltyService
                 'sales' => $salesTotals,
                 'costs' => $costsTotals,
                 'net_payout' => $net,
-                'paid' => $this->registrationPaidStatus(
-                    $data['paidByRegistrationQuarter'],
-                    $registration->project_registration_id,
+                'paid' => $this->registrationPaidStatusByAuthor(
+                    $data['paidByAuthorQuarter'],
+                    $registration->user_id,
                     $quartersWithActivity
                 ),
             ];
@@ -155,6 +165,10 @@ class RoyaltyService
 
     public function computeAuthorPayout(int $userId, int $year, int $quarter): array
     {
+        if ($this->summariesAvailable($year, $quarter)) {
+            return $this->computeAuthorPayoutFromSummaries($userId, $year, $quarter);
+        }
+
         $data = $this->buildRoyaltyData($year, $quarter, null, $userId);
         $quarters = $this->quartersForPeriod($quarter);
 
@@ -347,14 +361,6 @@ class RoyaltyService
                 return $row;
             });
 
-        $payoutsData = DB::table('storage_payouts')
-            ->select('project_registration_id', 'quarter', 'is_paid')
-            ->where('year', $year)
-            ->when($quarter, function ($query) use ($quarter) {
-                $query->where('quarter', $quarter);
-            })
-            ->get();
-
         $authorPayoutsData = DB::table('author_payouts')
             ->select('user_id', 'quarter', 'paid_at')
             ->where('year', $year)
@@ -367,7 +373,6 @@ class RoyaltyService
             'registrations' => $registrations,
             'salesByProjectQuarter' => $this->groupSales($salesData),
             'costsByRegistrationQuarter' => $this->groupCosts($costsData),
-            'paidByRegistrationQuarter' => $this->groupPayouts($payoutsData),
             'paidByAuthorQuarter' => $this->groupAuthorPayouts($authorPayoutsData),
         ];
     }
@@ -386,15 +391,6 @@ class RoyaltyService
         return $costsData->groupBy('project_registration_id')->map(function ($rows) {
             return $rows->keyBy('quarter')->map(function ($row) {
                 return (float) $row->total_costs;
-            })->toArray();
-        })->toArray();
-    }
-
-    private function groupPayouts(Collection $payoutsData): array
-    {
-        return $payoutsData->groupBy('project_registration_id')->map(function ($rows) {
-            return $rows->keyBy('quarter')->map(function ($row) {
-                return (bool) $row->is_paid;
             })->toArray();
         })->toArray();
     }
@@ -454,14 +450,14 @@ class RoyaltyService
         return $quartersWithActivity;
     }
 
-    private function registrationPaidStatus(array $paidByRegistrationQuarter, int $registrationId, array $quartersWithActivity): bool
+    private function registrationPaidStatusByAuthor(array $paidByAuthorQuarter, int $userId, array $quartersWithActivity): bool
     {
         if (empty($quartersWithActivity)) {
             return false;
         }
 
         foreach ($quartersWithActivity as $quarter) {
-            if (! ($paidByRegistrationQuarter[$registrationId][$quarter] ?? false)) {
+            if (! ($paidByAuthorQuarter[$userId][$quarter] ?? false)) {
                 return false;
             }
         }
@@ -509,5 +505,332 @@ class RoyaltyService
     {
         return (string) $exception->getCode() === '23000'
             || str_contains($exception->getMessage(), 'Duplicate entry');
+    }
+
+    private function summariesAvailable(int $year, ?int $quarter): bool
+    {
+        if (! Schema::hasTable('royalty_summaries')) {
+            return false;
+        }
+
+        return RoyaltySummary::query()
+            ->where('year', $year)
+            ->when($quarter, function ($query) use ($quarter) {
+                $query->where('quarter', $quarter);
+            })
+            ->exists();
+    }
+
+    private function getAuthorSummaryFromSummaries(int $year, ?int $quarter, ?string $status, ?string $search): Collection
+    {
+        $registrationQuery = DB::table('project_registrations as registrations')
+            ->select(
+                'registrations.id as project_registration_id',
+                'registrations.project_id',
+                'projects.user_id',
+                'projects.name as project_name',
+                'book_names.book_name',
+                'users.first_name',
+                'users.last_name',
+                'users.email'
+            )
+            ->join('projects', 'registrations.project_id', '=', 'projects.id')
+            ->join('users', 'projects.user_id', '=', 'users.id')
+            ->leftJoinSub(
+                DB::table('project_books')
+                    ->selectRaw('project_id, MIN(book_name) as book_name')
+                    ->groupBy('project_id'),
+                'book_names',
+                'book_names.project_id',
+                '=',
+                'projects.id'
+            )
+            ->where('registrations.field', 'central-distribution')
+            ->where('registrations.in_storage', 1);
+
+        if ($search) {
+            $registrationQuery->where(function ($query) use ($search) {
+                $query->where('users.first_name', 'like', "%{$search}%")
+                    ->orWhere('users.last_name', 'like', "%{$search}%")
+                    ->orWhere('users.email', 'like', "%{$search}%")
+                    ->orWhere('projects.name', 'like', "%{$search}%")
+                    ->orWhere('book_names.book_name', 'like', "%{$search}%");
+            });
+        }
+
+        $registrations = $registrationQuery->get();
+        $registrationIds = $registrations->pluck('project_registration_id');
+
+        $summaryRows = RoyaltySummary::query()
+            ->select(
+                'project_registration_id',
+                'user_id',
+                'quarter',
+                'sales_amount',
+                'cost_amount_multiplied',
+                'net_amount'
+            )
+            ->where('year', $year)
+            ->when($registrationIds->isNotEmpty(), function ($query) use ($registrationIds) {
+                $query->whereIn('project_registration_id', $registrationIds->all());
+            })
+            ->when($quarter, function ($query) use ($quarter) {
+                $query->where('quarter', $quarter);
+            })
+            ->get();
+
+        $summariesByRegistration = $summaryRows->groupBy('project_registration_id');
+        $paidByAuthorQuarter = $this->groupAuthorPayouts(
+            DB::table('author_payouts')
+                ->select('user_id', 'quarter', 'paid_at')
+                ->where('year', $year)
+                ->when($quarter, function ($query) use ($quarter) {
+                    $query->where('quarter', $quarter);
+                })
+                ->get()
+        );
+
+        $authors = collect();
+
+        foreach ($registrations as $registration) {
+            $summary = $summariesByRegistration->get($registration->project_registration_id, collect());
+            $salesTotals = (float) $summary->sum('sales_amount');
+            $costsTotals = (float) $summary->sum('cost_amount_multiplied');
+            $net = (float) $summary->sum('net_amount');
+            $quartersWithActivity = $summary
+                ->filter(function ($row) {
+                    return (float) $row->sales_amount !== 0.0 || (float) $row->cost_amount_multiplied !== 0.0;
+                })
+                ->pluck('quarter')
+                ->unique()
+                ->values()
+                ->all();
+
+            $isPaid = $this->registrationPaidStatusByAuthor(
+                $paidByAuthorQuarter,
+                $registration->user_id,
+                $quartersWithActivity
+            );
+
+            if (! $authors->has($registration->user_id)) {
+                $authors->put($registration->user_id, [
+                    'user_id' => $registration->user_id,
+                    'name' => trim("{$registration->first_name} {$registration->last_name}"),
+                    'email' => $registration->email,
+                    'total_sales' => 0.0,
+                    'total_costs' => 0.0,
+                    'net_payout' => 0.0,
+                    'registrations' => [],
+                    'paid' => false,
+                    'activity_quarters' => [],
+                ]);
+            }
+
+            $author = $authors->get($registration->user_id);
+            $author['total_sales'] += $salesTotals;
+            $author['total_costs'] += $costsTotals;
+            $author['net_payout'] += $net;
+            $author['registrations'][] = [
+                'project_registration_id' => $registration->project_registration_id,
+                'project_id' => $registration->project_id,
+                'project_name' => $registration->project_name,
+                'book_name' => $registration->book_name,
+                'sales' => $salesTotals,
+                'costs' => $costsTotals,
+                'net_payout' => $net,
+                'quarters_with_activity' => $quartersWithActivity,
+                'paid' => $isPaid,
+            ];
+
+            $author['activity_quarters'] = array_values(array_unique(array_merge(
+                $author['activity_quarters'],
+                $quartersWithActivity
+            )));
+
+            $authors->put($registration->user_id, $author);
+        }
+
+        $authors = $authors->values()->map(function (array $author) use ($paidByAuthorQuarter, $quarter) {
+            $author['paid'] = $this->authorPaidStatus(
+                $paidByAuthorQuarter,
+                $author['user_id'],
+                $quarter,
+                $author['activity_quarters']
+            );
+            $author['status'] = $this->authorStatus($author['total_sales'], $author['total_costs'], $author['net_payout'], $author['paid']);
+
+            return $author;
+        });
+
+        if ($status) {
+            $authors = $authors->filter(fn (array $author) => $author['status'] === $status)->values();
+        }
+
+        return $authors->sortByDesc('net_payout')->values();
+    }
+
+    private function getAuthorDetailsFromSummaries(User $user, int $year, ?int $quarter): array
+    {
+        $summaryRows = RoyaltySummary::query()
+            ->select(
+                'project_registration_id',
+                'quarter',
+                'sales_amount',
+                'cost_amount_multiplied',
+                'net_amount'
+            )
+            ->where('user_id', $user->id)
+            ->where('year', $year)
+            ->when($quarter, function ($query) use ($quarter) {
+                $query->where('quarter', $quarter);
+            })
+            ->get();
+
+        $summariesByRegistration = $summaryRows->groupBy('project_registration_id');
+        $paidByAuthorQuarter = $this->groupAuthorPayouts(
+            DB::table('author_payouts')
+                ->select('user_id', 'quarter', 'paid_at')
+                ->where('year', $year)
+                ->where('user_id', $user->id)
+                ->when($quarter, function ($query) use ($quarter) {
+                    $query->where('quarter', $quarter);
+                })
+                ->get()
+        );
+
+        $registrations = DB::table('project_registrations as registrations')
+            ->select(
+                'registrations.id as project_registration_id',
+                'registrations.project_id',
+                'projects.name as project_name',
+                'book_names.book_name'
+            )
+            ->join('projects', 'registrations.project_id', '=', 'projects.id')
+            ->leftJoinSub(
+                DB::table('project_books')
+                    ->selectRaw('project_id, MIN(book_name) as book_name')
+                    ->groupBy('project_id'),
+                'book_names',
+                'book_names.project_id',
+                '=',
+                'projects.id'
+            )
+            ->where('projects.user_id', $user->id)
+            ->where('registrations.field', 'central-distribution')
+            ->where('registrations.in_storage', 1)
+            ->get()
+            ->map(function ($registration) use ($summariesByRegistration, $paidByAuthorQuarter, $user) {
+                $summary = $summariesByRegistration->get($registration->project_registration_id, collect());
+                $salesTotals = (float) $summary->sum('sales_amount');
+                $costsTotals = (float) $summary->sum('cost_amount_multiplied');
+                $net = (float) $summary->sum('net_amount');
+                $quartersWithActivity = $summary
+                    ->filter(function ($row) {
+                        return (float) $row->sales_amount !== 0.0 || (float) $row->cost_amount_multiplied !== 0.0;
+                    })
+                    ->pluck('quarter')
+                    ->unique()
+                    ->values()
+                    ->all();
+
+                return [
+                    'project_registration_id' => $registration->project_registration_id,
+                    'project_id' => $registration->project_id,
+                    'project_name' => $registration->project_name,
+                    'book_name' => $registration->book_name,
+                    'sales' => $salesTotals,
+                    'costs' => $costsTotals,
+                    'net_payout' => $net,
+                    'paid' => $this->registrationPaidStatusByAuthor(
+                        $paidByAuthorQuarter,
+                        $user->id,
+                        $quartersWithActivity
+                    ),
+                ];
+            })
+            ->sortByDesc(function (array $registration) {
+                return abs($registration['net_payout']);
+            })
+            ->values();
+
+        return [
+            'user' => $user,
+            'registrations' => $registrations,
+            'totals' => [
+                'sales' => $registrations->sum('sales'),
+                'costs' => $registrations->sum('costs'),
+                'net_payout' => $registrations->sum('net_payout'),
+            ],
+        ];
+    }
+
+    private function computeAuthorPayoutFromSummaries(int $userId, int $year, int $quarter): array
+    {
+        $summaryRows = RoyaltySummary::query()
+            ->select(
+                'project_registration_id',
+                'sales_amount',
+                'cost_amount_multiplied',
+                'net_amount'
+            )
+            ->where('user_id', $userId)
+            ->where('year', $year)
+            ->where('quarter', $quarter)
+            ->get()
+            ->groupBy('project_registration_id');
+
+        $registrations = DB::table('project_registrations as registrations')
+            ->select(
+                'registrations.id as project_registration_id',
+                'registrations.project_id',
+                'projects.name as project_name',
+                'book_names.book_name'
+            )
+            ->join('projects', 'registrations.project_id', '=', 'projects.id')
+            ->leftJoinSub(
+                DB::table('project_books')
+                    ->selectRaw('project_id, MIN(book_name) as book_name')
+                    ->groupBy('project_id'),
+                'book_names',
+                'book_names.project_id',
+                '=',
+                'projects.id'
+            )
+            ->where('projects.user_id', $userId)
+            ->where('registrations.field', 'central-distribution')
+            ->where('registrations.in_storage', 1)
+            ->get();
+
+        $items = [];
+        $total = 0.0;
+
+        foreach ($registrations as $registration) {
+            $summary = $summaryRows->get($registration->project_registration_id, collect());
+            $salesTotals = (float) $summary->sum('sales_amount');
+            $costsTotals = (float) $summary->sum('cost_amount_multiplied');
+
+            if ($salesTotals == 0.0 && $costsTotals == 0.0) {
+                continue;
+            }
+
+            $net = (float) $summary->sum('net_amount');
+
+            $items[] = [
+                'project_registration_id' => $registration->project_registration_id,
+                'project_id' => $registration->project_id,
+                'project_name' => $registration->project_name,
+                'book_name' => $registration->book_name,
+                'sales' => $salesTotals,
+                'costs' => $costsTotals,
+                'net_payout' => $net,
+            ];
+
+            $total += $net;
+        }
+
+        return [
+            'total' => $total,
+            'items' => $items,
+        ];
     }
 }

@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\AuthorPayout;
 use App\Http\Controllers\Controller;
 use App\Services\RoyaltyService;
-use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Services\RoyaltyStatementService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class RoyaltyController extends Controller
@@ -69,6 +73,13 @@ class RoyaltyController extends Controller
         $quarter = isset($validated['quarter']) ? (int) $validated['quarter'] : null;
 
         $details = $royaltyService->getAuthorDetails($userId, $year, $quarter);
+        $payouts = AuthorPayout::where('user_id', $userId)
+            ->where('year', $year)
+            ->when($quarter, function ($query) use ($quarter) {
+                $query->where('quarter', $quarter);
+            })
+            ->orderBy('quarter')
+            ->get();
         $years = range(2024, $currentYear);
         $quarters = [1, 2, 3, 4];
 
@@ -76,6 +87,7 @@ class RoyaltyController extends Controller
             'author' => $details['user'],
             'registrations' => $details['registrations'],
             'totals' => $details['totals'],
+            'payouts' => $payouts,
             'year' => $year,
             'quarter' => $quarter,
             'years' => $years,
@@ -83,7 +95,7 @@ class RoyaltyController extends Controller
         ]);
     }
 
-    public function markPaid(Request $request, RoyaltyService $royaltyService): RedirectResponse
+    public function markPaid(Request $request, RoyaltyService $royaltyService, RoyaltyStatementService $statementService): RedirectResponse
     {
         $currentYear = now()->year;
 
@@ -120,6 +132,7 @@ class RoyaltyController extends Controller
                 );
 
                 $total += $result['total'];
+                $statementService->generateForPayout($result['payout']);
 
                 if ($result['status'] === 'created') {
                     $created++;
@@ -149,5 +162,57 @@ class RoyaltyController extends Controller
         }
 
         return redirect()->route('admin.royalty.authors.index', $redirectParams);
+    }
+
+    public function generateStatement(Request $request, int $payoutId, RoyaltyStatementService $statementService): RedirectResponse
+    {
+        $validated = $request->validate([
+            'force' => 'nullable|boolean',
+        ]);
+
+        $payout = AuthorPayout::findOrFail($payoutId);
+        $statementService->generateForPayout($payout, (bool) ($validated['force'] ?? false));
+
+        session()->flash('message.content', 'Statement generated for '.$payout->year.' Q'.$payout->quarter.'.');
+
+        return redirect()->back();
+    }
+
+    public function generateStatementsBatch(Request $request, RoyaltyStatementService $statementService): RedirectResponse
+    {
+        $currentYear = now()->year;
+
+        $validated = $request->validate([
+            'year' => 'required|integer|min:2000|max:'.($currentYear + 1),
+            'quarter' => 'required|integer|min:1|max:4',
+            'force' => 'nullable|boolean',
+        ]);
+
+        $year = (int) $validated['year'];
+        $quarter = (int) $validated['quarter'];
+        $force = (bool) ($validated['force'] ?? false);
+
+        $results = $statementService->generateBatch($year, $quarter, $force);
+
+        session()->flash(
+            'message.content',
+            'Statement batch complete for '.$year.' Q'.$quarter.'. '
+            .'Generated: '.$results['generated'].'. Skipped: '.$results['skipped'].'. Errors: '.$results['errors'].'.'
+        );
+
+        return redirect()->back();
+    }
+
+    public function downloadStatement(int $payoutId): Response
+    {
+        $payout = AuthorPayout::findOrFail($payoutId);
+
+        if (! $payout->statement_path || ! Storage::disk('local')->exists($payout->statement_path)) {
+            abort(404);
+        }
+
+        $filename = sprintf('royalty-statement-%d-Q%d.pdf', $payout->year, $payout->quarter);
+
+        return Storage::disk('local')->download($payout->statement_path, $filename);
     }
 }

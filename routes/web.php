@@ -1291,6 +1291,12 @@ Route::domain($admin)->group(function () {
         Route::get('/royalty/authors/{user_id}', [Backend\RoyaltyController::class, 'show'])->name('admin.royalty.authors.show');
         Route::post('/royalty/authors/mark-paid', [Backend\RoyaltyController::class, 'markPaid'])
             ->name('admin.royalty.authors.mark-paid');
+        Route::post('/royalty/authors/statement/{payout}/generate', [Backend\RoyaltyController::class, 'generateStatement'])
+            ->name('admin.royalty.authors.statement.generate');
+        Route::post('/royalty/authors/statements/generate', [Backend\RoyaltyController::class, 'generateStatementsBatch'])
+            ->name('admin.royalty.authors.statements.generate');
+        Route::get('/royalty/authors/statement/{payout}/download', [Backend\RoyaltyController::class, 'downloadStatement'])
+            ->name('admin.royalty.authors.statement.download');
 
         Route::post('generate_assignment_group/{id}', [Backend\AssignmentController::class, 'generateGroup'])->name('assignment.generate_assignment_group');
         Route::post('assignment/{id}/uploadManuscript', [Backend\AssignmentController::class, 'uploadManuscript'])->name('assignment.group.upload_manuscript');

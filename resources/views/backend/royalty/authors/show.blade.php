@@ -45,6 +45,60 @@
             <span style="margin-left: 20px;"><strong>Net Payout:</strong> {{ FrontendHelpers::currencyFormat($totals['net_payout']) }}</span>
         </div>
 
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>Payout statements</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-border">
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Total</th>
+                                <th>Paid</th>
+                                <th>Reference</th>
+                                <th>Statement</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($payouts as $payout)
+                                <tr>
+                                    <td>{{ $payout->year }} Q{{ $payout->quarter }}</td>
+                                    <td>{{ FrontendHelpers::currencyFormat($payout->amount_total) }}</td>
+                                    <td>
+                                        @if ($payout->paid_at)
+                                            <span class="label label-success">Paid</span>
+                                            <br>
+                                            <small>{{ $payout->paid_at->format('Y-m-d') }}</small>
+                                        @else
+                                            <span class="label label-warning">Unpaid</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ $payout->note ?: '—' }}</td>
+                                    <td>
+                                        @if ($payout->statement_path)
+                                            <a class="btn btn-xs btn-success" href="{{ route('admin.royalty.authors.statement.download', $payout->id) }}">
+                                                Download
+                                            </a>
+                                        @endif
+                                        <form method="POST" action="{{ route('admin.royalty.authors.statement.generate', $payout->id) }}" style="display:inline;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-xs btn-info">Generate</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5">No payouts found for this period.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <div class="table-responsive">
             <table class="table table-striped table-border">
                 <thead>

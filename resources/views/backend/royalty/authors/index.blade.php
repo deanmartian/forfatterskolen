@@ -63,6 +63,38 @@
             <button type="submit" class="btn btn-default" style="margin-left: 10px;">Filter</button>
         </form>
 
+        <form method="POST" action="{{ route('admin.royalty.authors.statements.generate') }}" class="form-inline" style="margin-bottom: 15px;">
+            @csrf
+            <div class="form-group">
+                <label for="statement-year">Statement Year</label>
+                <select name="year" id="statement-year" class="form-control">
+                    @foreach ($years as $yearOption)
+                        <option value="{{ $yearOption }}" @if ($yearOption == $year) selected @endif>
+                            {{ $yearOption }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group" style="margin-left: 10px;">
+                <label for="statement-quarter">Statement Quarter</label>
+                <select name="quarter" id="statement-quarter" class="form-control">
+                    @foreach ($quarters as $quarterOption)
+                        <option value="{{ $quarterOption }}" @if ($quarterOption == $quarter) selected @endif>
+                            Q{{ $quarterOption }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="checkbox" style="margin-left: 10px;">
+                <label>
+                    <input type="checkbox" name="force" value="1"> Force regenerate
+                </label>
+            </div>
+            <button type="submit" class="btn btn-info" style="margin-left: 10px;">
+                Generate statements for payable authors
+            </button>
+        </form>
+
         <form method="POST" action="{{ route('admin.royalty.authors.mark-paid') }}" id="mark-paid-form">
             @csrf
             <input type="hidden" name="year" value="{{ $year }}">
