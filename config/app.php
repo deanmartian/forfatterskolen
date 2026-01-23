@@ -14,7 +14,7 @@ return [
 
     'locale' => 'no',
 
-    'log_max_files' => env('APP_LOG_MAX_FILES', 2),
+    'log_max_files' => env('APP_LOG_MAX_FILES', 14),
 
     'live_url' => env('APP_LIVE_URL'),
 
