@@ -48,6 +48,15 @@ All errors use the same envelope:
 - **404**: Resource not found
 - **422**: Validation error
 
+## Date/time format
+All date/time fields use ISO 8601 (UTC) format, e.g. `2024-01-02T10:45:00Z`.
+
+## CORS
+Allowed origins:
+- `https://forfatterskolen.no`
+
+The API supports `OPTIONS` preflight requests and allows the `Authorization` header.
+
 ---
 
 # Auth
@@ -104,6 +113,9 @@ Content-Type: application/json
 - **403** `forbidden` (inactive user)
 - **422** `validation_error`
 
+**Notes**
+- If the refresh token is already revoked, the response is **401** `unauthorized`.
+
 ## POST /auth/logout
 
 **Request**
@@ -124,7 +136,11 @@ Content-Type: application/json
 ```
 
 **Errors**
+- **401** `unauthorized` (invalid/expired refresh token)
 - **422** `validation_error`
+
+**Notes**
+- Logout is idempotent. If the refresh token is already revoked, the response is still **200** with `"revoked": true`.
 
 ---
 
@@ -178,9 +194,9 @@ Authorization: Bearer <access_token>
       "course_id": 12,
       "package_id": 88,
       "is_active": true,
-      "started_at": "Jan 02, 2024 10:45 am",
-      "start_date": "Jan 02, 2024",
-      "end_date": "Jan 02, 2025",
+      "started_at": "2024-01-02T10:45:00Z",
+      "start_date": "2024-01-02",
+      "end_date": "2025-01-02",
       "access_lessons": [
         1,
         2,
@@ -232,9 +248,9 @@ Authorization: Bearer <access_token>
       "course_id": 12,
       "package_id": 88,
       "is_active": true,
-      "started_at": "Jan 02, 2024 10:45 am",
-      "start_date": "Jan 02, 2024",
-      "end_date": "Jan 02, 2025",
+      "started_at": "2024-01-02T10:45:00Z",
+      "start_date": "2024-01-02",
+      "end_date": "2025-01-02",
       "access_lessons": [
         1,
         2,
@@ -289,8 +305,8 @@ Authorization: Bearer <access_token>
       "period": "days",
       "order": 1,
       "allow_lesson_download": false,
-      "created_at": "Feb 01, 2024 09:15 am",
-      "updated_at": "Feb 01, 2024 09:15 am"
+      "created_at": "2024-02-01T09:15:00Z",
+      "updated_at": "2024-02-01T09:15:00Z"
     }
   ]
 }
@@ -330,8 +346,8 @@ Authorization: Bearer <access_token>
     "period": "days",
     "order": 1,
     "allow_lesson_download": false,
-    "created_at": "Feb 01, 2024 09:15 am",
-    "updated_at": "Feb 01, 2024 09:15 am"
+    "created_at": "2024-02-01T09:15:00Z",
+    "updated_at": "2024-02-01T09:15:00Z"
   }
 }
 ```
@@ -350,6 +366,8 @@ File uploads are a two-step flow:
 2) Upload the file using the provided URL.
 
 Downloads are also signed and time-limited.
+
+The signed upload URL is a time-limited API endpoint (not an S3 presign). Both the `signature` query parameter and the `Authorization` header are required.
 
 ### Constraints
 - `filename` must be a plain file name (no `/` or `\`) and <= 255 chars.
@@ -395,6 +413,7 @@ Content-Type: application/json
 ## POST /files/{id}/upload
 
 Upload the file to the signed URL. This endpoint expects a multipart payload with a `file` field.
+Both the `signature` query parameter and `Authorization` header are required.
 
 **Request**
 ```bash

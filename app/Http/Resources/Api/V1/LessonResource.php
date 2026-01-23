@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Api\V1;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class LessonResource extends JsonResource
@@ -20,8 +21,8 @@ class LessonResource extends JsonResource
             'period' => $this->period,
             'order' => $this->order,
             'allow_lesson_download' => (bool) $this->allow_lesson_download,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at ? Carbon::parse($this->created_at)->toIso8601String() : null,
+            'updated_at' => $this->updated_at ? Carbon::parse($this->updated_at)->toIso8601String() : null,
         ];
     }
 }
