@@ -53,7 +53,7 @@ All date/time fields use ISO 8601 (UTC) format, e.g. `2024-01-02T10:45:00Z`.
 
 ## CORS
 Allowed origins:
-- `https://forfatterskolen.no`
+- `https://www.forfatterskolen.no/`
 
 The API supports `OPTIONS` preflight requests and allows the `Authorization` header.
 
