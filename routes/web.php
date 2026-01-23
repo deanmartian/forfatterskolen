@@ -5,7 +5,7 @@ use App\Http\Controllers\Backend;
 use App\Http\Controllers\Editor;
 use App\Http\Controllers\Editor\CoachingTimeController;
 use App\Http\Controllers\Frontend;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\PaypalController;
 use Illuminate\Support\Facades\Route;
 
@@ -2161,7 +2161,7 @@ Route::get('/check-nearly-expired-course', [HomeController::class, 'checkNearlyE
 Route::prefix('auth')->group(function () {
     Route::get('logout', [Auth\LoginController::class, 'logout'])->name('auth.logout-get');
     Route::post('logout', [Auth\LoginController::class, 'logout'])->name('auth.logout');
-    Route::post('password', [Auth\PasswordController::class, 'updatePassword']);
+    //Route::post('password', [Auth\PasswordController::class, 'updatePassword']);
 });
 
 // Localization - use for vue

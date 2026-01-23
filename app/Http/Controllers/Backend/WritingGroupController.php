@@ -7,11 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AddWritingGroupRequest;
 use App\Repositories\Services\WritingGroupService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\View\View;
 
-class WritingGroupController extends Controller implements HasMiddleware
+class WritingGroupController extends Controller
 {
     /**
      * Variable storage of the service
@@ -28,13 +27,7 @@ class WritingGroupController extends Controller implements HasMiddleware
         // middleware to check if admin have access to the faq page
 
         $this->writingGroupService = $writingGroupService;
-    }
-
-    public static function middleware(): array
-    {
-        return [
-            'checkPageAccess:10',
-        ];
+        $this->middleware('checkPageAccess:10');
     }
 
     /**
