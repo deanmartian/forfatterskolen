@@ -30,11 +30,14 @@ use Swift_Mailer;
 use Symfony\Component\Mime\Email;
 
 if (! app()->runningInConsole()) {
-    include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
+    /* include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
     Log::info('------------------------- inside admin helpers here ----------------------');
     Log::info($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
     include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
-    include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
+    include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php'; */
+    include_once base_path('Docx2Text.php');
+    include_once base_path('Pdf2Text.php');
+    include_once base_path('Odt2Text.php');
 }
 
 class AdminHelpers
