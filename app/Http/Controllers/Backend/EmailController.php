@@ -9,16 +9,13 @@ use App\LearnerEmail;
 use App\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
-class EmailController extends Controller implements HasMiddleware
+class EmailController extends Controller
 {
-    public static function middleware(): array
+    public function __construct()
     {
-        return [
-            'checkPageAccess:12',
-        ];
+        $this->middleware('checkPageAccess:12');
     }
 
     /**
