@@ -18,12 +18,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
-/* include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php'; */
-include_once public_path('Docx2Text.php');
-include_once public_path('Pdf2Text.php');
-include_once public_path('Odt2Text.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class ManuscriptController extends Controller
 {

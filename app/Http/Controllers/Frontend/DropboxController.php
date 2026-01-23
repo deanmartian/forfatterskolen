@@ -13,7 +13,7 @@ use Illuminate\View\View;
 use Spatie\Dropbox\Client as DropboxClient;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-include_once public_path('Docx2Text.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
 
 class DropboxController extends Controller
 {
