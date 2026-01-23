@@ -1,29 +1,35 @@
-# Lovable API v1 JWT Auth
+# Lovable API v1 (Laravel)
 
-This document describes the additive `/api/v1` auth endpoints and expected payloads for Lovable.
+This document is copy/paste-ready for the `/api/v1` endpoints used by Lovable.
 
-## Token lifetimes
-- **Access token**: 15 minutes.
-- **Refresh token**: 14 days.
-
-## Base URL
+## Base URLs
 ```
 https://<your-domain>/api/v1
 ```
 
-## Auth flow
+## Authentication
+All protected endpoints require a Bearer token.
+```
+Authorization: Bearer <access_token>
+```
+
+### JWT/Refresh flow
 1. `POST /auth/login` with email + password.
-2. Use `access_token` in `Authorization: Bearer <token>` for protected routes.
-3. When access token expires, call `POST /auth/refresh` with the refresh token.
+2. Use the returned `access_token` for protected routes.
+3. When the access token expires, call `POST /auth/refresh` with the refresh token.
 4. (Optional) call `POST /auth/logout` to revoke the refresh token.
 
+### Token lifetimes
+- **Access token**: 15 minutes.
+- **Refresh token**: 14 days.
+
 ## Error format
-All 401/403/422 errors use the same envelope:
+All errors use the same envelope:
 ```json
 {
   "error": {
     "message": "Human readable message",
-    "code": "unauthorized | forbidden | validation_error",
+    "code": "unauthorized | forbidden | not_found | validation_error",
     "details": {
       "field": [
         "Validation error message"
@@ -32,6 +38,19 @@ All 401/403/422 errors use the same envelope:
   }
 }
 ```
+
+`details` is only present for validation errors.
+
+## Status codes
+- **200**: Success
+- **401**: Missing/invalid credentials or expired tokens
+- **403**: Authenticated but not allowed (cross-user access blocked)
+- **404**: Resource not found
+- **422**: Validation error
+
+---
+
+# Auth
 
 ## POST /auth/login
 
@@ -55,6 +74,11 @@ Content-Type: application/json
 }
 ```
 
+**Errors**
+- **401** `unauthorized` (invalid credentials)
+- **403** `forbidden` (inactive user)
+- **422** `validation_error`
+
 ## POST /auth/refresh
 
 **Request**
@@ -75,6 +99,11 @@ Content-Type: application/json
 }
 ```
 
+**Errors**
+- **401** `unauthorized` (invalid/expired refresh token)
+- **403** `forbidden` (inactive user)
+- **422** `validation_error`
+
 ## POST /auth/logout
 
 **Request**
@@ -93,6 +122,13 @@ Content-Type: application/json
   "revoked": true
 }
 ```
+
+**Errors**
+- **422** `validation_error`
+
+---
+
+# Profile
 
 ## GET /me
 
@@ -113,6 +149,14 @@ Authorization: Bearer <access_token>
   ]
 }
 ```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+
+---
+
+# Dashboard
 
 ## GET /dashboard
 
@@ -161,6 +205,14 @@ Authorization: Bearer <access_token>
 }
 ```
 
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+
+---
+
+# Courses
+
 ## GET /courses/taken
 
 Returns all courses taken for the authenticated user.
@@ -207,6 +259,10 @@ Authorization: Bearer <access_token>
 }
 ```
 
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+
 ## GET /courses/{id}/lessons
 
 Returns lessons for a course owned by the authenticated user.
@@ -240,6 +296,15 @@ Authorization: Bearer <access_token>
 }
 ```
 
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden` (course not owned by user)
+- **404** `not_found` (course not found)
+
+---
+
+# Lessons
+
 ## GET /lessons/{id}
 
 Returns a single lesson for a course owned by the authenticated user.
@@ -271,7 +336,14 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Files (Upload + Download)
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden` (lesson not owned by user)
+- **404** `not_found` (lesson not found)
+
+---
+
+# Files (Upload + Download)
 
 File uploads are a two-step flow:
 1) Request a signed upload instruction.
@@ -315,6 +387,11 @@ Content-Type: application/json
 }
 ```
 
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **422** `validation_error`
+
 ## POST /files/{id}/upload
 
 Upload the file to the signed URL. This endpoint expects a multipart payload with a `file` field.
@@ -334,6 +411,11 @@ curl -X POST "https://<your-domain>/api/v1/files/101/upload?expires=...&signatur
 }
 ```
 
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **422** `validation_error`
+
 ## GET /files/{id}/signed-download
 
 **Request**
@@ -351,7 +433,67 @@ Authorization: Bearer <access_token>
 }
 ```
 
-Use the `download_url` to retrieve the file:
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found`
+
+## GET /files/{id}/download
+
+Use the signed URL to retrieve the file:
 ```bash
 curl -L "https://<your-domain>/api/v1/files/101/download?expires=...&signature=..." -o notes.pdf
+```
+
+**Errors**
+- **404** `not_found`
+
+---
+
+# Quick test steps
+
+## Login + access a protected route
+```bash
+curl -s -X POST "https://<your-domain>/api/v1/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"secret"}'
+```
+
+Copy the `access_token` and call:
+```bash
+curl -s "https://<your-domain>/api/v1/me" \
+  -H "Authorization: Bearer <access_token>"
+```
+
+## Refresh access token
+```bash
+curl -s -X POST "https://<your-domain>/api/v1/auth/refresh" \
+  -H "Content-Type: application/json" \
+  -d '{"refresh_token":"<refresh_token>"}'
+```
+
+## Signed upload flow
+```bash
+curl -s -X POST "https://<your-domain>/api/v1/files/signed-upload" \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"filename":"notes.pdf","mime_type":"application/pdf","size":123456}'
+```
+
+Then upload using the returned `upload.url`:
+```bash
+curl -X POST "<upload.url>" \
+  -H "Authorization: Bearer <access_token>" \
+  -F "file=@./notes.pdf"
+```
+
+## Signed download flow
+```bash
+curl -s "https://<your-domain>/api/v1/files/101/signed-download" \
+  -H "Authorization: Bearer <access_token>"
+```
+
+Then download using the returned `download_url`:
+```bash
+curl -L "<download_url>" -o notes.pdf
 ```

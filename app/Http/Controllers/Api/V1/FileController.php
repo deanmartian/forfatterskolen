@@ -112,14 +112,14 @@ class FileController extends ApiController
         ]);
     }
 
-    public function download(ApiFile $file): BinaryFileResponse
+    public function download(ApiFile $file): BinaryFileResponse|JsonResponse
     {
         if (! $file->storage_path) {
-            abort(404);
+            return $this->errorResponse('File not found.', 'not_found', 404);
         }
 
         if (! Storage::disk('public')->exists($file->storage_path)) {
-            abort(404);
+            return $this->errorResponse('File not found.', 'not_found', 404);
         }
 
         $absolutePath = Storage::disk('public')->path($file->storage_path);
