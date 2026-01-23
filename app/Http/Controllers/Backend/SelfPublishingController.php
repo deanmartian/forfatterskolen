@@ -18,9 +18,12 @@ use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
+/* include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php'; */
+include_once base_path('Docx2Text.php');
+include_once base_path('Pdf2Text.php');
+include_once base_path('Odt2Text.php');
 
 class SelfPublishingController extends Controller
 {
