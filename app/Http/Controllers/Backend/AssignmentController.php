@@ -40,12 +40,9 @@ use PhpOffice\PhpWord\PhpWord;
 use PhpParser\Node\Expr\Assign;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-/* include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php';
-include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php'; */
-require_once public_path('Docx2Text.php');
-require_once public_path('Pdf2Text.php');
-require_once public_path('Odt2Text.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php';
 
 class AssignmentController extends Controller
 {
