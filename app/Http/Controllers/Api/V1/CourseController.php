@@ -24,7 +24,7 @@ class CourseController extends ApiController
                     $shortDescription = $course->getAttribute('short_description');
 
                     if ($shortDescription === null) {
-                        $shortDescription = $course->description_raw;
+                        $shortDescription = Str::limit($course->description_raw ?? '', 200, '...');
                     }
 
                     $slug = $course->getAttribute('slug');
@@ -44,7 +44,6 @@ class CourseController extends ApiController
                         'slug' => $slug,
                         'short_description' => $shortDescription,
                         'is_active' => (bool) $course->status,
-                        'is_free' => (bool) $course->is_free,
                         'start_date' => $course->getRawOriginal('start_date'),
                         'end_date' => $course->getRawOriginal('end_date'),
                         'thumbnail_url' => $thumbnailUrl,
@@ -56,6 +55,54 @@ class CourseController extends ApiController
         });
 
         return response()->json(['data' => $courses]);
+    }
+
+    public function showPublic(int $id): JsonResponse
+    {
+        $course = Course::query()
+            ->where('for_sale', 1)
+            ->find($id);
+
+        if (! $course) {
+            return $this->errorResponse('Course not found.', 'not_found', 404);
+        }
+
+        $shortDescription = $course->getAttribute('short_description');
+
+        if ($shortDescription === null) {
+            $shortDescription = Str::limit($course->description_raw ?? '', 200, '...');
+        }
+
+        $slug = $course->getAttribute('slug');
+
+        if (! $slug) {
+            $slug = Str::slug($course->title);
+        }
+
+        $thumbnailUrl = $course->getAttribute('thumbnail_url') ?: $course->course_image;
+        $checkoutUrl = $course->pay_later_with_application
+            ? route('front.course.application', ['id' => $course->id])
+            : route('front.course.checkout', ['id' => $course->id]);
+
+        return response()->json([
+            'data' => [
+                'id' => $course->id,
+                'title' => $course->title,
+                'slug' => $slug,
+                'short_description' => $shortDescription,
+                'description' => $course->description,
+                'description_simplemde' => $course->description_simplemde,
+                'type' => $course->type,
+                'instructor' => $course->instructor,
+                'start_date' => $course->getRawOriginal('start_date'),
+                'end_date' => $course->getRawOriginal('end_date'),
+                'thumbnail_url' => $thumbnailUrl,
+                'course_image' => $course->course_image,
+                'is_active' => (bool) $course->status,
+                'is_free' => (bool) $course->is_free,
+                'checkout_url' => $checkoutUrl,
+            ],
+        ]);
     }
 
     public function taken(Request $request): AnonymousResourceCollection

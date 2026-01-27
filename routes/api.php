@@ -37,6 +37,7 @@ Route::prefix('v1')->middleware(['cors'])->group(function () {
     });
 
     Route::get('/courses/for-sale', [CourseController::class, 'forSale']);
+    Route::get('/courses/{id}', [CourseController::class, 'showPublic']);
 
     Route::middleware('apiJwt')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
