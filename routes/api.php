@@ -36,6 +36,8 @@ Route::prefix('v1')->middleware(['cors'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 
+    Route::get('/courses/for-sale', [CourseController::class, 'forSale']);
+
     Route::middleware('apiJwt')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
         Route::get('/dashboard', [DashboardController::class, 'show']);
