@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CourseController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\FileController;
+use App\Http\Controllers\Api\V1\HealthController;
+use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LessonController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,12 +38,14 @@ Route::prefix('v1')->middleware(['cors'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 
+    Route::get('/health', [HealthController::class, 'show']);
     Route::get('/courses/for-sale', [CourseController::class, 'forSale']);
     Route::get('/courses/{id}', [CourseController::class, 'showPublic']);
 
     Route::middleware('apiJwt')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
         Route::get('/dashboard', [DashboardController::class, 'show']);
+        Route::get('/invoices', [InvoiceController::class, 'index']);
         Route::get('/courses/taken', [CourseController::class, 'taken']);
         Route::get('/courses/{id}/lessons', [CourseController::class, 'lessons']);
         Route::get('/lessons/{id}', [LessonController::class, 'show']);

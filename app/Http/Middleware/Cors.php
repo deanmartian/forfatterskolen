@@ -15,8 +15,14 @@ class Cors
     {
         $allowedOrigins = array_filter(array_map('trim', explode(',', config('api.cors.lovable_origins'))));
         $origin = $request->headers->get('Origin');
+        $allowWildcard = in_array('*', $allowedOrigins, true);
 
-        if ($origin && in_array($origin, $allowedOrigins, true)) {
+        if ($allowWildcard && app()->environment('production')) {
+            $allowedOrigins = array_values(array_filter($allowedOrigins, static fn ($value) => $value !== '*'));
+            $allowWildcard = false;
+        }
+
+        if ($origin && ($allowWildcard || in_array($origin, $allowedOrigins, true))) {
             header('Access-Control-Allow-Origin: '.$origin);
         }
 
