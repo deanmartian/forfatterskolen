@@ -25,8 +25,15 @@ class PasswordResetEmail extends Mailable
 
     public function build()
     {
-        return $this->from('post@forfatterskolen.no', 'Forfatterskolen')
+        $fromAddress = config('mail.from.address', 'postmail@forfatterskolen.no');
+        $fromName = config('mail.from.name', 'Forfatterskolen');
+        $replyToAddress = config('mail.reply_to.address', $fromAddress);
+        $replyToName = config('mail.reply_to.name', $fromName);
+
+        return $this->from($fromAddress, $fromName)
+            ->replyTo($replyToAddress, $replyToName)
             ->subject('Passord Tilbakestilling Forespørsel')
-            ->view('emails.passwordreset');
+            ->view('emails.passwordreset')
+            ->text('emails.passwordreset_plain');
     }
 }

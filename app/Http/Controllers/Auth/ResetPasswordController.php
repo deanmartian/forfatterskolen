@@ -72,10 +72,12 @@ class ResetPasswordController extends Controller
                 'email_subject' => 'Forespørsel om å tilbakestille passordet ditt',
                 'email_message' => view('emails.passwordreset', compact('actionText', 'actionUrl', 'level'))->render(),
                 'from_name' => '',
-                'from_email' => 'postmail@forfatterskolen.no',
+                'from_email' => config('mail.from.address', 'postmail@forfatterskolen.no'),
                 'attach_file' => null,
+                'text_view' => 'emails.passwordreset_plain',
+                'view_data' => compact('actionUrl'),
             ];
-            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            \Mail::to($to)->send(new SubjectBodyEmail($emailData));
             // Mail::to($request->reset_email)->send(new PasswordResetEmail($passwordReset));
 
             if ($request->has('redirect')) {
@@ -264,9 +266,11 @@ class ResetPasswordController extends Controller
             'email_subject' => 'Forespørsel om å tilbakestille passordet ditt',
             'email_message' => view('emails.passwordreset', compact('actionText', 'actionUrl', 'level'))->render(),
             'from_name' => '',
-            'from_email' => 'postmail@forfatterskolen.no',
+            'from_email' => config('mail.from.address', 'postmail@forfatterskolen.no'),
             'attach_file' => null,
+            'text_view' => 'emails.passwordreset_plain',
+            'view_data' => compact('actionUrl'),
         ];
-        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        \Mail::to($to)->send(new SubjectBodyEmail($emailData));
     }
 }
