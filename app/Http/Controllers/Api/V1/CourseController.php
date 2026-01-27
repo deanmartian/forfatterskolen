@@ -16,11 +16,11 @@ class CourseController extends ApiController
 {
     public function forSale(): JsonResponse
     {
-        $courses = Cache::remember('api.v1.courses.for-sale', 300, static function (): array {
+        $courses = Cache::remember('api.v1.courses.for-sale', 600, function (): array {
             return Course::query()
                 ->where('for_sale', 1)
                 ->get()
-                ->map(static function (Course $course): array {
+                ->map(function (Course $course): array {
                     $shortDescription = $course->getAttribute('short_description');
 
                     if ($shortDescription === null) {
@@ -33,10 +33,10 @@ class CourseController extends ApiController
                         $slug = Str::slug($course->title);
                     }
 
-                    $thumbnailUrl = $course->getAttribute('thumbnail_url') ?: $course->course_image;
+                    $thumbnailUrl = $this->absoluteUrl($course->getAttribute('thumbnail_url') ?: $course->course_image);
                     $checkoutUrl = $course->pay_later_with_application
-                        ? route('front.course.application', ['id' => $course->id])
-                        : route('front.course.checkout', ['id' => $course->id]);
+                        ? route('front.course.application', ['id' => $course->id], true)
+                        : route('front.course.checkout', ['id' => $course->id], true);
 
                     return [
                         'id' => $course->id,
@@ -79,10 +79,10 @@ class CourseController extends ApiController
             $slug = Str::slug($course->title);
         }
 
-        $thumbnailUrl = $course->getAttribute('thumbnail_url') ?: $course->course_image;
+        $thumbnailUrl = $this->absoluteUrl($course->getAttribute('thumbnail_url') ?: $course->course_image);
         $checkoutUrl = $course->pay_later_with_application
-            ? route('front.course.application', ['id' => $course->id])
-            : route('front.course.checkout', ['id' => $course->id]);
+            ? route('front.course.application', ['id' => $course->id], true)
+            : route('front.course.checkout', ['id' => $course->id], true);
 
         return response()->json([
             'data' => [
@@ -134,5 +134,18 @@ class CourseController extends ApiController
         $lessons = $course->lessons()->orderBy('order', 'asc')->get();
 
         return LessonResource::collection($lessons);
+    }
+
+    private function absoluteUrl(?string $path): ?string
+    {
+        if (! $path) {
+            return null;
+        }
+
+        if (Str::startsWith($path, ['http://', 'https://'])) {
+            return $path;
+        }
+
+        return url($path);
     }
 }
