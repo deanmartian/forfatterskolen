@@ -19,6 +19,7 @@ class CourseController extends ApiController
         $courses = Cache::remember('api.v1.courses.for-sale', 600, function (): array {
             return Course::query()
                 ->where('for_sale', 1)
+                ->latest()
                 ->get()
                 ->map(function (Course $course): array {
                     $shortDescription = $course->getAttribute('short_description');
