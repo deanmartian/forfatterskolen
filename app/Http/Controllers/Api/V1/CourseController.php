@@ -57,8 +57,14 @@ class CourseController extends ApiController
         return response()->json(['data' => $courses]);
     }
 
-    public function showPublic(int $id): JsonResponse
+    public function showPublic($id): JsonResponse
     {
+        if (! is_numeric($id)) {
+            return $this->errorResponse('Course not found.', 'not_found', 404);
+        }
+
+        $id = (int) $id;
+
         $course = Course::query()
             ->where('for_sale', 1)
             ->find($id);
