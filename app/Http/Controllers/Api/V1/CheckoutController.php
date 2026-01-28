@@ -10,6 +10,7 @@ use App\Http\FrontendHelpers;
 use App\Services\CourseService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class CheckoutController extends ApiController
@@ -21,6 +22,8 @@ class CheckoutController extends ApiController
         if (! $user) {
             return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
         }
+
+        Auth::setUser($user);
 
         $course = Course::query()->where('for_sale', 1)->find($courseId);
 
