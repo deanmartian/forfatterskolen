@@ -7,6 +7,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Routing\Exceptions\InvalidSignatureException;
+use Illuminate\Support\Str;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -34,6 +35,22 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $exception)
     {
+        $request = request();
+
+        if ($request && $request->is('api/*')) {
+            $requestId = $request->attributes->get('request_id');
+
+            if (! $requestId) {
+                $requestId = (string) Str::uuid();
+                $request->attributes->set('request_id', $requestId);
+            }
+
+            logger()->error('API exception', [
+                'request_id' => $requestId,
+                'exception' => $exception,
+            ]);
+        }
+
         parent::report($exception);
     }
 
@@ -67,8 +84,13 @@ class Handler extends ExceptionHandler
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-        if ($request->expectsJson()) {
-            return response()->json(['error' => 'Unauthenticated.'], 401);
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'error' => [
+                    'message' => 'Unauthenticated.',
+                    'code' => 'unauthorized',
+                ],
+            ], 401);
         }
 
         return redirect()->guest(route('/'));

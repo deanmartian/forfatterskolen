@@ -50,6 +50,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'admin' => \App\Http\Middleware\Admin::class,
+            'apiRequestId' => \App\Http\Middleware\ApiRequestId::class,
             'apiJwt' => \App\Http\Middleware\ApiJwtAuth::class,
             'checkAutoRenewCourses' => \App\Http\Middleware\CheckAutoRenewCourses::class,
             'checkPageAccess' => \App\Http\Middleware\CheckPageAccess::class,

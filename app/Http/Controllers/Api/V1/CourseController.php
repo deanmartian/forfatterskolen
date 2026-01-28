@@ -105,9 +105,13 @@ class CourseController extends ApiController
         ]);
     }
 
-    public function taken(Request $request): AnonymousResourceCollection
+    public function taken(Request $request): JsonResponse|AnonymousResourceCollection
     {
         $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
 
         $coursesTaken = CoursesTaken::with('package.course')
             ->where('user_id', $user->id)
