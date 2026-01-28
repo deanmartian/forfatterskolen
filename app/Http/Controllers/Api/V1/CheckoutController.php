@@ -156,7 +156,7 @@ class CheckoutController extends ApiController
             ], 201);
         }
 
-        $redirectUrl = $this->extractCheckoutUrl($result['gui_snippet'] ?? '');
+        $redirectUrl = $result['gui_page_url'] ?? $this->extractCheckoutUrl($result['gui_snippet'] ?? '');
 
         if (! $redirectUrl) {
             return $this->errorResponse('Unable to build checkout redirect.', 'validation_error', 422);
@@ -245,8 +245,18 @@ class CheckoutController extends ApiController
             return null;
         }
 
-        if (preg_match('/src=[\"\\\']([^\"\\\']+)[\"\\\']/', $guiSnippet, $matches)) {
+        if (preg_match('/data-checkout-(?:url|uri)=[\"\\\']([^\"\\\']+)[\"\\\']/', $guiSnippet, $matches)) {
             return $matches[1] ?? null;
+        }
+
+        if (preg_match('/src=[\"\\\']([^\"\\\']+)[\"\\\']/', $guiSnippet, $matches)) {
+            $candidate = $matches[1] ?? null;
+
+            if ($candidate && str_contains($candidate, 'index.js')) {
+                return null;
+            }
+
+            return $candidate;
         }
 
         return null;

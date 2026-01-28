@@ -254,7 +254,8 @@ class CourseService
 
             $response = $checkoutClient->create($data);
             $orderId = $response['OrderId'];
-            $guiSnippet = $response['Gui']['Snippet'];
+            $guiSnippet = $response['Gui']['Snippet'] ?? '';
+            $guiPageUrl = $response['Gui']['PageUrl'] ?? null;
             $orderStatus = $response['Status'];
             $orderRecord->svea_order_id = $orderId;
             $orderRecord->save(); // update the checkout and save the order id from svea
@@ -352,7 +353,8 @@ class CourseService
 
             $response = $checkoutClient->create($data);
             $orderId = $response['OrderId'];
-            $guiSnippet = $response['Gui']['Snippet'];
+            $guiSnippet = $response['Gui']['Snippet'] ?? '';
+            $guiPageUrl = $response['Gui']['PageUrl'] ?? null;
 
             $orderRecord->svea_order_id = $orderId;
             $orderRecord->save();
@@ -360,6 +362,7 @@ class CourseService
             return [
                 'order' => $orderRecord,
                 'gui_snippet' => $guiSnippet,
+                'gui_page_url' => $guiPageUrl,
             ];
         } catch (\Throwable $exception) {
             $orderRecord->delete();
