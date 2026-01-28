@@ -245,7 +245,7 @@ class CheckoutController extends ApiController
             return null;
         }
 
-        if (preg_match('/data-sco-sveacheckout-iframesrc=[\"\\\']([^\"\\\']+)[\"\\\']/', $guiSnippet, $matches)) {
+        if (preg_match('/data-sco-sveacheckout-iframesrc=[\"\\\']([^\"\\\']+)[\"\\\']/i', $guiSnippet, $matches)) {
             return $matches[1] ?? null;
         }
 
