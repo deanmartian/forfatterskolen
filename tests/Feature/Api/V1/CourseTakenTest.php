@@ -21,6 +21,10 @@ class CourseTakenTest extends TestCase
     {
         parent::setUp();
 
+        if (! extension_loaded('sqlite3')) {
+            $this->markTestSkipped('SQLite3 extension is not available.');
+        }
+
         config()->set('database.default', 'sqlite');
         config()->set('database.connections.sqlite.database', ':memory:');
         $this->app['db']->purge('sqlite');
