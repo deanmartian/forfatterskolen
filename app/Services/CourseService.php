@@ -273,6 +273,105 @@ class CourseService
     }
 
     /**
+     * Start a checkout session for API consumers.
+     *
+     * @return array{order: \App\Order, gui_snippet?: string, redirect_url?: string, error?: string}
+     */
+    public function startApiCheckout(Request $request): array
+    {
+        $package = Package::find($request->package_id);
+        $course = $package->course;
+        $calculatedPrice = $this->calculatePrice($course, $package, $request);
+
+        if ($request->has('order_type') && $request->order_type === 6) {
+            $calculatedPrice = $request->price;
+        }
+
+        $discount = $request->price - $calculatedPrice;
+        $request->merge(['discount' => $discount]);
+
+        $orderRecord = $this->createOrder($request);
+
+        if ($request->is_pay_later) {
+            return [
+                'order' => $orderRecord,
+                'redirect_url' => url('/thankyou?pl_ord='.$orderRecord->id),
+            ];
+        }
+
+        $checkoutMerchantId = config('services.svea.checkoutid');
+        $checkoutSecret = config('services.svea.checkout_secret');
+
+        // set endpoint url. Eg. test or prod
+        $baseUrl = \Svea\Checkout\Transport\Connector::PROD_BASE_URL;
+
+        try {
+            $conn = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
+            $checkoutClient = new \Svea\Checkout\CheckoutClient($conn);
+
+            $data = [
+                'countryCode' => config('services.svea.country_code'),
+                'currency' => config('services.svea.currency'),
+                'locale' => config('services.svea.locale'),
+                'clientOrderNumber' => config('services.svea.identifier').$orderRecord->id,
+                'merchantData' => $course->title.' order',
+                'cart' => [
+                    'items' => [
+                        [
+                            'name' => \Illuminate\Support\Str::limit($course->title, 35),
+                            'quantity' => 100,
+                            'unitPrice' => $calculatedPrice * 100,
+                            'unit' => 'pc',
+                        ],
+                    ],
+                ],
+                'presetValues' => [
+                    [
+                        'typeName' => 'emailAddress',
+                        'value' => $request->email,
+                        'isReadonly' => false,
+                    ],
+                    [
+                        'typeName' => 'postalCode',
+                        'value' => $request->zip,
+                        'isReadonly' => false,
+                    ],
+                    [
+                        'typeName' => 'PhoneNumber',
+                        'value' => $request->phone,
+                        'isReadonly' => false,
+                    ],
+                ],
+                'merchantSettings' => [
+                    'termsUri' => url('/terms/course-terms'),
+                    'checkoutUri' => url('/course/'.$course->id.'/checkout?t=1'),
+                    'confirmationUri' => url('/thankyou?svea_ord='.$orderRecord->id),
+                    'pushUri' => url('/svea-callback?svea_order_id={checkout.order.uri}'),
+                ],
+            ];
+
+            $response = $checkoutClient->create($data);
+            $orderId = $response['OrderId'];
+            $guiSnippet = $response['Gui']['Snippet'];
+
+            $orderRecord->svea_order_id = $orderId;
+            $orderRecord->save();
+
+            return [
+                'order' => $orderRecord,
+                'gui_snippet' => $guiSnippet,
+            ];
+        } catch (\Throwable $exception) {
+            $orderRecord->delete();
+
+            return [
+                'order' => $orderRecord,
+                'error' => $exception->getMessage(),
+            ];
+        }
+    }
+
+    /**
      * Calculate the price with the coupon
      */
     public function calculatePrice($course, $package, Request $request): int
