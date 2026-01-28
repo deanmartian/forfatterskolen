@@ -38,6 +38,13 @@ class CourseTakenTest extends TestCase
             $table->softDeletes();
         });
 
+        Schema::create('user_preferred_editor', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->integer('user_id')->unsigned()->index();
+            $table->integer('editor_id')->unsigned()->index();
+            $table->timestamps();
+        });
+
         Schema::create('courses', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('title')->default('');
