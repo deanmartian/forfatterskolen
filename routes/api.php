@@ -40,13 +40,14 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
 
     Route::get('/health', [HealthController::class, 'show']);
     Route::get('/courses/for-sale', [CourseController::class, 'forSale']);
+    Route::get('/courses/taken', [CourseController::class, 'taken'])
+        ->middleware('apiJwt');
     Route::get('/courses/{id}', [CourseController::class, 'showPublic']);
 
     Route::middleware('apiJwt')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
         Route::get('/dashboard', [DashboardController::class, 'show']);
         Route::get('/invoices', [InvoiceController::class, 'index']);
-        Route::get('/courses/taken', [CourseController::class, 'taken']);
         Route::get('/courses/{id}/lessons', [CourseController::class, 'lessons']);
         Route::get('/lessons/{id}', [LessonController::class, 'show']);
         Route::post('/files/signed-upload', [FileController::class, 'signedUpload']);
