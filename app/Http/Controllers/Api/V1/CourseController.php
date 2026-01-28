@@ -57,8 +57,14 @@ class CourseController extends ApiController
         return response()->json(['data' => $courses]);
     }
 
-    public function showPublic(int $id): JsonResponse
+    public function showPublic($id): JsonResponse
     {
+        if (! is_numeric($id)) {
+            return $this->errorResponse('Course not found.', 'not_found', 404);
+        }
+
+        $id = (int) $id;
+
         $course = Course::query()
             ->where('for_sale', 1)
             ->find($id);
@@ -105,9 +111,13 @@ class CourseController extends ApiController
         ]);
     }
 
-    public function taken(Request $request): AnonymousResourceCollection
+    public function taken(Request $request): JsonResponse|AnonymousResourceCollection
     {
         $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
 
         $coursesTaken = CoursesTaken::with('package.course')
             ->where('user_id', $user->id)
