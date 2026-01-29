@@ -10,6 +10,7 @@ use App\AssignmentLearnerConfiguration;
 use App\AssignmentLearnerSubmissionDate;
 use App\AssignmentManuscript;
 use App\CoursesTaken;
+use App\Genre;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Services\FileIntegrityService;
@@ -207,6 +208,20 @@ class AssignmentController extends ApiController
             return $this->errorResponse('Submission already exists.', 'submission_exists', 409);
         }
 
+        $type = $request->input('type');
+
+        if ($type === null || $type === '') {
+            return $this->errorResponse('Type is required.', 'validation_error', 422, [
+                'field' => 'type',
+            ]);
+        }
+
+        if (! is_numeric($type) || ! Genre::find((int) $type)) {
+            return $this->errorResponse('Invalid type.', 'validation_error', 422, [
+                'field' => 'type',
+            ]);
+        }
+
         if (! $request->hasFile('filename') || ! $request->file('filename')->isValid()) {
             return $this->errorResponse('Missing or invalid file.', 'invalid_file', 422);
         }
@@ -323,7 +338,7 @@ class AssignmentController extends ApiController
             'user_id' => $user->id,
             'filename' => '/'.$destinationPath.end($expFileName),
             'words' => $wordCount,
-            'type' => $request->input('type'),
+            'type' => (int) $type,
             'manu_type' => $request->input('manu_type'),
             'join_group' => $joinGroup,
             'letter_to_editor' => $letterToEditor,
