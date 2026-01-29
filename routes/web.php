@@ -59,9 +59,15 @@ Route::domain($front)->group(function () {
         Route::get('/support', [Frontend\HomeController::class, 'support'])->name('front.support'); // Support
         Route::get('/support/{id}/articles', [Frontend\HomeController::class, 'supportArticles'])->name('front.support-articles'); // Support Articles
         Route::get('/support/{id}/article/{article_id}', [Frontend\HomeController::class, 'supportArticle'])->name('front.support-article'); // Support Article
-        Route::get('/free-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar'); // Support Article
-        Route::post('/free-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar.submit'); // Support Article
-        Route::get('/free-webinar/{id}/thank-you', [Frontend\HomeController::class, 'freeWebinarThanks'])->name('front.free-webinar-thanks'); // Support Article
+        Route::get('/gratis-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar'); // Support Article
+        Route::post('/gratis-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar.submit'); // Support Article
+        Route::get('/gratis-webinar/{id}/thank-you', [Frontend\HomeController::class, 'freeWebinarThanks'])->name('front.free-webinar-thanks'); // Support Article
+        Route::get('/free-webinar/{id}/', function ($id) {
+            return redirect()->route('front.free-webinar', ['id' => $id], 301);
+        });
+        Route::get('/free-webinar/{id}/thank-you', function ($id) {
+            return redirect()->route('front.free-webinar-thanks', ['id' => $id], 301);
+        });
         Route::get('/webinartakk', [Frontend\HomeController::class, 'webinarThanks'])->name('front.webinar-thanks'); // Support Article
         Route::get('/children', [Frontend\HomeController::class, 'children'])->name('front.children');
         Route::view('/subscribe-success', 'frontend.subscribe-success')->name('front.subscribe-success'); // Homepage

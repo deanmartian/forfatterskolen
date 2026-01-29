@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\CheckoutController;
 use App\Http\Controllers\Api\V1\CourseController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\FileController;
+use App\Http\Controllers\Api\V1\FreeWebinarController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LessonController;
@@ -44,6 +45,8 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::get('/courses/taken', [CourseController::class, 'taken'])
         ->middleware('apiJwt');
     Route::get('/courses/{id}', [CourseController::class, 'showPublic']);
+    Route::get('/free-webinars', [FreeWebinarController::class, 'index']);
+    Route::get('/free-webinars/{id}', [FreeWebinarController::class, 'show']);
 
     Route::middleware('apiJwt')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);

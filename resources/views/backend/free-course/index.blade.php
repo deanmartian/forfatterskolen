@@ -92,7 +92,7 @@
                                         </div>
                                         <div class="pull-right button-container">
                                             <?php
-                                            $webinarUrl = "https://forfatterskolen.no/free-webinar/".$webinar->id;
+                                            $webinarUrl = route('front.free-webinar', $webinar->id, true);
                                             ?>
                                             <input type="text" value="{{ $webinarUrl }}"
                                                    style="position: absolute; left: -10000px;">
