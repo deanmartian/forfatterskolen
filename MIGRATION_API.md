@@ -184,6 +184,70 @@ GET /api/v1/dashboard
 Authorization: Bearer <access_token>
 ```
 
+---
+
+# Checkout
+
+## POST /checkout/courses/{courseId}/start
+
+Starts a checkout session for a course using the existing payment flow (Vipps/Svea/etc).
+
+**Request**
+```http
+POST /api/v1/checkout/courses/{courseId}/start
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "package_id": 123,
+  "payment_mode_id": 3,
+  "payment_plan_id": 8,
+  "coupon": "OPTIONAL-COUPON",
+  "is_pay_later": false
+}
+```
+
+**Response (201)**
+```json
+{
+  "redirect_url": "https://checkout.svea.com/.../iframe",
+  "reference": 98765
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden` (course not purchasable / already owned)
+- **404** `not_found` (course not found)
+- **422** `validation_error`
+
+## GET /checkout/status/{reference}
+
+Returns the current status of a checkout session.
+
+**Request**
+```http
+GET /api/v1/checkout/status/{reference}
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "status": "pending",
+  "order": {
+    "order_id": 98765,
+    "payment_mode": "Faktura",
+    "is_processed": false,
+    "svea_order_id": "123456789"
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **404** `not_found`
+
 **Response (200)**
 ```json
 {
