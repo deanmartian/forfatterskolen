@@ -6,6 +6,7 @@ use App\Assignment;
 use App\AssignmentAddon;
 use App\AssignmentFeedback;
 use App\AssignmentFeedbackNoGroup;
+use App\AssignmentGroupLearner;
 use App\AssignmentLearnerConfiguration;
 use App\AssignmentLearnerSubmissionDate;
 use App\AssignmentManuscript;
@@ -81,12 +82,12 @@ class AssignmentController extends ApiController
                         if (! AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
                             if ($course->type == 'Single' && $assignment->submission_date == '365') {
                                 if (Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
-                                    $assignments[] = $this->formatAssignment($assignment, $user, $courseTaken);
+                                    $assignments[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
                                 }
                             } else {
                                 if (Carbon::parse($courseTaken->started_at)->addDays((int) $assignment->submission_date)
                                     ->gt(Carbon::now())) {
-                                    $assignments[] = $this->formatAssignment($assignment, $user, $courseTaken);
+                                    $assignments[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
                                 }
                             }
                         } else {
@@ -95,7 +96,7 @@ class AssignmentController extends ApiController
 
                             if (Carbon::parse($assignmentSubmissionDate)->gt(Carbon::now()->subDay())
                                 && Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
-                                $assignments[] = $this->formatAssignment($assignment, $user, $courseTaken);
+                                $assignments[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
                             }
                         }
                     }
@@ -115,7 +116,7 @@ class AssignmentController extends ApiController
 
             if (! $feedback && (! $manuscript || ! $manuscript->locked)) {
                 if (Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
-                    $assignments[] = $this->formatAssignment($assignment, $user, null);
+                    $assignments[] = $this->formatAssignment($assignment, $user, null, false);
                 }
             }
         }
@@ -154,7 +155,7 @@ class AssignmentController extends ApiController
         }
 
         return response()->json([
-            'data' => $this->formatAssignment($assignment, $user, null),
+            'data' => $this->formatAssignment($assignment, $user, null, true),
         ]);
     }
 
@@ -436,11 +437,11 @@ class AssignmentController extends ApiController
         return $this->errorResponse('Feedback not found.', 'not_found', 404);
     }
 
-    protected function formatAssignment(Assignment $assignment, $user, ?CoursesTaken $courseTaken): array
+    protected function formatAssignment(Assignment $assignment, $user, ?CoursesTaken $courseTaken, bool $includeFeedbackSummary): array
     {
         $course = $assignment->course;
 
-        return [
+        $payload = [
             'id' => $assignment->id,
             'title' => $assignment->title,
             'description' => $assignment->description,
@@ -459,6 +460,12 @@ class AssignmentController extends ApiController
             'course_taken_end_date' => $courseTaken ? $courseTaken->end_date : null,
             'submission' => $this->assignmentSubmissionSummary($assignment, $user),
         ];
+
+        if ($includeFeedbackSummary) {
+            $payload['feedback_summary'] = $this->assignmentFeedbackSummary($assignment, $user);
+        }
+
+        return $payload;
     }
 
     protected function assignmentSubmissionSummary(Assignment $assignment, $user): ?array
@@ -479,6 +486,49 @@ class AssignmentController extends ApiController
             'status' => $manuscript->status,
             'words' => $manuscript->words,
             'uploaded_at' => $manuscript->uploaded_at,
+        ];
+    }
+
+    protected function assignmentFeedbackSummary(Assignment $assignment, $user): ?array
+    {
+        $manuscript = AssignmentManuscript::where('assignment_id', $assignment->id)
+            ->where('user_id', $user->id)
+            ->latest('id')
+            ->first();
+
+        $noGroupFeedback = null;
+        if ($manuscript) {
+            $noGroupFeedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript->id)
+                ->where('is_active', 1)
+                ->latest('id')
+                ->first();
+        }
+
+        $groupLearnerIds = AssignmentGroupLearner::where('user_id', $user->id)
+            ->whereHas('group', function ($query) use ($assignment) {
+                $query->where('assignment_id', $assignment->id);
+            })
+            ->pluck('id');
+
+        $groupFeedback = null;
+        if ($groupLearnerIds->isNotEmpty()) {
+            $groupFeedback = AssignmentFeedback::whereIn('assignment_group_learner_id', $groupLearnerIds)
+                ->where('is_active', 1)
+                ->latest('id')
+                ->first();
+        }
+
+        $feedback = $noGroupFeedback ?: $groupFeedback;
+
+        if (! $feedback) {
+            return null;
+        }
+
+        return [
+            'id' => $feedback->id,
+            'is_active' => (bool) $feedback->is_active,
+            'availability' => $feedback->availability,
+            'filename' => $feedback->filename,
         ];
     }
 
