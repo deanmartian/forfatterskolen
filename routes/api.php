@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\FreeWebinarController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LessonController;
+use App\Http\Controllers\Api\V1\PublisherBookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::get('/courses/{id}', [CourseController::class, 'showPublic']);
     Route::get('/free-webinars', [FreeWebinarController::class, 'index']);
     Route::get('/free-webinars/{id}', [FreeWebinarController::class, 'show']);
+    Route::get('/publisher-books', [PublisherBookController::class, 'index']);
 
     Route::middleware('apiJwt')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
