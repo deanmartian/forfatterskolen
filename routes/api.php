@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\AssignmentController;
 use App\Http\Controllers\Api\V1\CheckoutController;
 use App\Http\Controllers\Api\V1\CourseController;
 use App\Http\Controllers\Api\V1\DashboardController;
@@ -65,6 +66,11 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::post('/files/{file}/upload', [FileController::class, 'upload'])
             ->middleware('signed')
             ->name('api.v1.files.upload');
+        Route::get('/assignments', [AssignmentController::class, 'index']);
+        Route::get('/assignments/{id}', [AssignmentController::class, 'show']);
+        Route::post('/assignments/{id}/submit', [AssignmentController::class, 'submit']);
+        Route::get('/assignments/submissions/{id}/download', [AssignmentController::class, 'downloadSubmission']);
+        Route::get('/assignments/feedback/{id}/download', [AssignmentController::class, 'downloadFeedback']);
     });
 
     Route::get('/files/{file}/download', [FileController::class, 'download'])
