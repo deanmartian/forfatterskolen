@@ -18,6 +18,11 @@ class PublisherBookController extends ApiController
                     return [
                         'id' => $book->id,
                         'title' => $book->title,
+                        'description' => $book->description,
+                        'quote_description' => $book->quote_description,
+                        'author_image' => $book->author_image,
+                        'book_image' => $book->book_image,
+                        'book_image_link' => $book->book_image_link,
                         'order' => $book->display_order,
                     ];
                 })
