@@ -142,6 +142,12 @@ class CourseController extends ApiController
             return $this->errorResponse('You do not have access to this course.', 'forbidden', 403);
         }
 
+        $courseTaken = $user->coursesTaken()
+            ->whereIn('package_id', $course->packages()->pluck('id'))
+            ->first();
+
+        $request->attributes->set('course_started_at', optional($courseTaken)->started_at);
+
         $lessons = $course->lessons()->orderBy('order', 'asc')->get();
 
         return LessonResource::collection($lessons);
