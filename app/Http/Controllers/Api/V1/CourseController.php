@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class CourseController extends ApiController
@@ -145,24 +144,12 @@ class CourseController extends ApiController
 
         $packages = $course->packagesIsShow()
             ->get()
-            ->flatMap(function (Package $package) use ($currency, $isAvailable): array {
-                $rows = [];
-
-                $rows[] = $this->buildVariantPayload($package, 1, $currency, $isAvailable);
-
-                if ($package->months_3_enable) {
-                    $rows[] = $this->buildVariantPayload($package, 3, $currency, $isAvailable);
-                }
-
-                if ($package->months_6_enable) {
-                    $rows[] = $this->buildVariantPayload($package, 6, $currency, $isAvailable);
-                }
-
-                if ($package->months_12_enable) {
-                    $rows[] = $this->buildVariantPayload($package, 12, $currency, $isAvailable);
-                }
-
-                return $rows;
+            ->map(function (Package $package) use ($currency, $isAvailable): array {
+                return array_merge($package->toArray(), [
+                    'features' => $this->buildPackageFeatures($package),
+                    'currency' => $currency,
+                    'is_available' => $isAvailable,
+                ]);
             })
             ->values()
             ->all();
@@ -258,59 +245,6 @@ class CourseController extends ApiController
         return url($path);
     }
 
-    private function buildVariantPayload(Package $package, int $division, ?string $currency, bool $isAvailable): array
-    {
-        $priceTotal = $this->resolveVariantPrice($package, $division);
-        $paymentType = $division === 1 ? 'full' : 'installment';
-
-        $payload = [
-            'id' => $this->buildVariantId($package->id, $division),
-            'name' => $package->variation,
-            'price_total' => $priceTotal,
-            'currency' => $currency,
-            'payment_type' => $paymentType,
-            'is_default' => (bool) ($package->is_standard && $division === 1),
-            'is_available' => $isAvailable,
-            'features' => $this->buildPackageFeatures($package),
-            'package_fields' => $this->buildPackageFields($package),
-        ];
-
-        if ($division !== 1) {
-            $payload['installments'] = $division;
-            $payload['first_payment'] = round($priceTotal / $division, 2);
-        }
-
-        return $payload;
-    }
-
-    private function resolveVariantPrice(Package $package, int $division): float
-    {
-        if ($division === 1) {
-            return (float) $package->calculated_price;
-        }
-
-        if ($division === 3) {
-            return (float) (($package->months_3_is_sale && $package->months_3_sale_price)
-                ? $package->months_3_sale_price
-                : $package->months_3_price);
-        }
-
-        if ($division === 6) {
-            return (float) (($package->months_6_is_sale && $package->months_6_sale_price)
-                ? $package->months_6_sale_price
-                : $package->months_6_price);
-        }
-
-        return (float) (($package->months_12_is_sale && $package->months_12_sale_price)
-            ? $package->months_12_sale_price
-            : $package->months_12_price);
-    }
-
-    private function buildVariantId(int $packageId, int $division): string
-    {
-        return $packageId.'-'.$division;
-    }
-
     private function buildPackageFeatures(Package $package): array
     {
         $lines = preg_split("/\r\n|\r|\n/", (string) $package->description);
@@ -320,17 +254,6 @@ class CourseController extends ApiController
             ->map(fn (string $line): string => preg_replace('/^-\s*/', '', $line))
             ->filter(fn (string $line): bool => $line !== '')
             ->values()
-            ->all();
-    }
-
-    private function buildPackageFields(Package $package): array
-    {
-        static $columns = null;
-
-        $columns ??= Schema::getColumnListing($package->getTable());
-
-        return collect($columns)
-            ->mapWithKeys(fn (string $column): array => [$column => $package->getAttribute($column)])
             ->all();
     }
 }
