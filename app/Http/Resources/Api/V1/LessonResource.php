@@ -17,6 +17,9 @@ class LessonResource extends JsonResource
             'course_id' => $this->course_id,
             'title' => $this->title,
             'content' => $this->content,
+            'lesson_content' => $this->whenLoaded('lessonContent', function () {
+                return $this->lessonContent->values();
+            }),
             'description' => $this->description,
             'description_simplemde' => $this->description_simplemde,
             'whole_lesson_file' => $this->whole_lesson_file,
