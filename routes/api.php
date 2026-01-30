@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LessonController;
 use App\Http\Controllers\Api\V1\PublisherBookController;
+use App\Http\Controllers\Api\V1\WebinarController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -72,6 +73,10 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::post('/assignments/{id}/submit', [AssignmentController::class, 'submit']);
         Route::get('/assignments/submissions/{id}/download', [AssignmentController::class, 'downloadSubmission']);
         Route::get('/assignments/feedback/{id}/download', [AssignmentController::class, 'downloadFeedback']);
+        Route::get('/webinars', [WebinarController::class, 'index']);
+        Route::get('/webinars/{id}', [WebinarController::class, 'show']);
+        Route::get('/webinars/{id}/join', [WebinarController::class, 'join']);
+        Route::post('/webinars/{id}/register', [WebinarController::class, 'register']);
     });
 
     Route::get('/files/{file}/download', [FileController::class, 'download'])
