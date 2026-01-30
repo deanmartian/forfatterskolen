@@ -191,6 +191,7 @@ Authorization: Bearer <access_token>
 ## POST /checkout/courses/{courseId}/start
 
 Starts a checkout session for a course using the existing payment flow (Vipps/Svea/etc).
+Pricing is derived server-side from the selected package and payment plan.
 
 **Request**
 ```http
@@ -342,6 +343,46 @@ Authorization: Bearer <access_token>
 **Errors**
 - **401** `unauthorized`
 - **403** `forbidden`
+
+## GET /courses/{id}/packages
+
+Returns purchasable package options for a course. Each package can repeat for each enabled payment plan.
+
+**Request**
+```http
+GET /api/v1/courses/12/packages
+```
+
+**Response (200)**
+```json
+{
+  "data": [
+    {
+      "id": "88",
+      "name": "Standard Package",
+      "price_total": 14900,
+      "currency": "NOK",
+      "payment_type": "full",
+      "is_default": true,
+      "is_available": true
+    },
+    {
+      "id": "88",
+      "name": "Standard Package",
+      "price_total": 14900,
+      "currency": "NOK",
+      "payment_type": "installment",
+      "installments": 3,
+      "first_payment": 4966.67,
+      "is_default": false,
+      "is_available": true
+    }
+  ]
+}
+```
+
+**Errors**
+- **404** `not_found` (course not found)
 
 ## GET /courses/{id}/lessons
 
