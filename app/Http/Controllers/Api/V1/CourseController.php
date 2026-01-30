@@ -145,6 +145,8 @@ class CourseController extends ApiController
         $packages = $course->packagesIsShow()
             ->get()
             ->map(function (Package $package) use ($currency, $isAvailable): array {
+                $package->makeHidden(['description_formatted', 'description_with_check']);
+
                 return array_merge($package->toArray(), [
                     'features' => $this->buildPackageFeatures($package),
                     'currency' => $currency,
