@@ -209,7 +209,6 @@ class CourseController extends ApiController
 
     private function buildVariantPayload(Package $package, int $division, ?string $currency, bool $isAvailable): array
     {
-        $paymentType = $division === 1 ? 'full' : 'installment';
         $priceTotal = $this->resolveVariantPrice($package, $division);
         $variantName = $division === 1
             ? sprintf('%s - Full payment', $package->variation)
@@ -220,12 +219,12 @@ class CourseController extends ApiController
             'name' => $variantName,
             'price_total' => $priceTotal,
             'currency' => $currency,
-            'payment_type' => $paymentType,
             'is_default' => (bool) ($package->is_standard && $division === 1),
             'is_available' => $isAvailable,
         ];
 
-        if ($paymentType === 'installment') {
+        if ($division !== 1) {
+            $payload['months_enable'] = $division;
             $payload['installments'] = $division;
             $payload['first_payment'] = round($priceTotal / $division, 2);
         }
@@ -258,6 +257,6 @@ class CourseController extends ApiController
 
     private function buildVariantId(int $packageId, int $division): string
     {
-        return $packageId.'-'.$division;
+        return (string) $packageId;
     }
 }
