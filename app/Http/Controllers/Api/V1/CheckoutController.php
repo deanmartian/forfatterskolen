@@ -71,10 +71,9 @@ class CheckoutController extends ApiController
             'zip' => ['required', 'string'],
             'city' => ['required', 'string'],
             'phone' => ['required', 'string'],
-            'variant_id' => ['nullable', 'string'],
-            'package_id' => ['required_without:variant_id', 'integer', 'exists:packages,id'],
-            'payment_mode_id' => ['required_without:variant_id', 'integer', 'exists:payment_modes,id'],
-            'payment_plan_id' => ['required_without:variant_id', 'integer', 'exists:payment_plans,id'],
+            'package_id' => ['required', 'integer', 'exists:packages,id'],
+            'payment_mode_id' => ['required', 'integer', 'exists:payment_modes,id'],
+            'payment_plan_id' => ['required', 'integer', 'exists:payment_plans,id'],
             'coupon' => ['nullable', 'string'],
             'is_pay_later' => ['nullable', 'boolean'],
         ]);
@@ -84,24 +83,9 @@ class CheckoutController extends ApiController
         }
 
         $validated = $validator->validated();
-        $paymentMode = null;
-        $paymentPlan = null;
-
-        if (! empty($validated['variant_id'])) {
-            $resolvedVariant = $this->resolveVariant($course, $validated['variant_id']);
-
-            if (isset($resolvedVariant['error'])) {
-                return $this->errorResponse($resolvedVariant['error'], 'validation_error', 422);
-            }
-
-            $package = $resolvedVariant['package'];
-            $paymentPlan = $resolvedVariant['payment_plan'];
-            $paymentMode = $resolvedVariant['payment_mode'];
-        } else {
-            $package = Package::find($validated['package_id']);
-            $paymentMode = PaymentMode::find($validated['payment_mode_id']);
-            $paymentPlan = PaymentPlan::find($validated['payment_plan_id']);
-        }
+        $package = Package::find($validated['package_id']);
+        $paymentMode = PaymentMode::find($validated['payment_mode_id']);
+        $paymentPlan = PaymentPlan::find($validated['payment_plan_id']);
 
         if (! $package || (int) $package->course_id !== $course->id) {
             return $this->errorResponse('Package not available for this course.', 'forbidden', 403);
@@ -290,45 +274,6 @@ class CheckoutController extends ApiController
         }
 
         return null;
-    }
-
-    private function resolveVariant(Course $course, string $variantId): array
-    {
-        if (! preg_match('/^(\d+)-(\d+)$/', $variantId, $matches)) {
-            return ['error' => 'Invalid variant_id format.'];
-        }
-
-        $packageId = (int) $matches[1];
-        $division = (int) $matches[2];
-
-        $package = Package::find($packageId);
-
-        if (! $package || (int) $package->course_id !== $course->id) {
-            return ['error' => 'Package not available for this course.'];
-        }
-
-        if (! $this->planIsEnabled($package, $division)) {
-            return ['error' => 'Payment plan not available for this package.'];
-        }
-
-        $paymentPlan = PaymentPlan::where('division', $division)->first();
-
-        if (! $paymentPlan) {
-            return ['error' => 'Payment plan not found.'];
-        }
-
-        $paymentMode = PaymentMode::where('mode', 'Faktura')->first()
-            ?? PaymentMode::where('mode', 'Vipps')->first();
-
-        if (! $paymentMode) {
-            return ['error' => 'Payment mode not found.'];
-        }
-
-        return [
-            'package' => $package,
-            'payment_plan' => $paymentPlan,
-            'payment_mode' => $paymentMode,
-        ];
     }
 
     private function planIsEnabled(Package $package, int $division): bool
