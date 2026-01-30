@@ -6,6 +6,7 @@ use App\Course;
 use App\Order;
 use App\Package;
 use App\PaymentMode;
+use App\PaymentPlan;
 use App\Http\FrontendHelpers;
 use App\Services\CourseService;
 use Illuminate\Http\JsonResponse;
@@ -81,16 +82,25 @@ class CheckoutController extends ApiController
             return $this->errorResponse('Validation failed.', 'validation_error', 422, $validator->errors()->toArray());
         }
 
-        $package = Package::find($validator->validated()['package_id']);
+        $validated = $validator->validated();
+        $package = Package::find($validated['package_id']);
+        $paymentMode = PaymentMode::find($validated['payment_mode_id']);
+        $paymentPlan = PaymentPlan::find($validated['payment_plan_id']);
 
         if (! $package || (int) $package->course_id !== $course->id) {
             return $this->errorResponse('Package not available for this course.', 'forbidden', 403);
         }
 
-        $paymentMode = PaymentMode::find($validator->validated()['payment_mode_id']);
-
         if (! $paymentMode) {
             return $this->errorResponse('Payment mode not found.', 'not_found', 404);
+        }
+
+        if (! $paymentPlan) {
+            return $this->errorResponse('Payment plan not found.', 'not_found', 404);
+        }
+
+        if (! $this->planIsEnabled($package, (int) $paymentPlan->division)) {
+            return $this->errorResponse('Payment plan not available for this package.', 'forbidden', 403);
         }
 
         if (! in_array($paymentMode->mode, ['Vipps', 'Paypal', 'Faktura'], true)) {
@@ -99,15 +109,15 @@ class CheckoutController extends ApiController
 
         $payload = array_merge($payload, [
             'payment_mode_id' => $paymentMode->id,
-            'payment_plan_id' => $validator->validated()['payment_plan_id'],
+            'payment_plan_id' => $paymentPlan->id,
             'package_id' => $package->id,
         ]);
 
         $request->replace($payload);
 
         $request->merge([
-            'price' => $courseService->calculatePrice($course, $package, $request),
-            'is_pay_later' => (bool) ($validator->validated()['is_pay_later'] ?? false),
+            'price' => $courseService->calculatePlanPrice($course, $package, (int) $paymentPlan->division, $request),
+            'is_pay_later' => (bool) ($validated['is_pay_later'] ?? false),
         ]);
 
         $result = $courseService->startApiCheckout($request);
@@ -191,9 +201,15 @@ class CheckoutController extends ApiController
         }
 
         $status = 'pending';
+        $paymentModeLabel = optional($order->paymentMode)->mode;
+
+        if ((int) $order->payment_mode_id === 3 && $order->svea_order_id) {
+            $paymentModeLabel = 'Svea';
+        }
+
         $details = [
             'order_id' => $order->id,
-            'payment_mode' => optional($order->paymentMode)->mode,
+            'payment_mode' => $paymentModeLabel,
             'is_processed' => (bool) $order->is_processed,
         ];
 
@@ -264,5 +280,16 @@ class CheckoutController extends ApiController
         }
 
         return null;
+    }
+
+    private function planIsEnabled(Package $package, int $division): bool
+    {
+        return match ($division) {
+            1 => true,
+            3 => (bool) $package->months_3_enable,
+            6 => (bool) $package->months_6_enable,
+            12 => (bool) $package->months_12_enable,
+            default => false,
+        };
     }
 }

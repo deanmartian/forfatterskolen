@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Course;
 use App\CoursesTaken;
+use App\Package;
 use App\Http\Resources\Api\V1\CourseTakenResource;
 use App\Http\Resources\Api\V1\LessonResource;
 use Illuminate\Http\Request;
@@ -128,6 +129,46 @@ class CourseController extends ApiController
         return CourseTakenResource::collection($coursesTaken);
     }
 
+    public function packages(int $id): JsonResponse
+    {
+        $course = Course::query()
+            ->where('for_sale', 1)
+            ->find($id);
+
+        if (! $course) {
+            return $this->errorResponse('Course not found.', 'not_found', 404);
+        }
+
+        $currency = config('services.svea.currency');
+        $isAvailable = (bool) ($course->status && ! $course->hide_price && ! $course->pay_later_with_application);
+
+        $packages = $course->packagesIsShow()
+            ->get()
+            ->flatMap(function (Package $package) use ($currency, $isAvailable): array {
+                $rows = [];
+
+                $rows[] = $this->buildVariantPayload($package, 1, $currency, $isAvailable);
+
+                if ($package->months_3_enable) {
+                    $rows[] = $this->buildVariantPayload($package, 3, $currency, $isAvailable);
+                }
+
+                if ($package->months_6_enable) {
+                    $rows[] = $this->buildVariantPayload($package, 6, $currency, $isAvailable);
+                }
+
+                if ($package->months_12_enable) {
+                    $rows[] = $this->buildVariantPayload($package, 12, $currency, $isAvailable);
+                }
+
+                return $rows;
+            })
+            ->values()
+            ->all();
+
+        return response()->json(['data' => $packages]);
+    }
+
     public function lessons(Request $request, int $id): JsonResponse|AnonymousResourceCollection
     {
         $course = Course::find($id);
@@ -164,5 +205,56 @@ class CourseController extends ApiController
         }
 
         return url($path);
+    }
+
+    private function buildVariantPayload(Package $package, int $division, ?string $currency, bool $isAvailable): array
+    {
+        $priceTotal = $this->resolveVariantPrice($package, $division);
+        $paymentType = $division === 1 ? 'full' : 'installment';
+
+        $payload = [
+            'id' => $this->buildVariantId($package->id, $division),
+            'name' => $package->variation,
+            'price_total' => $priceTotal,
+            'currency' => $currency,
+            'payment_type' => $paymentType,
+            'is_default' => (bool) ($package->is_standard && $division === 1),
+            'is_available' => $isAvailable,
+        ];
+
+        if ($division !== 1) {
+            $payload['installments'] = $division;
+            $payload['first_payment'] = round($priceTotal / $division, 2);
+        }
+
+        return $payload;
+    }
+
+    private function resolveVariantPrice(Package $package, int $division): float
+    {
+        if ($division === 1) {
+            return (float) $package->calculated_price;
+        }
+
+        if ($division === 3) {
+            return (float) (($package->months_3_is_sale && $package->months_3_sale_price)
+                ? $package->months_3_sale_price
+                : $package->months_3_price);
+        }
+
+        if ($division === 6) {
+            return (float) (($package->months_6_is_sale && $package->months_6_sale_price)
+                ? $package->months_6_sale_price
+                : $package->months_6_price);
+        }
+
+        return (float) (($package->months_12_is_sale && $package->months_12_sale_price)
+            ? $package->months_12_sale_price
+            : $package->months_12_price);
+    }
+
+    private function buildVariantId(int $packageId, int $division): string
+    {
+        return $packageId.'-'.$division;
     }
 }
