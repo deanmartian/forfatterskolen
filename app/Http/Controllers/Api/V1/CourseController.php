@@ -255,6 +255,6 @@ class CourseController extends ApiController
 
     private function buildVariantId(int $packageId, int $division): string
     {
-        return (string) $packageId;
+        return $packageId.'-'.$division;
     }
 }
