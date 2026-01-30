@@ -148,7 +148,7 @@ class CourseController extends ApiController
 
         $request->attributes->set('course_started_at', optional($courseTaken)->started_at);
 
-        $lessons = $course->lessons()->orderBy('order', 'asc')->get();
+        $lessons = $course->lessons()->with('videos')->orderBy('order', 'asc')->get();
 
         return LessonResource::collection($lessons);
     }
