@@ -169,6 +169,56 @@ class CourseController extends ApiController
         return response()->json(['data' => $packages]);
     }
 
+    public function plan(int $id): JsonResponse
+    {
+        $course = Course::query()
+            ->where('for_sale', 1)
+            ->find($id);
+
+        if (! $course) {
+            return $this->errorResponse('Course not found.', 'not_found', 404);
+        }
+
+        if ($course->id === 17) {
+            $webinars = $course->webinars()
+                ->active()
+                ->notReplay()
+                ->get()
+                ->map(function ($webinar): array {
+                    return [
+                        'id' => $webinar->id,
+                        'title' => $webinar->title,
+                        'description' => $webinar->description,
+                        'short_description' => Str::limit(strip_tags($webinar->description ?? ''), 180),
+                        'start_date' => $webinar->start_date,
+                        'image_url' => $this->absoluteUrl($webinar->image ?: '/images/no_image.png'),
+                    ];
+                })
+                ->values()
+                ->all();
+
+            return response()->json([
+                'data' => [
+                    'type' => 'webinars',
+                    'webinars' => $webinars,
+                ],
+            ]);
+        }
+
+        $coursePlanLesson = $course->lesson_kursplan()->first();
+        $coursePlan = $coursePlanLesson ? $coursePlanLesson->content : $course->course_plan;
+
+        return response()->json([
+            'data' => [
+                'type' => 'course_plan',
+                'course_plan' => $course->course_plan,
+                'course_plan_html' => $coursePlanLesson ? $coursePlan : nl2br($coursePlan ?? ''),
+                'course_plan_data' => $course->course_plan_data,
+                'has_course_plan_data' => (bool) $course->course_plan_data,
+            ],
+        ]);
+    }
+
     public function lessons(Request $request, int $id): JsonResponse|AnonymousResourceCollection
     {
         $course = Course::find($id);

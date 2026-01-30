@@ -384,6 +384,51 @@ GET /api/v1/courses/12/packages
 **Errors**
 - **404** `not_found` (course not found)
 
+## GET /courses/{id}/plan
+
+Returns the course plan content as displayed in the frontend course page. For webinar-only
+courses (course id `17`), the response includes upcoming webinars instead of a text plan.
+
+**Request**
+```http
+GET /api/v1/courses/12/plan
+```
+
+**Response (200, standard course)**
+```json
+{
+  "data": {
+    "type": "course_plan",
+    "course_plan": "Week 1: Introduction\nWeek 2: Drafting",
+    "course_plan_html": "Week 1: Introduction<br />\nWeek 2: Drafting",
+    "course_plan_data": "<p>Optional schedule markup.</p>",
+    "has_course_plan_data": true
+  }
+}
+```
+
+**Response (200, webinar course)**
+```json
+{
+  "data": {
+    "type": "webinars",
+    "webinars": [
+      {
+        "id": 55,
+        "title": "Opening session",
+        "description": "<p>Meet the instructor.</p>",
+        "short_description": "Meet the instructor.",
+        "start_date": "2024-02-01T18:00:00Z",
+        "image_url": "https://www.forfatterskolen.no/images/no_image.png"
+      }
+    ]
+  }
+}
+```
+
+**Errors**
+- **404** `not_found` (course not found)
+
 ## GET /courses/{id}/lessons
 
 Returns lessons for a course owned by the authenticated user.
