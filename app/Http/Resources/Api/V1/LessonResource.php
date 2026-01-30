@@ -17,10 +17,10 @@ class LessonResource extends JsonResource
             'course_id' => $this->course_id,
             'title' => $this->title,
             'content' => $this->content,
-            'video' => $this->whenLoaded('videos', function () {
-                $video = $this->videos->first();
+            'video' => $this->whenLoaded('lessonContent', function () {
+                $content = $this->lessonContent->first();
 
-                return $video ? $video->embed_code : null;
+                return $content ? $content->lesson_content : null;
             }),
             'description' => $this->description,
             'description_simplemde' => $this->description_simplemde,

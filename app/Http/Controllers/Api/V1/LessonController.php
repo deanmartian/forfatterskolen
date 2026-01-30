@@ -11,7 +11,7 @@ class LessonController extends ApiController
 {
     public function show(Request $request, int $id): JsonResponse
     {
-        $lesson = Lesson::with(['course', 'videos'])->find($id);
+        $lesson = Lesson::with(['course', 'lessonContent'])->find($id);
 
         if (! $lesson) {
             return $this->errorResponse('Lesson not found.', 'not_found', 404);
