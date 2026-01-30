@@ -201,9 +201,15 @@ class CheckoutController extends ApiController
         }
 
         $status = 'pending';
+        $paymentModeLabel = optional($order->paymentMode)->mode;
+
+        if ((int) $order->payment_mode_id === 3 && $order->svea_order_id) {
+            $paymentModeLabel = 'Svea';
+        }
+
         $details = [
             'order_id' => $order->id,
-            'payment_mode' => optional($order->paymentMode)->mode,
+            'payment_mode' => $paymentModeLabel,
             'is_processed' => (bool) $order->is_processed,
         ];
 
