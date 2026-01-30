@@ -270,6 +270,7 @@ class CourseController extends ApiController
             'payment_type' => $paymentType,
             'is_default' => (bool) ($package->is_standard && $division === 1),
             'is_available' => $isAvailable,
+            'features' => $this->buildPackageFeatures($package),
         ];
 
         if ($division !== 1) {
@@ -306,5 +307,17 @@ class CourseController extends ApiController
     private function buildVariantId(int $packageId, int $division): string
     {
         return $packageId.'-'.$division;
+    }
+
+    private function buildPackageFeatures(Package $package): array
+    {
+        $lines = preg_split("/\r\n|\r|\n/", (string) $package->description);
+
+        return collect($lines)
+            ->map(fn (string $line): string => trim($line))
+            ->map(fn (string $line): string => preg_replace('/^-\s*/', '', $line))
+            ->filter(fn (string $line): bool => $line !== '')
+            ->values()
+            ->all();
     }
 }
