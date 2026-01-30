@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class CourseController extends ApiController
@@ -271,6 +272,7 @@ class CourseController extends ApiController
             'is_default' => (bool) ($package->is_standard && $division === 1),
             'is_available' => $isAvailable,
             'features' => $this->buildPackageFeatures($package),
+            'package_fields' => $this->buildPackageFields($package),
         ];
 
         if ($division !== 1) {
@@ -318,6 +320,17 @@ class CourseController extends ApiController
             ->map(fn (string $line): string => preg_replace('/^-\s*/', '', $line))
             ->filter(fn (string $line): bool => $line !== '')
             ->values()
+            ->all();
+    }
+
+    private function buildPackageFields(Package $package): array
+    {
+        static $columns = null;
+
+        $columns ??= Schema::getColumnListing($package->getTable());
+
+        return collect($columns)
+            ->mapWithKeys(fn (string $column): array => [$column => $package->getAttribute($column)])
             ->all();
     }
 }
