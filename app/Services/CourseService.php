@@ -469,6 +469,97 @@ class CourseService
         return $price;
     }
 
+    public function calculatePlanPrice(Course $course, Package $package, int $division, Request $request): int
+    {
+        if ($division === 1) {
+            return $this->calculatePrice($course, $package, $request);
+        }
+
+        $hasPaidCourse = false;
+
+        if (Auth::user()) {
+            foreach (\Auth::user()->coursesTakenNotOld as $courseTaken) {
+                if ($courseTaken->package->course->type != 'Free' && $courseTaken->is_active) {
+                    if ($courseTaken->package->course->is_free != 1) {
+                        $hasPaidCourse = true;
+                    }
+                    break;
+                }
+            }
+        }
+
+        $today = Carbon::today()->format('Y-m-d');
+        $price = 0;
+        $basePrice = 0;
+        $salePrice = null;
+
+        if ($division === 3) {
+            $from = Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
+            $to = Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
+            $isBetween = (($today >= $from) && ($today <= $to)) ? 1 : 0;
+            $basePrice = (int) $package->months_3_price;
+            $price = $basePrice;
+            $salePrice = $isBetween && $package->months_3_sale_price ? (int) $package->months_3_sale_price : null;
+        } elseif ($division === 6) {
+            $from = Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
+            $to = Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
+            $isBetween = (($today >= $from) && ($today <= $to)) ? 1 : 0;
+            $basePrice = (int) $package->months_6_price;
+            $price = $basePrice;
+            $salePrice = $isBetween && $package->months_6_sale_price ? (int) $package->months_6_sale_price : null;
+        } else {
+            $from = Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
+            $to = Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
+            $isBetween = (($today >= $from) && ($today <= $to)) ? 1 : 0;
+            $basePrice = (int) $package->months_12_price;
+            $price = $basePrice;
+            $salePrice = $isBetween && $package->months_12_sale_price ? (int) $package->months_12_sale_price : null;
+        }
+
+        if ($salePrice !== null) {
+            $price = $salePrice;
+        }
+
+        if ($hasPaidCourse && $package->has_student_discount) {
+            $studentDiscount = $course->type === 'Group' ? 1000 : 500;
+            $price = $price - $studentDiscount;
+        }
+
+        if ($request->coupon) {
+            $discountCoupon = CourseDiscount::where('coupon', $request->coupon)
+                ->where('course_id', $course->id)->first();
+
+            if ($discountCoupon) {
+                if ($discountCoupon->valid_to) {
+                    $valid_from = Carbon::parse($discountCoupon->valid_from)->format('Y-m-d');
+                    $valid_to = Carbon::parse($discountCoupon->valid_to)->format('Y-m-d');
+                    $today = Carbon::today()->format('Y-m-d');
+
+                    if (! (($today >= $valid_from) && ($today <= $valid_to))) {
+                        return $price;
+                    }
+                }
+
+                $discount = ((int) $discountCoupon->discount);
+                $packageDiscount = 0;
+
+                if ($salePrice !== null) {
+                    $packageDiscount = $basePrice - $salePrice;
+                }
+
+                if ($discountCoupon->type === 1) {
+                    $price -= $discount - $packageDiscount;
+                }
+
+                if ($discountCoupon->type === 0) {
+                    $price -= $discount;
+                }
+            }
+        }
+
+        return $price;
+    }
+
     /**
      * Create order record
      *

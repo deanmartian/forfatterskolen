@@ -47,6 +47,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::get('/courses/taken', [CourseController::class, 'taken'])
         ->middleware('apiJwt');
     Route::get('/courses/{id}', [CourseController::class, 'showPublic']);
+    Route::get('/courses/{id}/packages', [CourseController::class, 'packages']);
     Route::get('/free-webinars', [FreeWebinarController::class, 'index']);
     Route::get('/free-webinars/{id}', [FreeWebinarController::class, 'show']);
     Route::get('/publisher-books', [PublisherBookController::class, 'index']);
