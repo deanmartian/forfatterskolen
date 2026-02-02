@@ -245,8 +245,14 @@ class CheckoutController extends ApiController
 
         $request->replace($payload);
 
+        $baseRequest = new Request(array_merge($request->all(), ['coupon' => null]));
+        $basePrice = $courseService->calculatePlanPrice($course, $package, (int) $paymentPlan->division, $baseRequest);
+        $finalPrice = $courseService->calculatePlanPrice($course, $package, (int) $paymentPlan->division, $request);
+        $discount = max(0, $basePrice - $finalPrice);
+
         $request->merge([
-            'price' => $courseService->calculatePlanPrice($course, $package, (int) $paymentPlan->division, $request),
+            'price' => $basePrice,
+            'discount' => $discount,
             'is_pay_later' => (bool) ($validated['is_pay_later'] ?? false),
         ]);
 
