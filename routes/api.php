@@ -62,6 +62,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::post('/checkout/courses/{courseId}/start', [CheckoutController::class, 'startCourseCheckout']);
         Route::get('/checkout/status/{reference}', [CheckoutController::class, 'status']);
         Route::get('/courses/{id}/lessons', [CourseController::class, 'lessons']);
+        Route::get('/courses/{id}/webinars', [WebinarController::class, 'courseIndex']);
         Route::get('/lessons/{id}', [LessonController::class, 'show']);
         Route::post('/files/signed-upload', [FileController::class, 'signedUpload']);
         Route::get('/files/{file}/signed-download', [FileController::class, 'signedDownload']);

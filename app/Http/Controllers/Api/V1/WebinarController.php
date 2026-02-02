@@ -26,63 +26,33 @@ class WebinarController extends ApiController
             return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
         }
 
-        if ($user->isDisabled) {
-            return response()->json(['data' => ['upcoming' => [], 'replays' => []]]);
+        return response()->json([
+            'data' => [
+                'upcoming' => [],
+                'replays' => [],
+            ],
+            'meta' => [
+                'placeholder' => true,
+            ],
+        ]);
+    }
+
+    public function courseIndex(Request $request, $id): JsonResponse
+    {
+        if (! is_numeric($id)) {
+            return $this->errorResponse('Course not found.', 'not_found', 404);
         }
 
-        $coursesTaken = $this->activeCoursesTaken($user);
+        $user = $this->apiUser($request);
 
-        if ($coursesTaken->isEmpty()) {
-            return response()->json(['data' => ['upcoming' => [], 'replays' => []]]);
-        }
-
-        $courseIds = $coursesTaken
-            ->map(fn (CoursesTaken $courseTaken) => optional($courseTaken->package)->course_id)
-            ->filter()
-            ->unique()
-            ->values();
-
-        if ($courseIds->isEmpty()) {
-            return response()->json(['data' => ['upcoming' => [], 'replays' => []]]);
-        }
-
-        $webinars = Webinar::with('course')
-            ->whereIn('course_id', $courseIds)
-            ->where('status', 1)
-            ->orderBy('start_date', 'asc')
-            ->get();
-
-        $upcoming = [];
-        $replays = [];
-        $now = Carbon::now();
-
-        foreach ($webinars as $webinar) {
-            $courseTaken = $this->resolveCourseTaken($coursesTaken, $webinar);
-
-            if (! $courseTaken || $courseTaken->is_disabled) {
-                continue;
-            }
-
-            if (! $this->isWithinCourseAccessWindow($webinar, $courseTaken)) {
-                continue;
-            }
-
-            $payload = $this->formatWebinar($webinar);
-
-            if ($this->isReplayWebinar($webinar)) {
-                $replays[] = $payload;
-                continue;
-            }
-
-            if (Carbon::parse($webinar->start_date)->greaterThanOrEqualTo($now)) {
-                $upcoming[] = $payload;
-            }
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
         }
 
         return response()->json([
-            'data' => [
-                'upcoming' => $upcoming,
-                'replays' => $replays,
+            'data' => [],
+            'meta' => [
+                'placeholder' => true,
             ],
         ]);
     }
