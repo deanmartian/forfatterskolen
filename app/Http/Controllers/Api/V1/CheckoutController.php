@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Course;
+use App\CourseDiscount;
 use App\Order;
 use App\Package;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\Http\FrontendHelpers;
 use App\Services\CourseService;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +18,119 @@ use Illuminate\Support\Facades\Validator;
 
 class CheckoutController extends ApiController
 {
+    public function discount(Request $request, int $courseId, CourseService $courseService): JsonResponse
+    {
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        Auth::setUser($user);
+
+        $course = Course::query()->where('for_sale', 1)->find($courseId);
+
+        if (! $course) {
+            return $this->errorResponse('Course not found.', 'not_found', 404);
+        }
+
+        if ($course->pay_later_with_application) {
+            return $this->errorResponse('Course requires application checkout.', 'forbidden', 403);
+        }
+
+        if ($course->hide_price) {
+            return $this->errorResponse('Course is not available for direct checkout.', 'forbidden', 403);
+        }
+
+        if (! $user->could_buy_course) {
+            return $this->errorResponse('You are not allowed to buy courses.', 'forbidden', 403);
+        }
+
+        $coursePackages = $course->packages->pluck('id')->toArray();
+        $alreadyTaken = $coursePackages
+            ? $user->coursesTaken()->whereIn('package_id', $coursePackages)->exists()
+            : false;
+
+        if ($alreadyTaken) {
+            return $this->errorResponse('You already have access to this course.', 'forbidden', 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'package_id' => ['required', 'integer', 'exists:packages,id'],
+            'payment_plan_id' => ['required', 'integer', 'exists:payment_plans,id'],
+            'coupon' => ['nullable', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorResponse('Validation failed.', 'validation_error', 422, $validator->errors()->toArray());
+        }
+
+        $validated = $validator->validated();
+        $package = Package::find($validated['package_id']);
+        $paymentPlan = PaymentPlan::find($validated['payment_plan_id']);
+
+        if (! $package || (int) $package->course_id !== $course->id) {
+            return $this->errorResponse('Package not available for this course.', 'forbidden', 403);
+        }
+
+        if (! $paymentPlan) {
+            return $this->errorResponse('Payment plan not found.', 'not_found', 404);
+        }
+
+        if (! $this->planIsEnabled($package, (int) $paymentPlan->division)) {
+            return $this->errorResponse('Payment plan not available for this package.', 'forbidden', 403);
+        }
+
+        $coupon = $validated['coupon'] ?? null;
+        if ($coupon) {
+            $discountCoupon = CourseDiscount::query()
+                ->where('course_id', $course->id)
+                ->whereRaw('BINARY coupon = ?', [$coupon])
+                ->first();
+
+            if (! $discountCoupon) {
+                return $this->errorResponse('Invalid coupon.', 'validation_error', 422, [
+                    'coupon' => ['Invalid coupon.'],
+                ]);
+            }
+
+            if ($discountCoupon->valid_to) {
+                $validFrom = Carbon::parse($discountCoupon->valid_from)->format('Y-m-d');
+                $validTo = Carbon::parse($discountCoupon->valid_to)->format('Y-m-d');
+                $today = Carbon::today()->format('Y-m-d');
+
+                if (! (($today >= $validFrom) && ($today <= $validTo))) {
+                    return $this->errorResponse('Coupon expired.', 'validation_error', 422, [
+                        'coupon' => ['Coupon expired.'],
+                    ]);
+                }
+            }
+        }
+
+        $payload = [
+            'package_id' => $package->id,
+            'payment_plan_id' => $paymentPlan->id,
+            'coupon' => $coupon,
+        ];
+
+        $pricingRequest = new Request($payload);
+        $baseRequest = new Request(array_merge($payload, ['coupon' => null]));
+
+        $price = $courseService->calculatePlanPrice($course, $package, (int) $paymentPlan->division, $pricingRequest);
+        $basePrice = $courseService->calculatePlanPrice($course, $package, (int) $paymentPlan->division, $baseRequest);
+        $discount = max(0, $basePrice - $price);
+
+        return response()->json([
+            'course_id' => $course->id,
+            'package_id' => $package->id,
+            'payment_plan_id' => $paymentPlan->id,
+            'base_price' => $basePrice,
+            'price' => $price,
+            'discount' => $discount,
+            'coupon' => $coupon,
+        ]);
+    }
+
     public function startCourseCheckout(Request $request, int $courseId, CourseService $courseService): JsonResponse
     {
         $user = $this->apiUser($request);
@@ -130,8 +245,14 @@ class CheckoutController extends ApiController
 
         $request->replace($payload);
 
+        $baseRequest = new Request(array_merge($request->all(), ['coupon' => null]));
+        $basePrice = $courseService->calculatePlanPrice($course, $package, (int) $paymentPlan->division, $baseRequest);
+        $finalPrice = $courseService->calculatePlanPrice($course, $package, (int) $paymentPlan->division, $request);
+        $discount = max(0, $basePrice - $finalPrice);
+
         $request->merge([
-            'price' => $courseService->calculatePlanPrice($course, $package, (int) $paymentPlan->division, $request),
+            'price' => $basePrice,
+            'discount' => $discount,
             'is_pay_later' => (bool) ($validated['is_pay_later'] ?? false),
         ]);
 

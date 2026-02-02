@@ -278,7 +278,9 @@ class ShopController extends Controller
         $comment .= 'Betalingsplan: '.$payment_plan.')';
 
         if ($request->coupon) {
-            $discountCoupon = CourseDiscount::where('coupon', $request->coupon)->where('course_id', $course_id)->first();
+            $discountCoupon = CourseDiscount::whereRaw('BINARY coupon = ?', [$request->coupon])
+                ->where('course_id', $course_id)
+                ->first();
 
             if ($discountCoupon->valid_to) {
                 $valid_from = Carbon::parse($discountCoupon->valid_from)->format('Y-m-d');
@@ -868,7 +870,9 @@ class ShopController extends Controller
             return redirect()->route('front.course.index');
         }
 
-        $discountData = $course->discounts()->where('coupon', '=', $coupon)->first();
+        $discountData = $course->discounts()
+            ->whereRaw('BINARY coupon = ?', [$coupon])
+            ->first();
 
         if (! $discountData) {
             return view('frontend.shop.applied-discount', compact('course', 'coupon', 'discountData'))
@@ -917,8 +921,9 @@ class ShopController extends Controller
             if ($request->coupon) {
                 $package = Package::find($request->package_id);
                 $payment_plan = PaymentPlan::find($request->payment_plan_id);
-                $discountCoupon = CourseDiscount::where('course_id', $course_id)->where('coupon',
-                    $request->coupon)->first();
+                $discountCoupon = CourseDiscount::where('course_id', $course_id)
+                    ->whereRaw('BINARY coupon = ?', [$request->coupon])
+                    ->first();
 
                 $full_payment_price = $package->full_payment_price;
                 $months_3_price = $package->months_3_price;
@@ -991,7 +996,9 @@ class ShopController extends Controller
         }
 
         if ($request->coupon) {
-            $discountCoupon = CourseDiscount::where('course_id', $course_id)->where('coupon', $request->coupon)->first();
+            $discountCoupon = CourseDiscount::where('course_id', $course_id)
+                ->whereRaw('BINARY coupon = ?', [$request->coupon])
+                ->first();
             $package = Package::find($request->package_id);
             $payment_plan = PaymentPlan::find($request->payment_plan_id);
 
@@ -1208,7 +1215,9 @@ class ShopController extends Controller
         $discount = 0;
 
         if ($request->coupon) {
-            $discountCoupon = CourseDiscount::where('coupon', $request->coupon)->where('course_id', $course_id)->first();
+            $discountCoupon = CourseDiscount::whereRaw('BINARY coupon = ?', [$request->coupon])
+                ->where('course_id', $course_id)
+                ->first();
 
             if ($discountCoupon->valid_to) {
                 $valid_from = Carbon::parse($discountCoupon->valid_from)->format('Y-m-d');
@@ -1267,7 +1276,7 @@ class ShopController extends Controller
 
         /* original apply discount
          * if ($request->coupon) {
-            $discountCoupon = CourseDiscount::where('coupon', $request->coupon)->first();
+            $discountCoupon = CourseDiscount::whereRaw('BINARY coupon = ?', [$request->coupon])->first();
 
             if ($discountCoupon && !$hasPaidCourse) {
                 $price = $price - ((int) $discountCoupon->discount * 100);
@@ -1663,7 +1672,9 @@ class ShopController extends Controller
         $discount = 0;
 
         if ($request->coupon) {
-            $discountCoupon = CourseDiscount::where('coupon', $request->coupon)->where('course_id', $course_id)->first();
+            $discountCoupon = CourseDiscount::whereRaw('BINARY coupon = ?', [$request->coupon])
+                ->where('course_id', $course_id)
+                ->first();
 
             if ($discountCoupon->valid_to) {
                 $valid_from = Carbon::parse($discountCoupon->valid_from)->format('Y-m-d');
@@ -1722,7 +1733,7 @@ class ShopController extends Controller
 
         /* original apply discount
          * if ($request->coupon) {
-            $discountCoupon = CourseDiscount::where('coupon', $request->coupon)->first();
+            $discountCoupon = CourseDiscount::whereRaw('BINARY coupon = ?', [$request->coupon])->first();
 
             if ($discountCoupon && !$hasPaidCourse) {
                 $price = $price - ((int) $discountCoupon->discount * 100);
@@ -2021,7 +2032,9 @@ class ShopController extends Controller
         $course = Course::find($course_id);
         if ($course->rewardCoupons()->count()) {
             if ($request->isMethod('post')) {
-                $reward = $course->rewardCoupons()->where('coupon', $request->coupon)->first();
+                $reward = $course->rewardCoupons()
+                    ->whereRaw('BINARY coupon = ?', [$request->coupon])
+                    ->first();
 
                 if (! $reward) {
                     return redirect()->back()->withInput()->with(['errors' => AdminHelpers::createMessageBag('Invalid coupon.')]);

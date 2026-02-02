@@ -127,7 +127,7 @@ class CourseRewardCouponController extends Controller
         for ($i = 0; $i < $count; $i++) {
             $code = $this->generateCouponCode();
 
-            $checkReward = CourseRewardCoupon::where('coupon', '=', $code)
+            $checkReward = CourseRewardCoupon::whereRaw('BINARY coupon = ?', [$code])
                 ->where('course_id', '=', $course_id)
                 ->get();
 

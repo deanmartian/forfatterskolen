@@ -188,6 +188,49 @@ Authorization: Bearer <access_token>
 
 # Checkout
 
+## GET /checkout/courses/{courseId}/discount
+## POST /checkout/courses/{courseId}/discount
+
+Returns the pricing breakdown for a checkout, including any coupon discount.
+Coupon codes are case-sensitive.
+
+**Request**
+```http
+GET /api/v1/checkout/courses/{courseId}/discount?package_id=123&payment_plan_id=8&coupon=OPTIONAL-COUPON
+Authorization: Bearer <access_token>
+```
+
+```http
+POST /api/v1/checkout/courses/{courseId}/discount
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "package_id": 123,
+  "payment_plan_id": 8,
+  "coupon": "OPTIONAL-COUPON"
+}
+```
+
+**Response (200)**
+```json
+{
+  "course_id": 12,
+  "package_id": 123,
+  "payment_plan_id": 8,
+  "base_price": 14900,
+  "price": 13900,
+  "discount": 1000,
+  "coupon": "OPTIONAL-COUPON"
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden` (course not purchasable / already owned)
+- **404** `not_found` (course not found)
+- **422** `validation_error` (invalid coupon, plan, or payload)
+
 ## POST /checkout/courses/{courseId}/start
 
 Starts a checkout session for a course using the existing payment flow (Vipps/Svea/etc).
