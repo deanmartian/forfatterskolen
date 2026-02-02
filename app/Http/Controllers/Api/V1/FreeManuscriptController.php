@@ -32,7 +32,7 @@ class FreeManuscriptController extends Controller
             'email' => 'required|email',
             'first_name' => 'required|alpha_spaces',
             'last_name' => 'required|alpha_spaces',
-            'genre' => 'required',
+            'genre' => 'required|integer',
             'text' => 'required|no_links',
         ]);
 
@@ -40,6 +40,11 @@ class FreeManuscriptController extends Controller
             $wordCount = FrontendHelpers::get_num_of_words($request->input('text', ''));
             if ($wordCount > 500) {
                 $validator->errors()->add('text', trans('site.content-max-500-words'));
+            }
+
+            $genre = $request->input('genre');
+            if (FrontendHelpers::assignmentType($genre) === 'None') {
+                $validator->errors()->add('genre', 'Invalid genre.');
             }
         });
 
