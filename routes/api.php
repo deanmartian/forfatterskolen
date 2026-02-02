@@ -59,6 +59,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/invoices', [InvoiceController::class, 'index']);
         Route::get('/invoices/{id}', [InvoiceController::class, 'show']);
         Route::get('/invoices/{id}/pdf', [InvoiceController::class, 'pdf']);
+        Route::get('/checkout/courses/{courseId}/discount', [CheckoutController::class, 'discount']);
         Route::post('/checkout/courses/{courseId}/start', [CheckoutController::class, 'startCourseCheckout']);
         Route::get('/checkout/status/{reference}', [CheckoutController::class, 'status']);
         Route::get('/courses/{id}/lessons', [CourseController::class, 'lessons']);
