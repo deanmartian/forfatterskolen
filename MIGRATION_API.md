@@ -186,6 +186,188 @@ Authorization: Bearer <access_token>
 
 ---
 
+# Webinars
+
+## GET /webinars
+
+Returns the portal webinar lists for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/webinars
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "upcoming": [
+      {
+        "id": 123,
+        "course_id": 17,
+        "course_title": "Webinarpakke",
+        "title": "Upcoming webinar",
+        "description": "Details",
+        "host": "Host name",
+        "start_date": "2024-05-10 18:00:00",
+        "image_url": "https://www.forfatterskolen.no/uploads/webinar.png",
+        "is_replay": false
+      }
+    ],
+    "replays": [
+      {
+        "id": 456,
+        "lesson_id": 789,
+        "title": "Replay title",
+        "description": "Replay description",
+        "date": "2024-04-01 12:00:00",
+        "content": "<iframe ...></iframe>"
+      }
+    ]
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+
+## GET /courses/{id}/webinars
+
+Returns the webinars for a specific course the learner has access to.
+
+**Request**
+```http
+GET /api/v1/courses/{id}/webinars
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "upcoming": [
+      {
+        "id": 123,
+        "course_id": 3,
+        "course_title": "Course Title",
+        "title": "Upcoming webinar",
+        "description": "Details",
+        "host": "Host name",
+        "start_date": "2024-05-10 18:00:00",
+        "image_url": "https://www.forfatterskolen.no/uploads/webinar.png",
+        "is_replay": false
+      }
+    ],
+    "replays": [
+      {
+        "id": 124,
+        "course_id": 3,
+        "course_title": "Course Title",
+        "title": "Replay webinar",
+        "description": "Details",
+        "host": "Host name",
+        "start_date": "2024-04-01 12:00:00",
+        "image_url": "https://www.forfatterskolen.no/uploads/webinar.png",
+        "is_replay": true
+      }
+    ]
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found`
+
+## GET /webinars/{id}
+
+Returns a webinar detail payload.
+
+**Request**
+```http
+GET /api/v1/webinars/{id}
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 123,
+    "course_id": 3,
+    "course_title": "Course Title",
+    "title": "Upcoming webinar",
+    "description": "Details",
+    "host": "Host name",
+    "start_date": "2024-05-10 18:00:00",
+    "image_url": "https://www.forfatterskolen.no/uploads/webinar.png",
+    "is_replay": false,
+    "is_registered": true
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found`
+
+## GET /webinars/{id}/join
+
+Returns a join URL or replay URL based on access.
+
+**Request**
+```http
+GET /api/v1/webinars/{id}/join
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "join_url": "https://event-provider.example/join",
+    "replay_url": null
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found`
+- **422** `unprocessable_entity`
+
+## POST /webinars/{id}/register
+
+Registers the authenticated user for a webinar and returns a join URL.
+
+**Request**
+```http
+POST /api/v1/webinars/{id}/register
+Authorization: Bearer <access_token>
+```
+
+**Response (201)**
+```json
+{
+  "data": {
+    "join_url": "https://event-provider.example/join"
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found`
+- **422** `unprocessable_entity`
+
+---
+
 # Checkout
 
 ## POST /checkout/courses/{courseId}/start
