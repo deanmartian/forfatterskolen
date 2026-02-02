@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\CheckoutController;
 use App\Http\Controllers\Api\V1\CourseController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\FileController;
+use App\Http\Controllers\Api\V1\FreeManuscriptController;
 use App\Http\Controllers\Api\V1\FreeWebinarController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\InvoiceController;
@@ -52,6 +53,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::get('/courses/{id}/packages', [CourseController::class, 'packages']);
     Route::get('/free-webinars', [FreeWebinarController::class, 'index']);
     Route::get('/free-webinars/{id}', [FreeWebinarController::class, 'show']);
+    Route::post('/free-manuscripts', [FreeManuscriptController::class, 'store']);
     Route::get('/publisher-books', [PublisherBookController::class, 'index']);
 
     Route::middleware('apiJwt')->group(function () {
