@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Course;
 use App\CoursesTaken;
 use App\Http\FrontendHelpers;
+use App\LessonContent;
 use App\User;
 use App\Webinar;
 use App\WebinarRegistrant;
@@ -11,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -26,13 +29,76 @@ class WebinarController extends ApiController
             return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
         }
 
+        if ($user->isDisabled) {
+            return response()->json(['data' => ['upcoming' => [], 'replays' => []]]);
+        }
+
+        $courseIds = $this->activeCourseIds($user);
+
+        if ($courseIds->isEmpty()) {
+            return response()->json(['data' => ['upcoming' => [], 'replays' => []]]);
+        }
+
+        $replayWebinars = LessonContent::query()
+            ->select('lesson_contents.*')
+            ->leftJoin('lessons', 'lesson_contents.lesson_id', '=', 'lessons.id')
+            ->leftJoin('courses', 'lessons.course_id', '=', 'courses.id')
+            ->where('courses.id', 17)
+            ->whereIn('courses.id', $courseIds)
+            ->latest('lesson_contents.date')
+            ->get()
+            ->map(function (LessonContent $content): array {
+                return [
+                    'id' => $content->id,
+                    'lesson_id' => $content->lesson_id,
+                    'title' => $content->title,
+                    'description' => $content->description,
+                    'date' => $content->getRawOriginal('date'),
+                    'content' => $content->lesson_content,
+                ];
+            })
+            ->values()
+            ->all();
+
+        $upcomingWebinars = DB::table('courses_taken')
+            ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
+            ->join('courses', 'packages.course_id', '=', 'courses.id')
+            ->join('webinars', 'courses.id', '=', 'webinars.course_id')
+            ->select(
+                'webinars.*',
+                'courses.title as course_title',
+                DB::raw('TIMESTAMPDIFF(HOUR, NOW(), webinars.start_date) as diffWithHours')
+            )
+            ->where('courses_taken.user_id', $user->id)
+            ->where('courses.id', 17)
+            ->whereNotIn('webinars.id', self::REPLAY_WEBINAR_IDS)
+            ->where('set_as_replay', 0)
+            ->whereNull('courses_taken.deleted_at')
+            ->where('webinars.start_date', '>=', Carbon::today())
+            ->orderBy('courses.type', 'ASC')
+            ->orderBy('webinars.start_date', 'ASC')
+            ->having('diffWithHours', '>=', 0)
+            ->get()
+            ->map(function ($webinar): array {
+                return [
+                    'id' => $webinar->id,
+                    'course_id' => $webinar->course_id,
+                    'course_title' => $webinar->course_title,
+                    'title' => $webinar->title,
+                    'description' => $webinar->description,
+                    'host' => $webinar->host,
+                    'start_date' => $webinar->start_date,
+                    'image_url' => $this->absoluteUrl($webinar->image),
+                    'is_replay' => false,
+                ];
+            })
+            ->values()
+            ->all();
+
         return response()->json([
             'data' => [
-                'upcoming' => [],
-                'replays' => [],
-            ],
-            'meta' => [
-                'placeholder' => true,
+                'upcoming' => $upcomingWebinars,
+                'replays' => $replayWebinars,
             ],
         ]);
     }
@@ -49,10 +115,60 @@ class WebinarController extends ApiController
             return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
         }
 
+        $course = Course::find((int) $id);
+
+        if (! $course) {
+            return $this->errorResponse('Course not found.', 'not_found', 404);
+        }
+
+        if (! $this->userOwnsCourse($user, $course)) {
+            return $this->errorResponse('You do not have access to this course.', 'forbidden', 403);
+        }
+
+        if ($user->isDisabled) {
+            return response()->json(['data' => ['upcoming' => [], 'replays' => []]]);
+        }
+
+        $courseTaken = $user->coursesTaken()
+            ->whereIn('package_id', $course->packages()->pluck('id'))
+            ->get()
+            ->first(function (CoursesTaken $taken) {
+                return ! $taken->is_disabled;
+            });
+
+        if (! $courseTaken) {
+            return $this->errorResponse('You do not have access to this course.', 'forbidden', 403);
+        }
+
+        $webinars = Webinar::with('course')
+            ->where('course_id', $course->id)
+            ->where('status', 1)
+            ->orderBy('start_date', 'asc')
+            ->get()
+            ->filter(function (Webinar $webinar) use ($courseTaken): bool {
+                return $this->isWithinCourseAccessWindow($webinar, $courseTaken);
+            });
+
+        $upcoming = [];
+        $replays = [];
+
+        foreach ($webinars as $webinar) {
+            $payload = $this->formatWebinar($webinar);
+
+            if ($this->isReplayWebinar($webinar)) {
+                $replays[] = $payload;
+                continue;
+            }
+
+            if (Carbon::parse($webinar->start_date)->greaterThanOrEqualTo(Carbon::today())) {
+                $upcoming[] = $payload;
+            }
+        }
+
         return response()->json([
-            'data' => [],
-            'meta' => [
-                'placeholder' => true,
+            'data' => [
+                'upcoming' => $upcoming,
+                'replays' => $replays,
             ],
         ]);
     }
@@ -283,6 +399,34 @@ class WebinarController extends ApiController
         return $coursesTaken->first(function (CoursesTaken $courseTaken) use ($webinar) {
             return optional($courseTaken->package)->course_id === $webinar->course_id;
         });
+    }
+
+    private function activeCourseIds(User $user): Collection
+    {
+        $today = now()->toDateString();
+
+        return DB::table('courses')
+            ->leftJoin('packages', 'courses.id', '=', 'packages.course_id')
+            ->leftJoin('courses_taken', 'courses_taken.package_id', '=', 'packages.id')
+            ->where('courses_taken.user_id', $user->id)
+            ->whereNull('courses_taken.deleted_at')
+            ->where(function ($q) use ($today) {
+                $q->where(function ($inner) {
+                    $inner->whereNull('courses_taken.disable_start_date')
+                        ->whereNull('courses_taken.disable_end_date');
+                })
+                ->orWhere(function ($inner) use ($today) {
+                    $inner->whereNotNull('courses_taken.disable_start_date')
+                        ->whereRaw('DATE(courses_taken.disable_start_date) > ?', [$today]);
+                })
+                ->orWhere(function ($inner) use ($today) {
+                    $inner->whereNotNull('courses_taken.disable_end_date')
+                        ->whereRaw('DATE(courses_taken.disable_end_date) < ?', [$today]);
+                });
+            })
+            ->pluck('courses.id')
+            ->unique()
+            ->values();
     }
 
     private function isReplayWebinar(Webinar $webinar): bool
