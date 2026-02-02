@@ -63,6 +63,21 @@ class CheckoutController extends ApiController
             'phone' => optional($user->address)->phone ?? '',
         ], $request->all());
 
+        if (empty($payload['payment_plan_id']) && ! empty($payload['payment_mode_id'])) {
+            $paymentMode = PaymentMode::find($payload['payment_mode_id']);
+
+            if ($paymentMode && $paymentMode->mode === 'Vipps') {
+                $defaultPlan = PaymentPlan::query()
+                    ->where('division', 1)
+                    ->orderBy('id')
+                    ->first();
+
+                if ($defaultPlan) {
+                    $payload['payment_plan_id'] = $defaultPlan->id;
+                }
+            }
+        }
+
         $validator = Validator::make($payload, [
             'email' => ['required', 'email'],
             'first_name' => ['required', 'string'],
