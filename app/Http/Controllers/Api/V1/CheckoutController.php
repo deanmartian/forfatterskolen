@@ -85,7 +85,7 @@ class CheckoutController extends ApiController
         if ($coupon) {
             $discountCoupon = CourseDiscount::query()
                 ->where('course_id', $course->id)
-                ->where('coupon', $coupon)
+                ->whereRaw('BINARY coupon = ?', [$coupon])
                 ->first();
 
             if (! $discountCoupon) {

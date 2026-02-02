@@ -4456,7 +4456,9 @@ class LearnerController extends Controller
         $course_id = $package->course->id;
 
         if ($request->coupon) {
-            $discountCoupon = CourseDiscount::where('coupon', $request->coupon)->where('course_id', $course_id)->first();
+            $discountCoupon = CourseDiscount::whereRaw('BINARY coupon = ?', [$request->coupon])
+                ->where('course_id', $course_id)
+                ->first();
 
             if ($discountCoupon) {
                 $discount = ((int) $discountCoupon->discount);

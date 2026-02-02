@@ -266,7 +266,9 @@ class GiftService
         }
 
         if ($request->coupon) {
-            $discountCoupon = CourseDiscount::where('coupon', $request->coupon)->where('course_id', $course->id)->first();
+            $discountCoupon = CourseDiscount::whereRaw('BINARY coupon = ?', [$request->coupon])
+                ->where('course_id', $course->id)
+                ->first();
 
             if ($discountCoupon) {
                 if ($discountCoupon->valid_to) {

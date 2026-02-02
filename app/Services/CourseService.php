@@ -49,7 +49,9 @@ class CourseService
     public function checkCouponDiscount($course_id, $coupon): JsonResponse
     {
         $course = $this->course->find($course_id);
-        $discountCoupon = $course->discounts()->where('coupon', $coupon)->first();
+        $discountCoupon = $course->discounts()
+            ->whereRaw('BINARY coupon = ?', [$coupon])
+            ->first();
 
         if (! $discountCoupon) {
             return response()->json([
@@ -425,7 +427,7 @@ class CourseService
 
         // check if coupon is submitted
         if ($request->coupon) {
-            $discountCoupon = CourseDiscount::where('coupon', $request->coupon)
+            $discountCoupon = CourseDiscount::whereRaw('BINARY coupon = ?', [$request->coupon])
                 ->where('course_id', $course->id)->first();
 
             // check if coupon belongs to the course
@@ -526,7 +528,7 @@ class CourseService
         }
 
         if ($request->coupon) {
-            $discountCoupon = CourseDiscount::where('coupon', $request->coupon)
+            $discountCoupon = CourseDiscount::whereRaw('BINARY coupon = ?', [$request->coupon])
                 ->where('course_id', $course->id)->first();
 
             if ($discountCoupon) {
