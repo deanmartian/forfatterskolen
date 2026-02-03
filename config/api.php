@@ -8,8 +8,8 @@ return [
     'cors' => [
         'lovable_origins' => env(
             'LOVABLE_CORS_ORIGINS',
-            'https://*.lovableproject.com,https://*.lovable.app,https://lovable.app,https://staging.lovable.app'
+            'https://*.lovableproject.com,https://*.lovable.app,https://lovable.app,https://staging.lovable.app,https://forfatterskolen-ny-front.lovable.app'
         ),
-        'allow_credentials' => env('LOVABLE_CORS_ALLOW_CREDENTIALS', true),
+        'allow_credentials' => env('LOVABLE_CORS_ALLOW_CREDENTIALS', false),
     ],
 ];
