@@ -244,6 +244,15 @@ class CoachingTimeController extends ApiController
         $timer = CoachingTimerManuscript::find($data['coaching_timer_id']);
         $slot = EditorTimeSlot::find($data['editor_time_slot_id']);
 
+        $slotStart = Carbon::parse($slot->date.' '.$slot->start_time, 'UTC');
+        if ($slotStart->lessThan(Carbon::now('UTC'))) {
+            return $this->errorResponse(
+                'Selected time slot is in the past.',
+                'slot_in_past',
+                422
+            );
+        }
+
         $requiredDuration = $timer->plan_type == 1 ? 60 : 30;
         if ($slot->duration != $requiredDuration) {
             return $this->errorResponse(
