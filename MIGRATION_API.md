@@ -593,6 +593,40 @@ Authorization: Bearer <access_token>
 
 ---
 
+# Assignments
+
+## POST /assignments/submissions/{id}/replace
+
+Replaces an existing assignment submission for the authenticated learner.
+
+**Request**
+```http
+POST /api/v1/assignments/submissions/{id}/replace
+Authorization: Bearer <access_token>
+Content-Type: multipart/form-data
+
+filename: <file>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 123,
+    "assignment_id": 456,
+    "word_count": 789
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found`
+- **422** `invalid_file | invalid_file_format | max_words_exceeded`
+
+---
+
 # Checkout
 
 ## GET /checkout/courses/{courseId}/discount
