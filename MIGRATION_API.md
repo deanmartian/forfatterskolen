@@ -186,6 +186,231 @@ Authorization: Bearer <access_token>
 
 ---
 
+# Coaching time
+
+## GET /learner/coaching-time
+
+Returns coaching-time summary data for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/learner/coaching-time
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "stats": {
+    "booked_editors_count": 1,
+    "booked_sessions_this_month": 2,
+    "available_slots": 5
+  },
+  "next_session": {
+    "id": 10,
+    "editor": "Editor Name",
+    "scheduled_at": "2024-06-01T09:00:00Z",
+    "scheduled_at_local": "2024-06-01T11:00:00+02:00",
+    "duration_minutes": 60,
+    "plan_type": 1
+  },
+  "coaching_timers": [
+    {
+      "id": 1,
+      "plan_type": 1,
+      "plan_label": "Coaching time (1 time)",
+      "help_with": "Plot structure",
+      "status": 0,
+      "approved_date": null,
+      "suggested_date": null,
+      "call_type": "video"
+    }
+  ],
+  "booked_sessions": [
+    {
+      "id": 10,
+      "editor": "Editor Name",
+      "scheduled_at": "2024-06-01T09:00:00Z",
+      "scheduled_at_local": "2024-06-01T11:00:00+02:00",
+      "duration_minutes": 60,
+      "plan_type": 1
+    }
+  ],
+  "editors": [
+    {
+      "id": 99,
+      "name": "Editor Name",
+      "available_slots": 3
+    }
+  ],
+  "links": {
+    "self": "https://<your-domain>/api/v1/learner/coaching-time",
+    "available": "https://<your-domain>/api/v1/learner/coaching-time/available",
+    "request": "https://<your-domain>/api/v1/learner/coaching-time/request",
+    "add_session": "https://<your-domain>/api/v1/learner/coaching-time/add-session"
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+
+## GET /learner/coaching-time/available
+
+Returns available editor time slots for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/learner/coaching-time/available
+Authorization: Bearer <access_token>
+```
+
+**Optional query params**
+- `coaching_timer_id` (int): Select a specific coaching timer for availability checks.
+
+**Response (200)**
+```json
+{
+  "coaching_timers": [
+    {
+      "id": 1,
+      "plan_type": 1,
+      "plan_label": "Coaching time (1 time)",
+      "help_with": null,
+      "status": 0,
+      "approved_date": null,
+      "suggested_date": null,
+      "call_type": null
+    }
+  ],
+  "selected_coaching_timer": {
+    "id": 1,
+    "plan_type": 1,
+    "plan_label": "Coaching time (1 time)",
+    "help_with": null,
+    "status": 0,
+    "approved_date": null,
+    "suggested_date": null,
+    "call_type": null
+  },
+  "has_pending_request": false,
+  "editors": [
+    {
+      "editor": {
+        "id": 99,
+        "name": "Editor Name"
+      },
+      "slots": [
+        {
+          "id": 55,
+          "date": "2024-06-01",
+          "start_time": "09:00:00",
+          "duration": 60,
+          "scheduled_at": "2024-06-01T09:00:00Z",
+          "requested": false,
+          "declined": false,
+          "can_book": true
+        }
+      ]
+    }
+  ],
+  "links": {
+    "self": "https://<your-domain>/api/v1/learner/coaching-time/available",
+    "back": "https://<your-domain>/api/v1/learner/coaching-time",
+    "request": "https://<your-domain>/api/v1/learner/coaching-time/request"
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found` (invalid `coaching_timer_id`)
+
+## POST /learner/coaching-time/request
+
+Books an available editor time slot for the authenticated learner.
+
+**Request**
+```http
+POST /api/v1/learner/coaching-time/request
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "coaching_timer_id": 1,
+  "editor_time_slot_id": 55,
+  "help_with": "Plot structure",
+  "call_type": "video"
+}
+```
+
+**Response (200)**
+```json
+{
+  "message": "Time slot booked.",
+  "coaching_timer": {
+    "id": 1,
+    "plan_type": 1,
+    "plan_label": "Coaching time (1 time)",
+    "help_with": "Plot structure",
+    "status": 0,
+    "approved_date": null,
+    "suggested_date": null,
+    "call_type": "video"
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **409** `slot_booked`
+- **422** `invalid_slot_duration`
+- **422** `slot_in_past`
+- **422** `validation_error`
+
+## POST /learner/coaching-time/add-session
+
+Adds a coaching-time session from a course package for the authenticated learner.
+
+**Request**
+```http
+POST /api/v1/learner/coaching-time/add-session
+Authorization: Bearer <access_token>
+Content-Type: multipart/form-data
+
+course_taken_id=123
+plan_type=1
+manuscript=<optional .docx file>
+```
+
+**Response (201)**
+```json
+{
+  "message": "Coaching Time added.",
+  "coaching_timer": {
+    "id": 1,
+    "plan_type": 1,
+    "plan_label": "Coaching time (1 time)",
+    "help_with": null,
+    "status": 0,
+    "approved_date": null,
+    "suggested_date": null,
+    "call_type": null
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found` (invalid `course_taken_id`)
+- **422** `validation_error`
+
+---
+
 # Webinars
 
 ## GET /webinars
