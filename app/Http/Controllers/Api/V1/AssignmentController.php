@@ -513,7 +513,8 @@ class AssignmentController extends ApiController
             ]);
         }
 
-        $assignmentManuscript->filename = '/'.$fileName;
+        $relativePath = trim($destinationPath, '/').'/'.$storedFileName;
+        $assignmentManuscript->filename = '/'.$relativePath;
         $assignmentManuscript->words = $wordCount;
         $assignmentManuscript->save();
 
