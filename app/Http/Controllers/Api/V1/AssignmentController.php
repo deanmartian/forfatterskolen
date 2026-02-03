@@ -437,6 +437,99 @@ class AssignmentController extends ApiController
         return $this->errorResponse('Feedback not found.', 'not_found', 404);
     }
 
+    public function replaceSubmission(Request $request, $id): JsonResponse
+    {
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        $assignmentManuscript = AssignmentManuscript::find($id);
+
+        if (! $assignmentManuscript) {
+            return $this->errorResponse('Submission not found.', 'not_found', 404);
+        }
+
+        if ((int) $assignmentManuscript->user_id !== (int) $user->id) {
+            return $this->errorResponse('You do not have access to this submission.', 'forbidden', 403);
+        }
+
+        if (! $request->hasFile('filename') || ! $request->file('filename')->isValid()) {
+            return $this->errorResponse('Missing or invalid file.', 'invalid_file', 422);
+        }
+
+        $oldManuscript = $assignmentManuscript->filename;
+        $destinationPath = 'storage/assignment-manuscripts/';
+        $extensions = ['pdf', 'doc', 'docx', 'odt'];
+        $extension = strtolower($request->file('filename')->getClientOriginalExtension());
+
+        if (! in_array($extension, $extensions)) {
+            return $this->errorResponse(
+                'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT.',
+                'invalid_file_format',
+                422
+            );
+        }
+
+        $actualName = $user->id;
+        $fileName = AdminHelpers::checkFileName($destinationPath, $actualName, $extension);
+        $expFileName = explode('/', $fileName);
+        $storedFileName = end($expFileName);
+
+        $uploadedFiles = [];
+        $request->file('filename')->move($destinationPath, $storedFileName);
+        $absolutePath = $this->resolveUploadedFilePath($destinationPath, $storedFileName);
+        $uploadedFiles[] = ['absolute' => $absolutePath];
+
+        if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+            $this->cleanupUploadedFiles($uploadedFiles);
+
+            return $this->errorResponse(
+                'The uploaded file appears to be invalid or corrupted.',
+                'invalid_file',
+                422
+            );
+        }
+
+        $wordCount = $this->extractWordCount($extension, $destinationPath.end($expFileName));
+        $assignment = $assignmentManuscript->assignment;
+        $assignmentMaxWords = $assignment->allow_up_to > 0 ? $assignment->allow_up_to : $assignment->max_words;
+
+        $assignmentConfigurator = AssignmentLearnerConfiguration::where('user_id', $user->id)
+            ->where('assignment_id', $assignment->id)
+            ->first();
+
+        if ($assignmentConfigurator) {
+            $assignmentMaxWords = $assignmentConfigurator->max_words;
+        }
+
+        if ($wordCount > $assignmentMaxWords && $assignment->check_max_words) {
+            $this->cleanupUploadedFiles($uploadedFiles);
+
+            return $this->errorResponse('Word count exceeds maximum.', 'max_words_exceeded', 422, [
+                'max_words' => $assignmentMaxWords,
+                'word_count' => $wordCount,
+            ]);
+        }
+
+        $assignmentManuscript->filename = '/'.$fileName;
+        $assignmentManuscript->words = $wordCount;
+        $assignmentManuscript->save();
+
+        if ($oldManuscript && File::exists(public_path($oldManuscript))) {
+            File::delete(public_path($oldManuscript));
+        }
+
+        return response()->json([
+            'data' => [
+                'id' => $assignmentManuscript->id,
+                'assignment_id' => $assignmentManuscript->assignment_id,
+                'word_count' => $wordCount,
+            ],
+        ]);
+    }
+
     protected function formatAssignment(Assignment $assignment, $user, ?CoursesTaken $courseTaken, bool $includeFeedbackSummary): array
     {
         $course = $assignment->course;

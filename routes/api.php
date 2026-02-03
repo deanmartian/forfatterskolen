@@ -76,6 +76,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/assignments', [AssignmentController::class, 'index']);
         Route::get('/assignments/{id}', [AssignmentController::class, 'show']);
         Route::post('/assignments/{id}/submit', [AssignmentController::class, 'submit']);
+        Route::post('/assignments/submissions/{id}/replace', [AssignmentController::class, 'replaceSubmission']);
         Route::get('/assignments/submissions/{id}/download', [AssignmentController::class, 'downloadSubmission']);
         Route::get('/assignments/feedback/{id}/download', [AssignmentController::class, 'downloadFeedback']);
         Route::get('/webinars', [WebinarController::class, 'index']);
