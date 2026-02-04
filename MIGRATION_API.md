@@ -323,6 +323,47 @@ Authorization: Bearer <access_token>
 - **401** `unauthorized`
 - **403** `forbidden`
 
+---
+
+# Private messages
+
+## GET /learner/private-messages
+
+Returns private messages for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/learner/private-messages?per_page=10
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": [
+    {
+      "id": 12,
+      "message": "<p>Remember to submit your manuscript.</p>",
+      "from_user": {
+        "id": 4,
+        "name": "Admin User"
+      },
+      "created_at": "2024-01-02T10:45:00Z"
+    }
+  ],
+  "meta": {
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 10,
+    "total": 1
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+
 ## GET /learner/coaching-time/available
 
 Returns available editor time slots for the authenticated learner.
