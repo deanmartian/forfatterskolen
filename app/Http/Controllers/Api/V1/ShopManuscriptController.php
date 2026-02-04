@@ -268,6 +268,12 @@ class ShopManuscriptController extends ApiController
             return $this->errorResponse('Shop manuscript not found.', 'not_found', 404);
         }
 
+        if (! $shopManuscriptTaken->is_active
+            || $shopManuscriptTaken->is_manuscript_locked
+            || $shopManuscriptTaken->status !== 'Not started') {
+            return $this->errorResponse('Manuscript upload not allowed.', 'forbidden', 403);
+        }
+
         $validator = Validator::make($request->all(), [
             'manuscript' => ['required', 'file'],
             'genre' => ['required', 'string'],
@@ -390,6 +396,12 @@ class ShopManuscriptController extends ApiController
             return $this->errorResponse('Shop manuscript not found.', 'not_found', 404);
         }
 
+        if (! $shopManuscriptTaken->is_active
+            || $shopManuscriptTaken->is_manuscript_locked
+            || $shopManuscriptTaken->status === 'Finished') {
+            return $this->errorResponse('Synopsis upload not allowed.', 'forbidden', 403);
+        }
+
         $validator = Validator::make($request->all(), [
             'synopsis' => ['required', 'file'],
         ]);
@@ -433,6 +445,12 @@ class ShopManuscriptController extends ApiController
 
         if (! $shopManuscriptTaken) {
             return $this->errorResponse('Shop manuscript not found.', 'not_found', 404);
+        }
+
+        if (! $shopManuscriptTaken->is_active
+            || $shopManuscriptTaken->is_manuscript_locked
+            || $shopManuscriptTaken->status === 'Finished') {
+            return $this->errorResponse('Manuscript update not allowed.', 'forbidden', 403);
         }
 
         $validator = Validator::make($request->all(), [
@@ -591,6 +609,12 @@ class ShopManuscriptController extends ApiController
 
         if (! $shopManuscriptTaken) {
             return $this->errorResponse('Shop manuscript not found.', 'not_found', 404);
+        }
+
+        if (! $shopManuscriptTaken->is_active
+            || $shopManuscriptTaken->is_manuscript_locked
+            || $shopManuscriptTaken->status === 'Finished') {
+            return $this->errorResponse('Manuscript delete not allowed.', 'forbidden', 403);
         }
 
         $shopManuscriptTaken->file = null;

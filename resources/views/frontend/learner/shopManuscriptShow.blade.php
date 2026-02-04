@@ -149,7 +149,7 @@
 							@endforeach
 						</div>
 
-						@if (!$shopManuscriptTaken->is_manuscript_locked)
+						@if (!$shopManuscriptTaken->is_manuscript_locked && $shopManuscriptTaken->status !== 'Finished')
 							<div>
 								<button type="button" class="btn btn-primary uploadManuscriptBtn"
 										data-toggle="modal" data-target="#uploadManuscriptModal"
@@ -325,4 +325,3 @@
         });
 	</script>
 @stop
-
