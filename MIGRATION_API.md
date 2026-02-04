@@ -168,11 +168,11 @@ GET /api/v1/health
 
 # Profile
 
-## GET /me
+## GET /profile
 
 **Request**
 ```http
-GET /api/v1/me
+GET /api/v1/profile
 Authorization: Bearer <access_token>
 ```
 
@@ -184,6 +184,15 @@ Authorization: Bearer <access_token>
   "email": "user@example.com",
   "roles": [
     "learner"
+  ],
+  "certificates": [
+    {
+      "id": 1,
+      "course_id": 12,
+      "package_id": 34,
+      "course_title": "Creative Writing",
+      "certificate_number": "CERT-2024-001"
+    }
   ]
 }
 ```
@@ -995,6 +1004,322 @@ Authorization: Bearer <access_token>
 
 ---
 
+# Shop manuscripts (Learner)
+
+## GET /learner/shop-manuscripts
+
+Returns shop manuscript purchases for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/learner/shop-manuscripts?per_page=10
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": [
+    {
+      "id": 55,
+      "shop_manuscript_id": 7,
+      "title": "Manuscript review",
+      "genre": 2,
+      "description": "Looking for feedback.",
+      "status": "Pending",
+      "is_active": true,
+      "words": 12000,
+      "max_words": 15000,
+      "file": "/storage/shop-manuscripts/manuscript.pdf",
+      "synopsis": "/storage/shop-manuscripts-synopsis/synopsis.pdf",
+      "expected_finish": "2024-06-01",
+      "created_at": "2024-05-01T10:00:00Z",
+      "manuscript_uploaded_date": "2024-05-02T12:00:00Z",
+      "feedback_user_id": 12,
+      "coaching_time_later": false
+    }
+  ],
+  "meta": {
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 10,
+    "total": 1
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+
+## GET /learner/shop-manuscripts/{id}
+
+Returns a single shop manuscript with feedback and comments.
+
+**Request**
+```http
+GET /api/v1/learner/shop-manuscripts/55
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 55,
+    "shop_manuscript_id": 7,
+    "title": "Manuscript review",
+    "genre": 2,
+    "description": "Looking for feedback.",
+    "status": "Pending",
+    "is_active": true,
+    "words": 12000,
+    "max_words": 15000,
+    "file": "/storage/shop-manuscripts/manuscript.pdf",
+    "synopsis": "/storage/shop-manuscripts-synopsis/synopsis.pdf",
+    "expected_finish": "2024-06-01",
+    "created_at": "2024-05-01T10:00:00Z",
+    "manuscript_uploaded_date": "2024-05-02T12:00:00Z",
+    "feedback_user_id": 12,
+    "coaching_time_later": false,
+    "feedbacks": [
+      {
+        "id": 5,
+        "grade": "A",
+        "notes": "Great work.",
+        "hours_worked": 3,
+        "notes_to_head_editor": null,
+        "approved": true,
+        "files": [
+          "/storage/shop-manuscripts-feedback/feedback.pdf"
+        ],
+        "created_at": "2024-05-10T10:00:00Z"
+      }
+    ],
+    "comments": [
+      {
+        "id": 44,
+        "comment": "Thanks for the feedback!",
+        "created_at": "2024-05-11T09:00:00Z",
+        "user": {
+          "id": 123,
+          "first_name": "Ada",
+          "last_name": "Lovelace",
+          "full_name": "Ada Lovelace"
+        }
+      }
+    ]
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **404** `not_found`
+
+## GET /learner/shop-manuscripts/{id}/download/{type}
+
+Downloads a manuscript or synopsis file for a shop manuscript.
+
+**Request**
+```http
+GET /api/v1/learner/shop-manuscripts/55/download/manuscript
+Authorization: Bearer <access_token>
+```
+
+`type` must be `manuscript` or `synopsis`.
+
+**Response**
+- **200** file download
+
+**Errors**
+- **401** `unauthorized`
+- **404** `not_found`
+- **422** `validation_error` (invalid type)
+
+## GET /learner/shop-manuscripts/{id}/feedback/{feedbackId}/download
+
+Downloads feedback files for a shop manuscript.
+
+**Request**
+```http
+GET /api/v1/learner/shop-manuscripts/55/feedback/5/download
+Authorization: Bearer <access_token>
+```
+
+**Response**
+- **200** file download (zip or single file)
+
+**Errors**
+- **401** `unauthorized`
+- **404** `not_found`
+
+## POST /learner/shop-manuscripts/{id}/comments
+
+Posts a comment on a shop manuscript thread.
+
+**Request**
+```http
+POST /api/v1/learner/shop-manuscripts/55/comments
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "comment": "Thanks for the feedback!"
+}
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 44,
+    "comment": "Thanks for the feedback!",
+    "created_at": "2024-05-11T09:00:00Z",
+    "user": {
+      "id": 123,
+      "first_name": "Ada",
+      "last_name": "Lovelace",
+      "full_name": "Ada Lovelace"
+    }
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **404** `not_found`
+- **422** `validation_error`
+
+## POST /learner/shop-manuscripts/{id}/upload
+
+Uploads a manuscript (and optional synopsis) for a shop manuscript purchase.
+
+**Request**
+```http
+POST /api/v1/learner/shop-manuscripts/55/upload
+Authorization: Bearer <access_token>
+Content-Type: multipart/form-data
+
+manuscript=<file>
+genre=2
+description=<optional>
+synopsis=<optional file>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 55,
+    "shop_manuscript_id": 7,
+    "title": "Manuscript review",
+    "status": "Pending",
+    "words": 12000
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden` (upload not allowed)
+- **404** `not_found`
+- **422** `validation_error`
+- **422** `word_limit_exceeded`
+
+## POST /learner/shop-manuscripts/{id}/upload-synopsis
+
+Uploads or replaces only the synopsis file.
+
+**Request**
+```http
+POST /api/v1/learner/shop-manuscripts/55/upload-synopsis
+Authorization: Bearer <access_token>
+Content-Type: multipart/form-data
+
+synopsis=<file>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 55,
+    "synopsis": "/storage/shop-manuscripts-synopsis/synopsis.pdf"
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden` (upload not allowed)
+- **404** `not_found`
+- **422** `validation_error`
+
+## POST /learner/shop-manuscripts/{id}/update-uploaded
+
+Updates manuscript metadata or replaces uploaded files.
+
+**Request**
+```http
+POST /api/v1/learner/shop-manuscripts/55/update-uploaded
+Authorization: Bearer <access_token>
+Content-Type: multipart/form-data
+
+manuscript=<optional file>
+synopsis=<optional file>
+genre=<optional>
+description=<optional>
+coaching_time_later=<optional boolean>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 55,
+    "genre": 2,
+    "description": "Updated description",
+    "coaching_time_later": true
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden` (update not allowed)
+- **404** `not_found`
+- **422** `validation_error`
+- **422** `word_limit_exceeded`
+
+## DELETE /learner/shop-manuscripts/{id}/uploaded
+
+Deletes the uploaded manuscript and synopsis for a shop manuscript purchase.
+
+**Request**
+```http
+DELETE /api/v1/learner/shop-manuscripts/55/uploaded
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 55,
+    "file": null,
+    "synopsis": null
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden` (delete not allowed)
+- **404** `not_found`
+
+---
+
 # Checkout
 
 ## GET /checkout/courses/{courseId}/discount
@@ -1567,7 +1892,7 @@ curl -s -X POST "https://<your-domain>/api/v1/auth/login" \
 
 Copy the `access_token` and call:
 ```bash
-curl -s "https://<your-domain>/api/v1/me" \
+curl -s "https://<your-domain>/api/v1/profile" \
   -H "Authorization: Bearer <access_token>"
 ```
 
