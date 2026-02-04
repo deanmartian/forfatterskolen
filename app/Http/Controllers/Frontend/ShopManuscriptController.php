@@ -603,6 +603,7 @@ class ShopManuscriptController extends Controller
     public function upload_manuscript($id, Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->firstOrFail();
+
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
 
         $request->validate([
@@ -730,6 +731,7 @@ class ShopManuscriptController extends Controller
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)
             ->where('user_id', Auth::user()->id)->firstOrFail();
+
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
         if ($request->hasFile('synopsis') && $request->file('synopsis')->isValid()) {
             $extension = pathinfo($_FILES['synopsis']['name'], PATHINFO_EXTENSION);
@@ -761,6 +763,7 @@ class ShopManuscriptController extends Controller
     public function updateUploadedManuscript($id, Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->first();
+
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
 
         $word_count = 0;
@@ -913,6 +916,7 @@ class ShopManuscriptController extends Controller
     public function deleteUploadedManuscript($id): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->first();
+
         $shopManuscriptTaken->file = null;
         $shopManuscriptTaken->words = null;
         $shopManuscriptTaken->genre = 0;

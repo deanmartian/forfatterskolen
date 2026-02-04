@@ -303,7 +303,6 @@
 @endif
 
 @stop
-
 @section('scripts')
 	<script>
         let has_exceed = $("input[name=exceed]").length;
@@ -325,4 +324,3 @@
         });
 	</script>
 @stop
-
