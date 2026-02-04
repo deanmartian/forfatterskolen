@@ -3304,8 +3304,19 @@ class LearnerController extends Controller
         return response()->download($timeRegister->invoice_file);
     }
 
-    public function profile(): View
+    public function profile(Request $request)
     {
+        if ($request->expectsJson()) {
+            $user = Auth::user();
+
+            return response()->json([
+                'id' => $user->id,
+                'name' => trim($user->first_name.' '.$user->last_name),
+                'email' => $user->email,
+                'roles' => $this->rolesForUser($user),
+            ]);
+        }
+
         // get course certificates based on users course taken
         $certificates = DB::table('course_certificates')
             ->leftJoin('courses', 'course_certificates.course_id', '=', 'courses.id')
@@ -3385,6 +3396,23 @@ class LearnerController extends Controller
         $social->save();
 
         return redirect()->back()->with('profile_success', 'Profile successfully updated.');
+    }
+
+    private function rolesForUser(User $user): array
+    {
+        $roles = [];
+        $map = [
+            User::AdminRole => 'admin',
+            User::LearnerRole => 'learner',
+            User::EditorRole => 'editor',
+            User::GiutbokRole => 'giutbok',
+        ];
+
+        if (isset($map[$user->role])) {
+            $roles[] = $map[$user->role];
+        }
+
+        return $roles;
     }
 
     /**
