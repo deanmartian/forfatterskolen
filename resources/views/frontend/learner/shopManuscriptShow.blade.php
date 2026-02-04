@@ -149,7 +149,7 @@
 							@endforeach
 						</div>
 
-						@if (!$shopManuscriptTaken->is_manuscript_locked && $shopManuscriptTaken->status !== 'Finished')
+						@if (!$shopManuscriptTaken->is_manuscript_locked)
 							<div>
 								<button type="button" class="btn btn-primary uploadManuscriptBtn"
 										data-toggle="modal" data-target="#uploadManuscriptModal"
@@ -303,7 +303,6 @@
 @endif
 
 @stop
-
 @section('scripts')
 	<script>
         let has_exceed = $("input[name=exceed]").length;

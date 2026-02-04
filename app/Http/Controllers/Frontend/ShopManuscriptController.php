@@ -604,12 +604,6 @@ class ShopManuscriptController extends Controller
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->firstOrFail();
 
-        if (! $shopManuscriptTaken->is_active
-            || $shopManuscriptTaken->is_manuscript_locked
-            || $shopManuscriptTaken->status !== 'Not started') {
-            return abort(403);
-        }
-
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
 
         $request->validate([
@@ -738,12 +732,6 @@ class ShopManuscriptController extends Controller
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)
             ->where('user_id', Auth::user()->id)->firstOrFail();
 
-        if (! $shopManuscriptTaken->is_active
-            || $shopManuscriptTaken->is_manuscript_locked
-            || $shopManuscriptTaken->status === 'Finished') {
-            return abort(403);
-        }
-
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
         if ($request->hasFile('synopsis') && $request->file('synopsis')->isValid()) {
             $extension = pathinfo($_FILES['synopsis']['name'], PATHINFO_EXTENSION);
@@ -775,13 +763,6 @@ class ShopManuscriptController extends Controller
     public function updateUploadedManuscript($id, Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->first();
-
-        if (! $shopManuscriptTaken
-            || ! $shopManuscriptTaken->is_active
-            || $shopManuscriptTaken->is_manuscript_locked
-            || $shopManuscriptTaken->status === 'Finished') {
-            return abort(403);
-        }
 
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
 
@@ -935,13 +916,6 @@ class ShopManuscriptController extends Controller
     public function deleteUploadedManuscript($id): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->first();
-
-        if (! $shopManuscriptTaken
-            || ! $shopManuscriptTaken->is_active
-            || $shopManuscriptTaken->is_manuscript_locked
-            || $shopManuscriptTaken->status === 'Finished') {
-            return abort(403);
-        }
 
         $shopManuscriptTaken->file = null;
         $shopManuscriptTaken->words = null;
