@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AssignmentController;
+use App\Http\Controllers\Api\V1\CalendarController;
 use App\Http\Controllers\Api\V1\CheckoutController;
 use App\Http\Controllers\Api\V1\CoachingTimeController;
 use App\Http\Controllers\Api\V1\CourseController;
@@ -64,6 +65,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/learner/coaching-time/available', [CoachingTimeController::class, 'available']);
         Route::post('/learner/coaching-time/request', [CoachingTimeController::class, 'request']);
         Route::post('/learner/coaching-time/add-session', [CoachingTimeController::class, 'addSession']);
+        Route::get('/calendar/events', [CalendarController::class, 'events']);
         Route::get('/invoices', [InvoiceController::class, 'index']);
         Route::get('/invoices/{id}', [InvoiceController::class, 'show']);
         Route::get('/invoices/{id}/pdf', [InvoiceController::class, 'pdf']);
