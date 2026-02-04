@@ -59,7 +59,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::get('/publisher-books', [PublisherBookController::class, 'index']);
 
     Route::middleware('apiJwt')->group(function () {
-        Route::get('/me', [AuthController::class, 'me']);
+        Route::get('/profile', [AuthController::class, 'me']);
         Route::get('/dashboard', [DashboardController::class, 'show']);
         Route::get('/learner/coaching-time', [CoachingTimeController::class, 'index']);
         Route::get('/learner/coaching-time/available', [CoachingTimeController::class, 'available']);

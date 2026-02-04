@@ -11,6 +11,7 @@ use Firebase\JWT\JWT;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class AuthController extends ApiController
@@ -87,12 +88,25 @@ class AuthController extends ApiController
     public function me(Request $request): JsonResponse
     {
         $user = $request->attributes->get('api_user');
+        $certificates = DB::table('course_certificates')
+            ->leftJoin('courses', 'course_certificates.course_id', '=', 'courses.id')
+            ->leftJoin('packages', 'packages.id', '=', 'course_certificates.package_id')
+            ->leftJoin('courses_taken', 'courses_taken.package_id', '=', 'packages.id')
+            ->select('course_certificates.*', 'courses.title as course_title')
+            ->where('courses.completed_date', '<=', Carbon::now())
+            ->whereNotNull('courses.issue_date')
+            ->whereNotNull('course_certificates.package_id')
+            ->where('courses_taken.user_id', $user->id)
+            // ->whereNull('courses_taken.deleted_at') //remove this to not show deleted courses_taken
+            ->groupBy('course_certificates.id')
+            ->get();
 
         return response()->json([
             'id' => $user->id,
             'name' => trim($user->first_name.' '.$user->last_name),
             'email' => $user->email,
             'roles' => $this->rolesForUser($user),
+            'certificates' => $certificates,
         ]);
     }
 
