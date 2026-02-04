@@ -13,6 +13,14 @@ class Cors
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (function_exists('header_remove')) {
+            header_remove('Access-Control-Allow-Origin');
+            header_remove('Access-Control-Allow-Credentials');
+            header_remove('Access-Control-Allow-Methods');
+            header_remove('Access-Control-Allow-Headers');
+            header_remove('Vary');
+        }
+
         $allowedOrigins = array_filter(array_map('trim', explode(',', config('api.cors.lovable_origins'))));
         $origin = $request->headers->get('Origin');
         $allowWildcard = in_array('*', $allowedOrigins, true);
@@ -25,22 +33,23 @@ class Cors
 
         $allowedOrigin = $this->resolveAllowedOrigin($origin, $allowedOrigins, $allowWildcard);
 
+        $response = $request->getMethod() === 'OPTIONS'
+            ? response('', 200)
+            : $next($request);
+
         if ($allowedOrigin) {
-            header('Access-Control-Allow-Origin: '.$allowedOrigin);
+            $response->headers->remove('Access-Control-Allow-Origin');
+            $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin);
             if ($allowCredentials) {
-                header('Access-Control-Allow-Credentials: true');
+                $response->headers->set('Access-Control-Allow-Credentials', 'true');
             }
         }
 
-        header('Vary: Origin');
-        header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Authorization, Content-Type, Accept');
+        $response->headers->set('Vary', 'Origin');
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+        $response->headers->set('Access-Control-Allow-Headers', 'Authorization, Content-Type, Accept');
 
-        if ($request->getMethod() === 'OPTIONS') {
-            return response('', 200);
-        }
-
-        return $next($request);
+        return $response;
     }
 
     private function resolveAllowedOrigin(?string $origin, array $allowedOrigins, bool $allowWildcard): ?string
