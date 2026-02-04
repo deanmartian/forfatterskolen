@@ -270,7 +270,7 @@ class ShopManuscriptController extends ApiController
 
         if (! $shopManuscriptTaken->is_active
             || $shopManuscriptTaken->is_manuscript_locked
-            || $shopManuscriptTaken->status !== 'Not started') {
+            || $shopManuscriptTaken->status === 'Finished') {
             return $this->errorResponse('Manuscript upload not allowed.', 'forbidden', 403);
         }
 
