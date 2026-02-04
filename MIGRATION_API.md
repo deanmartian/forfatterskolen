@@ -144,6 +144,28 @@ Content-Type: application/json
 
 ---
 
+# Health
+
+## GET /health
+
+Returns API health info.
+
+**Request**
+```http
+GET /api/v1/health
+```
+
+**Response (200)**
+```json
+{
+  "ok": true,
+  "env": "production",
+  "time": "2024-01-02T10:45:00Z"
+}
+```
+
+---
+
 # Profile
 
 ## GET /me
@@ -249,6 +271,42 @@ Authorization: Bearer <access_token>
     "request": "https://<your-domain>/api/v1/learner/coaching-time/request",
     "add_session": "https://<your-domain>/api/v1/learner/coaching-time/add-session"
   }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+
+---
+
+# Calendar
+
+## GET /calendar/events
+
+Returns calendar events for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/calendar/events
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "events": [
+    {
+      "id": 12,
+      "title": "Lesson: Lesson 1 fra Course Title",
+      "className": "event-important",
+      "start": "2024-01-02",
+      "end": "2024-01-03",
+      "all_day": true,
+      "allDay": true,
+      "color": "#d95e66"
+    }
+  ]
 }
 ```
 
@@ -410,6 +468,187 @@ manuscript=<optional .docx file>
 - **422** `validation_error`
 
 ---
+
+# Courses (Public)
+
+## GET /courses/for-sale
+
+Returns active courses available for purchase.
+
+**Request**
+```http
+GET /api/v1/courses/for-sale
+```
+
+**Response (200)**
+```json
+{
+  "data": [
+    {
+      "id": 12,
+      "title": "Creative Writing",
+      "slug": "creative-writing",
+      "short_description": "Build your writing practice.",
+      "is_active": true,
+      "start_date": "2024-01-02",
+      "end_date": "2024-12-31",
+      "thumbnail_url": "https://www.forfatterskolen.no/images/course.png",
+      "checkout_url": "https://www.forfatterskolen.no/checkout/12"
+    }
+  ]
+}
+```
+
+## GET /courses/{id}
+
+Returns a public course detail payload for purchasable courses.
+
+**Request**
+```http
+GET /api/v1/courses/12
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 12,
+    "title": "Creative Writing",
+    "slug": "creative-writing",
+    "short_description": "Build your writing practice.",
+    "description": "<p>Full description.</p>",
+    "description_simplemde": null,
+    "type": "Single",
+    "instructor": "Ada Lovelace",
+    "start_date": "2024-01-02",
+    "end_date": "2024-12-31",
+    "thumbnail_url": "https://www.forfatterskolen.no/images/course.png",
+    "course_image": "/images/course.png",
+    "is_active": true,
+    "is_free": false,
+    "checkout_url": "https://www.forfatterskolen.no/checkout/12"
+  }
+}
+```
+
+**Errors**
+- **404** `not_found` (course not found)
+
+# Webinars (Public)
+
+## GET /free-webinars
+
+Returns free/public webinar listings.
+
+**Request**
+```http
+GET /api/v1/free-webinars
+```
+
+**Response (200)**
+```json
+{
+  "data": [
+    {
+      "id": 44,
+      "title": "Free webinar",
+      "description": "Details",
+      "start_date": "2024-05-10 18:00:00",
+      "image_url": "https://www.forfatterskolen.no/uploads/free-webinar.png",
+      "webinar_url": "https://www.forfatterskolen.no/free-webinar/44"
+    }
+  ]
+}
+```
+
+## GET /free-webinars/{id}
+
+Returns a free/public webinar detail.
+
+**Request**
+```http
+GET /api/v1/free-webinars/44
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 44,
+    "title": "Free webinar",
+    "description": "Details",
+    "start_date": "2024-05-10 18:00:00",
+    "image_url": "https://www.forfatterskolen.no/uploads/free-webinar.png",
+    "webinar_url": "https://www.forfatterskolen.no/free-webinar/44",
+    "gtwebinar_id": "ABC123"
+  }
+}
+```
+
+**Errors**
+- **404** `not_found`
+
+# Free manuscript
+
+## POST /free-manuscripts
+
+Submits a free manuscript for review. Rate-limited to 5 requests/hour per IP.
+
+**Request**
+```http
+POST /api/v1/free-manuscripts
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "first_name": "Ada",
+  "last_name": "Lovelace",
+  "genre": 1,
+  "text": "Manuscript text..."
+}
+```
+
+**Response (201)**
+```json
+{
+  "id": 123
+}
+```
+
+**Errors**
+- **422** `validation_error` (invalid payload or duplicate email)
+- **429** `too_many_requests` (rate limit exceeded)
+
+# Publisher books
+
+## GET /publisher-books
+
+Returns published book listings.
+
+**Request**
+```http
+GET /api/v1/publisher-books
+```
+
+**Response (200)**
+```json
+{
+  "data": [
+    {
+      "id": 88,
+      "title": "Book Title",
+      "description": "Book description",
+      "quote_description": "Quote",
+      "author_image": "/images/author.png",
+      "book_image": "https://www.forfatterskolen.no/images/book.png",
+      "book_image_link": "https://bookstore.example/book",
+      "order": 1
+    }
+  ]
+}
+```
+
+# Courses (Learner)
 
 # Webinars
 
@@ -595,6 +834,99 @@ Authorization: Bearer <access_token>
 
 # Assignments
 
+## GET /assignments
+
+Returns assignments available to the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/assignments
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": [
+    {
+      "id": 987,
+      "title": "Assignment title",
+      "course_id": 12,
+      "submission_date": "2024-06-01T00:00:00Z",
+      "status": "open"
+    }
+  ]
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+
+## GET /assignments/{id}
+
+Returns assignment details for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/assignments/987
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 987,
+    "title": "Assignment title",
+    "description": "Assignment details",
+    "course_id": 12,
+    "submission_date": "2024-06-01T00:00:00Z"
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found`
+
+## POST /assignments/{id}/submit
+
+Submits an assignment manuscript for the authenticated learner.
+
+**Request**
+```http
+POST /api/v1/assignments/987/submit
+Authorization: Bearer <access_token>
+Content-Type: multipart/form-data
+
+filename=<file>
+type=1
+manu_type=<optional>
+join_group=0
+letter_to_editor=<optional file>
+```
+
+**Response (201)**
+```json
+{
+  "data": {
+    "id": 456,
+    "assignment_id": 987,
+    "uploaded_at": "2024-06-01T10:45:00Z",
+    "word_count": 1200
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found`
+- **409** `submission_exists | submission_locked`
+- **422** `invalid_file | invalid_file_format | invalid_file_mime | invalid_type | validation_error`
+
 ## POST /assignments/submissions/{id}/replace
 
 Replaces an existing assignment submission for the authenticated learner.
@@ -624,6 +956,42 @@ filename: <file>
 - **403** `forbidden`
 - **404** `not_found`
 - **422** `invalid_file | invalid_file_format | max_words_exceeded`
+
+## GET /assignments/submissions/{id}/download
+
+Downloads an assignment submission file.
+
+**Request**
+```http
+GET /api/v1/assignments/submissions/456/download
+Authorization: Bearer <access_token>
+```
+
+**Response**
+- **200** file download
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found`
+
+## GET /assignments/feedback/{id}/download
+
+Downloads assignment feedback files for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/assignments/feedback/321/download
+Authorization: Bearer <access_token>
+```
+
+**Response**
+- **200** file download (zip or single file)
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found`
 
 ---
 
@@ -775,6 +1143,91 @@ Authorization: Bearer <access_token>
 - **403** `forbidden`
 
 ---
+
+# Invoices
+
+## GET /invoices
+
+Returns recent invoices for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/invoices
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": [
+    {
+      "id": 123,
+      "invoice_number": "INV-2024-001",
+      "reference": "123456789",
+      "status": "paid",
+      "total": 14900,
+      "due_date": "2024-02-01",
+      "created_at": "2024-01-02T10:45:00Z"
+    }
+  ]
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+
+## GET /invoices/{id}
+
+Returns a single invoice for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/invoices/123
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "id": 123,
+    "invoice_number": "INV-2024-001",
+    "reference": "123456789",
+    "status": "paid",
+    "total": 14900,
+    "balance": 0,
+    "due_date": "2024-02-01",
+    "issue_date": "2024-01-01",
+    "pdf_url": "https://fiken.no/api/v1/files/...",
+    "fiken_weblink": "https://fiken.no/filer/...",
+    "created_at": "2024-01-02T10:45:00Z"
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `invoice_not_found`
+
+## GET /invoices/{id}/pdf
+
+Downloads the invoice PDF.
+
+**Request**
+```http
+GET /api/v1/invoices/123/pdf
+Authorization: Bearer <access_token>
+```
+
+**Response**
+- **200** file download
+
+**Errors**
+- **401** `unauthorized`
+- **403** `invoice_forbidden`
+- **404** `invoice_not_found | invoice_pdf_missing`
 
 # Courses
 
