@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LessonController;
 use App\Http\Controllers\Api\V1\PublisherBookController;
+use App\Http\Controllers\Api\V1\ShopManuscriptController;
 use App\Http\Controllers\Api\V1\WebinarController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -90,6 +91,15 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/webinars/{id}', [WebinarController::class, 'show']);
         Route::get('/webinars/{id}/join', [WebinarController::class, 'join']);
         Route::post('/webinars/{id}/register', [WebinarController::class, 'register']);
+        Route::get('/learner/shop-manuscripts', [ShopManuscriptController::class, 'index']);
+        Route::get('/learner/shop-manuscripts/{id}', [ShopManuscriptController::class, 'show']);
+        Route::get('/learner/shop-manuscripts/{id}/download/{type}', [ShopManuscriptController::class, 'download']);
+        Route::get('/learner/shop-manuscripts/{id}/feedback/{feedbackId}/download', [ShopManuscriptController::class, 'downloadFeedback']);
+        Route::post('/learner/shop-manuscripts/{id}/comments', [ShopManuscriptController::class, 'postComment']);
+        Route::post('/learner/shop-manuscripts/{id}/upload', [ShopManuscriptController::class, 'upload']);
+        Route::post('/learner/shop-manuscripts/{id}/upload-synopsis', [ShopManuscriptController::class, 'uploadSynopsis']);
+        Route::post('/learner/shop-manuscripts/{id}/update-uploaded', [ShopManuscriptController::class, 'updateUploaded']);
+        Route::delete('/learner/shop-manuscripts/{id}/uploaded', [ShopManuscriptController::class, 'deleteUploaded']);
     });
 
     Route::get('/files/{file}/download', [FileController::class, 'download'])
