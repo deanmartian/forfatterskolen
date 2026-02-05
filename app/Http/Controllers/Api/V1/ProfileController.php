@@ -53,16 +53,24 @@ class ProfileController extends ApiController
     private function profilePayload($user): array
     {
         $address = $user->address;
+        $street = optional($address)->street;
+        $postalCode = optional($address)->zip;
+        $city = optional($address)->city;
+        $addressLineParts = array_filter([$street, $postalCode, $city], static function ($part) {
+            return $part !== null && $part !== '';
+        });
+        $addressLine = $addressLineParts === [] ? '' : implode(', ', $addressLineParts);
 
         return [
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'email' => $user->email,
-            'phone' => $address->phone,
-            'address' => [
-                'street' => $address->street,
-                'postal_code' => $address->zip,
-                'city' => $address->city,
+            'phone' => optional($address)->phone,
+            'address' => $addressLine,
+            'address_components' => [
+                'street' => $street,
+                'postal_code' => $postalCode,
+                'city' => $city,
             ],
         ];
     }
