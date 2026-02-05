@@ -30,7 +30,7 @@ class PortalController extends ApiController
 
         return response()->json([
             'portal' => $portal,
-            'redirect_url' => route('learner.dashboard'),
+            'redirect_url' => config('api.lovable_portal_url'),
         ]);
     }
 }
