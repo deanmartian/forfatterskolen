@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LessonController;
 use App\Http\Controllers\Api\V1\PrivateMessageController;
+use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\PublisherBookController;
 use App\Http\Controllers\Api\V1\ShopManuscriptController;
 use App\Http\Controllers\Api\V1\WebinarController;
@@ -62,6 +63,8 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
 
     Route::middleware('apiJwt')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
+        Route::get('/profile', [ProfileController::class, 'show']);
+        Route::match(['put', 'patch', 'post'], '/profile', [ProfileController::class, 'update']);
         Route::get('/dashboard', [DashboardController::class, 'show']);
         Route::get('/learner/coaching-time', [CoachingTimeController::class, 'index']);
         Route::get('/learner/coaching-time/available', [CoachingTimeController::class, 'available']);
