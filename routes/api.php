@@ -64,7 +64,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::middleware('apiJwt')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
         Route::get('/profile', [ProfileController::class, 'show']);
-        Route::put('/profile', [ProfileController::class, 'update']);
+        Route::match(['put', 'patch', 'post'], '/profile', [ProfileController::class, 'update']);
         Route::get('/dashboard', [DashboardController::class, 'show']);
         Route::get('/learner/coaching-time', [CoachingTimeController::class, 'index']);
         Route::get('/learner/coaching-time/available', [CoachingTimeController::class, 'available']);
