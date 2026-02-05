@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\CheckoutController;
 use App\Http\Controllers\Api\V1\CoachingTimeController;
 use App\Http\Controllers\Api\V1\CourseController;
 use App\Http\Controllers\Api\V1\DashboardController;
+use App\Http\Controllers\Api\V1\EmailHistoryController;
 use App\Http\Controllers\Api\V1\FileController;
 use App\Http\Controllers\Api\V1\FreeManuscriptController;
 use App\Http\Controllers\Api\V1\FreeWebinarController;
@@ -72,6 +73,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::post('/learner/coaching-time/add-session', [CoachingTimeController::class, 'addSession']);
         Route::get('/calendar/events', [CalendarController::class, 'events']);
         Route::get('/learner/private-messages', [PrivateMessageController::class, 'index']);
+        Route::get('/learner/email-history', [EmailHistoryController::class, 'index']);
         Route::get('/invoices', [InvoiceController::class, 'index']);
         Route::get('/invoices/{id}', [InvoiceController::class, 'show']);
         Route::get('/invoices/{id}/pdf', [InvoiceController::class, 'pdf']);
