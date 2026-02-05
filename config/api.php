@@ -12,5 +12,5 @@ return [
         ),
         'allow_credentials' => env('LOVABLE_CORS_ALLOW_CREDENTIALS', false),
     ],
-    'lovable_portal_url' => env('LOVABLE_PORTAL_URL', 'https://ny.forfatterskolen.no/'),
+    'lovable_portal_url' => env('LOVABLE_PORTAL_URL', 'https://ny.forfatterskolen.no/portal'),
 ];
