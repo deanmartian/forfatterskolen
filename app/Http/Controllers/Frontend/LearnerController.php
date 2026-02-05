@@ -2374,7 +2374,7 @@ class LearnerController extends Controller
                 }
             } else {
                 if (! $courseTaken->end_date) {
-                    $courseTaken->end_date = Carbon::parse($course->start_date)->addYear(1);
+                    $courseTaken->end_date = Carbon::parse($course->start_date ? $course->start_date : today())->addYear(1);
                 }
             }
 
