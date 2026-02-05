@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\FreeWebinarController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LessonController;
+use App\Http\Controllers\Api\V1\PortalController;
 use App\Http\Controllers\Api\V1\PrivateMessageController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\PublisherBookController;
@@ -74,6 +75,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/calendar/events', [CalendarController::class, 'events']);
         Route::get('/learner/private-messages', [PrivateMessageController::class, 'index']);
         Route::get('/learner/email-history', [EmailHistoryController::class, 'index']);
+        Route::post('/learner/change-portal', [PortalController::class, 'update']);
         Route::get('/invoices', [InvoiceController::class, 'index']);
         Route::get('/invoices/{id}', [InvoiceController::class, 'show']);
         Route::get('/invoices/{id}/pdf', [InvoiceController::class, 'pdf']);
