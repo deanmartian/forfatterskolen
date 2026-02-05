@@ -179,27 +179,73 @@ Authorization: Bearer <access_token>
 **Response (200)**
 ```json
 {
-  "id": 123,
-  "name": "Ada Lovelace",
+  "first_name": "Ada",
+  "last_name": "Lovelace",
   "email": "user@example.com",
-  "roles": [
-    "learner"
-  ],
-  "certificates": [
-    {
-      "id": 1,
-      "course_id": 12,
-      "package_id": 34,
-      "course_title": "Creative Writing",
-      "certificate_number": "CERT-2024-001"
-    }
-  ]
+  "phone": "+47 999 99 999",
+  "address": {
+    "street": "Examplegata 1",
+    "postal_code": "0123",
+    "city": "Oslo"
+  }
 }
 ```
 
 **Errors**
 - **401** `unauthorized`
 - **403** `forbidden`
+
+## PUT /profile
+
+Updates contact fields for the authenticated user. Only `phone` and the `address` subfields are writable. `email` is read-only.
+
+**Request (JSON)**
+```http
+PUT /api/v1/profile
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "phone": "+47 999 99 999",
+  "address": {
+    "street": "Examplegata 1",
+    "postal_code": "0123",
+    "city": "Oslo"
+  }
+}
+```
+
+**Request (multipart/form-data)**
+```http
+PUT /api/v1/profile
+Authorization: Bearer <access_token>
+Content-Type: multipart/form-data
+
+phone=+47 999 99 999
+address[street]=Examplegata 1
+address[postal_code]=0123
+address[city]=Oslo
+```
+
+**Response (200)**
+```json
+{
+  "first_name": "Ada",
+  "last_name": "Lovelace",
+  "email": "user@example.com",
+  "phone": "+47 999 99 999",
+  "address": {
+    "street": "Examplegata 1",
+    "postal_code": "0123",
+    "city": "Oslo"
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **422** `validation_error`
 
 ---
 
