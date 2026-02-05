@@ -410,6 +410,54 @@ Authorization: Bearer <access_token>
 - **401** `unauthorized`
 - **403** `forbidden`
 
+---
+
+# Email history
+
+## GET /learner/email-history
+
+Returns email history entries for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/learner/email-history?per_page=10
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": [
+    {
+      "id": 123,
+      "subject": "Welcome to Forfatterskolen",
+      "from_email": "postmail@forfatterskolen.no",
+      "message": "<p>Welcome!</p>",
+      "parent": "courses-taken",
+      "parent_id": 88,
+      "recipient": {
+        "name": "Ada Lovelace",
+        "id": 42,
+        "email": "ada@example.com"
+      },
+      "track_code": "abc123",
+      "date_open": "2024-01-05T12:30:00Z",
+      "created_at": "2024-01-05T12:00:00Z"
+    }
+  ],
+  "meta": {
+    "current_page": 1,
+    "last_page": 3,
+    "per_page": 10,
+    "total": 25
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+
 ## GET /learner/coaching-time/available
 
 Returns available editor time slots for the authenticated learner.
