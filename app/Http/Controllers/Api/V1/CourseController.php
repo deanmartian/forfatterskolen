@@ -8,7 +8,7 @@ use App\CoursesTaken;
 use App\Package;
 use App\Http\Resources\Api\V1\CourseTakenResource;
 use App\Http\Resources\Api\V1\LessonResource;
-use App\Helpers\FrontendHelpers;
+use App\Http\FrontendHelpers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
