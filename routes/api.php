@@ -75,6 +75,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/calendar/events', [CalendarController::class, 'events']);
         Route::get('/learner/private-messages', [PrivateMessageController::class, 'index']);
         Route::get('/learner/email-history', [EmailHistoryController::class, 'index']);
+        Route::get('/learner/email-history/search', [EmailHistoryController::class, 'search']);
         Route::post('/learner/change-portal', [PortalController::class, 'update']);
         Route::get('/invoices', [InvoiceController::class, 'index']);
         Route::get('/invoices/{id}', [InvoiceController::class, 'show']);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\EmailHistory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -31,13 +32,79 @@ class EmailHistoryController extends ApiController
             ]);
         }
 
+        $emailHistories = $this->emailHistoryQuery($user)
+            ->latest()
+            ->paginate($perPage);
+
+        return response()->json([
+            'data' => $emailHistories->getCollection()
+                ->map(fn (EmailHistory $history) => $this->formatHistory($history))
+                ->values(),
+            'meta' => [
+                'current_page' => $emailHistories->currentPage(),
+                'last_page' => $emailHistories->lastPage(),
+                'per_page' => $emailHistories->perPage(),
+                'total' => $emailHistories->total(),
+            ],
+        ]);
+    }
+
+    public function search(Request $request): JsonResponse
+    {
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        $subject = trim((string) $request->query('subject', ''));
+
+        if ($subject === '') {
+            return $this->errorResponse('Subject query is required.', 'invalid_request', 422);
+        }
+
+        $perPage = (int) $request->query('per_page', 10);
+        $perPage = $perPage > 0 ? min($perPage, 50) : 10;
+
+        if ($user->isDisabled) {
+            return response()->json([
+                'data' => [],
+                'meta' => [
+                    'current_page' => 1,
+                    'last_page' => 1,
+                    'per_page' => $perPage,
+                    'total' => 0,
+                ],
+            ]);
+        }
+
+        $emailHistories = $this->emailHistoryQuery($user)
+            ->where('subject', 'LIKE', '%' . $subject . '%')
+            ->latest()
+            ->paginate($perPage);
+
+        return response()->json([
+            'data' => $emailHistories->getCollection()
+                ->map(fn (EmailHistory $history) => $this->formatHistory($history))
+                ->values(),
+            'meta' => [
+                'current_page' => $emailHistories->currentPage(),
+                'last_page' => $emailHistories->lastPage(),
+                'per_page' => $emailHistories->perPage(),
+                'total' => $emailHistories->total(),
+            ],
+        ]);
+    }
+
+    private function emailHistoryQuery($user): Builder
+    {
         $learnerAssignmentManuscripts = $user->assignmentManuscripts->pluck('id');
         $learnerShopManuscriptsTaken = $user->shopManuscriptsTaken->pluck('id');
         $learnerCoursesTaken = $user->coursesTaken->pluck('id');
         $registeredWebinarLists = $user->registeredWebinars->pluck('id');
         $learnerInvoices = $user->invoices->pluck('id');
 
-        $emailHistories = EmailHistory::query()->where(function ($query) use ($learnerAssignmentManuscripts) {
+        return EmailHistory::query()->where(function ($query) use ($learnerAssignmentManuscripts) {
             $query->where('parent', 'LIKE', 'assignment-manuscripts%');
             $query->whereIn('parent_id', $learnerAssignmentManuscripts);
         })
@@ -79,21 +146,7 @@ class EmailHistoryController extends ApiController
             })
             ->orWhere(function ($query) use ($user) {
                 $query->where('recipient', $user->email);
-            })
-            ->latest()
-            ->paginate($perPage);
-
-        return response()->json([
-            'data' => $emailHistories->getCollection()
-                ->map(fn (EmailHistory $history) => $this->formatHistory($history))
-                ->values(),
-            'meta' => [
-                'current_page' => $emailHistories->currentPage(),
-                'last_page' => $emailHistories->lastPage(),
-                'per_page' => $emailHistories->perPage(),
-                'total' => $emailHistories->total(),
-            ],
-        ]);
+            });
     }
 
     private function formatHistory(EmailHistory $history): array
