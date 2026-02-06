@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\AdminHelpers;
+use App\Http\FrontendHelpers;
 use App\Mail\SubjectBodyEmail;
 use App\Log;
 use App\ShopManuscript;
@@ -638,6 +639,7 @@ class ShopManuscriptController extends ApiController
             'shop_manuscript_id' => $taken->shop_manuscript_id,
             'title' => $taken->shop_manuscript->title ?? null,
             'genre' => $taken->genre,
+            'genre_label' => $taken->genre !== null ? FrontendHelpers::assignmentType($taken->genre) : null,
             'description' => $taken->description,
             'status' => $taken->status,
             'is_active' => (bool) $taken->is_active,
