@@ -845,6 +845,25 @@ GET /api/v1/publisher-books
 
 # Courses (Learner)
 
+## GET /courses/certificates/{id}/download
+
+Downloads a course certificate PDF for the authenticated learner.
+
+**Request**
+```http
+GET /api/v1/courses/certificates/{id}/download
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+
+Binary PDF download with `Content-Disposition: attachment`.
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **404** `not_found`
+
 # Webinars
 
 ## GET /webinars

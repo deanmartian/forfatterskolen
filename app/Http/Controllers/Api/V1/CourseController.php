@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Course;
+use App\CourseCertificate;
 use App\CoursesTaken;
 use App\Package;
 use App\Http\Resources\Api\V1\CourseTakenResource;
 use App\Http\Resources\Api\V1\LessonResource;
+use App\Helpers\FrontendHelpers;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -232,6 +235,63 @@ class CourseController extends ApiController
         $lessons = $course->lessons()->with('lessonContent')->orderBy('order', 'asc')->get();
 
         return LessonResource::collection($lessons);
+    }
+
+    public function downloadCertificate(Request $request, int $id)
+    {
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        $certificate = CourseCertificate::find($id);
+
+        if (! $certificate) {
+            return $this->errorResponse('Certificate not found.', 'not_found', 404);
+        }
+
+        $course = $certificate->course;
+
+        if (! $course) {
+            return $this->errorResponse('Course not found.', 'not_found', 404);
+        }
+
+        $courseTaken = $user->coursesTaken()
+            ->withTrashed()
+            ->whereIn('package_id', $course->packages()->pluck('id'))
+            ->first();
+
+        if (! $courseTaken) {
+            return $this->errorResponse('You do not have access to this course.', 'forbidden', 403);
+        }
+
+        $issueDate = Carbon::parse($course->type === 'Single'
+            ? Carbon::parse($courseTaken->started_at)->addDays(80)
+            : $course->issue_date
+        );
+
+        $template = str_replace([
+            '{LEARNERNAME}',
+            '{COURSENAME}',
+            '{COMPLETEDDATE}',
+            '{ISSUEDDATE}',
+        ],
+            [
+                $user->full_name,
+                $course->title,
+                $course->completed_date,
+                $issueDate->format('d').'. '.FrontendHelpers::convertMonthLanguage($issueDate->format('n')).' '.$issueDate->format('Y'),
+            ],
+            $certificate->template
+        );
+
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->setPaper('letter', 'landscape');
+        $pdf->loadHTML($template);
+
+        return $pdf->download($course->title.' certificate.pdf');
     }
 
     private function absoluteUrl(?string $path): ?string
