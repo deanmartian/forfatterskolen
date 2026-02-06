@@ -38,7 +38,7 @@ class EmailHistoryController extends ApiController
 
         return response()->json([
             'data' => $emailHistories->getCollection()
-                ->map(fn (EmailHistory $history) => $this->formatHistory($history))
+                ->map(fn (EmailHistory $history) => $this->formatHistory($history, false))
                 ->values(),
             'meta' => [
                 'current_page' => $emailHistories->currentPage(),
@@ -158,13 +158,12 @@ class EmailHistoryController extends ApiController
         });
     }
 
-    private function formatHistory(EmailHistory $history): array
+    private function formatHistory(EmailHistory $history, bool $includeMessage = true): array
     {
-        return [
+        $payload = [
             'id' => $history->id,
             'subject' => $history->subject,
             'from_email' => $history->from_email,
-            'message' => $history->message,
             'parent' => $history->parent,
             'parent_id' => $history->parent_id,
             'recipient' => $history->recipient,
@@ -174,5 +173,11 @@ class EmailHistoryController extends ApiController
             'date_open' => $history->getRawOriginal('date_open'),
             'created_at' => $history->getRawOriginal('created_at'),
         ];
+
+        if ($includeMessage) {
+            $payload['message'] = $history->message;
+        }
+
+        return $payload;
     }
 }
