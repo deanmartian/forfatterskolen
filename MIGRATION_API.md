@@ -29,7 +29,7 @@ All errors use the same envelope:
 {
   "error": {
     "message": "Human readable message",
-    "code": "unauthorized | forbidden | not_found | validation_error",
+    "code": "unauthorized | forbidden | not_found | validation_error | invalid_request",
     "details": {
       "field": [
         "Validation error message"
@@ -457,6 +457,57 @@ Authorization: Bearer <access_token>
 **Errors**
 - **401** `unauthorized`
 - **403** `forbidden`
+
+## GET /learner/email-history/search
+
+Searches email history entries for the authenticated learner by subject.
+
+**Request**
+```http
+GET /api/v1/learner/email-history/search?subject=welcome&per_page=10
+Authorization: Bearer <access_token>
+```
+
+**Required query params**
+- `subject` (string): Subject keyword to search for (case-insensitive).
+
+**Optional query params**
+- `per_page` (int): Page size (max 50, default 10).
+
+**Response (200)**
+```json
+{
+  "data": [
+    {
+      "id": 123,
+      "subject": "Welcome to Forfatterskolen",
+      "from_email": "postmail@forfatterskolen.no",
+      "message": "<p>Welcome!</p>",
+      "parent": "courses-taken",
+      "parent_id": 88,
+      "recipient": {
+        "name": "Ada Lovelace",
+        "id": 42,
+        "email": "ada@example.com"
+      },
+      "track_code": "abc123",
+      "date_open": "2024-01-05T12:30:00Z",
+      "created_at": "2024-01-05T12:00:00Z"
+    }
+  ],
+  "meta": {
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 10,
+    "total": 1
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **403** `forbidden`
+- **422** `invalid_request` (subject query is required)
 
 ## GET /learner/coaching-time/available
 
