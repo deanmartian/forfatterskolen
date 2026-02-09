@@ -5855,11 +5855,16 @@
         modal.find('form').attr('action', action);
 	});
 
-	$(document).on("click", ".resendEmailHistoryBtn", function(){
-		let record = $(this).data('record');
+	document.addEventListener("click", function(event) {
+		let button = event.target.closest(".resendEmailHistoryBtn");
+		if (!button) {
+			return;
+		}
+
+		let record = $(button).data('record') || {};
 		let modal = $("#resendEmailHistoryModal");
 		if (typeof window.triggerLoadTinymce === 'function') {
-			window.triggerLoadTinymce($(this).data('target'));
+			window.triggerLoadTinymce($(button).data('target') || '#resendEmailHistoryModal');
 		}
 
 		modal.find("[name=parent]").val(record.parent);
@@ -6204,7 +6209,7 @@
 
         setTimeout(function(){
             tinymce.activeEditor.setContent(fields.message);
-		}, 200);
+	}, 200);
 	});
 
     $(".deletePrivateMessageBtn").click(function(){
