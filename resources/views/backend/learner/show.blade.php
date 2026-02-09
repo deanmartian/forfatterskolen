@@ -5858,6 +5858,9 @@
 	$(document).on("click", ".resendEmailHistoryBtn", function(){
 		let record = $(this).data('record');
 		let modal = $("#resendEmailHistoryModal");
+		if (typeof window.triggerLoadTinymce === 'function') {
+			window.triggerLoadTinymce($(this).data('target'));
+		}
 
 		modal.find("[name=parent]").val(record.parent);
 		modal.find("[name=parent_id]").val(record.parent_id);

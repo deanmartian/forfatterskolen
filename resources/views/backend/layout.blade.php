@@ -289,6 +289,11 @@
                 tinymce.init(tiny_editor_config);
             }
 
+            window.triggerLoadTinymce = function(target) {
+                currentTarget = target;
+                initTinyMCE();
+            };
+
             let shouldInitOnClick = ['backend.dashboard', 'admin.learner.show', 'admin.free-manuscript.index'].includes(currentRoute);
 
             document.addEventListener('click', function(event) {
