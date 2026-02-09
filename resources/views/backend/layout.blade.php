@@ -289,38 +289,31 @@
                 tinymce.init(tiny_editor_config);
             }
 
-            window.triggerLoadTinymce = function(target) {
-                currentTarget = target;
+            if (!['backend.dashboard', 'admin.learner.show', 'admin.free-manuscript.index'].includes(currentRoute)) {
+                document.querySelectorAll('.loadScriptButton').forEach(button => {
+                    button.addEventListener('click', function() {
+                        let currentBtn = $(this);
+                        currentTarget = currentBtn.data('target');
+                    });
+                });
                 initTinyMCE();
-            };
-
-            let shouldInitOnClick = ['backend.dashboard', 'admin.learner.show', 'admin.free-manuscript.index'].includes(currentRoute);
-
-            document.addEventListener('click', function(event) {
-                let button = event.target.closest('.loadScriptButton');
-                if (!button) {
-                    return;
-                }
-
-                let currentBtn = $(button);
-                currentTarget = currentBtn.data('target');
-
-                if (shouldInitOnClick) {
-                    initTinyMCE();
-                    /* if (typeof tinymce === 'undefined') {
-                        var script = document.createElement('script');
-                        script.src = "https://cdn.tiny.cloud/1/nek3obgwg98gkwb24kkslobuly8x3ul5l53agctoenes6nyb/tinymce/5/tinymce.min.js";
-                        script.referrerPolicy = "origin";
-                        script.onload = initTinyMCE;
-                        document.body.appendChild(script);
-                    } else {
+            } else {
+                document.querySelectorAll('.loadScriptButton').forEach(button => {
+                    button.addEventListener('click', function() {
+                        let currentBtn = $(this);
+                        currentTarget = currentBtn.data('target');
                         initTinyMCE();
-                    } */
-                }
-            });
-
-            if (!shouldInitOnClick) {
-                initTinyMCE();
+                        /* if (typeof tinymce === 'undefined') {
+                            var script = document.createElement('script');
+                            script.src = "https://cdn.tiny.cloud/1/nek3obgwg98gkwb24kkslobuly8x3ul5l53agctoenes6nyb/tinymce/5/tinymce.min.js";
+                            script.referrerPolicy = "origin";
+                            script.onload = initTinyMCE;
+                            document.body.appendChild(script);
+                        } else {
+                            initTinyMCE();
+                        } */
+                    });
+                });
             }
 
             function setEditorContent(editorId, content) {
