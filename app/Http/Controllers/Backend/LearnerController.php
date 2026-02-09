@@ -179,7 +179,7 @@ class LearnerController extends Controller
         $emailHistories = [];
         if ($learner->id != 4) {
             $emailHistories = DB::table('email_history')
-                // ->select('id', 'parent', 'parent_id', 'recipient', 'subject', 'from_email', 'date_open')
+                ->select('id', 'parent', 'parent_id', 'recipient', 'subject', 'from_email', 'date_open', 'message', 'created_at')
                 ->where(function ($query) use ($learnerAssignmentManuscripts) {
                     $query->where('parent', 'LIKE', 'assignment-manuscripts%');
                     $query->whereIn('parent_id', $learnerAssignmentManuscripts);
@@ -208,10 +208,6 @@ class LearnerController extends Controller
                     $query->where('parent', '=', 'invoice');
                     $query->whereIn('parent_id', $learnerInvoices);
                 })
-                ->orWhere(function ($query) use ($learnerInvoices) {
-                    $query->where('parent', '=', 'invoice');
-                    $query->whereIn('parent_id', $learnerInvoices);
-                })
                 ->orWhere(function ($query) use ($learner) {
                     $query->where('parent', 'LIKE', 'copy-editing%');
                     $query->where('recipient', $learner->email);
@@ -228,6 +224,7 @@ class LearnerController extends Controller
                     $query->where('recipient', $learner->email);
                 })
                 ->latest()
+                ->limit(200)
                 ->get();
             /* $emailHistories = EmailHistory::select('id', 'parent', 'parent_id', 'recipient', 'subject', 'from_email', 'date_open')
             ->withTrashed()
