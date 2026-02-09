@@ -189,7 +189,7 @@
             const currentRoute = "{{ Route::currentRouteName() }}";
 
             // tinymce load editor
-            let tiny_editor_config = {
+            var tiny_editor_config = {
                 path_absolute: "{{ URL::to('/') }}",
                 height: '500',
                 selector: '.tinymce',
