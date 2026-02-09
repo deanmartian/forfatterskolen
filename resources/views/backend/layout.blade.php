@@ -289,31 +289,33 @@
                 tinymce.init(tiny_editor_config);
             }
 
-            if (!['backend.dashboard', 'admin.learner.show', 'admin.free-manuscript.index'].includes(currentRoute)) {
-                document.querySelectorAll('.loadScriptButton').forEach(button => {
-                    button.addEventListener('click', function() {
-                        let currentBtn = $(this);
-                        currentTarget = currentBtn.data('target');
-                    });
-                });
-                initTinyMCE();
-            } else {
-                document.querySelectorAll('.loadScriptButton').forEach(button => {
-                    button.addEventListener('click', function() {
-                        let currentBtn = $(this);
-                        currentTarget = currentBtn.data('target');
+            let shouldInitOnClick = ['backend.dashboard', 'admin.learner.show', 'admin.free-manuscript.index'].includes(currentRoute);
+
+            document.addEventListener('click', function(event) {
+                let button = event.target.closest('.loadScriptButton');
+                if (!button) {
+                    return;
+                }
+
+                let currentBtn = $(button);
+                currentTarget = currentBtn.data('target');
+
+                if (shouldInitOnClick) {
+                    initTinyMCE();
+                    /* if (typeof tinymce === 'undefined') {
+                        var script = document.createElement('script');
+                        script.src = "https://cdn.tiny.cloud/1/nek3obgwg98gkwb24kkslobuly8x3ul5l53agctoenes6nyb/tinymce/5/tinymce.min.js";
+                        script.referrerPolicy = "origin";
+                        script.onload = initTinyMCE;
+                        document.body.appendChild(script);
+                    } else {
                         initTinyMCE();
-                        /* if (typeof tinymce === 'undefined') {
-                            var script = document.createElement('script');
-                            script.src = "https://cdn.tiny.cloud/1/nek3obgwg98gkwb24kkslobuly8x3ul5l53agctoenes6nyb/tinymce/5/tinymce.min.js";
-                            script.referrerPolicy = "origin";
-                            script.onload = initTinyMCE;
-                            document.body.appendChild(script);
-                        } else {
-                            initTinyMCE();
-                        } */
-                    });
-                });
+                    } */
+                }
+            });
+
+            if (!shouldInitOnClick) {
+                initTinyMCE();
             }
 
             function setEditorContent(editorId, content) {
