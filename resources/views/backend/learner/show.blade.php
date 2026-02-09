@@ -1973,48 +1973,25 @@
 						Email History
 					</h4>
 				</div>
-				<div class="table-responsive" style="padding: 10px">
-					<table class="table dt-table">
-						<thead>
-						<tr>
-							<th>{{ trans('site.subject') }}</th>
-							<th>{{ trans('site.from') }}</th>
-							<th>{{ trans('site.date-sent') }}</th>
-							<th>Date Opened</th>
-							<th></th>
-						</tr>
-						</thead>
-						<tbody>
-							@foreach($emailHistories as $emailHistory)
+				<div id="learner-email-history">
+					<div class="table-responsive" style="padding: 10px">
+						<table class="table dt-table">
+							<thead>
+							<tr>
+								<th>{{ trans('site.subject') }}</th>
+								<th>{{ trans('site.from') }}</th>
+								<th>{{ trans('site.date-sent') }}</th>
+								<th>Date Opened</th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody>
 								<tr>
-									<td>
-										{{ $emailHistory->subject }}
-									</td>
-									<td>
-										{{ $emailHistory->from_email }}
-									</td>
-									<td>
-										{{ $emailHistory->created_at }}
-									</td>
-									<td>
-										{{ $emailHistory->date_open }}
-									</td>
-									<td class="text-center">
-										<button class="btn btn-info btn-xs" data-toggle="modal"
-												data-target="#showEmailModal"
-												data-message="{{ $emailHistory->message }}" onclick="showEmailMessage(this)">
-												Show Message
-											</button>
-										<button class="btn btn-success btn-xs resendEmailHistoryBtn loadScriptButton" data-toggle="modal" 
-											data-target="#resendEmailHistoryModal" data-record="{{ json_encode($emailHistory) }}"
-											style="margin-top: 5px;">
-											Resend Email
-										</button>
-									</td>
+									<td colspan="5" class="text-center text-muted">Loading email history...</td>
 								</tr>
-							@endforeach
-						</tbody>
-					</table>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div> <!-- end email history section -->
 
@@ -5878,9 +5855,17 @@
         modal.find('form').attr('action', action);
 	});
 
-	$(".resendEmailHistoryBtn").click(function(){
-		let record = $(this).data('record');
+	document.addEventListener("click", function(event) {
+		let button = event.target.closest(".resendEmailHistoryBtn");
+		if (!button) {
+			return;
+		}
+
+		let record = $(button).data('record') || {};
 		let modal = $("#resendEmailHistoryModal");
+		if (typeof triggerLoadTinymce === 'function') {
+			triggerLoadTinymce($(button).data('target') || '#resendEmailHistoryModal');
+		}
 
 		modal.find("[name=parent]").val(record.parent);
 		modal.find("[name=parent_id]").val(record.parent_id);
@@ -5889,13 +5874,37 @@
 		modal.find("[name=from_email]").val(record.from_email);
 		//modal.find("[name=recipient]").val(record.recipient_email);
 
-console.log(record);
-		tinymce.get('sendEmailHistoryEditor').execCommand('mceRefresh');
-		setTimeout(function(){
-			console.log("inside set timeout");
-			console.log(record.message);
-            tinymce.activeEditor.setContent(record.message);
-		}, 200);
+		console.log(record);
+		modal.find("#sendEmailHistoryEditor").val(record.message || '');
+
+		let editor = tinymce.get('sendEmailHistoryEditor');
+		if (editor) {
+			editor.execCommand('mceRefresh');
+			editor.setContent(record.message || '');
+		} else {
+			setTimeout(function(){
+				let retryEditor = tinymce.get('sendEmailHistoryEditor');
+				if (retryEditor) {
+					retryEditor.execCommand('mceRefresh');
+					retryEditor.setContent(record.message || '');
+				}
+			}, 200);
+		}
+	});
+
+	$(function() {
+		let emailHistoryUrl = "{{ route('admin.learner.email-history.partial', $learner->id) }}";
+		let emailHistoryContainer = $("#learner-email-history");
+
+		$.get(emailHistoryUrl)
+			.done(function(html) {
+				emailHistoryContainer.html(html);
+			})
+			.fail(function() {
+				emailHistoryContainer.find("tbody").html(
+					"<tr><td colspan='5' class='text-center text-danger'>Unable to load email history.</td></tr>"
+				);
+			});
 	});
 
     $(".booksForSaleBtn").click(function() {
@@ -6200,7 +6209,7 @@ console.log(record);
 
         setTimeout(function(){
             tinymce.activeEditor.setContent(fields.message);
-		}, 200);
+	}, 200);
 	});
 
     $(".deletePrivateMessageBtn").click(function(){
