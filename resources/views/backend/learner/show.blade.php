@@ -5867,12 +5867,21 @@
 		//modal.find("[name=recipient]").val(record.recipient_email);
 
 		console.log(record);
-		tinymce.get('sendEmailHistoryEditor').execCommand('mceRefresh');
-		setTimeout(function(){
-			console.log("inside set timeout");
-			console.log(record.message);
-            tinymce.activeEditor.setContent(record.message);
-		}, 200);
+		modal.find("#sendEmailHistoryEditor").val(record.message || '');
+
+		let editor = tinymce.get('sendEmailHistoryEditor');
+		if (editor) {
+			editor.execCommand('mceRefresh');
+			editor.setContent(record.message || '');
+		} else {
+			setTimeout(function(){
+				let retryEditor = tinymce.get('sendEmailHistoryEditor');
+				if (retryEditor) {
+					retryEditor.execCommand('mceRefresh');
+					retryEditor.setContent(record.message || '');
+				}
+			}, 200);
+		}
 	});
 
 	$(function() {
