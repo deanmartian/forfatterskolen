@@ -176,62 +176,6 @@ class LearnerController extends Controller
         $selfPublishingList = SelfPublishing::whereNotIn('id',
             $learner->selfPublishingList()->pluck('self_publishing_id')->toArray())->get();
 
-        $emailHistories = [];
-        if ($learner->id != 4) {
-            $emailHistories = DB::table('email_history')
-                ->select('id', 'parent', 'parent_id', 'recipient', 'subject', 'from_email', 'date_open', 'message', 'created_at')
-                ->where(function ($query) use ($learnerAssignmentManuscripts) {
-                    $query->where('parent', 'LIKE', 'assignment-manuscripts%');
-                    $query->whereIn('parent_id', $learnerAssignmentManuscripts);
-                })
-                ->orWhere(function ($query) use ($learnerShopManuscriptsTaken) {
-                    $query->where('parent', 'LIKE', 'shop-manuscripts-taken%');
-                    $query->whereIn('parent_id', $learnerShopManuscriptsTaken);
-                })
-                ->orWhere(function ($query) use ($learnerCoursesTaken) {
-                    $query->where('parent', 'LIKE', 'courses-taken%');
-                    $query->whereIn('parent_id', $learnerCoursesTaken);
-                })
-                ->orWhere(function ($query) use ($registeredWebinarLists) {
-                    $query->where('parent', '=', 'webinar-registrant');
-                    $query->whereIn('parent_id', $registeredWebinarLists);
-                })
-                ->orWhere(function ($query) use ($learner) {
-                    $query->where('parent', '=', 'learner');
-                    $query->where('parent_id', $learner->id);
-                })
-                ->orWhere(function ($query) use ($learner) {
-                    $query->where('parent', '=', 'free-manuscripts');
-                    $query->where('recipient', $learner->email);
-                })
-                ->orWhere(function ($query) use ($learnerInvoices) {
-                    $query->where('parent', '=', 'invoice');
-                    $query->whereIn('parent_id', $learnerInvoices);
-                })
-                ->orWhere(function ($query) use ($learner) {
-                    $query->where('parent', 'LIKE', 'copy-editing%');
-                    $query->where('recipient', $learner->email);
-                })
-                ->orWhere(function ($query) use ($learner) {
-                    $query->where('parent', 'LIKE', 'correction%');
-                    $query->where('recipient', $learner->email);
-                })
-                ->orWhere(function ($query) use ($learner) {
-                    $query->where('parent', 'LIKE', 'gift-purchase');
-                    $query->where('recipient', $learner->email);
-                })
-                ->orWhere(function ($query) use ($learner) {
-                    $query->where('recipient', $learner->email);
-                })
-                ->latest()
-                ->limit(200)
-                ->get();
-            /* $emailHistories = EmailHistory::select('id', 'parent', 'parent_id', 'recipient', 'subject', 'from_email', 'date_open')
-            ->withTrashed()
-            ->limit(20)
-            ->get(); */
-        }
-
         $projects = Project::with(['registrations' => function ($query) {
             $query->where('field', 'isbn');
         }])->where('user_id', $learner->id)->get();
@@ -259,10 +203,80 @@ class LearnerController extends Controller
         $assignmentMaxWords = AssignmentLearnerConfiguration::where('user_id', $learner->id)
             ->pluck('max_words', 'assignment_id');
 
-        return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
+        return view('backend.learner.show', compact('learner', 'learnerAssignments',
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList',
             'timeRegisters', 'projects', 'certificates', 'projects', 'bookSaleTypes', 'tasks', 'assignmentSubmissionDates',
             'assignmentMaxWords'));
+    }
+
+    private function emailHistoryQueryForLearner(User $learner)
+    {
+        $learnerAssignmentManuscripts = $learner->assignmentManuscripts->pluck('id');
+        $learnerShopManuscriptsTaken = $learner->shopManuscriptsTaken->pluck('id');
+        $learnerCoursesTaken = $learner->coursesTaken->pluck('id');
+        $registeredWebinarLists = $learner->registeredWebinars->pluck('id');
+        $learnerInvoices = $learner->invoices->pluck('id');
+
+        return DB::table('email_history')
+            ->select('id', 'parent', 'parent_id', 'recipient', 'subject', 'from_email', 'date_open', 'message', 'created_at')
+            ->where(function ($query) use ($learnerAssignmentManuscripts) {
+                $query->where('parent', 'LIKE', 'assignment-manuscripts%');
+                $query->whereIn('parent_id', $learnerAssignmentManuscripts);
+            })
+            ->orWhere(function ($query) use ($learnerShopManuscriptsTaken) {
+                $query->where('parent', 'LIKE', 'shop-manuscripts-taken%');
+                $query->whereIn('parent_id', $learnerShopManuscriptsTaken);
+            })
+            ->orWhere(function ($query) use ($learnerCoursesTaken) {
+                $query->where('parent', 'LIKE', 'courses-taken%');
+                $query->whereIn('parent_id', $learnerCoursesTaken);
+            })
+            ->orWhere(function ($query) use ($registeredWebinarLists) {
+                $query->where('parent', '=', 'webinar-registrant');
+                $query->whereIn('parent_id', $registeredWebinarLists);
+            })
+            ->orWhere(function ($query) use ($learner) {
+                $query->where('parent', '=', 'learner');
+                $query->where('parent_id', $learner->id);
+            })
+            ->orWhere(function ($query) use ($learner) {
+                $query->where('parent', '=', 'free-manuscripts');
+                $query->where('recipient', $learner->email);
+            })
+            ->orWhere(function ($query) use ($learnerInvoices) {
+                $query->where('parent', '=', 'invoice');
+                $query->whereIn('parent_id', $learnerInvoices);
+            })
+            ->orWhere(function ($query) use ($learner) {
+                $query->where('parent', 'LIKE', 'copy-editing%');
+                $query->where('recipient', $learner->email);
+            })
+            ->orWhere(function ($query) use ($learner) {
+                $query->where('parent', 'LIKE', 'correction%');
+                $query->where('recipient', $learner->email);
+            })
+            ->orWhere(function ($query) use ($learner) {
+                $query->where('parent', 'LIKE', 'gift-purchase');
+                $query->where('recipient', $learner->email);
+            })
+            ->orWhere(function ($query) use ($learner) {
+                $query->where('recipient', $learner->email);
+            });
+    }
+
+    public function learnerEmailHistoryPartial($learner_id): View
+    {
+        $learner = User::findOrFail($learner_id);
+
+        $emailHistories = collect();
+        if ($learner->id != 4) {
+            $emailHistories = $this->emailHistoryQueryForLearner($learner)
+                ->latest()
+                ->limit(50)
+                ->get();
+        }
+
+        return view('backend.learner.partials.email-history-table', compact('learner', 'emailHistories'));
     }
 
     public function update($id, Request $request)
@@ -2842,57 +2856,9 @@ class LearnerController extends Controller
 
     public function learnerEmailHistory($learner_id): View
     {
-        $learner = User::find($learner_id);
+        $learner = User::findOrFail($learner_id);
 
-        $learnerAssignmentManuscripts = $learner->assignmentManuscripts->pluck('id');
-        $learnerShopManuscriptsTaken = $learner->shopManuscriptsTaken->pluck('id');
-        $learnerCoursesTaken = $learner->coursesTaken->pluck('id');
-        $registeredWebinarLists = $learner->registeredWebinars->pluck('id');
-        $learnerInvoices = $learner->invoices->pluck('id');
-
-        $emailHistories = DB::table('email_history')->where(function ($query) use ($learnerAssignmentManuscripts) {
-            $query->where('parent', 'LIKE', 'assignment-manuscripts%');
-            $query->whereIn('parent_id', $learnerAssignmentManuscripts);
-        })
-            ->orWhere(function ($query) use ($learnerShopManuscriptsTaken) {
-                $query->where('parent', 'LIKE', 'shop-manuscripts-taken%');
-                $query->whereIn('parent_id', $learnerShopManuscriptsTaken);
-            })
-            ->orWhere(function ($query) use ($learnerCoursesTaken) {
-                $query->where('parent', 'LIKE', 'courses-taken%');
-                $query->whereIn('parent_id', $learnerCoursesTaken);
-            })
-            ->orWhere(function ($query) use ($registeredWebinarLists) {
-                $query->where('parent', '=', 'webinar-registrant');
-                $query->whereIn('parent_id', $registeredWebinarLists);
-            })
-            ->orWhere(function ($query) use ($learner) {
-                $query->where('parent', '=', 'learner');
-                $query->where('parent_id', $learner->id);
-            })
-            ->orWhere(function ($query) use ($learner) {
-                $query->where('parent', '=', 'free-manuscripts');
-                $query->where('recipient', $learner->email);
-            })
-            ->orWhere(function ($query) use ($learnerInvoices) {
-                $query->where('parent', '=', 'invoice');
-                $query->whereIn('parent_id', $learnerInvoices);
-            })
-            ->orWhere(function ($query) use ($learner) {
-                $query->where('parent', 'LIKE', 'copy-editing%');
-                $query->where('recipient', $learner->email);
-            })
-            ->orWhere(function ($query) use ($learner) {
-                $query->where('parent', 'LIKE', 'correction%');
-                $query->where('recipient', $learner->email);
-            })
-            ->orWhere(function ($query) use ($learner) {
-                $query->where('parent', 'LIKE', 'gift-purchase');
-                $query->where('recipient', $learner->email);
-            })
-            ->orWhere(function ($query) use ($learner) {
-                $query->where('recipient', $learner->email);
-            })
+        $emailHistories = $this->emailHistoryQueryForLearner($learner)
             ->latest()
             ->paginate(20);
 

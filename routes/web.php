@@ -727,6 +727,7 @@ Route::domain($admin)->group(function () {
         Route::post('learner/register', [Backend\LearnerController::class, 'registerLearner'])->name('admin.learner.register');
         Route::get('learner/export-vipps-efaktura', [Backend\LearnerController::class, 'exportLearnerWithVipps']);
         Route::get('learner/{id}/email-history', [Backend\LearnerController::class, 'learnerEmailHistory'])->name('admin.learner.email-history');
+        Route::get('learner/{id}/email-history/partial', [Backend\LearnerController::class, 'learnerEmailHistoryPartial'])->name('admin.learner.email-history.partial');
         Route::post('learner/{id}/set-disable-date', [Backend\LearnerController::class, 'setLearnerDisableDate'])->name('admin.learner.set_disable_date');
         Route::delete('/learner/{id}/remove-disable-date', [Backend\LearnerController::class, 'removeLearnerDisableDate'])->name('admin.learner.remove_disable_date');
         Route::resource('learner', Backend\LearnerController::class, [
