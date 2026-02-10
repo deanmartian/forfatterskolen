@@ -294,6 +294,9 @@
 
             function triggerLoadTinymce(target) {
                 currentTarget = target;
+                if (!tiny_editor_config) {
+                    tiny_editor_config = window.tiny_editor_config || {};
+                }
                 if (typeof tinymce !== 'undefined') {
                     let selector = '.tinymce';
                     if (target) {
