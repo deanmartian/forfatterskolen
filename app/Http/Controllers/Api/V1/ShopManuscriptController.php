@@ -16,7 +16,9 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use ZipArchive;
 
@@ -153,14 +155,18 @@ class ShopManuscriptController extends ApiController
             return $this->errorResponse('Feedback not found.', 'not_found', 404);
         }
 
-        $files = $feedback->filename;
+        $files = collect($feedback->filename)
+            ->map(fn ($file) => $this->normalizeFeedbackFilePath($file))
+            ->filter()
+            ->values()
+            ->all();
 
         if (! $files || count($files) === 0) {
             return $this->errorResponse('File not found.', 'not_found', 404);
         }
 
         if (count($files) === 1) {
-            $absolutePath = public_path($files[0]);
+            $absolutePath = public_path(Arr::first($files));
 
             if (! file_exists($absolutePath)) {
                 return $this->errorResponse('File not found.', 'not_found', 404);
@@ -178,14 +184,13 @@ class ShopManuscriptController extends ApiController
         }
 
         foreach ($files as $feedFile) {
-            $trimmedFile = trim($feedFile);
-            $absolutePath = public_path($trimmedFile);
+            $absolutePath = public_path($feedFile);
 
             if (! file_exists($absolutePath)) {
                 continue;
             }
 
-            $zip->addFile($absolutePath, basename($trimmedFile));
+            $zip->addFile($absolutePath, basename($feedFile));
         }
 
         $zip->close();
@@ -662,7 +667,10 @@ class ShopManuscriptController extends ApiController
                 'hours_worked' => $feedback->hours_worked,
                 'notes_to_head_editor' => $feedback->notes_to_head_editor,
                 'approved' => $feedback->approved ?? null,
-                'files' => $feedback->filename ?? [],
+                'files' => collect($feedback->filename)
+                    ->map(fn ($file) => $this->normalizeFeedbackFilePath($file))
+                    ->filter()
+                    ->values(),
                 'created_at' => $feedback->created_at,
             ])->values();
 
@@ -700,5 +708,29 @@ class ShopManuscriptController extends ApiController
                 // ignore cleanup failures
             }
         }
+    }
+
+    protected function normalizeFeedbackFilePath(?string $file): ?string
+    {
+        if (! $file) {
+            return null;
+        }
+
+        $trimmedFile = trim($file);
+        if ($trimmedFile === '') {
+            return null;
+        }
+
+        if (! Str::startsWith($trimmedFile, ['http://', 'https://'])) {
+            return parse_url($trimmedFile, PHP_URL_PATH) ?: $trimmedFile;
+        }
+
+        $urlPath = parse_url($trimmedFile, PHP_URL_PATH);
+
+        if (! is_string($urlPath) || $urlPath === '') {
+            return null;
+        }
+
+        return $urlPath;
     }
 }
