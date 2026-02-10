@@ -294,6 +294,14 @@
 
             function triggerLoadTinymce(target) {
                 currentTarget = target;
+                if (typeof tinymce !== 'undefined') {
+                    let selector = '.tinymce';
+                    if (target) {
+                        selector = `${target} .tinymce`;
+                    }
+                    tiny_editor_config.selector = selector;
+                    tinymce.remove(selector);
+                }
                 initTinyMCE();
             }
 
