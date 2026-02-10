@@ -1034,6 +1034,7 @@ class LearnerController extends Controller
             // for checking if the course taken is not disabled
             return !$courseTaken->is_disabled; // use the accessor
         });
+        $formerCourses = Auth::user()->formerCourses()->whereNotNull('end_date')->get();
         $addOns = AssignmentAddon::where('user_id', \Auth::user()->id)->pluck('assignment_id')->toArray();
         $userAssignments = Auth::user()->activeAssignments;
         $userExpiredAssignments = Auth::user()->expiredAssignments;
@@ -1193,6 +1194,68 @@ class LearnerController extends Controller
                             && \Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now()) &&
                             \Carbon\Carbon::parse($assignment->available_date)->gt(Carbon::now())) {
                             $upcomingAssignments[] = $assignment;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        foreach ($formerCourses as $formerCourse) {
+            if (! $formerCourse->package || ! $formerCourse->package->course) {
+                continue;
+            }
+
+            foreach ($formerCourse->package->course->activeAssignments as $assignment) {
+                if (! in_array($assignment->id, $visibleForFormerLearnerAssignmentIds)) {
+                    continue;
+                }
+
+                $allowed_package = json_decode($assignment->allowed_package);
+                $assignmentDisabledLearners = $assignment->disabledLearners()->pluck('user_id')->toArray();
+                $package_id = $formerCourse->package->id;
+                $assignmentsWithUserManuscript = $assignment->manuscripts()->where('user_id', Auth::user()->id)
+                    ->pluck('assignment_id')->toArray();
+
+                if ((! is_null($allowed_package) && in_array($package_id, $allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)
+                    || in_array($assignment->id, $assignmentsWithUserManuscript)) {
+                    if (! in_array($formerCourse->user_id, $assignmentDisabledLearners)) {
+                        $assignmentManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
+                            ->where('assignment_id', $assignment->id)
+                            ->first();
+
+                        if (! $assignmentManuscript || ($assignmentManuscript && ! $assignmentManuscript->locked
+                            && ! $assignmentManuscript->has_feedback)) {
+                            if (! AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
+                                if ($formerCourse->package->course->type == 'Single' && $assignment->submission_date == '365') {
+                                    $includeAssignment = $assignment;
+                                    $includeAssignment->course_taken_end_date = $formerCourse->end_date; // for displaying submit button
+                                    if ($assignment->max_words === 0) {
+                                        $noWordLimitAssignments[] = $includeAssignment;
+                                    } else {
+                                        $assignments[] = $includeAssignment;
+                                    }
+                                } else {
+                                    if (\Carbon\Carbon::parse($formerCourse->started_at)->addDays((int) $assignment->submission_date)
+                                        ->gt(Carbon::now())) {
+                                        if ($assignment->max_words === 0) {
+                                            $noWordLimitAssignments[] = $assignment;
+                                        } else {
+                                            $assignments[] = $assignment;
+                                        }
+                                    }
+                                }
+                            } else {
+                                $assignmentSubmissionDate = $assignmentSubmissionDates[$assignment->id] ??
+                                $assignment->submission_date;
+                                if (\Carbon\Carbon::parse($assignmentSubmissionDate)->gt(Carbon::now()->subDay())) {
+                                    if ($assignment->max_words === 0) {
+                                        $noWordLimitAssignments[] = $assignment;
+                                    } else {
+                                        $assignments[] = $assignment;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
