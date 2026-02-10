@@ -1974,24 +1974,7 @@
 					</h4>
 				</div>
 				<div id="learner-email-history">
-					<div class="table-responsive" style="padding: 10px">
-						<table class="table dt-table">
-							<thead>
-							<tr>
-								<th>{{ trans('site.subject') }}</th>
-								<th>{{ trans('site.from') }}</th>
-								<th>{{ trans('site.date-sent') }}</th>
-								<th>Date Opened</th>
-								<th></th>
-							</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td colspan="5" class="text-center text-muted">Loading email history...</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+					<div class="text-center text-muted" style="padding: 20px;">Loading email history...</div>
 				</div>
 			</div> <!-- end email history section -->
 
@@ -5899,10 +5882,16 @@
 		$.get(emailHistoryUrl)
 			.done(function(html) {
 				emailHistoryContainer.html(html);
+
+				emailHistoryContainer.find(".dt-table").DataTable({
+					"lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+					pageLength: 10,
+					"aaSorting": []
+				});
 			})
 			.fail(function() {
-				emailHistoryContainer.find("tbody").html(
-					"<tr><td colspan='5' class='text-center text-danger'>Unable to load email history.</td></tr>"
+				emailHistoryContainer.html(
+					"<div class='text-center text-danger' style='padding: 20px;'>Unable to load email history.</div>"
 				);
 			});
 	});
