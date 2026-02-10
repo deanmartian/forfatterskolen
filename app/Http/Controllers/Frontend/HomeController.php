@@ -944,6 +944,7 @@ class HomeController extends Controller
             $courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
         }
 
+        $request->request->remove('is_pay_later');
         /* if (filter_var($request->is_pay_later, FILTER_VALIDATE_BOOLEAN)) {
             return $coachingTimeService->processPayLaterOrder($request);
         } */
