@@ -189,7 +189,7 @@
             const currentRoute = "{{ Route::currentRouteName() }}";
 
             // tinymce load editor
-            let tiny_editor_config = {
+            var tiny_editor_config = window.tiny_editor_config = {
                 path_absolute: "{{ URL::to('/') }}",
                 height: '500',
                 selector: '.tinymce',
@@ -286,11 +286,25 @@
             };
 
             function initTinyMCE() {
+                if (typeof tinymce === 'undefined' || !tiny_editor_config) {
+                    return;
+                }
                 tinymce.init(tiny_editor_config);
             }
 
             function triggerLoadTinymce(target) {
                 currentTarget = target;
+                if (!tiny_editor_config) {
+                    tiny_editor_config = window.tiny_editor_config || {};
+                }
+                if (typeof tinymce !== 'undefined') {
+                    let selector = '.tinymce';
+                    if (target) {
+                        selector = `${target} .tinymce`;
+                    }
+                    tiny_editor_config.selector = selector;
+                    tinymce.remove(selector);
+                }
                 initTinyMCE();
             }
 
