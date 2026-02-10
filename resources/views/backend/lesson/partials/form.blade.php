@@ -248,7 +248,7 @@ const methods = {
                 let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
                 let y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
 
-                let cmsURL = tiny_editor_config.path_absolute + '/laravel-filemanager?editor=tinymce5';
+                let cmsURL = window.tinyEditorConfig.path_absolute + '/laravel-filemanager?editor=tinymce5';
                 if (meta.filetype == 'image') {
                     cmsURL = cmsURL + "&type=Images";
                 } else {

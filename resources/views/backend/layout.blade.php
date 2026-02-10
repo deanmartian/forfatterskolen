@@ -189,7 +189,7 @@
             const currentRoute = "{{ Route::currentRouteName() }}";
 
             // tinymce load editor
-            var tiny_editor_config = window.tiny_editor_config = {
+            window.tinyEditorConfig = {
                 path_absolute: "{{ URL::to('/') }}",
                 height: '500',
                 selector: '.tinymce',
@@ -286,23 +286,23 @@
             };
 
             function initTinyMCE() {
-                if (typeof tinymce === 'undefined' || !tiny_editor_config) {
+                const editorConfig = window.tinyEditorConfig;
+                if (typeof tinymce === 'undefined' || !editorConfig) {
                     return;
                 }
-                tinymce.init(tiny_editor_config);
+                tinymce.init(editorConfig);
             }
 
             function triggerLoadTinymce(target) {
                 currentTarget = target;
-                if (!tiny_editor_config) {
-                    tiny_editor_config = window.tiny_editor_config || {};
-                }
+                const editorConfig = window.tinyEditorConfig || {};
+                window.tinyEditorConfig = editorConfig;
                 if (typeof tinymce !== 'undefined') {
                     let selector = '.tinymce';
                     if (target) {
                         selector = `${target} .tinymce`;
                     }
-                    tiny_editor_config.selector = selector;
+                    editorConfig.selector = selector;
                     tinymce.remove(selector);
                 }
                 initTinyMCE();
