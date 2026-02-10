@@ -10,7 +10,7 @@
         </tr>
         </thead>
         <tbody>
-        @forelse($emailHistories as $emailHistory)
+        @foreach($emailHistories as $emailHistory)
             <tr>
                 <td>
                     {{ $emailHistory->subject }}
@@ -37,11 +37,11 @@
                     </button>
                 </td>
             </tr>
-        @empty
-            <tr>
-                <td colspan="5" class="text-center text-muted">No email history found.</td>
-            </tr>
-        @endforelse
+        @endforeach
         </tbody>
     </table>
+
+    @if($emailHistories->isEmpty())
+        <div class="text-center text-muted" style="padding: 10px;">No email history found.</div>
+    @endif
 </div>
