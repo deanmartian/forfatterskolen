@@ -10,6 +10,7 @@ use App\ShopManuscript;
 use App\Services\ShopManuscriptApiCheckoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class ShopManuscriptCheckoutController extends ApiController
@@ -29,7 +30,11 @@ class ShopManuscriptCheckoutController extends ApiController
         }
 
         try {
-            $order = $service->createOrder($user, $shopManuscript, $request->validated()['idempotency_key']);
+            Auth::setUser($user);
+            $result = $service->createOrder($user, $shopManuscript, $request->validated()['idempotency_key'], $request);
+            $order = $result['order'];
+            $order->setAttribute('checkout_payment_url', $result['payment_url']);
+            $order->setAttribute('checkout_message', $result['message']);
         } catch (\DomainException $exception) {
             return $this->errorResponse($exception->getMessage(), 'forbidden', 403);
         } catch (\Throwable $exception) {
@@ -98,10 +103,7 @@ class ShopManuscriptCheckoutController extends ApiController
         }
 
         if (in_array($status, ['CAPTURED', 'RESERVED', 'CAPTURE'], true)) {
-            $service->markPaidByVippsReference($orderReference, [
-                'status' => $status,
-                'payload' => $request->all(),
-            ]);
+            $service->markPaidByVippsReference($orderReference);
         }
 
         return response()->json(['ok' => true]);

@@ -9,35 +9,47 @@ use App\PaymentPlan;
 use App\ShopManuscript;
 use App\ShopManuscriptsTaken;
 use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ShopManuscriptApiCheckoutService
 {
-    public function createOrder(User $user, ShopManuscript $shopManuscript, string $idempotencyKey): Order
+    public function __construct(private readonly ShopManuscriptService $shopManuscriptService)
     {
-        return DB::transaction(function () use ($user, $shopManuscript, $idempotencyKey) {
-            $existing = Order::query()
-                ->with(['shopManuscriptOrder', 'paymentMode'])
-                ->where('user_id', $user->id)
-                ->where('type', Order::MANUSCRIPT_TYPE)
-                ->where('item_id', $shopManuscript->id)
-                ->where('is_processed', 0)
-                ->whereHas('shopManuscriptOrder', function ($query) use ($idempotencyKey) {
-                    $query->where('genre', $this->idempotencyGenre($idempotencyKey));
-                })
-                ->lockForUpdate()
-                ->first();
+    }
 
-            if ($existing) {
-                return $existing;
+    public function createOrder(User $user, ShopManuscript $shopManuscript, string $idempotencyKey, Request $request): array
+    {
+        return DB::transaction(function () use ($user, $shopManuscript, $idempotencyKey, $request) {
+            $cacheKey = $this->idempotencyCacheKey($user->id, $shopManuscript->id, $idempotencyKey);
+            $cachedOrderId = Cache::get($cacheKey);
+
+            if ($cachedOrderId) {
+                $existing = Order::query()->with(['shopManuscriptOrder', 'paymentMode'])->find((int) $cachedOrderId);
+                if ($existing && (int) $existing->user_id === (int) $user->id && (int) $existing->item_id === (int) $shopManuscript->id) {
+                    return ['order' => $existing, 'payment_url' => null, 'message' => 'Checkout order created and awaiting payment.'];
+                }
             }
 
             $this->assertCanPurchase($user, $shopManuscript);
 
-            $paymentPlan = PaymentPlan::query()->where('division', 1)->orderBy('id')->first();
-            $paymentMode = PaymentMode::query()->where('mode', 'Vipps')->first();
+            $uploaded = $this->shopManuscriptService->uploadLearnerManuscript($request, (int) $user->id);
+            $wordCount = (int) ($uploaded['word_count'] ?? 0);
+            $filePath = $uploaded['manuscript_file'] ?? null;
 
-            $provider = $paymentMode ? 'vipps' : 'manual';
+            if ($wordCount <= 0 || ! $filePath) {
+                throw new \DomainException(trans('site.invalid-manuscript-word-count'));
+            }
+
+            if ($wordCount > (int) $shopManuscript->max_words) {
+                throw new \DomainException('Uploaded manuscript exceeds the selected plan word limit.');
+            }
+
+            $pricing = $this->calculatePricing($shopManuscript, $wordCount);
+
+            $paymentPlan = PaymentPlan::query()->where('division', 1)->orderBy('id')->first();
+            $paymentMode = PaymentMode::query()->whereIn('mode', ['Vipps', 'Svea'])->orderByRaw("FIELD(mode, 'Vipps', 'Svea')")->first();
 
             $order = Order::create([
                 'user_id' => $user->id,
@@ -46,49 +58,51 @@ class ShopManuscriptApiCheckoutService
                 'package_id' => 0,
                 'plan_id' => $paymentPlan?->id,
                 'payment_mode_id' => $paymentMode?->id,
-                'price' => $shopManuscript->price,
+                'price' => $pricing['base_price'],
                 'discount' => 0,
+                'additional' => $pricing['excess_amount'],
                 'is_processed' => 0,
                 'is_order_withdrawn' => 0,
             ]);
 
+            $synopsis = $this->shopManuscriptService->uploadSynopsis($request);
+
+            OrderShopManuscript::create([
+                'order_id' => $order->id,
+                'genre' => (string) $request->input('genre'),
+                'file' => '/'.ltrim((string) $filePath, '/'),
+                'words' => $wordCount,
+                'description' => $request->input('description'),
+                'synopsis' => $synopsis,
+                'coaching_time_later' => $request->boolean('coaching_time_later'),
+                'send_to_email' => $request->boolean('send_to_email'),
+            ]);
+
+            Cache::put($cacheKey, $order->id, now()->addHours(24));
+
             $paymentUrl = null;
             $message = 'Order created. Payment is pending manual processing. Please contact support to complete payment.';
 
-            if ($provider === 'vipps') {
+            if ($paymentMode && $paymentMode->mode === 'Vipps') {
                 $vippsOrderId = $this->vippsOrderReference($order);
                 $paymentUrl = app(\App\Http\Controllers\Controller::class)->vippsInitiatePayment([
-                    'amount' => (int) round(((float) $shopManuscript->price) * 100),
+                    'amount' => (int) round((($order->price + $order->additional) - $order->discount) * 100),
                     'orderId' => $vippsOrderId,
                     'transactionText' => $shopManuscript->title,
                     'is_ajax' => true,
                     'vipps_phone_number' => optional($user->address)->vipps_phone_number,
                 ]);
 
-                if (! is_string($paymentUrl) || $paymentUrl === '') {
-                    $provider = 'manual';
-                    $paymentUrl = null;
-                } else {
+                if (is_string($paymentUrl) && $paymentUrl !== '') {
                     $order->svea_order_id = $vippsOrderId;
-                    $message = 'Checkout created. Continue payment in Vipps.';
                     $order->save();
+                    $message = 'Checkout created. Continue payment in Vipps.';
+                } else {
+                    $paymentUrl = null;
                 }
             }
 
-            OrderShopManuscript::create([
-                'order_id' => $order->id,
-                'genre' => $this->idempotencyGenre($idempotencyKey),
-                'description' => json_encode([
-                    'checkout' => [
-                        'status' => 'pending',
-                        'payment_provider' => $provider,
-                        'payment_url' => $paymentUrl,
-                        'message' => $message,
-                    ],
-                ]),
-            ]);
-
-            return $order->fresh(['shopManuscriptOrder', 'paymentMode']);
+            return ['order' => $order->fresh(['shopManuscriptOrder', 'paymentMode']), 'payment_url' => $paymentUrl, 'message' => $message];
         });
     }
 
@@ -110,22 +124,13 @@ class ShopManuscriptApiCheckoutService
             $order->is_order_withdrawn = 1;
             $order->save();
 
-            $metadata = json_decode((string) $order->shopManuscriptOrder?->description, true) ?: [];
-            $metadata['checkout']['status'] = 'cancelled';
-            $metadata['checkout']['message'] = 'Order cancelled.';
-
-            if ($order->shopManuscriptOrder) {
-                $order->shopManuscriptOrder->description = json_encode($metadata);
-                $order->shopManuscriptOrder->save();
-            }
-
             return $order->fresh(['shopManuscriptOrder', 'paymentMode']);
         });
     }
 
-    public function markPaidByVippsReference(string $vippsOrderId, array $payload = []): ?Order
+    public function markPaidByVippsReference(string $vippsOrderId): ?Order
     {
-        return DB::transaction(function () use ($vippsOrderId, $payload) {
+        return DB::transaction(function () use ($vippsOrderId) {
             $order = Order::query()
                 ->with(['shopManuscriptOrder', 'paymentMode'])
                 ->where('type', Order::MANUSCRIPT_TYPE)
@@ -147,23 +152,19 @@ class ShopManuscriptApiCheckoutService
                     ->exists();
 
                 if (! $exists) {
-                    ShopManuscriptsTaken::create([
-                        'user_id' => $order->user_id,
-                        'shop_manuscript_id' => $order->item_id,
-                        'is_active' => false,
-                        'is_welcome_email_sent' => 0,
-                    ]);
+                    $taken = new ShopManuscriptsTaken;
+                    $taken->user_id = $order->user_id;
+                    $taken->shop_manuscript_id = $order->item_id;
+                    $taken->genre = $order->shopManuscriptOrder?->genre;
+                    $taken->description = $order->shopManuscriptOrder?->description;
+                    $taken->file = $order->shopManuscriptOrder?->file;
+                    $taken->words = $order->shopManuscriptOrder?->words;
+                    $taken->synopsis = $order->shopManuscriptOrder?->synopsis;
+                    $taken->is_active = false;
+                    $taken->coaching_time_later = $order->shopManuscriptOrder?->coaching_time_later;
+                    $taken->is_welcome_email_sent = 0;
+                    $taken->save();
                 }
-            }
-
-            $metadata = json_decode((string) $order->shopManuscriptOrder?->description, true) ?: [];
-            $metadata['checkout']['status'] = 'paid';
-            $metadata['checkout']['message'] = 'Payment captured and access granted.';
-            $metadata['checkout']['provider_payload'] = $payload;
-
-            if ($order->shopManuscriptOrder) {
-                $order->shopManuscriptOrder->description = json_encode($metadata);
-                $order->shopManuscriptOrder->save();
             }
 
             return $order->fresh(['shopManuscriptOrder', 'paymentMode']);
@@ -197,9 +198,27 @@ class ShopManuscriptApiCheckoutService
         }
     }
 
-    private function idempotencyGenre(string $idempotencyKey): string
+    private function calculatePricing(ShopManuscript $shopManuscript, int $wordCount): array
     {
-        return 'api-idempotency:'.hash('sha256', $idempotencyKey);
+        $excessPerWordAmount = \App\Http\FrontendHelpers::manuscriptExcessPerWordPrice();
+        $basePrice = (float) $shopManuscript->full_payment_price;
+        $excessWords = $wordCount - 17500;
+
+        if (in_array((int) $shopManuscript->id, [3, 9], true)) {
+            $excessWords = $wordCount - 5000;
+            $excessPerWordAmount = 0.112;
+            $basePrice = 1500;
+        }
+
+        return [
+            'base_price' => $basePrice,
+            'excess_amount' => $excessWords > 0 ? $excessWords * $excessPerWordAmount : 0,
+        ];
+    }
+
+    private function idempotencyCacheKey(int $userId, int $shopManuscriptId, string $idempotencyKey): string
+    {
+        return sprintf('api:shop-manuscript-checkout:%d:%d:%s', $userId, $shopManuscriptId, hash('sha256', $idempotencyKey));
     }
 
     private function vippsOrderReference(Order $order): string

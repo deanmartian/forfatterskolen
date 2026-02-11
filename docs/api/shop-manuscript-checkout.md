@@ -2,7 +2,7 @@
 
 Base path: `/api/v1`
 
-Authentication: same bearer token used for other authenticated `/api/v1` endpoints.
+Authentication: bearer token used for authenticated `/api/v1` routes.
 
 ## Status values
 
@@ -13,9 +13,9 @@ Authentication: same bearer token used for other authenticated `/api/v1` endpoin
 
 ## Idempotency
 
-`POST /learner/shop-manuscripts/{id}/checkout` requires the `Idempotency-Key` request header.
+`POST /learner/shop-manuscripts/{id}/checkout` requires `Idempotency-Key`.
 
-For the same user + shop manuscript + idempotency key, the API returns the existing checkout order instead of creating duplicates.
+The API reuses the same order for the same `user + manuscript + idempotency key`.
 
 ---
 
@@ -27,6 +27,16 @@ For the same user + shop manuscript + idempotency key, the API returns the exist
 
 - `Authorization: Bearer <token>`
 - `Idempotency-Key: <client-generated-unique-key>`
+
+### Multipart form-data body
+
+- `genre` (required)
+- `manuscript` (required file: `docx,pdf,doc,odt`)
+- `description` (optional)
+- `synopsis` (optional file: `pdf,doc,docx,odt`)
+- `coaching_time_later` (optional boolean)
+- `send_to_email` (optional boolean)
+- `word_count` (optional, recommended for doc/docx uploads)
 
 ### Example response
 
@@ -52,20 +62,6 @@ For the same user + shop manuscript + idempotency key, the API returns the exist
 
 - `Authorization: Bearer <token>`
 
-### Example response
-
-```json
-{
-  "order_id": 101,
-  "status": "paid",
-  "amount": 1490,
-  "currency": "NOK",
-  "payment_provider": "vipps",
-  "payment_url": "https://api.vipps.no/...",
-  "message": "Payment captured and access granted."
-}
-```
-
 ---
 
 ## 3) Cancel checkout
@@ -76,7 +72,7 @@ For the same user + shop manuscript + idempotency key, the API returns the exist
 
 - `Authorization: Bearer <token>`
 
-Cancels only pending orders. If provider remote cancellation is unavailable, order is still cancelled locally.
+Cancels only pending manuscript checkout orders owned by the authenticated learner.
 
 ---
 
@@ -84,8 +80,8 @@ Cancels only pending orders. If provider remote cancellation is unavailable, ord
 
 `POST /api/v1/payments/vipps/shop-manuscripts/webhook`
 
-Optional header verification:
+Optional verification header:
 
-- `X-Shopmanuscript-Webhook-Token: <token>` when `services.vipps.webhook_token` is configured.
+- `X-Shopmanuscript-Webhook-Token: <token>` when `services.vipps.webhook_token` is set.
 
-This endpoint updates checkout state based on payment status and grants learner access on successful payment.
+On successful provider status (`CAPTURED`/`RESERVED`), order is marked paid and manuscript access is provisioned.

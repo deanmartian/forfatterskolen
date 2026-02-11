@@ -11,21 +11,16 @@ class ShopManuscriptCheckoutOrderResource extends JsonResource
     {
         /** @var Order $order */
         $order = $this->resource;
-        $metadata = is_array($order->shopManuscriptOrder?->description)
-            ? $order->shopManuscriptOrder->description
-            : (json_decode((string) $order->shopManuscriptOrder?->description, true) ?: []);
-
-        $checkout = $metadata['checkout'] ?? [];
-        $status = $checkout['status'] ?? $this->resolveStatus($order);
+        $status = $this->resolveStatus($order);
 
         return [
             'order_id' => $order->id,
             'status' => $status,
-            'amount' => (float) ($order->price - $order->discount),
+            'amount' => (float) (($order->price + $order->additional) - $order->discount),
             'currency' => 'NOK',
-            'payment_provider' => $checkout['payment_provider'] ?? strtolower((string) optional($order->paymentMode)->mode ?: 'manual'),
-            'payment_url' => $checkout['payment_url'] ?? null,
-            'message' => $checkout['message'] ?? $this->defaultMessage($status),
+            'payment_provider' => $this->provider($order),
+            'payment_url' => $order->getAttribute('checkout_payment_url'),
+            'message' => $order->getAttribute('checkout_message') ?: $this->defaultMessage($status),
         ];
     }
 
@@ -40,6 +35,17 @@ class ShopManuscriptCheckoutOrderResource extends JsonResource
         }
 
         return 'pending';
+    }
+
+    private function provider(Order $order): string
+    {
+        $mode = strtolower((string) optional($order->paymentMode)->mode);
+
+        if ($mode === 'vipps') {
+            return 'vipps';
+        }
+
+        return 'manual';
     }
 
     private function defaultMessage(string $status): string

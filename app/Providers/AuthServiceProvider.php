@@ -39,7 +39,8 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('cancelShopManuscriptCheckoutOrder', function (User $user, Order $order): bool {
             return (int) $order->user_id === (int) $user->id
                 && (int) $order->type === Order::MANUSCRIPT_TYPE
-                && (int) $order->is_processed === 0;
+                && (int) $order->is_processed === 0
+                && (int) ($order->is_order_withdrawn ?? 0) === 0;
         });
     }
 }

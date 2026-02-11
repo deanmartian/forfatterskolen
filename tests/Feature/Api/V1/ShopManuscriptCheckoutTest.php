@@ -3,10 +3,10 @@
 namespace Tests\Feature\Api\V1;
 
 use App\Order;
-use App\ShopManuscript;
 use App\User;
 use Firebase\JWT\JWT;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
@@ -21,6 +21,7 @@ class ShopManuscriptCheckoutTest extends TestCase
             $this->markTestSkipped('SQLite3 extension is not available.');
         }
 
+        config()->set('cache.default', 'array');
         config()->set('database.default', 'sqlite');
         config()->set('database.connections.sqlite.database', ':memory:');
         $this->app['db']->purge('sqlite');
@@ -46,14 +47,23 @@ class ShopManuscriptCheckoutTest extends TestCase
             $table->timestamps();
         });
 
+        Schema::create('addresses', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->string('street')->nullable();
+            $table->string('zip')->nullable();
+            $table->string('city')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('vipps_phone_number')->nullable();
+            $table->timestamps();
+        });
+
         Schema::create('shop_manuscripts', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('title');
             $table->text('description')->nullable();
             $table->unsignedInteger('max_words')->default(0);
-            $table->decimal('price', 11, 2);
-            $table->decimal('split_payment_price', 11, 2)->nullable();
-            $table->string('fiken_product')->nullable();
+            $table->decimal('full_payment_price', 11, 2);
             $table->timestamps();
         });
 
@@ -79,11 +89,11 @@ class ShopManuscriptCheckoutTest extends TestCase
             $table->integer('payment_mode_id')->nullable();
             $table->decimal('price', 10, 2)->default(0);
             $table->decimal('discount', 10, 2)->default(0);
+            $table->decimal('additional', 10, 2)->default(0);
             $table->string('svea_order_id')->nullable();
             $table->string('svea_invoice_id')->nullable();
             $table->tinyInteger('is_processed')->default(0);
             $table->tinyInteger('is_order_withdrawn')->default(0);
-            $table->decimal('additional', 10, 2)->default(0);
             $table->timestamps();
         });
 
@@ -104,7 +114,12 @@ class ShopManuscriptCheckoutTest extends TestCase
             $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('shop_manuscript_id');
+            $table->string('genre')->nullable();
+            $table->text('description')->nullable();
             $table->string('file')->nullable();
+            $table->integer('words')->nullable();
+            $table->string('synopsis')->nullable();
+            $table->tinyInteger('coaching_time_later')->default(0);
             $table->boolean('is_active')->default(false);
             $table->boolean('is_welcome_email_sent')->default(false);
             $table->timestamps();
@@ -123,10 +138,7 @@ class ShopManuscriptCheckoutTest extends TestCase
     {
         [$user, $token, $manuscript] = $this->seedCheckoutContext();
 
-        $response = $this->postJson('/api/v1/learner/shop-manuscripts/'.$manuscript->id.'/checkout', [], [
-            'Authorization' => 'Bearer '.$token,
-            'Idempotency-Key' => 'idem-key-1001',
-        ]);
+        $response = $this->checkout($token, $manuscript->id, 'idem-key-1001');
 
         $response->assertStatus(201)
             ->assertJsonPath('status', 'pending')
@@ -143,15 +155,8 @@ class ShopManuscriptCheckoutTest extends TestCase
     {
         [, $token, $manuscript] = $this->seedCheckoutContext();
 
-        $first = $this->postJson('/api/v1/learner/shop-manuscripts/'.$manuscript->id.'/checkout', [], [
-            'Authorization' => 'Bearer '.$token,
-            'Idempotency-Key' => 'idem-key-constant',
-        ]);
-
-        $second = $this->postJson('/api/v1/learner/shop-manuscripts/'.$manuscript->id.'/checkout', [], [
-            'Authorization' => 'Bearer '.$token,
-            'Idempotency-Key' => 'idem-key-constant',
-        ]);
+        $first = $this->checkout($token, $manuscript->id, 'idem-key-constant');
+        $second = $this->checkout($token, $manuscript->id, 'idem-key-constant');
 
         $first->assertStatus(201);
         $second->assertStatus(201);
@@ -164,11 +169,7 @@ class ShopManuscriptCheckoutTest extends TestCase
         [$owner, $ownerToken, $manuscript] = $this->seedCheckoutContext('owner@example.com');
         [, $otherToken] = $this->seedCheckoutContext('other@example.com');
 
-        $create = $this->postJson('/api/v1/learner/shop-manuscripts/'.$manuscript->id.'/checkout', [], [
-            'Authorization' => 'Bearer '.$ownerToken,
-            'Idempotency-Key' => 'idem-owner-key',
-        ]);
-
+        $create = $this->checkout($ownerToken, $manuscript->id, 'idem-owner-key');
         $orderId = (int) $create->json('order_id');
 
         $show = $this->getJson('/api/v1/learner/shop-manuscripts/checkout/'.$orderId, [
@@ -193,11 +194,7 @@ class ShopManuscriptCheckoutTest extends TestCase
     {
         [, $token, $manuscript] = $this->seedCheckoutContext();
 
-        $create = $this->postJson('/api/v1/learner/shop-manuscripts/'.$manuscript->id.'/checkout', [], [
-            'Authorization' => 'Bearer '.$token,
-            'Idempotency-Key' => 'idem-cancel-key',
-        ]);
-
+        $create = $this->checkout($token, $manuscript->id, 'idem-cancel-key');
         $orderId = (int) $create->json('order_id');
 
         $cancel = $this->postJson('/api/v1/learner/shop-manuscripts/checkout/'.$orderId.'/cancel', [], [
@@ -217,11 +214,7 @@ class ShopManuscriptCheckoutTest extends TestCase
     {
         [$user, $token, $manuscript] = $this->seedCheckoutContext();
 
-        $create = $this->postJson('/api/v1/learner/shop-manuscripts/'.$manuscript->id.'/checkout', [], [
-            'Authorization' => 'Bearer '.$token,
-            'Idempotency-Key' => 'idem-webhook-key',
-        ]);
-
+        $create = $this->checkout($token, $manuscript->id, 'idem-webhook-key');
         $orderId = (int) $create->json('order_id');
 
         $order = Order::find($orderId);
@@ -248,6 +241,20 @@ class ShopManuscriptCheckoutTest extends TestCase
         ]);
     }
 
+    private function checkout(string $token, int $manuscriptId, string $idempotencyKey)
+    {
+        return $this->post('/api/v1/learner/shop-manuscripts/'.$manuscriptId.'/checkout', [
+            'genre' => 'Fiction',
+            'description' => 'API checkout',
+            'manuscript' => UploadedFile::fake()->create('draft.docx', 10, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
+            'word_count' => 6000,
+        ], [
+            'Authorization' => 'Bearer '.$token,
+            'Idempotency-Key' => $idempotencyKey,
+            'Accept' => 'application/json',
+        ]);
+    }
+
     private function seedCheckoutContext(string $email = 'learner@example.com'): array
     {
         $user = User::create([
@@ -260,11 +267,11 @@ class ShopManuscriptCheckoutTest extends TestCase
             'could_buy_course' => 1,
         ]);
 
-        $manuscript = ShopManuscript::create([
+        $manuscript = \App\ShopManuscript::create([
             'title' => 'Manuskript',
             'description' => 'Description',
-            'max_words' => 5000,
-            'price' => 1490,
+            'max_words' => 20000,
+            'full_payment_price' => 1490,
         ]);
 
         return [$user, $this->makeTokenForUser($user), $manuscript];
