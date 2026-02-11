@@ -46,7 +46,7 @@ class ShopManuscriptCheckoutController extends ApiController
             ->setStatusCode(201);
     }
 
-    public function show(Request $request, int $orderId): JsonResponse
+    public function show(Request $request, int $orderId, ShopManuscriptApiCheckoutService $service): JsonResponse
     {
         $user = $this->apiUser($request);
 
@@ -61,6 +61,8 @@ class ShopManuscriptCheckoutController extends ApiController
         if (! $order || Gate::forUser($user)->denies('viewShopManuscriptCheckoutOrder', $order)) {
             return $this->errorResponse('Checkout order not found.', 'not_found', 404);
         }
+
+        $order = $service->syncOrderPaymentStatus($order);
 
         return response()->json((new ShopManuscriptCheckoutOrderResource($order))->resolve());
     }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\FrontendHelpers;
 use App\Order;
 use App\OrderShopManuscript;
 use App\PaymentMode;
@@ -149,6 +150,33 @@ class ShopManuscriptApiCheckoutService
         });
     }
 
+    public function syncOrderPaymentStatus(Order $order): Order
+    {
+        $order->loadMissing(['shopManuscriptOrder', 'paymentMode']);
+
+        if ((int) $order->is_processed === 1) {
+            return $order;
+        }
+
+        $mode = strtolower((string) optional($order->paymentMode)->mode);
+
+        if ($mode !== 'svea' || ! $order->svea_order_id) {
+            return $order;
+        }
+
+        $status = $this->resolveSveaStatus((string) $order->svea_order_id);
+
+        if ($status === 'paid') {
+            return $this->markOrderAsPaid($order);
+        }
+
+        if ($status === 'failed') {
+            $order->setAttribute('checkout_message', 'Payment failed at provider.');
+        }
+
+        return $order;
+    }
+
     public function markPaidByVippsReference(string $vippsOrderId): ?Order
     {
         return DB::transaction(function () use ($vippsOrderId) {
@@ -163,33 +191,55 @@ class ShopManuscriptApiCheckoutService
                 return null;
             }
 
-            if ((int) $order->is_processed === 0) {
-                $order->is_processed = 1;
-                $order->save();
-
-                $exists = ShopManuscriptsTaken::query()
-                    ->where('user_id', $order->user_id)
-                    ->where('shop_manuscript_id', $order->item_id)
-                    ->exists();
-
-                if (! $exists) {
-                    $taken = new ShopManuscriptsTaken;
-                    $taken->user_id = $order->user_id;
-                    $taken->shop_manuscript_id = $order->item_id;
-                    $taken->genre = $order->shopManuscriptOrder?->genre;
-                    $taken->description = $order->shopManuscriptOrder?->description;
-                    $taken->file = $order->shopManuscriptOrder?->file;
-                    $taken->words = $order->shopManuscriptOrder?->words;
-                    $taken->synopsis = $order->shopManuscriptOrder?->synopsis;
-                    $taken->is_active = false;
-                    $taken->coaching_time_later = $order->shopManuscriptOrder?->coaching_time_later;
-                    $taken->is_welcome_email_sent = 0;
-                    $taken->save();
-                }
-            }
-
-            return $order->fresh(['shopManuscriptOrder', 'paymentMode']);
+            return $this->markOrderAsPaid($order);
         });
+    }
+
+    private function markOrderAsPaid(Order $order): Order
+    {
+        if ((int) $order->is_processed === 0) {
+            $order->is_processed = 1;
+            $order->save();
+
+            $exists = ShopManuscriptsTaken::query()
+                ->where('user_id', $order->user_id)
+                ->where('shop_manuscript_id', $order->item_id)
+                ->exists();
+
+            if (! $exists) {
+                $taken = new ShopManuscriptsTaken;
+                $taken->user_id = $order->user_id;
+                $taken->shop_manuscript_id = $order->item_id;
+                $taken->genre = $order->shopManuscriptOrder?->genre;
+                $taken->description = $order->shopManuscriptOrder?->description;
+                $taken->file = $order->shopManuscriptOrder?->file;
+                $taken->words = $order->shopManuscriptOrder?->words;
+                $taken->synopsis = $order->shopManuscriptOrder?->synopsis;
+                $taken->is_active = false;
+                $taken->coaching_time_later = $order->shopManuscriptOrder?->coaching_time_later;
+                $taken->is_welcome_email_sent = 0;
+                $taken->save();
+            }
+        }
+
+        return $order->fresh(['shopManuscriptOrder', 'paymentMode']);
+    }
+
+    private function resolveSveaStatus(string $sveaOrderId): string
+    {
+        $response = FrontendHelpers::sveaOrderDetails($sveaOrderId);
+
+        if ($response instanceof \Illuminate\Http\JsonResponse) {
+            return 'pending';
+        }
+
+        $status = $response['Status'] ?? null;
+
+        return match ($status) {
+            'Final' => 'paid',
+            'Cancelled', 'Invalid' => 'failed',
+            default => 'pending',
+        };
     }
 
     private function assertCanPurchase(User $user, ShopManuscript $shopManuscript): void

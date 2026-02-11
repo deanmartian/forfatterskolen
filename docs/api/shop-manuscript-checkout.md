@@ -64,6 +64,8 @@ The API reuses the same order for the same `user + manuscript + idempotency key`
 
 - `Authorization: Bearer <token>`
 
+For `Svea` orders, this endpoint also checks provider status (similar to `/api/v1/checkout/status/{reference}` patterns) and marks the order paid when Svea reports a finalized payment.
+
 ---
 
 ## 3) Cancel checkout
