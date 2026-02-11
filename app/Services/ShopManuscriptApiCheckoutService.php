@@ -12,6 +12,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ShopManuscriptApiCheckoutService
 {
@@ -48,8 +49,16 @@ class ShopManuscriptApiCheckoutService
 
             $pricing = $this->calculatePricing($shopManuscript, $wordCount);
 
-            $paymentPlan = PaymentPlan::query()->where('division', 1)->orderBy('id')->first();
-            $paymentMode = PaymentMode::query()->whereIn('mode', ['Vipps', 'Svea'])->orderByRaw("FIELD(mode, 'Vipps', 'Svea')")->first();
+            $paymentPlan = PaymentPlan::query()->find((int) $request->input('payment_plan_id'));
+            $paymentMode = PaymentMode::query()->find((int) $request->input('payment_mode_id'));
+
+            if (! $paymentPlan || ! $paymentMode) {
+                throw new \DomainException('Invalid payment mode or payment plan.');
+            }
+
+            if (! in_array($paymentMode->mode, ['Vipps', 'Svea'], true)) {
+                throw new \DomainException('Unsupported payment mode. Supported modes are Vipps and Svea.');
+            }
 
             $order = Order::create([
                 'user_id' => $user->id,
@@ -83,7 +92,7 @@ class ShopManuscriptApiCheckoutService
             $paymentUrl = null;
             $message = 'Order created. Payment is pending manual processing. Please contact support to complete payment.';
 
-            if ($paymentMode && $paymentMode->mode === 'Vipps') {
+            if ($paymentMode->mode === 'Vipps') {
                 $vippsOrderId = $this->vippsOrderReference($order);
                 $paymentUrl = app(\App\Http\Controllers\Controller::class)->vippsInitiatePayment([
                     'amount' => (int) round((($order->price + $order->additional) - $order->discount) * 100),
@@ -99,6 +108,18 @@ class ShopManuscriptApiCheckoutService
                     $message = 'Checkout created. Continue payment in Vipps.';
                 } else {
                     $paymentUrl = null;
+                }
+            }
+
+            if ($paymentMode->mode === 'Svea') {
+                $svea = $this->initiateSveaCheckout($order, $shopManuscript, $user, (int) $paymentPlan->division);
+                if ($svea['payment_url']) {
+                    $order->svea_order_id = $svea['provider_order_id'];
+                    $order->save();
+                    $paymentUrl = $svea['payment_url'];
+                    $message = 'Checkout created. Continue payment in Svea.';
+                } else {
+                    $message = 'Order created, but Svea checkout could not be initialized right now. Please contact support.';
                 }
             }
 
@@ -204,5 +225,92 @@ class ShopManuscriptApiCheckoutService
     private function vippsOrderReference(Order $order): string
     {
         return sprintf('sm-%d-%d', $order->id, $order->user_id);
+    }
+
+    /**
+     * @return array{provider_order_id:?string,payment_url:?string}
+     */
+    private function initiateSveaCheckout(Order $order, ShopManuscript $shopManuscript, User $user, int $division): array
+    {
+        $merchantId = config('services.svea.checkoutid');
+        $secret = config('services.svea.checkout_secret');
+
+        if (! $merchantId || ! $secret) {
+            return ['provider_order_id' => null, 'payment_url' => null];
+        }
+
+        $address = $user->address;
+        if (! $address || ! $address->zip || ! $address->phone || ! $user->email) {
+            return ['provider_order_id' => null, 'payment_url' => null];
+        }
+
+        $total = ($order->price + $order->additional) - $order->discount;
+
+        try {
+            $conn = \Svea\Checkout\Transport\Connector::init($merchantId, $secret, \Svea\Checkout\Transport\Connector::PROD_BASE_URL);
+            $checkoutClient = new \Svea\Checkout\CheckoutClient($conn);
+
+            $response = $checkoutClient->create([
+                'countryCode' => config('services.svea.country_code'),
+                'currency' => config('services.svea.currency'),
+                'locale' => config('services.svea.locale'),
+                'clientOrderNumber' => config('services.svea.identifier').$order->id,
+                'merchantData' => $shopManuscript->title.' order',
+                'cart' => [
+                    'items' => [[
+                        'name' => Str::limit($shopManuscript->title, 35),
+                        'quantity' => max(1, $division),
+                        'unitPrice' => (int) round(($total / max(1, $division)) * 100),
+                        'unit' => 'pc',
+                        'vatPercent' => 2500,
+                    ]],
+                ],
+                'presetValues' => [
+                    ['typeName' => 'emailAddress', 'value' => $user->email, 'isReadonly' => false],
+                    ['typeName' => 'postalCode', 'value' => $address->zip, 'isReadonly' => false],
+                    ['typeName' => 'PhoneNumber', 'value' => $address->phone, 'isReadonly' => false],
+                ],
+                'merchantSettings' => [
+                    'termsUri' => url('/terms/manuscript-terms'),
+                    'checkoutUri' => url('/shop-manuscript/'.$shopManuscript->id.'/checkout?t=1'),
+                    'confirmationUri' => url('/shop-manuscript/'.$shopManuscript->id.'/thankyou?svea_ord='.$order->id),
+                    'pushUri' => url('/svea-callback?svea_order_id={checkout.order.uri}'),
+                ],
+            ]);
+
+            return [
+                'provider_order_id' => $response['OrderId'] ?? null,
+                'payment_url' => $this->extractCheckoutUrl($response['Gui']['Snippet'] ?? ''),
+            ];
+        } catch (\Throwable $exception) {
+            return ['provider_order_id' => null, 'payment_url' => null];
+        }
+    }
+
+    private function extractCheckoutUrl(string $guiSnippet): ?string
+    {
+        if ($guiSnippet === '') {
+            return null;
+        }
+
+        if (preg_match('/data-sco-sveacheckout-iframesrc=["\\\']([^"\\\']+)["\\\']/i', $guiSnippet, $matches)) {
+            return $matches[1] ?? null;
+        }
+
+        if (preg_match('/data-checkout-(?:url|uri)=["\\\']([^"\\\']+)["\\\']/', $guiSnippet, $matches)) {
+            return $matches[1] ?? null;
+        }
+
+        if (preg_match('/src=["\\\']([^"\\\']+)["\\\']/', $guiSnippet, $matches)) {
+            $candidate = $matches[1] ?? null;
+
+            if ($candidate && str_contains($candidate, 'index.js')) {
+                return null;
+            }
+
+            return $candidate;
+        }
+
+        return null;
     }
 }

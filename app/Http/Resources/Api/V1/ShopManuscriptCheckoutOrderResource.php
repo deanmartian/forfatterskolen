@@ -45,6 +45,10 @@ class ShopManuscriptCheckoutOrderResource extends JsonResource
             return 'vipps';
         }
 
+        if ($mode === 'svea') {
+            return 'svea';
+        }
+
         return 'manual';
     }
 

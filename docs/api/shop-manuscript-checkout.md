@@ -31,6 +31,8 @@ The API reuses the same order for the same `user + manuscript + idempotency key`
 ### Multipart form-data body
 
 - `genre` (required, integer id that exists in `genre` table)
+- `payment_mode_id` (required, existing `payment_modes.id`; currently supports `Vipps` or `Svea`)
+- `payment_plan_id` (required, existing `payment_plans.id`)
 - `manuscript` (required file: `docx,pdf,doc,odt`)
 - `description` (optional)
 - `synopsis` (optional file: `pdf,doc,docx,odt`)
@@ -46,9 +48,9 @@ The API reuses the same order for the same `user + manuscript + idempotency key`
   "status": "pending",
   "amount": 1490,
   "currency": "NOK",
-  "payment_provider": "manual",
-  "payment_url": null,
-  "message": "Order created. Payment is pending manual processing. Please contact support to complete payment."
+  "payment_provider": "svea",
+  "payment_url": "https://checkout.svea.com/...",
+  "message": "Checkout created. Continue payment in Svea."
 }
 ```
 

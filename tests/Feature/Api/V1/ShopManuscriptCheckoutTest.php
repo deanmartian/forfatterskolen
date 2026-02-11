@@ -130,7 +130,10 @@ class ShopManuscriptCheckoutTest extends TestCase
             $table->timestamps();
         });
 
-        \App\PaymentPlan::create(['division' => 1]);
+        \App\PaymentPlan::create(['id' => 1, 'division' => 1]);
+        \App\PaymentPlan::create(['id' => 2, 'division' => 3]);
+        \App\PaymentMode::create(['id' => 1, 'mode' => 'Vipps']);
+        \App\PaymentMode::create(['id' => 2, 'mode' => 'Svea']);
 
         config()->set('services.jwt.secret', 'test-secret');
         config()->set('api.jwt.access_ttl_minutes', 60);
@@ -143,11 +146,11 @@ class ShopManuscriptCheckoutTest extends TestCase
     {
         [$user, $token, $manuscript] = $this->seedCheckoutContext();
 
-        $response = $this->checkout($token, $manuscript->id, 'idem-key-1001');
+        $response = $this->checkout($token, $manuscript->id, 'idem-key-1001', 1, 1);
 
         $response->assertStatus(201)
             ->assertJsonPath('status', 'pending')
-            ->assertJsonPath('payment_provider', 'manual');
+            ->assertJsonPath('payment_provider', 'vipps');
 
         $this->assertDatabaseHas('orders', [
             'user_id' => $user->id,
@@ -160,8 +163,8 @@ class ShopManuscriptCheckoutTest extends TestCase
     {
         [, $token, $manuscript] = $this->seedCheckoutContext();
 
-        $first = $this->checkout($token, $manuscript->id, 'idem-key-constant');
-        $second = $this->checkout($token, $manuscript->id, 'idem-key-constant');
+        $first = $this->checkout($token, $manuscript->id, 'idem-key-constant', 1, 1);
+        $second = $this->checkout($token, $manuscript->id, 'idem-key-constant', 1, 1);
 
         $first->assertStatus(201);
         $second->assertStatus(201);
@@ -174,7 +177,7 @@ class ShopManuscriptCheckoutTest extends TestCase
         [$owner, $ownerToken, $manuscript] = $this->seedCheckoutContext('owner@example.com');
         [, $otherToken] = $this->seedCheckoutContext('other@example.com');
 
-        $create = $this->checkout($ownerToken, $manuscript->id, 'idem-owner-key');
+        $create = $this->checkout($ownerToken, $manuscript->id, 'idem-owner-key', 1, 1);
         $orderId = (int) $create->json('order_id');
 
         $show = $this->getJson('/api/v1/learner/shop-manuscripts/checkout/'.$orderId, [
@@ -199,7 +202,7 @@ class ShopManuscriptCheckoutTest extends TestCase
     {
         [, $token, $manuscript] = $this->seedCheckoutContext();
 
-        $create = $this->checkout($token, $manuscript->id, 'idem-cancel-key');
+        $create = $this->checkout($token, $manuscript->id, 'idem-cancel-key', 1, 1);
         $orderId = (int) $create->json('order_id');
 
         $cancel = $this->postJson('/api/v1/learner/shop-manuscripts/checkout/'.$orderId.'/cancel', [], [
@@ -219,7 +222,7 @@ class ShopManuscriptCheckoutTest extends TestCase
     {
         [$user, $token, $manuscript] = $this->seedCheckoutContext();
 
-        $create = $this->checkout($token, $manuscript->id, 'idem-webhook-key');
+        $create = $this->checkout($token, $manuscript->id, 'idem-webhook-key', 1, 1);
         $orderId = (int) $create->json('order_id');
 
         $order = Order::find($orderId);
@@ -246,11 +249,13 @@ class ShopManuscriptCheckoutTest extends TestCase
         ]);
     }
 
-    private function checkout(string $token, int $manuscriptId, string $idempotencyKey)
+    private function checkout(string $token, int $manuscriptId, string $idempotencyKey, int $paymentModeId, int $paymentPlanId)
     {
         $genreId = \App\Genre::query()->firstOrCreate(['name' => 'Fiction'])->id;
 
         return $this->post('/api/v1/learner/shop-manuscripts/'.$manuscriptId.'/checkout', [
+            'payment_mode_id' => $paymentModeId,
+            'payment_plan_id' => $paymentPlanId,
             'genre' => $genreId,
             'description' => 'API checkout',
             'manuscript' => UploadedFile::fake()->create('draft.docx', 10, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),

@@ -8,6 +8,8 @@ class ShopManuscriptCheckoutStoreRequest extends ApiRequest
     {
         return [
             'idempotency_key' => ['required', 'string', 'min:8', 'max:120'],
+            'payment_mode_id' => ['required', 'integer', 'exists:payment_modes,id'],
+            'payment_plan_id' => ['required', 'integer', 'exists:payment_plans,id'],
             'genre' => ['required', 'integer', 'exists:genre,id'],
             'description' => ['nullable', 'string'],
             'coaching_time_later' => ['nullable', 'boolean'],
