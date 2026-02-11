@@ -1,0 +1,284 @@
+<?php
+
+namespace Tests\Feature\Api\V1;
+
+use App\Order;
+use App\ShopManuscript;
+use App\User;
+use Firebase\JWT\JWT;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
+use Tests\TestCase;
+
+class ShopManuscriptCheckoutTest extends TestCase
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (! extension_loaded('sqlite3')) {
+            $this->markTestSkipped('SQLite3 extension is not available.');
+        }
+
+        config()->set('database.default', 'sqlite');
+        config()->set('database.connections.sqlite.database', ':memory:');
+        $this->app['db']->purge('sqlite');
+        $this->app['db']->reconnect('sqlite');
+
+        Schema::create('users', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->integer('role')->default(2);
+            $table->boolean('is_active')->default(1);
+            $table->boolean('could_buy_course')->default(1);
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('user_preferred_editor', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('editor_id');
+            $table->timestamps();
+        });
+
+        Schema::create('shop_manuscripts', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->unsignedInteger('max_words')->default(0);
+            $table->decimal('price', 11, 2);
+            $table->decimal('split_payment_price', 11, 2)->nullable();
+            $table->string('fiken_product')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('payment_plans', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->integer('division')->default(1);
+            $table->timestamps();
+        });
+
+        Schema::create('payment_modes', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->string('mode');
+            $table->timestamps();
+        });
+
+        Schema::create('orders', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->integer('item_id');
+            $table->integer('type');
+            $table->integer('package_id')->default(0);
+            $table->integer('plan_id')->nullable();
+            $table->integer('payment_mode_id')->nullable();
+            $table->decimal('price', 10, 2)->default(0);
+            $table->decimal('discount', 10, 2)->default(0);
+            $table->string('svea_order_id')->nullable();
+            $table->string('svea_invoice_id')->nullable();
+            $table->tinyInteger('is_processed')->default(0);
+            $table->tinyInteger('is_order_withdrawn')->default(0);
+            $table->decimal('additional', 10, 2)->default(0);
+            $table->timestamps();
+        });
+
+        Schema::create('order_shop_manuscripts', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->unsignedInteger('order_id');
+            $table->string('genre')->nullable();
+            $table->string('file')->nullable();
+            $table->integer('words')->nullable();
+            $table->text('description')->nullable();
+            $table->string('synopsis')->nullable();
+            $table->tinyInteger('coaching_time_later')->default(0);
+            $table->tinyInteger('send_to_email')->default(0);
+            $table->timestamps();
+        });
+
+        Schema::create('shop_manuscripts_taken', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('shop_manuscript_id');
+            $table->string('file')->nullable();
+            $table->boolean('is_active')->default(false);
+            $table->boolean('is_welcome_email_sent')->default(false);
+            $table->timestamps();
+        });
+
+        \App\PaymentPlan::create(['division' => 1]);
+
+        config()->set('services.jwt.secret', 'test-secret');
+        config()->set('api.jwt.access_ttl_minutes', 60);
+        config()->set('services.vipps.client_id', null);
+        config()->set('services.vipps.client_secret', null);
+        config()->set('services.vipps.msn', null);
+    }
+
+    public function test_creates_checkout_happy_path(): void
+    {
+        [$user, $token, $manuscript] = $this->seedCheckoutContext();
+
+        $response = $this->postJson('/api/v1/learner/shop-manuscripts/'.$manuscript->id.'/checkout', [], [
+            'Authorization' => 'Bearer '.$token,
+            'Idempotency-Key' => 'idem-key-1001',
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('status', 'pending')
+            ->assertJsonPath('payment_provider', 'manual');
+
+        $this->assertDatabaseHas('orders', [
+            'user_id' => $user->id,
+            'item_id' => $manuscript->id,
+            'type' => Order::MANUSCRIPT_TYPE,
+        ]);
+    }
+
+    public function test_idempotency_returns_same_order(): void
+    {
+        [, $token, $manuscript] = $this->seedCheckoutContext();
+
+        $first = $this->postJson('/api/v1/learner/shop-manuscripts/'.$manuscript->id.'/checkout', [], [
+            'Authorization' => 'Bearer '.$token,
+            'Idempotency-Key' => 'idem-key-constant',
+        ]);
+
+        $second = $this->postJson('/api/v1/learner/shop-manuscripts/'.$manuscript->id.'/checkout', [], [
+            'Authorization' => 'Bearer '.$token,
+            'Idempotency-Key' => 'idem-key-constant',
+        ]);
+
+        $first->assertStatus(201);
+        $second->assertStatus(201);
+        $this->assertSame($first->json('order_id'), $second->json('order_id'));
+        $this->assertEquals(1, Order::query()->count());
+    }
+
+    public function test_unauthorized_user_cannot_read_or_cancel_others_order(): void
+    {
+        [$owner, $ownerToken, $manuscript] = $this->seedCheckoutContext('owner@example.com');
+        [, $otherToken] = $this->seedCheckoutContext('other@example.com');
+
+        $create = $this->postJson('/api/v1/learner/shop-manuscripts/'.$manuscript->id.'/checkout', [], [
+            'Authorization' => 'Bearer '.$ownerToken,
+            'Idempotency-Key' => 'idem-owner-key',
+        ]);
+
+        $orderId = (int) $create->json('order_id');
+
+        $show = $this->getJson('/api/v1/learner/shop-manuscripts/checkout/'.$orderId, [
+            'Authorization' => 'Bearer '.$otherToken,
+        ]);
+
+        $cancel = $this->postJson('/api/v1/learner/shop-manuscripts/checkout/'.$orderId.'/cancel', [], [
+            'Authorization' => 'Bearer '.$otherToken,
+        ]);
+
+        $show->assertStatus(404);
+        $cancel->assertStatus(404);
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $orderId,
+            'user_id' => $owner->id,
+            'is_processed' => 0,
+        ]);
+    }
+
+    public function test_cancels_pending_order(): void
+    {
+        [, $token, $manuscript] = $this->seedCheckoutContext();
+
+        $create = $this->postJson('/api/v1/learner/shop-manuscripts/'.$manuscript->id.'/checkout', [], [
+            'Authorization' => 'Bearer '.$token,
+            'Idempotency-Key' => 'idem-cancel-key',
+        ]);
+
+        $orderId = (int) $create->json('order_id');
+
+        $cancel = $this->postJson('/api/v1/learner/shop-manuscripts/checkout/'.$orderId.'/cancel', [], [
+            'Authorization' => 'Bearer '.$token,
+        ]);
+
+        $cancel->assertStatus(200)
+            ->assertJsonPath('status', 'cancelled');
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $orderId,
+            'is_order_withdrawn' => 1,
+        ]);
+    }
+
+    public function test_webhook_updates_order_to_paid_and_creates_purchase(): void
+    {
+        [$user, $token, $manuscript] = $this->seedCheckoutContext();
+
+        $create = $this->postJson('/api/v1/learner/shop-manuscripts/'.$manuscript->id.'/checkout', [], [
+            'Authorization' => 'Bearer '.$token,
+            'Idempotency-Key' => 'idem-webhook-key',
+        ]);
+
+        $orderId = (int) $create->json('order_id');
+
+        $order = Order::find($orderId);
+        $order->svea_order_id = 'sm-'.$orderId.'-'.$user->id;
+        $order->save();
+
+        $webhook = $this->postJson('/api/v1/payments/vipps/shop-manuscripts/webhook', [
+            'transactionInfo' => [
+                'orderId' => 'sm-'.$orderId.'-'.$user->id,
+                'status' => 'CAPTURED',
+            ],
+        ]);
+
+        $webhook->assertStatus(200)->assertJson(['ok' => true]);
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $orderId,
+            'is_processed' => 1,
+        ]);
+
+        $this->assertDatabaseHas('shop_manuscripts_taken', [
+            'user_id' => $user->id,
+            'shop_manuscript_id' => $manuscript->id,
+        ]);
+    }
+
+    private function seedCheckoutContext(string $email = 'learner@example.com'): array
+    {
+        $user = User::create([
+            'first_name' => 'Learner',
+            'last_name' => 'User',
+            'email' => $email,
+            'password' => Hash::make('password'),
+            'role' => User::LearnerRole,
+            'is_active' => 1,
+            'could_buy_course' => 1,
+        ]);
+
+        $manuscript = ShopManuscript::create([
+            'title' => 'Manuskript',
+            'description' => 'Description',
+            'max_words' => 5000,
+            'price' => 1490,
+        ]);
+
+        return [$user, $this->makeTokenForUser($user), $manuscript];
+    }
+
+    private function makeTokenForUser(User $user): string
+    {
+        return JWT::encode([
+            'iss' => config('app.url', 'http://localhost'),
+            'sub' => $user->id,
+            'email' => $user->email,
+            'iat' => now()->timestamp,
+            'exp' => now()->addMinutes(60)->timestamp,
+            'jti' => (string) $user->id.'-checkout-test',
+        ], config('services.jwt.secret'), 'HS256');
+    }
+}
