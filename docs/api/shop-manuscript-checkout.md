@@ -30,7 +30,7 @@ The API reuses the same order for the same `user + manuscript + idempotency key`
 
 ### Multipart form-data body
 
-- `genre` (required)
+- `genre` (required, integer id that exists in `genre` table)
 - `manuscript` (required file: `docx,pdf,doc,odt`)
 - `description` (optional)
 - `synopsis` (optional file: `pdf,doc,docx,odt`)

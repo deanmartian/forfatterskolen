@@ -67,6 +67,11 @@ class ShopManuscriptCheckoutTest extends TestCase
             $table->timestamps();
         });
 
+        Schema::create('genre', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->string('name');
+        });
+
         Schema::create('payment_plans', function (Blueprint $table): void {
             $table->increments('id');
             $table->integer('division')->default(1);
@@ -243,8 +248,10 @@ class ShopManuscriptCheckoutTest extends TestCase
 
     private function checkout(string $token, int $manuscriptId, string $idempotencyKey)
     {
+        $genreId = \App\Genre::query()->firstOrCreate(['name' => 'Fiction'])->id;
+
         return $this->post('/api/v1/learner/shop-manuscripts/'.$manuscriptId.'/checkout', [
-            'genre' => 'Fiction',
+            'genre' => $genreId,
             'description' => 'API checkout',
             'manuscript' => UploadedFile::fake()->create('draft.docx', 10, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
             'word_count' => 6000,

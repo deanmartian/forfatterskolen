@@ -8,7 +8,7 @@ class ShopManuscriptCheckoutStoreRequest extends ApiRequest
     {
         return [
             'idempotency_key' => ['required', 'string', 'min:8', 'max:120'],
-            'genre' => ['required', 'string', 'max:255'],
+            'genre' => ['required', 'integer', 'exists:genre,id'],
             'description' => ['nullable', 'string'],
             'coaching_time_later' => ['nullable', 'boolean'],
             'send_to_email' => ['nullable', 'boolean'],
