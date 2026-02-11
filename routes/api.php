@@ -63,6 +63,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::get('/free-webinars/{id}', [FreeWebinarController::class, 'show']);
     Route::post('/free-manuscripts', [FreeManuscriptController::class, 'store']);
     Route::get('/publisher-books', [PublisherBookController::class, 'index']);
+    Route::get('/shop-manuscripts/by-word-count', [ShopManuscriptController::class, 'byWordCount']);
 
     Route::middleware('apiJwt')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
@@ -105,7 +106,6 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/webinars/{id}', [WebinarController::class, 'show']);
         Route::get('/webinars/{id}/join', [WebinarController::class, 'join']);
         Route::post('/webinars/{id}/register', [WebinarController::class, 'register']);
-        Route::get('/learner/shop-manuscripts/by-word-count', [ShopManuscriptController::class, 'byWordCount']);
         Route::get('/learner/shop-manuscripts', [ShopManuscriptController::class, 'index']);
         Route::get('/learner/shop-manuscripts/{id}', [ShopManuscriptController::class, 'show']);
         Route::get('/learner/shop-manuscripts/{id}/download/{type}', [ShopManuscriptController::class, 'download']);

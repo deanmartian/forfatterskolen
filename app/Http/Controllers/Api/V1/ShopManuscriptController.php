@@ -28,12 +28,6 @@ class ShopManuscriptController extends ApiController
 {
     public function byWordCount(ShopManuscriptWordCountLookupRequest $request): JsonResponse
     {
-        $user = $this->apiUser($request);
-
-        if (! $user) {
-            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
-        }
-
         $wordCount = (int) $request->validated()['word_count'];
 
         $plan = ShopManuscript::query()
