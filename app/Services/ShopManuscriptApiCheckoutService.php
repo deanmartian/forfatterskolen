@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Address;
 use App\Http\FrontendHelpers;
 use App\Order;
 use App\OrderShopManuscript;
@@ -109,7 +110,7 @@ class ShopManuscriptApiCheckoutService
             }
 
             if ($this->isSveaMode($paymentMode)) {
-                $svea = $this->initiateSveaCheckout($order, $shopManuscript, $user, (int) $paymentPlan->division);
+                $svea = $this->initiateSveaCheckout($order, $shopManuscript, $user, $request);
                 if ($svea['payment_url']) {
                     $order->svea_order_id = $svea['provider_order_id'];
                     $order->save();
@@ -295,7 +296,7 @@ class ShopManuscriptApiCheckoutService
     /**
      * @return array{provider_order_id:?string,payment_url:?string}
      */
-    private function initiateSveaCheckout(Order $order, ShopManuscript $shopManuscript, User $user, int $division): array
+    private function initiateSveaCheckout(Order $order, ShopManuscript $shopManuscript, User $user, Request $request): array
     {
         $merchantId = config('services.svea.checkoutid');
         $secret = config('services.svea.checkout_secret');
@@ -304,12 +305,14 @@ class ShopManuscriptApiCheckoutService
             return ['provider_order_id' => null, 'payment_url' => null];
         }
 
-        $address = $user->address;
-        if (! $address || ! $address->zip || ! $address->phone || ! $user->email) {
+        $contact = $this->resolveContactData($user, $request);
+
+        if (! $contact['email'] || ! $contact['zip'] || ! $contact['phone']) {
             return ['provider_order_id' => null, 'payment_url' => null];
         }
 
         $total = ($order->price + $order->additional) - $order->discount;
+        $vatPercent = FrontendHelpers::userHasPaidCourse() ? 0 : 2500;
 
         try {
             $conn = \Svea\Checkout\Transport\Connector::init($merchantId, $secret, \Svea\Checkout\Transport\Connector::PROD_BASE_URL);
@@ -324,16 +327,16 @@ class ShopManuscriptApiCheckoutService
                 'cart' => [
                     'items' => [[
                         'name' => Str::limit($shopManuscript->title, 35),
-                        'quantity' => max(1, $division),
-                        'unitPrice' => (int) round(($total / max(1, $division)) * 100),
+                        'quantity' => 100,
+                        'unitPrice' => (int) round($total * 100),
                         'unit' => 'pc',
-                        'vatPercent' => 2500,
+                        'vatPercent' => $vatPercent,
                     ]],
                 ],
                 'presetValues' => [
-                    ['typeName' => 'emailAddress', 'value' => $user->email, 'isReadonly' => false],
-                    ['typeName' => 'postalCode', 'value' => $address->zip, 'isReadonly' => false],
-                    ['typeName' => 'PhoneNumber', 'value' => $address->phone, 'isReadonly' => false],
+                    ['typeName' => 'emailAddress', 'value' => $contact['email'], 'isReadonly' => false],
+                    ['typeName' => 'postalCode', 'value' => $contact['zip'], 'isReadonly' => false],
+                    ['typeName' => 'PhoneNumber', 'value' => $contact['phone'], 'isReadonly' => false],
                 ],
                 'merchantSettings' => [
                     'termsUri' => url('/terms/manuscript-terms'),
@@ -350,6 +353,34 @@ class ShopManuscriptApiCheckoutService
         } catch (\Throwable $exception) {
             return ['provider_order_id' => null, 'payment_url' => null];
         }
+    }
+
+    /**
+     * @return array{email:string,zip:string,phone:string}
+     */
+    private function resolveContactData(User $user, Request $request): array
+    {
+        $address = $user->address;
+
+        $email = (string) ($request->input('email') ?: $user->email ?: '');
+        $zip = (string) ($request->input('zip') ?: ($address->zip ?? ''));
+        $phone = (string) ($request->input('phone') ?: ($address->phone ?? ''));
+
+        if ($zip !== '' || $phone !== '') {
+            Address::query()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'zip' => $zip ?: ($address->zip ?? null),
+                    'phone' => $phone ?: ($address->phone ?? null),
+                ]
+            );
+        }
+
+        return [
+            'email' => $email,
+            'zip' => $zip,
+            'phone' => $phone,
+        ];
     }
 
     private function extractCheckoutUrl(string $guiSnippet): ?string
