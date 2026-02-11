@@ -1066,6 +1066,7 @@ class LearnerController extends Controller
                 $assignmentDisabledLearners = $assignment->disabledLearners()->pluck('user_id')->toArray();
                 $package_id = $courseTaken->package->id;
                 $course = $courseTaken->package->course;
+                $isVisibleForFormerLearner = in_array($assignment->id, $visibleForFormerLearnerAssignmentIds);
                 // assignment where user has manuscript but don't have any package for that assignment
                 // usually added on admin page
                 $assignmentsWithUserManuscript = $assignment->manuscripts()->where('user_id', Auth::user()->id)
@@ -1087,7 +1088,7 @@ class LearnerController extends Controller
                             if (! AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
                                 if ($course->type == 'Single' && $assignment->submission_date == '365') {
                                     if (\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())
-                                        || in_array($assignment->id, $visibleForFormerLearnerAssignmentIds)) {
+                                        || $isVisibleForFormerLearner) {
                                         $includeAssignment = $assignment;
                                         $includeAssignment->course_taken_end_date = $courseTaken->end_date; // for displaying submit button
                                         if ($assignment->max_words === 0) {
@@ -1097,7 +1098,8 @@ class LearnerController extends Controller
                                         }
                                     }
                                 } else {
-                                    if (\Carbon\Carbon::parse($courseTaken->started_at)->addDays((int) $assignment->submission_date)
+                                    if ($isVisibleForFormerLearner
+                                        || \Carbon\Carbon::parse($courseTaken->started_at)->addDays((int) $assignment->submission_date)
                                         ->gt(Carbon::now())) {
                                         if ($assignment->max_words === 0) {
                                             $noWordLimitAssignments[] = $assignment;
@@ -1109,9 +1111,8 @@ class LearnerController extends Controller
                             } else {
                                 $assignmentSubmissionDate = $assignmentSubmissionDates[$assignment->id] ??
                                 $assignment->submission_date;
-                                $isVisibleForFormerLearner = in_array($assignment->id, $visibleForFormerLearnerAssignmentIds);
                                 // added the && to check if the course taken is not yet expired
-                                if (\Carbon\Carbon::parse($assignmentSubmissionDate)->gt(Carbon::now()->subDay()) &&
+                                if (($isVisibleForFormerLearner || \Carbon\Carbon::parse($assignmentSubmissionDate)->gt(Carbon::now()->subDay())) &&
                                     (\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now()) || $isVisibleForFormerLearner)) {
                                     if ($assignment->max_words === 0) {
                                         $noWordLimitAssignments[] = $assignment;
@@ -1236,7 +1237,8 @@ class LearnerController extends Controller
                                         $assignments[] = $includeAssignment;
                                     }
                                 } else {
-                                    if (\Carbon\Carbon::parse($formerCourse->started_at)->addDays((int) $assignment->submission_date)
+                                    if (in_array($assignment->id, $visibleForFormerLearnerAssignmentIds)
+                                        || \Carbon\Carbon::parse($formerCourse->started_at)->addDays((int) $assignment->submission_date)
                                         ->gt(Carbon::now())) {
                                         if ($assignment->max_words === 0) {
                                             $noWordLimitAssignments[] = $assignment;
@@ -1248,7 +1250,8 @@ class LearnerController extends Controller
                             } else {
                                 $assignmentSubmissionDate = $assignmentSubmissionDates[$assignment->id] ??
                                 $assignment->submission_date;
-                                if (\Carbon\Carbon::parse($assignmentSubmissionDate)->gt(Carbon::now()->subDay())) {
+                                if (in_array($assignment->id, $visibleForFormerLearnerAssignmentIds)
+                                    || \Carbon\Carbon::parse($assignmentSubmissionDate)->gt(Carbon::now()->subDay())) {
                                     if ($assignment->max_words === 0) {
                                         $noWordLimitAssignments[] = $assignment;
                                     } else {
