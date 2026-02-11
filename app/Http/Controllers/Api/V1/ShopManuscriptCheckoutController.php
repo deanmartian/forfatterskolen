@@ -33,17 +33,16 @@ class ShopManuscriptCheckoutController extends ApiController
             Auth::setUser($user);
             $result = $service->createOrder($user, $shopManuscript, $request->validated()['idempotency_key'], $request);
             $order = $result['order'];
-            $order->setAttribute('checkout_payment_url', $result['payment_url']);
-            $order->setAttribute('checkout_message', $result['message']);
         } catch (\DomainException $exception) {
-            return $this->errorResponse($exception->getMessage(), 'forbidden', 403);
+            return $this->errorResponse($exception->getMessage(), 'validation_error', 422);
         } catch (\Throwable $exception) {
             return $this->errorResponse('Unable to create checkout.', 'server_error', 500);
         }
 
-        return (new ShopManuscriptCheckoutOrderResource($order))
-            ->response()
-            ->setStatusCode(201);
+        return response()->json([
+            'redirect_url' => $result['payment_url'],
+            'reference' => $order->id,
+        ], 201);
     }
 
     public function show(Request $request, int $orderId, ShopManuscriptApiCheckoutService $service): JsonResponse

@@ -87,7 +87,7 @@ class ShopManuscriptApiCheckoutService
             Cache::put($cacheKey, $order->id, now()->addHours(24));
 
             $paymentUrl = null;
-            $message = 'Order created. Payment is pending manual processing. Please contact support to complete payment.';
+            $message = null;
 
             if ($this->isVippsMode($paymentMode)) {
                 $vippsOrderId = $this->vippsOrderReference($order);
@@ -104,7 +104,7 @@ class ShopManuscriptApiCheckoutService
                     $order->save();
                     $message = 'Checkout created. Continue payment in Vipps.';
                 } else {
-                    $paymentUrl = null;
+                    throw new \DomainException('Unable to start Vipps checkout.');
                 }
             }
 
@@ -116,8 +116,12 @@ class ShopManuscriptApiCheckoutService
                     $paymentUrl = $svea['payment_url'];
                     $message = 'Checkout created. Continue payment in Svea.';
                 } else {
-                    $message = 'Order created, but Svea checkout could not be initialized right now. Please contact support.';
+                    throw new \DomainException('Unable to start Svea checkout.');
                 }
+            }
+
+            if (! $this->isVippsMode($paymentMode) && ! $this->isSveaMode($paymentMode)) {
+                throw new \DomainException('Unsupported payment mode for API checkout.');
             }
 
             return ['order' => $order->fresh(['shopManuscriptOrder', 'paymentMode']), 'payment_url' => $paymentUrl, 'message' => $message];

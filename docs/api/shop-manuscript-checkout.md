@@ -44,13 +44,8 @@ The API reuses the same order for the same `user + manuscript + idempotency key`
 
 ```json
 {
-  "order_id": 101,
-  "status": "pending",
-  "amount": 1490,
-  "currency": "NOK",
-  "payment_provider": "svea",
-  "payment_url": "https://checkout.svea.com/...",
-  "message": "Checkout created. Continue payment in Svea."
+  "redirect_url": "https://checkout.svea.com/...",
+  "reference": 101
 }
 ```
 
