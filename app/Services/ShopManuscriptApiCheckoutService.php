@@ -176,26 +176,6 @@ class ShopManuscriptApiCheckoutService
         if (! $user->could_buy_course) {
             throw new \DomainException('You are not allowed to buy shop manuscripts.');
         }
-
-        $alreadyTaken = ShopManuscriptsTaken::query()
-            ->where('user_id', $user->id)
-            ->where('shop_manuscript_id', $shopManuscript->id)
-            ->exists();
-
-        if ($alreadyTaken) {
-            throw new \DomainException('You already purchased this shop manuscript.');
-        }
-
-        $alreadyPaid = Order::query()
-            ->where('user_id', $user->id)
-            ->where('type', Order::MANUSCRIPT_TYPE)
-            ->where('item_id', $shopManuscript->id)
-            ->where('is_processed', 1)
-            ->exists();
-
-        if ($alreadyPaid) {
-            throw new \DomainException('You already purchased this shop manuscript.');
-        }
     }
 
     private function calculatePricing(ShopManuscript $shopManuscript, int $wordCount): array
