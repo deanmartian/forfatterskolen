@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\V1\PrivateMessageController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\PublisherBookController;
 use App\Http\Controllers\Api\V1\ShopManuscriptController;
+use App\Http\Controllers\Api\V1\ShopManuscriptCheckoutController;
 use App\Http\Controllers\Api\V1\WebinarController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -62,6 +63,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::get('/free-webinars/{id}', [FreeWebinarController::class, 'show']);
     Route::post('/free-manuscripts', [FreeManuscriptController::class, 'store']);
     Route::get('/publisher-books', [PublisherBookController::class, 'index']);
+    Route::get('/shop-manuscripts/by-word-count', [ShopManuscriptController::class, 'byWordCount']);
 
     Route::middleware('apiJwt')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
@@ -113,7 +115,12 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::post('/learner/shop-manuscripts/{id}/upload-synopsis', [ShopManuscriptController::class, 'uploadSynopsis']);
         Route::post('/learner/shop-manuscripts/{id}/update-uploaded', [ShopManuscriptController::class, 'updateUploaded']);
         Route::delete('/learner/shop-manuscripts/{id}/uploaded', [ShopManuscriptController::class, 'deleteUploaded']);
+        Route::post('/learner/shop-manuscripts/{id}/checkout', [ShopManuscriptCheckoutController::class, 'store']);
+        Route::get('/learner/shop-manuscripts/checkout/{orderId}', [ShopManuscriptCheckoutController::class, 'show']);
+        Route::post('/learner/shop-manuscripts/checkout/{orderId}/cancel', [ShopManuscriptCheckoutController::class, 'cancel']);
     });
+
+    Route::post('/payments/vipps/shop-manuscripts/webhook', [ShopManuscriptCheckoutController::class, 'vippsWebhook']);
 
     Route::get('/files/{file}/download', [FileController::class, 'download'])
         ->middleware('signed')

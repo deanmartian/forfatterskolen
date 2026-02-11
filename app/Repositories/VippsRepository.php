@@ -263,4 +263,49 @@ class VippsRepository
 
         return $response;
     }
+
+    /**
+     * @return ApiException|array
+     */
+    public function cancelPayment(string $orderId)
+    {
+        $getToken = $this->getAccessToken();
+
+        if ($getToken instanceof ApiException) {
+            return $getToken;
+        }
+
+        $accessToken = $getToken['data']->access_token ?? null;
+
+        if (! $accessToken) {
+            return new ApiException('Vipps access token is unavailable.', null, 500);
+        }
+
+        $url = '/ecomm/v2/payments/'.$orderId.'/cancel';
+        $method = 'POST';
+        $header = [
+            'Authorization: '.$accessToken,
+        ];
+
+        $body = json_encode([
+            'merchantInfo' => [
+                'merchantSerialNumber' => config('services.vipps.msn'),
+            ],
+            'transaction' => [
+                'transactionText' => 'Cancelled payment for order #'.$orderId,
+            ],
+        ]);
+
+        $response = AdminHelpers::vippsAPI($method, $url, $body, $header);
+
+        if ($response['http_code'] != ApiResponse::HTTPCODE_SUCCESS) {
+            if (isset($response['data'][0])) {
+                return new ApiException($response['data'][0]->errorMessage, null, $response['http_code']);
+            }
+
+            return new ApiException($response['data']->message ?? 'Unable to cancel Vipps payment.', null, $response['http_code']);
+        }
+
+        return $response;
+    }
 }
