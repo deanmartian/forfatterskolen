@@ -57,10 +57,6 @@ class ShopManuscriptApiCheckoutService
                 throw new \DomainException('Invalid payment mode or payment plan.');
             }
 
-            if (! in_array($paymentMode->mode, ['Vipps', 'Svea'], true)) {
-                throw new \DomainException('Unsupported payment mode. Supported modes are Vipps and Svea.');
-            }
-
             $order = Order::create([
                 'user_id' => $user->id,
                 'item_id' => $shopManuscript->id,
