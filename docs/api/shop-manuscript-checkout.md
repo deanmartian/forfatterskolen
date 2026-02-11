@@ -4,6 +4,12 @@ Base path: `/api/v1`
 
 Authentication: bearer token used for authenticated `/api/v1` routes.
 
+## Plan lookup by word count
+
+`GET /api/v1/learner/shop-manuscripts/by-word-count?word_count=<int>`
+
+Returns the first `shop_manuscripts` record where `max_words >= word_count`, ordered by `max_words` ascending.
+
 ## Status values
 
 - `pending`: checkout created, awaiting payment confirmation

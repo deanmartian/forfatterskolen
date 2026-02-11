@@ -259,6 +259,25 @@ class ShopManuscriptCheckoutTest extends TestCase
         ]);
     }
 
+    public function test_by_word_count_returns_matching_shop_manuscript_plan(): void
+    {
+        [$user, $token] = $this->seedCheckoutContext();
+
+        \App\ShopManuscript::create([
+            'title' => 'Big Plan',
+            'description' => 'Large manuscript',
+            'max_words' => 60000,
+            'full_payment_price' => 2990,
+        ]);
+
+        $response = $this->getJson('/api/v1/learner/shop-manuscripts/by-word-count?word_count=18000', [
+            'Authorization' => 'Bearer '.$token,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.max_words', 20000);
+    }
+
     private function checkout(string $token, int $manuscriptId, string $idempotencyKey, int $paymentModeId, int $paymentPlanId)
     {
         $genreId = \App\Genre::query()->firstOrCreate(['name' => 'Fiction'])->id;
