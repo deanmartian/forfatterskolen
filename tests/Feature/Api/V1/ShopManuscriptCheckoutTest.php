@@ -134,6 +134,7 @@ class ShopManuscriptCheckoutTest extends TestCase
         \App\PaymentPlan::create(['id' => 2, 'division' => 3]);
         \App\PaymentMode::create(['id' => 1, 'mode' => 'Vipps']);
         \App\PaymentMode::create(['id' => 2, 'mode' => 'Svea']);
+        \App\PaymentMode::create(['id' => 3, 'mode' => 'Faktura']);
 
         config()->set('services.jwt.secret', 'test-secret');
         config()->set('api.jwt.access_ttl_minutes', 60);
@@ -170,6 +171,16 @@ class ShopManuscriptCheckoutTest extends TestCase
         $second->assertStatus(201);
         $this->assertSame($first->json('order_id'), $second->json('order_id'));
         $this->assertEquals(1, Order::query()->count());
+    }
+
+    public function test_faktura_mode_id_three_is_treated_as_svea_provider(): void
+    {
+        [, $token, $manuscript] = $this->seedCheckoutContext();
+
+        $response = $this->checkout($token, $manuscript->id, 'idem-key-faktura', 3, 1);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('payment_provider', 'svea');
     }
 
     public function test_unauthorized_user_cannot_read_or_cancel_others_order(): void

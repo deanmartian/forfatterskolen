@@ -31,7 +31,7 @@ The API reuses the same order for the same `user + manuscript + idempotency key`
 ### Multipart form-data body
 
 - `genre` (required, integer id that exists in `genre` table)
-- `payment_mode_id` (required, existing `payment_modes.id`; currently supports `Vipps` or `Svea`)
+- `payment_mode_id` (required, existing `payment_modes.id`; `Vipps` uses Vipps, and `Svea` or `Faktura`/id=3 are treated as Svea checkout)
 - `payment_plan_id` (required, existing `payment_plans.id`)
 - `manuscript` (required file: `docx,pdf,doc,odt`)
 - `description` (optional)

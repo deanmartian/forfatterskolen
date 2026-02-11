@@ -49,6 +49,10 @@ class ShopManuscriptCheckoutOrderResource extends JsonResource
             return 'svea';
         }
 
+        if ((int) ($order->payment_mode_id ?? 0) === 3 || $mode === 'faktura') {
+            return 'svea';
+        }
+
         return 'manual';
     }
 

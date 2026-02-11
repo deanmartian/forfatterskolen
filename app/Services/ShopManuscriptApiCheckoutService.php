@@ -89,7 +89,7 @@ class ShopManuscriptApiCheckoutService
             $paymentUrl = null;
             $message = 'Order created. Payment is pending manual processing. Please contact support to complete payment.';
 
-            if ($paymentMode->mode === 'Vipps') {
+            if ($this->isVippsMode($paymentMode)) {
                 $vippsOrderId = $this->vippsOrderReference($order);
                 $paymentUrl = app(\App\Http\Controllers\Controller::class)->vippsInitiatePayment([
                     'amount' => (int) round((($order->price + $order->additional) - $order->discount) * 100),
@@ -108,7 +108,7 @@ class ShopManuscriptApiCheckoutService
                 }
             }
 
-            if ($paymentMode->mode === 'Svea') {
+            if ($this->isSveaMode($paymentMode)) {
                 $svea = $this->initiateSveaCheckout($order, $shopManuscript, $user, (int) $paymentPlan->division);
                 if ($svea['payment_url']) {
                     $order->svea_order_id = $svea['provider_order_id'];
@@ -271,6 +271,21 @@ class ShopManuscriptApiCheckoutService
     private function vippsOrderReference(Order $order): string
     {
         return sprintf('sm-%d-%d', $order->id, $order->user_id);
+    }
+
+    private function isVippsMode(PaymentMode $paymentMode): bool
+    {
+        return strcasecmp((string) $paymentMode->mode, 'Vipps') === 0;
+    }
+
+    private function isSveaMode(PaymentMode $paymentMode): bool
+    {
+        if ((int) $paymentMode->id === 3) {
+            return true;
+        }
+
+        return strcasecmp((string) $paymentMode->mode, 'Svea') === 0
+            || strcasecmp((string) $paymentMode->mode, 'Faktura') === 0;
     }
 
     /**
