@@ -27,43 +27,45 @@
                     </thead>
                     <tbody>
                         @foreach ($applications as $application)
-                            <tr>
-                                <td>
-                                    <a href="{{route('admin.learner.show', $application->user->id)}}">
-                                        {{$application->user->full_name}}
-                                    </a>
-                                </td>
-                                <td>
-                                    {{ $application->package->variation }}
-                                </td>
-                                <td>
-                                    {!! $application->file_link !!}
-                                </td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#viewApplicationModal"
-                                        onclick="viewApplication({{ $application->id }})">
-                                        <i class="fa fa-eye"></i>
-                                    </button>
-                                    <a href="{{ route('admin.course.application.download', $application->id) }}" 
-                                        class="btn btn-success btn-sm">
-                                        <i class="fa fa-download"></i>
-                                    </a>
-
-                                    @if (!$application->approved_date)
-                                        <button class="btn btn-warning btn-sm approveBtn" data-toggle="modal" 
-                                        data-target="#approveModal" 
-                                        data-action="{{ route('admin.course.application.approve',$application->id) }}">
-                                            <i class="fa fa-check"></i>
+                            @if ($application->user)
+                                <tr>
+                                    <td>
+                                        <a href="{{route('admin.learner.show', $application->user->id)}}">
+                                            {{$application->user->full_name}}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {{ $application->package->variation }}
+                                    </td>
+                                    <td>
+                                        {!! $application->file_link !!}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#viewApplicationModal"
+                                            onclick="viewApplication({{ $application->id }})">
+                                            <i class="fa fa-eye"></i>
                                         </button>
+                                        <a href="{{ route('admin.course.application.download', $application->id) }}" 
+                                            class="btn btn-success btn-sm">
+                                            <i class="fa fa-download"></i>
+                                        </a>
 
-                                        <button class="btn btn-danger btn-sm deleteBtn" data-toggle="modal" 
-                                        data-target="#deleteModal"
-                                        data-action="{{ route('admin.course.application.delete',$application->id) }}">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    @endif
-                                </td>
-                            </tr>
+                                        @if (!$application->approved_date)
+                                            <button class="btn btn-warning btn-sm approveBtn" data-toggle="modal" 
+                                            data-target="#approveModal" 
+                                            data-action="{{ route('admin.course.application.approve',$application->id) }}">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+
+                                            <button class="btn btn-danger btn-sm deleteBtn" data-toggle="modal" 
+                                            data-target="#deleteModal"
+                                            data-action="{{ route('admin.course.application.delete',$application->id) }}">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endif
                         @endforeach
                     </tbody>
                 </table>
