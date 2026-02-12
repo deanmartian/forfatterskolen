@@ -320,6 +320,8 @@ class ShopManuscriptApiCheckoutService
             $conn = \Svea\Checkout\Transport\Connector::init($merchantId, $secret, \Svea\Checkout\Transport\Connector::PROD_BASE_URL);
             $checkoutClient = new \Svea\Checkout\CheckoutClient($conn);
 
+            $lovableBase = rtrim(config('api.lovable_url'), '/');
+
             $response = $checkoutClient->create([
                 'countryCode' => config('services.svea.country_code'),
                 'currency' => config('services.svea.currency'),
@@ -343,7 +345,7 @@ class ShopManuscriptApiCheckoutService
                 'merchantSettings' => [
                     'termsUri' => url('/terms/manuscript-terms'),
                     'checkoutUri' => url('/shop-manuscript/'.$shopManuscript->id.'/checkout?t=1'),
-                    'confirmationUri' => url('/shop-manuscript/'.$shopManuscript->id.'/thankyou?svea_ord='.$order->id),
+                    'confirmationUri' => $lovableBase.'/shop-manuscript/'.$shopManuscript->id.'/thankyou?svea_ord='.$order->id,
                     'pushUri' => url('/svea-callback?svea_order_id={checkout.order.uri}'),
                 ],
             ]);
