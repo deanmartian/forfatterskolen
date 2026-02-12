@@ -66,6 +66,8 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::get('/shop-manuscripts/by-word-count', [ShopManuscriptController::class, 'byWordCount']);
 
     Route::middleware('apiJwt')->group(function () {
+        Route::get('/shop-manuscripts/{id}/thankyou', [ShopManuscriptCheckoutController::class, 'thankyou'])
+            ->name('api.v1.shop-manuscripts.thankyou');
         Route::get('/me', [AuthController::class, 'me']);
         Route::get('/profile', [ProfileController::class, 'show']);
         Route::match(['put', 'patch', 'post'], '/profile', [ProfileController::class, 'update']);

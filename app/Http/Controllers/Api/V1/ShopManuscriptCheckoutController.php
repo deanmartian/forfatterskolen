@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\CheckoutLog;
 use App\Http\Requests\Api\V1\ShopManuscriptCheckoutCancelRequest;
 use App\Http\Requests\Api\V1\ShopManuscriptCheckoutStoreRequest;
 use App\Http\Resources\Api\V1\ShopManuscriptCheckoutOrderResource;
+use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Order;
 use App\ShopManuscript;
+use App\Services\ShopManuscriptService;
+use Carbon\Carbon;
 use App\Services\ShopManuscriptApiCheckoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -109,5 +113,58 @@ class ShopManuscriptCheckoutController extends ApiController
         }
 
         return response()->json(['ok' => true]);
+    }
+
+    public function thankyou(Request $request, int $id, ShopManuscriptService $shopManuscriptService): JsonResponse
+    {
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        if (! $request->has('svea_ord') && ! $request->has('pl_ord')) {
+            return $this->errorResponse('Missing order reference.', 'validation_error', 422);
+        }
+
+        $orderId = (int) ($request->input('svea_ord') ?? $request->input('pl_ord'));
+
+        $order = Order::query()
+            ->where('id', $orderId)
+            ->where('item_id', $id)
+            ->where('type', Order::MANUSCRIPT_TYPE)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (! $order) {
+            return $this->errorResponse('Order not found.', 'not_found', 404);
+        }
+
+        if ($request->has('svea_ord')) {
+            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+        }
+
+        if (! $order->is_processed) {
+            $shopManuscriptTaken = $shopManuscriptService->addShopManuscriptToLearner($order);
+            $shopManuscriptService->notifyAdmin($order);
+            $shopManuscriptService->notifyUser($order, $shopManuscriptTaken);
+        }
+
+        $order->is_processed = 1;
+        $order->save();
+
+        CheckoutLog::updateOrCreate([
+            'user_id' => $order->user_id,
+            'parent' => 'shop-manuscript',
+            'parent_id' => $id,
+        ], [
+            'is_ordered' => true,
+        ]);
+
+        return response()->json([
+            'status' => 'ok',
+            'order_id' => $order->id,
+            'is_processed' => (bool) $order->is_processed,
+        ]);
     }
 }
