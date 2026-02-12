@@ -902,7 +902,7 @@ Route::domain($admin)->group(function () {
         Route::get('/course/application/{id}/details', [Backend\CourseController::class, 'applicationDetails']);
         Route::get('/course/application/{id}/download', [Backend\CourseController::class, 'applicationDownload'])->name('admin.course.application.download');
         Route::post('/course/application/{id}/approve', [Backend\CourseController::class, 'applicationApprove'])->name('admin.course.application.approve');
-        Route::post('/course/120/application/add-approved-orders', [Backend\CourseController::class, 'addApprovedApplicationOrders'])
+        Route::get('/course/{id}/application/add-approved-orders', [Backend\CourseController::class, 'addApprovedApplicationOrders'])
             ->name('admin.course.application.add-approved-orders');
         Route::delete('/course/application/{id}/delete', [Backend\CourseController::class, 'applicationDelete'])->name('admin.course.application.delete');
         Route::post('/course/package/copy-learners', [Backend\CourseController::class, 'copyPackageLearners'])

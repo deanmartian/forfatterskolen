@@ -1214,9 +1214,9 @@ class CourseController extends Controller
         ]);
     }
 
-    public function addApprovedApplicationOrders(): RedirectResponse
+    public function addApprovedApplicationOrders($id): RedirectResponse
     {
-        $course = Course::findOrFail(120);
+        $course = Course::findOrFail($id);
         $packageIds = $course->packages()->pluck('id')->toArray();
         $planId = optional(PaymentPlan::where('division', 1)->first())->id ?? 8;
 
