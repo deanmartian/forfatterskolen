@@ -150,7 +150,7 @@ class ShopManuscriptCheckoutTest extends TestCase
         $response = $this->checkout($token, $manuscript->id, 'idem-key-1001', 1, 1);
 
         $response->assertStatus(201)
-            ->assertJsonStructure(['redirect_url', 'reference']);
+            ->assertJsonStructure(['redirect_url', 'gui_snippet', 'reference']);
 
         $this->assertDatabaseHas('orders', [
             'user_id' => $user->id,
@@ -179,7 +179,7 @@ class ShopManuscriptCheckoutTest extends TestCase
         $response = $this->checkout($token, $manuscript->id, 'idem-key-faktura', 3, 1);
 
         $response->assertStatus(201)
-            ->assertJsonStructure(['redirect_url', 'reference']);
+            ->assertJsonStructure(['redirect_url', 'gui_snippet', 'reference']);
     }
 
     public function test_unauthorized_user_cannot_read_or_cancel_others_order(): void

@@ -56,6 +56,7 @@ The API reuses the same order for the same `user + manuscript + idempotency key`
 ```json
 {
   "redirect_url": "https://checkout.svea.com/...",
+  "gui_snippet": "<div data-sco-sveacheckout-iframesrc=\"https://checkout.svea.com/...\"></div>",
   "reference": 101
 }
 ```
