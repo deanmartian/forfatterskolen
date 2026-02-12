@@ -102,6 +102,15 @@ class ShopManuscriptCheckoutTest extends TestCase
             $table->timestamps();
         });
 
+        Schema::create('checkout_logs', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->string('parent');
+            $table->string('parent_id');
+            $table->tinyInteger('is_ordered')->default(0);
+            $table->timestamps();
+        });
+
         Schema::create('order_shop_manuscripts', function (Blueprint $table): void {
             $table->increments('id');
             $table->unsignedInteger('order_id');
@@ -274,6 +283,66 @@ class ShopManuscriptCheckoutTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('data.max_words', 20000);
+    }
+
+
+
+    public function test_thankyou_requires_logged_in_user(): void
+    {
+        [, , $manuscript] = $this->seedCheckoutContext();
+
+        $response = $this->getJson('/api/v1/shop-manuscripts/'.$manuscript->id.'/thankyou?pl_ord=1');
+
+        $response->assertStatus(401)
+            ->assertJsonPath('error.code', 'unauthorized');
+    }
+
+    public function test_thankyou_requires_order_reference_query_param(): void
+    {
+        [, $token, $manuscript] = $this->seedCheckoutContext();
+
+        $response = $this->getJson('/api/v1/shop-manuscripts/'.$manuscript->id.'/thankyou', [
+            'Authorization' => 'Bearer '.$token,
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonPath('error.code', 'validation_error');
+    }
+
+    public function test_thankyou_returns_order_status(): void
+    {
+        [$user, $token, $manuscript] = $this->seedCheckoutContext();
+
+        $order = Order::create([
+            'user_id' => $user->id,
+            'item_id' => $manuscript->id,
+            'type' => Order::MANUSCRIPT_TYPE,
+            'package_id' => 0,
+            'plan_id' => 1,
+            'payment_mode_id' => 1,
+            'price' => 1490,
+            'discount' => 0,
+            'additional' => 0,
+            'is_processed' => 1,
+            'is_order_withdrawn' => 0,
+        ]);
+
+        $response = $this->getJson('/api/v1/shop-manuscripts/'.$manuscript->id.'/thankyou?pl_ord='.$order->id, [
+            'Authorization' => 'Bearer '.$token,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('status', 'ok')
+            ->assertJsonPath('order_id', $order->id)
+            ->assertJsonPath('is_processed', true)
+            ->assertJsonMissingPath('thankyou_url');
+
+        $this->assertDatabaseHas('checkout_logs', [
+            'user_id' => $user->id,
+            'parent' => 'shop-manuscript',
+            'parent_id' => (string) $manuscript->id,
+            'is_ordered' => 1,
+        ]);
     }
 
     private function checkout(string $token, int $manuscriptId, string $idempotencyKey, int $paymentModeId, int $paymentPlanId)
