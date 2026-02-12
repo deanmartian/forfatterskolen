@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\AdminHelpers;
+use App\Http\Requests\Api\V1\ShopManuscriptWordCountLookupRequest;
+use App\Http\Resources\Api\V1\ShopManuscriptPlanResource;
 use App\Http\FrontendHelpers;
 use App\Mail\SubjectBodyEmail;
 use App\Log;
@@ -24,6 +26,24 @@ use ZipArchive;
 
 class ShopManuscriptController extends ApiController
 {
+    public function byWordCount(ShopManuscriptWordCountLookupRequest $request): JsonResponse
+    {
+        $wordCount = (int) $request->validated()['word_count'];
+
+        $plan = ShopManuscript::query()
+            ->where('max_words', '>=', $wordCount)
+            ->orderBy('max_words')
+            ->first();
+
+        if (! $plan) {
+            return $this->errorResponse('No shop manuscript plan found for this word count.', 'not_found', 404);
+        }
+
+        return response()->json([
+            'data' => (new ShopManuscriptPlanResource($plan))->resolve(),
+        ]);
+    }
+
     public function index(Request $request): JsonResponse
     {
         $user = $this->apiUser($request);
