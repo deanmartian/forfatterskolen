@@ -41,6 +41,7 @@ class ShopManuscriptCheckoutController extends ApiController
 
         return response()->json([
             'redirect_url' => $result['payment_url'],
+            'gui_snippet' => $result['gui_snippet'] ?? null,
             'reference' => $order->id,
         ], 201);
     }

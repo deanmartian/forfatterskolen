@@ -31,7 +31,7 @@ class ShopManuscriptApiCheckoutService
             if ($cachedOrderId) {
                 $existing = Order::query()->with(['shopManuscriptOrder', 'paymentMode'])->find((int) $cachedOrderId);
                 if ($existing && (int) $existing->user_id === (int) $user->id && (int) $existing->item_id === (int) $shopManuscript->id) {
-                    return ['order' => $existing, 'payment_url' => null, 'message' => 'Checkout order created and awaiting payment.'];
+                    return ['order' => $existing, 'payment_url' => null, 'gui_snippet' => null, 'message' => 'Checkout order created and awaiting payment.'];
                 }
             }
 
@@ -88,6 +88,7 @@ class ShopManuscriptApiCheckoutService
             Cache::put($cacheKey, $order->id, now()->addHours(24));
 
             $paymentUrl = null;
+            $guiSnippet = null;
             $message = null;
 
             if ($this->isVippsMode($paymentMode)) {
@@ -115,6 +116,7 @@ class ShopManuscriptApiCheckoutService
                     $order->svea_order_id = $svea['provider_order_id'];
                     $order->save();
                     $paymentUrl = $svea['payment_url'];
+                    $guiSnippet = $svea['gui_snippet'];
                     $message = 'Checkout created. Continue payment in Svea.';
                 } else {
                     throw new \DomainException('Unable to start Svea checkout.');
@@ -125,7 +127,7 @@ class ShopManuscriptApiCheckoutService
                 throw new \DomainException('Unsupported payment mode for API checkout.');
             }
 
-            return ['order' => $order->fresh(['shopManuscriptOrder', 'paymentMode']), 'payment_url' => $paymentUrl, 'message' => $message];
+            return ['order' => $order->fresh(['shopManuscriptOrder', 'paymentMode']), 'payment_url' => $paymentUrl, 'gui_snippet' => $guiSnippet, 'message' => $message];
         });
     }
 
@@ -294,7 +296,7 @@ class ShopManuscriptApiCheckoutService
     }
 
     /**
-     * @return array{provider_order_id:?string,payment_url:?string}
+     * @return array{provider_order_id:?string,payment_url:?string,gui_snippet:?string}
      */
     private function initiateSveaCheckout(Order $order, ShopManuscript $shopManuscript, User $user, Request $request): array
     {
@@ -302,13 +304,13 @@ class ShopManuscriptApiCheckoutService
         $secret = config('services.svea.checkout_secret');
 
         if (! $merchantId || ! $secret) {
-            return ['provider_order_id' => null, 'payment_url' => null];
+            return ['provider_order_id' => null, 'payment_url' => null, 'gui_snippet' => null];
         }
 
         $contact = $this->resolveContactData($user, $request);
 
         if (! $contact['email'] || ! $contact['zip'] || ! $contact['phone']) {
-            return ['provider_order_id' => null, 'payment_url' => null];
+            return ['provider_order_id' => null, 'payment_url' => null, 'gui_snippet' => null];
         }
 
         $total = ($order->price + $order->additional) - $order->discount;
@@ -349,9 +351,10 @@ class ShopManuscriptApiCheckoutService
             return [
                 'provider_order_id' => $response['OrderId'] ?? null,
                 'payment_url' => $this->extractCheckoutUrl($response['Gui']['Snippet'] ?? ''),
+                'gui_snippet' => $response['Gui']['Snippet'] ?? null,
             ];
         } catch (\Throwable $exception) {
-            return ['provider_order_id' => null, 'payment_url' => null];
+            return ['provider_order_id' => null, 'payment_url' => null, 'gui_snippet' => null];
         }
     }
 
