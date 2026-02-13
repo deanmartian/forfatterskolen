@@ -7,7 +7,6 @@ use App\Http\Requests\Api\V1\ShopManuscriptCheckoutCancelRequest;
 use App\Http\Requests\Api\V1\ShopManuscriptCheckoutStoreRequest;
 use App\Http\Resources\Api\V1\ShopManuscriptCheckoutOrderResource;
 use App\Jobs\SveaUpdateOrderDetailsJob;
-use App\Helpers\ApiException;
 use App\Order;
 use App\ShopManuscript;
 use App\Services\ShopManuscriptService;
@@ -118,7 +117,7 @@ class ShopManuscriptCheckoutController extends ApiController
     }
 
 
-    public function vippsFallback(Request $request, ShopManuscriptApiCheckoutService $service, VippsRepository $vippsRepository): JsonResponse
+    public function vippsFallback(Request $request, VippsRepository $vippsRepository): JsonResponse
     {
         $orderReference = (string) $request->query('t', '');
 
@@ -126,41 +125,47 @@ class ShopManuscriptCheckoutController extends ApiController
             return $this->errorResponse('Missing Vipps order reference.', 'validation_error', 422);
         }
 
-        $order = Order::query()
-            ->where('type', Order::MANUSCRIPT_TYPE)
-            ->where('svea_order_id', $orderReference)
-            ->first();
-
-        if (! $order) {
-            return $this->errorResponse('Checkout order not found.', 'not_found', 404);
-        }
+        $expOrder = explode('-', $orderReference);
+        $order = isset($expOrder[0]) ? Order::find((int) $expOrder[0]) : null;
 
         $tokenResponse = $vippsRepository->getAccessToken();
 
-        if ($tokenResponse instanceof ApiException) {
+        if ($tokenResponse instanceof \App\Helpers\ApiException) {
             return $this->errorResponse('Unable to read Vipps payment status.', 'provider_error', 502);
         }
 
-        $detailsResponse = $vippsRepository->getPaymentDetails($orderReference, $tokenResponse['data']->access_token);
+        $vippsOrder = $vippsRepository->getPaymentDetails($orderReference, $tokenResponse['data']->access_token);
 
-        if ($detailsResponse instanceof ApiException) {
+        if ($vippsOrder instanceof \App\Helpers\ApiException) {
             return $this->errorResponse('Unable to read Vipps payment status.', 'provider_error', 502);
         }
 
-        $transactionHistory = data_get($detailsResponse, 'data.transactionLogHistory.0');
-        $isCaptured = strtoupper((string) data_get($transactionHistory, 'operation', '')) === 'CAPTURE'
-            && (bool) data_get($transactionHistory, 'operationSuccess', false);
+        $transactionHistory = data_get($vippsOrder, 'data.transactionLogHistory.0');
 
-        if ($isCaptured) {
-            $order = $service->markPaidByVippsReference($orderReference) ?? $order;
+        if ($transactionHistory && $order) {
+            $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.cancelled-order' : 'front.course.cancelled-order';
+            $isCaptured = strtoupper((string) data_get($transactionHistory, 'operation', '')) === 'CAPTURE'
+                && (bool) data_get($transactionHistory, 'operationSuccess', false);
+
+            if ($isCaptured) {
+                $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.thankyou' : 'front.shop.thankyou';
+            }
+
+            return response()->json([
+                'status' => $isCaptured ? 'paid' : 'cancelled',
+                'order_id' => $order->id,
+                'item_id' => $order->item_id,
+                'reference' => $orderReference,
+                'route' => $route,
+                'route_params' => ['id' => $order->item_id],
+            ]);
         }
 
         return response()->json([
-            'status' => $isCaptured ? 'paid' : 'pending',
-            'order_id' => $order->id,
-            'item_id' => $order->item_id,
+            'status' => 'unknown',
             'reference' => $orderReference,
-            'is_processed' => (bool) $order->is_processed,
+            'route' => 'front.thank-you',
+            'route_params' => [],
         ]);
     }
 
