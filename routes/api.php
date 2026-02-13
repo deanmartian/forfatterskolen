@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\V1\PublisherBookController;
 use App\Http\Controllers\Api\V1\ShopManuscriptController;
 use App\Http\Controllers\Api\V1\ShopManuscriptCheckoutController;
 use App\Http\Controllers\Api\V1\WebinarController;
+use App\Http\Controllers\Api\V1\VippsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -64,7 +65,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::post('/free-manuscripts', [FreeManuscriptController::class, 'store']);
     Route::get('/publisher-books', [PublisherBookController::class, 'index']);
     Route::get('/shop-manuscripts/by-word-count', [ShopManuscriptController::class, 'byWordCount']);
-    Route::get('/vipps/fallback', [ShopManuscriptCheckoutController::class, 'vippsFallback'])
+    Route::get('/vipps/fallback', [VippsController::class, 'fallback'])
         ->name('api.v1.vipps.fallback');
 
     Route::middleware('apiJwt')->group(function () {
