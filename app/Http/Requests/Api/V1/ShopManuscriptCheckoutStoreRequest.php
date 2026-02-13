@@ -10,6 +10,7 @@ class ShopManuscriptCheckoutStoreRequest extends ApiRequest
             'idempotency_key' => ['required', 'string', 'min:8', 'max:120'],
             'payment_mode_id' => ['required', 'integer', 'exists:payment_modes,id'],
             'payment_plan_id' => ['required', 'integer', 'exists:payment_plans,id'],
+            'price' => ['nullable', 'numeric', 'min:0'],
             'email' => ['nullable', 'email'],
             'zip' => ['nullable', 'string', 'max:30'],
             'phone' => ['nullable', 'string', 'max:30'],

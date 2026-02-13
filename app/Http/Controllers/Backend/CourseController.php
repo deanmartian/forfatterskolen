@@ -28,6 +28,7 @@ use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\Package;
 use App\PackageCourse;
+use App\PaymentPlan;
 use App\Services\CourseService;
 use App\SimilarCourse;
 use App\User;
@@ -1209,6 +1210,54 @@ class CourseController extends Controller
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Application approved.'),
+            'alert_type' => 'success',
+        ]);
+    }
+
+    public function addApprovedApplicationOrders($id): RedirectResponse
+    {
+        $course = Course::findOrFail($id);
+        $packageIds = $course->packages()->pluck('id')->toArray();
+        $planId = optional(PaymentPlan::where('division', 1)->first())->id ?? 8;
+
+        $applications = CourseApplication::with('package')
+            ->whereIn('package_id', $packageIds)
+            ->whereNotNull('approved_date')
+            ->get();
+
+        $ordersAdded = 0;
+
+        foreach ($applications as $application) {
+            if (! $application->package) {
+                continue;
+            }
+
+            $existingOrder = Order::where('user_id', $application->user_id)
+                ->where('package_id', $application->package_id)
+                ->exists();
+
+            if ($existingOrder) {
+                continue;
+            }
+
+            Order::create([
+                'user_id' => $application->user_id,
+                'item_id' => $application->package->course_id,
+                'type' => Order::COURSE_TYPE,
+                'package_id' => $application->package_id,
+                'plan_id' => $planId,
+                'price' => $application->package->full_payment_price ?? $application->package->calculated_price ?? 0,
+                'discount' => 0,
+                'payment_mode_id' => 3,
+                'is_processed' => 1,
+                'is_pay_later' => 1,
+            ]);
+
+            $ordersAdded++;
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag($ordersAdded.' order(s) added from approved applications.'),
             'alert_type' => 'success',
         ]);
     }

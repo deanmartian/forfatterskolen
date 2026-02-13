@@ -106,8 +106,28 @@ class AuthController extends ApiController
             'name' => trim($user->first_name.' '.$user->last_name),
             'email' => $user->email,
             'roles' => $this->rolesForUser($user),
+            'has_paid_course' => $this->hasPaidCourse($user),
             'certificates' => $certificates,
         ]);
+    }
+
+    private function hasPaidCourse(User $user): bool
+    {
+        foreach ($user->coursesTakenNotOld as $courseTaken) {
+            if (! $courseTaken->is_active) {
+                continue;
+            }
+
+            if ($courseTaken->package->course->type === 'Free') {
+                continue;
+            }
+
+            if ((int) $courseTaken->package->course->is_free !== 1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function createAccessToken(User $user): array
