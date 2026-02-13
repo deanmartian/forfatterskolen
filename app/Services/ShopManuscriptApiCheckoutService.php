@@ -98,7 +98,7 @@ class ShopManuscriptApiCheckoutService
                     'amount' => (int) round((($order->price + $order->additional) - $order->discount) * 100),
                     'orderId' => $vippsOrderId,
                     'transactionText' => $shopManuscript->title,
-                    'fallbackUrl' => (string) $request->input('fallbackUrl', 'https://ny.forfatterskolen.no/vipps/fallback'),
+                    'fallbackUrl' => (string) $request->input('fallbackUrl', 'https://ny.forfatterskolen.no/vipps/fallback?t='.$vippsOrderId),
                     'is_ajax' => true,
                     'vipps_phone_number' => optional($user->address)->vipps_phone_number,
                 ]);
