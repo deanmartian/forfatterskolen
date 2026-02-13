@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class VippsController extends ApiController
 {
-    public function fallback(Request $request, VippsRepository $vippsRepository): JsonResponse
+    public function fallback(Request $request, VippsRepository $vippsRepository)/* : JsonResponse */
     {
         $orderReference = (string) $request->query('t', '');
 
@@ -43,21 +43,22 @@ class VippsController extends ApiController
                 $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.thankyou' : 'front.shop.thankyou';
             }
 
-            return response()->json([
+            /* return response()->json([
                 'status' => $isCaptured ? 'paid' : 'cancelled',
                 'order_id' => $order->id,
                 'item_id' => $order->item_id,
                 'reference' => $orderReference,
                 'route' => $route,
                 'route_params' => ['id' => $order->item_id],
-            ]);
+            ]); */
         }
 
-        return response()->json([
+        return redirect()->to(rtrim(config('api.lovable_url') .'/vipps/fallback?t=' . $orderReference, '/'));
+        /* return response()->json([
             'status' => 'unknown',
             'reference' => $orderReference,
             'route' => 'front.thank-you',
             'route_params' => [],
-        ]);
+        ]); */
     }
 }
