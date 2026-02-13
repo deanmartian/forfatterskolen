@@ -50,6 +50,7 @@ class ShopManuscriptApiCheckoutService
             }
 
             $pricing = $this->calculatePricing($shopManuscript, $wordCount);
+            $price = $request->input('price');
 
             $paymentPlan = PaymentPlan::query()->find((int) $request->input('payment_plan_id'));
             $paymentMode = PaymentMode::query()->find((int) $request->input('payment_mode_id'));
@@ -65,7 +66,7 @@ class ShopManuscriptApiCheckoutService
                 'package_id' => 0,
                 'plan_id' => $paymentPlan?->id,
                 'payment_mode_id' => $paymentMode?->id,
-                'price' => $pricing['base_price'],
+                'price' => $price !== null ? (float) $price : $pricing['base_price'],
                 'discount' => 0,
                 'additional' => $pricing['excess_amount'],
                 'is_processed' => 0,

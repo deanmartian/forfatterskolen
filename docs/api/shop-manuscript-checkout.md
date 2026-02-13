@@ -41,6 +41,7 @@ The API reuses the same order for the same `user + manuscript + idempotency key`
 - `genre` (required, integer id that exists in `genre` table)
 - `payment_mode_id` (required, existing `payment_modes.id`; `Vipps` uses Vipps, and `Svea` or `Faktura`/id=3 are treated as Svea checkout)
 - `payment_plan_id` (required, existing `payment_plans.id`)
+- `price` (optional, numeric; if provided it is used as the order price, otherwise checkout uses calculated base price)
 - `email` (optional, used as fallback for provider checkout prefill)
 - `zip` (optional, used as fallback for provider checkout prefill)
 - `phone` (optional, used as fallback for provider checkout prefill)

@@ -165,6 +165,24 @@ class ShopManuscriptCheckoutTest extends TestCase
             'user_id' => $user->id,
             'item_id' => $manuscript->id,
             'type' => Order::MANUSCRIPT_TYPE,
+            'price' => 1490,
+        ]);
+    }
+
+    public function test_creates_checkout_with_custom_price_when_passed(): void
+    {
+        [$user, $token, $manuscript] = $this->seedCheckoutContext();
+
+        $response = $this->checkout($token, $manuscript->id, 'idem-key-custom-price', 1, 1, 999);
+
+        $response->assertStatus(201)
+            ->assertJsonStructure(['redirect_url', 'gui_snippet', 'reference']);
+
+        $this->assertDatabaseHas('orders', [
+            'user_id' => $user->id,
+            'item_id' => $manuscript->id,
+            'type' => Order::MANUSCRIPT_TYPE,
+            'price' => 999,
         ]);
     }
 
@@ -345,18 +363,24 @@ class ShopManuscriptCheckoutTest extends TestCase
         ]);
     }
 
-    private function checkout(string $token, int $manuscriptId, string $idempotencyKey, int $paymentModeId, int $paymentPlanId)
+    private function checkout(string $token, int $manuscriptId, string $idempotencyKey, int $paymentModeId, int $paymentPlanId, ?float $price = null)
     {
         $genreId = \App\Genre::query()->firstOrCreate(['name' => 'Fiction'])->id;
 
-        return $this->post('/api/v1/learner/shop-manuscripts/'.$manuscriptId.'/checkout', [
+        $payload = [
             'payment_mode_id' => $paymentModeId,
             'payment_plan_id' => $paymentPlanId,
             'genre' => $genreId,
             'description' => 'API checkout',
             'manuscript' => UploadedFile::fake()->create('draft.docx', 10, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
             'word_count' => 6000,
-        ], [
+        ];
+
+        if ($price !== null) {
+            $payload['price'] = $price;
+        }
+
+        return $this->post('/api/v1/learner/shop-manuscripts/'.$manuscriptId.'/checkout', $payload, [
             'Authorization' => 'Bearer '.$token,
             'Idempotency-Key' => $idempotencyKey,
             'Accept' => 'application/json',
