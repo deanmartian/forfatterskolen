@@ -64,6 +64,8 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::post('/free-manuscripts', [FreeManuscriptController::class, 'store']);
     Route::get('/publisher-books', [PublisherBookController::class, 'index']);
     Route::get('/shop-manuscripts/by-word-count', [ShopManuscriptController::class, 'byWordCount']);
+    Route::get('/vipps/fallback', [ShopManuscriptCheckoutController::class, 'vippsFallback'])
+        ->name('api.v1.vipps.fallback');
 
     Route::middleware('apiJwt')->group(function () {
         Route::get('/shop-manuscripts/{id}/thankyou', [ShopManuscriptCheckoutController::class, 'thankyou'])
