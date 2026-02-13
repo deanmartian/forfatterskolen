@@ -115,6 +115,7 @@ class ShopManuscriptCheckoutController extends ApiController
         return response()->json(['ok' => true]);
     }
 
+
     public function thankyou(Request $request, int $id, ShopManuscriptService $shopManuscriptService): JsonResponse
     {
         $user = $this->apiUser($request);
