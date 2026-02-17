@@ -919,6 +919,8 @@ Supports the same search inputs used by the Blade page:
 - `search_upcoming`: filters upcoming webinars by webinar title.
 - `search_replay`: filters replay lesson content by title.
 
+Webinar entries include `course_taken_end_date` (from `courses_taken.end_date`).
+
 When `search_replay` is not provided, `lesson_contents` is returned as an empty list.
 
 **Request**
@@ -947,7 +949,7 @@ Authorization: Bearer <access_token>
         "description": "Details",
         "host": "Host name",
         "start_date": "2024-05-10 18:00:00",
-        "end_date": "2024-05-10 20:00:00",
+        "course_taken_end_date": "2024-12-31",
         "image_url": "https://www.forfatterskolen.no/uploads/webinar.png",
         "set_as_replay": false
       }

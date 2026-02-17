@@ -208,6 +208,7 @@ class WebinarController extends ApiController
                 'webinars.*',
                 'courses_taken.id as courses_taken_id',
                 'courses.title as course_title',
+                'courses_taken.end_date as course_taken_end_date',
                 DB::raw('TIMESTAMPDIFF(HOUR, NOW(), webinars.start_date) as diffWithHours')
             )
             ->where('courses_taken.user_id', $user->id)
@@ -248,7 +249,7 @@ class WebinarController extends ApiController
                     'description' => $webinar->description,
                     'host' => $webinar->host,
                     'start_date' => $webinar->start_date,
-                    'end_date' => $webinar->end_date,
+                    'course_taken_end_date' => $webinar->course_taken_end_date,
                     'image_url' => $this->absoluteUrl($webinar->image),
                     'set_as_replay' => (bool) $webinar->set_as_replay,
                 ];
