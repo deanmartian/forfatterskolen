@@ -1322,6 +1322,23 @@ Authorization: Bearer <access_token>
 - **401** `unauthorized`
 - **404** `not_found`
 
+## GET /learner/shop-manuscripts/{id}/download/synopsis
+
+Downloads only the synopsis file for a shop manuscript.
+
+**Request**
+```http
+GET /api/v1/learner/shop-manuscripts/55/download/synopsis
+Authorization: Bearer <access_token>
+```
+
+**Response**
+- **200** file download
+
+**Errors**
+- **401** `unauthorized`
+- **404** `not_found`
+
 ## GET /learner/shop-manuscripts/{id}/download/{type}
 
 Downloads a manuscript or synopsis file for a shop manuscript.

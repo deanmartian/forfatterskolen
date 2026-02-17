@@ -150,6 +150,11 @@ class ShopManuscriptController extends ApiController
         return response()->download($absolutePath, $newName);
     }
 
+    public function downloadSynopsis(Request $request, $id): JsonResponse|BinaryFileResponse
+    {
+        return $this->download($request, $id, 'synopsis');
+    }
+
     public function downloadFeedback(Request $request, $id, $feedbackId): JsonResponse|BinaryFileResponse
     {
         $user = $this->apiUser($request);
