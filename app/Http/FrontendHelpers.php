@@ -1275,6 +1275,51 @@ class FrontendHelpers
         }
     }
 
+    public static function sveaOrderDetailsTest($svea_order_id)
+    {
+        $checkoutMerchantId = config('services.svea.checkoutid_test');
+        $checkoutSecret = config('services.svea.checkout_secret_test');
+
+        // set endpoint url. Eg. test or prod
+        $baseUrl = \Svea\Checkout\Transport\Connector::TEST_ADMIN_BASE_URL;
+
+        $connector = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
+
+        try {
+            /**
+             * Create Connector object
+             *
+             * Exception \Svea\Checkout\Exception\SveaConnectorException will be returned if
+             * some of fields $merchantId, $sharedSecret and $baseUrl is missing
+             *
+             *
+             * Deliver Order
+             *
+             * Possible Exceptions are:
+             * \Svea\Checkout\Exception\SveaInputValidationException
+             * \Svea\Checkout\Exception\SveaApiException
+             * \Exception - for any other error
+             */
+            $conn = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
+            $checkoutClient = new \Svea\Checkout\CheckoutAdminClient($conn);
+            $data = [
+                'orderId' => (int) $svea_order_id,
+            ];
+
+            $response = $checkoutClient->getOrder($data);
+
+            return $response;
+        } catch (\Svea\Checkout\Exception\SveaApiException $ex) {
+            return response()->json($ex->getMessage(), 400);
+        } catch (\Svea\Checkout\Exception\SveaConnectorException $ex) {
+            return response()->json($ex->getMessage(), 400);
+        } catch (\Svea\Checkout\Exception\SveaInputValidationException $ex) {
+            return response()->json($ex->getMessage(), 400);
+        } catch (\Exception $ex) {
+            return response()->json($ex->getMessage(), 400);
+        }
+    }
+
     public static function extractTextFromDocx($filePath)
     {
         $text = '';
