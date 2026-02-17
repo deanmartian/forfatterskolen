@@ -12,6 +12,7 @@ use App\WebinarRegistrant;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -169,6 +170,120 @@ class WebinarController extends ApiController
             'data' => [
                 'upcoming' => $upcoming,
                 'replays' => $replays,
+            ],
+        ]);
+    }
+
+    public function learnerCourseWebinar(Request $request): JsonResponse
+    {
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        if ($user->isDisabled) {
+            return response()->json([
+                'data' => [
+                    'is_replay_search' => false,
+                    'webinars' => [],
+                    'lesson_contents' => [],
+                ],
+                'meta' => [
+                    'webinars' => $this->paginationMeta(null),
+                    'lesson_contents' => $this->paginationMeta(null),
+                ],
+            ]);
+        }
+
+        $perPage = 8;
+        $upcomingSearch = trim((string) $request->query('search_upcoming', ''));
+        $replaySearch = trim((string) $request->query('search_replay', ''));
+
+        $webinarQuery = DB::table('courses_taken')
+            ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
+            ->join('courses', 'packages.course_id', '=', 'courses.id')
+            ->join('webinars', 'courses.id', '=', 'webinars.course_id')
+            ->select(
+                'webinars.*',
+                'courses_taken.id as courses_taken_id',
+                'courses.title as course_title',
+                'courses_taken.end_date as course_taken_end_date',
+                DB::raw('TIMESTAMPDIFF(HOUR, NOW(), webinars.start_date) as diffWithHours')
+            )
+            ->where('courses_taken.user_id', $user->id)
+            ->where('courses.id', '!=', 17)
+            ->whereNull('courses_taken.deleted_at');
+
+        if ($upcomingSearch !== '') {
+            $webinarQuery->whereNotIn('webinars.id', self::REPLAY_WEBINAR_IDS)
+                ->where('webinars.start_date', '>=', Carbon::today())
+                ->where('webinars.title', 'like', '%'.$upcomingSearch.'%')
+                ->where('set_as_replay', 0);
+        } else {
+            $webinarQuery->where(function ($query) {
+                $query->where(function ($subQuery) {
+                    $subQuery->whereIn('webinars.id', self::REPLAY_WEBINAR_IDS)
+                        ->orWhere('set_as_replay', 1);
+                })->orWhere(function ($subQuery) {
+                    $subQuery->whereNotIn('webinars.id', self::REPLAY_WEBINAR_IDS)
+                        ->where('set_as_replay', 0);
+                });
+            });
+        }
+
+        $webinars = $webinarQuery
+            ->orderBy('courses.type', 'asc')
+            ->orderBy('webinars.set_as_replay', 'desc')
+            ->orderBy('webinars.start_date', 'asc')
+            ->having('diffWithHours', '>=', 0)
+            ->paginate($perPage)
+            ->appends($request->query())
+            ->through(function ($webinar): array {
+                return [
+                    'id' => $webinar->id,
+                    'courses_taken_id' => $webinar->courses_taken_id,
+                    'course_id' => $webinar->course_id,
+                    'course_title' => $webinar->course_title,
+                    'title' => $webinar->title,
+                    'description' => $webinar->description,
+                    'host' => $webinar->host,
+                    'start_date' => $webinar->start_date,
+                    'course_taken_end_date' => $webinar->course_taken_end_date,
+                    'image_url' => $this->absoluteUrl($webinar->image),
+                    'set_as_replay' => (bool) $webinar->set_as_replay,
+                ];
+            });
+
+        $lessonContents = null;
+
+        if ($replaySearch !== '') {
+            $lessonContents = LessonContent::query()
+                ->where('title', 'like', '%'.$replaySearch.'%')
+                ->latest('date')
+                ->paginate($perPage)
+                ->appends($request->query())
+                ->through(function (LessonContent $content): array {
+                    return [
+                        'id' => $content->id,
+                        'lesson_id' => $content->lesson_id,
+                        'title' => $content->title,
+                        'description' => $content->description,
+                        'date' => $content->getRawOriginal('date'),
+                        'content' => $content->lesson_content,
+                    ];
+                });
+        }
+
+        return response()->json([
+            'data' => [
+                'is_replay_search' => $replaySearch !== '',
+                'webinars' => $webinars->items(),
+                'lesson_contents' => $lessonContents ? $lessonContents->items() : [],
+            ],
+            'meta' => [
+                'webinars' => $this->paginationMeta($webinars),
+                'lesson_contents' => $this->paginationMeta($lessonContents),
             ],
         ]);
     }
@@ -443,5 +558,24 @@ class WebinarController extends ApiController
         }
 
         return Carbon::parse($webinar->start_date)->lessThanOrEqualTo(Carbon::parse($endDate));
+    }
+
+    private function paginationMeta(?LengthAwarePaginator $paginator): array
+    {
+        if (! $paginator) {
+            return [
+                'current_page' => 1,
+                'last_page' => 1,
+                'per_page' => 0,
+                'total' => 0,
+            ];
+        }
+
+        return [
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+            'per_page' => $paginator->perPage(),
+            'total' => $paginator->total(),
+        ];
     }
 }

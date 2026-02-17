@@ -108,6 +108,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/assignments/submissions/{id}/download', [AssignmentController::class, 'downloadSubmission']);
         Route::get('/assignments/feedback/{id}/download', [AssignmentController::class, 'downloadFeedback']);
         Route::get('/webinars', [WebinarController::class, 'index']);
+        Route::match(['get', 'post'], '/learner/course-webinar', [WebinarController::class, 'learnerCourseWebinar']);
         Route::get('/webinars/{id}', [WebinarController::class, 'show']);
         Route::get('/webinars/{id}/join', [WebinarController::class, 'join']);
         Route::post('/webinars/{id}/register', [WebinarController::class, 'register']);
