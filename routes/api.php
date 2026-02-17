@@ -113,6 +113,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::post('/webinars/{id}/register', [WebinarController::class, 'register']);
         Route::get('/learner/shop-manuscripts', [ShopManuscriptController::class, 'index']);
         Route::get('/learner/shop-manuscripts/{id}', [ShopManuscriptController::class, 'show']);
+        Route::get('/learner/shop-manuscripts/{id}/download/synopsis', [ShopManuscriptController::class, 'downloadSynopsis']);
         Route::get('/learner/shop-manuscripts/{id}/download/{type}', [ShopManuscriptController::class, 'download']);
         Route::get('/learner/shop-manuscripts/{id}/feedback/{feedbackId}/download', [ShopManuscriptController::class, 'downloadFeedback']);
         Route::post('/learner/shop-manuscripts/{id}/comments', [ShopManuscriptController::class, 'postComment']);
