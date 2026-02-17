@@ -911,6 +911,78 @@ Authorization: Bearer <access_token>
 - **401** `unauthorized`
 - **403** `forbidden`
 
+## GET|POST /learner/course-webinar
+
+API equivalent of the legacy `learner.course-webinar` web route.
+
+Supports the same search inputs used by the Blade page:
+- `search_upcoming`: filters upcoming webinars by webinar title.
+- `search_replay`: filters replay lesson content by title.
+
+When `search_replay` is not provided, `lesson_contents` is returned as an empty list.
+
+**Request**
+```http
+GET /api/v1/learner/course-webinar?search_upcoming=skriv
+Authorization: Bearer <access_token>
+```
+
+```http
+POST /api/v1/learner/course-webinar?search_replay=plot
+Authorization: Bearer <access_token>
+```
+
+**Response (200)**
+```json
+{
+  "data": {
+    "is_replay_search": true,
+    "webinars": [
+      {
+        "id": 123,
+        "courses_taken_id": 77,
+        "course_id": 3,
+        "course_title": "Romanforfatterstudiet",
+        "title": "Webinar title",
+        "description": "Details",
+        "host": "Host name",
+        "start_date": "2024-05-10 18:00:00",
+        "end_date": "2024-05-10 20:00:00",
+        "image_url": "https://www.forfatterskolen.no/uploads/webinar.png",
+        "set_as_replay": false
+      }
+    ],
+    "lesson_contents": [
+      {
+        "id": 456,
+        "lesson_id": 12,
+        "title": "Replay title",
+        "description": "Replay details",
+        "date": "2024-04-01 12:00:00",
+        "content": "<iframe ...></iframe>"
+      }
+    ]
+  },
+  "meta": {
+    "webinars": {
+      "current_page": 1,
+      "last_page": 4,
+      "per_page": 8,
+      "total": 30
+    },
+    "lesson_contents": {
+      "current_page": 1,
+      "last_page": 2,
+      "per_page": 8,
+      "total": 10
+    }
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+
 ## GET /courses/{id}/webinars
 
 Returns the webinars for a specific course the learner has access to.
