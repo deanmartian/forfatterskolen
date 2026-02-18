@@ -25,7 +25,10 @@ class MultipleEmailConfirmation extends Mailable
 
     public function build()
     {
-        return $this->from('postmail@forfatterskolen.no', 'Forfatterskolen')
+        $fromAddress = config('mail.from.address', 'support@forfatterskolen.no');
+        $fromName = config('mail.from.name', 'Forfatterskolen');
+
+        return $this->from($fromAddress, $fromName)
             ->subject('Email Confirmation')
             ->view('emails.email_confirmation');
     }

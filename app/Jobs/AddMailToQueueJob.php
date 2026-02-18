@@ -9,10 +9,15 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
 class AddMailToQueueJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public $tries = 3;
+
+    public $backoff = [60, 300];
 
     private $recipient;
 
@@ -43,8 +48,8 @@ class AddMailToQueueJob implements ShouldQueue
         $this->recipient = $recipient;
         $this->email_subject = $subject;
         $this->email_message = $message;
-        $this->from_email = $from_email ?: 'postmail@forfatterskolen.no';
-        $this->from_name = $from_name ?: 'Forfatterskolen';
+        $this->from_email = $from_email ?: config('mail.from.address', 'support@forfatterskolen.no');
+        $this->from_name = $from_name ?: config('mail.from.name', 'Forfatterskolen');
         $this->attach_file = $attachment;
         $this->parent = $parent;
         $this->parent_id = $parent_id;
@@ -56,13 +61,25 @@ class AddMailToQueueJob implements ShouldQueue
      */
     public function handle(SaleService $saleService): void
     {
-
-        $track_code = md5(rand());
+        $track_code = Str::random(32);
         \Mail::send(new AddMailToQueueMail($this->recipient, $this->email_subject, $this->email_message, $this->from_email,
             $this->from_name, $this->attach_file, $track_code, $this->email_view));
 
         $saleService->createEmailHistory($this->email_subject, $this->from_email, $this->email_message, $this->parent,
             $this->parent_id, $this->recipient, $track_code);
+    }
 
+    /**
+     * Handle a job failure.
+     */
+    public function failed(\Throwable $exception): void
+    {
+        \Log::error('AddMailToQueueJob failed', [
+            'recipient' => $this->recipient,
+            'subject' => $this->email_subject,
+            'parent' => $this->parent,
+            'parent_id' => $this->parent_id,
+            'error' => $exception->getMessage(),
+        ]);
     }
 }

@@ -37,7 +37,10 @@ class DiscussionEmail extends Mailable
 
     public function build()
     {
-        return $this->from('postmail@forfatterskolen.no', 'Forfatterskolen')
+        $fromAddress = config('mail.from.address', 'support@forfatterskolen.no');
+        $fromName = config('mail.from.name', 'Forfatterskolen');
+
+        return $this->from($fromAddress, $fromName)
             ->subject('Discussion')
             ->view('emails.discussion_new');
     }

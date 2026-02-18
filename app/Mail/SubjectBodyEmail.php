@@ -31,7 +31,7 @@ class SubjectBodyEmail extends Mailable
         $this->email_message = $email_data['email_message'];
         $this->email_subject = $email_data['email_subject'];
         $this->from_name = $email_data['from_name'] ?: config('mail.from.name', 'Forfatterskolen');
-        $this->from_email = $email_data['from_email'] ?: config('mail.from.address', 'postmail@forfatterskolen.no');
+        $this->from_email = $email_data['from_email'] ?: config('mail.from.address', 'support@forfatterskolen.no');
         $this->attach_file = $email_data['attach_file'] ?: null;
         $this->email_view = isset($email_data['view']) ? $email_data['view'] : 'emails.subject_body';
         $this->text_view = isset($email_data['text_view']) ? $email_data['text_view'] : 'emails.subject_body_plain';
