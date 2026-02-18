@@ -29,12 +29,14 @@ class VippsController extends ApiController
         $tokenResponse = $vippsRepository->getAccessToken();
         Log::info(json_encode($tokenResponse));
         if ($tokenResponse instanceof \App\Helpers\ApiException) {
+            return redirect()->to(rtrim(config('api.lovable_url') .'/vipps/fallback?t=' . $orderReference, '/'));
             return $this->errorResponse('Unable to read Vipps payment status.', 'provider_error', 502);
         }
 
         $vippsOrder = $vippsRepository->getPaymentDetails($orderReference, $tokenResponse['data']->access_token);
 
         if ($vippsOrder instanceof \App\Helpers\ApiException) {
+            return redirect()->to(rtrim(config('api.lovable_url') .'/vipps/fallback?t=' . $orderReference, '/'));
             return $this->errorResponse('Unable to read Vipps payment status.', 'provider_error', 502);
         }
 
