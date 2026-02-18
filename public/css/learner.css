@@ -1932,3 +1932,103 @@ body:not(.modal-open) {
         margin-right: 0;
     }
 }
+
+/* ===================== Forum Styles ===================== */
+
+.forum-category-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.forum-category-pills .btn {
+    border-radius: 20px;
+    font-size: 13px;
+    padding: 4px 14px;
+}
+
+.forum-table th {
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #888;
+    border-top: none;
+}
+
+.forum-thread-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.forum-thread-link {
+    font-weight: 600;
+    color: #333;
+    font-size: 15px;
+}
+
+.forum-thread-link:hover {
+    color: #E73946;
+    text-decoration: none;
+}
+
+.forum-thread-meta {
+    width: 100%;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.forum-post {
+    display: flex;
+    gap: 20px;
+}
+
+.forum-post-avatar {
+    flex-shrink: 0;
+    width: 60px;
+    text-align: center;
+}
+
+.avatar-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #E73946;
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.forum-post-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.forum-post-body {
+    margin-bottom: 8px;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+
+@media only screen and (max-width: 768px) {
+    .forum-post {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .forum-post-avatar {
+        width: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .forum-table th:nth-child(3),
+    .forum-table td:nth-child(3) {
+        display: none;
+    }
+}

@@ -496,7 +496,18 @@ Route::domain($front)->group(function () {
         Route::get('course-certificate/{id}/download', [Frontend\LearnerController::class, 'downloadCourseCertificate'])->name('learner.download-course-certificate');
         Route::get('/other-service/{id}/download/{type}', [Frontend\LearnerController::class, 'downloadOtherServiceDoc'])->name('learner.other-service.download-doc'); // Download assignment feedback
         Route::get('/other-service/download-feedback/{id}', [Frontend\LearnerController::class, 'downloadOtherServiceFeedback'])->name('learner.other-service.download-feedback');
-        Route::get('/forum', [Frontend\LearnerController::class, 'forum'])->name('learner.forum');
+        // Forum
+        Route::get('/forum', [Frontend\ForumController::class, 'index'])->name('learner.forum.index');
+        Route::get('/forum/category/{id}', [Frontend\ForumController::class, 'category'])->name('learner.forum.category');
+        Route::get('/forum/thread/create', [Frontend\ForumController::class, 'createThread'])->name('learner.forum.thread.create');
+        Route::post('/forum/thread', [Frontend\ForumController::class, 'storeThread'])->name('learner.forum.thread.store');
+        Route::get('/forum/thread/{id}', [Frontend\ForumController::class, 'showThread'])->name('learner.forum.thread');
+        Route::get('/forum/thread/{id}/edit', [Frontend\ForumController::class, 'editThread'])->name('learner.forum.thread.edit');
+        Route::put('/forum/thread/{id}', [Frontend\ForumController::class, 'updateThread'])->name('learner.forum.thread.update');
+        Route::delete('/forum/thread/{id}', [Frontend\ForumController::class, 'deleteThread'])->name('learner.forum.thread.delete');
+        Route::post('/forum/thread/{threadId}/post', [Frontend\ForumController::class, 'storePost'])->name('learner.forum.post.store');
+        Route::put('/forum/post/{id}', [Frontend\ForumController::class, 'editPost'])->name('learner.forum.post.update');
+        Route::delete('/forum/post/{id}', [Frontend\ForumController::class, 'deletePost'])->name('learner.forum.post.delete');
         Route::post('/webinar-auto-register-update', [Frontend\LearnerController::class, 'autoRegisterCourseWebinar']);
 
         Route::post('/profile', [Frontend\LearnerController::class, 'profileUpdate'])->name('learner.profile.update'); // Profile Update

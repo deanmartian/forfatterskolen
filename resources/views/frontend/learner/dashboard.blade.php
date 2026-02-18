@@ -225,16 +225,16 @@
                     <div class="global-card">
                         <div class="card-header">
                             <h2>
-                                {{ trans('site.login-to') }}:
+                                Forum
                             </h2>
                         </div>
                         <div class="card-body pb-0">
-                            <a href="https://www.facebook.com/groups/272814062884940" class="btn site-btn-global w-100">
-                                <b>{{ trans('site.forum') }}</b>
-                                <i class="fa fa-key"></i>
+                            <a href="{{ route('learner.forum.index') }}" class="btn site-btn-global w-100">
+                                <b>Forum</b>
+                                <i class="fa fa-comments"></i>
                             </a>
                         </div>
-                    </div> <!-- end login card -->
+                    </div> <!-- end forum card -->
 
                     <div class="card global-card mt-4">
                         <div class="card-header">

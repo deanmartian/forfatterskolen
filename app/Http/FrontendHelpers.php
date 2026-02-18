@@ -354,6 +354,12 @@ class FrontendHelpers
                 'is_active' => GlobalRequest::is('account/document-converter*'),
             ], */
             [
+                'route_name' => 'learner.forum.index',
+                'fa-icon' => 'fa fa-comments',
+                'label' => 'Forum',
+                'is_active' => GlobalRequest::is('account/forum*'),
+            ],
+            [
                 'route_name' => 'learner.invoice',
                 'fa-icon' => 'fa fa-file-invoice',
                 'label' => trans('site.learner.nav.invoice'),
