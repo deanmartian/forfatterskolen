@@ -173,30 +173,18 @@
                         <input type="hidden" name="type">
 
                         <div class="form-group epub-container">
-                            @include('frontend.learner.self-publishing.partials._file-upload', [
-                                'uploadName'  => 'epub',
-                                'acceptTypes' => '.epub,.pdf',
-                                'maxMb'       => 50,
-                                'label'       => trans('site.epub'),
-                            ])
+                            <label>{{ trans_choice('site.files', 1) }}</label>
+                            <input type="file" class="form-control" name="epub">
                         </div>
 
                         <div class="form-group mobi-container">
-                            @include('frontend.learner.self-publishing.partials._file-upload', [
-                                'uploadName'  => 'mobi',
-                                'acceptTypes' => '.epub,.pdf',
-                                'maxMb'       => 50,
-                                'label'       => trans('site.mobi'),
-                            ])
+                            <label>{{ trans_choice('site.files', 1) }}</label>
+                            <input type="file" class="form-control" name="mobi">
                         </div>
 
                         <div class="form-group cover-container">
-                            @include('frontend.learner.self-publishing.partials._file-upload', [
-                                'uploadName'  => 'cover',
-                                'acceptTypes' => '.jpg,.jpeg,.png',
-                                'maxMb'       => 20,
-                                'label'       => trans('site.homepage.illustration-cover-design'),
-                            ])
+                            <label>{{ trans_choice('site.files', 1) }}</label>
+                            <input type="file" class="form-control" name="cover">
                         </div>
 
                         <button type="submit" class="btn btn-success pull-right margin-top">
