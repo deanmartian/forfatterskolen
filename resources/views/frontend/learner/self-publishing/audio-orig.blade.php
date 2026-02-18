@@ -126,21 +126,13 @@
                         <input type="hidden" name="type">
 
                         <div class="form-group files-container">
-                            @include('frontend.learner.self-publishing.partials._file-upload', [
-                                'uploadName'  => 'files',
-                                'acceptTypes' => '.mp3,.wav',
-                                'maxMb'       => 500,
-                                'label'       => trans_choice('site.files', 1),
-                            ])
+                            <label>{{ trans_choice('site.files',1) }}</label>
+                            <input type="file" class="form-control" name="files">
                         </div>
 
                         <div class="form-group cover-container">
-                            @include('frontend.learner.self-publishing.partials._file-upload', [
-                                'uploadName'  => 'cover',
-                                'acceptTypes' => '.jpg,.jpeg,.png',
-                                'maxMb'       => 20,
-                                'label'       => trans('site.homepage.illustration-cover-design'),
-                            ])
+                            <label>{{ trans('site.homepage.illustration-cover-design') }}</label>
+                            <input type="file" class="form-control" name="cover">
                         </div>
 
                         <button type="submit" class="btn btn-success pull-right margin-top">
