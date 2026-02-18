@@ -23,6 +23,19 @@ use App\Http\Controllers\Api\V1\ShopManuscriptController;
 use App\Http\Controllers\Api\V1\ShopManuscriptCheckoutController;
 use App\Http\Controllers\Api\V1\WebinarController;
 use App\Http\Controllers\Api\V1\VippsController;
+use App\Http\Controllers\Api\V1\WorkshopController as ApiWorkshopController;
+use App\Http\Controllers\Api\V1\WritingGroupController;
+use App\Http\Controllers\Api\V1\WordWrittenController;
+use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\PrivateGroupController;
+use App\Http\Controllers\Api\V1\PilotReaderController;
+use App\Http\Controllers\Api\V1\SelfPublishingController as ApiSelfPublishingController;
+use App\Http\Controllers\Api\V1\ProjectController as ApiProjectController;
+use App\Http\Controllers\Api\V1\SurveyController as ApiSurveyController;
+use App\Http\Controllers\Api\V1\BookSaleController;
+use App\Http\Controllers\Api\V1\UpgradeController;
+use App\Http\Controllers\Api\V1\MarketingController;
+use App\Http\Controllers\Api\V1\ProgressPlanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -65,6 +78,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::post('/free-manuscripts', [FreeManuscriptController::class, 'store']);
     Route::get('/publisher-books', [PublisherBookController::class, 'index']);
     Route::get('/shop-manuscripts/by-word-count', [ShopManuscriptController::class, 'byWordCount']);
+    Route::get('/workshops/for-sale', [ApiWorkshopController::class, 'forSale']);
     Route::get('/vipps/fallback', [VippsController::class, 'fallback'])
         ->name('api.v1.vipps.fallback');
 
@@ -125,6 +139,102 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::post('/learner/shop-manuscripts/{id}/checkout', [ShopManuscriptCheckoutController::class, 'store']);
         Route::get('/learner/shop-manuscripts/checkout/{orderId}', [ShopManuscriptCheckoutController::class, 'show']);
         Route::post('/learner/shop-manuscripts/checkout/{orderId}/cancel', [ShopManuscriptCheckoutController::class, 'cancel']);
+
+        // Workshops
+        Route::get('/workshops', [ApiWorkshopController::class, 'index']);
+        Route::get('/workshops/{id}', [ApiWorkshopController::class, 'show']);
+
+        // Writing Groups
+        Route::get('/writing-groups', [WritingGroupController::class, 'index']);
+        Route::get('/writing-groups/{id}', [WritingGroupController::class, 'show']);
+        Route::put('/writing-groups/{id}', [WritingGroupController::class, 'update']);
+
+        // Word Written
+        Route::get('/word-written', [WordWrittenController::class, 'index']);
+        Route::post('/word-written', [WordWrittenController::class, 'store']);
+        Route::get('/word-written/goals', [WordWrittenController::class, 'goals']);
+        Route::post('/word-written/goals', [WordWrittenController::class, 'storeGoal']);
+        Route::put('/word-written/goals/{id}', [WordWrittenController::class, 'updateGoal']);
+        Route::delete('/word-written/goals/{id}', [WordWrittenController::class, 'deleteGoal']);
+        Route::get('/word-written/goals/{id}/statistic', [WordWrittenController::class, 'goalStatistic']);
+
+        // Notifications
+        Route::get('/notifications', [NotificationController::class, 'index']);
+        Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+        Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+
+        // Private Groups
+        Route::get('/private-groups', [PrivateGroupController::class, 'index']);
+        Route::post('/private-groups', [PrivateGroupController::class, 'store']);
+        Route::get('/private-groups/{id}', [PrivateGroupController::class, 'show']);
+        Route::put('/private-groups/{id}', [PrivateGroupController::class, 'update']);
+        Route::get('/private-groups/{id}/discussions', [PrivateGroupController::class, 'discussions']);
+        Route::post('/private-groups/{id}/discussions', [PrivateGroupController::class, 'storeDiscussion']);
+        Route::get('/private-groups/{groupId}/discussions/{discussionId}', [PrivateGroupController::class, 'showDiscussion']);
+        Route::post('/private-groups/{groupId}/discussions/{discussionId}/replies', [PrivateGroupController::class, 'storeReply']);
+        Route::get('/private-groups/{id}/members', [PrivateGroupController::class, 'members']);
+        Route::get('/private-groups/{id}/books', [PrivateGroupController::class, 'books']);
+
+        // Pilot Reader (Book Author)
+        Route::get('/books', [PilotReaderController::class, 'books']);
+        Route::post('/books', [PilotReaderController::class, 'storeBook']);
+        Route::get('/books/{id}', [PilotReaderController::class, 'showBook']);
+        Route::put('/books/{id}', [PilotReaderController::class, 'updateBook']);
+        Route::delete('/books/{id}', [PilotReaderController::class, 'deleteBook']);
+        Route::get('/books/{bookId}/chapters', [PilotReaderController::class, 'chapters']);
+        Route::post('/books/{bookId}/chapters', [PilotReaderController::class, 'storeChapter']);
+        Route::get('/books/{bookId}/chapters/{chapterId}', [PilotReaderController::class, 'showChapter']);
+        Route::put('/books/{bookId}/chapters/{chapterId}', [PilotReaderController::class, 'updateChapter']);
+        Route::delete('/books/{bookId}/chapters/{chapterId}', [PilotReaderController::class, 'deleteChapter']);
+        Route::post('/books/{bookId}/chapters/sort', [PilotReaderController::class, 'sortChapters']);
+        Route::get('/books/{bookId}/readers', [PilotReaderController::class, 'readers']);
+        Route::get('/books/{bookId}/invitations', [PilotReaderController::class, 'invitations']);
+        Route::get('/chapters/{chapterId}/notes', [PilotReaderController::class, 'chapterNotes']);
+
+        // Self-Publishing
+        Route::get('/self-publishing', [ApiSelfPublishingController::class, 'index']);
+        Route::get('/self-publishing/{id}', [ApiSelfPublishingController::class, 'show']);
+        Route::get('/self-publishing/orders', [ApiSelfPublishingController::class, 'orders']);
+        Route::get('/self-publishing/feedback/{id}/download', [ApiSelfPublishingController::class, 'downloadFeedback']);
+
+        // Projects
+        Route::get('/projects', [ApiProjectController::class, 'index']);
+        Route::post('/projects', [ApiProjectController::class, 'store']);
+        Route::get('/projects/{id}', [ApiProjectController::class, 'show']);
+        Route::post('/projects/{id}/set-standard', [ApiProjectController::class, 'setStandard']);
+        Route::get('/projects/{id}/graphic-work', [ApiProjectController::class, 'graphicWork']);
+        Route::get('/projects/{id}/registration', [ApiProjectController::class, 'registration']);
+        Route::get('/projects/{id}/contracts', [ApiProjectController::class, 'contracts']);
+        Route::get('/projects/{id}/invoices', [ApiProjectController::class, 'invoices']);
+        Route::get('/projects/{id}/storage', [ApiProjectController::class, 'storage']);
+        Route::get('/projects/{id}/marketing', [ApiProjectController::class, 'marketing']);
+
+        // Surveys
+        Route::get('/surveys/{id}', [ApiSurveyController::class, 'show']);
+        Route::post('/surveys/{id}/submit', [ApiSurveyController::class, 'submit']);
+
+        // Book Sales
+        Route::get('/book-sales', [BookSaleController::class, 'index']);
+        Route::get('/book-sales/{id}', [BookSaleController::class, 'show']);
+        Route::post('/book-sales', [BookSaleController::class, 'store']);
+        Route::delete('/book-sales/{id}', [BookSaleController::class, 'destroy']);
+        Route::get('/book-sales/by-month/{year}', [BookSaleController::class, 'salesByMonth']);
+        Route::get('/book-sales/monthly-details/{year}/{month}', [BookSaleController::class, 'monthlyDetails']);
+
+        // Upgrades
+        Route::get('/upgrades', [UpgradeController::class, 'index']);
+        Route::get('/upgrades/course/{courseTakenId}/package/{packageId}', [UpgradeController::class, 'courseUpgradeDetails']);
+
+        // Marketing Plans
+        Route::get('/marketing-plans', [MarketingController::class, 'index']);
+        Route::get('/marketing-plans/{id}', [MarketingController::class, 'show']);
+        Route::post('/projects/{projectId}/marketing-plan/answer', [MarketingController::class, 'saveAnswer']);
+
+        // Progress Plan
+        Route::get('/progress-plan', [ProgressPlanController::class, 'index']);
+        Route::get('/progress-plan/{step}', [ProgressPlanController::class, 'show']);
+        Route::post('/progress-plan/manuscripts/upload', [ProgressPlanController::class, 'uploadManuscript']);
     });
 
     Route::post('/payments/vipps/shop-manuscripts/webhook', [ShopManuscriptCheckoutController::class, 'vippsWebhook']);
