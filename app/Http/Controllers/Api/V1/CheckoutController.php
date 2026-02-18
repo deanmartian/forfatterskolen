@@ -206,6 +206,7 @@ class CheckoutController extends ApiController
             'payment_plan_id' => ['required', 'integer', 'exists:payment_plans,id'],
             'coupon' => ['nullable', 'string'],
             'is_pay_later' => ['nullable', 'boolean'],
+            'fallbackUrl' => ['nullable', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -275,6 +276,7 @@ class CheckoutController extends ApiController
                 'amount' => $amount,
                 'orderId' => $orderId,
                 'transactionText' => $transactionText,
+                'fallbackUrl' => (string) $request->input('fallbackUrl', route('api.v1.vipps.fallback', ['t' => 'sm-'.$orderId])),
                 'is_ajax' => true,
                 'vipps_phone_number' => optional($user->address)->vipps_phone_number,
             ];
