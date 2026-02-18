@@ -113,15 +113,10 @@
                         <input type="hidden" name="id">
                         <input type="hidden" name="type" value="cover">
 
-                            {{-- Cover image upload via reusable partial --}}
-                            @include('frontend.partials._file-upload', [
-                                'uploadName'  => 'cover[]',
-                                'acceptTypes' => 'image/*',
-                                'maxMb'       => 20,
-                                'label'       => trans('site.homepage.illustration-cover-design'),
-                                'multiple'    => true,
-                                'required'    => false,
-                            ])
+                            <div class="form-group">
+                                <label>{{ trans('site.homepage.illustration-cover-design') }}</label>
+                                <input type="file" class="form-control" name="cover[]" accept="image/*" multiple>
+                            </div>
                             
                             <div class="form-group">
                                 <label>{{ trans('site.description') }}</label>
@@ -179,15 +174,7 @@
 
                             <div class="form-group">
                                 <label>{{ trans('site.backside-image-optional') }}</label>
-                                {{-- Backside image also uses the reusable partial --}}
-                                @include('frontend.partials._file-upload', [
-                                    'uploadName'  => 'backside_image[]',
-                                    'acceptTypes' => 'image/*',
-                                    'maxMb'       => 20,
-                                    'label'       => trans('site.backside-image-optional'),
-                                    'multiple'    => true,
-                                    'required'    => false,
-                                ])
+                                <input type="file" class="form-control" name="backside_image[]" accept="image/*" multiple>
                             </div>
 
                             <div class="form-group">
@@ -269,11 +256,13 @@
 
                     var formatExists = false;
 
+                    // Check if the format matches any predefined options
                     for (var i = 0; i < formatSelect.options.length; i++) {
                         if (formatSelect.options[i].value === record.format) {
                             formatSelect.value = record.format;
                             formatExists = true;
 
+                            // If it's a predefined format like '125x200', split it for width/height
                             var dimensions = record.format.split('x');
                             if (dimensions.length == 2) {
                                 widthInput.value = dimensions[0];
@@ -284,8 +273,9 @@
                     }
                     
                     if (!formatExists) {
-                        formatSelect.value = '';
+                        formatSelect.value = ''; // Select "other" option
 
+                        // Assuming `printData` contains custom width and height
                         if (record.format) {
                             var dimensions = record.format.split('x');
                             if (dimensions.length == 2) {
@@ -293,8 +283,9 @@
                                 heightInput.value = dimensions[1];
                             }
                         } else {
-                            widthInput.value = record.width || '';
-                            heightInput.value = record.height || '';
+                            // You can also fallback to width and height fields if needed
+                            widthInput.value = record.width || ''; // Use width from printData
+                            heightInput.value = record.height || ''; // Use height from printData
                         }
                     }
                 }
@@ -316,10 +307,12 @@
             var widthInput = document.getElementById('cover-width-input');
             var heightInput = document.getElementById('cover-height-input');
             
+            // If the selected value is "other", clear the width and height inputs
             if (selectedFormat !== "") {
+                // Split the selected format (e.g., '125x200' => ['125', '200'])
                 var dimensions = selectedFormat.split('x');
-                widthInput.value = dimensions[0];
-                heightInput.value = dimensions[1];
+                widthInput.value = dimensions[0];  // Set the width
+                heightInput.value = dimensions[1]; // Set the height
             } else {
                 widthInput.value = '';
                 heightInput.value = '';
