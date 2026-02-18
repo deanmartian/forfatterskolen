@@ -6,12 +6,15 @@ use App\Order;
 use App\Repositories\VippsRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class VippsController extends ApiController
 {
     public function fallback(Request $request, VippsRepository $vippsRepository)/* : JsonResponse */
     {
+        Log::info("------------- inside vipps fallback -------------");
         $orderReference = (string) $request->query('t', '');
+        Log::info(" order reference $orderReference");
 
         if ($orderReference === '') {
             return $this->errorResponse('Missing Vipps order reference.', 'validation_error', 422);
@@ -19,6 +22,9 @@ class VippsController extends ApiController
 
         $expOrder = explode('-', $orderReference);
         $order = isset($expOrder[1]) ? Order::find((int) $expOrder[1]) : null; // use 1 instead of 0 since ny.fs include sm-
+
+        Log::info(json_encode($expOrder));
+        Log::info(json_encode($order));
 
         $tokenResponse = $vippsRepository->getAccessToken();
 
