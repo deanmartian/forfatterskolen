@@ -1,10 +1,7 @@
-<div class="sp-card">
-    <div class="sp-card__header">
-        <h2>{{ trans('site.author-portal-menu.sales') }}</h2>
-    </div>
-    <div class="sp-card__body">
-        <div class="table-responsive">
-            <table class="sp-table dt-table">
+<div class="panel">
+    <div class="panel-body">
+        <div class="table-responsive" style="padding: 10px">
+            <table class="table dt-table">
                 <thead>
                     <tr>
                         <th>{{ trans('site.type') }}</th>
@@ -15,9 +12,15 @@
                 <tbody>
                     @foreach ($inventorySales as $sale)
                         <tr>
-                            <td>{{ $sale->inventory_type }}</td>
-                            <td>{{ $sale->quantity }}</td>
-                            <td>{{ $sale->date }}</td>
+                            <td>
+                                {{ $sale->inventory_type }}
+                            </td>
+                            <td>
+                                {{ $sale->quantity }}
+                            </td>
+                            <td>
+                                {{ $sale->date }}
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
