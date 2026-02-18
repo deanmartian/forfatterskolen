@@ -68,23 +68,17 @@
                     onsubmit="disableSubmit(this)" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     <input type="hidden" name="id">
-
                     <div class="form-group">
-                        @include('frontend.learner.self-publishing.partials._file-upload', [
-                            'uploadName'  => 'file[]',
-                            'acceptTypes' => '.pdf,.indd',
-                            'maxMb'       => 200,
-                            'label'       => trans('site.author-portal.interior'),
-                        ])
+                        <label>{{ trans('site.author-portal.interior') }}</label>
+                        <input type="file" name="file[]" class="form-control"
+                        accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        multiple>
                     </div>
 
                     <div class="form-group">
-                        @include('frontend.learner.self-publishing.partials._file-upload', [
-                            'uploadName'  => 'corporate_page',
-                            'acceptTypes' => '.pdf,.indd',
-                            'maxMb'       => 200,
-                            'label'       => trans('site.corporate-page'),
-                        ])
+                        <label>{{ trans('site.corporate-page') }}</label>
+                        <input type="file" name="corporate_page" class="form-control"
+                        accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                     </div>
 
                     <div class="form-group">
@@ -112,12 +106,9 @@
                     </div>
 
                     <div class="form-group format-image-container hide">
-                        @include('frontend.learner.self-publishing.partials._file-upload', [
-                            'uploadName'  => 'format_image',
-                            'acceptTypes' => '.jpg,.jpeg,.png,.gif',
-                            'maxMb'       => 20,
-                            'label'       => trans('site.format-image'),
-                        ])
+                        <label>{{ trans('site.format-image') }}</label>
+                        <input type="file" name="format_image" class="form-control"
+                        accept="image/*">
                     </div>
 
                     <div class="form-group">
