@@ -27,7 +27,7 @@ class VippsController extends ApiController
         Log::info(json_encode($order));
 
         $tokenResponse = $vippsRepository->getAccessToken();
-
+        Log::info(json_encode($tokenResponse));
         if ($tokenResponse instanceof \App\Helpers\ApiException) {
             return $this->errorResponse('Unable to read Vipps payment status.', 'provider_error', 502);
         }
