@@ -6,277 +6,463 @@
 
 @section('styles')
 <style>
-    body {
-        background-color: #f8f9fa;
-    }
-    .timeline {
-        position: relative;
-        max-width: 800px;
-        margin: 50px auto;
-    }
-    /* Gray timeline line */
-    .timeline::after {
-        content: "";
-        position: absolute;
-        width: 4px;
-        background-color: #6c757d; /* Gray color */
-        top: 0;
-        bottom: 0;
-        left: 50%;
-        margin-left: -2px;
-    }
-    /* Timeline item styling */
-    .timeline-item {
-        padding: 20px;
-        position: relative;
-        background: white;
-        border-radius: 6px;
-        width: 45%;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    .timeline-item::after {
-        content: '';
-        position: absolute;
-        width: 20px;
-        height: 28px;
-        right: -13px;
-        background-color: #939597;
-        border: 5px solid #F5DF4D;
-        top: 15px;
-        z-index: 1;
-    }
-    .timeline-item:nth-child(odd) {
-        left: 0;
-        text-align: right;
-    }
-    .timeline-item:nth-child(even) {
-        left: 55%;
-    }
-    /* Half-circle markers */
-    /* .timeline-item::before {
-        content: "";
-        position: absolute;
-        width: 15px;
-        height: 15px;
-        background: #f1c40f;
-        border-radius: 50%;
-        top: 30px;
-        margin-left: -7px;
-        z-index: 1;
-    }
-    .timeline-item:nth-child(odd)::before {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        right: -38px;
-    } */
-    .timeline-item:nth-child(odd)::after {
-        border-top-left-radius: 12px;
-        border-bottom-left-radius: 12px;
-        border-right: none;
-        right: -38px;
-    }
-    /* .timeline-item:nth-child(even)::before {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        left: -31px;
-    } */
-    .timeline-item:nth-child(even)::after {
-        border-top-right-radius: 12px;
-        border-bottom-right-radius: 12px;
-        border-left: none;
-        left: -38px;
-    }
-    /* Header and date styles */
-    .timeline-header {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-    .timeline-date {
-        font-size: 14px;
-        color: #666;
-    }
-    /* Sub-steps styling */
-    .sub-steps {
-        padding: 0;
-        list-style: none;
-        margin-top: 10px;
-        text-align: left;
-    }
-    .sub-steps li {
-        font-size: 14px;
-        color: #666;
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap');
+    :root {
+        --brand: #7B1A1A;
+        --brand-light: #9B2525;
+        --gold: #B8973A;
+        --gold-light: #D4AF5A;
+        --bg: #F8F6F2;
+        --surface: #FFFFFF;
+        --border: #E8E2D8;
+        --text: #1A1410;
+        --muted: #7A6F63;
+        --finished: #2E7D52;
+        --started: #B8973A;
+        --not-started: #9A8E83;
+        --not-planned: #C8BFB5;
     }
 
-    .sub-steps li::before {
-        content: '➡';
-        margin-right: 12px;
+    .card-global.progress-plan-card {
+        background: var(--bg);
+        border: none;
+        box-shadow: none;
+    }
+
+    .progress-plan-card .card-header {
+        background: transparent;
+        border-bottom: none;
+        font-family: 'Playfair Display', serif;
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: var(--text);
+        padding: 18px 6px 6px;
+    }
+
+    .progress-plan-card .card-body {
+        padding: 8px 6px 22px;
+    }
+
+    .progress-plan-subtitle {
+        color: var(--muted);
+        font-size: 13.5px;
+        margin-bottom: 28px;
+    }
+
+    .summary-bar {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 44px;
+        padding: 20px 24px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+    }
+
+    .summary-stat {
+        flex: 1;
+        text-align: center;
+    }
+
+    .summary-stat .val {
+        font-size: 26px;
+        font-family: 'Playfair Display', serif;
+        font-weight: 600;
+        line-height: 1.1;
+    }
+
+    .summary-stat .lbl {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 3px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .summary-stat.green .val {
+        color: var(--finished);
+    }
+
+    .summary-stat.gold .val {
+        color: var(--gold);
+    }
+
+    .summary-stat.gray .val {
+        color: var(--not-started);
+    }
+
+    .summary-stat.brand .val {
+        color: var(--brand);
+    }
+
+    .divider {
+        width: 1px;
+        background: var(--border);
+    }
+
+    .progress-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 40px;
+    }
+
+    .progress-track {
+        flex: 1;
+        background: var(--border);
+        border-radius: 99px;
+        height: 6px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--brand) 0%, var(--gold-light) 100%);
+        border-radius: 99px;
+        transition: width .8s ease;
+    }
+
+    .progress-percent {
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+        font-weight: 500;
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 56px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 18px;
+        top: 8px;
+        bottom: 8px;
+        width: 2px;
+        background: linear-gradient(180deg, var(--brand) 0%, var(--border) 100%);
+    }
+
+    .tl-item {
+        position: relative;
+        margin-bottom: 12px;
+    }
+
+    .tl-dot {
+        position: absolute;
+        left: -46px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid var(--border);
+        background: var(--surface);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--muted);
+        z-index: 2;
+    }
+
+    .tl-dot.finished {
+        background: var(--finished);
+        border-color: var(--finished);
+        color: #fff;
+    }
+
+    .tl-dot.started {
+        background: var(--gold);
+        border-color: var(--gold);
+        color: #fff;
+    }
+
+    .tl-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        transition: box-shadow .2s, transform .2s;
+        text-decoration: none;
+    }
+
+    .tl-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, .07);
+        transform: translateX(3px);
+        text-decoration: none;
+    }
+
+    .tl-card.highlight-brand {
+        border-left: 3px solid var(--brand);
+    }
+
+    .tl-card.highlight-gold {
+        border-left: 3px solid var(--gold);
+    }
+
+    .tl-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .tl-step-num {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--not-started);
+        letter-spacing: 0.06em;
+        min-width: 28px;
+    }
+
+    .tl-name {
+        font-size: 14.5px;
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    .tl-right {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .tl-date {
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+        text-align: left;
+    }
+
+    .tl-date span {
+        display: block;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--not-planned);
+        margin-bottom: 2px;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 99px;
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+    }
+
+    .badge::before {
+        content: '';
+        display: block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+
+    .badge.finished {
+        background: #EDF7F2;
+        color: var(--finished);
+    }
+
+    .badge.finished::before {
+        background: var(--finished);
+    }
+
+    .badge.started {
+        background: #FDF8EC;
+        color: #8A6B20;
+    }
+
+    .badge.started::before {
+        background: var(--gold);
+    }
+
+    .badge.not-started {
+        background: #F4F2EF;
+        color: var(--not-started);
+    }
+
+    .badge.not-started::before {
+        background: var(--not-started);
+    }
+
+    .badge.not-planned {
+        background: #F4F2EF;
+        color: var(--not-planned);
+    }
+
+    .badge.not-planned::before {
+        background: var(--not-planned);
+    }
+
+    @media (max-width: 991px) {
+        .summary-stat .val,
+        .tl-name,
+        .tl-date,
+        .badge,
+        .progress-percent,
+        .tl-step-num {
+            font-size: revert;
+        }
+
+        .tl-date span {
+            font-size: 10px;
+        }
+
+        .tl-right {
+            gap: 10px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .summary-bar {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .divider {
+            display: none;
+        }
+
+        .timeline {
+            padding-left: 44px;
+        }
+
+        .tl-dot {
+            left: -40px;
+            width: 28px;
+            height: 28px;
+            font-size: 11px;
+        }
+
+        .tl-card {
+            padding: 14px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .tl-right {
+            width: 100%;
+            justify-content: space-between;
+        }
     }
 </style>
 @stop
 
 @section('content')
+    @php
+        $total = count($steps);
+
+        $normalizeStatus = function ($statusText) {
+            $status = strtolower(trim((string) $statusText));
+
+            if (in_array($status, ['finished', 'fullført'])) {
+                return 'finished';
+            }
+
+            if (in_array($status, ['started', 'pågår', 'paagar'])) {
+                return 'started';
+            }
+
+            if (in_array($status, ['not started', 'ikke startet'])) {
+                return 'not-started';
+            }
+
+            return 'not-planned';
+        };
+
+        $finishedCount = collect($steps)->filter(fn ($step) => $normalizeStatus($step['status_text']) === 'finished')->count();
+        $startedCount = collect($steps)->filter(fn ($step) => $normalizeStatus($step['status_text']) === 'started')->count();
+        $notStartedCount = collect($steps)->filter(fn ($step) => $normalizeStatus($step['status_text']) === 'not-started')->count();
+
+        $progressPercentage = $total > 0 ? (int) round(($finishedCount / $total) * 100) : 0;
+
+        $statusLabelMap = [
+            'finished' => 'Fullført',
+            'started' => 'Pågår',
+            'not-started' => 'Ikke startet',
+            'not-planned' => 'Ikke planlagt',
+        ];
+    @endphp
+
     <div class="learner-container">
         <div class="container">
-            <div class="card card-global">
+            <div class="card card-global progress-plan-card">
                 <div class="card-header">
                     Prosjektfremdrift
                 </div>
                 <div class="card-body">
-                    {{-- <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr class="info">
-                                <th>Steg</th>
-                                <th>Oppgave</th>
-                                <th>Status</th>
-                                <th>Forventet dato</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Ferdig manuskript</td>
-                                <td class="status-pending">Ikke påbegynt</td>
-                                <td>
-                                    {{ now() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Redaktør & korrektur</td>
-                                <td class="status-pending">Ikke påbegynt</td>
-                                <td>
-                                    {{ now() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Bokdesign & layout</td>
-                                <td class="status-pending">Ikke påbegynt</td>
-                                <td>
-                                    {{ now() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>ISBN & metadata</td>
-                                <td class="status-pending">Ikke påbegynt</td>
-                                <td>
-                                    {{ now() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>Publisering</td>
-                                <td class="status-pending">Ikke påbegynt</td>
-                                <td>
-                                    {{ now() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td>Markedsføring</td>
-                                <td class="status-pending">Ikke påbegynt</td>
-                                <td>
-                                    {{ now() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td>Oppfølging & salg</td>
-                                <td class="status-pending">Ikke påbegynt</td>
-                                <td>
-                                    {{ now() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td>Publisering (sende til trykk)</td>
-                                <td class="status-pending">Ikke påbegynt</td>
-                                <td>
-                                    {{ now() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>9</td>
-                                <td>Utsending av bøker når de har kommet inn på lager</td>
-                                <td class="status-pending">Ikke påbegynt</td>
-                                <td>
-                                    {{ now() }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>10</td>
-                                <td>Markedføring</td>
-                                <td class="status-pending">Ikke påbegynt</td>
-                                <td>
-                                    {{ now() }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table> --}}
-                    {{-- <div class="timeline">
-                        @php
-                            $steps = [
-                                ['title' => 'Ferdig manuskript', 'sub' => ['Skrive utkast', 'Gjennomgå innhold'], 'date' => now()->addDays(5)],
-                                ['title' => 'Redaktør & korrektur', 'sub' => ['Første redigering', 'Andre gjennomgang'], 'date' => now()->addDays(15)],
-                                ['title' => 'Bokdesign & layout', 'sub' => ['Velge font', 'Sette opp layout'], 'date' => now()->addDays(25)],
-                                ['title' => 'ISBN & metadata', 'sub' => ['Registrere ISBN', 'Legge inn metadata'], 'date' => now()->addDays(35)],
-                                ['title' => 'Publisering', 'sub' => ['Trykke boken', 'Godkjenne prøvetrykk'], 'date' => now()->addDays(45)],
-                                ['title' => 'Markedsføring', 'sub' => ['Lage kampanje', 'Sosiale medier'], 'date' => now()->addDays(55)],
-                                ['title' => 'Oppfølging & salg', 'sub' => ['Kontakt bokhandlere', 'Oppdatere nettside'], 'date' => now()->addDays(65)]
-                            ];
-                        @endphp
-                
-                        @foreach($steps as $index => $step)
-                            <div class="timeline-item">
-                                <div class="timeline-header">{{ $index + 1 }}. {{ $step['title'] }}</div>
-                                <p class="timeline-date"><strong>Forventet dato:</strong> {{ $step['date']->format('d-m-Y') }}</p>
-                                <p><strong>Status:</strong> Ikke påbegynt</p>
-                                @if (!empty($step['sub']))
-                                    <ul class="sub-steps">
-                                        @foreach($step['sub'] as $subStep)
-                                            <li>➡ {{ $subStep }}</li>
-                                        @endforeach
-                                    </ul>
-                                @endif
-                            </div>
-                        @endforeach
-                    </div> --}}
-                    <div class="timeline">
-                        @foreach ( $steps as $step)
-                            <div class="timeline-item">
-                                <div class="timeline-header">
-                                    <a href="{{ route('learner.progress-plan.step', $step['step_number']) }}">
-                                        <h3>
-                                            {{ $step['step_number'] }}. {{ $step['title'] }}
-                                        </h3>
-                                    </a>
-                                </div>
-                                <p class="timeline-date"><strong>Forventet dato:</strong> 
-                                    {{ $step['expected_date'] 
-                                    ? \Carbon\Carbon::parse($step['expected_date'])->format('d.m.Y') 
-                                    : '—' }}
-                                    {{-- {{ \Carbon\Carbon::now()->addDays($step['step_number'])->format('d.m.Y')  }} --}}
-                                </p>
-                                <p><strong>Status:</strong> {{ $step['status_text'] }}</p>
+                    <p class="progress-plan-subtitle">Oversikt over alle steg i utgivelsesprosessen</p>
 
-                                {{-- @if ($step['step_number'] == 1)
-                                    <ul class="sub-steps">
-                                        <li>Step 1. (we can have more than one here) since some deliver more times to get it finish</li>
-                                        <li>Step 2. Språkvask</li>
-                                        <li>Step 3. Korrektur</li>
-                                        <li>Step 4. Omslag</li>
-                                        <li>Step 5. Ombrekk</li>
-                                        <li>Step 6. Ebok</li>
-                                        <li>Step 7. Lybok</li>
-                                    </ul>
-                                @endif --}}
+                    <div class="summary-bar">
+                        <div class="summary-stat green">
+                            <div class="val">{{ $finishedCount }}</div>
+                            <div class="lbl">Fullført</div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="summary-stat gold">
+                            <div class="val">{{ $startedCount }}</div>
+                            <div class="lbl">Pågår</div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="summary-stat gray">
+                            <div class="val">{{ $notStartedCount }}</div>
+                            <div class="lbl">Ikke startet</div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="summary-stat brand">
+                            <div class="val">{{ $total }}</div>
+                            <div class="lbl">Totalt</div>
+                        </div>
+                    </div>
+
+                    <div class="progress-header">
+                        <div class="progress-track">
+                            <div class="progress-fill" style="width: {{ $progressPercentage }}%;"></div>
+                        </div>
+                        <div class="progress-percent">{{ $progressPercentage }}% fullført</div>
+                    </div>
+
+                    <div class="timeline">
+                        @foreach ($steps as $step)
+                            @php
+                                $statusClass = $normalizeStatus($step['status_text']);
+                                $isFinished = $statusClass === 'finished';
+                                $isStarted = $statusClass === 'started';
+                                $dotText = $isFinished ? '✓' : ($isStarted ? '↻' : str_pad((string) $step['step_number'], 2, '0', STR_PAD_LEFT));
+                                $cardClass = $isFinished ? 'highlight-brand' : ($isStarted ? 'highlight-gold' : '');
+                            @endphp
+
+                            <div class="tl-item">
+                                <div class="tl-dot {{ $isFinished ? 'finished' : ($isStarted ? 'started' : '') }}">{{ $dotText }}</div>
+                                <a href="{{ route('learner.progress-plan.step', $step['step_number']) }}" class="tl-card {{ $cardClass }}">
+                                    <div class="tl-left">
+                                        <span class="tl-step-num">{{ str_pad((string) $step['step_number'], 2, '0', STR_PAD_LEFT) }}</span>
+                                        <span class="tl-name">{{ $step['title'] }}</span>
+                                    </div>
+                                    <div class="tl-right">
+                                        <div class="tl-date">
+                                            <span>Forventet dato</span>
+                                            {{ $step['expected_date'] ? \Carbon\Carbon::parse($step['expected_date'])->format('d.m.Y') : '—' }}
+                                        </div>
+                                        <span class="badge {{ $statusClass }}">{{ $statusLabelMap[$statusClass] }}</span>
+                                    </div>
+                                </a>
                             </div>
                         @endforeach
                     </div>
                 </div>
-                
             </div>
         </div>
     </div>
