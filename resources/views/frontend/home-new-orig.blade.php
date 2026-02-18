@@ -191,62 +191,45 @@
         </div> <!-- end container -->
     </div> <!-- end online-courses-row-->
 
-    {{-- ============================================================
-        NYTT: Utgitte elever (erstatter video-testimonial karusellen)
-        Krever $publishedBooks fra controlleren:
-        $publishedBooks = \App\PublisherBook::orderBy('id', 'desc')->take(3)->get();
-    ============================================================ --}}
-    @php
-        $publishedBooks = \App\PublisherBook::orderBy('id', 'desc')->take(3)->get();
-    @endphp
     <div class="testimonials-row">
         <div class="container">
             <h2>
-                Våre nyeste utgivelser
+                {{ trans('site.front.student-testimonial.heading') }}
             </h2>
 
-            <div class="row justify-content-center">
-                @foreach($publishedBooks as $book)
-                    @php
-                        $author_image = $book->author_image ? \App\Http\FrontendHelpers::checkJpegImg($book->author_image) : '';
-                    @endphp
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 border-0 text-center">
-                            <div class="card-body d-flex flex-column align-items-center">
-                                {{-- Bokomslag --}}
-                                <div class="published-book-cover mb-3">
-                                    @if($book->book_image_link)
-                                        <a href="{{ $book->book_image_link }}" target="_blank">
-                                    @endif
-                                        <img data-src="https://www.forfatterskolen.no/{{ $author_image }}"
-                                             alt="{{ $book->title }}"
-                                             class="img-responsive"
-                                             style="max-height: 320px; width: auto; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border-radius: 4px;">
-                                    @if($book->book_image_link)
-                                        </a>
-                                    @endif
+            <div class="carousel-onebyone">
+                <div id="video-testimonial-carousel" class="carousel slide mt-4" data-ride="carousel"
+                     data-interval="10000">
+                    <div class="video-testimonial-row row carousel-inner row w-100 mx-auto" role="listbox">
+                        @foreach($testimonials as $k => $testimonial)
+                            <div class="carousel-item col-md-3 {{ $k == 0 ? 'active' : '' }}">
+                                <a href="javascript:void(0)" data-toggle="modal" data-target="#vooModal" class="vooBtn"
+                                   data-link="{{ $testimonial->testimony }}">
+                                    <div class="img-container"
+                                         data-bg="https://www.forfatterskolen.no/{{ $testimonial->author_image }}">
+                                        <img data-src="https://www.forfatterskolen.no/{{ '/images-new/play-white.png' }}" class="play-image">
+                                    </div> <!-- end image container -->
+                                </a>
+
+                                <div class="details-container">
+                                    <span class="font-montserrat-semibold theme-text">{{ $testimonial->name }}</span>
+                                    <br>
+                                    <span class="font-montserrat-regular">{{ $testimonial->description }}</span>
                                 </div>
-
-                                {{-- Forfatternavn (title-feltet er forfatternavnet i PublisherBook) --}}
-                                <h3 class="font-montserrat-semibold theme-text mt-3 mb-1" style="font-size: 1.1rem;">
-                                    {{ $book->title }}
-                                </h3>
-
-                                {{-- Kort beskrivelse (description inneholder HTML) --}}
-                                <p class="font-montserrat-regular text-muted" style="font-size: 0.9rem;">
-                                    {{ \Illuminate\Support\Str::limit(strip_tags($book->description), 120) }}
-                                </p>
                             </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
+                        @endforeach
+                    </div> <!-- end carousel-inner -->
 
-            {{-- "Se alle" lenke --}}
-            <div class="text-center mt-3">
-                <a href="{{ route('front.publishing') }}" class="btn site-btn-global">
-                    Se alle utgitte elever
-                </a>
+                    <a class="carousel-control-prev" href="#video-testimonial-carousel" role="button" data-slide="prev">
+                        <i class="fa fa-chevron-left fa-lg text-muted"></i>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next text-faded" href="#video-testimonial-carousel" role="button"
+                       data-slide="next">
+                        <i class="fa fa-chevron-right fa-lg text-muted"></i>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div> <!-- end testimonials-row -->
@@ -297,30 +280,94 @@
     </div>
 @endif
 
-{{-- Fjernet: #vooModal (video-modal) – ikke lenger i bruk etter fjerning av video-testimonials --}}
+<div id="vooModal" class="modal fade no-header-modal" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <iframe allow="autoplay" allowtransparency="true" style="max-width:100%" allowfullscreen="true"
+                        src="" scrolling="no" width="100%" height="430" frameborder="0"></iframe>
+            </div>
+        </div>
 
+    </div>
+</div>
 @stop
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
     <script>
         $(document).ready(function(){
             if ($(window).width() > 640) {
-                var vid = document.getElementById('vid');
-                if (vid) vid.play();
+                document.getElementById('vid').play();
             }
         });
 
         $(window).resize(function() {
-            var vid = document.getElementById('vid');
-            if (!vid) return;
             if ($(window).width() <= 640) {
-                vid.pause();
+                document.getElementById('vid').pause();
             } else {
-                vid.play();
+                document.getElementById('vid').play();
             }
         });
 
         let url_link = '{{ route('front.agree-gdpr') }}';
+        let $carousel = jQuery('.carousel-onebyone .carousel');
+        if($carousel.length){
+            jQuery('.carousel-onebyone').on('slide.bs.carousel', carousel_onebyone);
+            carousel_set($carousel);
+            let resizeId;
+            jQuery(window).resize(function() {
+                clearTimeout(resizeId);
+                resizeId = setTimeout(()=>carousel_set($carousel), 500);
+            });
+        }
+
+        function carousel_set($carousel){
+            if(!$carousel || !$carousel.length) return;
+
+            $carousel.each((i, el)=>{
+                let $el = jQuery(el);
+                let itemsPerSlide = carousel_itemsPerSlide($el);
+                let totalItems = $el.find('.carousel-item').length;
+
+                if(itemsPerSlide < totalItems){
+                    $el.find('.carousel-control').removeClass('hidden');
+                }else{
+                    $el.find('.carousel-control').addClass('hidden');
+                }
+            });
+        }
+
+        function carousel_onebyone(e){
+            let carouselID = '#'+jQuery(this).find('.carousel').attr('id');
+            let $carousel = jQuery(carouselID);
+            let $inner = $carousel.find('.carousel-inner');
+            let $items = $carousel.find('.carousel-item');
+
+            let idx = jQuery(e.relatedTarget).index();
+            let itemsPerSlide = carousel_itemsPerSlide($carousel);
+            let totalItems = $items.length;
+
+            if (idx >= totalItems-(itemsPerSlide-1)) {
+                let it = itemsPerSlide - (totalItems - idx);
+                for (let i=0; i<it; i++) {
+                    if (e.direction === 'left') {
+                        $items.eq(i).appendTo($inner);
+                    }else {
+                        $items.eq(0).appendTo($inner);
+                    }
+                }
+            }
+        }
+
+        function carousel_itemsPerSlide($carousel){
+            let itemW = $carousel.find('.carousel-item').width();
+            let innerW = $carousel.find('.carousel-inner').width();
+
+            return Math.floor(innerW/itemW);
+        }
 
         function agreeGdpr() {
             $.post(url_link).then(function(){
@@ -331,7 +378,79 @@
         $(".poem-text-container").mCustomScrollbar({
             theme: "light-thick",
             scrollInertia: 500,
+
         });
+
+        if ($(window).width() > 640) {
+            carouselMultiple();
+        } else {
+            $(".glyphicon").removeClass('hide');
+        }
+
+        $(window).on('resize', function(){
+            if ($(window).width() > 640) {
+                if ($(".item__third").length <= 3) {
+                    carouselMultiple();
+                }
+                $(".glyphicon").addClass('hide');
+            } else {
+                $(".glyphicon").removeClass('hide');
+                removeMultiple();
+            }
+        });
+
+        // for multiple item carousel action
+        let items = $(".multi-item-carousel").find('.carousel-inner .item'),
+            currentHighlight = 0;
+        $(".multi-item-carousel .left").click(function(){
+            currentHighlight = (currentHighlight - 1) % items.length;
+            items.removeClass('active').eq(currentHighlight).addClass('active');
+        });
+
+        $(".multi-item-carousel .right").click(function(){
+            currentHighlight = (currentHighlight + 1) % items.length;
+            items.removeClass('active').eq(currentHighlight).addClass('active');
+        });
+
+        $(".vooBtn").click(function(){
+            const iframe = $("#vooModal").find('iframe');
+            iframe.attr('src', $(this).data('link'));
+        });
+
+        $('#vooModal').on('hidden.bs.modal', function (e) {
+            const iframe = $("#vooModal").find('iframe');
+            iframe.attr('src', '');
+        })
+
+        function carouselMultiple() {
+            $('.multi-item-carousel .item').each(function(){
+                var next = $(this).next();
+                if (!next.length) next = $(this).siblings(':first');
+                next.children(':first-child').clone().appendTo($(this));
+            }).each(function(){
+                var prev = $(this).prev();
+                if (!prev.length) prev = $(this).siblings(':last');
+                prev.children(':nth-last-child(2)').clone().prependTo($(this));
+            });
+        }
+
+        function removeMultiple(){
+            let item_first = $('.multi-item-carousel .item:first-child');
+            if (item_first.find('.item__third').length > 1) {
+                item_first.find('.item__third').not(':eq(1)').remove();
+            }
+
+            let item_sec = $('.multi-item-carousel .item:nth-child(2)');
+            if (item_sec.find('.item__third').length > 1) {
+                item_sec.find('.item__third').not(':eq(1)').remove();
+            }
+
+            let item_third = $('.multi-item-carousel .item:nth-child(3)');
+            if (item_third.find('.item__third').length > 1) {
+                item_third.find('.item__third').not(':eq(1)').remove();
+            }
+
+        }
 
         function submitWritingPlan(self) {
             let modal = $("#writingPlanModal");
