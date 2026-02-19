@@ -1939,6 +1939,64 @@ Authorization: Bearer <access_token>
 - **401** `unauthorized`
 - **403** `forbidden`
 
+## POST /learner/course/take
+
+Starts a learner course that has already been purchased/assigned (`courses_taken`).
+
+This is the API equivalent of the legacy web route `learner.course.take`.
+
+**Request**
+```http
+POST /api/v1/learner/course/take
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "course_taken_id": 551
+}
+```
+
+**Response (200)**
+```json
+{
+  "message": "Course started.",
+  "data": {
+    "id": 551,
+    "course_id": 12,
+    "package_id": 88,
+    "is_active": true,
+    "started_at": "2024-01-02T10:45:00Z",
+    "start_date": "2024-01-02",
+    "end_date": "2025-01-02",
+    "access_lessons": [
+      1,
+      2,
+      3
+    ],
+    "years": 1,
+    "is_free": false,
+    "course": {
+      "id": 12,
+      "title": "Creative Writing",
+      "description": "Build your writing practice.",
+      "description_simplemde": null,
+      "course_image": "/images/courses/creative-writing.jpg",
+      "type": "Single",
+      "instructor": "Ada Lovelace",
+      "start_date": "2024-01-02",
+      "end_date": "2024-12-31",
+      "is_free": false
+    }
+  }
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **404** `not_found` (course taken does not exist or does not belong to the authenticated user)
+- **422** `validation_error` (missing/invalid `course_taken_id`)
+- **422** `course_unavailable` (course has a date window and is currently unavailable)
+
 ## GET /courses/{id}/packages
 
 Returns purchasable package options for a course. Each package can repeat for each enabled payment plan.

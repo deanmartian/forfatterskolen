@@ -85,6 +85,7 @@ class CourseTakenTest extends TestCase
             $table->boolean('is_reward')->default(0);
             $table->boolean('is_show')->default(1);
             $table->boolean('is_upgradeable')->default(1);
+            $table->integer('validity_period')->default(0);
             $table->timestamps();
         });
 
@@ -212,6 +213,158 @@ class CourseTakenTest extends TestCase
             ->assertJsonPath('data.0.start_date', null)
             ->assertJsonPath('data.0.end_date', null)
             ->assertJsonPath('data.0.started_at', null);
+    }
+
+
+    public function test_take_starts_course_for_owner(): void
+    {
+        $user = User::create([
+            'first_name' => 'Take',
+            'last_name' => 'Owner',
+            'email' => 'take-owner@example.com',
+            'password' => Hash::make('password'),
+            'role' => User::LearnerRole,
+            'is_active' => 1,
+        ]);
+
+        $course = Course::create([
+            'title' => 'Take Course',
+            'description' => 'Course description',
+            'course_image' => '',
+            'type' => 'online',
+            'instructor' => 'Instructor',
+            'start_date' => now()->toDateString(),
+        ]);
+
+        $package = Package::unguarded(function () use ($course) {
+            return Package::create([
+                'course_id' => $course->id,
+                'variation' => 'Standard',
+                'description' => 'Package description',
+                'full_payment_price' => 1000,
+                'months_3_price' => 400,
+                'months_6_price' => 200,
+                'months_12_price' => 100,
+                'full_price_product' => 'full',
+                'months_3_product' => 'm3',
+                'months_6_product' => 'm6',
+                'months_12_product' => 'm12',
+                'full_price_due_date' => 0,
+                'months_3_due_date' => 0,
+                'months_6_due_date' => 0,
+                'months_12_due_date' => 0,
+                'course_type' => 0,
+                'is_reward' => 0,
+                'is_show' => 1,
+                'is_upgradeable' => 1,
+                'validity_period' => 0,
+            ]);
+        });
+
+        $taken = CoursesTaken::create([
+            'user_id' => $user->id,
+            'package_id' => $package->id,
+            'is_active' => 1,
+            'started_at' => null,
+            'start_date' => null,
+            'end_date' => null,
+            'access_lessons' => '[]',
+            'years' => 1,
+            'is_free' => 0,
+        ]);
+
+        $token = $this->makeTokenForUser($user);
+
+        $response = $this->postJson('/api/v1/learner/course/take', [
+            'course_taken_id' => $taken->id,
+        ], [
+            'Authorization' => 'Bearer '.$token,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('message', 'Course started.')
+            ->assertJsonPath('data.id', $taken->id);
+
+        $taken->refresh();
+
+        $this->assertNotNull($taken->started_at);
+        $this->assertNotNull($taken->end_date);
+    }
+
+    public function test_take_returns_not_found_for_other_users_course(): void
+    {
+        $owner = User::create([
+            'first_name' => 'Owner',
+            'last_name' => 'User',
+            'email' => 'owner@example.com',
+            'password' => Hash::make('password'),
+            'role' => User::LearnerRole,
+            'is_active' => 1,
+        ]);
+
+        $other = User::create([
+            'first_name' => 'Other',
+            'last_name' => 'User',
+            'email' => 'other@example.com',
+            'password' => Hash::make('password'),
+            'role' => User::LearnerRole,
+            'is_active' => 1,
+        ]);
+
+        $course = Course::create([
+            'title' => 'Restricted Course',
+            'description' => 'Course description',
+            'course_image' => '',
+            'type' => 'online',
+            'instructor' => 'Instructor',
+        ]);
+
+        $package = Package::unguarded(function () use ($course) {
+            return Package::create([
+                'course_id' => $course->id,
+                'variation' => 'Standard',
+                'description' => 'Package description',
+                'full_payment_price' => 1000,
+                'months_3_price' => 400,
+                'months_6_price' => 200,
+                'months_12_price' => 100,
+                'full_price_product' => 'full',
+                'months_3_product' => 'm3',
+                'months_6_product' => 'm6',
+                'months_12_product' => 'm12',
+                'full_price_due_date' => 0,
+                'months_3_due_date' => 0,
+                'months_6_due_date' => 0,
+                'months_12_due_date' => 0,
+                'course_type' => 0,
+                'is_reward' => 0,
+                'is_show' => 1,
+                'is_upgradeable' => 1,
+            ]);
+        });
+
+        $taken = CoursesTaken::create([
+            'user_id' => $owner->id,
+            'package_id' => $package->id,
+            'is_active' => 1,
+            'started_at' => null,
+            'start_date' => null,
+            'end_date' => null,
+            'access_lessons' => '[]',
+            'years' => 1,
+            'is_free' => 0,
+        ]);
+
+        $token = $this->makeTokenForUser($other);
+
+        $response = $this->postJson('/api/v1/learner/course/take', [
+            'course_taken_id' => $taken->id,
+        ], [
+            'Authorization' => 'Bearer '.$token,
+        ]);
+
+        $response->assertStatus(404)
+            ->assertJsonPath('error.code', 'not_found');
     }
 
     private function makeTokenForUser(User $user): string

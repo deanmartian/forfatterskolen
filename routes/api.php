@@ -93,6 +93,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/course/{id}/thankyou', [CheckoutController::class, 'thankyou'])
             ->name('api.v1.course.thankyou');
         Route::get('/courses/{id}/lessons', [CourseController::class, 'lessons']);
+        Route::post('/learner/course/take', [CourseController::class, 'take']);
         Route::get('/courses/{id}/webinars', [WebinarController::class, 'courseIndex']);
         Route::get('/courses/certificates/{id}/download', [CourseController::class, 'downloadCertificate']);
         Route::get('/lessons/{id}', [LessonController::class, 'show']);
