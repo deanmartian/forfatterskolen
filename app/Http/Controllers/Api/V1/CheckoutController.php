@@ -13,6 +13,7 @@ use App\Package;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\Http\FrontendHelpers;
+use App\Jobs\SveaUpdateOrderDetailsTestJob;
 use App\Services\CourseService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
