@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\CheckoutLog;
 use App\Course;
 use App\CourseDiscount;
+use App\FikenInvoice;
+use App\Jobs\SveaUpdateOrderDetailsJob;
+use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\Package;
 use App\PaymentMode;
@@ -14,6 +18,8 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class CheckoutController extends ApiController
@@ -381,6 +387,113 @@ class CheckoutController extends ApiController
         return response()->json([
             'status' => $status,
             'order' => $details,
+        ]);
+    }
+
+    public function thankyou(Request $request, int $id, CourseService $courseService): JsonResponse
+    {
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        if (! $request->has('svea_ord') && ! $request->has('pl_ord')) {
+            return $this->errorResponse('Missing order reference.', 'validation_error', 422);
+        }
+
+        $orderId = (int) ($request->input('svea_ord') ?? $request->input('pl_ord'));
+
+        $order = Order::query()
+            ->with('package')
+            ->where('id', $orderId)
+            ->where('user_id', $user->id)
+            ->whereIn('type', [Order::COURSE_TYPE, Order::COURSE_UPGRADE_TYPE])
+            ->first();
+
+        if (! $order || ! $order->package || (int) $order->package->course_id !== $id) {
+            return $this->errorResponse('Order not found.', 'not_found', 404);
+        }
+
+        if ($request->has('svea_ord')) {
+            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+        }
+
+        if (! $order->is_processed) {
+            $courseTakenId = null;
+
+            try {
+                DB::transaction(function () use ($courseService, $order, &$courseTakenId) {
+                    if ($order->type === Order::COURSE_UPGRADE_TYPE) {
+                        $courseTaken = $courseService->upgradeCourseTaken($order);
+                        $courseTakenId = optional($courseTaken)->id;
+                        $courseService->notifyUserForUpgrade($order, $courseTaken);
+                    } else {
+                        $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
+                        $courseTakenId = optional($courseTaken)->id;
+                        $courseTaken->is_pay_later = $order->is_pay_later;
+                        $courseTaken->is_active = $order->is_pay_later ? 0 : 1;
+                        $courseTaken->save();
+
+                        $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken, true, true);
+                    }
+
+                    $courseService->notifyAdmin($order->user_id, $order->package_id);
+
+                    $order->is_processed = 1;
+                    $order->save();
+                });
+            } catch (\Throwable $exception) {
+                Log::error('Failed to process API course order on thankyou endpoint.', [
+                    'order_id' => $order->id,
+                    'learner_id' => $order->user_id,
+                    'course_taken_id' => $courseTakenId,
+                    'file' => $exception->getFile(),
+                    'line' => $exception->getLine(),
+                    'exception' => $exception->getMessage(),
+                ]);
+
+                $courseTakenMessage = $courseTakenId ? 'Course taken ID: '.$courseTakenId.'<br>' : '';
+                $emailData = [
+                    'email_subject' => 'Error processing course order',
+                    'email_message' => 'An error occurred while processing the course order.<br>'
+                        .'Learner ID: '.$order->user_id.'<br>'
+                        .'Order ID: '.$order->id.'<br>'
+                        .$courseTakenMessage
+                        .'File: '.$exception->getFile().'<br>'
+                        .'Line: '.$exception->getLine().'<br>'
+                        .'Error: '.$exception->getMessage(),
+                    'from_name' => 'Forfatterskolen',
+                    'from_email' => 'post@forfatterskolen.no',
+                    'attach_file' => null,
+                ];
+
+                \Mail::to('elybutabara@gmail.com')->queue(new SubjectBodyEmail($emailData));
+
+                return $this->errorResponse('Unable to process order.', 'server_error', 500);
+            }
+
+            CheckoutLog::updateOrCreate([
+                'user_id' => $user->id,
+                'parent' => 'course',
+                'parent_id' => $id,
+            ], [
+                'is_ordered' => true,
+            ]);
+        }
+
+        if ($request->has('iu')) {
+            $fikenUrl = decrypt($request->get('iu'));
+            $fiken = new FikenInvoice;
+            $fikenInvoice = $fiken->get_invoice_data($fikenUrl);
+            $fiken->send_invoice($fikenInvoice);
+        }
+
+        return response()->json([
+            'status' => 'ok',
+            'order_id' => $order->id,
+            'is_processed' => (bool) $order->is_processed,
+            'pay_later' => (bool) $request->has('pl_ord'),
         ]);
     }
 
