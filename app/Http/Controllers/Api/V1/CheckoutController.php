@@ -257,15 +257,27 @@ class CheckoutController extends ApiController
             'is_pay_later' => (bool) ($validated['is_pay_later'] ?? false),
         ]);
 
-        $result = $courseService->startApiCheckout($request);
-
-        if (isset($result['error'])) {
-            return $this->errorResponse('Unable to start checkout.', 'validation_error', 422, [
-                'payment' => [$result['error']],
-            ]);
+        if ($paymentMode->mode === 'Paypal') {
+            return $this->errorResponse('Paypal checkout is not supported via API.', 'validation_error', 422);
         }
 
-        $order = $result['order'];
+        if ($paymentMode->mode === 'Faktura' && ! $request->boolean('is_pay_later')) {
+            $result = $courseService->startApiCheckout($request);
+
+            if (isset($result['error'])) {
+                return $this->errorResponse('Unable to start checkout.', 'validation_error', 422, [
+                    'payment' => [$result['error']],
+                ]);
+            }
+
+            $order = $result['order'];
+        } else {
+            $order = $courseService->createOrder($request);
+            $result = [
+                'order' => $order,
+                'redirect_url' => url('/thankyou?pl_ord='.$order->id),
+            ];
+        }
 
         if ($paymentMode->mode === 'Vipps') {
             $amount = (int) (($order->price - $order->discount) * 100);
@@ -291,10 +303,6 @@ class CheckoutController extends ApiController
                 'redirect_url' => $redirectUrl,
                 'reference' => $order->id,
             ], 201);
-        }
-
-        if ($paymentMode->mode === 'Paypal') {
-            return $this->errorResponse('Paypal checkout is not supported via API.', 'validation_error', 422);
         }
 
         if ($request->boolean('is_pay_later')) {
