@@ -1722,6 +1722,43 @@ Authorization: Bearer <access_token>
 - **401** `unauthorized`
 - **404** `not_found`
 
+## GET /course/{id}/thankyou
+
+API equivalent of the web `ShopController::thankyou()` flow for course orders.
+Use this after checkout redirect/fallback to finalize processing for the authenticated learner.
+
+Supports both invoice/Svea (`svea_ord`) and pay-later (`pl_ord`) references. Either one is required.
+
+**Request**
+```http
+GET /api/v1/course/{id}/thankyou?svea_ord=98765
+Authorization: Bearer <access_token>
+```
+
+```http
+GET /api/v1/course/{id}/thankyou?pl_ord=98765
+Authorization: Bearer <access_token>
+```
+
+Optional query parameter:
+- `iu`: encrypted Fiken invoice URL used to resend invoice data when present.
+
+**Response (200)**
+```json
+{
+  "status": "ok",
+  "order_id": 98765,
+  "is_processed": true,
+  "pay_later": false
+}
+```
+
+**Errors**
+- **401** `unauthorized`
+- **404** `not_found` (order not found, does not belong to user, or does not match course)
+- **422** `validation_error` (missing `svea_ord`/`pl_ord`)
+- **500** `server_error` (order processing failed)
+
 **Response (200)**
 ```json
 {
