@@ -237,6 +237,45 @@ class CourseController extends ApiController
         return LessonResource::collection($lessons);
     }
 
+    public function take(Request $request): JsonResponse|CourseTakenResource
+    {
+        $user = $this->apiUser($request);
+
+        $data = $request->validate([
+            'course_taken_id' => ['required', 'integer'],
+        ]);
+
+        $courseTaken = CoursesTaken::with('package.course')
+            ->where('id', $data['course_taken_id'])
+            ->where('user_id', $user->id)
+            ->where('is_active', true)
+            ->first();
+
+        if (! $courseTaken) {
+            return $this->errorResponse('Course taken not found.', 'not_found', 404);
+        }
+
+        if (! FrontendHelpers::isCourseTakenAvailable($courseTaken)) {
+            return $this->errorResponse('This course is not available to start.', 'course_unavailable', 422);
+        }
+
+        $course = $courseTaken->package->course;
+        $courseTaken->started_at = Carbon::now();
+
+        if (! $courseTaken->end_date) {
+            if ($courseTaken->package->validity_period > 0) {
+                $courseTaken->end_date = Carbon::today()->addMonth($courseTaken->package->validity_period);
+            } else {
+                $courseTaken->end_date = Carbon::parse($course->start_date ?: today())->addYear(1);
+            }
+        }
+
+        $courseTaken->save();
+
+        return (new CourseTakenResource($courseTaken))
+            ->additional(['message' => 'Course started.']);
+    }
+
     public function downloadCertificate(Request $request, int $id)
     {
         $user = $this->apiUser($request);
