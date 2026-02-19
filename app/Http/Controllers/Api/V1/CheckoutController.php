@@ -312,14 +312,14 @@ class CheckoutController extends ApiController
             ], 201);
         }
 
-        $redirectUrl = $result['gui_page_url'] ?? $this->extractCheckoutUrl($result['gui_snippet'] ?? '');
+        $guiSnippet = $result['gui_snippet'] ?? '';
 
-        if (! $redirectUrl) {
-            return $this->errorResponse('Unable to build checkout redirect.', 'validation_error', 422);
+        if ($guiSnippet === '') {
+            return $this->errorResponse('Unable to build checkout snippet.', 'validation_error', 422);
         }
 
         return response()->json([
-            'redirect_url' => $redirectUrl,
+            'gui_snippet' => $guiSnippet,
             'reference' => $order->id,
         ], 201);
     }
@@ -399,33 +399,6 @@ class CheckoutController extends ApiController
             'Cancelled', 'Invalid' => 'failed',
             default => 'pending',
         };
-    }
-
-    private function extractCheckoutUrl(string $guiSnippet): ?string
-    {
-        if ($guiSnippet === '') {
-            return null;
-        }
-
-        if (preg_match('/data-sco-sveacheckout-iframesrc=[\"\\\']([^\"\\\']+)[\"\\\']/i', $guiSnippet, $matches)) {
-            return $matches[1] ?? null;
-        }
-
-        if (preg_match('/data-checkout-(?:url|uri)=[\"\\\']([^\"\\\']+)[\"\\\']/', $guiSnippet, $matches)) {
-            return $matches[1] ?? null;
-        }
-
-        if (preg_match('/src=[\"\\\']([^\"\\\']+)[\"\\\']/', $guiSnippet, $matches)) {
-            $candidate = $matches[1] ?? null;
-
-            if ($candidate && str_contains($candidate, 'index.js')) {
-                return null;
-            }
-
-            return $candidate;
-        }
-
-        return null;
     }
 
     private function planIsEnabled(Package $package, int $division): bool
