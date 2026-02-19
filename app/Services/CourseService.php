@@ -365,9 +365,10 @@ class CourseService
 
             return [
                 'order' => $orderRecord,
+                'payment_url' => $this->extractCheckoutUrl($response['Gui']['Snippet'] ?? ''),
                 'gui_snippet' => $guiSnippet,
-                'gui_page_url' => $guiPageUrl,
             ];
+
         } catch (\Throwable $exception) {
             $orderRecord->delete();
 
@@ -1184,5 +1185,32 @@ class CourseService
         } catch (\Exception $e) {
             return '';
         }
+    }
+
+    private function extractCheckoutUrl(string $guiSnippet): ?string
+    {
+        if ($guiSnippet === '') {
+            return null;
+        }
+
+        if (preg_match('/data-sco-sveacheckout-iframesrc=["\\\']([^"\\\']+)["\\\']/i', $guiSnippet, $matches)) {
+            return $matches[1] ?? null;
+        }
+
+        if (preg_match('/data-checkout-(?:url|uri)=["\\\']([^"\\\']+)["\\\']/', $guiSnippet, $matches)) {
+            return $matches[1] ?? null;
+        }
+
+        if (preg_match('/src=["\\\']([^"\\\']+)["\\\']/', $guiSnippet, $matches)) {
+            $candidate = $matches[1] ?? null;
+
+            if ($candidate && str_contains($candidate, 'index.js')) {
+                return null;
+            }
+
+            return $candidate;
+        }
+
+        return null;
     }
 }
