@@ -312,6 +312,8 @@ class CourseService
             $conn = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
             $checkoutClient = new \Svea\Checkout\CheckoutClient($conn);
 
+            $lovableBase = rtrim(config('api.lovable_url'), '/');
+
             $data = [
                 'countryCode' => config('services.svea.country_code'),
                 'currency' => config('services.svea.currency'),
@@ -348,7 +350,7 @@ class CourseService
                 'merchantSettings' => [
                     'termsUri' => url('/terms/course-terms'),
                     'checkoutUri' => url('/course/'.$course->id.'/checkout?t=1'),
-                    'confirmationUri' => url('/thankyou?svea_ord='.$orderRecord->id),
+                    'confirmationUri' => $lovableBase.'/course/'.$course->id.'/thankyou?svea_ord='.$orderRecord->id,
                     'pushUri' => url('/svea-callback?svea_order_id={checkout.order.uri}'),
                 ],
             ];
