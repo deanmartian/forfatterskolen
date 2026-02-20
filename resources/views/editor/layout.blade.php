@@ -3,66 +3,82 @@
     <head>
         @yield('title')
         @include('backend.partials.backend-css')
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" />
+        <link rel="stylesheet" href="{{ asset('css/editor-v2.css') }}">
         @yield('styles')
         <meta name="csrf-token" content="{{ csrf_token() }}" />
     </head>
     <body>
-        @include('editor.partials.navbar')
-        @yield('content')
+        <div class="ed-shell">
+            {{-- Sidebar --}}
+            @include('editor.partials.sidebar')
+
+            {{-- Main Area --}}
+            <main class="ed-main">
+                {{-- Top Header --}}
+                <header class="ed-header">
+                    <h1 class="ed-header__title">@yield('page-title', 'Dashboard')</h1>
+                    <div class="ed-header__actions">
+                        <div class="ed-search">
+                            <i class="fa fa-search"></i>
+                            <input type="text" placeholder="{{ trans('site.search-learner-id') }}...">
+                        </div>
+                        <button class="ed-notif-btn">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="ed-notif-btn__dot"></span>
+                        </button>
+                    </div>
+                </header>
+
+                {{-- Page Content --}}
+                <div class="ed-content">
+                    @yield('content')
+                    <div class="ed-footer">
+                        Forfatterskolen Redaktørportal
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        {{-- Change Password Modal --}}
         <div id="changePasswordModal" class="modal fade" role="dialog" data-backdrop="false">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Change Password</h4>
+                        <h4 class="modal-title">{{ trans('site.change-password') }}</h4>
                     </div>
                     <div class="modal-body">
                         <form id="form-change-password" role="form" method="POST" action="{{ route('editor.change-password') }}" novalidate class="form-horizontal">
                             {{ csrf_field() }}
-                            <div class="col-md-9">
-                                <label for="current-password" class="col-sm-4 control-label">Current Password</label>
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <input type="password" class="form-control" id="current-password" name="current-password" placeholder="Password">
-                                    </div>
-                                </div>
-                                <label for="password" class="col-sm-4 control-label">New Password</label>
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-                                    </div>
-                                </div>
-                                <label for="password_confirmation" class="col-sm-4 control-label">Re-enter Password</label>
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Re-enter Password">
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label for="current-password">Current Password</label>
+                                <input type="password" class="form-control" id="current-password" name="current-password" placeholder="Password">
                             </div>
                             <div class="form-group">
-                                <div class="col-sm-offset-5 col-sm-6">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </div>
+                                <label for="password">New Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
                             </div>
+                            <div class="form-group">
+                                <label for="password_confirmation">Re-enter Password</label>
+                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Re-enter Password">
+                            </div>
+                            <button type="submit" class="ed-btn ed-btn--primary">Submit</button>
                         </form>
                     </div>
                 </div>
-
             </div>
         </div>
 
+        {{-- Global Alerts --}}
         @if($errors->count())
-            <?php
-                $alert_type = session('alert_type');
-                if(!Session::has('alert_type')) {
-                    $alert_type = 'danger';
-                }
-            ?>
-            <div class="alert alert-{{ $alert_type }} global-alert-box" style="z-index: 9">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
-                <ul>
+            @php
+                $alert_type = session('alert_type', 'danger');
+            @endphp
+            <div class="alert alert-{{ $alert_type }}" style="position:fixed; bottom:20px; right:20px; z-index:9999; max-width:400px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <ul style="margin:0; padding-left:18px;">
                     @foreach($errors->all() as $error)
                         <li>{!! $error !!}</li>
                     @endforeach
@@ -70,137 +86,73 @@
             </div>
         @endif
 
+        {{-- Scripts --}}
         <script src="{{ mix('/js/app.js') }}"></script>
         @include('backend.partials.scripts')
-        <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-        {{-- <script src="https://cdn.tiny.cloud/1/winfkv7k6snl5zpwilziro7l9ch3eyhcjlyt30jutsbv5bta/tinymce/5/tinymce.min.js"
-                referrerpolicy="origin"></script> --}}
-        <script src="{{ asset("js/tinymce/tinymce.min.js") }}"></script>
+        <script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
         <script>
+            // DataTables init
             $(".dt-table").DataTable({
                 "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
                 pageLength: 10,
-                "aaSorting": []
-            });
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                "aaSorting": [],
+                "language": {
+                    "search": "",
+                    "searchPlaceholder": "Søk i tabell..."
                 }
             });
 
-            // tinymce load editor
+            $.ajaxSetup({
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+            });
+
+            // TinyMCE config
             let tiny_editor_config = {
                 path_absolute: "{{ URL::to('/') }}",
                 height: '500',
                 selector: '.tinymce',
                 license_key: 'gpl',
-                plugins: 'advlist autolink lists link image charmap preview ' +
-                    'anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen ' +
-                    'insertdatetime media nonbreaking save table directionality',
-                toolbar1: 'blocks fontfamily fontSize | bold italic underline strikethrough subscript ' +
-                /* toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript ' + */
-                'superscript | forecolor backcolor | alignleft aligncenter alignright ' +
-                'alignjustify  | removeformat',
-                toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code ' +
-                '| print fullscreen',
+                plugins: 'advlist autolink lists link image charmap preview anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table directionality',
+                toolbar1: 'blocks fontfamily fontSize | bold italic underline strikethrough subscript superscript | forecolor backcolor | alignleft aligncenter alignright alignjustify | removeformat',
+                toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
                 relative_urls: false,
                 extended_valid_elements: 'iframe[src|width|height|frameborder|allowfullscreen]',
                 media_live_embeds: true,
-                link_list: (success) => { // called on link dialog open
-                    success(); // show the link dialog first
-                    $(currentTarget).css('display', 'none');
-                },
                 images_upload_handler: function (blobInfo, progress) {
-                    return new Promise((resolve, reject) => { // Ensure it returns a Promise
+                    return new Promise((resolve, reject) => {
                         const xhr = new XMLHttpRequest();
                         xhr.withCredentials = false;
                         xhr.open('POST', '/tinymce-upload');
-
                         let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                         xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
-
-                        xhr.upload.onprogress = (e) => {
-                            progress(e.loaded / e.total * 100);
-                        };
-
+                        xhr.upload.onprogress = (e) => { progress(e.loaded / e.total * 100); };
                         xhr.onload = () => {
-                            if (xhr.status === 403) {
-                                reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
-                                return;
-                            }
-
-                            if (xhr.status < 200 || xhr.status >= 300) {
-                                reject('HTTP Error: ' + xhr.status);
-                                return;
-                            }
-
+                            if (xhr.status < 200 || xhr.status >= 300) { reject('HTTP Error: ' + xhr.status); return; }
                             const json = JSON.parse(xhr.responseText);
-
-                            if (!json || typeof json.location != 'string') {
-                                reject('Invalid JSON: ' + xhr.responseText);
-                                return;
-                            }
-
+                            if (!json || typeof json.location != 'string') { reject('Invalid JSON: ' + xhr.responseText); return; }
                             resolve(json.location);
                         };
-
-                        xhr.onerror = () => {
-                            reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
-                        };
-
+                        xhr.onerror = () => { reject('Upload failed. Code: ' + xhr.status); };
                         const formData = new FormData();
                         formData.append('file', blobInfo.blob(), blobInfo.filename());
-
                         xhr.send(formData);
                     });
                 },
-                setup: function (editor) {
-                    editor.on('CloseWindow', function (e) { // dialog closed
-                        $(currentTarget).css('display', 'block');
-                    });
-                }
-
-                /* file_picker_callback : function(callback, value, meta) {
-                    let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-                    let y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
-
-                    let cmsURL = tiny_editor_config.path_absolute + '/filemanager?editor=tinymce5';
-                    if (meta.filetype == 'image') {
-                        cmsURL = cmsURL + "&type=Images";
-                    } else {
-                        cmsURL = cmsURL + "&type=Files";
-                    }
-
-                    tinyMCE.activeEditor.windowManager.openUrl({
-                        url : cmsURL,
-                        title : 'Filemanager',
-                        width : x * 0.8,
-                        height : y * 0.8,
-                        resizable : "yes",
-                        close_previous : "no",
-                        onMessage: (api, message) => {
-                            callback(message.content);
-                        }
-                    });
-                } */
             };
             tinymce.init(tiny_editor_config);
 
             function disableSubmit(t) {
-                let submit_btn = $(t).find('[type=submit]');
-                submit_btn.text('');
-                submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
-                submit_btn.attr('disabled', 'disabled');
+                let btn = $(t).find('[type=submit]');
+                btn.html('<i class="fa fa-spinner fa-pulse"></i> Vennligst vent...');
+                btn.attr('disabled', 'disabled');
             }
 
-            function enableSelect(parent) {
-                let parentContainer = $("#" + parent);
-                parentContainer.find('.select2').show();
-                parentContainer.find('.hidden-container').hide();
-            }
+            // Mobile sidebar toggle
+            $(document).on('click', '.ed-sidebar-toggle', function() {
+                $('#edSidebar').toggleClass('open');
+            });
         </script>
         @yield('scripts')
     </body>
