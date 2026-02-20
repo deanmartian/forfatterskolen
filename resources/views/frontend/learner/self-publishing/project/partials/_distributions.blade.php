@@ -20,7 +20,7 @@
                     @foreach ($projectUserBook->distributionCosts as $distributionCost)
                         <tr>
                             <td>{{ $distributionCost->nr }}</td>
-                            <td>{{ $distributionCost->service }}</td>
+                            <td>{{ AdminHelpers::distributionServices($distributionCost->service)['value'] }}</td>
                             <td>{{ $distributionCost->number }}</td>
                             <td>{{ AdminHelpers::currencyFormat($distributionCost->learner_amount) }}</td>
                         </tr>
