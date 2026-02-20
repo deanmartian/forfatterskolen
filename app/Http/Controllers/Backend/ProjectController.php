@@ -1075,7 +1075,7 @@ class ProjectController extends Controller
             return [
                 'step_number' => $number,
                 'title' => $title,
-                'status' => $step->status ?? 'not_started',
+                'status' => $step->status ?? 'not_planned',
                 'status_text' => $step->status_text ?? 'Not Planned',
                 'expected_date' => $step->expected_date ?? null,
             ];
