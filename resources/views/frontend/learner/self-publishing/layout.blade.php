@@ -786,7 +786,8 @@
                 </li>
                 <li>
                     <a href="{{ route('learner.project.show', optional($standardProject)->id ?? 0) }}" 
-                       class="nav-item {{ request()->routeIs('learner.project.*') ? 'active' : '' }}">
+                    class="nav-item {{ request()->routeIs('learner.project.*') 
+                    && !request()->routeIs('learner.project.storage') ? 'active' : '' }}">
                         <i class="fas fa-book"></i> {{ trans('site.author-portal.book-project') ?? 'Bokprosjekt' }}
                     </a>
                 </li>
@@ -815,8 +816,9 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-item {{ request()->routeIs('learner.inventory.*') ? 'active' : '' }}">
-                        <i class="fas fa-boxes"></i> {{ trans('site.author-portal.inventory') ?? 'Lagerstatus' }}
+                    <a href="{{ route('learner.project.storage', optional($standardProject)->id ?? 0) }}" 
+                       class="nav-item {{ request()->routeIs('learner.project.storage') ? 'active' : '' }}">
+                        <i class="fas fa-book"></i> {{ trans('site.author-portal.inventory') ?? 'Lagerstatus' }}
                     </a>
                 </li>
                 <li>
