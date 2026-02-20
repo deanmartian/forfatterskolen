@@ -796,7 +796,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-item {{ request()->routeIs('learner.cover.*') ? 'active' : '' }}">
+                    <a href="{{ route('learner.self-publishing.cover') }}" 
+                    class="nav-item {{ request()->routeIs('learner.cover.*') ? 'active' : '' }}">
                         <i class="fas fa-palette"></i> {{ trans('site.author-portal.cover-design') ?? 'Omslag & design' }}
                     </a>
                 </li>
