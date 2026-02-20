@@ -11,28 +11,28 @@
 @section('content')
     <div class="learner-container">
         <div class="container">
-            <a href="{{ route('learner.progress-plan') }}" class="btn btn-secondary mb-3">
-                <i class="fa fa-arrow-left"></i> Back
+            <a href="{{ route('learner.progress-plan') }}" class="btn btn-outline-brand mb-3">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i> Tilbake
             </a>
 
-            <div class="card card-global">
-                <div class="card-header">
+            <div class="card sp-card">
+                <div class="sp-card-header">
                     {{ $stepTitle }}
 
-                    <button type="button" class="btn btn-primary btn-xs uploadManuscriptBtn pull-right"
+                    <button type="button" class="btn btn-brand btn-xs uploadManuscriptBtn pull-right"
                         data-toggle="modal" data-target="#uploadManuscriptModal"
                         data-action="{{ route('learner.progress-plan.type-setting.upload') }}"
                         style="width: auto;">
                         {{ trans('site.learner.upload-script') }}
-                        <i class="fa fa-upload"></i>
+                        <i class="fa fa-upload" aria-hidden="true"></i>
                     </button>
                 </div>
-                <div class="card-body">
+                <div class="sp-card-body">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <td>File</td>
-                                <td>Upload Date</td>
+                                <td>Fil</td>
+                                <td>Dato</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -52,40 +52,56 @@
         </div>
     </div>
 
-    <div id="uploadManuscriptModal" class="modal fade global-modal" role="dialog">
+    <div id="uploadManuscriptModal" class="modal fade global-modal" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-md">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h3 class="modal-title">{{ trans('site.learner.upload-script') }}</h3>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <div class="modal-content sp-modal">
+            <div class="sp-modal__header">
+                <h3 class="sp-modal__title">
+                    <i class="fas fa-edit" style="color:var(--brand-primary);margin-right:6px"></i>
+                    {{ trans('site.learner.upload-script') }}
+                </h3>
+                <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="modal-body">
-                <form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)">
-                    {{ csrf_field() }}
-                    <div class="form-group">
-                      <label>
+            <form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)" data-sp-validate>
+                {{ csrf_field() }}
+                <div class="sp-modal__body">
+                    <div class="sp-form-group">
+                      <label class="sp-label">
                           * {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
                       </label>
-                        <input type="file" class="form-control" required name="manuscript" 
-                      accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, 
-                      application/pdf, application/vnd.oasis.opendocument.text">
+                        <input type="file" class="sp-input" required name="manuscript"
+                      accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                      application/pdf, application/vnd.oasis.opendocument.text"
+                      data-sp-file-preview="typeSettingFilePreview">
+                        <div id="typeSettingFilePreview"></div>
                     </div>
-                    <button type="submit" class="btn submit-btn pull-right">{{ trans('site.learner.upload-script') }}</button>
-                    <div class="clearfix"></div>
-                </form>
-            </div>
+                </div>
+                <div class="sp-modal__footer">
+                    <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
+                    <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
+                </div>
+            </form>
           </div>
-      
+
         </div>
     </div>
 
     @if(Session::has('manuscript_test_error'))
-        <div id="manuscriptTestErrorModal" class="modal fade" role="dialog">
+        <div id="manuscriptTestErrorModal" class="modal fade" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-body text-center">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
+                <div class="modal-content sp-modal">
+                    <div class="sp-modal__header" style="background:#fef2f2">
+                        <h3 class="sp-modal__title">
+                            <i class="fa fa-exclamation-triangle" style="color:#dc2626;margin-right:6px" aria-hidden="true"></i>
+                            Feil
+                        </h3>
+                        <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="sp-modal__body text-center">
                         {!! Session::get('manuscript_test_error') !!}
                     </div>
                 </div>

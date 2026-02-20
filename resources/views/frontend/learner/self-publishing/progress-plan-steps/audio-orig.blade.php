@@ -5,30 +5,30 @@
 @stop
 
 @section('title')
-    <title>Lydbok &rsaquo; Forfatterskolen</title>
+    <title>Project &rsaquo; Forfatterskolen</title>
 @stop
 
 @section('content')
 <div class="learner-container">
     <div class="container">
-        <a href="{{ route('learner.progress-plan') }}" class="btn btn-outline-brand mb-3">
-            <i class="fa fa-arrow-left" aria-hidden="true"></i> Tilbake
+        <a href="{{ route('learner.progress-plan') }}" class="btn btn-secondary mb-3">
+            <i class="fa fa-arrow-left"></i> Back
         </a>
 
         <div class="card">
-            <div class="sp-card-header">
+            <div class="card-header">
                 {{ $stepTitle }}
             </div>
 
-            <div class="sp-card-body">
+            <div class="card-body">
                 <section>
-                    <button type="button" class="btn btn-brand btn-xs float-right audioBtn" data-toggle="modal"
-                        data-target="#audioModal" data-type="files">+ Legg til lydfiler</button>
+                    <button type="button" class="btn btn-success btn-xs pull-right audioBtn" data-toggle="modal" 
+                        data-target="#audioModal" data-type="files">+ Add Audio Files</button>
                     <div class="table-responsive margin-top">
                         <table class="table table-side-bordered table-white">
                             <thead>
                                 <tr>
-                                    <th>Lyd</th>
+                                    <th>Audio</th>
                                     <th width="300"></th>
                                 </tr>
                             </thead>
@@ -43,12 +43,11 @@
                                             {!! $file->file_link !!}
                                         </td>
                                         <td>                      
-                                            <button class="btn btn-brand btn-xs audioBtn" data-toggle="modal"
+                                            <button class="btn btn-primary btn-xs audioBtn" data-toggle="modal"
                                                     data-target="#audioModal"
                                                     data-type="files" data-id="{{ $file->id }}"
-                                                    data-record="{{ json_encode($file) }}"
-                                                    aria-label="Rediger lydfil">
-                                                <i class="fa fa-edit" aria-hidden="true"></i>
+                                                    data-record="{{ json_encode($file) }}">
+                                                <i class="fa fa-edit"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -59,13 +58,13 @@
                 </section>
 
                 <section class="mt-3">
-                    <button type="button" class="btn btn-brand btn-xs float-right audioBtn" data-toggle="modal"
-                        data-target="#audioModal" data-type="cover">+ Legg til lydbok-omslag</button>
+                    <button type="button" class="btn btn-success btn-xs pull-right audioBtn" data-toggle="modal" 
+                        data-target="#audioModal" data-type="cover">+ Add Audio Cover</button>
                     <div class="table-responsive margin-top">
                         <table class="table table-side-bordered table-white">
                             <thead>
                             <tr>
-                                <th>Lydbok-omslag</th>
+                                <th>Audio Cover</th>
                                 <th width="300"></th>
                             </tr>
                             </thead>
@@ -79,12 +78,11 @@
                                         {!! $cover->file_link !!}
                                     </td>
                                     <td>                      
-                                        <button class="btn btn-brand btn-xs audioBtn" data-toggle="modal"
+                                        <button class="btn btn-primary btn-xs audioBtn" data-toggle="modal"
                                                 data-target="#audioModal"
                                                 data-type="cover" data-id="{{ $cover->id }}"
-                                                data-record="{{ json_encode($cover) }}"
-                                                aria-label="Rediger lydbok-omslag">
-                                            <i class="fa fa-edit" aria-hidden="true"></i>
+                                                data-record="{{ json_encode($cover) }}">
+                                            <i class="fa fa-edit"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -97,43 +95,38 @@
     </div>
 </div>
 
-<div id="audioModal" class="modal fade" role="dialog" aria-hidden="true">
+<div id="audioModal" class="modal fade" role="dialog">
     <div class="modal-dialog modal-md">
-        <div class="modal-content sp-modal">
-            <div class="sp-modal__header">
-                <h3 class="sp-modal__title">
-                    <i class="fas fa-headphones" style="color:var(--brand-primary);margin-right:6px"></i>
-                    <span class="sp-modal__title-text"></span>
-                </h3>
-                <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <form method="POST" action="{{ route($saveAudioRoute, $standardProject->id) }}"
-                enctype="multipart/form-data" onsubmit="disableSubmit(this)" data-sp-validate>
-                  {{ csrf_field() }}
-                  <input type="hidden" name="id">
-                  <input type="hidden" name="type">
-                <div class="sp-modal__body">
-                    <div class="sp-form-group files-container">
-                        <label class="sp-label">Fil</label>
-                        <input type="file" class="sp-input" name="files"
-                        data-sp-file-preview="audioFilesPreview">
-                        <div id="audioFilesPreview"></div>
+            <div class="modal-body">
+                <form method="POST" action="{{ route($saveAudioRoute, $standardProject->id) }}"
+                    enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                      {{ csrf_field() }}
+                      <input type="hidden" name="id">
+                      <input type="hidden" name="type">
+
+                    <div class="form-group files-container">
+                        <label>File</label>
+                        <input type="file" class="form-control" name="files">
                     </div>
 
-                    <div class="sp-form-group cover-container">
-                        <label class="sp-label">Omslag</label>
-                        <input type="file" class="sp-input" name="cover"
-                        data-sp-file-preview="audioCoverPreview">
-                        <div id="audioCoverPreview"></div>
+                    <div class="form-group cover-container">
+                        <label>Cover</label>
+                        <input type="file" class="form-control" name="cover">
                     </div>
-                </div>
-                <div class="sp-modal__footer">
-                    <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
-                    <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
-                </div>
-            </form>
+
+                    <button type="submit" class="btn btn-success pull-right margin-top">
+                        {{ trans('site.save') }}
+                    </button>
+
+                    <div class="clearfix"></div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -156,12 +149,12 @@
 
         switch (type) {
             case 'files':
-                modal.find('.sp-modal__title-text').text('Filer');
+                modal.find('.modal-title').text('Files');
                 filesContainer.removeClass('hide');
                 break;
 
             case 'cover':
-                modal.find('.sp-modal__title-text').text('Omslag');
+                modal.find('.modal-title').text('Cover');
                 coverContainer.removeClass('hide');
                 break;
         }
