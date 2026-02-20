@@ -530,7 +530,11 @@
             <div class="sidebar-section-title">{{ trans('site.author-portal.economy') ?? 'Økonomi' }}</div>
             <ul class="sidebar-nav">
                 <li>
-                    <a href="#" class="nav-item {{ request()->routeIs('learner.sales.*') ? 'active' : '' }}">
+                    @php $hasBookSale = FrontendHelpers::checkIfLearnerHasBookSale()->count() > 0; @endphp
+                    <a href="{{ $hasBookSale ? route('learner.book-sale') . '?year=' . FrontendHelpers::getLearnerSaleYear() 
+                    : 'javascript:void(0)' }}"  
+                        class="nav-item {{ request()->routeIs('learner.sales.*') ? 'active' : '' }}"
+                        style="{{ $hasBookSale ? '' : 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' }}">
                         <i class="fas fa-chart-line"></i> {{ trans('site.author-portal-menu.sales') ?? 'Salg' }}
                     </a>
                 </li>
