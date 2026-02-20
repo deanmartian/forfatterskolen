@@ -6,6 +6,7 @@ use App\Course;
 use App\CourseCertificate;
 use App\CoursesTaken;
 use App\Package;
+use App\PaymentPlan;
 use App\Http\Resources\Api\V1\CourseTakenResource;
 use App\Http\Resources\Api\V1\LessonResource;
 use App\Http\FrontendHelpers;
@@ -210,6 +211,52 @@ class CourseController extends ApiController
                 'has_course_plan_data' => (bool) $course->course_plan_data,
             ],
         ]);
+    }
+
+    public function paymentPlans(int $id): JsonResponse
+    {
+        $course = Course::query()
+            ->where('for_sale', 1)
+            ->find($id);
+
+        if (! $course) {
+            return $this->errorResponse('Course not found.', 'not_found', 404);
+        }
+
+        $paymentPlanIds = collect($course->payment_plan_ids ?? [])
+            ->filter(static fn ($value): bool => is_numeric($value))
+            ->map(static fn ($value): int => (int) $value)
+            ->unique()
+            ->values();
+
+        if ($paymentPlanIds->isEmpty()) {
+            return response()->json(['data' => []]);
+        }
+
+        $paymentPlans = PaymentPlan::query()
+            ->whereIn('id', $paymentPlanIds->all())
+            ->get(['id', 'plan', 'division'])
+            ->keyBy('id');
+
+        $data = $paymentPlanIds
+            ->map(static function (int $paymentPlanId) use ($paymentPlans): ?array {
+                $paymentPlan = $paymentPlans->get($paymentPlanId);
+
+                if (! $paymentPlan) {
+                    return null;
+                }
+
+                return [
+                    'id' => $paymentPlan->id,
+                    'plan' => $paymentPlan->plan,
+                    'division' => $paymentPlan->division,
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all();
+
+        return response()->json(['data' => $data]);
     }
 
     public function lessons(Request $request, int $id): JsonResponse|AnonymousResourceCollection
