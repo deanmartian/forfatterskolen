@@ -4,19 +4,32 @@
     <title>Time Register &rsaquo; Forfatterskolen</title>
 @stop
 
+@section('styles')
+    <style>
+        .fa-file-red:before {
+            content: "\f15b";
+        }
+
+        .fa-file-red {
+            color: #862736 !important;
+            font-size: 20px;
+        }
+    </style>
+@stop
+
 @section('content')
     <div class="learner-container">
         <div class="container">
             <div class="row">
                 <a href="{{ route('learner.project.show', $project->id) }}"
-                   class="btn btn-outline-brand mb-3">
+                   class="btn btn-secondary mb-3">
                     <i class="fa fa-arrow-left"></i> Back
                 </a>
 
                 <div class="col-md-12 dashboard-course no-left-padding">
-                    <div class="card sp-card">
-                        <div class="sp-card-body p-0">
-                            <table class="sp-table">
+                    <div class="card global-card">
+                        <div class="card-body p-0">
+                            <table class="table">
                                 <thead>
                                 <tr>
                                     <th>File</th>

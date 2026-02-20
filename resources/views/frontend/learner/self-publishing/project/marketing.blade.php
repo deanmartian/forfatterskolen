@@ -4,25 +4,12 @@
     <title>Time Register &rsaquo; Forfatterskolen</title>
 @stop
 
-@section('styles')
-    <style>
-        .fa-file-red:before {
-            content: "\f15b";
-        }
-
-        .fa-file-red {
-            color: #862736 !important;
-            font-size: 20px;
-        }
-    </style>
-@stop
-
 @section('content')
     <div class="learner-container">
         <div class="container">
             <div class="row">
                 <a href="{{ route('learner.project.show', $project->id) }}"
-                   class="btn btn-secondary mb-3">
+                   class="btn btn-outline-brand mb-3">
                     <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
                 </a>
 
@@ -30,8 +17,8 @@
                     <h3 class="mt-3">
                         {{ trans('site.author-portal.email-bookstore') }}
                     </h3>
-                    <div class="card global-card">
-                        <div class="card-body p-0">
+                    <div class="card sp-card">
+                        <div class="sp-card-body p-0">
                             <table class="table table-side-bordered table-white">
                                 <thead>
                                 <tr>
@@ -46,7 +33,7 @@
                                         <td>{!! $emailBookstore->file_link !!}</td>
                                         <td>{{ $emailBookstore->date }}</td>
                                         <td>
-                                            <a href="{{ $emailBookstore->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $emailBookstore->value }}" class="btn btn-brand btn-xs" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -55,13 +42,13 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for email bookstore -->
+                    </div> <!-- end card sp-card for email bookstore -->
 
                     <h3 class="mt-5">
                         {{ trans('site.author-portal.email-library') }}
                     </h3>
-                    <div class="card global-card">
-                        <div class="card-body p-0">
+                    <div class="card sp-card">
+                        <div class="sp-card-body p-0">
                             <table class="table table-side-bordered table-white">
                                 <thead>
                                 <tr>
@@ -76,7 +63,7 @@
                                         <td>{!! $emailLibrary->file_link !!}</td>
                                         <td>{{ $emailLibrary->date }}</td>
                                         <td>
-                                            <a href="{{ $emailLibrary->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $emailLibrary->value }}" class="btn btn-brand btn-xs" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -85,14 +72,14 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for email library-->
+                    </div> <!-- end card sp-card for email library-->
 
                     <h3 class="mt-5">
                         {{ trans('site.author-portal.email-press') }}
                     </h3>
-                    <div class="card global-card">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans_choice('site.files', 1) }}</th>
@@ -106,7 +93,7 @@
                                         <td>{!! $emailPress->file_link !!}</td>
                                         <td>{{ $emailPress->date }}</td>
                                         <td>
-                                            <a href="{{ $emailPress->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $emailPress->value }}" class="btn btn-brand btn-xs" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -115,14 +102,14 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for email-press -->
+                    </div> <!-- end card sp-card for email-press -->
 
                     <h3 class="mt-5">
                         {{ trans('site.author-portal.review-copies') }}
                     </h3>
-                    <div class="card global-card">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.review-copies-sent') }}</th>
@@ -137,11 +124,11 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for review copies sent-->
+                    </div> <!-- end card sp-card for review copies sent-->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.setup-online-store') }}</th>
@@ -158,10 +145,10 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for Set up online store -->
+                    </div> <!-- end card sp-card for Set up online store -->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
                             <table class="table table-side-bordered table-white">
                                 <thead>
                                 <tr>
@@ -179,11 +166,11 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for Set up Facebook -->
+                    </div> <!-- end card sp-card for Set up Facebook -->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans_choice('site.files', 1) }}</th>
@@ -202,11 +189,11 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for advertisement facebook -->
+                    </div> <!-- end card sp-card for advertisement facebook -->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.cultural-council') }}</th>
@@ -220,7 +207,7 @@
                                         <td>{!! $culturalCouncil->file_link !!}</td>
                                         <td>{{ $culturalCouncil->is_finished_text }}</td>
                                         <td>
-                                            <a href="{{ $culturalCouncil->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $culturalCouncil->value }}" class="btn btn-brand btn-xs" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -229,11 +216,11 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for cultural council-->
+                    </div> <!-- end card sp-card for cultural council-->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.application-free-word') }}</th>
@@ -247,7 +234,7 @@
                                         <td>{!! $freeWord->file_link !!}</td>
                                         <td>{{ $freeWord->is_finished_text }}</td>
                                         <td>
-                                            <a href="{{ $freeWord->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $freeWord->value }}" class="btn btn-brand btn-xs" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -256,11 +243,11 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for free words-->
+                    </div> <!-- end card sp-card for free words-->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.agreement-on-time-registration') }}</th>
@@ -275,11 +262,11 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for Agreement on time registration -->
+                    </div> <!-- end card sp-card for Agreement on time registration -->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.print-ebook') }}</th>
@@ -293,7 +280,7 @@
                                         <td>{!! $printEBook->file_link !!}</td>
                                         <td>{{ $printEBook->is_finished_text }}</td>
                                         <td>
-                                            <a href="{{ $printEBook->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $printEBook->value }}" class="btn btn-brand btn-xs" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -302,11 +289,11 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for print ebook -->
+                    </div> <!-- end card sp-card for print ebook -->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.sample-book-approved') }}</th>
@@ -320,7 +307,7 @@
                                         <td>{!! $sampleBook->file_link !!}</td>
                                         <td>{{ $sampleBook->is_finished_text }}</td>
                                         <td>
-                                            <a href="{{ $sampleBook->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $sampleBook->value }}" class="btn btn-brand btn-xs" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -329,11 +316,11 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for Sample book approved -->
+                    </div> <!-- end card sp-card for Sample book approved -->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.manuscripts-sent-to-print') }}</th>
@@ -348,11 +335,11 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for Manuscripts are sent to print -->
+                    </div> <!-- end card sp-card for Manuscripts are sent to print -->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.pdf-approved') }}</th>
@@ -366,7 +353,7 @@
                                         <td>{!! $pdfPrint->file_link !!}</td>
                                         <td>{{ $pdfPrint->is_finished_text }}</td>
                                         <td>
-                                            <a href="{{ $pdfPrint->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $pdfPrint->value }}" class="btn btn-brand btn-xs" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -375,11 +362,11 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for PDF is approved -->
+                    </div> <!-- end card sp-card for PDF is approved -->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.number-of-books-by-author') }}</th>
@@ -396,11 +383,11 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for Number of books by author -->
+                    </div> <!-- end card sp-card for Number of books by author -->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.update-book-base') }}</th>
@@ -415,11 +402,11 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for Update the book base -->
+                    </div> <!-- end card sp-card for Update the book base -->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
+                            <table class="sp-table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.ebook-ordered') }}</th>
@@ -434,10 +421,10 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for ebook ordered -->
+                    </div> <!-- end card sp-card for ebook ordered -->
 
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
+                    <div class="card sp-card mt-5">
+                        <div class="sp-card-body p-0">
                             <table class="table table-side-bordered table-white">
                                 <thead>
                                 <tr>
@@ -453,7 +440,7 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for ebook received and registered -->
+                    </div> <!-- end card sp-card for ebook received and registered -->
                 </div> <!-- end col-md-12 -->
             </div>
         </div>

@@ -4,23 +4,36 @@
     <title>Time Register &rsaquo; Forfatterskolen</title>
 @stop
 
+@section('styles')
+    <style>
+        .fa-file-red:before {
+            content: "\f15b";
+        }
+
+        .fa-file-red {
+            color: #862736 !important;
+            font-size: 20px;
+        }
+    </style>
+@stop
+
 @section('content')
     <div class="learner-container">
         <div class="container">
             <div class="row">
                 <div class="col-md-12 dashboard-course no-left-padding">
-                    <div class="card sp-card">
-                        <div class="sp-card-header">
+                    <div class="card global-card">
+                        <div class="card-header">
                             <h1 class="d-inline-block">
                                 {{ trans('site.author-portal.book-project') }}
                             </h1>
 
-                            <button class="btn btn-brand projectBtn pull-right" data-toggle="modal" data-target="#projectModal">
+                            <button class="btn btn-primary projectBtn pull-right" data-toggle="modal" data-target="#projectModal">
                                 {{ trans('site.author-portal.add-book-project') }}
                             </button>
                         </div>
-                        <div class="sp-card-body">
-                            <table class="sp-table">
+                        <div class="card-body">
+                            <table class="table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.project-number') }}</th>
@@ -57,10 +70,10 @@
                                                     {{ trans('site.author-portal.active') }}
                                                 </span>
                                             @elseif ($project->status === 'lead')
-                                                <span class="badge badge-warning">Prospekt</span>
+                                                <span class="badge badge-warning">Lead</span>
                                             @elseif($project->status === 'finished')
                                                 <span class="badge badge-success">
-                                                    Fullført
+                                                    {{ trans('site.finish') }}
                                                 </span>
                                             @endif
                                         </td>
@@ -70,7 +83,7 @@
                                                     {{ trans('site.author-portal.current') }}
                                                 </span>
                                             @else
-                                                <button class="btn btn-brand btn-xs standardProjectBtn" data-toggle="modal"
+                                                <button class="btn btn-primary btn-xs standardProjectBtn" data-toggle="modal" 
                                                 data-action="{{ route('learner.project.set-standard', $project->id) }}"
                                                 data-target="#standardProjectModal">
                                                     {{ trans('site.author-portal.set-standard') }}
@@ -95,64 +108,60 @@ frameborder="0"
         </div>
     </div>
 
-    <div id="projectModal" class="modal fade" role="dialog" aria-hidden="true">
+    <div id="projectModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-md">
-            <div class="modal-content sp-modal">
-                <div class="sp-modal__header">
-                    <h3 class="sp-modal__title">
-                        <i class="fas fa-plus-circle" style="color:var(--brand-primary);margin-right:6px" aria-hidden="true"></i>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
                         {{ trans('site.author-portal.add-book-project') }}
-                    </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form method="POST" action="{{ route('learner.save-project') }}" onsubmit="disableSubmit(this)" enctype="multipart/form-data" data-sp-validate>
-                    {{ csrf_field() }}
-                    <div class="sp-modal__body">
-                        <div class="sp-form-group">
-                            <label class="sp-label" for="idxProjectName">{{ trans('site.author-portal.project-name') }} <span class="sp-required">*</span></label>
-                            <input type="text" class="sp-input" id="idxProjectName" name="name" required>
-                            <span class="sp-error"></span>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('learner.save-project') }}" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label>{{ trans('site.author-portal.project-name') }}</label>
+                            <input type="text" class="form-control" name="name" required>
                         </div>
-                        <div class="sp-form-group">
-                            <label class="sp-label" for="idxProjectDesc">{{ trans('site.description') }}</label>
-                            <textarea class="sp-input sp-textarea" id="idxProjectDesc" name="description" rows="10"></textarea>
+
+                        <div class="form-group">
+                            <label>{{ trans('site.description') }}</label>
+                            <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
                         </div>
-                    </div>
-                    <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
-                        <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
-                    </div>
-                </form>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <div id="standardProjectModal" class="modal fade" role="dialog" aria-hidden="true">
+    <div id="standardProjectModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-md">
-            <div class="modal-content sp-modal">
-                <div class="sp-modal__header">
-                    <h3 class="sp-modal__title">
-                        <i class="fas fa-star" style="color:var(--brand-primary);margin-right:6px" aria-hidden="true"></i>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
                         {{ trans('site.author-portal.standard-project') }}
-                    </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form method="POST" action="" onsubmit="disableSubmit(this)">
-                    {{ csrf_field() }}
-                    <div class="sp-modal__body">
-                        <p style="color:#374151;font-size:14px">
-                            Er du sikker på at du vil sette dette prosjektet som <em>standard</em>?
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+
+                        <p>
+                            Are you sure you want to set this project as <em>standard</em>?
                         </p>
-                    </div>
-                    <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
-                        <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
-                    </div>
-                </form>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

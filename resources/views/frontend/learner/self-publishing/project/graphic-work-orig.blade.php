@@ -1,7 +1,20 @@
 @extends('frontend.learner.self-publishing.layout')
 
 @section('title')
-    <title>Grafisk arbeid &rsaquo; Forfatterskolen</title>
+    <title>Time Register &rsaquo; Forfatterskolen</title>
+@stop
+
+@section('styles')
+    <style>
+        .fa-file-red:before {
+            content: "\f15b";
+        }
+
+        .fa-file-red {
+            color: #862736 !important;
+            font-size: 20px;
+        }
+    </style>
 @stop
 
 @section('content')
@@ -9,7 +22,7 @@
         <div class="container">
             <div class="row">
                 <a href="{{ route('learner.project.show', $project->id) }}"
-                   class="btn btn-outline-brand mb-3">
+                   class="btn btn-secondary mb-3">
                     <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
                 </a>
 
@@ -18,9 +31,9 @@
                     <h3 class="mt-3">
                         {{ trans('site.homepage.illustration-cover-design') }}
                     </h3>
-                    <div class="card sp-card">
-                        <div class="sp-card-body p-0">
-                            <table class="sp-table">
+                    <div class="card global-card">
+                        <div class="card-body p-0">
+                            <table class="table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.homepage.illustration-cover-design') }}</th>
@@ -74,14 +87,14 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card sp-card for cover-->
+                    </div> <!-- end card global-card for cover-->
 
                     <h3 class="mt-5">
                         {{ trans('site.author-portal.page-format') }}
                     </h3>
-                    <div class="card sp-card">
-                        <div class="sp-card-body p-0">
-                            <table class="sp-table">
+                    <div class="card global-card">
+                        <div class="card-body p-0">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>{{ trans('site.author-portal.interior') }}</th>
@@ -113,9 +126,9 @@
                     <h3 class="mt-5">
                         {{ trans('site.author-portal.indesign') }}
                     </h3>
-                    <div class="card sp-card">
-                        <div class="sp-card-body p-0">
-                            <table class="sp-table">
+                    <div class="card global-card">
+                        <div class="card-body p-0">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>{{ trans('site.author-portal.interior') }}</th>
@@ -140,7 +153,7 @@
                                                         </a>
                                                     @else
                                                         @if ($coverFile)
-                                                            <a href="{{ $coverFile }}" class="btn btn-brand btn-xs" download>
+                                                            <a href="{{ $coverFile }}" class="btn btn-success btn-xs" download>
                                                                 <i class="fa fa-download"></i>
                                                             </a>
                                                             <a href="{{ asset($coverFile) }}" target="_blank" style="margin-right: 5px">
@@ -168,9 +181,9 @@
                     <h3 class="mt-5">
                         {{ trans('site.author-portal.barcode') }}
                     </h3>
-                    <div class="card sp-card">
-                        <div class="sp-card-body p-0">
-                            <table class="sp-table">
+                    <div class="card global-card">
+                        <div class="card-body p-0">
+                            <table class="table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.author-portal.barcode') }}</th>
@@ -187,7 +200,7 @@
                                         </td>
                                         <td>
                                             <a href="{{ url('/dropbox/download/' . trim($barCode->value)) }}" 
-                                                class="btn btn-brand btn-xs" download>
+                                                class="btn btn-success btn-xs" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -196,14 +209,14 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card sp-card for barcode-->
+                    </div> <!-- end card global-card for barcode-->
 
                     <h3 class="mt-5">
                         {{ trans('site.author-portal.print-ready') }}
                     </h3>
-                    <div class="card sp-card">
-                        <div class="sp-card-body p-0">
-                            <table class="sp-table">
+                    <div class="card global-card">
+                        <div class="card-body p-0">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>{{ trans_choice('site.files', 1) }}</th>
@@ -221,7 +234,7 @@
                                                             <i class="fa fa-download" aria-hidden="true"></i>
                                                         </a>&nbsp;
                                                     @else
-                                                        <a href="{{ $printReady->value }}" class="btn btn-brand btn-xs" download>
+                                                        <a href="{{ $printReady->value }}" class="btn btn-success btn-xs" download>
                                                             <i class="fa fa-download"></i>
                                                         </a>
                                                     @endif
@@ -247,9 +260,9 @@
                     <h3 class="mt-5">
                         {{ trans('site.author-portal.sample-book-pdf') }}
                     </h3>
-                    <div class="card sp-card">
-                        <div class="sp-card-body p-0">
-                            <table class="sp-table">
+                    <div class="card global-card">
+                        <div class="card-body p-0">
+                            <table class="table">
                                 <thead>
                                 <tr>
                                     <th>{{ trans_choice('site.files', 1) }}</th>
@@ -263,11 +276,11 @@
                                         <td>
                                             @if (strpos($sampleBookPDF->value, "project-"))
                                                 <a href="{{ url('/dropbox/download/' . trim($sampleBookPDF->value)) }}" 
-                                                    class="btn btn-brand btn-xs">
+                                                    class="btn btn-success btn-xs">
                                                     <i class="fa fa-download" aria-hidden="true"></i>
                                                 </a>
                                             @else
-                                                <a href="{{ $sampleBookPDF->value }}" class="btn btn-brand btn-xs" download>
+                                                <a href="{{ $sampleBookPDF->value }}" class="btn btn-success btn-xs" download>
                                                     <i class="fa fa-download"></i>
                                                 </a>
                                             @endif
@@ -277,7 +290,7 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- end card sp-card for sample book/pdf -->
+                    </div> <!-- end card global-card for sample book/pdf -->
 
                 </div> <!-- end col-md-12 -->
             </div>
