@@ -214,7 +214,6 @@ class CheckoutController extends ApiController
             'coupon' => ['nullable', 'string'],
             'is_pay_later' => ['nullable', 'boolean'],
             'fallbackUrl' => ['nullable', 'string'],
-            'is_fiken' => ['nullable', 'boolean'],
         ]);
 
         if ($validator->fails()) {
@@ -242,7 +241,7 @@ class CheckoutController extends ApiController
             return $this->errorResponse('Payment plan not available for this package.', 'forbidden', 403);
         }
 
-        if (($validated['is_fiken'] ?? false) && ! in_array((int) $paymentPlan->division, [1, 3, 6, 12], true)) {
+        if (($validated['is_pay_later'] ?? false) && ! in_array((int) $paymentPlan->division, [1, 3, 6, 12], true)) {
             return $this->errorResponse('Fiken checkout støtter kun betalingsplanene 1, 3, 6 eller 12 måneder.', 'validation_error', 422, [
                 'payment_plan_id' => ['Ugyldig betalingsplan for Fiken. Tillatte verdier er 1, 3, 6 eller 12 måneder.'],
             ]);
@@ -252,13 +251,13 @@ class CheckoutController extends ApiController
             return $this->errorResponse('Unsupported payment mode for API checkout.', 'validation_error', 422);
         }
 
-        if (($validated['is_fiken'] ?? false) && $paymentMode->mode !== 'Faktura') {
+        if (($validated['is_pay_later'] ?? false) && $paymentMode->mode !== 'Faktura') {
             return $this->errorResponse('Fiken checkout må bruke Faktura betalingsmodus.', 'validation_error', 422, [
                 'payment_mode_id' => ['Fiken checkout må bruke Faktura betalingsmodus.'],
             ]);
         }
 
-        $isPayLaterCheckout = (bool) ($validated['is_pay_later'] ?? false) || (bool) ($validated['is_fiken'] ?? false);
+        $isPayLaterCheckout = (bool) ($validated['is_pay_later'] ?? false);
 
         if ($isPayLaterCheckout) {
             $allowedPaymentPlanIds = collect($course->payment_plan_ids ?? [])
@@ -291,15 +290,13 @@ class CheckoutController extends ApiController
             'price' => $basePrice,
             'discount' => $discount,
             'is_pay_later' => (bool) ($validated['is_pay_later'] ?? false),
-            'is_fiken' => (bool) ($validated['is_fiken'] ?? false),
         ]);
 
         if ($paymentMode->mode === 'Paypal') {
             return $this->errorResponse('Paypal checkout is not supported via API.', 'validation_error', 422);
         }
 
-        if ($paymentMode->mode === 'Faktura' && $request->boolean('is_fiken')) {
-            $request->merge(['is_pay_later' => true]);
+        if ($paymentMode->mode === 'Faktura' && $request->boolean('is_pay_later')) {
             $order = $courseService->createOrder($request);
             $this->createFikenInvoiceForCourseOrder($order, $package, $paymentPlan, $request, $finalPrice);
             $result = [
