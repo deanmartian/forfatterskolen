@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\CheckoutLog;
 use App\Course;
 use App\CourseDiscount;
-use App\FikenInvoice;
+use App\Http\FikenInvoice;
 use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Mail\SubjectBodyEmail;
 use App\Order;
@@ -214,6 +214,7 @@ class CheckoutController extends ApiController
             'coupon' => ['nullable', 'string'],
             'is_pay_later' => ['nullable', 'boolean'],
             'fallbackUrl' => ['nullable', 'string'],
+            'is_fiken' => ['nullable', 'boolean'],
         ]);
 
         if ($validator->fails()) {
@@ -241,8 +242,36 @@ class CheckoutController extends ApiController
             return $this->errorResponse('Payment plan not available for this package.', 'forbidden', 403);
         }
 
+        if (($validated['is_fiken'] ?? false) && ! in_array((int) $paymentPlan->division, [1, 3, 6, 12], true)) {
+            return $this->errorResponse('Fiken checkout støtter kun betalingsplanene 1, 3, 6 eller 12 måneder.', 'validation_error', 422, [
+                'payment_plan_id' => ['Ugyldig betalingsplan for Fiken. Tillatte verdier er 1, 3, 6 eller 12 måneder.'],
+            ]);
+        }
+
         if (! in_array($paymentMode->mode, ['Vipps', 'Paypal', 'Faktura'], true)) {
             return $this->errorResponse('Unsupported payment mode for API checkout.', 'validation_error', 422);
+        }
+
+        if (($validated['is_fiken'] ?? false) && $paymentMode->mode !== 'Faktura') {
+            return $this->errorResponse('Fiken checkout må bruke Faktura betalingsmodus.', 'validation_error', 422, [
+                'payment_mode_id' => ['Fiken checkout må bruke Faktura betalingsmodus.'],
+            ]);
+        }
+
+        $isPayLaterCheckout = (bool) ($validated['is_pay_later'] ?? false) || (bool) ($validated['is_fiken'] ?? false);
+
+        if ($isPayLaterCheckout) {
+            $allowedPaymentPlanIds = collect($course->payment_plan_ids ?? [])
+                ->map(static fn ($id) => (int) $id)
+                ->filter()
+                ->unique()
+                ->values();
+
+            if ($allowedPaymentPlanIds->isEmpty() || ! $allowedPaymentPlanIds->contains((int) $paymentPlan->id)) {
+                return $this->errorResponse('Pay later er ikke tilgjengelig for valgt betalingsplan.', 'validation_error', 422, [
+                    'payment_plan_id' => ['Valgt betalingsplan er ikke tillatt for pay later på dette kurset.'],
+                ]);
+            }
         }
 
         $payload = array_merge($payload, [
@@ -262,13 +291,22 @@ class CheckoutController extends ApiController
             'price' => $basePrice,
             'discount' => $discount,
             'is_pay_later' => (bool) ($validated['is_pay_later'] ?? false),
+            'is_fiken' => (bool) ($validated['is_fiken'] ?? false),
         ]);
 
         if ($paymentMode->mode === 'Paypal') {
             return $this->errorResponse('Paypal checkout is not supported via API.', 'validation_error', 422);
         }
 
-        if ($paymentMode->mode === 'Faktura' && ! $request->boolean('is_pay_later')) {
+        if ($paymentMode->mode === 'Faktura' && $request->boolean('is_fiken')) {
+            $request->merge(['is_pay_later' => true]);
+            $order = $courseService->createOrder($request);
+            $this->createFikenInvoiceForCourseOrder($order, $package, $paymentPlan, $request, $finalPrice);
+            $result = [
+                'order' => $order,
+                'redirect_url' => url('/thankyou?pl_ord='.$order->id),
+            ];
+        } elseif ($paymentMode->mode === 'Faktura' && ! $request->boolean('is_pay_later')) {
             $result = $courseService->startApiCheckout($request);
 
             if (isset($result['error'])) {
@@ -496,6 +534,68 @@ class CheckoutController extends ApiController
             'is_processed' => (bool) $order->is_processed,
             'pay_later' => (bool) $request->has('pl_ord'),
         ]);
+    }
+
+
+    private function createFikenInvoiceForCourseOrder(Order $order, Package $package, PaymentPlan $paymentPlan, Request $request, int $planPrice): void
+    {
+        $dueDate = date('Y-m-d');
+
+        if ($package->issue_date && Carbon::parse($package->issue_date)->gt(Carbon::today())) {
+            $dueDate = $package->issue_date;
+        }
+
+        $dueDate = Carbon::parse($dueDate);
+
+        $productId = match ((int) $paymentPlan->division) {
+            3 => $package->months_3_product,
+            6 => $package->months_6_product,
+            12 => $package->months_12_product,
+            default => $package->full_price_product,
+        };
+
+        $invoiceDueDate = ((int) $paymentPlan->division === 1)
+            ? (clone $dueDate)->addDays(14)->format('Y-m-d')
+            : (clone $dueDate)->addMonth()->format('Y-m-d');
+
+        $paymentPlanLabel = (int) $paymentPlan->division === 1
+            ? 'Faktura (14 dagers betalingsfrist)'
+            : 'Rentefri delbetaling ('.$paymentPlan->division.' måneder)';
+
+        $comment = '(Kurs: '.$package->course->title.' ['.$package->variation.'], ';
+        $comment .= 'Betalingsmodus: Bankoverføring, ';
+        $comment .= 'Betalingsplan: '.$paymentPlanLabel.') API order';
+
+        $invoiceFields = [
+            'user_id' => $order->user_id,
+            'first_name' => (string) $request->input('first_name'),
+            'last_name' => (string) $request->input('last_name'),
+            'netAmount' => $planPrice * 100,
+            'dueDate' => $invoiceDueDate,
+            'description' => 'Kursordrefaktura',
+            'productID' => $productId,
+            'email' => (string) $request->input('email'),
+            'telephone' => (string) $request->input('phone'),
+            'address' => (string) $request->input('street'),
+            'postalPlace' => (string) $request->input('city'),
+            'postalCode' => (string) $request->input('zip'),
+            'comment' => $comment,
+            'payment_mode' => 'Faktura',
+        ];
+
+        $invoice = new FikenInvoice;
+
+        if ((int) $paymentPlan->division > 1) {
+            for ($index = 1; $index <= (int) $paymentPlan->division; $index++) {
+                $invoiceFields['dueDate'] = (clone $dueDate)->addMonth($index)->format('Y-m-d');
+                $invoiceFields['index'] = $index;
+                $invoice->create_invoice($invoiceFields);
+            }
+
+            return;
+        }
+
+        $invoice->create_invoice($invoiceFields);
     }
 
     private function resolveSveaStatus(string $sveaOrderId): string
