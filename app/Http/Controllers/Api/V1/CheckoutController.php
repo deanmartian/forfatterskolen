@@ -299,9 +299,12 @@ class CheckoutController extends ApiController
         if ($paymentMode->mode === 'Faktura' && $request->boolean('is_pay_later')) {
             $order = $courseService->createOrder($request);
             $this->createFikenInvoiceForCourseOrder($order, $package, $paymentPlan, $request, $finalPrice);
+
+            $orderRecord = $order;
+            $lovableBase = rtrim((string) config('api.lovable_url'), '/');
             $result = [
                 'order' => $order,
-                'redirect_url' => url('/thankyou?pl_ord='.$order->id),
+                'redirect_url' => $lovableBase.'/course/'.$course->id.'/thankyou?pl_ord='.$orderRecord->id,
             ];
         } elseif ($paymentMode->mode === 'Faktura' && ! $request->boolean('is_pay_later')) {
             $result = $courseService->startApiCheckout($request);
