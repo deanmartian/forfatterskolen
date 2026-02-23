@@ -214,7 +214,6 @@ class CheckoutController extends ApiController
             'coupon' => ['nullable', 'string'],
             'is_pay_later' => ['nullable', 'boolean'],
             'fallbackUrl' => ['nullable', 'string'],
-            'is_test' => ['nullable', 'boolean'],
         ]);
 
         if ($validator->fails()) {
