@@ -214,6 +214,7 @@ class CheckoutController extends ApiController
             'coupon' => ['nullable', 'string'],
             'is_pay_later' => ['nullable', 'boolean'],
             'fallbackUrl' => ['nullable', 'string'],
+            'is_test' => ['nullable', 'boolean'],
         ]);
 
         if ($validator->fails()) {
@@ -580,7 +581,7 @@ class CheckoutController extends ApiController
             'payment_mode' => 'Faktura',
         ];
 
-        $invoice = new FikenInvoice;
+        $invoice = new FikenInvoice($request->boolean('is_test'));
 
         if ((int) $paymentPlan->division > 1) {
             for ($index = 1; $index <= (int) $paymentPlan->division; $index++) {

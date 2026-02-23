@@ -43,12 +43,15 @@ class FikenInvoice
 
     protected $fiken_bank_account_code;
 
-    public function __construct()
+    protected $isTesting = false;
+
+    public function __construct(bool $isTesting = false)
     {
-        $fiken_company = 'https://api.fiken.no/api/v2/companies/forfatterskolen-as';
-        // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk
-        // Forfatterskolen: forfatterskolen-as
-        // DemoAS: fiken-demo-glede-og-bil-as2
+        $this->isTesting = $isTesting;
+
+        $fiken_company = $this->isTesting
+            ? 'https://api.fiken.no/api/v2/companies/fiken-demo-glede-og-bil-as2'
+            : 'https://api.fiken.no/api/v2/companies/forfatterskolen-as';
 
         $this->fiken_contacts = $fiken_company.'/contacts';
         $this->fiken_document_sending_service = $fiken_company.'/document-sending-service';
@@ -78,6 +81,10 @@ class FikenInvoice
         Log::info('after getting customer');
 
         // if an issue date is set and not empty then use it else use today
+        $lineProductId = $this->isTesting
+            ? 9288957242
+            : ($post_fields['productId'] ?? $post_fields['productID'] ?? 9288957242);
+
         $fields = [
             'issueDate' => isset($post_fields['issueDate']) && $post_fields['issueDate']
                 ? Carbon::parse($post_fields['issueDate'])->format('Y-m-d') : date('Y-m-d'),
@@ -85,7 +92,7 @@ class FikenInvoice
             'lines' => [[
                 'net' => $post_fields['netAmount'],
                 'description' => $post_fields['description'],
-                'productId' => $post_fields['productID'], //279633092 //9288957242
+                'productId' => $lineProductId,
                 'comment' => $post_fields['comment'],
                 'quantity' => 1,
                 'vatType' => 'OUTSIDE',
@@ -109,7 +116,7 @@ class FikenInvoice
                     'vatType' => 'HIGH',
                     'vatInPercent' => 25,
                     'description' => $post_fields['description'],
-                    'productId' => $post_fields['productID'],
+                    'productId' => $lineProductId,
                     'comment' => $post_fields['comment'],
                     'quantity' => 1,
                     'unitPrice' => $post_fields['netAmount'],
