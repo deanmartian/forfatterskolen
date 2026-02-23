@@ -242,9 +242,9 @@ class CheckoutController extends ApiController
             return $this->errorResponse('Payment plan not available for this package.', 'forbidden', 403);
         }
 
-        if (($validated['is_fiken'] ?? false) && ! in_array((int) $paymentPlan->division, [1, 3, 6], true)) {
-            return $this->errorResponse('Fiken checkout støtter kun faktura (14 dager) eller rentefri delbetaling (3/6 måneder).', 'validation_error', 422, [
-                'payment_plan_id' => ['Fiken delbetaling støtter kun 3 eller 6 måneder.'],
+        if (($validated['is_fiken'] ?? false) && ! in_array((int) $paymentPlan->division, [1, 3, 6, 12], true)) {
+            return $this->errorResponse('Fiken checkout støtter kun betalingsplanene 1, 3, 6 eller 12 måneder.', 'validation_error', 422, [
+                'payment_plan_id' => ['Ugyldig betalingsplan for Fiken. Tillatte verdier er 1, 3, 6 eller 12 måneder.'],
             ]);
         }
 
@@ -256,6 +256,22 @@ class CheckoutController extends ApiController
             return $this->errorResponse('Fiken checkout må bruke Faktura betalingsmodus.', 'validation_error', 422, [
                 'payment_mode_id' => ['Fiken checkout må bruke Faktura betalingsmodus.'],
             ]);
+        }
+
+        $isPayLaterCheckout = (bool) ($validated['is_pay_later'] ?? false) || (bool) ($validated['is_fiken'] ?? false);
+
+        if ($isPayLaterCheckout) {
+            $allowedPaymentPlanIds = collect($course->payment_plan_ids ?? [])
+                ->map(static fn ($id) => (int) $id)
+                ->filter()
+                ->unique()
+                ->values();
+
+            if ($allowedPaymentPlanIds->isEmpty() || ! $allowedPaymentPlanIds->contains((int) $paymentPlan->id)) {
+                return $this->errorResponse('Pay later er ikke tilgjengelig for valgt betalingsplan.', 'validation_error', 422, [
+                    'payment_plan_id' => ['Valgt betalingsplan er ikke tillatt for pay later på dette kurset.'],
+                ]);
+            }
         }
 
         $payload = array_merge($payload, [
