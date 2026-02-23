@@ -16,22 +16,22 @@
 @section('content')
     <div class="learner-container">
         <div class="container">
-            <a href="{{ route('learner.progress-plan') }}" class="btn btn-outline-brand mb-3">
-                <i class="fa fa-arrow-left" aria-hidden="true"></i> Tilbake
+            <a href="{{ route('learner.progress-plan') }}" class="btn btn-secondary mb-3">
+                <i class="fa fa-arrow-left"></i> Back
             </a>
 
-            <div class="card sp-card">
-                <div class="sp-card-header">
+            <div class="card card-global">
+                <div class="card-header">
                     {{ $stepTitle }}
 
-                    <button type="button" class="btn btn-brand btn-xs pull-right printBtn"
+                    <button type="button" class="btn btn-primary btn-xs pull-right printBtn"
                         data-toggle="modal" data-target="#printModal"
                         data-print="{{ json_encode($print) }}">
-                        Rediger
-                        <i class="fa fa-edit" aria-hidden="true"></i>
+                        Edit
+                        <i class="fa fa-edit"></i>
                     </button>
                 </div>
-                <div class="sp-card-body">
+                <div class="card-body">
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
@@ -158,40 +158,38 @@
         </div>
     </div>
 
-    <div id="printModal" class="modal fade" role="dialog" aria-hidden="true">
+    <div id="printModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-md">
-            <div class="modal-content sp-modal">
-                <div class="sp-modal__header">
-                    <h3 class="sp-modal__title">
-                        <i class="fas fa-print" style="color:var(--brand-primary);margin-right:6px"></i>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
                         Print Details
-                    </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form method="POST" action="{{ route($savePrintRoute, $standardProject->id) }}"
-                    enctype="multipart/form-data" data-sp-validate>
-                      {{ csrf_field() }}
-                    <div class="sp-modal__body">
-                        <div class="sp-form-group">
-                            <label class="sp-label">ISBN</label>
-                            <input type="text" class="sp-input" name="isbn" required>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route($savePrintRoute, $standardProject->id) }}"
+                        enctype="multipart/form-data">
+                          {{ csrf_field() }}
+    
+                        <div class="form-group">
+                            <label>ISBN</label>
+                            <input type="text" class="form-control" name="isbn" required>
                         </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Antall</label>
-                            <input type="text" class="sp-input" name="number" onkeypress="return numeralsOnly(event)" required>
+    
+                        <div class="form-group">
+                            <label>Antall</label>
+                            <input type="text" class="form-control" name="number" onkeypress="return numeralsOnly(event)" required>
                         </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Sider</label>
-                            <input type="text" class="sp-input" name="pages" onkeypress="return numeralsOnly(event)" required>
+    
+                        <div class="form-group">
+                            <label>Sider</label>
+                            <input type="text" class="form-control" name="pages" onkeypress="return numeralsOnly(event)" required>
                         </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Størrelse</label>
-                            <select class="sp-input" name="format" id="format-select">
+    
+                        <div class="form-group">
+                            <label>Størrelse</label>
+                            <select class="form-control" name="format" id="format-select">
                                 <option value="">Valgfri størrelse</option>
                                 @foreach (AdminHelpers::projectFormats() as $format)
                                     <option value="{{ $format['id'] }}">
@@ -200,20 +198,20 @@
                                 @endforeach
                             </select>
                         </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Bredde (mm)</label>
-                            <input type="text" class="sp-input" name="width" id="width-input" onkeypress="return numeralsOnly(event)">
+    
+                        <div class="form-group">
+                            <label>Bredde (mm)</label>
+                            <input type="text" class="form-control" name="width" id="width-input" onkeypress="return numeralsOnly(event)">
                         </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Høyde (mm)</label>
-                            <input type="text" class="sp-input" name="height" id="height-input" onkeypress="return numeralsOnly(event)">
+    
+                        <div class="form-group">
+                            <label>Høyde (mm)</label>
+                            <input type="text" class="form-control" name="height" id="height-input" onkeypress="return numeralsOnly(event)">
                         </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Antall titler</label>
-                            <select class="sp-input valid" name="originals">
+    
+                        <div class="form-group">
+                            <label>Antall titler</label>
+                            <select class="form-control valid" name="originals">
                                 @for ($i = 1; $i <= 20; $i++)
                                     <option value="{{ $i }}">
                                         {{ $i }}
@@ -221,10 +219,10 @@
                                 @endfor
                             </select>
                         </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Innbinding</label>
-                            <select class="sp-input" name="binding">
+    
+                        <div class="form-group">
+                            <label>Innbinding</label>
+                            <select class="form-control" name="binding">
                                 @foreach (AdminHelpers::projectBindings() as $binding)
                                     <option value="{{ $binding['id'] }}">
                                         {{ $binding['option'] }}
@@ -232,18 +230,18 @@
                                 @endforeach
                             </select>
                         </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Garnhefting</label>
-                            <select class="sp-input" name="yarn_stapling">
+    
+                        <div class="form-group">
+                            <label>Garnhefting</label>
+                            <select class="form-control" name="yarn_stapling">
                                 <option selected="selected" value="0">Nei</option>
                                 <option value="1">Ja</option>
                             </select>
                         </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Papirtype innhold</label>
-                            <select class="sp-input" name="media">
+    
+                        <div class="form-group">
+                            <label>Papirtype innhold</label>
+                            <select class="form-control" name="media">
                                 @foreach (AdminHelpers::projectMedias() as $media)
                                     <option value="{{ $media['id'] }}">
                                         {{ $media['option'] }}
@@ -251,10 +249,10 @@
                                 @endforeach
                             </select>
                         </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Trykk av innhold</label>
-                            <select class="sp-input valid" name="print_method">
+    
+                        <div class="form-group">
+                            <label>Trykk av innhold</label>
+                            <select class="form-control valid" name="print_method">
                                 @foreach (AdminHelpers::projectPrintMethods() as $method)
                                     <option value="{{ $method['id'] }}">
                                         {{ $method['option'] }}
@@ -262,10 +260,10 @@
                                 @endforeach
                             </select>
                         </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Innhold trykkes med</label>
-                            <select class="sp-input valid" name="color">
+    
+                        <div class="form-group">
+                            <label>Innhold trykkes med</label>
+                            <select class="form-control valid" name="color">
                                 @foreach (AdminHelpers::projectPrintColors() as $color)
                                     <option value="{{ $color['id'] }}">
                                         {{ $color['option'] }}
@@ -273,18 +271,20 @@
                                 @endforeach
                             </select>
                         </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Antall fargesider</label>
-                            <input type="text" class="sp-input" name="number_of_color_pages"
+    
+                        <div class="form-group">
+                            <label>Antall fargesider</label>
+                            <input type="text" class="form-control" name="number_of_color_pages" 
                             onkeypress="return numeralsOnly(event)">
                         </div>
-                    </div>
-                    <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
-                        <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
-                    </div>
-                </form>
+    
+                        <button type="submit" class="btn btn-success pull-right margin-top">
+                            {{ trans('site.save') }}
+                        </button>
+    
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -5,31 +5,31 @@
 @stop
 
 @section('title')
-    <title>Omslag &rsaquo; Forfatterskolen</title>
+    <title>Project &rsaquo; Forfatterskolen</title>
 @stop
 
 @section('content')
     <div class="learner-container">
         <div class="container">
-            <a href="{{ route('learner.progress-plan') }}" class="btn btn-outline-brand mb-3">
-                <i class="fa fa-arrow-left" aria-hidden="true"></i> Tilbake
+            <a href="{{ route('learner.progress-plan') }}" class="btn btn-secondary mb-3">
+                <i class="fa fa-arrow-left"></i> Back
             </a>
 
             <div class="card">
-                <div class="sp-card-header">
+                <div class="card-header">
                     {{ trans('site.homepage.illustration-cover-design') }}
 
-                    <button type="button" class="btn btn-brand btn-xs pull-right coverBtn" data-toggle="modal" 
+                    <button type="button" class="btn btn-success btn-xs pull-right coverBtn" data-toggle="modal" 
                                 data-target="#coverModal" data-type="cover">
-                        + Legg til omslag
+                        + Add Cover
                     </button>
                 </div>
-                <div class="sp-card-body">
-                    <table class="sp-table">
+                <div class="card-body">
+                    <table class="table table-global">
                         <thead>
                             <tr>
-                                <th>Omslag</th>
-                                <th width="500">Trykkeklar</th>
+                                <th>Cover</th>
+                                <th width="500">Print Ready</th>
                                 <th width="300"></th>
                             </tr>
                         </thead>
@@ -51,8 +51,8 @@
                                                 </a>
                                             @else
                                                 @if ($coverFile)
-                                                    <a href="{{ $coverFile }}" class="btn btn-brand btn-xs" download>
-                                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                                    <a href="{{ $coverFile }}" class="btn btn-success btn-xs" download>
+                                                        <i class="fa fa-download"></i>
                                                     </a>
                                                     <a href="{{ asset($coverFile) }}" target="_blank" style="margin-right: 5px">
                                                         {{ basename($coverFile) }}
@@ -70,18 +70,17 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <button class="btn btn-outline-brand btn-xs view-cover-btn" data-toggle="modal"
+                                        <button class="btn btn-info btn-xs view-cover-btn" data-toggle="modal" 
                                             data-target="#coverDetailsModal"
-                                            data-id="{{ $cover->id }}" aria-label="Vis omslag">
-                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                            data-id="{{ $cover->id }}">
+                                            <i class="fa fa-eye"></i>
                                         </button>
 
-                                        <button class="btn btn-brand btn-xs coverBtn" data-toggle="modal"
+                                        <button class="btn btn-primary btn-xs coverBtn" data-toggle="modal"
                                                 data-target="#coverModal"
                                                 data-type="cover" data-id="{{ $cover->id }}"
-                                                data-record="{{ json_encode($cover) }}"
-                                                aria-label="Rediger omslag">
-                                            <i class="fa fa-edit" aria-hidden="true"></i>
+                                                data-record="{{ json_encode($cover) }}">
+                                            <i class="fa fa-edit"></i>
                                         </button>
                                         <div id="cover-data-{{ $cover->id }}" class="d-none">
                                             {{-- Copy your table HTML here and make sure to use raw data --}}
@@ -98,39 +97,35 @@
         </div>
     </div>
 
-    <div id="coverModal" class="modal fade" role="dialog" aria-hidden="true">
+    <div id="coverModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-md">
-            <div class="modal-content sp-modal">
-                <div class="sp-modal__header">
-                    <h3 class="sp-modal__title">
-                        <i class="fas fa-palette" style="color:var(--brand-primary);margin-right:6px"></i>
-                        <span class="sp-modal__title-text">Omslag</span>
-                    </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        Cover
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form method="POST" action="{{ route('learner.self-publishing.save-cover', $standardProject->id) }}"
-                    enctype="multipart/form-data" onsubmit="disableSubmit(this)" data-sp-validate>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('learner.self-publishing.save-cover', $standardProject->id) }}"
+                        enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                     {{ csrf_field() }}
                     <input type="hidden" name="id">
                     <input type="hidden" name="type" value="cover">
-                    <div class="sp-modal__body">
-                        <div class="sp-form-group">
-                            <label class="sp-label">Omslag</label>
-                            <input type="file" class="sp-input" name="cover[]" accept="image/*" multiple
-                            data-sp-file-preview="coverFilePreview">
-                            <div id="coverFilePreview"></div>
+
+                        <div class="form-group">
+                            <label>Cover</label>
+                            <input type="file" class="form-control" name="cover[]" accept="image/*" multiple>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
                         </div>
 
-                        <div class="sp-form-group">
-                            <label class="sp-label">Beskrivelse</label>
-                            <textarea name="description" cols="30" rows="10" class="sp-input"></textarea>
-                        </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">Størrelse</label>
-                            <select class="sp-input" name="cover_format" id="cover-format-select">
+                        <div class="form-group">
+                            <label>Størrelse</label>
+                            <select class="form-control" name="cover_format" id="cover-format-select">
                                 <option value="">Valgfri størrelse</option>
                                     @foreach (AdminHelpers::projectFormats() as $format)
                                         <option value="{{ $format['id'] }}">
@@ -140,22 +135,22 @@
                             </select>
                         </div>
 
-                        <div class="sp-form-group">
-                            <label class="sp-label">Bredde (mm)</label>
-                            <input type="text" class="sp-input" name="cover_width" id="cover-width-input"
+                        <div class="form-group">
+                            <label>Bredde (mm)</label>
+                            <input type="text" class="form-control" name="cover_width" id="cover-width-input" 
+                            onkeypress="return numeralsOnly(event)">
+                        </div>
+    
+                        <div class="form-group">
+                            <label>Høyde (mm)</label>
+                            <input type="text" class="form-control" name="cover_height" id="cover-height-input" 
                             onkeypress="return numeralsOnly(event)">
                         </div>
 
-                        <div class="sp-form-group">
-                            <label class="sp-label">Høyde (mm)</label>
-                            <input type="text" class="sp-input" name="cover_height" id="cover-height-input"
-                            onkeypress="return numeralsOnly(event)">
-                        </div>
-
-                        <div class="sp-form-group">
-                            <label class="sp-label">ISBN</label>
-                            <select class="sp-input" name="isbn_id" required>
-                                <option value="" disabled selected>- Velg ISBN -</option>
+                        <div class="form-group">
+                            <label>ISBN</label>
+                            <select class="form-control" name="isbn_id" required>
+                                <option value="" disabled selected>- Select ISBN -</option>
                                 @foreach ($isbns as $isbn)
                                     <option value="{{ $isbn->id }}">
                                         {{ $isbn->value }}
@@ -164,55 +159,50 @@
                             </select>
                         </div>
 
-                        <div class="sp-form-group">
-                            <label class="sp-label">Baksidetekst (valgfritt)</label> <br>
-                            <input type="checkbox" data-toggle="toggle" data-on="Tekst" data-off="Dokument"
+                        <div class="form-group">
+                            <label>Backside Text (optional)</label> <br>
+                            <input type="checkbox" data-toggle="toggle" data-on="Text" data-off="Document"
                                 name="backside_type" data-width="100" class="backsideToggle" checked
                                 >
 
-                            <textarea name="backside_text" cols="30" rows="3" class="sp-input backside-text"
+                            <textarea name="backside_text" cols="30" rows="3" class="form-control backside-text"
                             style="margin-top: 10px"></textarea>
-                            <input type="file" name="backside_file" class="sp-input backside-file"
-                        accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                        style="display: none; margin-top: 10px"
-                        data-sp-file-preview="coverBacksidePreview">
-                            <div id="coverBacksidePreview"></div>
+                            <input type="file" name="backside_file" class="form-control backside-file"
+                        accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document" 
+                        style="display: none; margin-top: 10px">
                         </div>
 
-                        <div class="sp-form-group">
-                            <label class="sp-label">Baksidebilde (valgfritt)</label>
-                            <input type="file" class="sp-input" name="backside_image[]" accept="image/*" multiple
-                            data-sp-file-preview="coverBacksideImagePreview">
-                            <div id="coverBacksideImagePreview"></div>
+                        <div class="form-group">
+                            <label>Backside Image (optional)</label>
+                            <input type="file" class="form-control" name="backside_image[]" accept="image/*" multiple>
                         </div>
 
-                        <div class="sp-form-group">
-                            <label class="sp-label">Instruksjon (til grafisk designer)</label>
-                            <textarea name="instruction" cols="30" rows="10" class="sp-input"></textarea>
+                        <div class="form-group">
+                            <label>Instruction (for graphic designer)</label>
+                            <textarea name="instruction" cols="30" rows="10" class="form-control"></textarea>
                         </div>
-                    </div>
-                    <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
-                        <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
-                    </div>
-                </form>
+
+                        <button type="submit" class="btn btn-success pull-right margin-top">
+                            {{ trans('site.save') }}
+                        </button>
+
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="coverDetailsModal" class="modal fade" role="dialog" aria-hidden="true">
+    <div id="coverDetailsModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content sp-modal">
-                <div class="sp-modal__header">
-                    <h3 class="sp-modal__title">
-                        <i class="fas fa-palette" style="color:var(--brand-primary);margin-right:6px"></i>
-                        Omslagsdetaljer
-                    </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        Cover Details
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <div class="sp-modal__body" id="coverModalContent" style="overflow: auto">
+                <div class="modal-body" id="coverModalContent" style="overflow: auto">
                     {{-- Table content will be loaded here dynamically --}}
                 </div>
             </div>
@@ -240,12 +230,12 @@
 
             switch (type) {
                 case 'cover':
-                        modal.find('.sp-modal__title-text').text('Omslag');
+                        modal.find('.modal-title').text('Cover');
                         coverContainer.removeClass('hide');
                     break;
 
                 case 'cover-print-ready':
-                        modal.find('.sp-modal__title-text').text('Trykkeklar');
+                        modal.find('.modal-title').text('Print Ready');
                         descriptionContainer.removeClass('hide');
                     break;
             }

@@ -442,6 +442,281 @@
             }
             .sidebar-overlay.active { display: block; }
 
+            /* ── Modal ──────────────────────────────────────── */
+            .sp-modal {
+                border-radius: var(--radius, 10px);
+                overflow: hidden;
+                border: none;
+                box-shadow: 0 20px 60px rgba(0,0,0,.15);
+            }
+
+            .sp-modal__header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 18px 24px;
+                background: var(--brand-pale, #f9edef);
+                border-bottom: 1px solid var(--border-color, #e5e7eb);
+            }
+
+            .sp-modal__title {
+                font-size: 16px;
+                font-weight: 700;
+                color: #1f2937;
+                margin: 0;
+                display: flex;
+                align-items: center;
+            }
+
+            .sp-modal__close {
+                background: none;
+                border: none;
+                font-size: 22px;
+                color: #6b7280;
+                cursor: pointer;
+                padding: 0;
+                line-height: 1;
+                transition: color .2s;
+            }
+
+            .sp-modal__close:hover {
+                color: var(--brand-primary, #862736);
+            }
+
+            .sp-modal__body {
+                padding: 24px;
+            }
+
+            .sp-modal__footer {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+                padding: 16px 24px;
+                background: #f9fafb;
+                border-top: 1px solid var(--border-color, #e5e7eb);
+            }
+
+            /* ── Forms ──────────────────────────────────────── */
+            .sp-form-group {
+                margin-bottom: 18px;
+            }
+
+            .sp-label {
+                display: block;
+                font-size: 13px;
+                font-weight: 600;
+                color: #374151;
+                margin-bottom: 6px;
+            }
+
+            .sp-required {
+                color: var(--brand-primary, #862736);
+            }
+
+            .sp-input {
+                width: 100%;
+                border: 1.5px solid var(--border-color, #e5e7eb);
+                border-radius: 8px;
+                padding: 10px 14px;
+                font-size: 14px;
+                color: #1f2937;
+                background: #fff;
+                transition: border-color .2s, box-shadow .2s;
+            }
+
+            .sp-input:focus {
+                border-color: var(--brand-primary, #862736);
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(134,39,54,.12);
+            }
+
+            .sp-input:disabled {
+                background: #f9fafb;
+                color: #6b7280;
+                cursor: not-allowed;
+            }
+
+            .sp-input.is-invalid {
+                border-color: #dc2626;
+                box-shadow: 0 0 0 3px rgba(220,38,38,.1);
+            }
+
+            .sp-input.is-valid {
+                border-color: #16a34a;
+            }
+
+            .sp-textarea {
+                resize: vertical;
+                min-height: 100px;
+            }
+
+            .sp-select {
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+                background-position: right 12px center;
+                background-repeat: no-repeat;
+                background-size: 16px;
+                padding-right: 36px;
+            }
+
+            .sp-error {
+                display: none;
+                font-size: 12px;
+                color: #dc2626;
+                margin-top: 4px;
+            }
+
+            .sp-input.is-invalid + .sp-error {
+                display: block;
+            }
+
+            /* ── Buttons (for modals/forms) ─────────────────── */
+            .btn-brand {
+                background: var(--brand-primary, #862736);
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                padding: 8px 18px;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background .2s, transform .1s;
+            }
+
+            .btn-brand:hover {
+                background: var(--brand-dark, #5f1a25);
+                color: #fff;
+            }
+
+            .btn-outline-brand {
+                background: transparent;
+                color: var(--brand-primary, #862736);
+                border: 1.5px solid var(--brand-primary, #862736);
+                border-radius: 8px;
+                padding: 7px 16px;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background .2s, color .2s;
+            }
+
+            .btn-outline-brand:hover {
+                background: var(--brand-pale, #f9edef);
+                color: var(--brand-dark, #5f1a25);
+            }
+
+            .btn-xs-brand {
+                padding: 4px 12px;
+                font-size: 12px;
+            }
+
+            /* ── File upload preview ────────────────────────── */
+            .sp-file-preview {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px;
+                background: #f9fafb;
+                border: 1px solid var(--border-color, #e5e7eb);
+                border-radius: 8px;
+                margin-top: 8px;
+            }
+
+            .sp-file-preview__icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                background: var(--brand-pale, #f9edef);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--brand-primary, #862736);
+                font-size: 16px;
+                flex-shrink: 0;
+            }
+
+            .sp-file-preview__info {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .sp-file-preview__name {
+                font-size: 13px;
+                font-weight: 600;
+                color: #1f2937;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .sp-file-preview__size {
+                font-size: 12px;
+                color: #6b7280;
+            }
+
+            .sp-file-preview__remove {
+                background: none;
+                border: none;
+                color: #dc2626;
+                cursor: pointer;
+                font-size: 14px;
+                padding: 4px;
+                transition: opacity .2s;
+            }
+
+            .sp-file-preview__remove:hover {
+                opacity: .7;
+            }
+
+            /* ── Deduplicated icon helpers ─────────────────── */
+            .fa-file-red:before   { content: "\f15b"; }
+            .fa-file-red          { color: #862736 !important; font-size: 20px; }
+
+            .fa-clock-red:before  { content: "\f017"; }
+            .fa-clock-red         { color: #862736 !important; font-size: 20px; }
+
+            .fa-shopping-cart-red:before { content: "\f07a"; }
+            .fa-shopping-cart-red        { color: #862736 !important; font-size: 20px; }
+
+            .fa-bar-chart-red:before { content: "\f080"; }
+            .fa-bar-chart-red        { color: #862736 !important; font-size: 20px; }
+
+            /* ── Accessibility: focus-visible ─────────────── */
+            .sp-input:focus-visible,
+            .sp-select:focus-visible,
+            .sp-textarea:focus-visible,
+            .btn-brand:focus-visible,
+            .btn-outline-brand:focus-visible,
+            a:focus-visible,
+            button:focus-visible {
+                outline: 2px solid var(--brand-primary, #862736);
+                outline-offset: 2px;
+            }
+
+            :focus:not(:focus-visible) {
+                outline: none;
+            }
+
+            /* ── Accessibility: screen-reader only ────────── */
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+
+            /* ── Brand-pale for variable fallback ───────────── */
+            /* Ensure --brand-pale is available as a CSS variable */
+            :root {
+                --brand-pale: #f9edef;
+                --border-color: #e5e7eb;
+            }
+
             /* Animations */
             @keyframes sp-fadeUp {
                 from { opacity: 0; transform: translateY(12px); }
@@ -511,7 +786,8 @@
                 </li>
                 <li>
                     <a href="{{ route('learner.project.show', optional($standardProject)->id ?? 0) }}" 
-                       class="nav-item {{ request()->routeIs('learner.project.*') ? 'active' : '' }}">
+                    class="nav-item {{ request()->routeIs('learner.project.*') 
+                    && !request()->routeIs('learner.project.storage') ? 'active' : '' }}">
                         <i class="fas fa-book"></i> {{ trans('site.author-portal.book-project') ?? 'Bokprosjekt' }}
                     </a>
                 </li>
@@ -521,7 +797,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-item {{ request()->routeIs('learner.cover.*') ? 'active' : '' }}">
+                    <a href="{{ route('learner.self-publishing.cover') }}" 
+                    class="nav-item {{ request()->routeIs('learner.cover.*') ? 'active' : '' }}">
                         <i class="fas fa-palette"></i> {{ trans('site.author-portal.cover-design') ?? 'Omslag & design' }}
                     </a>
                 </li>
@@ -530,13 +807,18 @@
             <div class="sidebar-section-title">{{ trans('site.author-portal.economy') ?? 'Økonomi' }}</div>
             <ul class="sidebar-nav">
                 <li>
-                    <a href="#" class="nav-item {{ request()->routeIs('learner.sales.*') ? 'active' : '' }}">
+                    @php $hasBookSale = FrontendHelpers::checkIfLearnerHasBookSale()->count() > 0; @endphp
+                    <a href="{{ $hasBookSale ? route('learner.book-sale') . '?year=' . FrontendHelpers::getLearnerSaleYear() 
+                    : 'javascript:void(0)' }}"  
+                        class="nav-item {{ request()->routeIs('learner.sales.*') ? 'active' : '' }}"
+                        style="{{ $hasBookSale ? '' : 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' }}">
                         <i class="fas fa-chart-line"></i> {{ trans('site.author-portal-menu.sales') ?? 'Salg' }}
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="nav-item {{ request()->routeIs('learner.inventory.*') ? 'active' : '' }}">
-                        <i class="fas fa-boxes"></i> {{ trans('site.author-portal.inventory') ?? 'Lagerstatus' }}
+                    <a href="{{ route('learner.project.storage', optional($standardProject)->id ?? 0) }}" 
+                       class="nav-item {{ request()->routeIs('learner.project.storage') ? 'active' : '' }}">
+                        <i class="fas fa-book"></i> {{ trans('site.author-portal.inventory') ?? 'Lagerstatus' }}
                     </a>
                 </li>
                 <li>
@@ -659,6 +941,185 @@
                     $('#sidebarOverlay').removeClass('active');
                 }
             });
+
+            /**
+             * SP Forms — Forfatterskolen Selvpublisering
+             * Validation, delete modal, and file preview components
+             */
+
+            (function() {
+                'use strict';
+
+                /* ═══════════════════════════════════════════
+                1. FORM VALIDATION
+                Bruk: Legg til data-sp-validate på <form>
+                Regler via HTML5-attributter: required, minlength, maxlength, pattern, type="email"
+                ═══════════════════════════════════════════ */
+                document.addEventListener('DOMContentLoaded', function() {
+
+                    document.querySelectorAll('[data-sp-validate]').forEach(function(form) {
+                        var inputs = form.querySelectorAll('.sp-input[required], .sp-input[minlength], .sp-input[pattern], .sp-input[type="email"], .sp-input[type="number"]');
+
+                        inputs.forEach(function(input) {
+                            // Valider ved blur
+                            input.addEventListener('blur', function() {
+                                validateField(input);
+                            });
+
+                            // Fjern feilmelding ved input
+                            input.addEventListener('input', function() {
+                                if (input.classList.contains('is-invalid')) {
+                                    validateField(input);
+                                }
+                            });
+                        });
+
+                        // Valider ved submit
+                        form.addEventListener('submit', function(e) {
+                            var isValid = true;
+                            inputs.forEach(function(input) {
+                                if (!validateField(input)) {
+                                    isValid = false;
+                                }
+                            });
+
+                            if (!isValid) {
+                                e.preventDefault();
+                                var firstError = form.querySelector('.is-invalid');
+                                if (firstError) {
+                                    firstError.focus();
+                                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                }
+                            }
+                        });
+                    });
+
+                    function validateField(input) {
+                        var errorEl = input.parentElement.querySelector('.sp-error') ||
+                                    input.nextElementSibling;
+                        var message = '';
+
+                        if (input.hasAttribute('required') && !input.value.trim()) {
+                            message = 'Dette feltet er påkrevd';
+                        } else if (input.hasAttribute('minlength') && input.value.length < parseInt(input.getAttribute('minlength'))) {
+                            message = 'Minimum ' + input.getAttribute('minlength') + ' tegn';
+                        } else if (input.hasAttribute('maxlength') && input.value.length > parseInt(input.getAttribute('maxlength'))) {
+                            message = 'Maksimum ' + input.getAttribute('maxlength') + ' tegn';
+                        } else if (input.type === 'email' && input.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value)) {
+                            message = 'Ugyldig e-postadresse';
+                        } else if (input.type === 'number' && input.hasAttribute('min') && parseFloat(input.value) < parseFloat(input.getAttribute('min'))) {
+                            message = 'Minimum verdi er ' + input.getAttribute('min');
+                        } else if (input.hasAttribute('pattern') && input.value && !new RegExp(input.getAttribute('pattern')).test(input.value)) {
+                            message = input.getAttribute('data-pattern-error') || 'Ugyldig format';
+                        }
+
+                        if (message) {
+                            input.classList.add('is-invalid');
+                            input.classList.remove('is-valid');
+                            if (errorEl && errorEl.classList.contains('sp-error')) {
+                                errorEl.textContent = message;
+                                errorEl.style.display = 'block';
+                            }
+                            return false;
+                        } else {
+                            input.classList.remove('is-invalid');
+                            if (input.value.trim()) {
+                                input.classList.add('is-valid');
+                            }
+                            if (errorEl && errorEl.classList.contains('sp-error')) {
+                                errorEl.textContent = '';
+                                errorEl.style.display = 'none';
+                            }
+                            return true;
+                        }
+                    }
+
+                    /* ═══════════════════════════════════════════
+                    2. DELETE MODAL
+                    Bruk: data-sp-delete, data-action, data-title, data-message
+                    ═══════════════════════════════════════════ */
+                    $(document).on('click', '[data-sp-delete]', function() {
+                        var modal = $('#spDeleteModal');
+                        var action = $(this).data('action');
+                        var title = $(this).data('title') || 'Bekreft sletting';
+                        var message = $(this).data('message') || 'Er du sikker på at du vil slette dette elementet? Denne handlingen kan ikke angres.';
+
+                        modal.find('.sp-delete-title').text(title);
+                        modal.find('.sp-delete-message').text(message);
+                        modal.find('.sp-delete-form').attr('action', action);
+                        modal.modal('show');
+                    });
+
+                    /* ═══════════════════════════════════════════
+                    3. FILE PREVIEW
+                    Bruk: data-sp-file-preview="previewContainerId" på file inputs
+                    ═══════════════════════════════════════════ */
+                    document.querySelectorAll('[data-sp-file-preview]').forEach(function(input) {
+                        var previewContainer = document.getElementById(input.dataset.spFilePreview);
+                        if (!previewContainer) return;
+
+                        input.addEventListener('change', function() {
+                            previewContainer.innerHTML = '';
+
+                            Array.from(this.files).forEach(function(file) {
+                                var size = file.size < 1024 * 1024
+                                    ? (file.size / 1024).toFixed(1) + ' KB'
+                                    : (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+
+                                var icon = getFileIcon(file.name);
+
+                                var preview = document.createElement('div');
+                                preview.className = 'sp-file-preview';
+                                preview.innerHTML =
+                                    '<div class="sp-file-preview__icon"><i class="fa ' + icon + '"></i></div>' +
+                                    '<div class="sp-file-preview__info">' +
+                                        '<div class="sp-file-preview__name">' + escapeHtml(file.name) + '</div>' +
+                                        '<div class="sp-file-preview__size">' + size + '</div>' +
+                                    '</div>' +
+                                    '<button type="button" class="sp-file-preview__remove" title="Fjern">' +
+                                        '<i class="fa fa-times"></i>' +
+                                    '</button>';
+
+                                preview.querySelector('.sp-file-preview__remove').addEventListener('click', function() {
+                                    preview.remove();
+                                    input.value = '';
+                                });
+
+                                // Vis bildeforhåndsvisning
+                                if (file.type.startsWith('image/')) {
+                                    var reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        preview.querySelector('.sp-file-preview__icon').innerHTML =
+                                            '<img src="' + e.target.result + '" style="width:40px;height:40px;object-fit:cover;border-radius:6px">';
+                                    };
+                                    reader.readAsDataURL(file);
+                                }
+
+                                previewContainer.appendChild(preview);
+                            });
+                        });
+                    });
+
+                    function getFileIcon(filename) {
+                        var ext = filename.split('.').pop().toLowerCase();
+                        var icons = {
+                            pdf: 'fa-file-pdf-o', doc: 'fa-file-word-o', docx: 'fa-file-word-o',
+                            xls: 'fa-file-excel-o', xlsx: 'fa-file-excel-o',
+                            jpg: 'fa-file-image-o', jpeg: 'fa-file-image-o', png: 'fa-file-image-o',
+                            gif: 'fa-file-image-o', mp3: 'fa-file-audio-o', wav: 'fa-file-audio-o',
+                            epub: 'fa-book', zip: 'fa-file-archive-o',
+                            odt: 'fa-file-text-o', indd: 'fa-file-o', mobi: 'fa-book'
+                        };
+                        return icons[ext] || 'fa-file-o';
+                    }
+
+                    function escapeHtml(text) {
+                        var div = document.createElement('div');
+                        div.appendChild(document.createTextNode(text));
+                        return div.innerHTML;
+                    }
+                });
+            })();
         </script>
 
         @yield('scripts')

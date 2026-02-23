@@ -7,22 +7,22 @@
 @section('content')
     <div class="learner-container">
         <div class="container">
-            <a href="{{ route('learner.progress-plan') }}" class="btn btn-outline-brand mb-3">
-                <i class="fa fa-arrow-left" aria-hidden="true"></i> Tilbake
+            <a href="{{ route('learner.progress-plan') }}" class="btn btn-secondary mb-3">
+                <i class="fa fa-arrow-left"></i> Back
             </a>
 
             <div class="card">
-                <div class="sp-card-header">
+                <div class="card-header">
                     {{ trans('site.front.correction.title') }}
 
-                    <button class="btn btn-brand btn-xs pull-right uploadOtherServiceManuscriptBtn" data-toggle="modal"
+                    <button class="btn btn-primary btn-xs pull-right uploadOtherServiceManuscriptBtn" data-toggle="modal"
                             data-target="#uploadOtherServiceManuscriptModal"
                             data-action="{{ route('learner.project.progress-plan.other-service.upload-manuscript', 2) }}">
                         {{ trans('site.front.form.upload-manuscript') }}
                     </button>
                 </div>
-                <div class="sp-card-body py-0">
-                    <table class="sp-table">
+                <div class="card-body py-0">
+                    <table class="table table-global">
                         <thead>
                         <tr>
                             <th>{{ trans('site.learner.script') }}</th>
@@ -51,7 +51,7 @@
 
                                         @if(!$correction->is_locked && $correction->status !=2)
                                             <br>
-                                            <button class="btn btn-brand btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
+                                            <button class="btn btn-primary btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
                                                     data-target="#uploadOtherServiceManuscriptModal"
                                                     data-id="{{ $correction->id }}"
                                                     data-action="{{ route('learner.project.progress-plan.other-service.upload-manuscript', 2) }}">
@@ -108,38 +108,35 @@
         </div>
     </div>
 
-    <div id="uploadOtherServiceManuscriptModal" class="modal fade" role="dialog" aria-hidden="true">
+    <div id="uploadOtherServiceManuscriptModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-md">
-            <div class="modal-content sp-modal">
-                <div class="sp-modal__header">
-                    <h3 class="sp-modal__title">
-                        <i class="fas fa-upload" style="color:var(--brand-primary);margin-right:6px"></i>
-                        Last opp manuskript
-                    </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        Upload Manuscript
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data" data-sp-validate>
-                    {{ csrf_field() }}
-                    <input type="hidden" name="project_id" value="{{ $standardProject->id }}">
-                    <input type="hidden" name="user_id" value="{{ auth()->id() }}">
-                    <input type="hidden" name="id">
-                    <div class="sp-modal__body">
-                        <div class="sp-form-group">
-                            <label class="sp-label">{{ trans_choice('site.manuscripts', 1) }}</label>
-                            <input type="file" name="manuscript" class="sp-input"
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="project_id" value="{{ $standardProject->id }}">
+                        <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+                        <input type="hidden" name="id">
+
+                        <div class="form-group">
+                            <label>{{ trans_choice('site.manuscripts', 1) }}</label>
+                            <input type="file" name="manuscript" class="form-control"
                                    accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
-					    application/vnd.oasis.opendocument.text" multiple
-                                   data-sp-file-preview="correctionFilePreview">
-                            <div id="correctionFilePreview"></div>
+					    application/vnd.oasis.opendocument.text" multiple>
                         </div>
-                    </div>
-                    <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
-                        <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
-                    </div>
-                </form>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>

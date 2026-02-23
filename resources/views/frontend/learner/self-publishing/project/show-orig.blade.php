@@ -4,6 +4,19 @@
     <title>Project &rsaquo; Forfatterskolen</title>
 @stop
 
+@section('styles')
+    <style>
+        .fa-file-red:before {
+            content: "\f15b";
+        }
+
+        .fa-file-red {
+            color: #862736 !important;
+            font-size: 20px;
+        }
+    </style>
+@stop
+
 @section('content')
     <div class="learner-container">
         <div class="container">
@@ -43,25 +56,25 @@
                     Invoice
                 </a>--}}
                 <div class="col-md-12 dashboard-course no-left-padding">
-                    <div class="card sp-card">
-                        <div class="sp-card-header">
+                    <div class="card global-card">
+                        <div class="card-header">
                             <h1 class="d-inline-block">
                                 {{-- {{ trans('site.self-publishing-text') }} --}}
                                 {{ trans('site.learner.editor-text') }}
                             </h1>
 
-                            {{-- <a href="{{ route('learner.service.order', [$project->id, 3]) }}" class="btn btn-brand float-right">
+                            {{-- <a href="{{ route('learner.service.order', [$project->id, 3]) }}" class="btn btn-primary float-right">
                                 Order
                             </a> --}}
                         </div>
-                        <div class="sp-card-body">
-                            <table class="sp-table">
+                        <div class="card-body">
+                            <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Tittel</th>
-                                    <th>Beskrivelse</th>
-                                    <th>Filer</th>
-                                    <th>Tilbakemeldinger</th>
+                                    <th>{{ trans('site.title') }}</th>
+                                    <th>{{ trans('site.description') }}</th>
+                                    <th>{{ trans_choice('site.files', 0) }}</th>
+                                    <th>{{ trans_choice('site.feedbacks', 0) }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -77,7 +90,7 @@
                                             {!! $publishing->dropbox_file_link_with_download !!}
                                             @if(!$publishing->feedback)
                                                 <br>
-                                                <button class="btn btn-brand btn-xs uploadSelfPublishingManuscriptBtn"
+                                                <button class="btn btn-primary btn-xs uploadSelfPublishingManuscriptBtn"
                                                         data-toggle="modal"
                                                         data-target="#uploadSelfPublishingManuscriptModal"
                                                         data-action="{{ route('learner.project.self-publishing.upload-manuscript', $publishing->id) }}">
@@ -89,14 +102,14 @@
                                             @if($publishing->feedback)
                                                 @if($publishing->feedback->is_approved)
                                                     @if (strpos($publishing->feedback->manuscript, 'project-'))
-                                                        <a href="{{ route('dropbox.download_file',
+                                                        <a href="{{ route('dropbox.download_file', 
                                                             trim($publishing->feedback->manuscript)) }}"
-                                                        class="btn btn-brand btn-xs margin-top" download="">
+                                                        class="btn btn-primary btn-xs margin-top" download="">
                                                             {{ trans('site.learner.download-feedback') }}
                                                         </a>
                                                     @else
                                                         <a href="{{ $publishing->feedback->manuscript }}"
-                                                        class="btn btn-brand btn-xs margin-top" download="">
+                                                        class="btn btn-primary btn-xs margin-top" download="">
                                                             {{ trans('site.learner.download-feedback') }}
                                                         </a>
                                                     @endif
@@ -114,18 +127,18 @@
                         </div>
                     </div> <!-- end self-publishing -->
 
-                    <div class="card sp-card mt-5">
-                        <div class="sp-card-header">
+                    <div class="card global-card mt-5">
+                        <div class="card-header">
                             <h1 class="d-inline-block">
                                 {{ trans('site.learner.copy-editing') }}
                             </h1>
 
-                            {{-- <a href="{{ route('learner.service.order', [$project->id, 1]) }}" class="btn btn-brand float-right">
+                            {{-- <a href="{{ route('learner.service.order', [$project->id, 1]) }}" class="btn btn-primary float-right">
                                 Order
                             </a> --}}
                         </div>
-                        <div class="sp-card-body py-0">
-                            <table class="sp-table">
+                        <div class="card-body py-0">
+                            <table class="table table-global">
                                 <thead>
                                 <tr>
                                     <th>
@@ -156,7 +169,7 @@
 
                                                 @if(!$editing->is_locked)
                                                         <br>
-                                                    <button class="btn btn-brand btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
+                                                    <button class="btn btn-primary btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
                                                             data-target="#uploadOtherServiceManuscriptModal"
                                                             data-action="{{ route('learner.project.other-service.upload-manuscript',
                                                              ['id' => $editing->id, 'type' => 1]) }}">
@@ -211,18 +224,18 @@
                         </div>
                     </div> <!-- end copy-editing -->
 
-                    <div class="card sp-card mt-5">
-                        <div class="sp-card-header">
+                    <div class="card global-card mt-5">
+                        <div class="card-header">
                             <h1 class="d-inline-block">
                                 {{ trans('site.front.correction.title') }}
                             </h1>
 
-                            {{-- <a href="{{ route('learner.service.order', [$project->id, 2]) }}" class="btn btn-brand float-right">
+                            {{-- <a href="{{ route('learner.service.order', [$project->id, 2]) }}" class="btn btn-primary float-right">
                                 Order
                             </a> --}}
                         </div>
-                        <div class="sp-card-body py-0">
-                            <table class="sp-table">
+                        <div class="card-body py-0">
+                            <table class="table table-global">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.learner.script') }}</th>
@@ -245,7 +258,7 @@
 
                                             @if(!$correction->is_locked)
                                                 <br>
-                                                <button class="btn btn-brand btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
+                                                <button class="btn btn-primary btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
                                                         data-target="#uploadOtherServiceManuscriptModal"
                                                         data-action="{{ route('learner.project.other-service.upload-manuscript',
                                                          ['id' => $correction->id, 'type' => 2]) }}">
@@ -305,68 +318,60 @@
         </div>
     </div>
 
-    <div id="uploadSelfPublishingManuscriptModal" class="modal fade" role="dialog" aria-hidden="true">
+    <div id="uploadSelfPublishingManuscriptModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-md">
-            <div class="modal-content sp-modal">
-                <div class="sp-modal__header">
-                    <h3 class="sp-modal__title">
-                        <i class="fas fa-upload" style="color:var(--brand-primary);margin-right:6px" aria-hidden="true"></i>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
                         {{ trans('site.learner.course-show.upload-manuscript') }}
-                    </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data" data-sp-validate>
-                    {{ csrf_field() }}
-                    <div class="sp-modal__body">
-                        <div class="sp-form-group">
-                            <label class="sp-label">{{ trans_choice('site.manuscripts', 1) }}</label>
-                            <input type="file" name="manuscript[]" class="sp-input"
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label>{{ trans_choice('site.manuscripts', 1) }}</label>
+                            <input type="file" name="manuscript[]" class="form-control"
                                    accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
-                                   application/vnd.oasis.opendocument.text" multiple
-                                   data-sp-file-preview="spManuscriptPreview">
-                            <div id="spManuscriptPreview"></div>
+					    application/vnd.oasis.opendocument.text" multiple>
                         </div>
-                    </div>
-                    <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
-                        <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
-                    </div>
-                </form>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>
 
-    <div id="uploadOtherServiceManuscriptModal" class="modal fade" role="dialog" aria-hidden="true">
+    <div id="uploadOtherServiceManuscriptModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-md">
-            <div class="modal-content sp-modal">
-                <div class="sp-modal__header">
-                    <h3 class="sp-modal__title">
-                        <i class="fas fa-upload" style="color:var(--brand-primary);margin-right:6px" aria-hidden="true"></i>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
                         {{ trans('site.learner.course-show.upload-manuscript') }}
-                    </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data" data-sp-validate>
-                    {{ csrf_field() }}
-                    <div class="sp-modal__body">
-                        <div class="sp-form-group">
-                            <label class="sp-label">{{ trans_choice('site.manuscripts', 1) }}</label>
-                            <input type="file" name="manuscript" class="sp-input"
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label>{{ trans_choice('site.manuscripts', 1) }}</label>
+                            <input type="file" name="manuscript" class="form-control"
                                    accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
-                                   application/vnd.oasis.opendocument.text" multiple
-                                   data-sp-file-preview="otherManuscriptPreview">
-                            <div id="otherManuscriptPreview"></div>
+					    application/vnd.oasis.opendocument.text" multiple>
                         </div>
-                    </div>
-                    <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
-                        <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
-                    </div>
-                </form>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>

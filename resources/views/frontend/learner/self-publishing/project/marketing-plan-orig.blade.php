@@ -4,17 +4,30 @@
     <title>Time Register &rsaquo; Forfatterskolen</title>
 @stop
 
+@section('styles')
+    <style>
+        .fa-file-red:before {
+            content: "\f15b";
+        }
+
+        .fa-file-red {
+            color: #862736 !important;
+            font-size: 20px;
+        }
+    </style>
+@stop
+
 @section('content')
     <div class="learner-container">
         <div class="container">
             <div class="row">
                 <a href="{{ route('learner.project.show', $project->id) }}"
-                   class="btn btn-outline-brand mb-3">
+                   class="btn btn-secondary mb-3">
                     <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
                 </a>
 
                 <div class="col-md-12 dashboard-course no-left-padding">
-                    <table class="sp-table">
+                    <table class="table">
                         <thead>
                         <tr>
                             <th>{{ trans('site.name') }}</th>
@@ -64,7 +77,7 @@
                                         @endif
                                     @endforeach
 
-                                    <button class="btn btn-brand btn-xs pull-right answerMarketingPlanBtn"
+                                    <button class="btn btn-success btn-xs pull-right answerMarketingPlanBtn"
                                             data-toggle="modal" data-target="#marketingPlanAnswerModal"
                                             data-action="{{ route('learner.project.save-marketing-qa', $project->id) }}"
                                             data-plan="{{ json_encode($marketingPlan) }}">
@@ -80,28 +93,25 @@
         </div>
     </div>
 
-    <div id="marketingPlanAnswerModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+    <div id="marketingPlanAnswerModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content sp-modal">
-                <div class="sp-modal__header">
-                    <h3 class="sp-modal__title">
-                        <i class="fas fa-comments" style="color:var(--brand-primary);margin-right:6px"></i>
-                        <span class="marketing-plan-title">{{ trans('site.answer-text') }}</span>
-                    </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        {{ trans('site.answer-text') }}
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form method="POST" action="" onsubmit="disableSubmit(this)" data-sp-validate>
-                    {{ csrf_field() }}
-                    <div class="sp-modal__body">
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+
                         <div class="question-container"></div>
-                    </div>
-                    <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
-                        <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
-                    </div>
-                </form>
+
+                        <button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -115,7 +125,7 @@
             let modal = $("#marketingPlanAnswerModal");
             let form = modal.find('form');
             modal.find('form').attr('action', action);
-            modal.find('.marketing-plan-title').text(plan.name);
+            modal.find('.modal-title').text(plan.name);
 
             let container = form.find(".question-container");
             container.empty();
@@ -125,21 +135,21 @@
                 let number = qk + 1;
                 let answer = question.answers[0] && question.answers[0].main_answer ? question.answers[0].main_answer : '';
 
-                questions += "<div class='sp-form-group'>";
-                questions += "<label class='sp-label'>" + question.main_question + "</label>";
-                questions += "<textarea class='sp-input sp-textarea' name='arr[" + number + "][main_answer]' rows='5'>"
+                questions += "<div class='form-group'>";
+                questions += "<label>" + question.main_question + "</label>";
+                questions += "<textarea type='text' class='form-control' name='arr[" + number + "][main_answer]' rows='5'>"
                     + answer + "</textarea>";
-                questions += "<input type='hidden' name='arr[" + number + "][main_question_id]'" +
+                questions += "<input type='hidden' class='form-control' name='arr[" + number + "][main_question_id]'" +
                     " value='" + question.id + "'>";
 
                     if (question.sub_question_decoded) {
-                        questions += "<div class='sub-questions' style='margin-left:24px;margin-top:12px'>";
+                        questions += "<div class='sub-questions ml-5'>";
                             $.each(question.sub_question_decoded, function(k, sub_question){
                                 let answer = question.answers[0] && question.answers[0].sub_answer_decoded[k]
                                     ? question.answers[0].sub_answer_decoded[k] : '';
-                                questions += "<div class='sp-form-group'>";
-                                    questions += "<label class='sp-label'>" + sub_question + "</label>";
-                                    questions += "<textarea class='sp-input sp-textarea' name='arr[" + number + "][sub_answer][]' rows='5'>"
+                                questions += "<div class='form-group'>";
+                                    questions += "<label>" + sub_question + "</label>";
+                                    questions += "<textarea type='text' class='form-control' name='arr[" + number + "][sub_answer][]' rows='5'>"
                                         + answer + "</textarea>";
                                 questions += "</div>";
                             });

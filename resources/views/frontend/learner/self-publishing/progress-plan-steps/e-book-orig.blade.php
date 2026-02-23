@@ -1,25 +1,25 @@
 @extends('frontend.learner.self-publishing.layout')
 
 @section('title')
-    <title>E-bok &rsaquo; Forfatterskolen</title>
+    <title>Project &rsaquo; Forfatterskolen</title>
 @stop
 
 @section('content')
     <div class="learner-container">
         <div class="container">
-            <a href="{{ route('learner.progress-plan') }}" class="btn btn-outline-brand mb-3">
-                <i class="fa fa-arrow-left" aria-hidden="true"></i> Tilbake
+            <a href="{{ route('learner.progress-plan') }}" class="btn btn-secondary mb-3">
+                <i class="fa fa-arrow-left"></i> Back
             </a>
 
             <div class="card">
-                <div class="sp-card-header">
-                    E-bok
+                <div class="card-header">
+                    E-book
                 </div>
-                <div class="sp-card-body">
+                <div class="card-body">
                     <section>
-                        <button type="button" class="btn btn-brand float-right ebookBtn" data-toggle="modal"
+                        <button type="button" class="btn btn-success pull-right ebookBtn" data-toggle="modal" 
                         data-target="#ebookModal"
-                        data-type="epub">+ Legg til Epub</button>
+                        data-type="epub">+ Add Epub</button>
                         <div class="table-responsive margin-top">
                             <table class="table table-side-bordered table-white">
                                 <thead>
@@ -39,12 +39,11 @@
                                                 {!! $epub->file_link !!}
                                             </td>
                                             <td>                      
-                                                <button class="btn btn-brand btn-xs ebookBtn" data-toggle="modal"
+                                                <button class="btn btn-primary btn-xs ebookBtn" data-toggle="modal"
                                                         data-target="#ebookModal"
                                                         data-type="epub" data-id="{{ $epub->id }}"
-                                                        data-record="{{ json_encode($epub) }}"
-                                                        aria-label="Rediger ePub">
-                                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                                        data-record="{{ json_encode($epub) }}">
+                                                    <i class="fa fa-edit"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -55,9 +54,9 @@
                     </section>
 
                     <section class="mt-5">
-                        <button type="button" class="btn btn-brand ebookBtn float-right" data-toggle="modal"
+                        <button type="button" class="btn btn-success ebookBtn pull-right" data-toggle="modal" 
                         data-target="#ebookModal"
-                                data-type="mobi">+ Legg til Mobi</button>
+                                data-type="mobi">+ Add Mobi</button>
                         <div class="table-responsive margin-top">
                             <table class="table table-side-bordered table-white">
                                 <thead>
@@ -77,12 +76,11 @@
                                                 {!! $mobi->file_link !!}
                                             </td>
                                             <td>                      
-                                                <button class="btn btn-brand btn-xs ebookBtn" data-toggle="modal"
+                                                <button class="btn btn-primary btn-xs ebookBtn" data-toggle="modal"
                                                         data-target="#ebookModal"
                                                         data-type="mobi" data-id="{{ $mobi->id }}"
-                                                        data-record="{{ json_encode($mobi) }}"
-                                                        aria-label="Rediger Mobi">
-                                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                                        data-record="{{ json_encode($mobi) }}">
+                                                    <i class="fa fa-edit"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -93,14 +91,14 @@
                     </section>
 
                     <section class="mt-5">
-                        <button type="button" class="btn btn-brand ebookBtn float-right" data-toggle="modal"
+                        <button type="button" class="btn btn-success ebookBtn pull-right" data-toggle="modal" 
                             data-target="#ebookModal"
-                                data-type="cover">+ Legg til omslag</button>
+                                data-type="cover">+ Add Cover</button>
                         <div class="table-responsive margin-top">
                             <table class="table table-side-bordered table-white">
                                 <thead>
                                 <tr>
-                                    <th>Omslag</th>
+                                    <th>Cover</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
@@ -115,12 +113,11 @@
                                                 {!! $cover->file_link !!}
                                             </td>
                                             <td>                      
-                                                <button class="btn btn-brand btn-xs ebookBtn" data-toggle="modal"
+                                                <button class="btn btn-primary btn-xs ebookBtn" data-toggle="modal"
                                                         data-target="#ebookModal"
                                                         data-type="cover" data-id="{{ $cover->id }}"
-                                                        data-record="{{ json_encode($cover) }}"
-                                                        aria-label="Rediger omslag">
-                                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                                        data-record="{{ json_encode($cover) }}">
+                                                    <i class="fa fa-edit"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -134,50 +131,43 @@
         </div>
     </div>
 
-    <div id="ebookModal" class="modal fade" role="dialog" aria-hidden="true">
+    <div id="ebookModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-md">
-            <div class="modal-content sp-modal">
-                <div class="sp-modal__header">
-                    <h3 class="sp-modal__title">
-                        <i class="fas fa-book" style="color:var(--brand-primary);margin-right:6px"></i>
-                        <span class="sp-modal__title-text"></span>
-                    </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <form method="POST" action="{{ route($saveEbookRoute, $standardProject->id) }}"
-                    enctype="multipart/form-data" onsubmit="disableSubmit(this)" data-sp-validate>
-                      {{ csrf_field() }}
-                      <input type="hidden" name="id">
-                      <input type="hidden" name="type">
-                    <div class="sp-modal__body">
-                        <div class="sp-form-group epub-container">
-                            <label class="sp-label">Fil</label>
-                            <input type="file" class="sp-input" name="epub"
-                            data-sp-file-preview="ebookEpubPreview">
-                            <div id="ebookEpubPreview"></div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route($saveEbookRoute, $standardProject->id) }}"
+                        enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                          {{ csrf_field() }}
+                          <input type="hidden" name="id">
+                          <input type="hidden" name="type">
+    
+                        <div class="form-group epub-container">
+                            <label>File</label>
+                            <input type="file" class="form-control" name="epub">
                         </div>
-
-                        <div class="sp-form-group mobi-container">
-                            <label class="sp-label">Fil</label>
-                            <input type="file" class="sp-input" name="mobi"
-                            data-sp-file-preview="ebookMobiPreview">
-                            <div id="ebookMobiPreview"></div>
+    
+                        <div class="form-group mobi-container">
+                            <label>File</label>
+                            <input type="file" class="form-control" name="mobi">
                         </div>
-
-                        <div class="sp-form-group cover-container">
-                            <label class="sp-label">Fil</label>
-                            <input type="file" class="sp-input" name="cover"
-                            data-sp-file-preview="ebookCoverPreview">
-                            <div id="ebookCoverPreview"></div>
+    
+                        <div class="form-group cover-container">
+                            <label>File</label>
+                            <input type="file" class="form-control" name="cover">
                         </div>
-                    </div>
-                    <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
-                        <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
-                    </div>
-                </form>
+    
+                        <button type="submit" class="btn btn-success pull-right margin-top">
+                            {{ trans('site.save') }}
+                        </button>
+    
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -202,17 +192,17 @@
 
         switch (type) {
             case 'epub':
-                modal.find('.sp-modal__title-text').text('Epub');
+                modal.find('.modal-title').text('Epub');
                 epubContainer.removeClass('hide');
                 break;
 
             case 'mobi':
-                modal.find('.sp-modal__title-text').text('Mobi');
+                modal.find('.modal-title').text('Mobi');
                 mobiContainer.removeClass('hide');
                 break;
-
+                
             case 'cover':
-                modal.find('.sp-modal__title-text').text('Omslag');
+                modal.find('.modal-title').text('Cover');
                 coverContainer.removeClass('hide');
                 break;
         }

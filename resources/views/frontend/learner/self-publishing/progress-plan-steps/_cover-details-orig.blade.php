@@ -1,4 +1,4 @@
-<table class="sp-table">
+<table class="table">
     <thead>
         <tr>
             <th>Cover</th>
@@ -30,7 +30,7 @@
                     @else
                         @if ($coverFile)
                             <a href="{{ $coverFile }}" class="btn btn-success btn-xs" download>
-                                <i class="fa fa-download" aria-hidden="true"></i>
+                                <i class="fa fa-download"></i>
                             </a>
                             <a href="{{ asset($coverFile) }}" target="_blank" style="margin-right: 5px">
                                 {{ basename($coverFile) }}

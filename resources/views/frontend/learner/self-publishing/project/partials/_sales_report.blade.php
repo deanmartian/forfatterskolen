@@ -6,28 +6,61 @@
         </h2>
     </div>
     <div class="sp-card__body">
-        @foreach ([
-            'turned-over' => $turnedOverCount,
-            'free' => $freeCount,
-            'commission' => $commissionCount,
-            'shredded' => $shreddedCount,
-            'defective' => $defectiveCount,
-            'corrections' => $correctionsCount,
-            'counts' => $countsCount,
-            'balance' => $balanceCount,
-        ] as $label => $count)
-            <div class="row" style="margin-bottom:8px">
-                <div class="col-xs-4 col-sm-3">
-                    <label class="control-label" style="font-weight:600;color:#374151;font-size:14px">
-                        {{ ucfirst(str_replace('-', ' ', $label)) }}
-                    </label>
+        @php
+            $reportItems = [
+                'Antall solgt' => $quantitySoldCount,
+                'Omsatt' => $turnedOverCount,
+                'Gratis' => $freeCount,
+                'Provisjon' => $commissionCount,
+                'Makulert' => $shreddedCount,
+                'Defekt' => $defectiveCount,
+                'Korreksjoner' => $correctionsCount,
+                'Tellinger' => $countsCount,
+                'Returer' => $returnsCount,
+            ];
+        @endphp
+
+        <div class="sp-report-grid">
+            @foreach ($reportItems as $label => $count)
+                <div class="sp-report-row">
+                    <span class="sp-report-label">{{ $label }}</span>
+                    <span class="sp-report-value">{{ $count }}</span>
                 </div>
-                <div class="col-xs-8 col-sm-9">
-                    <input type="text" class="form-control"
-                        value="{{ $count }}" disabled
-                        style="background:#f9fafb;border:1px solid var(--border-color);border-radius:8px">
-                </div>
-            </div>
-        @endforeach
+            @endforeach
+        </div>
     </div>
 </div>
+
+<style>
+    .sp-report-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+    .sp-report-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        transition: background .15s;
+    }
+    .sp-report-row:last-child {
+        border-bottom: none;
+    }
+    .sp-report-row:hover {
+        background: var(--brand-pale, #f9edef);
+    }
+    .sp-report-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+    }
+    .sp-report-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1f2937;
+        min-width: 60px;
+        text-align: right;
+    }
+</style>
