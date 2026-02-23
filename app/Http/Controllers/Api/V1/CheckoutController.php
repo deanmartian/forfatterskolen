@@ -580,7 +580,7 @@ class CheckoutController extends ApiController
             'payment_mode' => 'Faktura',
         ];
 
-        $invoice = new FikenInvoice($request->boolean('is_test'));
+        $invoice = new FikenInvoice(false);
 
         if ((int) $paymentPlan->division > 1) {
             for ($index = 1; $index <= (int) $paymentPlan->division; $index++) {
