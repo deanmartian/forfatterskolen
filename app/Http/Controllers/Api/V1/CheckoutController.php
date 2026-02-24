@@ -214,7 +214,6 @@ class CheckoutController extends ApiController
             'coupon' => ['nullable', 'string'],
             'is_pay_later' => ['nullable', 'boolean'],
             'fallbackUrl' => ['nullable', 'string'],
-            'is_fiken' => ['nullable', 'boolean'],
         ]);
 
         if ($validator->fails()) {
@@ -242,7 +241,7 @@ class CheckoutController extends ApiController
             return $this->errorResponse('Payment plan not available for this package.', 'forbidden', 403);
         }
 
-        if (($validated['is_fiken'] ?? false) && ! in_array((int) $paymentPlan->division, [1, 3, 6, 12], true)) {
+        if (($validated['is_pay_later'] ?? false) && ! in_array((int) $paymentPlan->division, [1, 3, 6, 12], true)) {
             return $this->errorResponse('Fiken checkout støtter kun betalingsplanene 1, 3, 6 eller 12 måneder.', 'validation_error', 422, [
                 'payment_plan_id' => ['Ugyldig betalingsplan for Fiken. Tillatte verdier er 1, 3, 6 eller 12 måneder.'],
             ]);
@@ -252,13 +251,13 @@ class CheckoutController extends ApiController
             return $this->errorResponse('Unsupported payment mode for API checkout.', 'validation_error', 422);
         }
 
-        if (($validated['is_fiken'] ?? false) && $paymentMode->mode !== 'Faktura') {
+        if (($validated['is_pay_later'] ?? false) && $paymentMode->mode !== 'Faktura') {
             return $this->errorResponse('Fiken checkout må bruke Faktura betalingsmodus.', 'validation_error', 422, [
                 'payment_mode_id' => ['Fiken checkout må bruke Faktura betalingsmodus.'],
             ]);
         }
 
-        $isPayLaterCheckout = (bool) ($validated['is_pay_later'] ?? false) || (bool) ($validated['is_fiken'] ?? false);
+        $isPayLaterCheckout = (bool) ($validated['is_pay_later'] ?? false);
 
         if ($isPayLaterCheckout) {
             $allowedPaymentPlanIds = collect($course->payment_plan_ids ?? [])
@@ -291,20 +290,21 @@ class CheckoutController extends ApiController
             'price' => $basePrice,
             'discount' => $discount,
             'is_pay_later' => (bool) ($validated['is_pay_later'] ?? false),
-            'is_fiken' => (bool) ($validated['is_fiken'] ?? false),
         ]);
 
         if ($paymentMode->mode === 'Paypal') {
             return $this->errorResponse('Paypal checkout is not supported via API.', 'validation_error', 422);
         }
 
-        if ($paymentMode->mode === 'Faktura' && $request->boolean('is_fiken')) {
-            $request->merge(['is_pay_later' => true]);
+        if ($paymentMode->mode === 'Faktura' && $request->boolean('is_pay_later')) {
             $order = $courseService->createOrder($request);
             $this->createFikenInvoiceForCourseOrder($order, $package, $paymentPlan, $request, $finalPrice);
+
+            $orderRecord = $order;
+            $lovableBase = rtrim((string) config('api.lovable_url'), '/');
             $result = [
                 'order' => $order,
-                'redirect_url' => url('/thankyou?pl_ord='.$order->id),
+                'redirect_url' => $lovableBase.'/course/'.$course->id.'/thankyou?pl_ord='.$orderRecord->id,
             ];
         } elseif ($paymentMode->mode === 'Faktura' && ! $request->boolean('is_pay_later')) {
             $result = $courseService->startApiCheckout($request);
@@ -539,6 +539,11 @@ class CheckoutController extends ApiController
 
     private function createFikenInvoiceForCourseOrder(Order $order, Package $package, PaymentPlan $paymentPlan, Request $request, int $planPrice): void
     {
+        $division = max(1, (int) $paymentPlan->division);
+        $invoiceNetAmount = $division > 1
+            ? (int) round(($planPrice / $division) * 100)
+            : (int) round($planPrice * 100);
+
         $dueDate = date('Y-m-d');
 
         if ($package->issue_date && Carbon::parse($package->issue_date)->gt(Carbon::today())) {
@@ -547,20 +552,20 @@ class CheckoutController extends ApiController
 
         $dueDate = Carbon::parse($dueDate);
 
-        $productId = match ((int) $paymentPlan->division) {
+        $productId = match ($division) {
             3 => $package->months_3_product,
             6 => $package->months_6_product,
             12 => $package->months_12_product,
             default => $package->full_price_product,
         };
 
-        $invoiceDueDate = ((int) $paymentPlan->division === 1)
+        $invoiceDueDate = ($division === 1)
             ? (clone $dueDate)->addDays(14)->format('Y-m-d')
             : (clone $dueDate)->addMonth()->format('Y-m-d');
 
-        $paymentPlanLabel = (int) $paymentPlan->division === 1
+        $paymentPlanLabel = $division === 1
             ? 'Faktura (14 dagers betalingsfrist)'
-            : 'Rentefri delbetaling ('.$paymentPlan->division.' måneder)';
+            : 'Rentefri delbetaling ('.$division.' måneder)';
 
         $comment = '(Kurs: '.$package->course->title.' ['.$package->variation.'], ';
         $comment .= 'Betalingsmodus: Bankoverføring, ';
@@ -570,7 +575,7 @@ class CheckoutController extends ApiController
             'user_id' => $order->user_id,
             'first_name' => (string) $request->input('first_name'),
             'last_name' => (string) $request->input('last_name'),
-            'netAmount' => $planPrice * 100,
+            'netAmount' => $invoiceNetAmount,
             'dueDate' => $invoiceDueDate,
             'description' => 'Kursordrefaktura',
             'productID' => $productId,
@@ -583,10 +588,10 @@ class CheckoutController extends ApiController
             'payment_mode' => 'Faktura',
         ];
 
-        $invoice = new FikenInvoice;
+        $invoice = new FikenInvoice(false);
 
-        if ((int) $paymentPlan->division > 1) {
-            for ($index = 1; $index <= (int) $paymentPlan->division; $index++) {
+        if ($division > 1) {
+            for ($index = 1; $index <= $division; $index++) {
                 $invoiceFields['dueDate'] = (clone $dueDate)->addMonth($index)->format('Y-m-d');
                 $invoiceFields['index'] = $index;
                 $invoice->create_invoice($invoiceFields);
