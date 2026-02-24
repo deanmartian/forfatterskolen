@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AssignmentController;
 use App\Http\Controllers\Api\V1\CalendarController;
 use App\Http\Controllers\Api\V1\CheckoutController;
 use App\Http\Controllers\Api\V1\CoachingTimeController;
+use App\Http\Controllers\Api\V1\CourseApplicationController;
 use App\Http\Controllers\Api\V1\CourseController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\EmailHistoryController;
@@ -58,6 +59,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::get('/courses/taken', [CourseController::class, 'taken'])
         ->middleware('apiJwt');
     Route::get('/courses/{id}', [CourseController::class, 'showPublic']);
+    Route::get('/courses/{id}/application', [CourseApplicationController::class, 'show']);
     Route::get('/course/{id}/payment-plans', [CourseController::class, 'paymentPlans']);
     Route::get('/courses/{id}/plan', [CourseController::class, 'plan']);
     Route::get('/courses/{id}/packages', [CourseController::class, 'packages']);
