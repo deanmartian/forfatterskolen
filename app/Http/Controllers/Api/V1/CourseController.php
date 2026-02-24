@@ -49,6 +49,7 @@ class CourseController extends ApiController
                         'title' => $course->title,
                         'slug' => $slug,
                         'short_description' => $shortDescription,
+                        'pay_later_with_application' => (bool) $course->pay_later_with_application,
                         'is_active' => (bool) $course->status,
                         'start_date' => $course->getRawOriginal('start_date'),
                         'end_date' => $course->getRawOriginal('end_date'),
