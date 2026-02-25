@@ -49,7 +49,7 @@ class CourseOrderJob implements ShouldQueue
         $this->recipient = $recipient;
         $this->email_subject = $subject;
         $this->email_content = $message;
-        $this->from_email = $from_email ?: 'postmail@forfatterskolen.no';
+        $this->from_email = $from_email ?: config('mail.from.address', 'support@forfatterskolen.no');
         $this->from_name = $from_name ?: 'Forfatterskolen';
         $this->attach_file = $attachment;
         $this->parent = $parent;
@@ -66,7 +66,7 @@ class CourseOrderJob implements ShouldQueue
     public function handle(SaleService $saleService): void
     {
 
-        $track_code = md5(rand());
+        $track_code = \Illuminate\Support\Str::random(32);
         \Mail::send(new CourseOrderMail($this->recipient, $this->email_subject, $this->email_content, $this->from_email,
             $this->from_name, $this->attach_file, $track_code, $this->actionText, $this->actionUrl, $this->user,
             $this->package_id));

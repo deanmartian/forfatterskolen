@@ -49,7 +49,7 @@ class CourseEmailOut extends Command
     {
         $today = Carbon::today()->format('Y-m-d');
         CronLog::create(['activity' => 'CourseEmailOut CRON running.']);
-        $courses = Course::all()->pluck('id');
+        $courses = Course::pluck('id');
         $emailOutList = EmailOut::where('for_free_course', 0)->whereDate('delay', '=', $today)
             ->whereIn('course_id', $courses)
             ->where('send_immediately', 0)->get();
@@ -61,13 +61,7 @@ class CourseEmailOut extends Command
                        $emailOut->course->packages->pluck('id')->toArray();
                 $emailRecipients = $emailOut->recipients->pluck('user_id')->toArray();
 
-                $emailAttachment = EmailAttachment::where('hash', $emailOut->attachment_hash)->first();
-                $attachmentText = '';
-                if ($emailAttachment) {
-                    $attachmentText = "<p style='margin-top: 10px'><b>Vedlegg:</b> 
-                        <a href='".route('front.email-attachment', $emailAttachment->hash)."'>"
-                        .AdminHelpers::extractFileName($emailAttachment->filename).'</a></p>';
-                }
+                $attachmentText = $this->buildAttachmentText($emailOut);
 
                 if ($emailOut->send_to_learners_no_course || $emailOut->send_to_learners_with_unpaid_pay_later) {
 
@@ -77,20 +71,10 @@ class CourseEmailOut extends Command
                     $clauses = [];
 
                     if ($emailOut->send_to_learners_no_course) {
-                        /* $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
-                            ->whereHas('user')
-                            //->whereNull('renewed_at')
-                            ->where('is_free', 1)
-                            ->get()->pluck('user_id')->toArray();
-
-                        $clauses[] = function ($q) use ($coursesTaken) {
-                            $q->whereIn('id', $coursesTaken);
-                        }; */
-
                         $coursesTakenUserIds = CoursesTaken::query()
-                            ->withoutGlobalScopes()                // ✅ removes "courses_taken.deleted_at is null"
+                            ->withoutGlobalScopes()                // removes "courses_taken.deleted_at is null"
                             ->from('courses_taken as ct')
-                            ->whereNull('ct.deleted_at')           // ✅ re-apply using alias
+                            ->whereNull('ct.deleted_at')           // re-apply using alias
 
                             ->whereIn('ct.package_id', $packages)
 
@@ -108,8 +92,8 @@ class CourseEmailOut extends Command
                                 ->from('courses_taken as ct2')
                                 ->whereColumn('ct2.user_id', 'ct.user_id')
                                 ->whereColumn('ct2.id', '!=', 'ct.id')
-                                ->whereNull('ct2.deleted_at') // ✅ ignore soft-deleted "other records" too
-                                ->where('ct2.package_id', 29) // ✅ only check package 29
+                                ->whereNull('ct2.deleted_at')
+                                ->where('ct2.package_id', 29)
                                 ->where(function ($qq) use ($today) {
                                     $qq->whereNull('ct2.end_date')
                                         ->orWhereDate('ct2.end_date', '>', $today);
@@ -168,50 +152,19 @@ class CourseEmailOut extends Command
 
                     // loop the result and send email
                     foreach ($userList as $user) {
-                        $toMail = $user->email;
-
-                        $encode_email = encrypt($user->email);
-                        $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
-                        $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
-                        if (strpos($emailOut->message, '[redirect]')) {
-                            $extractLink = FrontendHelpers::getTextBetween($emailOut->message, '[redirect]', '[/redirect]');
-                            $formatRedirectLink = route('auth.login.emailRedirect', [$encode_email, encrypt($extractLink)]);
-                            $redirectLabel = FrontendHelpers::getTextBetween($emailOut->message, '[redirect_label]', '[/redirect_label]');
-                            $redirectLink = "<a href='".$formatRedirectLink."'>".$redirectLabel.'</a>';
-                            $search_string = [
-                                '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]',
-                            ];
-                            $replace_string = [
-                                $redirectLink, '',
-                            ];
-                            $message = str_replace($search_string, $replace_string, $emailOut->message);
-                        } else {
-                            $search_string = [
-                                '[login_link]', '[username]', '[password]',
-                            ];
-                            $replace_string = [
-                                $loginLink, $user->email, $password,
-                            ];
-                            $message = str_replace($search_string, $replace_string, $emailOut->message);
+                        if ($user->is_disabled) {
+                            continue;
                         }
 
-                        $emailData['email_subject'] = $emailOut->subject;
-                        $emailData['email_message'] = $message.$attachmentText;
-                        $emailData['from_name'] = $emailOut->from_name;
-                        $emailData['from_email'] = $emailOut->from_email;
-                        $emailData['attach_file'] = null;
+                        $message = $this->replaceMessagePlaceholders($emailOut->message, $user);
+                        dispatch(new AddMailToQueueJob($user->email, $emailOut->subject, $message.$attachmentText,
+                            $emailOut->from_email, $emailOut->from_name, null, 'learner', $user->id));
 
-                        if(!$user->is_disabled) {
-                            // add email to queue
-                            dispatch(new AddMailToQueueJob($toMail, $emailOut->subject, $message.$attachmentText,
-                                $emailOut->from_email, $emailOut->from_name, null, 'learner', $user->id));
+                        $emailOut->recipients()->updateOrCreate([
+                            'user_id' => $user->id,
+                        ]);
 
-                            $emailOut->recipients()->updateOrCreate([
-                                'user_id' => $user->id,
-                            ]);
-
-                            CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
-                        }
+                        CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$user->email]);
                     }
 
                 } else {
@@ -243,51 +196,20 @@ class CourseEmailOut extends Command
 
                     // loop the result and send email
                     foreach ($coursesTaken as $courseTaken) {
-                        $toMail = $courseTaken->user->email;
-
-                        $encode_email = encrypt($courseTaken->user->email);
                         $user = $courseTaken->user;
-                        $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
-                        $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
-                        if (strpos($emailOut->message, '[redirect]')) {
-                            $extractLink = FrontendHelpers::getTextBetween($emailOut->message, '[redirect]', '[/redirect]');
-                            $formatRedirectLink = route('auth.login.emailRedirect', [$encode_email, encrypt($extractLink)]);
-                            $redirectLabel = FrontendHelpers::getTextBetween($emailOut->message, '[redirect_label]', '[/redirect_label]');
-                            $redirectLink = "<a href='".$formatRedirectLink."'>".$redirectLabel.'</a>';
-                            $search_string = [
-                                '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]',
-                            ];
-                            $replace_string = [
-                                $redirectLink, '',
-                            ];
-                            $message = str_replace($search_string, $replace_string, $emailOut->message);
-                        } else {
-                            $search_string = [
-                                '[login_link]', '[username]', '[password]',
-                            ];
-                            $replace_string = [
-                                $loginLink, $courseTaken->user->email, $password,
-                            ];
-                            $message = str_replace($search_string, $replace_string, $emailOut->message);
+                        if ($user->is_disabled) {
+                            continue;
                         }
 
-                        $emailData['email_subject'] = $emailOut->subject;
-                        $emailData['email_message'] = $message.$attachmentText;
-                        $emailData['from_name'] = $emailOut->from_name;
-                        $emailData['from_email'] = $emailOut->from_email;
-                        $emailData['attach_file'] = null;
+                        $message = $this->replaceMessagePlaceholders($emailOut->message, $user);
+                        dispatch(new AddMailToQueueJob($user->email, $emailOut->subject, $message.$attachmentText,
+                            $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
 
-                        if(!$courseTaken->user->is_disabled) {
-                            // add email to queue
-                            dispatch(new AddMailToQueueJob($toMail, $emailOut->subject, $message.$attachmentText,
-                                $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
+                        $emailOut->recipients()->updateOrCreate([
+                            'user_id' => $user->id,
+                        ]);
 
-                            $emailOut->recipients()->updateOrCreate([
-                                'user_id' => $user->id,
-                            ]);
-
-                            CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
-                        }
+                        CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$user->email]);
                     }
                 }
             }
@@ -306,13 +228,7 @@ class CourseEmailOut extends Command
                     $emailOut->course->packages->pluck('id')->toArray();
                 $emailRecipients = $emailOut->recipients->pluck('user_id')->toArray();
 
-                $emailAttachment = EmailAttachment::where('hash', $emailOut->attachment_hash)->first();
-                $attachmentText = '';
-                if ($emailAttachment) {
-                    $attachmentText = "<p style='margin-top: 10px'><b>Vedlegg:</b> 
-                        <a href='".route('front.email-attachment', $emailAttachment->hash)."'>"
-                        .AdminHelpers::extractFileName($emailAttachment->filename).'</a></p>';
-                }
+                $attachmentText = $this->buildAttachmentText($emailOut);
 
                 if ($emailOut->send_to_learners_no_course || $emailOut->send_to_learners_with_unpaid_pay_later) {
 
@@ -322,20 +238,6 @@ class CourseEmailOut extends Command
                     $clauses = [];
 
                     if ($emailOut->send_to_learners_no_course) {
-                        /* $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
-                            ->whereHas('user')
-                            ->where(function ($query) use ($emailDate) {
-                                $query->whereDate('started_at', '=', $emailDate);
-                                $query->orWhereDate('start_date', '=', $emailDate);
-                            })
-                            //->whereNull('renewed_at')
-                            ->where('is_free', 1)
-                            ->get()->pluck('user_id')->toArray();
-
-                        $clauses[] = function ($q) use ($coursesTaken) {
-                            $q->whereIn('id', $coursesTaken);
-                        }; */
-
                         $today = now()->toDateString();
 
                         $coursesTakenUserIds = CoursesTaken::query()
@@ -359,14 +261,14 @@ class CourseEmailOut extends Command
 
                             ->where('ct.is_free', 1)
 
-                            // ✅ exclude ONLY if user has an ACTIVE package_id=29
+                            // exclude ONLY if user has an ACTIVE package_id=29
                             ->whereNotExists(function ($q) use ($today) {
                                 $q->select(DB::raw(1))
                                 ->from('courses_taken as ct2')
                                 ->whereColumn('ct2.user_id', 'ct.user_id')
                                 ->whereColumn('ct2.id', '!=', 'ct.id')
                                 ->whereNull('ct2.deleted_at')
-                                ->where('ct2.package_id', 29) // ✅ only check package 29
+                                ->where('ct2.package_id', 29)
                                 ->where(function ($qq) use ($today) {
                                     $qq->whereNull('ct2.end_date')
                                         ->orWhereDate('ct2.end_date', '>', $today);
@@ -425,50 +327,19 @@ class CourseEmailOut extends Command
 
                     // loop the result and send email
                     foreach ($userList as $user) {
-                        $toMail = $user->email;
-
-                        $encode_email = encrypt($user->email);
-                        $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
-                        $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
-                        if (strpos($emailOut->message, '[redirect]')) {
-                            $extractLink = FrontendHelpers::getTextBetween($emailOut->message, '[redirect]', '[/redirect]');
-                            $formatRedirectLink = route('auth.login.emailRedirect', [$encode_email, encrypt($extractLink)]);
-                            $redirectLabel = FrontendHelpers::getTextBetween($emailOut->message, '[redirect_label]', '[/redirect_label]');
-                            $redirectLink = "<a href='".$formatRedirectLink."'>".$redirectLabel.'</a>';
-                            $search_string = [
-                                '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]',
-                            ];
-                            $replace_string = [
-                                $redirectLink, '',
-                            ];
-                            $message = str_replace($search_string, $replace_string, $emailOut->message);
-                        } else {
-                            $search_string = [
-                                '[login_link]', '[username]', '[password]',
-                            ];
-                            $replace_string = [
-                                $loginLink, $user->email, $password,
-                            ];
-                            $message = str_replace($search_string, $replace_string, $emailOut->message);
+                        if ($user->is_disabled) {
+                            continue;
                         }
 
-                        $emailData['email_subject'] = $emailOut->subject;
-                        $emailData['email_message'] = $message.$attachmentText;
-                        $emailData['from_name'] = $emailOut->from_name;
-                        $emailData['from_email'] = $emailOut->from_email;
-                        $emailData['attach_file'] = null;
+                        $message = $this->replaceMessagePlaceholders($emailOut->message, $user);
+                        dispatch(new AddMailToQueueJob($user->email, $emailOut->subject, $message.$attachmentText,
+                            $emailOut->from_email, $emailOut->from_name, null, 'learner', $user->id));
 
-                        if(!$user->is_disabled) {
-                            // add email to queue
-                            dispatch(new AddMailToQueueJob($toMail, $emailOut->subject, $message.$attachmentText,
-                                $emailOut->from_email, $emailOut->from_name, null, 'learner', $user->id));
+                        $emailOut->recipients()->updateOrCreate([
+                            'user_id' => $user->id,
+                        ]);
 
-                            $emailOut->recipients()->updateOrCreate([
-                                'user_id' => $user->id,
-                            ]);
-
-                            CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
-                        }
+                        CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$user->email]);
                     }
 
                 } else {
@@ -504,51 +375,20 @@ class CourseEmailOut extends Command
 
                     // loop the result and send email
                     foreach ($coursesTaken as $courseTaken) {
-                        $toMail = $courseTaken->user->email;
-
-                        $encode_email = encrypt($courseTaken->user->email);
                         $user = $courseTaken->user;
-                        $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
-                        $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
-                        if (strpos($emailOut->message, '[redirect]')) {
-                            $extractLink = FrontendHelpers::getTextBetween($emailOut->message, '[redirect]', '[/redirect]');
-                            $formatRedirectLink = route('auth.login.emailRedirect', [$encode_email, encrypt($extractLink)]);
-                            $redirectLabel = FrontendHelpers::getTextBetween($emailOut->message, '[redirect_label]', '[/redirect_label]');
-                            $redirectLink = "<a href='".$formatRedirectLink."'>".$redirectLabel.'</a>';
-                            $search_string = [
-                                '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]',
-                            ];
-                            $replace_string = [
-                                $redirectLink, '',
-                            ];
-                            $message = str_replace($search_string, $replace_string, $emailOut->message);
-                        } else {
-                            $search_string = [
-                                '[login_link]', '[username]', '[password]',
-                            ];
-                            $replace_string = [
-                                $loginLink, $courseTaken->user->email, $password,
-                            ];
-                            $message = str_replace($search_string, $replace_string, $emailOut->message);
+                        if ($user->is_disabled) {
+                            continue;
                         }
 
-                        $emailData['email_subject'] = $emailOut->subject;
-                        $emailData['email_message'] = $message.$attachmentText;
-                        $emailData['from_name'] = $emailOut->from_name;
-                        $emailData['from_email'] = $emailOut->from_email;
-                        $emailData['attach_file'] = null;
+                        $message = $this->replaceMessagePlaceholders($emailOut->message, $user);
+                        dispatch(new AddMailToQueueJob($user->email, $emailOut->subject, $message.$attachmentText,
+                            $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
 
-                        if(!$courseTaken->user->is_disabled) {
-                            // add email to queue
-                            dispatch(new AddMailToQueueJob($toMail, $emailOut->subject, $message.$attachmentText,
-                                $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
+                        $emailOut->recipients()->updateOrCreate([
+                            'user_id' => $user->id,
+                        ]);
 
-                            $emailOut->recipients()->updateOrCreate([
-                                'user_id' => $user->id,
-                            ]);
-
-                            CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
-                        }
+                        CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$user->email]);
                     }
                 }
             }
@@ -558,5 +398,56 @@ class CourseEmailOut extends Command
         CronLog::create(['activity' => 'CourseEmailOut CRON done running.']);
 
         return 'done';
+    }
+
+    /**
+     * Replace placeholders in the email message with user-specific values.
+     */
+    private function replaceMessagePlaceholders(string $messageTemplate, User $user): string
+    {
+        $encode_email = encrypt($user->email);
+        $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
+        $password = $user->need_pass_update
+            ? 'Skjult (kan endres inne i portalen eller via glemt passord)'
+            : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+
+        if (strpos($messageTemplate, '[redirect]') !== false) {
+            $extractLink = FrontendHelpers::getTextBetween($messageTemplate, '[redirect]', '[/redirect]');
+            $formatRedirectLink = route('auth.login.emailRedirect', [$encode_email, encrypt($extractLink)]);
+            $redirectLabel = FrontendHelpers::getTextBetween($messageTemplate, '[redirect_label]', '[/redirect_label]');
+            $redirectLink = "<a href='".$formatRedirectLink."'>".$redirectLabel.'</a>';
+            $search_string = [
+                '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]',
+            ];
+            $replace_string = [
+                $redirectLink, '',
+            ];
+
+            return str_replace($search_string, $replace_string, $messageTemplate);
+        }
+
+        $search_string = [
+            '[login_link]', '[username]', '[password]',
+        ];
+        $replace_string = [
+            $loginLink, $user->email, $password,
+        ];
+
+        return str_replace($search_string, $replace_string, $messageTemplate);
+    }
+
+    /**
+     * Build attachment text HTML for an email out entry.
+     */
+    private function buildAttachmentText(EmailOut $emailOut): string
+    {
+        $emailAttachment = EmailAttachment::where('hash', $emailOut->attachment_hash)->first();
+        if ($emailAttachment) {
+            return "<p style='margin-top: 10px'><b>Vedlegg:</b>
+                <a href='".route('front.email-attachment', $emailAttachment->hash)."'>"
+                .AdminHelpers::extractFileName($emailAttachment->filename).'</a></p>';
+        }
+
+        return '';
     }
 }

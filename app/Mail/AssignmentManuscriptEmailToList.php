@@ -21,7 +21,10 @@ class AssignmentManuscriptEmailToList extends Mailable
 
     public function build()
     {
-        return $this->from('postmail@forfatterskolen.no', 'Forfatterskolen')
+        $fromAddress = config('mail.from.address', 'support@forfatterskolen.no');
+        $fromName = config('mail.from.name', 'Forfatterskolen');
+
+        return $this->from($fromAddress, $fromName)
             ->subject($this->data['subject'])
             ->view('emails.assignment_manuscript_email_to_list');
     }

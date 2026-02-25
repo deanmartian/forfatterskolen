@@ -41,8 +41,12 @@ class AddMailToQueueMail extends Mailable
 
     public function build()
     {
+        $replyToAddress = config('mail.reply_to.address', $this->from_email);
+        $replyToName = config('mail.reply_to.name', $this->from_name);
+
         $email = $this->to($this->recipient)
             ->from($this->from_email, $this->from_name)
+            ->replyTo($replyToAddress, $replyToName)
             ->subject($this->email_subject)
             ->view($this->emailView)
             ->text('emails.subject_body_plain');
