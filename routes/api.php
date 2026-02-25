@@ -70,6 +70,8 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::get('/shop-manuscripts/by-word-count', [ShopManuscriptController::class, 'byWordCount']);
     Route::get('/vipps/fallback', [VippsController::class, 'fallback'])
         ->name('api.v1.vipps.fallback');
+    Route::post('/documents/convert-to-docx', [App\Http\Controllers\Frontend\DocumentConversionController::class, 'convertToDocx'])
+        ->name('api.v1.documents.convert-to-docx');
 
     Route::middleware('apiJwt')->group(function () {
         Route::get('/shop-manuscripts/{id}/thankyou', [ShopManuscriptCheckoutController::class, 'thankyou'])
@@ -105,8 +107,6 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::post('/files/{file}/upload', [FileController::class, 'upload'])
             ->middleware('signed')
             ->name('api.v1.files.upload');
-        Route::post('/documents/convert-to-docx', [App\Http\Controllers\Frontend\DocumentConversionController::class, 'convertToDocx'])
-            ->name('api.v1.documents.convert-to-docx');
         Route::get('/assignments', [AssignmentController::class, 'index']);
         Route::get('/assignments/{id}', [AssignmentController::class, 'show']);
         Route::post('/assignments/{id}/submit', [AssignmentController::class, 'submit']);
