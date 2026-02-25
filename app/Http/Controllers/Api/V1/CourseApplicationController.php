@@ -8,6 +8,10 @@ use App\User;
 use App\Http\FrontendHelpers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+<<<<<<< codex/create-api-for-front.course.process-application
+use Illuminate\Support\Facades\Auth;
+=======
+>>>>>>> master
 use Illuminate\Support\Facades\Hash;
 
 class CourseApplicationController extends ApiController
@@ -81,6 +85,11 @@ class CourseApplicationController extends ApiController
             ]);
         }
 
+<<<<<<< codex/create-api-for-front.course.process-application
+        Auth::login($user);
+
+=======
+>>>>>>> master
         $package = $course->packagesIsShow()->first();
         if (! $package) {
             return $this->errorResponse('Course package not found.', 'package_not_found', 404);

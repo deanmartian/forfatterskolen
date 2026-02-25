@@ -162,8 +162,12 @@ class CourseApplicationApiTest extends TestCase
             'last_name' => 'Writer',
         ]);
 
+        $user = \DB::table('users')->where('email', 'applicant@example.com')->first();
+        $this->assertAuthenticatedAs(\App\User::find($user->id));
+
         $this->assertDatabaseHas('course_applications', [
             'package_id' => $packageId,
+            'user_id' => $user->id,
         ]);
     }
 
@@ -216,5 +220,7 @@ class CourseApplicationApiTest extends TestCase
 
         $response->assertStatus(422)
             ->assertJsonPath('error.code', 'duplicate_application');
+
+        $this->assertAuthenticatedAs(\App\User::find($userId));
     }
 }
