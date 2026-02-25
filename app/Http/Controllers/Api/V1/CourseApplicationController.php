@@ -33,7 +33,7 @@ class CourseApplicationController extends ApiController
         return response()->json([
             'success' => true,
             'action' => 'show_application',
-            'application_url' => $lovableBase.'/skrivekurs/'.$course->id.'/application',
+            'redirect_url' => $lovableBase.'/skrivekurs/'.$course->id.'/application',
         ]);
     }
 }
