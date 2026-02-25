@@ -60,6 +60,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         ->middleware('apiJwt');
     Route::get('/courses/{id}', [CourseController::class, 'showPublic']);
     Route::get('/courses/{id}/application', [CourseApplicationController::class, 'show']);
+    Route::post('/courses/{id}/application/process', [CourseApplicationController::class, 'store']);
     Route::get('/course/{id}/payment-plans', [CourseController::class, 'paymentPlans']);
     Route::get('/courses/{id}/plan', [CourseController::class, 'plan']);
     Route::get('/courses/{id}/packages', [CourseController::class, 'packages']);
