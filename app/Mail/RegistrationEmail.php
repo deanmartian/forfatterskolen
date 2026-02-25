@@ -21,12 +21,15 @@ class RegistrationEmail extends Mailable
     {
         $this->user = $user;
         $this->actionText = 'Se Alle Kurs';
-        $this->actionUrl = 'http://www.forfatterskolen.no/course';
+        $this->actionUrl = 'https://www.forfatterskolen.no/course';
     }
 
     public function build()
     {
-        return $this->from('postmail@forfatterskolen.no', 'Forfatterskolen')
+        $fromAddress = config('mail.from.address', 'support@forfatterskolen.no');
+        $fromName = config('mail.from.name', 'Forfatterskolen');
+
+        return $this->from($fromAddress, $fromName)
             ->subject('Welcome to Forfatterskolen')
             ->view('emails.registration');
     }

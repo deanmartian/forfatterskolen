@@ -27,7 +27,7 @@
 <body>
 
 <div>
-    <img src="http://www.forfatterskolen.no/images/logo.png" style="height: 80px; margin-bottom: 36px;">
+    <img src="https://www.forfatterskolen.no/images/logo.png" style="height: 80px; margin-bottom: 36px;">
 </div>
 
 <p style="margin-top: 30px; font-family: Arial">

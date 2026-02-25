@@ -76,7 +76,7 @@ $style = [
                                     <td style="{{ $fontFamily }} {{ $style['email-body_cell'] }}">
                                         <!-- Greeting -->
                                         <div style="text-align: center;">
-                                            <img src="http://www.forfatterskolen.no/images/logo.png" style="height: 60px; margin-bottom: 36px;">
+                                            <img src="https://www.forfatterskolen.no/images/logo.png" style="height: 60px; margin-bottom: 36px;">
                                         </div>
                                         
                                         <!-- Intro -->
