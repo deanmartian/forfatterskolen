@@ -26,14 +26,14 @@ class CourseApplicationController extends ApiController
             return response()->json([
                 'success' => true,
                 'action' => 'redirect_checkout',
-                'redirect_url' => $lovableBase.'/course/'.$course->id.'/checkout',
+                'redirect_url' => $lovableBase.'/skrivekurs/'.$course->id.'/checkout',
             ]);
         }
 
         return response()->json([
             'success' => true,
             'action' => 'show_application',
-            'application_url' => $lovableBase.'/course/'.$course->id.'/application',
+            'application_url' => $lovableBase.'/skrivekurs/'.$course->id.'/application',
         ]);
     }
 }

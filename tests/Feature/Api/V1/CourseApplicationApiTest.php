@@ -68,7 +68,7 @@ class CourseApplicationApiTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
             ->assertJsonPath('action', 'show_application')
-            ->assertJsonPath('application_url', 'https://ny.forfatterskolen.no/course/'.$courseId.'/application');
+            ->assertJsonPath('application_url', 'https://ny.forfatterskolen.no/skrivekurs/'.$courseId.'/application');
     }
 
     public function test_it_returns_checkout_redirect_when_course_is_not_application_based(): void
@@ -97,6 +97,6 @@ class CourseApplicationApiTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
             ->assertJsonPath('action', 'redirect_checkout')
-            ->assertJsonPath('redirect_url', 'https://ny.forfatterskolen.no/course/'.$courseId.'/checkout');
+            ->assertJsonPath('redirect_url', 'https://ny.forfatterskolen.no/skrivekurs/'.$courseId.'/checkout');
     }
 }
