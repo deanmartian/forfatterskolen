@@ -44,14 +44,21 @@ class AssignmentController extends ApiController
             return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
         }
 
-        if ($user->isDisabled) {
-            return response()->json(['data' => []]);
-        }
-
         $assignments = [];
+        $expiredAssignments = [];
+        $upcomingAssignments = [];
+        $waitingForResponse = [];
+        $waitingForResponseIds = [];
+        $noWordLimitAssignments = [];
+
         $addOns = AssignmentAddon::where('user_id', $user->id)->pluck('assignment_id')->toArray();
+        $assignmentGroupLearners = AssignmentGroupLearner::with(['group.assignment.course'])
+            ->where('user_id', $user->id)
+            ->get();
         $assignmentSubmissionDates = AssignmentLearnerSubmissionDate::where('user_id', $user->id)
             ->pluck('submission_date', 'assignment_id');
+        $assignmentMaxWords = AssignmentLearnerConfiguration::where('user_id', $user->id)
+            ->pluck('max_words', 'assignment_id');
 
         $coursesTaken = $user->coursesTaken()->whereNotNull('end_date')->get()
             ->filter(function (CoursesTaken $courseTaken) {
@@ -82,12 +89,22 @@ class AssignmentController extends ApiController
                         if (! AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
                             if ($course->type == 'Single' && $assignment->submission_date == '365') {
                                 if (Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
-                                    $assignments[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                                    $payload = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                                    if ($assignment->max_words === 0) {
+                                        $noWordLimitAssignments[] = $payload;
+                                    } else {
+                                        $assignments[] = $payload;
+                                    }
                                 }
                             } else {
                                 if (Carbon::parse($courseTaken->started_at)->addDays((int) $assignment->submission_date)
                                     ->gt(Carbon::now())) {
-                                    $assignments[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                                    $payload = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                                    if ($assignment->max_words === 0) {
+                                        $noWordLimitAssignments[] = $payload;
+                                    } else {
+                                        $assignments[] = $payload;
+                                    }
                                 }
                             }
                         } else {
@@ -96,8 +113,80 @@ class AssignmentController extends ApiController
 
                             if (Carbon::parse($assignmentSubmissionDate)->gt(Carbon::now()->subDay())
                                 && Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
-                                $assignments[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                                $payload = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                                if ($assignment->max_words === 0) {
+                                    $noWordLimitAssignments[] = $payload;
+                                } else {
+                                    $assignments[] = $payload;
+                                }
                             }
+                        }
+                    }
+
+                    if ($assignmentManuscript && $assignmentManuscript->locked && ! $assignmentManuscript->has_feedback
+                        && ! $assignment->for_editor) {
+                        $waitingForResponse[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                        $waitingForResponseIds[] = $assignment->id;
+                    }
+                }
+            }
+
+            foreach ($course->expiredAssignments as $assignment) {
+                $allowedPackage = json_decode($assignment->allowed_package, true);
+                if ((! is_null($allowedPackage) && in_array($packageId, $allowedPackage))
+                    || is_null($allowedPackage)
+                    || in_array($assignment->id, $addOns)) {
+                    $waitingForResponseManuscript = AssignmentManuscript::where('user_id', $user->id)
+                        ->where('editor_id', '!=', 0)
+                        ->where('locked', 1)
+                        ->where('status', 0)
+                        ->where('assignment_id', $assignment->id)
+                        ->first();
+
+                    if ($waitingForResponseManuscript && ! in_array($assignment->id, $waitingForResponseIds)) {
+                        $waitingForResponse[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                    }
+
+                    if (! AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
+                        if ($course->type == 'Single' && $assignment->submission_date == '365') {
+                            if (Carbon::parse($courseTaken->end_date)->lt(Carbon::now())) {
+                                $expiredAssignments[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                            }
+                        } else {
+                            if (Carbon::parse($courseTaken->started_at)->addDays((int) $assignment->submission_date)
+                                ->lt(Carbon::now())) {
+                                $expiredAssignments[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                            }
+                        }
+                    } else {
+                        $assignmentManuscript = AssignmentManuscript::where('user_id', $user->id)
+                            ->where('assignment_id', $assignment->id)
+                            ->first();
+
+                        if (Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
+                            if ($course->type == 'Group') {
+                                if ($assignmentManuscript) {
+                                    $assignmentFeedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $assignmentManuscript->id)->first();
+                                    $assignmentGroups = $assignment->groups()->pluck('id')->toArray();
+                                    $userAssignmentGroupLearner = AssignmentGroupLearner::where('user_id', $user->id)
+                                        ->whereIn('assignment_group_id', $assignmentGroups)
+                                        ->first();
+
+                                    if (($assignmentFeedback && $assignmentManuscript->status > 0) || $userAssignmentGroupLearner) {
+                                        $expiredAssignments[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                                    }
+                                } else {
+                                    $expiredAssignments[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                                }
+                            } else {
+                                $expiredAssignments[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
+                            }
+                        }
+
+                        if (! $assignmentManuscript
+                            && Carbon::parse($assignment->submission_date)->gt(Carbon::now())
+                            && Carbon::parse($assignment->available_date)->gt(Carbon::now())) {
+                            $upcomingAssignments[] = $this->formatAssignment($assignment, $user, $courseTaken, false);
                         }
                     }
                 }
@@ -114,14 +203,77 @@ class AssignmentController extends ApiController
                     ->first();
             }
 
-            if (! $feedback && (! $manuscript || ! $manuscript->locked)) {
-                if (Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
+            if (! $feedback) {
+                if ($manuscript && $manuscript->locked) {
+                    $waitingForResponse[] = $this->formatAssignment($assignment, $user, null, false);
+                } elseif (Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
                     $assignments[] = $this->formatAssignment($assignment, $user, null, false);
                 }
             }
         }
 
-        return response()->json(['data' => $assignments]);
+        foreach ($user->expiredAssignments as $assignment) {
+            $manuscript = $assignment->manuscripts->first();
+            $feedback = null;
+
+            if ($manuscript) {
+                $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript->id)
+                    ->where('is_active', 1)
+                    ->first();
+            }
+
+            if ($feedback) {
+                $expiredAssignments[] = $this->formatAssignment($assignment, $user, null, false);
+            }
+        }
+
+        $upcomingPersonalAssignments = Assignment::where('parent', 'users')
+            ->where('parent_id', $user->id)
+            ->where('submission_date', '>=', Carbon::now())
+            ->where('available_date', '>', Carbon::now())
+            ->oldest('submission_date')
+            ->get();
+
+        foreach ($upcomingPersonalAssignments as $assignment) {
+            $upcomingAssignments[] = $this->formatAssignment($assignment, $user, null, false);
+        }
+
+        $expiredAssignments = collect($expiredAssignments)
+            ->sortByDesc('created_at')
+            ->unique('id')
+            ->values()
+            ->all();
+
+        $expiredById = collect($expiredAssignments)->pluck('id')->flip();
+        $waitingForResponse = collect($waitingForResponse)
+            ->reject(function ($assignment) use ($expiredById) {
+                return $expiredById->has($assignment['id']);
+            })
+            ->unique('id')
+            ->values()
+            ->all();
+
+        $upcomingAssignments = collect($upcomingAssignments)
+            ->sortBy('submission_date')
+            ->unique('id')
+            ->values()
+            ->all();
+
+        $assignments = $user->isDisabled ? [] : collect($assignments)->unique('id')->values()->all();
+        $noWordLimitAssignments = $user->isDisabled ? [] : collect($noWordLimitAssignments)->unique('id')->values()->all();
+
+        return response()->json([
+            'data' => [
+                'assignments' => $assignments,
+                'expiredAssignments' => $expiredAssignments,
+                'upcomingAssignments' => $upcomingAssignments,
+                'waitingForResponse' => $waitingForResponse,
+                'assignmentGroupLearners' => $assignmentGroupLearners,
+                'noWordLimitAssignments' => $noWordLimitAssignments,
+                'assignmentSubmissionDates' => $assignmentSubmissionDates,
+                'assignmentMaxWords' => $assignmentMaxWords,
+            ],
+        ]);
     }
 
     public function show(Request $request, $id): JsonResponse
