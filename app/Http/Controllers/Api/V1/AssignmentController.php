@@ -727,6 +727,8 @@ class AssignmentController extends ApiController
 
         return [
             'id' => $manuscript->id,
+            'filename' => $manuscript->filename,
+            'filename_display' => $manuscript->filename ? basename($manuscript->filename) : null,
             'locked' => (bool) $manuscript->locked,
             'has_feedback' => (bool) $manuscript->has_feedback,
             'status' => $manuscript->status,
