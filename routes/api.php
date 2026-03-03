@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\EmailHistoryController;
 use App\Http\Controllers\Api\V1\FileController;
 use App\Http\Controllers\Api\V1\FreeManuscriptController;
 use App\Http\Controllers\Api\V1\FreeWebinarController;
+use App\Http\Controllers\Api\V1\FrontendHelpersController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\InvoiceController;
 use App\Http\Controllers\Api\V1\LessonController;
@@ -67,6 +68,8 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::get('/free-webinars', [FreeWebinarController::class, 'index']);
     Route::get('/free-webinars/{id}', [FreeWebinarController::class, 'show']);
     Route::post('/free-manuscripts', [FreeManuscriptController::class, 'store']);
+    Route::get('/genres', [FrontendHelpersController::class, 'genres']);
+    Route::get('/manuscript-types', [FrontendHelpersController::class, 'manuscriptTypes']);
     Route::get('/publisher-books', [PublisherBookController::class, 'index']);
     Route::get('/shop-manuscripts/by-word-count', [ShopManuscriptController::class, 'byWordCount']);
     Route::get('/vipps/fallback', [VippsController::class, 'fallback'])
