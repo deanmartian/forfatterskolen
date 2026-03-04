@@ -683,6 +683,39 @@ class AssignmentController extends ApiController
         ]);
     }
 
+    public function deleteSubmission(Request $request, $id): JsonResponse
+    {
+        $assignmentManuscript = AssignmentManuscript::find($id);
+
+        if (! $assignmentManuscript) {
+            return $this->errorResponse('Submission not found.', 'not_found', 404);
+        }
+
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        if ((int) $assignmentManuscript->user_id !== (int) $user->id) {
+            return $this->errorResponse('You do not have access to this submission.', 'forbidden', 403);
+        }
+
+        $oldManuscript = $assignmentManuscript->filename;
+        $assignmentManuscript->forceDelete();
+
+        if ($oldManuscript && File::exists(public_path($oldManuscript))) {
+            File::delete(public_path($oldManuscript));
+        }
+
+        return response()->json([
+            'data' => [
+                'id' => (int) $id,
+                'deleted' => true,
+            ],
+        ]);
+    }
+
     protected function formatAssignment(Assignment $assignment, $user, ?CoursesTaken $courseTaken, bool $includeFeedbackSummary): array
     {
         $course = $assignment->course;
