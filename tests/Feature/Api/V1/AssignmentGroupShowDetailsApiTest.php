@@ -142,6 +142,17 @@ class AssignmentGroupShowDetailsApiTest extends TestCase
 
         AssignmentManuscript::create([
             'assignment_id' => $assignment->id,
+            'user_id' => $otherUser->id,
+            'filename' => '/storage/assignment-manuscripts/other.docx',
+            'status' => 1,
+            'locked' => 0,
+            'has_feedback' => 0,
+            'words' => 999,
+            'uploaded_at' => now(),
+        ]);
+
+        AssignmentManuscript::create([
+            'assignment_id' => $assignment->id,
             'user_id' => $user->id,
             'filename' => '/storage/assignment-manuscripts/sample.docx',
             'status' => 1,
@@ -162,6 +173,9 @@ class AssignmentGroupShowDetailsApiTest extends TestCase
             ->assertJsonPath('data.group.assignment_id', $assignment->id)
             ->assertJsonPath('data.otherLearnersIdList.0', $otherLearner->id)
             ->assertJsonPath('data.groupLearnerList.0.id', $memberLearner->id)
+            ->assertJsonPath('data.groupLearnerList.0.assignmentManuscript.user_id', $user->id)
+            ->assertJsonPath('data.groupLearnerList.1.assignmentManuscript.user_id', $otherUser->id)
+            ->assertJsonPath('data.groupLearnerList.1.assignmentManuscript.filename', '/storage/assignment-manuscripts/other.docx')
             ->assertJsonPath('data.assignmentManuscript.assignment_id', $assignment->id)
             ->assertJsonPath('data.assignmentManuscript.user_id', $user->id)
             ->assertJsonStructure([

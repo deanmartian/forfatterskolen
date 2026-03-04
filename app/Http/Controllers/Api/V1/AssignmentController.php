@@ -618,12 +618,35 @@ class AssignmentController extends ApiController
 
         $couldSendFeedbackTo[] = $groupLearner->id;
 
-        $groupLearnerList = AssignmentGroupLearner::with('user:id,first_name,last_name')
+        $groupLearners = AssignmentGroupLearner::with('user:id,first_name,last_name')
             ->where('assignment_group_id', $id)
             ->whereIn('id', $couldSendFeedbackTo)
             ->orderBy('created_at', 'desc')
+            ->get();
+
+        $manuscriptsByUserId = AssignmentManuscript::where('assignment_id', $group->assignment_id)
+            ->whereIn('user_id', $groupLearners->pluck('user_id')->all())
+            ->orderBy('id', 'desc')
             ->get()
-            ->map(function (AssignmentGroupLearner $learner) {
+            ->groupBy('user_id')
+            ->map(function ($manuscripts) {
+                $manuscript = $manuscripts->first();
+
+                return [
+                    'id' => $manuscript->id,
+                    'assignment_id' => $manuscript->assignment_id,
+                    'user_id' => $manuscript->user_id,
+                    'filename' => $manuscript->filename,
+                    'status' => $manuscript->status,
+                    'locked' => (bool) $manuscript->locked,
+                    'has_feedback' => (bool) $manuscript->has_feedback,
+                    'words' => $manuscript->words,
+                    'uploaded_at' => $manuscript->uploaded_at,
+                ];
+            });
+
+        $groupLearnerList = $groupLearners
+            ->map(function (AssignmentGroupLearner $learner) use ($manuscriptsByUserId) {
                 return [
                     'id' => $learner->id,
                     'assignment_group_id' => $learner->assignment_group_id,
@@ -637,6 +660,7 @@ class AssignmentController extends ApiController
                         'first_name' => $learner->user->first_name,
                         'last_name' => $learner->user->last_name,
                     ] : null,
+                    'assignmentManuscript' => $manuscriptsByUserId->get($learner->user_id),
                 ];
             })
             ->values();
