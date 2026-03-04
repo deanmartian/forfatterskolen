@@ -6,6 +6,7 @@ use App\Assignment;
 use App\AssignmentAddon;
 use App\AssignmentFeedback;
 use App\AssignmentFeedbackNoGroup;
+use App\AssignmentGroup;
 use App\AssignmentGroupLearner;
 use App\AssignmentLearnerConfiguration;
 use App\AssignmentLearnerSubmissionDate;
@@ -578,6 +579,139 @@ class AssignmentController extends ApiController
         }
 
         return response()->download($path);
+    }
+
+    public function groupShowDetails(Request $request, $id): JsonResponse
+    {
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        $group = AssignmentGroup::where('id', $id)
+            ->whereHas('learners', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->first();
+
+        if (! $group) {
+            return $this->errorResponse('Assignment group not found.', 'not_found', 404);
+        }
+
+        $groupLearners = AssignmentGroupLearner::where('assignment_group_id', $id)
+            ->where('user_id', '!=', $user->id);
+
+        $groupLearner = AssignmentGroupLearner::where('assignment_group_id', $id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (! $groupLearner) {
+            return $this->errorResponse('Assignment group membership not found.', 'not_found', 404);
+        }
+
+        $otherLearnersIdList = $groupLearners->pluck('id')->toArray();
+        $couldSendFeedbackTo = $groupLearner->could_send_feedback_to_id_list ?: $otherLearnersIdList;
+        $assignmentManuscript = AssignmentManuscript::where('assignment_id', $group->assignment_id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        $couldSendFeedbackTo[] = $groupLearner->id;
+
+        $groupLearners = AssignmentGroupLearner::with('user:id,first_name,last_name')
+            ->where('assignment_group_id', $id)
+            ->whereIn('id', $couldSendFeedbackTo)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $manuscriptsByUserId = AssignmentManuscript::where('assignment_id', $group->assignment_id)
+            ->whereIn('user_id', $groupLearners->pluck('user_id')->all())
+            ->orderBy('id', 'desc')
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($manuscripts) {
+                $manuscript = $manuscripts->first();
+
+                return [
+                    'id' => $manuscript->id,
+                    'assignment_id' => $manuscript->assignment_id,
+                    'user_id' => $manuscript->user_id,
+                    'filename' => $manuscript->filename,
+                    'status' => $manuscript->status,
+                    'locked' => (bool) $manuscript->locked,
+                    'has_feedback' => (bool) $manuscript->has_feedback,
+                    'words' => $manuscript->words,
+                    'uploaded_at' => $manuscript->uploaded_at,
+                ];
+            });
+
+        $feedbackByGroupLearnerId = AssignmentFeedback::where('user_id', $user->id)
+            ->whereIn('assignment_group_learner_id', $groupLearners->pluck('id')->all())
+            ->orderBy('id', 'desc')
+            ->get()
+            ->groupBy('assignment_group_learner_id')
+            ->map(function ($feedbacks) {
+                $feedback = $feedbacks->first();
+
+                return [
+                    'id' => $feedback->id,
+                    'assignment_group_learner_id' => $feedback->assignment_group_learner_id,
+                    'assignment_manuscript_id' => $feedback->assignment_manuscript_id,
+                    'user_id' => $feedback->user_id,
+                    'filename' => $feedback->filename,
+                    'is_active' => (bool) $feedback->is_active,
+                    'availability' => $feedback->availability,
+                    'created_at' => $feedback->created_at,
+                    'updated_at' => $feedback->updated_at,
+                ];
+            });
+
+        $groupLearnerList = $groupLearners
+            ->map(function (AssignmentGroupLearner $learner) use ($feedbackByGroupLearnerId, $manuscriptsByUserId) {
+                return [
+                    'id' => $learner->id,
+                    'assignment_group_id' => $learner->assignment_group_id,
+                    'user_id' => $learner->user_id,
+                    'could_send_feedback_to' => $learner->could_send_feedback_to,
+                    'could_send_feedback_to_id_list' => $learner->could_send_feedback_to_id_list,
+                    'created_at' => $learner->created_at,
+                    'updated_at' => $learner->updated_at,
+                    'user' => $learner->user ? [
+                        'id' => $learner->user->id,
+                        'first_name' => $learner->user->first_name,
+                        'last_name' => $learner->user->last_name,
+                    ] : null,
+                    'assignmentManuscript' => $manuscriptsByUserId->get($learner->user_id),
+                    'feedback' => $feedbackByGroupLearnerId->get($learner->id),
+                ];
+            })
+            ->values();
+
+        return response()->json([
+            'data' => [
+                'group' => [
+                    'id' => $group->id,
+                    'assignment_id' => $group->assignment_id,
+                    'title' => $group->title,
+                    'submission_date' => $group->submission_date,
+                    'allow_feedback_download' => (bool) $group->allow_feedback_download,
+                ],
+                'otherLearnersIdList' => $otherLearnersIdList,
+                'couldSendFeedbackTo' => array_values(array_unique($couldSendFeedbackTo)),
+                'groupLearnerList' => $groupLearnerList,
+                'assignmentManuscript' => $assignmentManuscript ? [
+                    'id' => $assignmentManuscript->id,
+                    'assignment_id' => $assignmentManuscript->assignment_id,
+                    'user_id' => $assignmentManuscript->user_id,
+                    'filename' => $assignmentManuscript->filename,
+                    'status' => $assignmentManuscript->status,
+                    'locked' => (bool) $assignmentManuscript->locked,
+                    'has_feedback' => (bool) $assignmentManuscript->has_feedback,
+                    'words' => $assignmentManuscript->words,
+                    'uploaded_at' => $assignmentManuscript->uploaded_at,
+                ] : null,
+            ],
+        ]);
     }
 
     public function downloadFeedback(Request $request, $id): JsonResponse|BinaryFileResponse
