@@ -70,6 +70,37 @@ class AssignmentController extends ApiController
             ->pluck('submission_date', 'assignment_id');
         $assignmentMaxWords = AssignmentLearnerConfiguration::where('user_id', $user->id)
             ->pluck('max_words', 'assignment_id');
+        $noGroupWithFeedback = AssignmentFeedbackNoGroup::with(['manuscript.assignment.course'])
+            ->where('learner_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function (AssignmentFeedbackNoGroup $feedback) {
+                $manuscript = $feedback->manuscript;
+                $assignment = $manuscript ? $manuscript->assignment : null;
+                $course = $assignment ? $assignment->course : null;
+
+                return [
+                    'id' => $feedback->id,
+                    'filename' => $feedback->filename,
+                    'is_admin' => (bool) $feedback->is_admin,
+                    'is_active' => (bool) $feedback->is_active,
+                    'availability' => $feedback->availability,
+                    'manuscript' => $manuscript ? [
+                        'id' => $manuscript->id,
+                        'status' => $manuscript->status,
+                        'file_link_with_download' => $manuscript->file_link_with_download,
+                        'assignment' => $assignment ? [
+                            'id' => $assignment->id,
+                            'title' => $assignment->title,
+                            'course' => $course ? [
+                                'id' => $course->id,
+                                'title' => $course->title,
+                            ] : null,
+                        ] : null,
+                    ] : null,
+                ];
+            })
+            ->values();
 
         $coursesTaken = $user->coursesTaken()->whereNotNull('end_date')->get()
             ->filter(function (CoursesTaken $courseTaken) {
@@ -283,6 +314,7 @@ class AssignmentController extends ApiController
                 'noWordLimitAssignments' => $noWordLimitAssignments,
                 'assignmentSubmissionDates' => $assignmentSubmissionDates,
                 'assignmentMaxWords' => $assignmentMaxWords,
+                'noGroupWithFeedback' => $noGroupWithFeedback,
             ],
         ]);
     }

@@ -1135,15 +1135,80 @@ Authorization: Bearer <access_token>
 **Response (200)**
 ```json
 {
-  "data": [
-    {
-      "id": 987,
-      "title": "Assignment title",
-      "course_id": 12,
-      "submission_date": "2024-06-01T00:00:00Z",
-      "status": "open"
-    }
-  ]
+  "data": {
+    "assignments": [
+      {
+        "id": 987,
+        "title": "Assignment title",
+        "description": "Write 1000 words",
+        "course": {
+          "id": 12,
+          "title": "Novel Course"
+        },
+        "submission_date": "2024-06-01 23:59:00",
+        "available_date": "2024-05-01 00:00:00",
+        "submission": {
+          "id": 456,
+          "filename": "/uploads/manuscripts/a.docx",
+          "filename_display": "a.docx",
+          "locked": true,
+          "has_feedback": true,
+          "status": 1,
+          "words": 1024,
+          "uploaded_at": "2024-05-20 10:00:00"
+        }
+      }
+    ],
+    "expiredAssignments": [],
+    "upcomingAssignments": [],
+    "waitingForResponse": [],
+    "assignmentGroupLearners": [
+      {
+        "id": 77,
+        "user_id": 1001,
+        "assignment_group_id": 30,
+        "submission": {
+          "id": 456,
+          "filename": "/uploads/manuscripts/a.docx",
+          "filename_display": "a.docx",
+          "locked": true,
+          "has_feedback": true,
+          "status": 1,
+          "words": 1024,
+          "uploaded_at": "2024-05-20 10:00:00"
+        }
+      }
+    ],
+    "noWordLimitAssignments": [],
+    "assignmentSubmissionDates": {
+      "987": "2024-06-01 23:59:00"
+    },
+    "assignmentMaxWords": {
+      "987": 1000
+    },
+    "noGroupWithFeedback": [
+      {
+        "id": 321,
+        "filename": "/uploads/feedback/feedback.pdf",
+        "is_admin": true,
+        "is_active": true,
+        "availability": "2024-05-25",
+        "manuscript": {
+          "id": 456,
+          "status": 1,
+          "file_link_with_download": "<a href=\"/js/ViewerJS/#../../uploads/manuscripts/a.docx\">a.docx</a>",
+          "assignment": {
+            "id": 987,
+            "title": "Assignment title",
+            "course": {
+              "id": 12,
+              "title": "Novel Course"
+            }
+          }
+        }
+      }
+    ]
+  }
 }
 ```
 
