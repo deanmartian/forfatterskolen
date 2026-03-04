@@ -650,8 +650,29 @@ class AssignmentController extends ApiController
                 ];
             });
 
+        $feedbackByGroupLearnerId = AssignmentFeedback::where('user_id', $user->id)
+            ->whereIn('assignment_group_learner_id', $groupLearners->pluck('id')->all())
+            ->orderBy('id', 'desc')
+            ->get()
+            ->groupBy('assignment_group_learner_id')
+            ->map(function ($feedbacks) {
+                $feedback = $feedbacks->first();
+
+                return [
+                    'id' => $feedback->id,
+                    'assignment_group_learner_id' => $feedback->assignment_group_learner_id,
+                    'assignment_manuscript_id' => $feedback->assignment_manuscript_id,
+                    'user_id' => $feedback->user_id,
+                    'filename' => $feedback->filename,
+                    'is_active' => (bool) $feedback->is_active,
+                    'availability' => $feedback->availability,
+                    'created_at' => $feedback->created_at,
+                    'updated_at' => $feedback->updated_at,
+                ];
+            });
+
         $groupLearnerList = $groupLearners
-            ->map(function (AssignmentGroupLearner $learner) use ($manuscriptsByUserId) {
+            ->map(function (AssignmentGroupLearner $learner) use ($feedbackByGroupLearnerId, $manuscriptsByUserId) {
                 return [
                     'id' => $learner->id,
                     'assignment_group_id' => $learner->assignment_group_id,
@@ -666,6 +687,7 @@ class AssignmentController extends ApiController
                         'last_name' => $learner->user->last_name,
                     ] : null,
                     'assignmentManuscript' => $manuscriptsByUserId->get($learner->user_id),
+                    'feedback' => $feedbackByGroupLearnerId->get($learner->id),
                 ];
             })
             ->values();

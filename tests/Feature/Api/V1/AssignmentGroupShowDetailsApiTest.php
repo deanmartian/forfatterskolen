@@ -4,6 +4,7 @@ namespace Tests\Feature\Api\V1;
 
 use App\Assignment;
 use App\AssignmentGroup;
+use App\AssignmentFeedback;
 use App\AssignmentGroupLearner;
 use App\AssignmentManuscript;
 use App\User;
@@ -77,6 +78,16 @@ class AssignmentGroupShowDetailsApiTest extends TestCase
             $table->boolean('has_feedback')->default(0);
             $table->integer('words')->default(0);
             $table->dateTime('uploaded_at')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('assignment_feedbacks', function (Blueprint $table): void {
+            $table->increments('id');
+            $table->unsignedInteger('assignment_group_learner_id');
+            $table->unsignedInteger('user_id');
+            $table->string('filename')->nullable();
+            $table->boolean('is_active')->default(1);
+            $table->dateTime('availability')->nullable();
             $table->timestamps();
         });
 
@@ -162,6 +173,14 @@ class AssignmentGroupShowDetailsApiTest extends TestCase
             'uploaded_at' => now(),
         ]);
 
+        $feedback = AssignmentFeedback::create([
+            'assignment_group_learner_id' => $otherLearner->id,
+            'user_id' => $user->id,
+            'filename' => '/storage/assignment-feedback/feedback.docx',
+            'is_active' => 1,
+            'availability' => now(),
+        ]);
+
         $token = $this->makeTokenForUser($user);
 
         $response = $this->getJson('/api/v1/assignment/group/'.$group->id.'/show-details', [
@@ -176,6 +195,8 @@ class AssignmentGroupShowDetailsApiTest extends TestCase
             ->assertJsonPath('data.groupLearnerList.0.assignmentManuscript.user_id', $user->id)
             ->assertJsonPath('data.groupLearnerList.1.assignmentManuscript.user_id', $otherUser->id)
             ->assertJsonPath('data.groupLearnerList.1.assignmentManuscript.filename', '/storage/assignment-manuscripts/other.docx')
+            ->assertJsonPath('data.groupLearnerList.1.feedback.id', $feedback->id)
+            ->assertJsonPath('data.groupLearnerList.1.feedback.user_id', $user->id)
             ->assertJsonPath('data.assignmentManuscript.assignment_id', $assignment->id)
             ->assertJsonPath('data.assignmentManuscript.user_id', $user->id)
             ->assertJsonStructure([
