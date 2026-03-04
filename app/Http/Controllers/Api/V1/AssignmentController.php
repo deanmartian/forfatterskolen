@@ -54,7 +54,18 @@ class AssignmentController extends ApiController
         $addOns = AssignmentAddon::where('user_id', $user->id)->pluck('assignment_id')->toArray();
         $assignmentGroupLearners = AssignmentGroupLearner::with(['group.assignment.course'])
             ->where('user_id', $user->id)
-            ->get();
+            ->get()
+            ->map(function (AssignmentGroupLearner $assignmentGroupLearner) use ($user) {
+                $payload = $assignmentGroupLearner->toArray();
+                $assignment = optional($assignmentGroupLearner->group)->assignment;
+
+                $payload['submission'] = $assignment
+                    ? $this->assignmentSubmissionSummary($assignment, $user)
+                    : null;
+
+                return $payload;
+            })
+            ->values();
         $assignmentSubmissionDates = AssignmentLearnerSubmissionDate::where('user_id', $user->id)
             ->pluck('submission_date', 'assignment_id');
         $assignmentMaxWords = AssignmentLearnerConfiguration::where('user_id', $user->id)
