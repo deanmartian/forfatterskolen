@@ -644,7 +644,8 @@ class AssignmentController extends ApiController
                     'type' => $manuscript->type,
                     'type_label' => FrontendHelpers::assignmentType($manuscript->type),
                     'manu_type' => $manuscript->manu_type,
-                    'manu_type_label' => FrontendHelpers::manuscriptType($manuscript->manu_type),
+                    'manu_type_label' => $manuscript->manu_type > 0 
+                        ? FrontendHelpers::manuscriptType($manuscript->manu_type) : 'None',
                     'uploaded_at' => $manuscript->uploaded_at,
                 ];
             });
