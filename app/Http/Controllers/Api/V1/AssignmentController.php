@@ -641,6 +641,10 @@ class AssignmentController extends ApiController
                     'locked' => (bool) $manuscript->locked,
                     'has_feedback' => (bool) $manuscript->has_feedback,
                     'words' => $manuscript->words,
+                    'type' => $manuscript->type,
+                    'type_label' => FrontendHelpers::assignmentType($manuscript->type),
+                    'manu_type' => $manuscript->manu_type,
+                    'manu_type_label' => FrontendHelpers::manuscriptType($manuscript->manu_type),
                     'uploaded_at' => $manuscript->uploaded_at,
                 ];
             });
