@@ -758,7 +758,11 @@ class AssignmentController extends ApiController
                     'updated_at' => $feedback->updated_at,
                     'filename' => $feedback->filename,
                     'files' => $files,
-                    'download_url' => url('/api/v1/assignments/feedback/'.$feedback->id.'/download?v='.$version),
+                    'download_url' => route('api.v1.learner.assignment.feedback.download', [
+                        'id' => $feedback->id,
+                        'v' => $version,
+                        'type' => 'group',
+                    ]),
                 ];
             })
             ->values();
@@ -1026,47 +1030,91 @@ class AssignmentController extends ApiController
         }
 
         $today = Carbon::today();
+        $feedbackType = strtolower((string) $request->query('type', ''));
 
-        $feedback = AssignmentFeedbackNoGroup::find($id);
-        if ($feedback) {
-            if ((int) $feedback->learner_id !== (int) $user->id) {
-                return $this->errorResponse('You do not have access to this feedback.', 'forbidden', 403);
-            }
-
-            if (! $feedback->is_active) {
-                return $this->errorResponse('Feedback not available.', 'forbidden', 403);
-            }
-
-            if ($feedback->availability && Carbon::parse($feedback->availability)->gt($today)) {
-                return $this->errorResponse('Feedback not available.', 'forbidden', 403);
-            }
-
-            $zipName = optional($feedback->manuscript->assignment)->title.' Feedbacks.zip';
-
-            return $this->downloadFeedbackFiles($feedback->filename, $zipName);
+        if ($feedbackType === 'nogroup') {
+            return $this->downloadNoGroupFeedback($id, $user->id, $today);
         }
 
-        $groupFeedback = AssignmentFeedback::find($id);
-        if ($groupFeedback) {
-            $groupLearner = $groupFeedback->assignment_group_learner;
-            if (! $groupLearner || (int) $groupLearner->user_id !== (int) $user->id) {
-                return $this->errorResponse('You do not have access to this feedback.', 'forbidden', 403);
-            }
+        if ($feedbackType === 'group') {
+            return $this->downloadGroupFeedback($id, $user->id, $today);
+        }
 
-            if (! $groupFeedback->is_active) {
-                return $this->errorResponse('Feedback not available.', 'forbidden', 403);
-            }
+        if ($feedbackType !== '') {
+            return $this->errorResponse('Invalid feedback type.', 'invalid_feedback_type', 422, [
+                'allowed' => ['group', 'nogroup'],
+            ]);
+        }
 
-            if ($groupFeedback->availability && Carbon::parse($groupFeedback->availability)->gt($today)) {
-                return $this->errorResponse('Feedback not available.', 'forbidden', 403);
-            }
+        $hasNoGroupFeedback = AssignmentFeedbackNoGroup::whereKey($id)->exists();
+        $hasGroupFeedback = AssignmentFeedback::whereKey($id)->exists();
 
-            $zipName = optional($groupFeedback->assignment_group_learner->group)->title.' Feedbacks.zip';
+        if ($hasNoGroupFeedback && $hasGroupFeedback) {
+            return $this->errorResponse('Feedback type is required for this feedback id.', 'ambiguous_feedback_id', 409, [
+                'type_query_param' => ['group', 'nogroup'],
+            ]);
+        }
 
-            return $this->downloadFeedbackFiles($groupFeedback->filename, $zipName);
+        if ($hasNoGroupFeedback) {
+            return $this->downloadNoGroupFeedback($id, $user->id, $today);
+        }
+
+        if ($hasGroupFeedback) {
+            return $this->downloadGroupFeedback($id, $user->id, $today);
         }
 
         return $this->errorResponse('Feedback not found.', 'not_found', 404);
+    }
+
+    protected function downloadNoGroupFeedback(int|string $id, int $userId, Carbon $today): JsonResponse|BinaryFileResponse
+    {
+        $feedback = AssignmentFeedbackNoGroup::find($id);
+
+        if (! $feedback) {
+            return $this->errorResponse('Feedback not found.', 'not_found', 404);
+        }
+
+        if ((int) $feedback->learner_id !== $userId) {
+            return $this->errorResponse('You do not have access to this feedback.', 'forbidden', 403);
+        }
+
+        if (! $feedback->is_active) {
+            return $this->errorResponse('Feedback not available.', 'forbidden', 403);
+        }
+
+        if ($feedback->availability && Carbon::parse($feedback->availability)->gt($today)) {
+            return $this->errorResponse('Feedback not available.', 'forbidden', 403);
+        }
+
+        $zipName = optional($feedback->manuscript->assignment)->title.' Feedbacks.zip';
+
+        return $this->downloadFeedbackFiles($feedback->filename, $zipName);
+    }
+
+    protected function downloadGroupFeedback(int|string $id, int $userId, Carbon $today): JsonResponse|BinaryFileResponse
+    {
+        $feedback = AssignmentFeedback::find($id);
+
+        if (! $feedback) {
+            return $this->errorResponse('Feedback not found.', 'not_found', 404);
+        }
+
+        $groupLearner = $feedback->assignment_group_learner;
+        if (! $groupLearner || (int) $groupLearner->user_id !== $userId) {
+            return $this->errorResponse('You do not have access to this feedback.', 'forbidden', 403);
+        }
+
+        if (! $feedback->is_active) {
+            return $this->errorResponse('Feedback not available.', 'forbidden', 403);
+        }
+
+        if ($feedback->availability && Carbon::parse($feedback->availability)->gt($today)) {
+            return $this->errorResponse('Feedback not available.', 'forbidden', 403);
+        }
+
+        $zipName = optional($feedback->assignment_group_learner->group)->title.' Feedbacks.zip';
+
+        return $this->downloadFeedbackFiles($feedback->filename, $zipName);
     }
 
     public function replaceSubmission(Request $request, $id): JsonResponse
