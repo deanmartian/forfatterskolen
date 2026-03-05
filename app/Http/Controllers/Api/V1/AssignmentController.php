@@ -719,6 +719,108 @@ class AssignmentController extends ApiController
         ]);
     }
 
+    public function submitFeedback(Request $request, $group_id, $id): JsonResponse
+    {
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        $group = AssignmentGroup::where('id', $group_id)
+            ->whereHas('learners', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->first();
+
+        if (! $group) {
+            return $this->errorResponse('Assignment group not found.', 'not_found', 404);
+        }
+
+        $targetLearner = AssignmentGroupLearner::where('id', $id)
+            ->where('assignment_group_id', $group_id)
+            ->first();
+
+        if (! $targetLearner) {
+            return $this->errorResponse('Assignment group learner not found.', 'not_found', 404);
+        }
+
+        if ((int) $targetLearner->user_id === (int) $user->id) {
+            return $this->errorResponse('You cannot submit feedback for yourself.', 'forbidden', 403);
+        }
+
+        if (! $request->hasFile('filename')) {
+            return $this->errorResponse('Missing file upload.', 'invalid_file', 422);
+        }
+
+        $files = $request->file('filename');
+        if (! is_array($files)) {
+            $files = [$files];
+        }
+
+        if (empty($files)) {
+            return $this->errorResponse('Missing file upload.', 'invalid_file', 422);
+        }
+
+        $destinationPath = 'storage/assignment-feedbacks';
+        $extensions = ['pdf', 'docx', 'odt'];
+        $uploadedFiles = [];
+
+        foreach ($files as $file) {
+            if (! $file || ! $file->isValid()) {
+                $this->cleanupUploadedFiles($uploadedFiles);
+
+                return $this->errorResponse('One or more files could not be uploaded.', 'invalid_file', 422);
+            }
+
+            $extension = strtolower($file->getClientOriginalExtension());
+            if (! in_array($extension, $extensions, true)) {
+                $this->cleanupUploadedFiles($uploadedFiles);
+
+                return $this->errorResponse(
+                    'Invalid file format. Allowed formats are PDF, DOCX, ODT.',
+                    'invalid_file_format',
+                    422
+                );
+            }
+
+            $fileName = AdminHelpers::checkFileName($destinationPath, $targetLearner->user_id.'f', $extension);
+            $storedFileName = basename($fileName);
+            $file->move($destinationPath, $storedFileName);
+
+            $absolutePath = $this->resolveUploadedFilePath($destinationPath, $storedFileName);
+            if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                $this->cleanupUploadedFiles($uploadedFiles);
+
+                return $this->errorResponse(
+                    'The uploaded file appears to be invalid or corrupted.',
+                    'invalid_file',
+                    422
+                );
+            }
+
+            $uploadedFiles[] = [
+                'relative' => '/'.$fileName,
+                'absolute' => $absolutePath,
+            ];
+        }
+
+        $assignmentFeedback = AssignmentFeedback::create([
+            'assignment_group_learner_id' => $targetLearner->id,
+            'user_id' => $user->id,
+            'filename' => implode(', ', array_column($uploadedFiles, 'relative')),
+        ]);
+
+        return response()->json([
+            'data' => [
+                'id' => $assignmentFeedback->id,
+                'assignment_group_learner_id' => $assignmentFeedback->assignment_group_learner_id,
+                'user_id' => $assignmentFeedback->user_id,
+                'filename' => $assignmentFeedback->filename,
+            ],
+        ], 201);
+    }
+
     public function downloadFeedback(Request $request, $id): JsonResponse|BinaryFileResponse
     {
         $user = $this->apiUser($request);

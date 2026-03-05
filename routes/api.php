@@ -114,6 +114,8 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/assignments', [AssignmentController::class, 'index']);
         Route::get('/assignments/{id}', [AssignmentController::class, 'show']);
         Route::get('/assignment/group/{id}/show-details', [AssignmentController::class, 'groupShowDetails']);
+        Route::post('/assignment/group/{group_id}/learner/{id}/submit_feedback', [AssignmentController::class, 'submitFeedback'])
+            ->name('api.v1.learner.assignment.group.submit_feedback');
         Route::post('/assignments/{id}/submit', [AssignmentController::class, 'submit']);
         Route::post('/assignments/submissions/{id}/replace', [AssignmentController::class, 'replaceSubmission']);
         Route::delete('/assignments/submissions/{id}', [AssignmentController::class, 'deleteSubmission']);
