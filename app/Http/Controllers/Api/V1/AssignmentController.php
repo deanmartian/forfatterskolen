@@ -692,6 +692,77 @@ class AssignmentController extends ApiController
             })
             ->values();
 
+        $today = Carbon::today()->toDateString();
+        $receivedFeedbacks = AssignmentFeedback::where('assignment_group_learner_id', $groupLearner->id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->filter(function (AssignmentFeedback $feedback) use ($assignmentManuscript, $today) {
+                if (! $feedback->is_active) {
+                    return false;
+                }
+
+                if ($feedback->availability && $today < $feedback->availability) {
+                    return false;
+                }
+
+                if (! $assignmentManuscript) {
+                    return true;
+                }
+
+                if ((int) $assignmentManuscript->editor_id === (int) $feedback->user_id) {
+                    return (bool) $assignmentManuscript->status;
+                }
+
+                return true;
+            })
+            ->map(function (AssignmentFeedback $feedback) {
+                $files = collect(explode(',', (string) $feedback->filename))
+                    ->map(function (string $file) {
+                        $relativePath = trim($file);
+                        if ($relativePath === '') {
+                            return null;
+                        }
+
+                        $extension = strtolower(pathinfo($relativePath, PATHINFO_EXTENSION));
+                        $isViewerJsFile = in_array($extension, ['pdf', 'odt'], true);
+
+                        return [
+                            'filename' => basename($relativePath),
+                            'path' => $relativePath,
+                            'preview_url' => $isViewerJsFile
+                                ? url('/js/ViewerJS/#../..'.$relativePath)
+                                : 'https://view.officeapps.live.com/op/embed.aspx?src='.url($relativePath),
+                        ];
+                    })
+                    ->filter()
+                    ->values();
+
+                $version = time();
+                $lastFilePath = $files->last()['path'] ?? null;
+                if ($lastFilePath) {
+                    $absolutePath = public_path($lastFilePath);
+                    if (is_file($absolutePath)) {
+                        $version = filemtime($absolutePath);
+                    }
+                }
+
+                return [
+                    'id' => $feedback->id,
+                    'assignment_group_learner_id' => $feedback->assignment_group_learner_id,
+                    'assignment_manuscript_id' => $feedback->assignment_manuscript_id,
+                    'user_id' => $feedback->user_id,
+                    'is_admin' => (bool) $feedback->is_admin,
+                    'is_active' => (bool) $feedback->is_active,
+                    'availability' => $feedback->availability,
+                    'created_at' => $feedback->created_at,
+                    'updated_at' => $feedback->updated_at,
+                    'filename' => $feedback->filename,
+                    'files' => $files,
+                    'download_url' => url('/api/v1/assignments/feedback/'.$feedback->id.'/download?v='.$version),
+                ];
+            })
+            ->values();
+
         return response()->json([
             'data' => [
                 'group' => [
@@ -704,6 +775,7 @@ class AssignmentController extends ApiController
                 'otherLearnersIdList' => $otherLearnersIdList,
                 'couldSendFeedbackTo' => array_values(array_unique($couldSendFeedbackTo)),
                 'groupLearnerList' => $groupLearnerList,
+                'receivedFeedbacks' => $receivedFeedbacks,
                 'assignmentManuscript' => $assignmentManuscript ? [
                     'id' => $assignmentManuscript->id,
                     'assignment_id' => $assignmentManuscript->assignment_id,
