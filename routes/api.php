@@ -118,6 +118,8 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
             ->name('api.v1.learner.assignment.group.submit_feedback');
         Route::post('/feedback/{id}/replace_feedback', [AssignmentController::class, 'replaceFeedback'])
             ->name('api.v1.learner.assignment.group.replace_feedback');
+        Route::post('/feedback/{id}/delete_feedback', [AssignmentController::class, 'deleteFeedback'])
+            ->name('api.v1.learner.assignment.group.delete_feedback');
         Route::post('/assignments/{id}/submit', [AssignmentController::class, 'submit']);
         Route::post('/assignments/submissions/{id}/replace', [AssignmentController::class, 'replaceSubmission']);
         Route::delete('/assignments/submissions/{id}', [AssignmentController::class, 'deleteSubmission']);

@@ -917,6 +917,34 @@ class AssignmentController extends ApiController
         ]);
     }
 
+    public function deleteFeedback(Request $request, $id): JsonResponse
+    {
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        $feedback = AssignmentFeedback::find($id);
+
+        if (! $feedback) {
+            return $this->errorResponse('Feedback not found.', 'not_found', 404);
+        }
+
+        if ((int) $feedback->user_id !== (int) $user->id) {
+            return $this->errorResponse('You do not have access to this feedback.', 'forbidden', 403);
+        }
+
+        $feedback->forceDelete();
+
+        return response()->json([
+            'data' => [
+                'id' => (int) $id,
+                'deleted' => true,
+            ],
+        ]);
+    }
+
     public function downloadFeedback(Request $request, $id): JsonResponse|BinaryFileResponse
     {
         $user = $this->apiUser($request);
