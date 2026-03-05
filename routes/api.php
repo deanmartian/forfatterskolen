@@ -125,6 +125,8 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::delete('/assignments/submissions/{id}', [AssignmentController::class, 'deleteSubmission']);
         Route::get('/assignments/submissions/{id}/download', [AssignmentController::class, 'downloadSubmission']);
         Route::get('/assignments/feedback/{id}/download', [AssignmentController::class, 'downloadFeedback']);
+        Route::get('/learner/assignment/feedback/{id}/download', [AssignmentController::class, 'downloadFeedback'])
+            ->name('api.v1.learner.assignment.feedback.download');
         Route::get('/webinars', [WebinarController::class, 'index']);
         Route::match(['get', 'post'], '/learner/course-webinar', [WebinarController::class, 'learnerCourseWebinar']);
         Route::get('/webinars/{id}', [WebinarController::class, 'show']);
