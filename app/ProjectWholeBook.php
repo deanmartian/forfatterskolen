@@ -2,12 +2,15 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProjectWholeBook extends Model
 {
+    use Loggable;
+
     protected $fillable = ['project_id', 'book_content', 'description', 'dropbox_link', 'is_file', 'designer_id',
         'page_count', 'width', 'height', 'designer_description'];
 

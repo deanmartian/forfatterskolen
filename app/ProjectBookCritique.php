@@ -2,11 +2,14 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectBookCritique extends Model
 {
+    use Loggable;
+    
     protected $fillable = ['project_id', 'book_content', 'description', 'is_file', 'feedback'];
 
     protected $appends = [

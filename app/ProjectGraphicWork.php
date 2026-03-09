@@ -2,12 +2,15 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ProjectGraphicWork extends Model
 {
+    use Loggable;
+
     protected $fillable = ['project_id', 'type', 'value', 'description', 'print_ready', 'format', 'isbn_id',
         'backside_text', 'backside_image', 'instruction', 'date', 'is_checked', 'upload_date'];
 

@@ -2,12 +2,15 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ProjectBook extends Model
 {
+    use Loggable;
+    
     protected $fillable = ['project_id', 'user_id', 'book_name', 'isbn_hardcover_book', 'isbn_ebook'];
 
     public function detail(): HasOne

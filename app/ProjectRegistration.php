@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ProjectRegistration extends Model
 {
+    use Loggable;
+    
     protected $fillable = ['project_id', 'parent_id', 'field', 'value', 'type', 'book_price', 'in_storage'];
 
     protected $appends = ['isbn_type'];

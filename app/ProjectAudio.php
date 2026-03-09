@@ -2,11 +2,14 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectAudio extends Model
 {
+    use Loggable;
+    
     protected $table = 'project_audios';
 
     protected $fillable = ['project_id', 'type', 'value'];

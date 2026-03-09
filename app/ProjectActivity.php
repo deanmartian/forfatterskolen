@@ -2,10 +2,13 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectActivity extends Model
 {
+    use Loggable;
+    
     protected $table = 'project_activity';
 
     /**

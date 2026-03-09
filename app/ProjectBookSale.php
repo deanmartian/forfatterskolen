@@ -2,11 +2,14 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectBookSale extends Model
 {
+    use Loggable;
+
     protected $fillable = [
         'project_book_id',
         'project_registration_id',

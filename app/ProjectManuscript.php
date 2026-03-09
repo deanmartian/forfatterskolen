@@ -2,10 +2,13 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectManuscript extends Model
 {
+    use Loggable;
+    
     protected $fillable = ['project_id', 'file'];
 
     protected $appends = [

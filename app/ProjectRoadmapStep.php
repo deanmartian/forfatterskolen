@@ -2,10 +2,13 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectRoadmapStep extends Model
 {
+    use Loggable;
+    
     protected $fillable = ['project_id', 'step_number', 'expected_date', 'status'];
 
     protected $appends = ['status_text'];

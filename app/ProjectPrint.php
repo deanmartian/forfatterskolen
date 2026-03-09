@@ -2,10 +2,13 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectPrint extends Model
 {
+    use Loggable;
+    
     protected $fillable = [
         'project_id',
         'isbn',

@@ -2,11 +2,14 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use App\Http\FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectManualInvoice extends Model
 {
+    use Loggable;
+    
     protected $fillable = ['project_id', 'invoice', 'amount', 'assigned_to', 'date', 'note'];
 
     protected $appends = ['amount_formatted', 'assigned_to_name'];

@@ -2,11 +2,14 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectMarketing extends Model
 {
+    use Loggable;
+    
     protected $table = 'project_marketing';
 
     protected $fillable = ['project_id', 'type', 'value', 'details', 'date', 'is_finished'];

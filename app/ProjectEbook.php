@@ -2,11 +2,14 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectEbook extends Model
 {
+    use Loggable;
+
     protected $fillable = ['project_id', 'type', 'value'];
 
     protected $appends = ['file_link'];

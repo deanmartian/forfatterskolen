@@ -2,11 +2,14 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProjectBookFormatting extends Model
 {
+    use Loggable;
+    
     protected $table = 'project_book_formatting';
 
     protected $fillable = ['project_id', 'file', 'corporate_page', 'designer_id', 'format', 'format_image', 'description'];
