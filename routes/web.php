@@ -2003,6 +2003,7 @@ Route::domain($editor)->group(function () {
         Route::post('deleteGenrePreferences/{id}', [Backend\EditorController::class, 'deleteGenrePreferences'])->name('editor.delete-genre-preferences');
         Route::post('saveAssignmentManuscriptEditorCanTake/{id}/{assignment_manu_id}', [Backend\EditorController::class, 'saveAssignmentManuscriptEditorCanTake'])->name('editor.saveAssignmentManuscriptEditorCanTake');
         Route::get('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}', [Backend\LearnerController::class, 'shopManuscriptTakenShowEditorPreview'])->name('editor.shop_manuscript_taken');
+        Route::get('shop-manuscript/{id}/download_synopsis', [Backend\LearnerController::class, 'downloadManuscriptSynopsis'])->name('editor.learner.download_synopsis');
         Route::get('acceptShopManuscriptRequest/{shop_manuscript_taken_id}/{accept}/{request_id}', [Backend\ShopManuscriptController::class, 'editorAcceptRequest'])->name('editor.acceptShopManuscriptRequest');
         Route::post('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}/comment', [Backend\LearnerController::class, 'shopManuscriptTakenShowComment'])->name('editor.shop_manuscript_taken_comment');
         Route::post('/update-expected-finish/{type}/{id}', [Backend\PageController::class, 'updateExpectedFinish'])->name('editor.personal-assignment.update-expected-finish');

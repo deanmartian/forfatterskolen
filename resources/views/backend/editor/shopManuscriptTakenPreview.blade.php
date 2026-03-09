@@ -77,7 +77,7 @@
 							{{ trans('site.description') }}: {{ $shopManuscriptTaken->description }}
 							<br>
 							@if ($shopManuscriptTaken->synopsis)
-								<a href="{{ route('admin.learner.download_synopsis', $shopManuscriptTaken->id) }}">{{ trans('site.download-synopsis') }}</a>
+								<a href="{{ route('editor.learner.download_synopsis', $shopManuscriptTaken->id) }}">{{ trans('site.download-synopsis') }}</a>
 							@endif
 							<br><br>
 
