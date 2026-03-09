@@ -116,11 +116,17 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/assignment/group/{id}/show-details', [AssignmentController::class, 'groupShowDetails']);
         Route::post('/assignment/group/{group_id}/learner/{id}/submit_feedback', [AssignmentController::class, 'submitFeedback'])
             ->name('api.v1.learner.assignment.group.submit_feedback');
+        Route::post('/feedback/{id}/replace_feedback', [AssignmentController::class, 'replaceFeedback'])
+            ->name('api.v1.learner.assignment.group.replace_feedback');
+        Route::post('/feedback/{id}/delete_feedback', [AssignmentController::class, 'deleteFeedback'])
+            ->name('api.v1.learner.assignment.group.delete_feedback');
         Route::post('/assignments/{id}/submit', [AssignmentController::class, 'submit']);
         Route::post('/assignments/submissions/{id}/replace', [AssignmentController::class, 'replaceSubmission']);
         Route::delete('/assignments/submissions/{id}', [AssignmentController::class, 'deleteSubmission']);
         Route::get('/assignments/submissions/{id}/download', [AssignmentController::class, 'downloadSubmission']);
         Route::get('/assignments/feedback/{id}/download', [AssignmentController::class, 'downloadFeedback']);
+        Route::get('/learner/assignment/feedback/{id}/download', [AssignmentController::class, 'downloadFeedback'])
+            ->name('api.v1.learner.assignment.feedback.download');
         Route::get('/webinars', [WebinarController::class, 'index']);
         Route::match(['get', 'post'], '/learner/course-webinar', [WebinarController::class, 'learnerCourseWebinar']);
         Route::get('/webinars/{id}', [WebinarController::class, 'show']);

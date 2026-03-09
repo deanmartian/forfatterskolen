@@ -692,6 +692,81 @@ class AssignmentController extends ApiController
             })
             ->values();
 
+        $today = Carbon::today()->toDateString();
+        $receivedFeedbacks = AssignmentFeedback::where('assignment_group_learner_id', $groupLearner->id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->filter(function (AssignmentFeedback $feedback) use ($assignmentManuscript, $today) {
+                if (! $feedback->is_active) {
+                    return false;
+                }
+
+                if ($feedback->availability && $today < $feedback->availability) {
+                    return false;
+                }
+
+                if (! $assignmentManuscript) {
+                    return true;
+                }
+
+                if ((int) $assignmentManuscript->editor_id === (int) $feedback->user_id) {
+                    return (bool) $assignmentManuscript->status;
+                }
+
+                return true;
+            })
+            ->map(function (AssignmentFeedback $feedback) {
+                $files = collect(explode(',', (string) $feedback->filename))
+                    ->map(function (string $file) {
+                        $relativePath = trim($file);
+                        if ($relativePath === '') {
+                            return null;
+                        }
+
+                        $extension = strtolower(pathinfo($relativePath, PATHINFO_EXTENSION));
+                        $isViewerJsFile = in_array($extension, ['pdf', 'odt'], true);
+
+                        return [
+                            'filename' => basename($relativePath),
+                            'path' => $relativePath,
+                            'preview_url' => $isViewerJsFile
+                                ? url('/js/ViewerJS/#../..'.$relativePath)
+                                : 'https://view.officeapps.live.com/op/embed.aspx?src='.url($relativePath),
+                        ];
+                    })
+                    ->filter()
+                    ->values();
+
+                $version = time();
+                $lastFilePath = $files->last()['path'] ?? null;
+                if ($lastFilePath) {
+                    $absolutePath = public_path($lastFilePath);
+                    if (is_file($absolutePath)) {
+                        $version = filemtime($absolutePath);
+                    }
+                }
+
+                return [
+                    'id' => $feedback->id,
+                    'assignment_group_learner_id' => $feedback->assignment_group_learner_id,
+                    'assignment_manuscript_id' => $feedback->assignment_manuscript_id,
+                    'user_id' => $feedback->user_id,
+                    'is_admin' => (bool) $feedback->is_admin,
+                    'is_active' => (bool) $feedback->is_active,
+                    'availability' => $feedback->availability,
+                    'created_at' => $feedback->created_at,
+                    'updated_at' => $feedback->updated_at,
+                    'filename' => $feedback->filename,
+                    'files' => $files,
+                    'download_url' => route('api.v1.learner.assignment.feedback.download', [
+                        'id' => $feedback->id,
+                        'v' => $version,
+                        'type' => 'group',
+                    ]),
+                ];
+            })
+            ->values();
+
         return response()->json([
             'data' => [
                 'group' => [
@@ -704,6 +779,7 @@ class AssignmentController extends ApiController
                 'otherLearnersIdList' => $otherLearnersIdList,
                 'couldSendFeedbackTo' => array_values(array_unique($couldSendFeedbackTo)),
                 'groupLearnerList' => $groupLearnerList,
+                'receivedFeedbacks' => $receivedFeedbacks,
                 'assignmentManuscript' => $assignmentManuscript ? [
                     'id' => $assignmentManuscript->id,
                     'assignment_id' => $assignmentManuscript->assignment_id,
@@ -821,6 +897,130 @@ class AssignmentController extends ApiController
         ], 201);
     }
 
+    public function replaceFeedback(Request $request, $id): JsonResponse
+    {
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        $feedback = AssignmentFeedback::find($id);
+
+        if (! $feedback) {
+            return $this->errorResponse('Feedback not found.', 'not_found', 404);
+        }
+
+        if ((int) $feedback->user_id !== (int) $user->id) {
+            return $this->errorResponse('You do not have access to this feedback.', 'forbidden', 403);
+        }
+
+        if (! $request->hasFile('filename')) {
+            return $this->errorResponse('Missing file upload.', 'invalid_file', 422);
+        }
+
+        $files = $request->file('filename');
+        if (! is_array($files)) {
+            $files = [$files];
+        }
+
+        if (empty($files)) {
+            return $this->errorResponse('Missing file upload.', 'invalid_file', 422);
+        }
+
+        $destinationPath = 'storage/assignment-feedbacks';
+        $extensions = ['pdf', 'docx', 'odt'];
+        $uploadedFiles = [];
+
+        foreach ($files as $file) {
+            if (! $file || ! $file->isValid()) {
+                $this->cleanupUploadedFiles($uploadedFiles);
+
+                return $this->errorResponse('One or more files could not be uploaded.', 'invalid_file', 422);
+            }
+
+            $extension = strtolower($file->getClientOriginalExtension());
+            if (! in_array($extension, $extensions, true)) {
+                $this->cleanupUploadedFiles($uploadedFiles);
+
+                return $this->errorResponse(
+                    'Invalid file format. Allowed formats are PDF, DOCX, ODT.',
+                    'invalid_file_format',
+                    422
+                );
+            }
+
+            $fileName = AdminHelpers::checkFileName($destinationPath, $feedback->assignment_group_learner_id.'f', $extension);
+            $storedFileName = basename($fileName);
+            $file->move($destinationPath, $storedFileName);
+
+            $absolutePath = $this->resolveUploadedFilePath($destinationPath, $storedFileName);
+            if (! $this->fileIntegrityService->passes($absolutePath, $extension)) {
+                $this->cleanupUploadedFiles($uploadedFiles);
+
+                return $this->errorResponse(
+                    'The uploaded file appears to be invalid or corrupted.',
+                    'invalid_file',
+                    422
+                );
+            }
+
+            $uploadedFiles[] = [
+                'relative' => '/'.$fileName,
+                'absolute' => $absolutePath,
+            ];
+        }
+
+        $oldFiles = array_values(array_filter(array_map('trim', explode(',', (string) $feedback->filename))));
+
+        $feedback->filename = implode(', ', array_column($uploadedFiles, 'relative'));
+        $feedback->save();
+
+        foreach ($oldFiles as $oldFile) {
+            $oldFilePath = public_path($oldFile);
+            if (File::exists($oldFilePath)) {
+                File::delete($oldFilePath);
+            }
+        }
+
+        return response()->json([
+            'data' => [
+                'id' => $feedback->id,
+                'assignment_group_learner_id' => $feedback->assignment_group_learner_id,
+                'user_id' => $feedback->user_id,
+                'filename' => $feedback->filename,
+            ],
+        ]);
+    }
+
+    public function deleteFeedback(Request $request, $id): JsonResponse
+    {
+        $user = $this->apiUser($request);
+
+        if (! $user) {
+            return $this->errorResponse('Missing or invalid token.', 'unauthorized', 401);
+        }
+
+        $feedback = AssignmentFeedback::find($id);
+
+        if (! $feedback) {
+            return $this->errorResponse('Feedback not found.', 'not_found', 404);
+        }
+
+        if ((int) $feedback->user_id !== (int) $user->id) {
+            return $this->errorResponse('You do not have access to this feedback.', 'forbidden', 403);
+        }
+
+        $feedback->forceDelete();
+
+        return response()->json([
+            'data' => [
+                'id' => (int) $id,
+                'deleted' => true,
+            ],
+        ]);
+    }
+
     public function downloadFeedback(Request $request, $id): JsonResponse|BinaryFileResponse
     {
         $user = $this->apiUser($request);
@@ -830,47 +1030,91 @@ class AssignmentController extends ApiController
         }
 
         $today = Carbon::today();
+        $feedbackType = strtolower((string) $request->query('type', ''));
 
-        $feedback = AssignmentFeedbackNoGroup::find($id);
-        if ($feedback) {
-            if ((int) $feedback->learner_id !== (int) $user->id) {
-                return $this->errorResponse('You do not have access to this feedback.', 'forbidden', 403);
-            }
-
-            if (! $feedback->is_active) {
-                return $this->errorResponse('Feedback not available.', 'forbidden', 403);
-            }
-
-            if ($feedback->availability && Carbon::parse($feedback->availability)->gt($today)) {
-                return $this->errorResponse('Feedback not available.', 'forbidden', 403);
-            }
-
-            $zipName = optional($feedback->manuscript->assignment)->title.' Feedbacks.zip';
-
-            return $this->downloadFeedbackFiles($feedback->filename, $zipName);
+        if ($feedbackType === 'nogroup') {
+            return $this->downloadNoGroupFeedback($id, $user->id, $today);
         }
 
-        $groupFeedback = AssignmentFeedback::find($id);
-        if ($groupFeedback) {
-            $groupLearner = $groupFeedback->assignment_group_learner;
-            if (! $groupLearner || (int) $groupLearner->user_id !== (int) $user->id) {
-                return $this->errorResponse('You do not have access to this feedback.', 'forbidden', 403);
-            }
+        if ($feedbackType === 'group') {
+            return $this->downloadGroupFeedback($id, $user->id, $today);
+        }
 
-            if (! $groupFeedback->is_active) {
-                return $this->errorResponse('Feedback not available.', 'forbidden', 403);
-            }
+        if ($feedbackType !== '') {
+            return $this->errorResponse('Invalid feedback type.', 'invalid_feedback_type', 422, [
+                'allowed' => ['group', 'nogroup'],
+            ]);
+        }
 
-            if ($groupFeedback->availability && Carbon::parse($groupFeedback->availability)->gt($today)) {
-                return $this->errorResponse('Feedback not available.', 'forbidden', 403);
-            }
+        $hasNoGroupFeedback = AssignmentFeedbackNoGroup::whereKey($id)->exists();
+        $hasGroupFeedback = AssignmentFeedback::whereKey($id)->exists();
 
-            $zipName = optional($groupFeedback->assignment_group_learner->group)->title.' Feedbacks.zip';
+        if ($hasNoGroupFeedback && $hasGroupFeedback) {
+            return $this->errorResponse('Feedback type is required for this feedback id.', 'ambiguous_feedback_id', 409, [
+                'type_query_param' => ['group', 'nogroup'],
+            ]);
+        }
 
-            return $this->downloadFeedbackFiles($groupFeedback->filename, $zipName);
+        if ($hasNoGroupFeedback) {
+            return $this->downloadNoGroupFeedback($id, $user->id, $today);
+        }
+
+        if ($hasGroupFeedback) {
+            return $this->downloadGroupFeedback($id, $user->id, $today);
         }
 
         return $this->errorResponse('Feedback not found.', 'not_found', 404);
+    }
+
+    protected function downloadNoGroupFeedback(int|string $id, int $userId, Carbon $today): JsonResponse|BinaryFileResponse
+    {
+        $feedback = AssignmentFeedbackNoGroup::find($id);
+
+        if (! $feedback) {
+            return $this->errorResponse('Feedback not found.', 'not_found', 404);
+        }
+
+        if ((int) $feedback->learner_id !== $userId) {
+            return $this->errorResponse('You do not have access to this feedback.', 'forbidden', 403);
+        }
+
+        if (! $feedback->is_active) {
+            return $this->errorResponse('Feedback not available.', 'forbidden', 403);
+        }
+
+        if ($feedback->availability && Carbon::parse($feedback->availability)->gt($today)) {
+            return $this->errorResponse('Feedback not available.', 'forbidden', 403);
+        }
+
+        $zipName = optional($feedback->manuscript->assignment)->title.' Feedbacks.zip';
+
+        return $this->downloadFeedbackFiles($feedback->filename, $zipName);
+    }
+
+    protected function downloadGroupFeedback(int|string $id, int $userId, Carbon $today): JsonResponse|BinaryFileResponse
+    {
+        $feedback = AssignmentFeedback::find($id);
+
+        if (! $feedback) {
+            return $this->errorResponse('Feedback not found.', 'not_found', 404);
+        }
+
+        $groupLearner = $feedback->assignment_group_learner;
+        if (! $groupLearner || (int) $groupLearner->user_id !== $userId) {
+            return $this->errorResponse('You do not have access to this feedback.', 'forbidden', 403);
+        }
+
+        if (! $feedback->is_active) {
+            return $this->errorResponse('Feedback not available.', 'forbidden', 403);
+        }
+
+        if ($feedback->availability && Carbon::parse($feedback->availability)->gt($today)) {
+            return $this->errorResponse('Feedback not available.', 'forbidden', 403);
+        }
+
+        $zipName = optional($feedback->assignment_group_learner->group)->title.' Feedbacks.zip';
+
+        return $this->downloadFeedbackFiles($feedback->filename, $zipName);
     }
 
     public function replaceSubmission(Request $request, $id): JsonResponse

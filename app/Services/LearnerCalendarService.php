@@ -34,6 +34,7 @@ class LearnerCalendarService
 
                 $events->push([
                     'id' => $lesson->course->id,
+                    'type' => 'lesson',
                     'title' => trans('site.learner.lesson') . ': '.$lesson->title.' fra '.$lesson->course->title,
                     'className' => 'event-important',
                     'start' => $availability->copy(),
@@ -49,6 +50,7 @@ class LearnerCalendarService
 
                 $events->push([
                     'id' => $webinar->course->id,
+                    'type' => 'webinar',
                     'title' => trans('site.learner.webinar') .': '.$webinar->title.' fra '.$webinar->course->title,
                     'className' => 'event-warning',
                     'start' => $start->copy(),
@@ -64,6 +66,7 @@ class LearnerCalendarService
 
                 $events->push([
                     'id' => $courseTaken->package->course->id,
+                    'type' => 'manuscript',
                     'title' => trans('site.learner.script') .': '.basename($manuscript->filename).' fra '.$courseTaken->package->course->title,
                     'className' => 'event-info',
                     'start' => $finishDate->copy(),
@@ -81,6 +84,7 @@ class LearnerCalendarService
 
                     $events->push([
                         'id' => $assignment->course->id,
+                        'type' => 'assignment',
                         'title' => trans('site.learner.assignment') . ': ' . $assignment->title . ' fra ' . $assignment->course->title,
                         'className' => 'event-success-new',
                         'start' => $submissionDate->copy(),
@@ -97,6 +101,7 @@ class LearnerCalendarService
 
                 $events->push([
                     'id' => $note->id,
+                    'type' => 'note',
                     'title' => $note->note,
                     'className' => 'event-inverse',
                     'start' => $fromDate->copy(),
@@ -113,6 +118,7 @@ class LearnerCalendarService
 
             $events->push([
                 'id' => $coaching->id,
+                'type' => 'coaching',
                 'title' => 'Coaching Session at '.date('H:i A', strtotime($coaching->approved_date)),
                 'className' => 'event-inverse',
                 'start' => $start->copy(),
@@ -134,6 +140,7 @@ class LearnerCalendarService
 
             return [
                 'id' => $event['id'],
+                'type' => $event['type'] ?? 'event',
                 'title' => $event['title'],
                 'className' => $event['className'],
                 'start' => $this->formatCalendarDateTime($start, $allDay),
