@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Invoice;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,25 +14,62 @@ class InvoiceController extends ApiController
     {
         $user = $this->apiUser($request);
 
-        $invoices = $user->invoices()
-            ->latest()
-            ->take(10)
-            ->get()
-            ->map(function (Invoice $invoice): array {
-                return [
-                    'id' => $invoice->id,
-                    'invoice_number' => $invoice->invoice_number,
-                    'reference' => $invoice->kid_number,
-                    'status' => $this->statusLabel($invoice),
-                    'total' => $invoice->gross ?? $invoice->balance,
-                    'due_date' => $invoice->fiken_dueDate,
-                    'created_at' => $invoice->getRawOriginal('created_at'),
-                ];
-            })
-            ->values()
-            ->all();
+        $unpaid = $user->invoices()
+            ->where('fiken_is_paid', 0)
+            ->orderBy('fiken_dueDate', 'ASC')
+            ->get();
 
-        return response()->json(['data' => $invoices]);
+        $paid = $user->invoices()
+            ->whereIn('fiken_is_paid', [1, 3])
+            ->orderBy('fiken_dueDate', 'DESC')
+            ->get();
+
+        $invoices = $unpaid->merge($paid)->paginate(15);
+
+        if ($request->filled('filter')) {
+            $invoices = $user->invoices()
+                ->where('id', $request->get('filter'))
+                ->paginate(15);
+        }
+
+        $sveaOrders = $user->orders()->svea()->with('coachingTime')->paginate(10);
+        $payLaterOrders = $user->orders()
+            ->where([
+                'is_pay_later' => 1,
+                'is_processed' => 1,
+                'is_invoice_sent' => 0,
+                'is_order_withdrawn' => 0,
+            ])
+            ->paginate(10);
+
+        $orderAttachments = DB::table('course_order_attachments')
+            ->leftJoin('courses', 'course_order_attachments.course_id', '=', 'courses.id')
+            ->leftJoin('packages', 'course_order_attachments.package_id', '=', 'packages.id')
+            ->leftJoin('courses_taken', 'courses_taken.package_id', '=', 'packages.id')
+            ->select(
+                'course_order_attachments.*',
+                'courses.title as course_title',
+                'courses_taken.id as course_taken_id',
+                'courses_taken.deleted_at'
+            )
+            ->where('courses_taken.user_id', $user->id)
+            ->where('course_order_attachments.user_id', $user->id)
+            ->whereNull('courses_taken.deleted_at')
+            ->groupBy('course_order_attachments.id')
+            ->get();
+
+        return response()->json([
+            'data' => [
+                'invoices' => $invoices,
+                'svea_orders' => $sveaOrders,
+                'user' => $user,
+                'order_attachments' => $orderAttachments,
+                'gift_purchases' => $user->giftPurchases,
+                'order_history' => $user->orders,
+                'time_registers' => $user->timeRegisters->load('project'),
+                'pay_later_orders' => $payLaterOrders,
+            ],
+        ]);
     }
 
     public function show(Request $request, int $id): JsonResponse

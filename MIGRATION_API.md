@@ -1871,30 +1871,66 @@ Optional query parameter:
 
 ## GET /invoices
 
-Returns recent invoices for the authenticated learner.
+Returns the learner invoice payload used by the web `learner.invoice` page.
+
+**Query params**
+- `filter` (optional): Invoice ID to return in the `invoices` paginator.
 
 **Request**
 ```http
-GET /api/v1/invoices
+GET /api/v1/invoices?filter=123
 Authorization: Bearer <access_token>
 ```
 
 **Response (200)**
 ```json
 {
-  "data": [
-    {
-      "id": 123,
-      "invoice_number": "INV-2024-001",
-      "reference": "123456789",
-      "status": "paid",
-      "total": 14900,
-      "due_date": "2024-02-01",
-      "created_at": "2024-01-02T10:45:00Z"
+  "data": {
+    "invoices": {
+      "current_page": 1,
+      "data": [
+        {
+          "id": 123,
+          "user_id": 55,
+          "invoice_number": "INV-2024-001",
+          "kid_number": "123456789",
+          "gross": 14900,
+          "fiken_dueDate": "2024-02-01",
+          "fiken_is_paid": 1,
+          "created_at": "2024-01-02T10:45:00Z",
+          "updated_at": "2024-01-02T10:45:00Z"
+        }
+      ],
+      "per_page": 15,
+      "total": 1
+    },
+    "svea_orders": {
+      "current_page": 1,
+      "data": [],
+      "per_page": 10,
+      "total": 0
+    },
+    "user": {
+      "id": 55,
+      "name": "Ada Lovelace"
+    },
+    "order_attachments": [],
+    "gift_purchases": [],
+    "order_history": [],
+    "time_registers": [],
+    "pay_later_orders": {
+      "current_page": 1,
+      "data": [],
+      "per_page": 10,
+      "total": 0
     }
-  ]
+  }
 }
 ```
+
+**Notes**
+- `invoices` are built by merging unpaid invoices (`fiken_is_paid = 0`, due date ascending) and paid/credited invoices (`fiken_is_paid IN (1,3)`, due date descending).
+- The endpoint returns Eloquent model payloads for invoice/order/user collections (not a reduced DTO).
 
 **Errors**
 - **401** `unauthorized`
