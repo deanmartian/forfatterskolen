@@ -89,6 +89,8 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::post('/learner/coaching-time/request', [CoachingTimeController::class, 'request']);
         Route::post('/learner/coaching-time/add-session', [CoachingTimeController::class, 'addSession']);
         Route::get('/calendar/events', [CalendarController::class, 'events']);
+        Route::get('/learner/calendar/export', [CalendarController::class, 'export'])
+            ->name('api.v1.learner.calendar.export');
         Route::get('/learner/private-messages', [PrivateMessageController::class, 'index']);
         Route::get('/learner/email-history', [EmailHistoryController::class, 'index']);
         Route::get('/learner/email-history/search', [EmailHistoryController::class, 'search']);
