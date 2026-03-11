@@ -5,6 +5,9 @@ return [
         'access_ttl_minutes' => 15,
         'refresh_ttl_days' => 14,
     ],
+    'community_sso' => [
+        'code_ttl_seconds' => env('COMMUNITY_SSO_CODE_TTL_SECONDS', 120),
+    ],
     'cors' => [
         'lovable_origins' => env(
             'LOVABLE_CORS_ORIGINS',
