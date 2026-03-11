@@ -19,6 +19,8 @@ class CommunityUserController extends ApiController
         return response()->json([
             'external_user_id' => $user->id,
             'name' => trim($user->first_name.' '.$user->last_name),
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
             'email' => $user->email,
             'community_access' => $this->communityAccessForUser($user),
             'course_access' => $this->courseAccessForUser($user),

@@ -172,6 +172,8 @@ class CommunityUserApiTest extends TestCase
             ->assertJson([
                 'external_user_id' => $user->id,
                 'name' => 'Helge Skurtveit',
+                'first_name' => 'Helge',
+                'last_name' => 'Skurtveit',
                 'email' => 'helge@example.com',
                 'community_access' => true,
                 'roles' => ['member'],
