@@ -106,6 +106,7 @@ return [
         'msn_test' => env('VIPPS_MSN_TEST'),
     ],
 
+
     'gpt' => [
         'api_key' => env('GPT_API_KEY'),
     ],

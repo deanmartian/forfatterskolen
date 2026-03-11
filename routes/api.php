@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth;
+use App\Http\Controllers\Api\CommunitySsoController;
+use App\Http\Controllers\Api\CommunityUserController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AssignmentController;
 use App\Http\Controllers\Api\V1\CalendarController;
@@ -48,6 +50,15 @@ Route::prefix('cross-domain')->group(function () {
     Route::post('/login', [Auth\LoginController::class, 'crossDomainLogin']);
 });
 
+
+Route::prefix('community')->middleware(['cors', 'apiRequestId'])->group(function () {
+    Route::post('/exchange-code', [CommunitySsoController::class, 'exchangeCode']);
+
+    Route::middleware('apiJwt')->group(function () {
+        Route::get('/user', [CommunityUserController::class, 'show']);
+    });
+});
+
 Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('/login', [AuthController::class, 'login']);
@@ -81,6 +92,7 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/shop-manuscripts/{id}/thankyou', [ShopManuscriptCheckoutController::class, 'thankyou'])
             ->name('api.v1.shop-manuscripts.thankyou');
         Route::get('/me', [AuthController::class, 'me']);
+        Route::post('/community/issue-code', [CommunitySsoController::class, 'issueCode']);
         Route::get('/profile', [ProfileController::class, 'show']);
         Route::match(['put', 'patch', 'post'], '/profile', [ProfileController::class, 'update']);
         Route::get('/dashboard', [DashboardController::class, 'show']);
