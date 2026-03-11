@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class CommunitySsoController extends ApiController
@@ -40,10 +41,14 @@ class CommunitySsoController extends ApiController
 
         $codeHash = hash('sha256', $data['code']);
 
+        Log::info("code = " . $codeHash);
+        Log::info("code hash = " . $codeHash);
+
         /** @var ApiCommunitySsoCode|null $record */
         $record = ApiCommunitySsoCode::query()
             ->where('code_hash', $codeHash)
             ->first();
+        Log::info(json_encode($record));
 
         if (! $record) {
             return $this->errorResponse('Invalid code.', 'unauthorized', 401);
