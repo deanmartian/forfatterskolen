@@ -137,6 +137,35 @@ class InvoiceController extends ApiController
 
     public function receipt(Request $request, int $id)
     {
+        $receipt = $this->buildReceipt($request, $id);
+
+        if ($receipt instanceof JsonResponse) {
+            return $receipt;
+        }
+
+        return $receipt['pdf']->download($receipt['filename']);
+    }
+
+    public function receiptView(Request $request, int $id)
+    {
+        $receipt = $this->buildReceipt($request, $id);
+
+        if ($receipt instanceof JsonResponse) {
+            return $receipt;
+        }
+
+        return response(view('frontend.pdf.invoice-receipt', [
+            'invoice' => $receipt['invoice'],
+            'user' => $receipt['user'],
+        ]));
+    }
+
+
+    /**
+     * @return array{invoice:Invoice,user:mixed,pdf:mixed,filename:string}|JsonResponse
+     */
+    private function buildReceipt(Request $request, int $id)
+    {
         $user = $this->apiUser($request);
 
         $invoice = Invoice::with(['transactions', 'package.course', 'payment_plan'])
@@ -155,7 +184,12 @@ class InvoiceController extends ApiController
         $invoiceNumber = $invoice->invoice_number ?? $invoice->id;
         $fileName = ($invoiceNumber ? str_pad((string) $invoiceNumber, 6, '0', STR_PAD_LEFT) : $invoice->id).'-kvittering.pdf';
 
-        return $pdf->download($fileName);
+        return [
+            'invoice' => $invoice,
+            'user' => $user,
+            'pdf' => $pdf,
+            'filename' => $fileName,
+        ];
     }
 
     private function statusLabel(Invoice $invoice): string
