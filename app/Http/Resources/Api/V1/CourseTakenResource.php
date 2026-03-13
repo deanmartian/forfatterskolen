@@ -94,6 +94,7 @@ class CourseTakenResource extends JsonResource
                 return [
                     'id' => $package->id,
                     'variation' => $package->variation,
+                    'description_with_check' => $package->description_with_check,
                     'course_type' => (int) $package->course_type,
                     'upgrade_price' => $upgradePrice,
                     'is_available' => true,
