@@ -86,9 +86,10 @@ class CourseTakenResource extends JsonResource
                         : ! ((int) $package->disable_upgrade_price === 1);
                 }
 
+                /* TODO: uncomment this after testing if finished 
                 if (! $displayBtn || ! (bool) $currentPackage->is_upgradeable) {
                     return null;
-                }
+                } */
 
                 return [
                     'id' => $package->id,
