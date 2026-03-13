@@ -135,6 +135,29 @@ class InvoiceController extends ApiController
             ->deleteFileAfterSend(true);
     }
 
+    public function receipt(Request $request, int $id)
+    {
+        $user = $this->apiUser($request);
+
+        $invoice = Invoice::with(['transactions', 'package.course', 'payment_plan'])
+            ->where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (! $invoice) {
+            return $this->errorResponse('Invoice not found.', 'invoice_not_found', Response::HTTP_NOT_FOUND);
+        }
+
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->loadHTML(view('frontend.pdf.invoice-receipt', compact('invoice', 'user')));
+
+        $invoiceNumber = $invoice->invoice_number ?? $invoice->id;
+        $fileName = ($invoiceNumber ? str_pad((string) $invoiceNumber, 6, '0', STR_PAD_LEFT) : $invoice->id).'-kvittering.pdf';
+
+        return $pdf->download($fileName);
+    }
+
     private function statusLabel(Invoice $invoice): string
     {
         if ($invoice->fiken_is_paid === Invoice::COMPLETED) {
