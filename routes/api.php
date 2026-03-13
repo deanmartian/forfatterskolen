@@ -110,6 +110,8 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/invoices', [InvoiceController::class, 'index']);
         Route::get('/invoices/{id}', [InvoiceController::class, 'show']);
         Route::get('/invoices/{id}/pdf', [InvoiceController::class, 'pdf']);
+        Route::get('/invoices/{id}/pdf/view', [InvoiceController::class, 'pdfView'])
+            ->name('api.invoices.pdf.view');
         Route::get('/learner/invoice/{id}/receipt/download', [InvoiceController::class, 'receipt'])
             ->name('api.learner.invoice.receipt.download');
         Route::get('/learner/invoice/{id}/receipt/view', [InvoiceController::class, 'receiptView'])
