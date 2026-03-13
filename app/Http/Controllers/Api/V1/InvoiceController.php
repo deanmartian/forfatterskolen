@@ -160,6 +160,39 @@ class InvoiceController extends ApiController
         ]));
     }
 
+    public function pdfView(Request $request, int $id)
+    {
+        $user = $this->apiUser($request);
+        $invoice = Invoice::find($id);
+
+        if (! $invoice) {
+            return $this->errorResponse('Invoice not found.', 'invoice_not_found', Response::HTTP_NOT_FOUND);
+        }
+
+        if ($invoice->user_id !== $user->id) {
+            return $this->errorResponse('You do not have access to this invoice.', 'invoice_forbidden', Response::HTTP_FORBIDDEN);
+        }
+
+        if (! $invoice->pdf_url) {
+            return $this->errorResponse('Invoice PDF not available.', 'invoice_pdf_missing', Response::HTTP_NOT_FOUND);
+        }
+
+        $pdfUrl = $this->normalizedPdfUrl($invoice->pdf_url);
+        $download = $this->downloadPdf($pdfUrl);
+
+        if ($download['status'] !== Response::HTTP_OK) {
+            return $this->errorResponse($download['message'], $download['code'], $download['status']);
+        }
+
+        return response()->file(
+            $download['path'],
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="'.$download['filename'].'"',
+            ]
+        )->deleteFileAfterSend(true);
+    }
+
 
     /**
      * @return array{invoice:Invoice,user:mixed,pdf:mixed,filename:string}|JsonResponse
