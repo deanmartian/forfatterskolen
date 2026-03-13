@@ -112,6 +112,8 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         Route::get('/invoices/{id}/pdf', [InvoiceController::class, 'pdf']);
         Route::get('/learner/invoice/{id}/receipt/download', [InvoiceController::class, 'receipt'])
             ->name('api.learner.invoice.receipt.download');
+        Route::get('/learner/invoice/{id}/receipt/view', [InvoiceController::class, 'receiptView'])
+            ->name('api.learner.invoice.receipt.view');
         Route::match(['get', 'post'], '/checkout/courses/{courseId}/discount', [CheckoutController::class, 'discount']);
         Route::post('/checkout/courses/{courseId}/start', [CheckoutController::class, 'startCourseCheckout']);
         Route::get('/checkout/status/{reference}', [CheckoutController::class, 'status']);
