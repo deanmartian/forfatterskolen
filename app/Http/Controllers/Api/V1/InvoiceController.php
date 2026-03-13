@@ -154,12 +154,15 @@ class InvoiceController extends ApiController
             return $receipt;
         }
 
-        return $receipt['pdf']->stream($receipt['filename']);
+        return response(view('frontend.pdf.invoice-receipt', [
+            'invoice' => $receipt['invoice'],
+            'user' => $receipt['user'],
+        ]));
     }
 
 
     /**
-     * @return array{pdf:mixed,filename:string}|JsonResponse
+     * @return array{invoice:Invoice,user:mixed,pdf:mixed,filename:string}|JsonResponse
      */
     private function buildReceipt(Request $request, int $id)
     {
@@ -182,6 +185,8 @@ class InvoiceController extends ApiController
         $fileName = ($invoiceNumber ? str_pad((string) $invoiceNumber, 6, '0', STR_PAD_LEFT) : $invoice->id).'-kvittering.pdf';
 
         return [
+            'invoice' => $invoice,
+            'user' => $user,
             'pdf' => $pdf,
             'filename' => $fileName,
         ];
