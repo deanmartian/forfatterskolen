@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" height="120" viewBox="0 0 220 120" width="220">
+  <g fill="none" fill-rule="evenodd" transform="translate(46 15)">
+    <path d="m0 0v72l32 18v-72z" fill="#fedfb8"></path>
+    <path d="m63.9999 0-32 18v72l32-18z" fill="#f7c991"></path>
+    <path d="m127.9998 0-31.999 18v72l31.999-18z" fill="#f7c991"></path>
+    <path d="m63.9999 0v72l32 18v-72z" fill="#fedfb8"></path>
+    <g transform="translate(0 13)">
+      <g stroke-linecap="round" stroke-width="2">
+        <path d="m97.0005 28.2312c3.094-1.835 8.389-10.074 8.389-10.074s4.489 6.964 4.489 16.4c0 8.979-6.484 16.175-6.484 16.175s-5.455 7.615-4.232 18.027" stroke="#6b8295" stroke-dasharray="0 4"></path>
+        <path d="m86 34.321c4.93-1.834 8.159-3.78 10-5.09" stroke="#92acbf" stroke-dasharray="0 4"></path>
+        <path d="m54.0122 33.8923c4.134-.321 7.367-.389 9.988-.317" stroke="#6b8295" stroke-dasharray="0 4"></path>
+        <path d="m32 56.7746s1.894-11.567 9.593-18.044" stroke="#6b8295" stroke-dasharray="0 4"></path>
+        <path d="m13.459 26.1501c-.358 5.97.817 16.612 9.627 25.583 1.26 1.128 6.669 7.076 8.582 8.528" stroke="#92acbf" stroke-dasharray="0 4"></path>
+      </g>
+      <path d="m48 16.1687v32l16-9v-32z" fill="#fedfb8"></path>
+      <path d="m80 16.1687v32l-16-9v-32z" fill="#fedfb8"></path>
+      <path d="m80 16.1687v32l-16-9v-32z" fill="#fff"></path>
+      <path d="m106.5039 50.1868c0 1.717-1.392 3.354-3.109 3.655-1.718.302-3.11-.846-3.11-2.564 0-1.717 1.392-3.353 3.11-3.654 1.717-.302 3.109.846 3.109 2.563" fill="#384652"></path>
+      <path d="m28.8027 55.0329c0-1.717-1.392-3.354-3.109-3.655-1.718-.302-3.11.846-3.11 2.564 0 1.717 1.392 3.354 3.11 3.655 1.717.301 3.109-.847 3.109-2.564" fill="#384652"></path>
+      <path d="m22.0923 21.6506c0-4.227-3.426-8.254-7.652-8.996-4.227-.741-7.653 2.084-7.653 6.31 0 4.227 3.426 8.254 7.653 8.996 4.226.742 7.652-2.083 7.652-6.31" fill="#edc001"></path>
+      <path d="m48 48.1687v-32l16-9 16 9v32" stroke="#cf9544" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      <path d="m66.2212 21.0159 10.511 5.913" stroke="#cf9544" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      <path d="m66.2212 26.0876 10.511 5.913" stroke="#f7c991" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      <path d="m66.2212 31.1594 10.511 5.912" stroke="#f7c991" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      <path d="m66.2212 36.2312 10.511 5.912" stroke="#f7c991" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      <path d="m32 72.0002-32-18v-4l32 18z" fill="#edc001"></path>
+      <path d="m32 72.0002 32-18v-4l-32 18z" fill="#a68602"></path>
+      <path d="m96 72.0002 32-18v-4l-32 18z" fill="#a68602"></path>
+      <path d="m96 72.0002-32-18v-4l32 18z" fill="#edc001"></path>
+      <path d="m105.3896 18.1575c-2.05-.761 15.627 2.858 21.174-13.033" stroke="#6b8295" stroke-dasharray="0 4" stroke-linecap="round" stroke-width="2"></path>
+      <path d="m108.499 17.612c0 1.717-1.392 3.354-3.109 3.655-1.718.301-3.11-.846-3.11-2.564 0-1.717 1.392-3.354 3.11-3.655 1.717-.301 3.109.847 3.109 2.564" fill="#384652"></path>
+      <path d="m86 45.0696v-32l-15.951-8.973c-.403-1.92-2.954-3.402-6.049-3.402s-5.646 1.482-6.049 3.402l-15.951 8.973v32" stroke="#cf9544" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      <path d="m66.2212 21.0159 10.511 5.913" stroke="#f7c991" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      <path d="m51.2681 18.1262 10.511-5.913v11.692l-10.511 5.913z" stroke="#cf9544" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      <path d="m14.2886 24.8738c-.089-.045-.16-.109-.212-.191-.053-.083-.079-.164-.079-.245v-6.215l-1.844.466c-.073.011-.146-.007-.218-.056-.073-.05-.138-.124-.194-.225l-.511-.907c-.047-.097-.066-.182-.053-.256.012-.073.053-.116.127-.127l2.717-.695c.049-.016.098-.015.146.002.048.016.101.039.158.068l1.067.542c.081.041.15.105.207.189.056.085.085.168.085.248v7.823c0 .08-.029.134-.085.161-.057.027-.126.021-.207-.02z" fill="#fff"></path>
+    </g>
+  </g>
+</svg>

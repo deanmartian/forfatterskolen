@@ -1,0 +1,1030 @@
+/* ==========================================================================
+   Årskurs Landing Page – Scoped under .arskurs-page
+   ========================================================================== */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Mulish:wght@300;400;600;700;800&family=Rubik:wght@300;400;500;600;700&display=swap');
+
+/* ---------- Variables & Base ---------- */
+.arskurs-page {
+    font-family: 'Mulish', 'Muli', sans-serif;
+    font-size: 18px;
+    color: #c9c9c9;
+    background: #19242c;
+    overflow-x: hidden;
+}
+.arskurs-page h1,
+.arskurs-page h2 {
+    font-family: 'Abril Fatface', serif;
+    line-height: 1.2;
+}
+.arskurs-page h3 {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.4;
+}
+.arskurs-page p {
+    font-size: 16px;
+    line-height: 1.6;
+}
+.arskurs-page a {
+    text-decoration: none;
+}
+.arskurs-page section {
+    position: relative;
+}
+
+/* ---------- CTA Button ---------- */
+.arskurs-page .btn-cta {
+    display: inline-block;
+    background: #E93746;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 16px 40px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    transition: background .3s, transform .15s;
+    border: none;
+    cursor: pointer;
+}
+.arskurs-page .btn-cta:hover {
+    background: #862736;
+    color: #fff;
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+/* ---------- Sticky Page Nav ---------- */
+.arskurs-page .page-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #111b22;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    padding: 0;
+}
+.arskurs-page .page-nav .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 12px 0;
+    flex-wrap: wrap;
+}
+.arskurs-page .page-nav a {
+    color: #aaa;
+    font-size: .9rem;
+    font-weight: 500;
+    letter-spacing: .3px;
+    transition: color .2s;
+}
+.arskurs-page .page-nav a:hover,
+.arskurs-page .page-nav a.active {
+    color: #fff;
+}
+.arskurs-page .page-nav .nav-cta {
+    background: #E93746;
+    color: #fff;
+    padding: 8px 22px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: .85rem;
+    text-transform: uppercase;
+}
+.arskurs-page .page-nav .nav-cta:hover {
+    background: #862736;
+    color: #fff;
+}
+
+/* ---------- Hero Section ---------- */
+.arskurs-page .hero-section {
+    background: #19242c;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+.arskurs-page .hero-section .hero-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 55%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+}
+.arskurs-page .hero-section .hero-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(to right, #19242c 0%, transparent 100%);
+}
+.arskurs-page .hero-section .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+    padding: 80px 0;
+}
+.arskurs-page .hero-section .hero-label {
+    color: #617c8f;
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+.arskurs-page .hero-section h1 {
+    font-size: 3.6rem;
+    color: #fff;
+    margin-bottom: 24px;
+}
+.arskurs-page .hero-section p {
+    color: #b0b8bf;
+    margin-bottom: 16px;
+}
+.arskurs-page .hero-section .hero-meta {
+    font-size: .88rem;
+    color: #888;
+    margin-top: 16px;
+}
+.arskurs-page .hero-section .trailer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-weight: 500;
+    margin-top: 20px;
+    transition: color .2s;
+}
+.arskurs-page .hero-section .trailer-link:hover {
+    color: #E93746;
+}
+.arskurs-page .hero-section .trailer-link .play-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    font-size: .8rem;
+    transition: border-color .2s, background .2s;
+}
+.arskurs-page .hero-section .trailer-link:hover .play-icon {
+    border-color: #E93746;
+    background: rgba(233,55,70,.15);
+}
+
+/* ---------- Light Sections ---------- */
+.arskurs-page .section-light {
+    background: #f5f5f5;
+    color: #212529;
+    padding: 80px 0;
+}
+.arskurs-page .section-light h2,
+.arskurs-page .section-light h3 {
+    color: #212529;
+}
+.arskurs-page .section-light p {
+    color: #444;
+}
+
+/* ---------- Dark Sections ---------- */
+.arskurs-page .section-dark {
+    background: #19242c;
+    color: #c9c9c9;
+    padding: 80px 0;
+}
+.arskurs-page .section-dark h2,
+.arskurs-page .section-dark h3 {
+    color: #fff;
+}
+
+/* ---------- 3-Column Features ---------- */
+.arskurs-page .features-section .feature-card {
+    text-align: center;
+    padding: 20px;
+}
+.arskurs-page .features-section .feature-card img {
+    width: 100%;
+    max-width: 340px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+.arskurs-page .features-section .feature-label {
+    color: #617c8f;
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+.arskurs-page .features-section h3 {
+    font-size: 24px;
+    margin-bottom: 14px;
+}
+
+/* ---------- Video Section ---------- */
+.arskurs-page .video-section {
+    text-align: center;
+}
+.arskurs-page .video-wrapper {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+}
+.arskurs-page .video-wrapper .wistia_responsive_padding {
+    padding: 56.25% 0 0 0;
+    position: relative;
+}
+.arskurs-page .video-wrapper .wistia_responsive_wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ---------- Price Section ---------- */
+.arskurs-page .price-section {
+    text-align: center;
+}
+.arskurs-page .price-section h2 {
+    font-size: 2.6rem;
+    margin-bottom: 16px;
+}
+.arskurs-page .price-box {
+    background: #f5c518;
+    border-radius: 8px;
+    padding: 40px;
+    max-width: 950px;
+    margin: 40px auto 0;
+    display: flex;
+    gap: 40px;
+    text-align: left;
+    color: #212529;
+}
+.arskurs-page .price-box-left {
+    flex: 0 0 40%;
+}
+.arskurs-page .price-box-right {
+    flex: 1;
+}
+.arskurs-page .price-box h3 {
+    font-size: 20px;
+    color: #212529;
+    margin-bottom: 8px;
+}
+.arskurs-page .price-box .price-subtitle {
+    color: #555;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+.arskurs-page .price-amount {
+    font-family: 'Abril Fatface', serif;
+    font-size: 3.5rem;
+    color: #212529;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+.arskurs-page .price-original {
+    font-size: 1.2rem;
+    color: #666;
+    text-decoration: line-through;
+    margin-left: 8px;
+}
+.arskurs-page .price-box .btn-cta {
+    margin-top: 20px;
+    width: 100%;
+    text-align: center;
+}
+.arskurs-page .price-expiry {
+    font-size: .85rem;
+    font-weight: 600;
+    color: #333;
+    margin-top: 12px;
+}
+.arskurs-page .price-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.arskurs-page .price-features li {
+    position: relative;
+    padding: 10px 0 10px 34px;
+    font-size: 16px;
+    color: #212529;
+    border-bottom: 1px solid rgba(0,0,0,.06);
+}
+.arskurs-page .price-features li:last-child {
+    border-bottom: none;
+}
+.arskurs-page .price-features li::before {
+    content: '\f00c';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    top: 10px;
+    color: #28a745;
+    font-size: .9rem;
+    background: #e6f9ec;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---------- Course Overview ---------- */
+.arskurs-page .course-overview h2 {
+    font-size: 2.6rem;
+    text-align: center;
+    margin-bottom: 12px;
+}
+.arskurs-page .course-overview .overview-intro {
+    max-width: 800px;
+    margin: 0 auto 50px;
+    text-align: center;
+}
+
+/* ---------- Timeline / Kursplan ---------- */
+.arskurs-page .timeline-section {
+    padding-bottom: 60px;
+}
+.arskurs-page .kursplan {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    padding-left: 96px;
+}
+
+/* Grey bar – left side, with vertical text */
+.arskurs-page .kursplan-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 60px;
+    width: 40px;
+    background: #e0e5e7;
+    border-radius: 8px;
+    z-index: 0;
+}
+/* Red line – separate from grey bar, to its right, runs through circles */
+.arskurs-page .kursplan::after {
+    content: '';
+    position: absolute;
+    left: 64px;
+    top: 0;
+    bottom: 60px;
+    width: 6px;
+    background: #E93746;
+    border-radius: 3px;
+    z-index: 0;
+}
+/* Rotated text label – sits at top on the grey bar */
+.arskurs-page .kursplan-bar span {
+    position: relative;
+    z-index: 1;
+    display: block;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    color: #555;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 1px;
+    padding: 10px 6px 16px;
+    background: #e0e5e7;
+    margin: 0 auto;
+    border-radius: 4px;
+}
+
+/* Week item */
+.arskurs-page .kp-week {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+/* Week heading with circle marker and horizontal line */
+.arskurs-page .kp-heading {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-bottom: 8px;
+}
+.arskurs-page .kp-heading h4 {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: #212529;
+    margin: 0;
+    padding-right: 16px;
+    white-space: nowrap;
+}
+/* Circle marker – centered on the red line */
+.arskurs-page .kp-heading::before {
+    content: '';
+    position: absolute;
+    left: -29px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border: 3px solid #19242c;
+    border-radius: 50%;
+    z-index: 2;
+}
+/* Horizontal line after heading text */
+.arskurs-page .kp-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #ddd;
+}
+
+/* Description text (for "Kurset starter") */
+.arskurs-page .kp-desc {
+    font-size: 16px;
+    color: #555;
+    margin: 0 0 8px;
+    line-height: 1.5;
+}
+
+/* ---------- Step cards (white) ---------- */
+.arskurs-page .kp-card {
+    display: flex;
+    align-items: flex-start;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.12), 0 2px 16px rgba(0,0,0,.04);
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+.arskurs-page .kp-card-icon {
+    flex: 0 0 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: #fafafa;
+}
+.arskurs-page .kp-card-icon img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+.arskurs-page .kp-card-content {
+    flex: 1;
+    padding: 24px 28px;
+}
+.arskurs-page .kp-card-content h3 {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    color: #212529;
+    margin: 0 0 10px;
+}
+.arskurs-page .kp-card-content p {
+    font-size: 16px;
+    color: #555;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ---------- Gold card (Den røde tråden) ---------- */
+.arskurs-page .kp-card-gold {
+    background: #ffeab3;
+    border: 1.5px solid #edac01;
+    border-radius: 8px;
+    box-shadow: none;
+    display: block;
+}
+.arskurs-page .kp-card-gold .kp-card-body {
+    padding: 28px 32px;
+}
+.arskurs-page .kp-card-gold h4 {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: #212529;
+    margin: 0 0 14px;
+}
+.arskurs-page .kp-badge {
+    display: inline-block;
+    background: #edac01;
+    color: #fff;
+    font-size: .85rem;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 20px;
+    text-transform: none;
+    letter-spacing: 0;
+    vertical-align: middle;
+    margin-left: 8px;
+}
+.arskurs-page .kp-card-gold p {
+    font-size: 16px;
+    color: #444;
+    margin: 0 0 22px;
+    line-height: 1.5;
+}
+
+/* Icons row in gold card */
+.arskurs-page .kp-icons-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+.arskurs-page .kp-icon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 0;
+    min-width: 0;
+}
+.arskurs-page .kp-icon-item img {
+    width: 100%;
+    max-width: 140px;
+    height: 95px;
+    object-fit: contain;
+}
+.arskurs-page .kp-icon-item span {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 1.35rem;
+    color: #212529;
+}
+
+/* ---------- Collapsible extra section ---------- */
+.arskurs-page .kp-extra {
+    display: none;
+}
+
+/* ---------- Toggle button ---------- */
+.arskurs-page .kp-toggle-wrap {
+    text-align: center;
+    margin-top: 16px;
+}
+.arskurs-page .kp-toggle-btn {
+    display: inline-block;
+    background: transparent;
+    color: #333;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 14px 36px;
+    border: 2px solid #333;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+}
+.arskurs-page .kp-toggle-btn:hover {
+    background: #333;
+    color: #fff;
+}
+
+/* ---------- Feedback / Checklist Sections ---------- */
+.arskurs-page .checklist-section .section-grid {
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+}
+.arskurs-page .checklist-section .section-grid .section-text {
+    flex: 1;
+}
+.arskurs-page .checklist-section .section-grid .section-image {
+    flex: 0 0 40%;
+}
+.arskurs-page .checklist-section .section-grid .section-image img {
+    width: 100%;
+    border-radius: 8px;
+}
+.arskurs-page .checklist {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0;
+}
+.arskurs-page .checklist li {
+    position: relative;
+    padding: 12px 0 12px 44px;
+    font-size: 17px;
+    line-height: 1.5;
+}
+.arskurs-page .checklist li::before {
+    content: '\f14a';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    top: 14px;
+    color: #edac01;
+    font-size: 1.3rem;
+}
+
+/* ---------- Kursholder Section ---------- */
+.arskurs-page .kursholder-section {
+    text-align: center;
+}
+.arskurs-page .kursholder-section h2 {
+    font-size: 2.6rem;
+    margin-bottom: 30px;
+}
+.arskurs-page .kursholder-section .kursholder-grid {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    text-align: left;
+    max-width: 900px;
+    margin: 0 auto;
+}
+.arskurs-page .kursholder-section .kursholder-video {
+    flex: 0 0 50%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.arskurs-page .kursholder-section .kursholder-text {
+    flex: 1;
+}
+.arskurs-page .kursholder-section .kursholder-text p {
+    margin-bottom: 12px;
+}
+
+/* ---------- Instructor Grid ---------- */
+.arskurs-page .instructor-section {
+    text-align: center;
+}
+.arskurs-page .instructor-section h2 {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+}
+.arskurs-page .instructor-section .instructor-image {
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+/* ---------- FAQ Section ---------- */
+.arskurs-page .faq-section h2 {
+    font-size: 2.6rem;
+    text-align: center;
+    margin-bottom: 40px;
+}
+.arskurs-page .faq-section .panel-group {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.arskurs-page .faq-section .panel {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: 0;
+}
+.arskurs-page .faq-section .panel-heading {
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+.arskurs-page .faq-section .panel-title a {
+    display: block;
+    padding: 20px 40px 20px 0;
+    color: #fff;
+    font-weight: 500;
+    font-size: 18px;
+    position: relative;
+    transition: color .2s;
+}
+.arskurs-page .faq-section .panel-title a:hover {
+    color: #E93746;
+    text-decoration: none;
+}
+.arskurs-page .faq-section .panel-title a::after {
+    content: '\f107';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform .3s;
+    color: #E93746;
+}
+.arskurs-page .faq-section .panel-title a.collapsed::after {
+    transform: translateY(-50%) rotate(0deg);
+}
+.arskurs-page .faq-section .panel-title a:not(.collapsed)::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+.arskurs-page .faq-section .panel-body {
+    padding: 0 0 20px;
+    color: #aaa;
+    font-size: 16px;
+    line-height: 1.6;
+    border-top: none;
+}
+
+/* ---------- Final CTA Section ---------- */
+.arskurs-page .final-cta-section {
+    text-align: center;
+}
+.arskurs-page .final-cta-section h2 {
+    font-size: 2.6rem;
+    margin-bottom: 16px;
+}
+
+/* ---------- Section Title Utility ---------- */
+.arskurs-page .section-title {
+    font-size: 2.4rem;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+/* ---------- Testimonials Section ---------- */
+.arskurs-page .testimonials-section {
+    padding: 80px 0;
+}
+.arskurs-page .testimonials-section h2 {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 10px;
+}
+.arskurs-page .testimonials-intro {
+    text-align: center;
+    color: #c9c9c9;
+    font-size: 16px;
+    margin-bottom: 50px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Hero testimonial (full-width with large image) */
+.arskurs-page .testimonial-hero {
+    display: flex;
+    align-items: stretch;
+    background: #1e2d38;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+.arskurs-page .testimonial-hero-text {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.arskurs-page .testimonial-headline {
+    font-family: 'Abril Fatface', serif;
+    font-size: 24px;
+    color: #c9a84c;
+    margin-bottom: 20px;
+    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.arskurs-page .testimonial-hero-text p {
+    color: #c9c9c9;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+.arskurs-page .testimonial-hero-text .testimonial-name {
+    color: #d4a8a8;
+    font-family: 'Abril Fatface', serif;
+    font-size: 16px;
+    font-style: italic;
+}
+.arskurs-page .testimonial-hero-image {
+    flex: 0 0 40%;
+    max-width: 40%;
+}
+.arskurs-page .testimonial-hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+    display: block;
+    filter: grayscale(100%);
+}
+
+/* Text-only card testimonials */
+.arskurs-page .testimonial-cards {
+    margin-bottom: 40px;
+}
+.arskurs-page .testimonial-card {
+    background: #1e2d38;
+    border-radius: 8px;
+    padding: 30px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+}
+.arskurs-page .testimonial-quote-icon {
+    font-family: 'Abril Fatface', serif;
+    font-size: 48px;
+    color: #c9a84c;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+.arskurs-page .testimonial-divider {
+    width: 60px;
+    height: 2px;
+    background: #c9a84c;
+    margin-bottom: 20px;
+}
+.arskurs-page .testimonial-card p {
+    color: #c9c9c9;
+    font-size: 16px;
+    line-height: 1.6;
+    flex: 1;
+    margin-bottom: 20px;
+}
+.arskurs-page .testimonial-card .testimonial-name {
+    color: #d4a8a8;
+    font-family: 'Abril Fatface', serif;
+    font-size: 16px;
+    font-style: italic;
+}
+
+/* Avatar testimonials (small circular image + text) */
+.arskurs-page .testimonial-avatars {
+    margin-bottom: 40px;
+}
+.arskurs-page .testimonial-avatar-card {
+    background: #1e2d38;
+    border: 1px solid #2a3f4d;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+.arskurs-page .testimonial-avatar-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.arskurs-page .testimonial-avatar-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+    filter: grayscale(100%);
+}
+.arskurs-page .testimonial-avatar-name {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.arskurs-page .testimonial-avatar-card p {
+    color: #c9c9c9;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991px) {
+    .arskurs-page .hero-section .hero-bg {
+        width: 100%;
+        opacity: .3;
+    }
+    .arskurs-page .hero-section h1 {
+        font-size: 2.4rem;
+    }
+    .arskurs-page .price-box {
+        flex-direction: column;
+    }
+    .arskurs-page .price-box-left {
+        flex: auto;
+    }
+    .arskurs-page .checklist-section .section-grid {
+        flex-direction: column;
+    }
+    .arskurs-page .checklist-section .section-grid .section-image {
+        flex: auto;
+        order: -1;
+    }
+    .arskurs-page .kursholder-section .kursholder-grid {
+        flex-direction: column;
+    }
+    .arskurs-page .testimonial-hero {
+        flex-direction: column;
+    }
+    .arskurs-page .testimonial-hero-image {
+        flex: auto;
+        max-width: 100%;
+        height: 300px;
+        order: -1;
+    }
+    .arskurs-page .testimonial-hero-text {
+        padding: 30px;
+    }
+}
+@media (max-width: 767px) {
+    .arskurs-page .hero-section h1 {
+        font-size: 2rem;
+    }
+    .arskurs-page .hero-section {
+        min-height: auto;
+        padding: 60px 0;
+    }
+    .arskurs-page .section-light,
+    .arskurs-page .section-dark {
+        padding: 50px 0;
+    }
+    .arskurs-page .page-nav .nav-inner {
+        gap: 1rem;
+        font-size: .8rem;
+    }
+    .arskurs-page .price-amount {
+        font-size: 2.5rem;
+    }
+    /* Kursplan responsive */
+    .arskurs-page .kursplan {
+        padding-left: 50px;
+    }
+    .arskurs-page .kursplan-bar {
+        font-size: 12px;
+        width: 4px;
+    }
+    .arskurs-page .kursplan-bar::before {
+        width: 28px;
+        left: -12px;
+    }
+    .arskurs-page .kp-heading::before {
+        left: -30px;
+        width: 14px;
+        height: 14px;
+    }
+    .arskurs-page .kp-card {
+        flex-direction: column;
+    }
+    .arskurs-page .kp-card-icon {
+        flex: auto;
+        padding: 16px;
+    }
+    .arskurs-page .kp-card-icon img {
+        width: 70px;
+        height: 70px;
+    }
+    .arskurs-page .kp-card-content {
+        padding: 16px 20px;
+    }
+    .arskurs-page .kp-icons-row {
+        gap: 10px;
+        justify-content: center;
+    }
+    .arskurs-page .kp-icon-item img {
+        width: 80px;
+        height: 55px;
+    }
+    .arskurs-page .kp-icon-item span {
+        font-size: .9rem;
+    }
+    .arskurs-page .kp-card-gold .kp-card-body {
+        padding: 20px;
+    }
+    .arskurs-page .faq-section h2,
+    .arskurs-page .price-section h2,
+    .arskurs-page .kursholder-section h2,
+    .arskurs-page .course-overview h2,
+    .arskurs-page .final-cta-section h2,
+    .arskurs-page .testimonials-section h2 {
+        font-size: 2rem;
+    }
+    .arskurs-page .testimonials-section {
+        padding: 50px 0;
+    }
+    .arskurs-page .testimonial-hero-text {
+        padding: 20px;
+    }
+    .arskurs-page .testimonial-headline {
+        font-size: 18px;
+    }
+    .arskurs-page .testimonial-card {
+        padding: 20px;
+    }
+}

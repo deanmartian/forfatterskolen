@@ -55,6 +55,7 @@ Route::domain($front)->group(function () {
         Route::post('/contact-us', [Frontend\HomeController::class, 'contact_us']); // Contact Us
         Route::get('/gift-cards', [Frontend\HomeController::class, 'giftCards'])->name('front.gift-cards');
         Route::post('/set-gift-card', [Frontend\HomeController::class, 'setGiftCard']);
+        Route::get('/arskurs', [Frontend\HomeController::class, 'arskurs'])->name('front.arskurs'); // Årskurs landing page
         Route::get('/faq', [Frontend\HomeController::class, 'faq'])->name('front.faq'); // FAQ
         Route::get('/support', [Frontend\HomeController::class, 'support'])->name('front.support'); // Support
         Route::get('/support/{id}/articles', [Frontend\HomeController::class, 'supportArticles'])->name('front.support-articles'); // Support Articles
@@ -617,6 +618,47 @@ Route::domain($front)->group(function () {
             Route::post('primary/set', [Frontend\LearnerController::class, 'setPrimaryEmail']);
             Route::post('destroy', [Frontend\LearnerController::class, 'removeSecondaryEmail']);
             Route::post('confirmation', [Frontend\LearnerController::class, 'sendEmailConfirmation']);
+        });
+
+        // Community (Skrivefellesskap)
+        Route::prefix('community')->name('learner.community.')->group(function () {
+            Route::get('/', [Frontend\CommunityForumController::class, 'home'])->name('home');
+            Route::post('/posts', [Frontend\CommunityForumController::class, 'storePost'])->name('storePost');
+            Route::post('/posts/{id}/like', [Frontend\CommunityForumController::class, 'toggleLike'])->name('toggleLike');
+            Route::post('/posts/{id}/comment', [Frontend\CommunityForumController::class, 'storeComment'])->name('storeComment');
+            Route::delete('/posts/{id}', [Frontend\CommunityForumController::class, 'deletePost'])->name('deletePost');
+            Route::get('/discussions', [Frontend\CommunityForumController::class, 'discussions'])->name('discussions');
+            Route::post('/discussions', [Frontend\CommunityForumController::class, 'storeDiscussion'])->name('storeDiscussion');
+            Route::get('/discussions/{id}', [Frontend\CommunityForumController::class, 'showDiscussion'])->name('discussion');
+            Route::post('/discussions/{id}/reply', [Frontend\CommunityForumController::class, 'storeReply'])->name('storeReply');
+            Route::get('/messages', [Frontend\CommunityForumController::class, 'messagesIndex'])->name('messages');
+            Route::get('/messages/{partnerId}', [Frontend\CommunityForumController::class, 'conversation'])->name('conversation');
+            Route::post('/messages', [Frontend\CommunityForumController::class, 'sendMessage'])->name('sendMessage');
+            Route::get('/members', [Frontend\CommunityForumController::class, 'members'])->name('members');
+            Route::get('/notifications', [Frontend\CommunityForumController::class, 'notifications'])->name('notifications');
+            Route::post('/notifications/{id}/read', [Frontend\CommunityForumController::class, 'markNotificationRead'])->name('markNotificationRead');
+            Route::post('/notifications/read-all', [Frontend\CommunityForumController::class, 'markAllNotificationsRead'])->name('markAllNotificationsRead');
+            Route::get('/manuscripts', [Frontend\CommunityForumController::class, 'manuscripts'])->name('manuscripts');
+            Route::post('/manuscripts', [Frontend\CommunityForumController::class, 'storeManuscript'])->name('storeManuscript');
+            Route::get('/manuscripts/{id}', [Frontend\CommunityForumController::class, 'showManuscript'])->name('manuscript');
+            Route::post('/manuscripts/{id}/excerpt', [Frontend\CommunityForumController::class, 'storeExcerpt'])->name('storeExcerpt');
+            Route::get('/excerpts/{id}', [Frontend\CommunityForumController::class, 'showExcerpt'])->name('excerpt');
+            Route::post('/excerpts/{id}/feedback', [Frontend\CommunityForumController::class, 'storeFeedback'])->name('storeFeedback');
+            Route::post('/manuscripts/{id}/follow', [Frontend\CommunityForumController::class, 'toggleFollow'])->name('toggleFollow');
+            Route::get('/course-groups', [Frontend\CommunityForumController::class, 'courseGroups'])->name('courseGroups');
+            Route::get('/course-groups/{id}', [Frontend\CommunityForumController::class, 'showCourseGroup'])->name('courseGroup');
+            Route::post('/course-groups/{id}/posts', [Frontend\CommunityForumController::class, 'storeCourseGroupPost'])->name('storeCourseGroupPost');
+            Route::get('/profile', [Frontend\CommunityForumController::class, 'profile'])->name('profile');
+            Route::post('/profile', [Frontend\CommunityForumController::class, 'updateProfile'])->name('updateProfile');
+        });
+
+        // Learner Messaging
+        Route::prefix('messages')->name('learner.messages.')->group(function () {
+            Route::get('/', [Frontend\LearnerMessageController::class, 'index'])->name('index');
+            Route::get('/create', [Frontend\LearnerMessageController::class, 'create'])->name('create');
+            Route::post('/', [Frontend\LearnerMessageController::class, 'store'])->name('store');
+            Route::get('/{id}', [Frontend\LearnerMessageController::class, 'show'])->name('show');
+            Route::post('/{id}/reply', [Frontend\LearnerMessageController::class, 'reply'])->name('reply');
         });
 
     });
@@ -1938,6 +1980,31 @@ Route::domain($admin)->group(function () {
 
         Route::post('/tinymce-upload', [Backend\TinymceController::class, 'store']);
         Route::get('/tinymce/images', [Backend\TinymceController::class, 'images'])->name('admin.tinymce.images');
+
+        // Community Admin
+        Route::prefix('community')->name('admin.community.')->group(function () {
+            Route::get('/', [Backend\CommunityController::class, 'index'])->name('index');
+            Route::get('/members', [Backend\CommunityController::class, 'members'])->name('members');
+            Route::post('/members/{id}/badge', [Backend\CommunityController::class, 'updateMemberBadge'])->name('members.badge');
+            Route::post('/members/{id}/toggle-suspend', [Backend\CommunityController::class, 'toggleSuspend'])->name('members.toggle-suspend');
+            Route::get('/posts', [Backend\CommunityController::class, 'posts'])->name('posts');
+            Route::post('/posts/{id}/toggle-pin', [Backend\CommunityController::class, 'togglePinPost'])->name('posts.toggle-pin');
+            Route::delete('/posts/{id}', [Backend\CommunityController::class, 'destroyPost'])->name('posts.destroy');
+            Route::get('/discussions', [Backend\CommunityController::class, 'discussions'])->name('discussions');
+            Route::post('/discussions/{id}/toggle-pin', [Backend\CommunityController::class, 'togglePinDiscussion'])->name('discussions.toggle-pin');
+            Route::delete('/discussions/{id}', [Backend\CommunityController::class, 'destroyDiscussion'])->name('discussions.destroy');
+            Route::get('/course-groups', [Backend\CommunityController::class, 'courseGroups'])->name('course-groups');
+            Route::post('/course-groups', [Backend\CommunityController::class, 'storeCourseGroup'])->name('course-groups.store');
+            Route::put('/course-groups/{id}', [Backend\CommunityController::class, 'updateCourseGroup'])->name('course-groups.update');
+            Route::delete('/course-groups/{id}', [Backend\CommunityController::class, 'destroyCourseGroup'])->name('course-groups.destroy');
+        });
+
+        // Admin Messaging
+        Route::prefix('messages')->name('admin.messages.')->group(function () {
+            Route::get('/', [Backend\AdminMessageController::class, 'index'])->name('index');
+            Route::get('/{id}', [Backend\AdminMessageController::class, 'show'])->name('show');
+            Route::post('/{id}/reply', [Backend\AdminMessageController::class, 'reply'])->name('reply');
+        });
     });
 
     // Authentication
@@ -1984,6 +2051,17 @@ Route::domain($editor)->group(function () {
         Route::post('/project/{id}/update-editor-hours', [Editor\PageController::class, 'projectEditorHours'])->name('editor.project.update-editor-hours');
         Route::get('/calendar', [Editor\PageController::class, 'calendar'])->name('editor.calendar');
         Route::get('/calendar/export', [Editor\PageController::class, 'exportCalendar'])->name('editor.calendar.export');
+
+        // Editor Messaging
+        Route::prefix('messages')->name('editor.messages.')->group(function () {
+            Route::get('/', [Editor\EditorMessageController::class, 'index'])->name('index');
+            Route::get('/create', [Editor\EditorMessageController::class, 'create'])->name('create');
+            Route::post('/', [Editor\EditorMessageController::class, 'store'])->name('store');
+            Route::get('/broadcast', [Editor\EditorMessageController::class, 'broadcastCreate'])->name('broadcast');
+            Route::post('/broadcast', [Editor\EditorMessageController::class, 'broadcastStore'])->name('broadcast.store');
+            Route::get('/{id}', [Editor\EditorMessageController::class, 'show'])->name('show');
+            Route::post('/{id}/reply', [Editor\EditorMessageController::class, 'reply'])->name('reply');
+        });
     });
 
     Route::middleware('editor')->group(function () {
