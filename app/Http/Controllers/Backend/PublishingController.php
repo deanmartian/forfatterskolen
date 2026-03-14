@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePublishingRequest;
 use App\Repositories\Services\PublishingService;
+use App\Testimonial;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -43,7 +44,9 @@ class PublishingController extends Controller
             $publishingHouses = $this->publishingService->paginate();
         }
 
-        return view('backend.publishing.index', compact('publishingHouses'));
+        $testimonials = Testimonial::paginate(15);
+
+        return view('backend.publishing.index', compact('publishingHouses', 'testimonials'));
     }
 
     /**
