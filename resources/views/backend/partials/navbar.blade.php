@@ -29,7 +29,7 @@ $urlList = array('pulse', 'board');
                     {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
                     <?php
                       $single = array('support', 'faq', 'admin', 'community');
-                      $request_name = in_array($page['request_name'], $single) ?:
+                      $request_name = in_array($page['request_name'], $single) ? $page['request_name'] :
                           ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
                       ?>
                     <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$request_name) }}</a>
@@ -42,7 +42,7 @@ $urlList = array('pulse', 'board');
                       {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
                       <?php
                         $single = array('support', 'faq', 'admin', 'community');
-                        $request_name = in_array($page['request_name'], $single) ?:
+                        $request_name = in_array($page['request_name'], $single) ? $page['request_name'] :
                             ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
                         ?>
                       <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$request_name) }}</a>

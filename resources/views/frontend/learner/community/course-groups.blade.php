@@ -11,8 +11,19 @@
 @section('content')
 <div class="learner-container community-wrapper">
     <div class="container">
+        @include('frontend.learner.community._nav')
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if($errors->any())
+            <div class="alert alert-danger">
+                @foreach($errors->all() as $error)
+                    <p style="margin: 0;">{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
         <h1 class="community-title">Kursgrupper</h1>
-        <p class="community-subtitle">Private grupper for kursdeltagere. Diskuter med andre elever pa samme kurs.</p>
+        <p class="community-subtitle">Private grupper for kursdeltagere. Diskuter med andre elever på samme kurs.</p>
 
         @if($courses->count() > 0)
             <div class="row">
@@ -47,7 +58,7 @@
         @else
             <div class="card community-card">
                 <div class="card-body text-center py-5">
-                    <p class="text-muted">Du er ikke meldt pa noen kurs enna.</p>
+                    <p class="text-muted">Du er ikke meldt på noen kurs ennå.</p>
                 </div>
             </div>
         @endif

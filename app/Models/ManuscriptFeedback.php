@@ -12,6 +12,8 @@ class ManuscriptFeedback extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $table = 'manuscript_feedback';
+
     protected $fillable = [
         'excerpt_id',
         'user_id',

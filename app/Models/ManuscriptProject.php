@@ -39,7 +39,6 @@ class ManuscriptProject extends Model
 
     public function followers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'manuscript_followers', 'project_id', 'user_id')
-            ->withTimestamps();
+        return $this->belongsToMany(User::class, 'manuscript_followers', 'project_id', 'user_id');
     }
 }

@@ -11,6 +11,17 @@
 @section('content')
 <div class="learner-container community-wrapper">
     <div class="container">
+        @include('frontend.learner.community._nav')
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if($errors->any())
+            <div class="alert alert-danger">
+                @foreach($errors->all() as $error)
+                    <p style="margin: 0;">{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
         <div class="row">
             <div class="col-md-8">
                 <h1 class="community-title">Velkommen tilbake, {{ Auth::user()->first_name }} <span class="wave">👋</span></h1>
@@ -142,7 +153,6 @@
                                     <strong class="member-name">{{ ucwords($member->name) }}</strong>
                                     <span class="text-muted member-role">{{ is_array($member->genres) ? implode(', ', array_slice($member->genres, 0, 2)) : 'Forfatter' }}</span>
                                 </div>
-                                <span class="online-dot"></span>
                             </div>
                         @endforeach
                     </div>

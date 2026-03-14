@@ -11,6 +11,17 @@
 @section('content')
 <div class="learner-container community-wrapper">
     <div class="container">
+        @include('frontend.learner.community._nav')
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if($errors->any())
+            <div class="alert alert-danger">
+                @foreach($errors->all() as $error)
+                    <p style="margin: 0;">{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
         <a href="{{ route('learner.community.courseGroups') }}" class="back-link">
             <i class="fa fa-arrow-left"></i> Tilbake til kursgrupper
         </a>
@@ -110,7 +121,7 @@
                 @empty
                     <div class="card community-card">
                         <div class="card-body text-center py-4">
-                            <p class="text-muted">Ingen innlegg i denne gruppen enna. Bli den forste!</p>
+                            <p class="text-muted">Ingen innlegg i denne gruppen ennå. Bli den første!</p>
                         </div>
                     </div>
                 @endforelse

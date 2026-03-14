@@ -11,11 +11,18 @@
 @section('content')
 <div class="learner-container community-wrapper">
     <div class="container">
-        <h1 class="community-title">Min profil</h1>
-
+        @include('frontend.learner.community._nav')
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
+        @if($errors->any())
+            <div class="alert alert-danger">
+                @foreach($errors->all() as $error)
+                    <p style="margin: 0;">{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+        <h1 class="community-title">Min profil</h1>
 
         <div class="row">
             <div class="col-md-4">
@@ -58,7 +65,6 @@
                         <h4 class="widget-title">Rediger profil</h4>
                         <form action="{{ route('learner.community.updateProfile') }}" method="POST">
                             @csrf
-                            @method('PUT')
                             <div class="form-group">
                                 <label>Navn</label>
                                 <input type="text" name="name" class="form-control" value="{{ $profile->name }}">

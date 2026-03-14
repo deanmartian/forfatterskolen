@@ -23,6 +23,9 @@
             <span class="badge badge-danger">{{ $unreadNotifications }}</span>
         @endif
     </a>
+    <a href="{{ route('learner.community.courseGroups') }}" class="{{ ($activePage ?? '') === 'courseGroups' ? 'active' : '' }}">
+        <i class="fa fa-graduation-cap"></i> Kursgrupper
+    </a>
     <a href="{{ route('learner.community.profile') }}" class="{{ ($activePage ?? '') === 'profile' ? 'active' : '' }}">
         <i class="fa fa-user"></i> Min profil
     </a>

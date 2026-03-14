@@ -11,6 +11,17 @@
 @section('content')
 <div class="learner-container community-wrapper">
     <div class="container">
+        @include('frontend.learner.community._nav')
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if($errors->any())
+            <div class="alert alert-danger">
+                @foreach($errors->all() as $error)
+                    <p style="margin: 0;">{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
         <div class="d-flex" style="justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div>
                 <h1 class="community-title">Manusrom</h1>

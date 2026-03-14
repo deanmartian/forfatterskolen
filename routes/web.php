@@ -651,6 +651,15 @@ Route::domain($front)->group(function () {
             Route::post('/profile', [Frontend\CommunityForumController::class, 'updateProfile'])->name('updateProfile');
         });
 
+        // Learner Messaging
+        Route::prefix('messages')->name('learner.messages.')->group(function () {
+            Route::get('/', [Frontend\LearnerMessageController::class, 'index'])->name('index');
+            Route::get('/create', [Frontend\LearnerMessageController::class, 'create'])->name('create');
+            Route::post('/', [Frontend\LearnerMessageController::class, 'store'])->name('store');
+            Route::get('/{id}', [Frontend\LearnerMessageController::class, 'show'])->name('show');
+            Route::post('/{id}/reply', [Frontend\LearnerMessageController::class, 'reply'])->name('reply');
+        });
+
     });
 
     Route::get('/api/pilotleser/login', [Frontend\LearnerController::class, 'pilotleserLogin']);
@@ -1988,6 +1997,13 @@ Route::domain($admin)->group(function () {
             Route::put('/course-groups/{id}', [Backend\CommunityController::class, 'updateCourseGroup'])->name('course-groups.update');
             Route::delete('/course-groups/{id}', [Backend\CommunityController::class, 'destroyCourseGroup'])->name('course-groups.destroy');
         });
+
+        // Admin Messaging
+        Route::prefix('messages')->name('admin.messages.')->group(function () {
+            Route::get('/', [Backend\AdminMessageController::class, 'index'])->name('index');
+            Route::get('/{id}', [Backend\AdminMessageController::class, 'show'])->name('show');
+            Route::post('/{id}/reply', [Backend\AdminMessageController::class, 'reply'])->name('reply');
+        });
     });
 
     // Authentication
@@ -2034,6 +2050,17 @@ Route::domain($editor)->group(function () {
         Route::post('/project/{id}/update-editor-hours', [Editor\PageController::class, 'projectEditorHours'])->name('editor.project.update-editor-hours');
         Route::get('/calendar', [Editor\PageController::class, 'calendar'])->name('editor.calendar');
         Route::get('/calendar/export', [Editor\PageController::class, 'exportCalendar'])->name('editor.calendar.export');
+
+        // Editor Messaging
+        Route::prefix('messages')->name('editor.messages.')->group(function () {
+            Route::get('/', [Editor\EditorMessageController::class, 'index'])->name('index');
+            Route::get('/create', [Editor\EditorMessageController::class, 'create'])->name('create');
+            Route::post('/', [Editor\EditorMessageController::class, 'store'])->name('store');
+            Route::get('/broadcast', [Editor\EditorMessageController::class, 'broadcastCreate'])->name('broadcast');
+            Route::post('/broadcast', [Editor\EditorMessageController::class, 'broadcastStore'])->name('broadcast.store');
+            Route::get('/{id}', [Editor\EditorMessageController::class, 'show'])->name('show');
+            Route::post('/{id}/reply', [Editor\EditorMessageController::class, 'reply'])->name('reply');
+        });
     });
 
     Route::middleware('editor')->group(function () {

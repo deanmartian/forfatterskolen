@@ -22,8 +22,7 @@ class CourseGroup extends Model
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'course_group_members')
-            ->withPivot('role')
-            ->withTimestamps();
+            ->withPivot('role');
     }
 
     public function posts(): HasMany

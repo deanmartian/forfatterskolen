@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('community_notifications', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->unsignedInteger('user_id');
-            $table->enum('type', ['reply', 'mention', 'message', 'announcement', 'like']);
+            $table->string('type');
             $table->text('content');
             $table->unsignedInteger('from_user_id')->nullable();
             $table->boolean('read')->default(false);

@@ -34,7 +34,7 @@ class CommunityForumController extends Controller
                 'user_id'      => $user->id,
                 'name'         => trim($user->first_name . ' ' . $user->last_name),
                 'badge'        => 'aktiv_elev',
-                'access_level' => 'member',
+                'access_level' => 'community_member',
             ]);
         }
 
@@ -52,23 +52,6 @@ class CommunityForumController extends Controller
         return collect(explode(' ', $name))
             ->map(fn($w) => ucfirst($w))
             ->join(' ');
-    }
-
-    private function getInitials($name)
-    {
-        return collect(explode(' ', $name))
-            ->map(fn($w) => mb_strtoupper(mb_substr($w, 0, 1)))
-            ->join('');
-    }
-
-    private function timeAgo($date)
-    {
-        $diff = now()->diffInMinutes($date);
-        if ($diff < 60) return 'Akkurat nå';
-        $hours = floor($diff / 60);
-        if ($hours < 24) return $hours . 't siden';
-        $days = floor($hours / 24);
-        return $days . 'd siden';
     }
 
     private function unreadNotificationCount()
@@ -97,6 +80,7 @@ class CommunityForumController extends Controller
             'profile' => $profile,
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),
+            'activePage'          => 'home',
         ]);
     }
 
@@ -172,6 +156,7 @@ class CommunityForumController extends Controller
             'profile'     => $profile,
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),
+            'activePage'          => 'discussions',
         ]);
     }
 
@@ -205,6 +190,7 @@ class CommunityForumController extends Controller
             'profile'    => $profile,
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),
+            'activePage'          => 'discussions',
         ]);
     }
 
@@ -283,6 +269,7 @@ class CommunityForumController extends Controller
             'members'       => Profile::with('user')->get(),
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),
+            'activePage'          => 'messages',
         ]);
     }
 
@@ -343,6 +330,7 @@ class CommunityForumController extends Controller
             'members'       => Profile::with('user')->get(),
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),
+            'activePage'          => 'messages',
         ]);
     }
 
@@ -386,6 +374,7 @@ class CommunityForumController extends Controller
             'profile' => $profile,
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),
+            'activePage'          => 'members',
         ]);
     }
 
@@ -404,6 +393,7 @@ class CommunityForumController extends Controller
             'profile'       => $profile,
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),
+            'activePage'          => 'notifications',
         ]);
     }
 
@@ -439,6 +429,7 @@ class CommunityForumController extends Controller
             'profile'  => $profile,
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),
+            'activePage'          => 'manuscripts',
         ]);
     }
 
@@ -474,6 +465,7 @@ class CommunityForumController extends Controller
             'profile' => $profile,
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),
+            'activePage'          => 'manuscripts',
         ]);
     }
 
@@ -512,6 +504,7 @@ class CommunityForumController extends Controller
             'profile' => $profile,
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),
+            'activePage'          => 'manuscripts',
         ]);
     }
 
@@ -591,6 +584,7 @@ class CommunityForumController extends Controller
             'courses'              => $courses,
             'unreadNotifications'  => $this->unreadNotificationCount(),
             'unreadMessages'       => $this->unreadMessageCount(),
+            'activePage'           => 'courseGroups',
         ]);
     }
 
@@ -632,6 +626,7 @@ class CommunityForumController extends Controller
             'learnerCount'         => $learnerIds->count(),
             'unreadNotifications'  => $this->unreadNotificationCount(),
             'unreadMessages'       => $this->unreadMessageCount(),
+            'activePage'           => 'courseGroups',
         ]);
     }
 
@@ -671,6 +666,7 @@ class CommunityForumController extends Controller
             'profile' => $profile,
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),
+            'activePage'          => 'profile',
         ]);
     }
 

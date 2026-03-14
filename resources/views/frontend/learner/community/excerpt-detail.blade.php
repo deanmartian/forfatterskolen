@@ -11,6 +11,17 @@
 @section('content')
 <div class="learner-container community-wrapper">
     <div class="container">
+        @include('frontend.learner.community._nav')
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if($errors->any())
+            <div class="alert alert-danger">
+                @foreach($errors->all() as $error)
+                    <p style="margin: 0;">{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
         <a href="{{ route('learner.community.manuscript', $excerpt->project->id) }}" class="back-link">
             <i class="fa fa-arrow-left"></i> Tilbake til prosjektet
         </a>
