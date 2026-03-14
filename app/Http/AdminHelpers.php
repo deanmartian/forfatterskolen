@@ -1269,6 +1269,7 @@ class AdminHelpers
             ['id' => 11, 'option' => 'Admins', 'route' => 'admin.admin.index', 'request_name' => 'admin'],
             /* array( 'id' => 12, 'option' => 'Email', 'route' => 'admin.email.index', 'request_name' => 'email'), */
             ['id' => 12, 'option' => 'Head Editor', 'route' => 'admin.head-editor-dashboard', 'request_name' => 'head-editor'],
+            ['id' => 15, 'option' => 'Fellesskap', 'route' => 'admin.community.index', 'request_name' => 'community'],
         ];
 
         if ($id > 0) {

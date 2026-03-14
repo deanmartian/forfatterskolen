@@ -26,6 +26,7 @@ return [
         'assigned-webinar' => 'Tilordnede webinarer',
         'projects' => 'Prosjekt',
         'editors-note' => 'Redaktørinnstruks',
+        'community' => 'Fellesskap',
     ],
     'all-manuscripts' => 'All Manuscripts',
     'manuscripts' => '[0,1] Manus |[2,*] Manus',
