@@ -14,11 +14,11 @@ return new class extends Migration
             $table->text('content');
             $table->string('image_url')->nullable();
             $table->boolean('pinned')->default(false);
-            $table->uuid('course_group_id')->nullable();
+            $table->unsignedInteger('course_group_id')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('course_group_id')->references('id')->on('course_groups')->onDelete('set null');
+            $table->foreign('course_group_id')->references('id')->on('courses')->onDelete('set null');
             $table->index('user_id');
             $table->index('created_at');
             $table->index('course_group_id');

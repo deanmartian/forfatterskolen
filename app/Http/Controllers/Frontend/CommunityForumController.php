@@ -609,7 +609,7 @@ class CommunityForumController extends Controller
             $q->where('course_id', $courseId);
         })->pluck('user_id')->unique();
 
-        // Get posts for this course group (using course_group_id = course id as string)
+        // Get posts for this course group (course_group_id references courses.id)
         $posts = Post::where('course_group_id', $courseId)
             ->with('user', 'comments.user')
             ->orderByDesc('pinned')
