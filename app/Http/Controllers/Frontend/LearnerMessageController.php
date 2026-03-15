@@ -84,6 +84,17 @@ class LearnerMessageController extends Controller
             'body' => 'required|string',
         ]);
 
+        // Verify recipient is allowed (assigned editor or contactable admin)
+        $recipientId = (int) $request->recipient_id;
+        $allowedIds = collect(self::CONTACTABLE_ADMIN_IDS);
+        $preferredEditor = Auth::user()->preferredEditor;
+        if ($preferredEditor) {
+            $allowedIds->push($preferredEditor->editor_id);
+        }
+        if (!$allowedIds->contains($recipientId)) {
+            abort(403, 'Du kan ikke sende melding til denne mottakeren.');
+        }
+
         $conversation = Conversation::create([
             'subject' => $request->subject,
             'created_by' => Auth::id(),

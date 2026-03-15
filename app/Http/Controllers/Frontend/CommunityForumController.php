@@ -47,6 +47,14 @@ class CommunityForumController extends Controller
         return $profile && $profile->badge === 'admin';
     }
 
+    private function rejectIfSuspended()
+    {
+        $profile = Profile::where('user_id', Auth::id())->first();
+        if ($profile && $profile->is_suspended) {
+            abort(403, 'Kontoen din er suspendert.');
+        }
+    }
+
     private function formatName($name)
     {
         return collect(explode(' ', $name))
@@ -86,6 +94,7 @@ class CommunityForumController extends Controller
 
     public function storePost(Request $request)
     {
+        $this->rejectIfSuspended();
         $request->validate(['content' => 'required|string|max:2000']);
 
         Post::create([
@@ -99,6 +108,7 @@ class CommunityForumController extends Controller
 
     public function toggleLike($postId)
     {
+        $this->rejectIfSuspended();
         $userId = Auth::id();
         $existing = PostReaction::where('post_id', $postId)->where('user_id', $userId)->first();
 
@@ -118,6 +128,7 @@ class CommunityForumController extends Controller
 
     public function storeComment(Request $request, $postId)
     {
+        $this->rejectIfSuspended();
         $request->validate(['content' => 'required|string|max:1000']);
 
         PostComment::create([
@@ -162,6 +173,7 @@ class CommunityForumController extends Controller
 
     public function storeDiscussion(Request $request)
     {
+        $this->rejectIfSuspended();
         $request->validate([
             'title'    => 'required|string|max:255',
             'content'  => 'required|string|max:5000',
@@ -196,6 +208,7 @@ class CommunityForumController extends Controller
 
     public function storeReply(Request $request, $discussionId)
     {
+        $this->rejectIfSuspended();
         $request->validate(['content' => 'required|string|max:2000']);
 
         $discussion = Discussion::findOrFail($discussionId);
@@ -435,6 +448,7 @@ class CommunityForumController extends Controller
 
     public function storeManuscript(Request $request)
     {
+        $this->rejectIfSuspended();
         $request->validate([
             'title'       => 'required|string|max:255',
             'genre'       => 'required|string|max:100',
@@ -471,6 +485,7 @@ class CommunityForumController extends Controller
 
     public function storeExcerpt(Request $request, $projectId)
     {
+        $this->rejectIfSuspended();
         $project = ManuscriptProject::findOrFail($projectId);
         if ($project->user_id !== Auth::id()) abort(403);
 
@@ -510,6 +525,7 @@ class CommunityForumController extends Controller
 
     public function storeFeedback(Request $request, $excerptId)
     {
+        $this->rejectIfSuspended();
         $request->validate(['content' => 'required|string|max:5000']);
 
         $excerpt = ManuscriptExcerpt::findOrFail($excerptId);
@@ -538,13 +554,14 @@ class CommunityForumController extends Controller
 
     public function toggleFollow($projectId)
     {
+        $this->rejectIfSuspended();
         $project = ManuscriptProject::findOrFail($projectId);
         $userId = Auth::id();
 
         if ($project->followers()->where('user_id', $userId)->exists()) {
             $project->followers()->detach($userId);
         } else {
-            $project->followers()->attach($userId);
+            $project->followers()->attach($userId, ['id' => Str::uuid()]);
         }
 
         return redirect()->back();
@@ -632,6 +649,7 @@ class CommunityForumController extends Controller
 
     public function storeCourseGroupPost(Request $request, $courseId)
     {
+        $this->rejectIfSuspended();
         $request->validate(['content' => 'required|string|max:2000']);
 
         $user = Auth::user();
