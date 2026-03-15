@@ -71,6 +71,14 @@ class CommunityForumController extends Controller
             ->join(' ');
     }
 
+    private function safeOrderByPinned($query, $table)
+    {
+        if (\Schema::hasColumn($table, 'pinned')) {
+            $query->orderByDesc('pinned');
+        }
+        return $query;
+    }
+
     private function unreadNotificationCount()
     {
         return Notification::where('user_id', Auth::id())->where('read', false)->count();
@@ -86,11 +94,10 @@ class CommunityForumController extends Controller
     public function home()
     {
         $profile = $this->ensureProfile();
-        $posts = Post::with(['user.profile', 'reactions', 'comments.user.profile'])
-            ->whereNull('course_group_id')
-            ->orderByDesc('pinned')
-            ->orderByDesc('created_at')
-            ->get();
+        $postsQuery = Post::with(['user.profile', 'reactions', 'comments.user.profile'])
+            ->whereNull('course_group_id');
+        $this->safeOrderByPinned($postsQuery, 'posts');
+        $posts = $postsQuery->orderByDesc('created_at')->get();
 
         return view('frontend.learner.community.home', [
             'posts'   => $posts,
@@ -166,10 +173,9 @@ class CommunityForumController extends Controller
     public function discussions()
     {
         $profile = $this->ensureProfile();
-        $discussions = Discussion::with(['user.profile', 'replies'])
-            ->orderByDesc('pinned')
-            ->orderByDesc('created_at')
-            ->get();
+        $discussionsQuery = Discussion::with(['user.profile', 'replies']);
+        $this->safeOrderByPinned($discussionsQuery, 'discussions');
+        $discussions = $discussionsQuery->orderByDesc('created_at')->get();
 
         return view('frontend.learner.community.discussions', [
             'discussions' => $discussions,
@@ -636,11 +642,10 @@ class CommunityForumController extends Controller
         })->pluck('user_id')->unique();
 
         // Get posts for this course group (course_group_id references courses.id)
-        $posts = Post::where('course_group_id', $courseId)
-            ->with('user', 'comments.user')
-            ->orderByDesc('pinned')
-            ->orderByDesc('created_at')
-            ->get();
+        $cgPostsQuery = Post::where('course_group_id', $courseId)
+            ->with('user', 'comments.user');
+        $this->safeOrderByPinned($cgPostsQuery, 'posts');
+        $posts = $cgPostsQuery->orderByDesc('created_at')->get();
 
         // Get member profiles
         $members = Profile::whereIn('user_id', $learnerIds)->get();
