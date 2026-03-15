@@ -54,7 +54,7 @@
                 {{-- Post form --}}
                 <div class="card community-card mb-3">
                     <div class="card-body">
-                        <form action="{{ route('learner.community.storeCourseGroupPost', $course->id) }}" method="POST">
+                        <form action="{{ route('learner.community.storeCourseGroupPost', $course->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @php
                                 $profile = Auth::user()->profile ?? null;
@@ -63,9 +63,20 @@
                             <div class="d-flex" style="gap: 10px;">
                                 <div class="avatar-circle">{{ $initials }}</div>
                                 <div style="flex: 1;">
-                                    <textarea name="content" class="form-control community-textarea" rows="3" placeholder="Del noe med gruppen..." required></textarea>
-                                    <div class="text-right mt-2">
-                                        <button type="submit" class="btn community-btn-primary">Publiser</button>
+                                    <textarea name="content" id="cg-post-textarea" class="form-control community-textarea" rows="3" placeholder="Del noe med gruppen..." required></textarea>
+                                    <div class="post-form-toolbar">
+                                        <label for="cg-image-input" class="btn-action" style="cursor: pointer; margin: 0;" title="Legg til bilde">
+                                            <i class="fa fa-camera"></i> Bilde
+                                        </label>
+                                        <input type="file" name="image" id="cg-image-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;">
+                                        <span id="cg-image-name" style="font-size: 12px; color: #888;"></span>
+                                        <div class="emoji-picker-wrapper" data-target="cg-post-textarea">
+                                            <button type="button" class="emoji-toggle-btn btn-action" title="Emoji"><i class="fa fa-smile-o"></i></button>
+                                            <div class="emoji-popup"><emoji-picker></emoji-picker></div>
+                                        </div>
+                                        <div style="margin-left: auto;">
+                                            <button type="submit" class="btn community-btn-primary">Publiser</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -76,23 +87,30 @@
                 {{-- Posts --}}
                 @forelse($posts as $post)
                     @php
+                        $isBotPost = $post->is_bot_post ?? false;
                         $pProfile = $post->user->profile ?? null;
-                        $pName = $pProfile ? ucwords($pProfile->name) : 'Ukjent';
-                        $pInitials = collect(explode(' ', $pName))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('');
+                        $pName = $isBotPost ? 'Forfatterskolen' : ($pProfile ? ucwords($pProfile->name) : 'Ukjent');
+                        $pInitials = $isBotPost ? 'FS' : collect(explode(' ', $pName))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('');
                     @endphp
                     <div class="card community-card mb-3">
                         <div class="card-body">
                             <div class="d-flex" style="gap: 10px;">
-                                <div class="avatar-circle avatar-sm">{{ $pInitials }}</div>
+                                <div class="avatar-circle avatar-sm {{ $isBotPost ? 'avatar-bot' : '' }}">{{ $pInitials }}</div>
                                 <div style="flex: 1;">
                                     <div class="post-header">
                                         <strong>{{ $pName }}</strong>
-                                        @if($pProfile && $pProfile->badge)
+                                        @if($isBotPost)
+                                            <span class="user-badge bot-badge">Offisiell</span>
+                                        @elseif($pProfile && $pProfile->badge)
                                             <span class="user-badge">{{ str_replace('_', ' ', $pProfile->badge) }}</span>
                                         @endif
                                         <span class="post-time text-muted">{{ \Carbon\Carbon::parse($post->created_at)->diffForHumans() }}</span>
                                     </div>
                                     <p class="post-content">{{ $post->content }}</p>
+
+                                    @if($post->image_url)
+                                        <img src="{{ $post->image_url }}" alt="Bilde" class="post-image">
+                                    @endif
 
                                     {{-- Comments --}}
                                     @if($post->comments->count() > 0)
@@ -153,4 +171,17 @@
         </div>
     </div>
 </div>
+@stop
+
+@section('scripts')
+<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+<script>
+var cgImgInput = document.getElementById('cg-image-input');
+if (cgImgInput) {
+    cgImgInput.addEventListener('change', function() {
+        document.getElementById('cg-image-name').textContent = this.files.length > 0 ? this.files[0].name : '';
+    });
+}
+</script>
+@include('frontend.learner.community._emoji')
 @stop

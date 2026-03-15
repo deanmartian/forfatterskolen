@@ -1991,6 +1991,8 @@ Route::domain($admin)->group(function () {
             Route::get('/posts', [Backend\CommunityController::class, 'posts'])->name('posts');
             Route::post('/posts/{id}/toggle-pin', [Backend\CommunityController::class, 'togglePinPost'])->name('posts.toggle-pin');
             Route::delete('/posts/{id}', [Backend\CommunityController::class, 'destroyPost'])->name('posts.destroy');
+            Route::post('/posts/bot', [Backend\CommunityController::class, 'storeBotPost'])->name('posts.store-bot');
+            Route::post('/posts/generate-ai', [Backend\CommunityController::class, 'generateAiContent'])->name('posts.generate-ai');
             Route::get('/discussions', [Backend\CommunityController::class, 'discussions'])->name('discussions');
             Route::post('/discussions/{id}/toggle-pin', [Backend\CommunityController::class, 'togglePinDiscussion'])->name('discussions.toggle-pin');
             Route::delete('/discussions/{id}', [Backend\CommunityController::class, 'destroyDiscussion'])->name('discussions.destroy');

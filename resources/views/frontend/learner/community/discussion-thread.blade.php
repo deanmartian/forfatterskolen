@@ -88,7 +88,13 @@
                 <form action="{{ route('learner.community.storeReply', $discussion->id) }}" method="POST">
                     @csrf
                     <div class="form-group">
-                        <textarea name="content" class="form-control community-textarea" rows="3" placeholder="Del dine tanker..." required></textarea>
+                        <textarea name="content" id="reply-textarea" class="form-control community-textarea" rows="3" placeholder="Del dine tanker..." required></textarea>
+                        <div class="post-form-toolbar" style="justify-content: flex-start;">
+                            <div class="emoji-picker-wrapper" data-target="reply-textarea">
+                                <button type="button" class="emoji-toggle-btn btn-action" title="Emoji"><i class="fa fa-smile-o"></i></button>
+                                <div class="emoji-popup"><emoji-picker></emoji-picker></div>
+                            </div>
+                        </div>
                     </div>
                     <button type="submit" class="btn community-btn-primary">Publiser svar</button>
                 </form>
@@ -96,4 +102,9 @@
         </div>
     </div>
 </div>
+@stop
+
+@section('scripts')
+<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+@include('frontend.learner.community._emoji')
 @stop

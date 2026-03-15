@@ -16,6 +16,7 @@ class Profile extends Model
         'user_id',
         'name',
         'author_name',
+        'use_author_name',
         'avatar_url',
         'bio',
         'genres',
@@ -30,6 +31,7 @@ class Profile extends Model
         'genres' => 'array',
         'writing_interests' => 'array',
         'is_suspended' => 'boolean',
+        'use_author_name' => 'boolean',
     ];
 
     public function user(): BelongsTo

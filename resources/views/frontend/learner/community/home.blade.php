@@ -30,16 +30,27 @@
                 {{-- Create post --}}
                 <div class="card community-card mb-4">
                     <div class="card-body">
-                        <form action="{{ route('learner.community.storePost') }}" method="POST">
+                        <form action="{{ route('learner.community.storePost') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="d-flex" style="gap: 12px;">
                                 <div class="avatar-circle">
                                     {{ strtoupper(substr($profile->name ?? '', 0, 1)) }}{{ strtoupper(substr(explode(' ', $profile->name ?? '')[1] ?? '', 0, 1)) }}
                                 </div>
                                 <div style="flex: 1;">
-                                    <textarea name="content" class="form-control community-textarea" rows="3" placeholder="Hva tenker du på?" required></textarea>
-                                    <div class="text-right mt-2">
-                                        <button type="submit" class="btn community-btn-primary">Publiser</button>
+                                    <textarea name="content" id="post-textarea" class="form-control community-textarea" rows="3" placeholder="Hva tenker du på?" required></textarea>
+                                    <div class="post-form-toolbar">
+                                        <label for="post-image-input" class="btn-action" style="cursor: pointer; margin: 0;" title="Legg til bilde">
+                                            <i class="fa fa-camera"></i> Bilde
+                                        </label>
+                                        <input type="file" name="image" id="post-image-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;">
+                                        <span id="post-image-name" style="font-size: 12px; color: #888;"></span>
+                                        <div class="emoji-picker-wrapper" data-target="post-textarea">
+                                            <button type="button" class="emoji-toggle-btn btn-action" title="Emoji"><i class="fa fa-smile-o"></i></button>
+                                            <div class="emoji-popup"><emoji-picker></emoji-picker></div>
+                                        </div>
+                                        <div style="margin-left: auto;">
+                                            <button type="submit" class="btn community-btn-primary">Publiser</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -50,9 +61,10 @@
                 {{-- Posts feed --}}
                 @forelse($posts as $post)
                     @php
+                        $isBotPost = $post->is_bot_post ?? false;
                         $postProfile = $post->user->profile ?? null;
-                        $postName = $postProfile ? ucwords($postProfile->name) : 'Ukjent';
-                        $postInitials = collect(explode(' ', $postName))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('');
+                        $postName = $isBotPost ? 'Forfatterskolen' : ($postProfile ? ucwords($postProfile->name) : 'Ukjent');
+                        $postInitials = $isBotPost ? 'FS' : collect(explode(' ', $postName))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('');
                         $liked = $post->reactions->where('user_id', Auth::id())->count() > 0;
                     @endphp
                     <div class="card community-card mb-3">
@@ -62,11 +74,13 @@
                             @endif
 
                             <div class="d-flex" style="gap: 12px;">
-                                <div class="avatar-circle">{{ $postInitials }}</div>
+                                <div class="avatar-circle {{ $isBotPost ? 'avatar-bot' : '' }}">{{ $postInitials }}</div>
                                 <div style="flex: 1;">
                                     <div class="post-header">
                                         <strong>{{ $postName }}</strong>
-                                        @if($postProfile && $postProfile->badge)
+                                        @if($isBotPost)
+                                            <span class="user-badge bot-badge">Offisiell</span>
+                                        @elseif($postProfile && $postProfile->badge)
                                             <span class="user-badge">{{ $postProfile->badge }}</span>
                                         @endif
                                         <span class="text-muted post-time">{{ \Carbon\Carbon::parse($post->created_at)->diffForHumans() }}</span>
@@ -173,6 +187,7 @@
 @stop
 
 @section('scripts')
+<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 <script>
 document.querySelectorAll('.toggle-comments').forEach(function(btn) {
     btn.addEventListener('click', function() {
@@ -182,5 +197,15 @@ document.querySelectorAll('.toggle-comments').forEach(function(btn) {
         }
     });
 });
+
+// Image filename display
+var imgInput = document.getElementById('post-image-input');
+if (imgInput) {
+    imgInput.addEventListener('change', function() {
+        var nameSpan = document.getElementById('post-image-name');
+        nameSpan.textContent = this.files.length > 0 ? this.files[0].name : '';
+    });
+}
 </script>
+@include('frontend.learner.community._emoji')
 @stop

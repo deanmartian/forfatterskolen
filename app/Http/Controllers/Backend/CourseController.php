@@ -163,6 +163,7 @@ class CourseController extends Controller
         $course->photographer = $request->photographer;
         $course->hide_price = isset($request->hide_price) ? 1 : 0;
         $course->pay_later_with_application = isset($request->pay_later_with_application) ? 1 : 0;
+        $course->show_in_course_groups = isset($request->show_in_course_groups) ? 1 : 0;
         $course->meta_title = $request->meta_title;
         $course->meta_description = $request->meta_description;
         $course->free_for_days = $free_for_days;
@@ -267,6 +268,7 @@ class CourseController extends Controller
         $course->is_free = isset($request->is_free) ? 1 : 0;
         $course->hide_price = isset($request->hide_price) ? 1 : 0;
         $course->pay_later_with_application = isset($request->pay_later_with_application) ? 1 : 0;
+        $course->show_in_course_groups = isset($request->show_in_course_groups) ? 1 : 0;
         $course->meta_title = $request->meta_title;
         $course->meta_description = $request->meta_description;
         $course->free_for_days = $free_for_days;
