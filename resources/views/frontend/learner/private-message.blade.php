@@ -19,7 +19,7 @@
 /* ── BK-REDESIGN SCOPE ──────────────────────────────────────── */
 .bk-redesign { font-family: 'Source Sans 3', -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
 
-.bk-redesign .bk-page { max-width: 880px; margin: 0 auto; padding: 2rem 1rem; }
+.bk-redesign .bk-page { max-width: 880px; margin: 0 auto; padding: 2rem 1rem; padding-top: 3.5rem; }
 
 /* ── PAGE HEADER ──────────────────────────────────── */
 .bk-redesign .bk-header { margin-bottom: 1.5rem; }
@@ -28,13 +28,12 @@
 
 /* ── MOBILE SIDEBAR TOGGLE ──────────────────────────── */
 .bk-redesign .bk-mobile-toggle {
-	display: none; position: fixed; top: 12px; left: 12px; z-index: 1050;
+	display: flex; position: fixed; top: 12px; left: 12px; z-index: 1050;
 	width: 36px; height: 36px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.12);
 	background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer;
 	align-items: center; justify-content: center;
 }
 .bk-redesign .bk-mobile-toggle svg { width: 18px; height: 18px; stroke: #1a1a1a; fill: none; stroke-width: 2; stroke-linecap: round; }
-@media (max-width: 1026px) { .bk-redesign .bk-mobile-toggle { display: flex; } }
 
 /* ── TABS ─────────────────────────────────────────── */
 .bk-redesign .bk-tabs { display: flex; gap: 0; border-bottom: 2px solid rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
@@ -502,6 +501,21 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 });
+
+// Auto-collapse sidebar when content area is too narrow
+(function() {
+	var mainContent = document.getElementById('main-content');
+	var sidebar = document.getElementById('sidebar');
+	var mainContainer = document.getElementById('main-container');
+	if (mainContent && sidebar) {
+		var contentWidth = mainContent.offsetWidth;
+		if (contentWidth < 700 && sidebar.classList.contains('sidebar-visible')) {
+			sidebar.classList.remove('sidebar-visible');
+			if (mainContainer) mainContainer.classList.remove('enlarge');
+			document.body.classList.remove('sidebar-open');
+		}
+	}
+})();
 </script>
 
 @stop

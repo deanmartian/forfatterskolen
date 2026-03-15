@@ -18,7 +18,7 @@
 .op-redesign { font-family: 'Source Sans 3', -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
 .op-redesign #topbar { display: none !important; }
 
-.op-redesign .op-page { max-width: 880px; margin: 0 auto; padding: 2rem 1rem; }
+.op-redesign .op-page { max-width: 880px; margin: 0 auto; padding: 2rem 1rem; padding-top: 3.5rem; }
 
 /* ── PAGE HEADER ──────────────────────────────────── */
 .op-redesign .op-header { margin-bottom: 1.5rem; }
@@ -27,13 +27,12 @@
 
 /* ── MOBILE SIDEBAR TOGGLE ──────────────────────────── */
 .op-redesign .op-mobile-toggle {
-	display: none; position: fixed; top: 12px; left: 12px; z-index: 1050;
+	display: flex; position: fixed; top: 12px; left: 12px; z-index: 1050;
 	width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.12);
 	background: #fff; align-items: center; justify-content: center; cursor: pointer;
 	box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 .op-redesign .op-mobile-toggle svg { width: 20px; height: 20px; stroke: #1a1a1a; }
-@media (max-width: 1026px) { .op-redesign .op-mobile-toggle { display: flex; } }
 
 /* ── TABS ─────────────────────────────────────────── */
 .op-redesign .op-tabs {
@@ -1236,6 +1235,21 @@
 		var panel = document.getElementById('op-panel-' + tabId);
 		if (panel) panel.classList.add('active');
 	}
+
+	// Auto-collapse sidebar when content area is too narrow
+	(function() {
+		var mainContent = document.getElementById('main-content');
+		var sidebar = document.getElementById('sidebar');
+		var mainContainer = document.getElementById('main-container');
+		if (mainContent && sidebar) {
+			var contentWidth = mainContent.offsetWidth;
+			if (contentWidth < 700 && sidebar.classList.contains('sidebar-visible')) {
+				sidebar.classList.remove('sidebar-visible');
+				if (mainContainer) mainContainer.classList.remove('enlarge');
+				document.body.classList.remove('sidebar-open');
+			}
+		}
+	})();
 
 	/* ── Existing functionality ───────────────────────── */
 	$(window).on('load', function() {
