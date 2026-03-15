@@ -383,6 +383,7 @@
                                                                                                               data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
                                                                                                               data-plan-id="{{ optional($order->paymentPlan)->id }}"
                                                                                                               data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'
+                                                                                                              data-total="{{ $order->price - $order->discount }}"
                                                                                                               disabled style="pointer-events: none;">
                                                                                                                       + {{ trans('site.create-invoice') }}
                                                                                                              </button>
@@ -877,48 +878,80 @@
 	</div>
 
         <div id="createInvoiceModal" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title">{{ trans('site.create-invoice') }}</h4>
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content" style="border-radius: 10px; overflow: hidden;">
+				<div class="modal-header" style="border-bottom: 3px solid #5F0000; padding: 16px 24px;">
+					<h4 class="modal-title" style="color: #5F0000; font-weight: 700; font-size: 18px;">Opprett betalingsplan</h4>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
-				<div class="modal-body">
-					<form method="POST" action="" onsubmit="disableSubmit(this)">
+				<div class="modal-body" style="padding: 24px;">
+					<form method="POST" action="" onsubmit="disableSubmit(this)" id="createInvoiceForm">
 						{{ csrf_field() }}
+						<input type="hidden" name="payment_plan_id" id="ppPlanIdInput" value="">
+						<input type="hidden" name="payment_plan_in_months" id="ppCustomMonthsInput" value="">
+						<input type="hidden" name="split_invoice" value="1">
 
-                                                <div class="form-group">
-                                                        <label>{{ trans('site.front.form.payment-plan') }}</label> <br>
-                                                        <div class="payment-plan-options">
-                                                                @foreach(App\PaymentPlan::orderBy('division', 'asc')->get() as $paymentPlan)
-                                                                        <div class="col-sm-6 payment-plan-option" data-payment-plan-option="true">
-                                                                                <input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
-                                                                                name="payment_plan_id" value="{{$paymentPlan->id}}" data-plan="{{trim($paymentPlan->plan)}}"
-                                                                                        id="{{$paymentPlan->plan}}" onchange="payment_plan_change(this)"
-                                                                                        data-plan-id="{{ $paymentPlan->id }}">
-                                                                                <label>{{$paymentPlan->plan}} </label>
-                                                                        </div>
-                                                                @endforeach
+						{{-- Totalbeløp-banner --}}
+						<div style="background: #FFEEE8; border-radius: 8px; padding: 14px 20px; margin-bottom: 20px; text-align: center;">
+							<span style="font-size: 13px; color: #5D7285; text-transform: uppercase; letter-spacing: 0.5px;">Totalbeløp</span>
+							<div id="ppTotalAmount" style="font-size: 26px; font-weight: 700; color: #5F0000;">0 kr</div>
+						</div>
 
-                                                                <div class="col-sm-6 payment-plan-option" data-payment-plan-option="true">
-                                                                        <input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
-                                                                        name="payment_plan_id" value="10" data-plan="{{trim('24 måneder')}}"
-                                                                                id="24 måneder" onchange="payment_plan_change(this)"
-                                                                                data-plan-id="10">
-                                                                        <label>24 måneder</label>
-                                                                </div>
-                                                                <div class="clearfix"></div>
-                                                        </div>
-                                                </div>
+						{{-- Velg betalingsplan --}}
+						<div class="form-group">
+							<label style="font-weight: 600; color: #2e3a59; margin-bottom: 10px; display: block;">Velg betalingsplan</label>
+							<div id="ppMonthCards" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+								{{-- Fylles av JS --}}
+							</div>
+						</div>
 
-						<button type="submit" class="btn btn-primary pull-right submitInvoice">
-							{{ trans('site.create-invoice') }}
-						</button>
+						{{-- Egendefinert antall måneder --}}
+						<div class="form-group" style="margin-bottom: 20px;">
+							<label style="font-size: 13px; color: #5D7285;">Eller skriv inn antall måneder</label>
+							<input type="number" id="ppCustomMonths" class="form-control" min="1" max="60" placeholder="f.eks. 4"
+								style="max-width: 180px; border-radius: 6px;">
+						</div>
+
+						{{-- Månedlig beløp --}}
+						<div id="ppMonthlyRow" style="display: none; background: #e8f5e9; border-radius: 6px; padding: 10px 16px; margin-bottom: 16px; text-align: center;">
+							<span style="color: #2e7d32; font-size: 14px;">= <strong id="ppMonthlyAmount">0 kr</strong>/mnd</span>
+						</div>
+
+						{{-- Forhåndsvisning av fakturaer --}}
+						<div id="ppPreviewSection" style="display: none; margin-bottom: 20px;">
+							<label style="font-weight: 600; color: #2e3a59; margin-bottom: 8px; display: block;">Fakturaoversikt</label>
+							<div style="max-height: 250px; overflow-y: auto; border: 1px solid #e4e8ed; border-radius: 6px;">
+								<table class="table table-sm" style="margin-bottom: 0; font-size: 13px;">
+									<thead style="background: #f8f9fa;">
+										<tr>
+											<th style="padding: 8px 12px; color: #5D7285; font-weight: 600;">#</th>
+											<th style="padding: 8px 12px; color: #5D7285; font-weight: 600;">Beløp</th>
+											<th style="padding: 8px 12px; color: #5D7285; font-weight: 600;">Forfallsdato</th>
+										</tr>
+									</thead>
+									<tbody id="ppPreviewBody">
+									</tbody>
+									<tfoot style="background: #f8f9fa; font-weight: 600;">
+										<tr>
+											<td style="padding: 8px 12px;">Totalt</td>
+											<td style="padding: 8px 12px;" id="ppPreviewTotal">0 kr</td>
+											<td></td>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+						</div>
+
+						<div class="text-right">
+							<button type="button" class="btn" data-dismiss="modal" style="margin-right: 8px;">Avbryt</button>
+							<button type="submit" class="btn submitInvoice" style="background: #5F0000; color: #fff; border: none; border-radius: 8px; padding: 8px 24px; font-weight: 600;">
+								Opprett betaling
+							</button>
+						</div>
 						<div class="clearfix"></div>
 					</form>
 				</div>
 			</div>
-
 		</div>
 	</div>
 
@@ -928,255 +961,254 @@
 	<script type="text/javascript" src="{{ asset('js/app.js?v='.time()) }}"></script>
 	<script>
         const invoiceProcessingMessage = @json(trans('site.pay-later-invoice-processing'));
-        const noPaymentPlanMessage = @json(__('No payment plans available for this purchase.'));
-        const paymentPlanOptionSelector = '[data-payment-plan-option]';
         let invoiceSubmissionInProgress = false;
 
-        function lockInvoiceModal(modal, submitButton) {
-            if (!modal || !modal.length || invoiceSubmissionInProgress) {
+        // Alle betalingsplaner fra DB
+        const allPaymentPlans = @json(App\PaymentPlan::orderBy('division', 'asc')->get()->map(function($p) {
+            return ['id' => $p->id, 'plan' => $p->plan, 'division' => $p->division];
+        }));
+        // Legg til 24 mnd som ekstra
+        allPaymentPlans.push({id: 10, plan: '24 måneder', division: 24});
+
+        let ppTotal = 0;
+        let ppSelectedMonths = 0;
+        let ppSelectedPlanId = null;
+
+        function formatKr(amount) {
+            return Math.round(amount).toLocaleString('nb-NO') + ' kr';
+        }
+
+        function renderMonthCards(allowedPlanIds, total) {
+            var container = $('#ppMonthCards');
+            container.empty();
+
+            var plans = allPaymentPlans.filter(function(p) {
+                return allowedPlanIds.indexOf(p.id) !== -1;
+            });
+
+            if (!plans.length) {
+                container.html('<p class="text-muted">Ingen betalingsplaner tilgjengelig.</p>');
                 return;
             }
 
-            invoiceSubmissionInProgress = true;
+            plans.forEach(function(plan) {
+                var monthly = plan.division > 1 ? Math.floor(total / plan.division) : total;
+                var label = plan.division === 1 ? plan.plan : plan.division + ' mnd';
+                var sublabel = plan.division > 1 ? '(' + formatKr(monthly) + '/mnd)' : '';
 
+                var card = $('<div class="pp-month-card" data-plan-id="' + plan.id + '" data-division="' + plan.division + '"></div>');
+                card.css({
+                    border: '2px solid #e4e8ed',
+                    borderRadius: '8px',
+                    padding: '12px 16px',
+                    cursor: 'pointer',
+                    textAlign: 'center',
+                    minWidth: '120px',
+                    flex: '1 1 auto',
+                    transition: 'border-color 0.2s'
+                });
+                card.html('<div style="font-weight:600;color:#2e3a59;">' + label + '</div>' +
+                    (sublabel ? '<div style="font-size:12px;color:#5D7285;">' + sublabel + '</div>' : ''));
+
+                card.on('click', function() {
+                    selectPlan(plan.id, plan.division);
+                });
+
+                container.append(card);
+            });
+        }
+
+        function selectPlan(planId, division) {
+            ppSelectedPlanId = planId;
+            ppSelectedMonths = division;
+
+            // Oppdater hidden inputs
+            $('#ppPlanIdInput').val(planId);
+            $('#ppCustomMonthsInput').val('');
+            $('#ppCustomMonths').val('');
+
+            // Highlight valgt kort
+            $('.pp-month-card').css('border-color', '#e4e8ed');
+            $('.pp-month-card[data-plan-id="' + planId + '"]').css('border-color', '#5F0000');
+
+            updatePreview();
+        }
+
+        function selectCustomMonths(months) {
+            months = parseInt(months, 10);
+            if (isNaN(months) || months < 1) {
+                $('#ppMonthlyRow').hide();
+                $('#ppPreviewSection').hide();
+                return;
+            }
+
+            ppSelectedPlanId = null;
+            ppSelectedMonths = months;
+
+            // Fjern plan-ID, bruk custom
+            $('#ppPlanIdInput').val('');
+            $('#ppCustomMonthsInput').val(months);
+
+            // Fjern highlight fra kort
+            $('.pp-month-card').css('border-color', '#e4e8ed');
+
+            updatePreview();
+        }
+
+        function updatePreview() {
+            var months = ppSelectedMonths;
+            var total = ppTotal;
+
+            if (!months || months < 1 || !total) {
+                $('#ppMonthlyRow').hide();
+                $('#ppPreviewSection').hide();
+                return;
+            }
+
+            var monthly = Math.floor(total / months);
+            var remainder = total - (monthly * months);
+
+            // Månedlig beløp
+            if (months > 1) {
+                $('#ppMonthlyAmount').text(formatKr(monthly));
+                $('#ppMonthlyRow').show();
+            } else {
+                $('#ppMonthlyRow').hide();
+            }
+
+            // Forhåndsvisning tabell
+            var tbody = $('#ppPreviewBody');
+            tbody.empty();
+
+            var baseDate = new Date();
+            var runningTotal = 0;
+
+            for (var i = 1; i <= months; i++) {
+                var amount = monthly;
+                if (i === months) {
+                    amount = monthly + remainder; // siste faktura får resten
+                }
+                runningTotal += amount;
+
+                var dueDate = new Date(baseDate);
+                dueDate.setMonth(dueDate.getMonth() + i);
+                var dateStr = ('0' + dueDate.getDate()).slice(-2) + '.' +
+                              ('0' + (dueDate.getMonth() + 1)).slice(-2) + '.' +
+                              dueDate.getFullYear();
+
+                tbody.append(
+                    '<tr>' +
+                    '<td style="padding:8px 12px;">Faktura ' + i + '</td>' +
+                    '<td style="padding:8px 12px;">' + formatKr(amount) + '</td>' +
+                    '<td style="padding:8px 12px;">' + dateStr + '</td>' +
+                    '</tr>'
+                );
+            }
+
+            $('#ppPreviewTotal').text(formatKr(runningTotal));
+            $('#ppPreviewSection').show();
+        }
+
+        // Lock modal during submission
+        function lockInvoiceModal(modal, submitButton) {
+            if (!modal || !modal.length || invoiceSubmissionInProgress) return;
+            invoiceSubmissionInProgress = true;
             if (submitButton && submitButton.length) {
                 submitButton.prop('disabled', true).addClass('disabled');
             }
-
-            const closeButtons = modal.find('[data-dismiss="modal"], .close');
+            var closeButtons = modal.find('[data-dismiss="modal"], .close');
             closeButtons.each(function () {
-                const button = $(this);
-                button.attr('data-dismiss-disabled', 'true');
-                button.removeAttr('data-dismiss');
-                button.prop('disabled', true).addClass('disabled');
-                button.css('pointer-events', 'none');
+                $(this).attr('data-dismiss-disabled', 'true').removeAttr('data-dismiss')
+                    .prop('disabled', true).addClass('disabled').css('pointer-events', 'none');
             });
-
-            const modalInstance = modal.data('bs.modal');
+            var modalInstance = modal.data('bs.modal');
             if (modalInstance) {
-                if (typeof modal.data('invoice-original-backdrop') === 'undefined') {
-                    modal.data('invoice-original-backdrop', modalInstance.options.backdrop);
-                }
-
-                if (typeof modal.data('invoice-original-keyboard') === 'undefined') {
-                    modal.data('invoice-original-keyboard', modalInstance.options.keyboard);
-                }
-
+                modal.data('invoice-original-backdrop', modalInstance.options.backdrop);
+                modal.data('invoice-original-keyboard', modalInstance.options.keyboard);
                 modalInstance.options.backdrop = 'static';
                 modalInstance.options.keyboard = false;
             }
-
             modal.off('click.dismiss.bs.modal');
-            modal.on('hide.bs.modal.invoice', function (event) {
-                if (invoiceSubmissionInProgress) {
-                    event.preventDefault();
-                }
+            modal.on('hide.bs.modal.invoice', function (e) {
+                if (invoiceSubmissionInProgress) e.preventDefault();
             });
-
             if (!$('.invoice-submit-overlay').length) {
-                const overlay = $('<div class="invoice-submit-overlay"><div class="invoice-submit-message"></div></div>');
-                overlay.css({
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    background: 'rgba(255,255,255,0.7)',
-                    'z-index': 1055,
-                    display: 'flex',
-                    'align-items': 'center',
-                    'justify-content': 'center',
-                    'text-align': 'center',
-                    'font-size': '18px',
-                    color: '#333',
-                    padding: '20px'
-                });
-
-                overlay.find('.invoice-submit-message').text(invoiceProcessingMessage);
+                var overlay = $('<div class="invoice-submit-overlay"></div>').css({
+                    position:'fixed',top:0,left:0,width:'100%',height:'100%',
+                    background:'rgba(255,255,255,0.7)',zIndex:1055,display:'flex',
+                    alignItems:'center',justifyContent:'center',textAlign:'center',
+                    fontSize:'18px',color:'#333',padding:'20px'
+                }).text(invoiceProcessingMessage);
                 $('body').append(overlay);
             }
         }
 
+        // Eksisterende knapp-handlers
         $(".vippsFakturaBtn").click(function() {
-            let action = $(this).data('action');
-            $("#vippsFakturaModal").find('form').attr('action', action);
+            $("#vippsFakturaModal").find('form').attr('action', $(this).data('action'));
         });
 
         $(".viewOrderBtn").click(function(){
-           let fields = $(this).data('fields');
-           let modal = $("#viewOrderModal");
-
+           var fields = $(this).data('fields');
+           var modal = $("#viewOrderModal");
            modal.find("#displayDate").text(fields.created_at_formatted);
-
-           if (fields.type === 1) {
-               modal.find(".package-variation").text(fields.item + " - " + fields.packageVariation);
-		   }
-
-            if (fields.type === 2) {
-                modal.find(".package-variation").text(fields.item);
-            }
-
-			if (fields.type > 2) {
-				modal.find(".package-variation").text(fields.payment_mode_id === 1 ? fields.packageVariation : fields.item);
-			}
-
+           if (fields.type === 1) modal.find(".package-variation").text(fields.item + " - " + fields.packageVariation);
+           if (fields.type === 2) modal.find(".package-variation").text(fields.item);
+           if (fields.type > 2) modal.find(".package-variation").text(fields.payment_mode_id === 1 ? fields.packageVariation : fields.item);
            modal.find(".payment-mode").text(fields.payment_mode_id === 1 ? 'Bankoverføring' : '');
            modal.find(".payment-plan").text(fields.payment_plan.plan);
-
            modal.find('.price-formatted').text(fields.price_formatted);
-
            modal.find('.discount-row').removeClass('hide');
            modal.find('.discount-formatted').text(fields.discount_formatted);
-
-           if (!fields.discount) {
-               modal.find('.discount-row').addClass('hide');
-		   }
-
-		   modal.find('.per-month-row').addClass('hide');
-		   if (fields.plan_id !== 8) {
-               modal.find('.per-month-row').removeClass('hide');
-		   }
-
-            modal.find('.additional-price-row').addClass('hide');
-            if (fields.coaching_time && fields.coaching_time.additional_price) {
-                modal.find('.additional-price-row').removeClass('hide');
-                modal.find('.additional-price').text(fields.coaching_time.additional_price_formatted);
-			}
-
-		   modal.find('.per-month').text(fields.monthly_price_formatted);
-		   modal.find('.total-formatted').text(fields.total_formatted);
+           if (!fields.discount) modal.find('.discount-row').addClass('hide');
+           modal.find('.per-month-row').addClass('hide');
+           if (fields.plan_id !== 8) modal.find('.per-month-row').removeClass('hide');
+           modal.find('.additional-price-row').addClass('hide');
+           if (fields.coaching_time && fields.coaching_time.additional_price) {
+               modal.find('.additional-price-row').removeClass('hide');
+               modal.find('.additional-price').text(fields.coaching_time.additional_price_formatted);
+           }
+           modal.find('.per-month').text(fields.monthly_price_formatted);
+           modal.find('.total-formatted').text(fields.total_formatted);
 		});
 
         $(".downloadReceipt").click(function(){
-            let fields = $(this).data('fields');
-            let type = fields.svea_invoice_id ? 'invoice' : 'receipt';
-            const link = document.createElement('a');
+            var fields = $(this).data('fields');
+            var type = fields.svea_invoice_id ? 'invoice' : 'receipt';
+            var link = document.createElement('a');
             link.href = '/account/invoice/' + fields.id + '/download/' + type + '?v=' + Date.now();
-            // link.setAttribute('download', 'test.doc');
             document.body.appendChild(link);
             link.click();
 		});
 
         $(".setVippsEFakturaBtn").click(function(){
-            let vipps_phone_number = $(this).data('vipps-number');
-            $("#setVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
+            $("#setVippsEFakturaModal").find('input[name=mobile_number]').val($(this).data('vipps-number'));
 		});
 
         $(".stopVippsEFakturaBtn").click(function(){
-            let vipps_phone_number = $(this).data('vipps-number');
-            $("#stopVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
+            $("#stopVippsEFakturaModal").find('input[name=mobile_number]').val($(this).data('vipps-number'));
         });
 
-        function collectAllPaymentPlans(modal) {
-                let cachedPlans = modal.data('all-payment-plans');
+        // Custom months input
+        $('#ppCustomMonths').on('input', function() {
+            selectCustomMonths($(this).val());
+        });
 
-                if (cachedPlans) {
-                        return cachedPlans;
-                }
-
-                let plans = [];
-
-                modal.find('.payment-plan-options').find(paymentPlanOptionSelector).each(function () {
-                        let option = $(this);
-                        let input = option.find('input[name="payment_plan_id"]');
-
-                        if (!input.length) {
-                                return;
-                        }
-
-                        let planId = parseInt(input.data('plan-id'), 10);
-
-                        plans.push({
-                                value: input.val(),
-                                plan: input.data('plan'),
-                                planId: planId,
-                                id: input.attr('id'),
-                                label: option.find('label').text().trim()
-                        });
-                });
-
-                plans = plans.filter(function (plan) {
-                        return !isNaN(plan.planId);
-                });
-
-                modal.data('all-payment-plans', plans);
-
-                return plans;
-        }
-
-        function renderPaymentPlanOptions(modal, plans) {
-                let container = modal.find('.payment-plan-options');
-                container.empty();
-
-                if (!plans || !plans.length) {
-                        let message = $('<p class="text-muted no-payment-plan-message"></p>').text(noPaymentPlanMessage);
-                        container.append(message);
-                        return false;
-                }
-
-                plans.forEach(function (plan) {
-                        let optionWrapper = $('<div class="col-sm-6 payment-plan-option" data-payment-plan-option="true"></div>');
-                        let input = $('<input type="radio" name="payment_plan_id">');
-
-                        input.val(plan.value);
-                        if (plan.plan) {
-                                input.attr('data-plan', plan.plan);
-                        }
-                        input.attr('data-plan-id', plan.planId);
-
-                        if (plan.id) {
-                                input.attr('id', plan.id);
-                        }
-
-                        input.on('change', function () {
-                                payment_plan_change(this);
-                        });
-
-                        let label = $('<label></label>').text(plan.label + ' ');
-
-                        optionWrapper.append(input);
-                        optionWrapper.append(label);
-
-                        container.append(optionWrapper);
-                });
-
-                container.append('<div class="clearfix"></div>');
-
-                return true;
-        }
-
+        // Modal reset ved åpning/lukking
         $('#createInvoiceModal').on('shown.bs.modal', function () {
             invoiceSubmissionInProgress = false;
             $('.invoice-submit-overlay').remove();
-
-            const modal = $(this);
+            var modal = $(this);
             modal.off('hide.bs.modal.invoice');
-
             modal.find('[data-dismiss-disabled]').each(function () {
-                const button = $(this);
-                button.removeAttr('data-dismiss-disabled');
-                button.attr('data-dismiss', 'modal');
-                button.prop('disabled', false).removeClass('disabled');
-                button.css('pointer-events', '');
+                $(this).removeAttr('data-dismiss-disabled').attr('data-dismiss', 'modal')
+                    .prop('disabled', false).removeClass('disabled').css('pointer-events', '');
             });
-
-            const submitButton = modal.find('.submitInvoice');
-            submitButton.prop('disabled', false).removeClass('disabled');
-
-            const modalInstance = modal.data('bs.modal');
-            if (modalInstance) {
-                const originalBackdrop = modal.data('invoice-original-backdrop');
-                const originalKeyboard = modal.data('invoice-original-keyboard');
-
-                modalInstance.options.backdrop = typeof originalBackdrop !== 'undefined' ? originalBackdrop : true;
-                modalInstance.options.keyboard = typeof originalKeyboard !== 'undefined' ? originalKeyboard : true;
-            }
+            modal.find('.submitInvoice').prop('disabled', false).removeClass('disabled');
         });
 
-        $('#createInvoiceModal form').on('submit', function () {
-            const modal = $('#createInvoiceModal');
-            const submitButton = modal.find('.submitInvoice');
-            lockInvoiceModal(modal, submitButton);
+        $('#createInvoiceForm').on('submit', function () {
+            lockInvoiceModal($('#createInvoiceModal'), $('#createInvoiceModal .submitInvoice'));
         });
 
         $('#createInvoiceModal').on('hidden.bs.modal', function () {
@@ -1184,122 +1216,65 @@
             $('.invoice-submit-overlay').remove();
         });
 
-        let createInvoiceReady = false;
-        const createInvoiceButtons = $(".createInvoiceBtn");
-
-        createInvoiceButtons
-                .prop('disabled', true)
-                .addClass('disabled')
-                .css('pointer-events', 'none');
+        // createInvoiceBtn — åpne modal med riktige data
+        var createInvoiceReady = false;
+        var createInvoiceButtons = $(".createInvoiceBtn");
+        createInvoiceButtons.prop('disabled', true).addClass('disabled').css('pointer-events', 'none');
 
         $(window).on('load', function () {
-                createInvoiceReady = true;
-                createInvoiceButtons
-                        .prop('disabled', false)
-                        .removeClass('disabled')
-                        .css('pointer-events', '');
+            createInvoiceReady = true;
+            createInvoiceButtons.prop('disabled', false).removeClass('disabled').css('pointer-events', '');
         });
 
         $(".createInvoiceBtn").click(function(event) {
-                        if (!createInvoiceReady) {
-                                event.preventDefault();
-                                event.stopImmediatePropagation();
-                                return false;
-                        }
+            if (!createInvoiceReady) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                return false;
+            }
 
-                        let action = $(this).data('action');
-                        let modal = $("#createInvoiceModal");
-                        let submitButton = modal.find('.submitInvoice');
+            var action = $(this).data('action');
+            var modal = $("#createInvoiceModal");
+            modal.find('form').attr('action', action);
 
-                        modal.find('form').attr('action', action);
+            // Total
+            ppTotal = parseFloat($(this).attr('data-total')) || 0;
+            $('#ppTotalAmount').text(formatKr(ppTotal));
 
-                        let rawPlanIds = $(this).attr('data-payment-plan-ids');
-                        let currentPlanId = $(this).attr('data-plan-id');
-                        let allowedPlanIds = [];
+            // Reset
+            ppSelectedPlanId = null;
+            ppSelectedMonths = 0;
+            $('#ppPlanIdInput').val('');
+            $('#ppCustomMonthsInput').val('');
+            $('#ppCustomMonths').val('');
+            $('#ppMonthlyRow').hide();
+            $('#ppPreviewSection').hide();
 
-                        if (rawPlanIds) {
-                                try {
-                                        let parsedPlanIds = JSON.parse(rawPlanIds);
+            // Parse allowed plan IDs
+            var rawPlanIds = $(this).attr('data-payment-plan-ids');
+            var allowedPlanIds = [];
 
-                                        if (Array.isArray(parsedPlanIds)) {
-                                                allowedPlanIds = parsedPlanIds
-                                                        .map(function (planId) {
-                                                                return parseInt(planId, 10);
-                                                        })
-                                                        .filter(function (planId) {
-                                                                return !isNaN(planId);
-                                                        });
-                                        }
-                                } catch (error) {
-                                        allowedPlanIds = rawPlanIds.split(',')
-                                                .map(function (planId) {
-                                                        return parseInt(planId, 10);
-                                                })
-                                                .filter(function (planId) {
-                                                        return !isNaN(planId);
-                                                });
-                                }
-                        }
+            if (rawPlanIds) {
+                try {
+                    var parsed = JSON.parse(rawPlanIds);
+                    if (Array.isArray(parsed)) {
+                        allowedPlanIds = parsed.map(function(id) { return parseInt(id, 10); })
+                            .filter(function(id) { return !isNaN(id); });
+                    }
+                } catch (e) {
+                    allowedPlanIds = rawPlanIds.split(',').map(function(id) { return parseInt(id, 10); })
+                        .filter(function(id) { return !isNaN(id); });
+                }
+            }
 
-                        let hasAllowedPlanIds = allowedPlanIds.length > 0;
-                        let parsedCurrentPlanId = parseInt(currentPlanId, 10);
+            // Render månedskort
+            renderMonthCards(allowedPlanIds, ppTotal);
 
-                        if (isNaN(parsedCurrentPlanId)) {
-                                parsedCurrentPlanId = null;
-                        }
-
-                        let allPaymentPlans = collectAllPaymentPlans(modal);
-                        let plansToRender = allPaymentPlans;
-
-                        if (hasAllowedPlanIds) {
-                                plansToRender = allPaymentPlans.filter(function (plan) {
-                                        return allowedPlanIds.indexOf(plan.planId) !== -1;
-                                });
-                        }
-
-                        let hasPlans = renderPaymentPlanOptions(modal, plansToRender);
-                        let splitInvoiceOptions = modal.find('input[name="split_invoice"]');
-
-                        if (!hasPlans) {
-                                splitInvoiceOptions.prop('checked', false);
-                                splitInvoiceOptions.prop('disabled', true);
-                                submitButton.prop('disabled', true).addClass('disabled');
-                                return;
-                        }
-
-                        submitButton.prop('disabled', false).removeClass('disabled');
-
-                        let paymentPlanInputs = modal.find('input[name="payment_plan_id"]');
-                        let selectedInput = $();
-
-                        if (parsedCurrentPlanId !== null) {
-                                selectedInput = paymentPlanInputs.filter(function () {
-                                        return parseInt($(this).data('plan-id'), 10) === parsedCurrentPlanId;
-                                }).first();
-                        }
-
-                        if (!selectedInput.length) {
-                                selectedInput = paymentPlanInputs.first();
-                        }
-
-                        if (selectedInput.length) {
-                                selectedInput.prop('checked', true);
-                                payment_plan_change(selectedInput.get(0));
-                        } else {
-                                splitInvoiceOptions.prop('checked', false);
-                                splitInvoiceOptions.prop('disabled', true);
-                        }
-                });
-
-		function payment_plan_change(t) {
-			let plan = $(t).data('plan');
-			let split_invoice = $('input:radio[name=split_invoice]');
-			split_invoice.prop('disabled', false);
-
-			if( plan === 'Hele beløpet' ) {
-				split_invoice.prop('disabled', true);
-				split_invoice.prop('checked', false);
-			}
-		}
+            // Forhåndsvelg første kort
+            var firstCard = $('#ppMonthCards .pp-month-card').first();
+            if (firstCard.length) {
+                selectPlan(parseInt(firstCard.data('plan-id'), 10), parseInt(firstCard.data('division'), 10));
+            }
+        });
 	</script>
 @stop
