@@ -23,6 +23,22 @@ class CommunityForumController extends Controller
 {
     /* ===================== HELPERS ===================== */
 
+    private static $requiredTables = [
+        'profiles', 'posts', 'post_reactions', 'post_comments',
+        'discussions', 'discussion_replies', 'community_notifications',
+        'direct_messages', 'manuscript_projects', 'manuscript_excerpts',
+        'manuscript_feedback', 'manuscript_followers',
+    ];
+
+    public function __construct()
+    {
+        foreach (self::$requiredTables as $table) {
+            if (!\Schema::hasTable($table)) {
+                abort(503, "Community-modulen krever at database-migrasjoner kjøres. Tabell '$table' mangler. Kjør: php artisan migrate");
+            }
+        }
+    }
+
     private function ensureProfile()
     {
         $user = Auth::user();
@@ -81,11 +97,13 @@ class CommunityForumController extends Controller
 
     private function unreadNotificationCount()
     {
+        if (!\Schema::hasTable('community_notifications')) return 0;
         return Notification::where('user_id', Auth::id())->where('read', false)->count();
     }
 
     private function unreadMessageCount()
     {
+        if (!\Schema::hasTable('direct_messages')) return 0;
         return DirectMessage::where('recipient_id', Auth::id())->where('read', false)->count();
     }
 
