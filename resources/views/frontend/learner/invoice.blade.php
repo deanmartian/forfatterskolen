@@ -49,13 +49,83 @@
 			display: block;
 		}
 
-                /* Media Queries */
+                /* Faktura-kort mobil */
+        .fiken-mobile-cards { display: none; }
+
+        .fiken-card {
+            background: #fff;
+            border: 1px solid #e4e8ed;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+        }
+
+        .fiken-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .fiken-card-nr {
+            font-weight: 700;
+            color: #2e3a59;
+            font-size: 15px;
+        }
+
+        .fiken-card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 12px;
+            margin-bottom: 12px;
+        }
+
+        .fiken-card-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #5D7285;
+            font-weight: 600;
+        }
+
+        .fiken-card-value {
+            font-size: 13px;
+            color: #2e3a59;
+        }
+
+        .fiken-card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .fiken-card-actions .btn,
+        .fiken-card-actions a {
+            font-size: 11px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .fiken-card-actions .gateway--paypal {
+            width: 100%;
+        }
+
+        .fiken-card-actions .gateway--paypal .btn {
+            width: 100%;
+            font-size: 12px;
+        }
+
+        /* Media Queries */
         @media only screen and (max-width: 768px) {
+            /* Tabs som pills, wrapping */
             .global-nav-tabs {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 4px;
                 padding-left: 0;
+                border-bottom: none;
+                list-style: none;
             }
 
             .global-nav-tabs .nav-item {
@@ -63,10 +133,26 @@
             }
 
             .global-nav-tabs .nav-link {
-                font-size: 12px;
+                font-size: 11px;
                 padding: 6px 10px;
+                border: 1px solid #dee2e6;
+                border-radius: 20px;
+                white-space: nowrap;
+                color: #2e3a59;
+                background: #fff;
             }
 
+            .global-nav-tabs .nav-link.active {
+                background: #5F0000;
+                color: #fff;
+                border-color: #5F0000;
+            }
+
+            /* Skjul desktop tabell, vis kort */
+            .fiken-table-wrap { display: none; }
+            .fiken-mobile-cards { display: block; }
+
+            /* Andre tabeller generelt */
             .learner-invoice-wrapper .table {
                 font-size: 12px;
             }
@@ -74,12 +160,14 @@
             .learner-invoice-wrapper .table th,
             .learner-invoice-wrapper .table td {
                 padding: 6px 8px;
-                white-space: nowrap;
+                white-space: normal;
+                word-break: break-word;
             }
 
             .invoice-actions {
-                min-width: 120px;
-                max-width: 150px;
+                min-width: auto;
+                max-width: none;
+                white-space: normal;
             }
 
             .invoice-actions .btn {
@@ -88,31 +176,8 @@
             }
 
             .learner-invoice-wrapper .container {
-                padding-left: 10px;
-                padding-right: 10px;
-            }
-
-            /* Kort-layout for fakturaer under smal skjerm */
-            .learner-invoice-wrapper .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-        }
-
-        @media only screen and (max-width: 480px) {
-            .global-nav-tabs .nav-link {
-                font-size: 11px;
-                padding: 5px 8px;
-            }
-
-            .invoice-actions {
-                min-width: 100px;
-            }
-
-            .invoice-actions .btn {
-                font-size: 10px;
-                padding: 3px 6px;
-                width: 100%;
+                padding-left: 8px;
+                padding-right: 8px;
             }
 
             /* Utestående-kort responsiv */
@@ -120,6 +185,16 @@
                 border-left: none !important;
                 padding-top: 12px;
             }
+        }
+
+        @media only screen and (max-width: 480px) {
+            .global-nav-tabs .nav-link {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+
+            .fiken-card { padding: 12px; }
+            .fiken-card-value { font-size: 12px; }
         }
 
         </style>
@@ -505,18 +580,18 @@
 								@endif
 
 								<div class="card global-card">
-									<div class="card-body py-0">
-										<table class="table table-global">
+									<div class="card-body py-0 fiken-table-wrap">
+										<table class="table table-global fiken-table">
 											<thead>
 											<tr>
 												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.invoice-number') }}</th>
 												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.deadline') }}</th>
 												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.remainders') }}</th>
 												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.status') }}</th>
-												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.created') }}</th>
+												<th class="col-hide-mobile" style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.created') }}</th>
 												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.kid-number') }}</th>
-												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.account-number') }}</th>
-												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.credit-note') }}</th>
+												<th class="col-hide-mobile" style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.account-number') }}</th>
+												<th class="col-hide-mobile" style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.credit-note') }}</th>
 												<th></th>
 											</tr>
 											</thead>
@@ -557,7 +632,7 @@
 															<span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#ffebee;color:#c62828;">{{$status}}</span>
 														@endif
 													</td>
-													<td>
+													<td class="col-hide-mobile">
 														{{ ucfirst(
 																\Carbon\Carbon::parse($invoice->created_at)
 																	->locale('nb')
@@ -565,8 +640,8 @@
 															) }}
 														{{-- {{date_format(date_create($invoice->created_at), 'M d, Y H.i')}} --}}</td>
 													<td> {{ $invoice->kid_number }} </td>
-													<td> 9015 18 00393 </td>
-													<td>
+													<td class="col-hide-mobile"> 9015 18 00393 </td>
+													<td class="col-hide-mobile">
 														@if($invoice->credit_note_url)
 															<a href="{{ route('learner.download.credit-note', $invoice->id) }}" 
 																class="blue-outline-btn">
@@ -623,6 +698,94 @@
 										</table>
 									</div>
 								</div> <!-- end card -->
+
+								{{-- Mobilkort for Fiken-fakturaer --}}
+								<div class="fiken-mobile-cards">
+									@foreach($invoices as $invoice)
+										@php
+											$m_txSum = $invoice->transactions->sum('amount');
+											$m_balance = $invoice->fiken_balance;
+											$m_status = $invoice->fiken_is_paid === 1 ? "BETALT"
+												: ($invoice->fiken_is_paid === 2 ? "SENDT TIL INKASSO" : "UBETALT");
+										@endphp
+										<div class="fiken-card">
+											<div class="fiken-card-header">
+												<span class="fiken-card-nr">#{{ $invoice->invoice_number }}</span>
+												@if($invoice->fiken_is_paid === 1)
+													<span style="padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#e8f5e9;color:#2e7d32;">{{ $m_status }}</span>
+												@elseif($invoice->fiken_is_paid === 2)
+													<span style="padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#fff3e0;color:#e65100;">{{ $m_status }}</span>
+												@elseif($invoice->fiken_is_paid === 3)
+													<span style="padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#f3e5f5;color:#7b1fa2;">Kreditert</span>
+												@else
+													<span style="padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#ffebee;color:#c62828;">{{ $m_status }}</span>
+												@endif
+											</div>
+											<div class="fiken-card-grid">
+												<div>
+													<div class="fiken-card-label">Frist</div>
+													<div class="fiken-card-value">{{ \Carbon\Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y') }}</div>
+												</div>
+												<div>
+													<div class="fiken-card-label">Restbeløp</div>
+													<div class="fiken-card-value" style="font-weight:600;color:#5F0000;">
+														@if($invoice->fiken_is_paid)
+															{{ \App\Http\FrontendHelpers::currencyFormat(0) }}
+														@else
+															{{ \App\Http\FrontendHelpers::currencyFormat($m_balance - $m_txSum) }}
+														@endif
+													</div>
+												</div>
+												<div>
+													<div class="fiken-card-label">KID</div>
+													<div class="fiken-card-value">{{ $invoice->kid_number }}</div>
+												</div>
+												<div>
+													<div class="fiken-card-label">Konto</div>
+													<div class="fiken-card-value">9015 18 00393</div>
+												</div>
+											</div>
+											<div class="fiken-card-actions">
+												<a href="{{ route('learner.download.invoice', $invoice->id) }}?v={{ time() }}"
+													class="btn" style="background:#5F0000;color:#fff;flex:1;">
+													Last ned
+												</a>
+												@if($invoice->fiken_invoice_id && !$invoice->fiken_is_paid)
+													<button class="btn vippsFakturaBtn" style="background:#852635;color:#fff;flex:1;"
+														data-toggle="modal" data-target="#vippsFakturaModal"
+														data-action="{{ route('learner.invoice.vipps-e-faktura', $invoice->id) }}">
+														eFaktura
+													</button>
+												@endif
+												@if($invoice->fiken_is_paid == 1)
+													<a href="{{ route('learner.invoice.receipt.download', $invoice->id) }}"
+														class="btn" style="background:#2e7d32;color:#fff;flex:1;">
+														Kvittering
+													</a>
+												@endif
+												@if($invoice->credit_note_url)
+													<a href="{{ route('learner.download.credit-note', $invoice->id) }}"
+														class="btn" style="background:#5D7285;color:#fff;flex:1;">
+														Kreditnota
+													</a>
+												@endif
+												@if(!$invoice->fiken_is_paid)
+													<div class="gateway--paypal" style="width:100%;margin-top:4px;">
+														<form method="POST" action="{{ route('checkout.payment.paypal', encrypt($invoice->id)) }}">
+															{{ csrf_field() }}
+															<button class="btn btn-primary d-block w-100">
+																<i class="fa fa-paypal"></i> Betal med kort
+															</button>
+														</form>
+													</div>
+													<a href="{{ route('learner.invoice.vipps-payment', $invoice->fiken_invoice_id) }}" style="width:100%;display:block;margin-top:4px;">
+														<img src="{{ asset('images-new/betal-vipps.png') }}" style="width:100%;max-width:200px;">
+													</a>
+												@endif
+											</div>
+										</div>
+									@endforeach
+								</div>
 								<div class="float-right">
 									{{ $invoices->appends(Request::all())->links('pagination.short-pagination') }}
 								</div>
@@ -897,6 +1060,19 @@
 							<div id="ppTotalAmount" style="font-size: 26px; font-weight: 700; color: #5F0000;">0 kr</div>
 						</div>
 
+						{{-- Førstebetaling --}}
+						<div class="form-group" style="margin-bottom: 16px;">
+							<label style="font-weight: 600; color: #2e3a59; margin-bottom: 6px; display: block;">Førstebetaling</label>
+							<div style="display: flex; align-items: center; gap: 12px;">
+								<div style="position: relative; max-width: 180px;">
+									<input type="number" id="ppFirstPayment" name="first_payment" class="form-control" min="0" value="0"
+										style="border-radius: 6px; padding-right: 32px;">
+									<span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #5D7285; font-size: 13px;">kr</span>
+								</div>
+								<span style="font-size: 14px; color: #5D7285;">Restbeløp: <strong id="ppRemainingAmount" style="color: #5F0000;">0 kr</strong></span>
+							</div>
+						</div>
+
 						{{-- Velg betalingsplan --}}
 						<div class="form-group">
 							<label style="font-weight: 600; color: #2e3a59; margin-bottom: 10px; display: block;">Velg betalingsplan</label>
@@ -973,6 +1149,7 @@
         const allPaymentPlans = @json($ppPlans);
 
         let ppTotal = 0;
+        let ppFirstPayment = 0;
         let ppSelectedMonths = 0;
         let ppSelectedPlanId = null;
 
@@ -980,9 +1157,11 @@
             return Math.round(amount).toLocaleString('nb-NO') + ' kr';
         }
 
-        function renderMonthCards(allowedPlanIds, total) {
+        function renderMonthCards(allowedPlanIds) {
             var container = $('#ppMonthCards');
             container.empty();
+            var remaining = ppTotal - ppFirstPayment;
+            if (remaining < 0) remaining = 0;
 
             var plans = allPaymentPlans.filter(function(p) {
                 return allowedPlanIds.indexOf(p.id) !== -1;
@@ -994,7 +1173,7 @@
             }
 
             plans.forEach(function(plan) {
-                var monthly = plan.division > 1 ? Math.floor(total / plan.division) : total;
+                var monthly = plan.division > 1 ? Math.floor(remaining / plan.division) : remaining;
                 var label = plan.division === 1 ? plan.plan : plan.division + ' mnd';
                 var sublabel = plan.division > 1 ? '(' + formatKr(monthly) + '/mnd)' : '';
 
@@ -1059,16 +1238,17 @@
 
         function updatePreview() {
             var months = ppSelectedMonths;
-            var total = ppTotal;
+            var remaining = ppTotal - ppFirstPayment;
+            if (remaining < 0) remaining = 0;
 
-            if (!months || months < 1 || !total) {
+            if (!months || months < 1 || !ppTotal) {
                 $('#ppMonthlyRow').hide();
                 $('#ppPreviewSection').hide();
                 return;
             }
 
-            var monthly = Math.floor(total / months);
-            var remainder = total - (monthly * months);
+            var monthly = Math.floor(remaining / months);
+            var rest = remaining - (monthly * months);
 
             // Månedlig beløp
             if (months > 1) {
@@ -1084,11 +1264,29 @@
 
             var baseDate = new Date();
             var runningTotal = 0;
+            var rowNum = 0;
+
+            // Førstebetaling-rad
+            if (ppFirstPayment > 0) {
+                rowNum++;
+                runningTotal += ppFirstPayment;
+                var todayStr = ('0' + baseDate.getDate()).slice(-2) + '.' +
+                               ('0' + (baseDate.getMonth() + 1)).slice(-2) + '.' +
+                               baseDate.getFullYear();
+                tbody.append(
+                    '<tr style="background:#FFEEE8;">' +
+                    '<td style="padding:8px 12px;font-weight:600;">Førstebetaling</td>' +
+                    '<td style="padding:8px 12px;font-weight:600;">' + formatKr(ppFirstPayment) + '</td>' +
+                    '<td style="padding:8px 12px;">' + todayStr + '</td>' +
+                    '</tr>'
+                );
+            }
 
             for (var i = 1; i <= months; i++) {
+                rowNum++;
                 var amount = monthly;
                 if (i === months) {
-                    amount = monthly + remainder; // siste faktura får resten
+                    amount = monthly + rest; // siste faktura får resten
                 }
                 runningTotal += amount;
 
@@ -1196,6 +1394,28 @@
             selectCustomMonths($(this).val());
         });
 
+        // Førstebetaling input
+        $('#ppFirstPayment').on('input', function() {
+            var val = parseFloat($(this).val()) || 0;
+            if (val < 0) val = 0;
+            if (val >= ppTotal) val = ppTotal - 1;
+            ppFirstPayment = val;
+            $('#ppRemainingAmount').text(formatKr(ppTotal - ppFirstPayment));
+
+            // Oppdater månedskort med nye beløp
+            var allowedPlanIds = [];
+            try {
+                allowedPlanIds = JSON.parse(window._ppLastAllowedPlanIds || '[]');
+            } catch(e) {}
+            renderMonthCards(allowedPlanIds);
+
+            // Re-select current plan
+            if (ppSelectedPlanId) {
+                $('.pp-month-card[data-plan-id="' + ppSelectedPlanId + '"]').css('border-color', '#5F0000');
+            }
+            updatePreview();
+        });
+
         // Modal reset ved åpning/lukking
         $('#createInvoiceModal').on('shown.bs.modal', function () {
             invoiceSubmissionInProgress = false;
@@ -1246,6 +1466,9 @@
             // Reset
             ppSelectedPlanId = null;
             ppSelectedMonths = 0;
+            ppFirstPayment = 0;
+            $('#ppFirstPayment').val(0);
+            $('#ppRemainingAmount').text(formatKr(ppTotal));
             $('#ppPlanIdInput').val('');
             $('#ppCustomMonthsInput').val('');
             $('#ppCustomMonths').val('');
@@ -1269,8 +1492,11 @@
                 }
             }
 
+            // Lagre allowedPlanIds for bruk i førstebetaling-handler
+            window._ppLastAllowedPlanIds = JSON.stringify(allowedPlanIds);
+
             // Render månedskort
-            renderMonthCards(allowedPlanIds, ppTotal);
+            renderMonthCards(allowedPlanIds);
 
             // Forhåndsvelg første kort
             var firstCard = $('#ppMonthCards .pp-month-card').first();
