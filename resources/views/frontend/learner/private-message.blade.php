@@ -26,14 +26,14 @@
 .bk-redesign .bk-header h1 { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin-bottom: 0.25rem; }
 .bk-redesign .bk-header p { font-size: 0.875rem; color: #5a5550; margin: 0; }
 
-/* ── MOBILE SIDEBAR TOGGLE ──────────────────────────── */
-.bk-redesign .bk-mobile-toggle {
-	display: flex; position: fixed; top: 12px; left: 12px; z-index: 1050;
-	width: 36px; height: 36px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.12);
+/* ── SIDEBAR TOGGLE (alltid synlig) ──────────────────── */
+.bk-redesign .bk-sidebar-toggle {
+	display: flex !important; position: fixed; top: 12px; left: 12px; z-index: 1050;
+	width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.12);
 	background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer;
-	align-items: center; justify-content: center;
+	align-items: center; justify-content: center; padding: 0;
 }
-.bk-redesign .bk-mobile-toggle svg { width: 18px; height: 18px; stroke: #1a1a1a; fill: none; stroke-width: 2; stroke-linecap: round; }
+.bk-redesign .bk-sidebar-toggle svg { width: 20px; height: 20px; stroke: #1a1a1a; fill: none; stroke-width: 2; stroke-linecap: round; }
 
 /* ── TABS ─────────────────────────────────────────── */
 .bk-redesign .bk-tabs { display: flex; gap: 0; border-bottom: 2px solid rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
@@ -247,8 +247,8 @@
 }
 </style>
 
-{{-- ── MOBILE SIDEBAR TOGGLE ──────────────────────────────── --}}
-<button class="bk-mobile-toggle" id="sidebarCollapse">
+{{-- ── SIDEBAR TOGGLE (egen knapp, unngår duplikat-ID) ─────── --}}
+<button class="bk-sidebar-toggle" id="bkSidebarToggle" type="button" aria-label="Vis/skjul meny">
 	<svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
 </button>
 
@@ -502,19 +502,44 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 });
 
-// Auto-collapse sidebar when content area is too narrow
+/* ── Sidebar toggle + auto-collapse ────────────────── */
 (function() {
-	var mainContent = document.getElementById('main-content');
 	var sidebar = document.getElementById('sidebar');
 	var mainContainer = document.getElementById('main-container');
-	if (mainContent && sidebar) {
-		var contentWidth = mainContent.offsetWidth;
-		if (contentWidth < 700 && sidebar.classList.contains('sidebar-visible')) {
+	var toggleBtn = document.getElementById('bkSidebarToggle');
+
+	// Egen klikk-handler — stopPropagation hindrer #main-content click fra å lukke med en gang
+	if (toggleBtn) {
+		toggleBtn.addEventListener('click', function(e) {
+			e.stopPropagation();
+			if (!sidebar) return;
+			sidebar.classList.toggle('sidebar-visible');
+			if (mainContainer) mainContainer.classList.toggle('enlarge');
+			document.body.classList.toggle('sidebar-open');
+		});
+	}
+
+	// Auto-collapse: kjør ETTER course-portal sin checkWindowWidth()
+	setTimeout(function() {
+		if (!sidebar) return;
+		var vpWidth = document.documentElement.clientWidth;
+		if (vpWidth < 1027 && sidebar.classList.contains('sidebar-visible')) {
 			sidebar.classList.remove('sidebar-visible');
 			if (mainContainer) mainContainer.classList.remove('enlarge');
 			document.body.classList.remove('sidebar-open');
 		}
-	}
+	}, 150);
+
+	// Lytt på resize og kollaps når vinduet er smalt
+	window.addEventListener('resize', function() {
+		if (!sidebar) return;
+		var vpWidth = document.documentElement.clientWidth;
+		if (vpWidth < 1027 && sidebar.classList.contains('sidebar-visible')) {
+			sidebar.classList.remove('sidebar-visible');
+			if (mainContainer) mainContainer.classList.remove('enlarge');
+			document.body.classList.remove('sidebar-open');
+		}
+	});
 })();
 </script>
 

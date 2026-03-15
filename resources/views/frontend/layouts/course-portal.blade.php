@@ -163,19 +163,23 @@
     // Add an event listener for the window resize event
     window.addEventListener('resize', handleResize);
 
-    // Toggle sidebar on button click
-    $("#sidebarCollapse").click(function () {
+    // Toggle sidebar — attributt-selector matcher ALLE elementer med id="sidebarCollapse"
+    // (jQuery #id matcher bare det første, men [id=...] matcher alle duplikater)
+    $("[id='sidebarCollapse'], [data-sidebar-toggle]").click(function (e) {
+        e.stopPropagation(); // Hindrer #main-content click fra å lukke med en gang
         sidebar.toggleClass("sidebar-visible");
         mainContainer.toggleClass("enlarge");
         $("body").toggleClass("sidebar-open");
     });
 
-    $("#main-content").click(function() {
-        if (window.innerWidth <= 1026 && sidebar.hasClass("sidebar-visible")) {
-            sidebar.removeClass("sidebar-visible");
-            mainContainer.removeClass("enlarge");
-            $("body").removeClass("sidebar-open");
-        }
+    // Lukk sidebar ved klikk utenfor — fanger klikk på #main-content OG body::after overlay
+    $(document).on("click", function(e) {
+        if (!sidebar.hasClass("sidebar-visible")) return;
+        // Ikke lukk hvis klikket var på sidebar eller en toggle-knapp
+        if ($(e.target).closest("#sidebar, [id='sidebarCollapse'], [data-sidebar-toggle]").length) return;
+        sidebar.removeClass("sidebar-visible");
+        mainContainer.removeClass("enlarge");
+        $("body").removeClass("sidebar-open");
     });
 
     function handleResize() {

@@ -25,14 +25,14 @@
 .op-redesign .op-header h1 { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin-bottom: 0.25rem; }
 .op-redesign .op-header p { font-size: 0.875rem; color: #5a5550; margin: 0; }
 
-/* ── MOBILE SIDEBAR TOGGLE ──────────────────────────── */
-.op-redesign .op-mobile-toggle {
-	display: flex; position: fixed; top: 12px; left: 12px; z-index: 1050;
+/* ── SIDEBAR TOGGLE (alltid synlig) ──────────────────── */
+.op-redesign .op-sidebar-toggle {
+	display: flex !important; position: fixed; top: 12px; left: 12px; z-index: 1050;
 	width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.12);
 	background: #fff; align-items: center; justify-content: center; cursor: pointer;
-	box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 0;
 }
-.op-redesign .op-mobile-toggle svg { width: 20px; height: 20px; stroke: #1a1a1a; }
+.op-redesign .op-sidebar-toggle svg { width: 20px; height: 20px; stroke: #1a1a1a; }
 
 /* ── TABS ─────────────────────────────────────────── */
 .op-redesign .op-tabs {
@@ -285,12 +285,16 @@
 @media (max-width: 1026px) {
 	.op-redesign .op-page { padding: 1.5rem 1rem; padding-top: 3.5rem; }
 	.op-redesign .op-header h1 { font-size: 1.35rem; }
+	/* Tabs: wrap i stedet for horisontal scroll */
+	.op-redesign .op-tabs { flex-wrap: wrap; overflow-x: visible; }
+	.op-redesign .op-tab { white-space: normal; text-align: center; padding: 0.55rem 0.85rem; font-size: 0.8rem; }
 }
 
 /* Small tablet / large phone */
 @media (max-width: 768px) {
 	.op-redesign .op-page { padding: 1.25rem 0.75rem; padding-top: 3.5rem; }
 	.op-redesign .op-header h1 { font-size: 1.25rem; }
+	.op-redesign .op-tab { padding: 0.5rem 0.65rem; font-size: 0.75rem; }
 	.op-redesign .op-card__top { flex-direction: column; gap: 0.5rem; }
 	.op-redesign .op-card__badges { justify-content: flex-start; }
 	.op-redesign .op-card__footer { flex-direction: column; align-items: flex-start; }
@@ -307,9 +311,9 @@
 	.op-redesign .op-header { margin-bottom: 1rem; }
 	.op-redesign .op-header h1 { font-size: 1.15rem; }
 	.op-redesign .op-header p { font-size: 0.8rem; }
-	.op-redesign .op-tabs { margin-bottom: 1rem; }
-	.op-redesign .op-tab { padding: 0.6rem 0.75rem; font-size: 0.78rem; }
-	.op-redesign .op-tab__count { font-size: 0.6rem; min-width: 16px; height: 16px; }
+	.op-redesign .op-tabs { margin-bottom: 1rem; gap: 0; }
+	.op-redesign .op-tab { padding: 0.45rem 0.5rem; font-size: 0.7rem; }
+	.op-redesign .op-tab__count { font-size: 0.55rem; min-width: 14px; height: 14px; padding: 0 3px; }
 	.op-redesign .op-card { padding: 1rem; border-radius: 10px; }
 	.op-redesign .op-card__title { font-size: 0.95rem; }
 	.op-redesign .op-card__desc { font-size: 0.8rem; }
@@ -324,8 +328,8 @@
 }
 </style>
 
-{{-- ── MOBILE SIDEBAR TOGGLE ────────────────────────────────────── --}}
-<button class="op-mobile-toggle" id="sidebarCollapse">
+{{-- ── SIDEBAR TOGGLE (egen knapp, unngår duplikat-ID) ─────────── --}}
+<button class="op-sidebar-toggle" id="opSidebarToggle" type="button" aria-label="Vis/skjul meny">
 	<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
 </button>
 
@@ -1236,19 +1240,47 @@
 		if (panel) panel.classList.add('active');
 	}
 
-	// Auto-collapse sidebar when content area is too narrow
+	/* ── Sidebar toggle + auto-collapse ────────────────── */
 	(function() {
-		var mainContent = document.getElementById('main-content');
 		var sidebar = document.getElementById('sidebar');
 		var mainContainer = document.getElementById('main-container');
-		if (mainContent && sidebar) {
-			var contentWidth = mainContent.offsetWidth;
-			if (contentWidth < 700 && sidebar.classList.contains('sidebar-visible')) {
+		var toggleBtn = document.getElementById('opSidebarToggle');
+
+		// Egen klikk-handler — stopPropagation hindrer #main-content click fra å lukke med en gang
+		if (toggleBtn) {
+			toggleBtn.addEventListener('click', function(e) {
+				e.stopPropagation();
+				if (!sidebar) return;
+				sidebar.classList.toggle('sidebar-visible');
+				if (mainContainer) mainContainer.classList.toggle('enlarge');
+				document.body.classList.toggle('sidebar-open');
+			});
+		}
+
+		// Auto-collapse: kjør ETTER course-portal sin checkWindowWidth()
+		// course-portal-scriptet kjører etter @yield('scripts'), så vi trenger setTimeout
+		setTimeout(function() {
+			if (!sidebar) return;
+			// Sjekk om vinduet faktisk er smalt (bruker documentElement.clientWidth
+			// som matcher CSS media queries, i stedet for window.innerWidth)
+			var vpWidth = document.documentElement.clientWidth;
+			if (vpWidth < 1027 && sidebar.classList.contains('sidebar-visible')) {
 				sidebar.classList.remove('sidebar-visible');
 				if (mainContainer) mainContainer.classList.remove('enlarge');
 				document.body.classList.remove('sidebar-open');
 			}
-		}
+		}, 150);
+
+		// Lytt på resize og kollaps når vinduet er smalt
+		window.addEventListener('resize', function() {
+			if (!sidebar) return;
+			var vpWidth = document.documentElement.clientWidth;
+			if (vpWidth < 1027 && sidebar.classList.contains('sidebar-visible')) {
+				sidebar.classList.remove('sidebar-visible');
+				if (mainContainer) mainContainer.classList.remove('enlarge');
+				document.body.classList.remove('sidebar-open');
+			}
+		});
 	})();
 
 	/* ── Existing functionality ───────────────────────── */

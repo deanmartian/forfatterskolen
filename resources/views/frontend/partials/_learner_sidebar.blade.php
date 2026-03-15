@@ -170,6 +170,14 @@
 }
 
 @media (max-width: 1026px) {
+    #sidebar {
+        display: none !important;
+        width: 220px !important;
+    }
+    #sidebar.sidebar-visible {
+        display: flex !important;
+        z-index: 1001 !important;
+    }
     #sidebar .sb-mobile-close { display: block; }
 }
 </style>
