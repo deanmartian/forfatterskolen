@@ -208,6 +208,11 @@
         .fc .fc-toolbar .fc-toolbar-chunk {
             display: flex;
             justify-content: center;
+            width: 100%;
+        }
+
+        .fc .fc-toolbar .fc-toolbar-chunk:first-child {
+            order: -1;
         }
 
         .fc .fc-button {
@@ -230,8 +235,13 @@
             padding: 2px 4px;
         }
 
+        .calendar-header {
+            padding: 12px 14px;
+        }
+
         .calendar-guide {
             gap: 4px !important;
+            justify-content: center;
         }
 
         .calendar-guide li {
@@ -240,7 +250,62 @@
         }
 
         .calendar-wrapper {
-            padding-top: 15px !important;
+            padding: 10px 8px 20px !important;
+        }
+
+        .calendar-header .d-flex.justify-content-md-end {
+            justify-content: center !important;
+            margin-top: 10px;
+        }
+
+        .calendar-header .btn {
+            font-size: 12px;
+            padding: 6px 14px;
+            width: 100%;
+        }
+
+        /* Begrens antall synlige events per dag */
+        .fc .fc-daygrid-day-frame {
+            min-height: 60px;
+        }
+
+        /* Tooltip touch-vennlig */
+        .fc-event-tooltip {
+            max-width: 250px;
+            font-size: 12px;
+        }
+    }
+
+    @media only screen and (max-width: 480px) {
+        .fc .fc-toolbar-title {
+            font-size: 14px;
+        }
+
+        .fc .fc-button {
+            padding: 3px 6px;
+            font-size: 11px;
+        }
+
+        .fc .fc-col-header-cell-cushion {
+            font-size: 10px;
+        }
+
+        .fc .fc-daygrid-day-number {
+            font-size: 11px;
+        }
+
+        .fc .fc-event {
+            font-size: 9px;
+            padding: 1px 3px;
+        }
+
+        .calendar-guide li {
+            font-size: 9px;
+            padding: 2px 5px;
+        }
+
+        .fc .fc-daygrid-day-frame {
+            min-height: 50px;
         }
     }
 </style>
@@ -300,16 +365,18 @@
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('full-calendar');
 
+    var isMobile = window.innerWidth <= 768;
+
     var calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'nb',
         timeZone: 'local',
         initialView: 'dayGridMonth',
-        dayMaxEventRows: 4,
+        dayMaxEventRows: isMobile ? 2 : 4,
         headerToolbar: {
             left: 'title',
             right: 'prev today next dayGridMonth,timeGridWeek,timeGridDay'
         },
-        dayHeaderFormat: { weekday: 'long' },
+        dayHeaderFormat: { weekday: isMobile ? 'short' : 'long' },
         allDayText: translations.allDay,
         buttonText: {
             today: translations.today,

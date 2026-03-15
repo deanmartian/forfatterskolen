@@ -1706,6 +1706,7 @@ class LearnerController extends Controller
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};*/
         return view('frontend.learner.invoice', compact(
             'invoices',
+            'unpaid',
             'sveaOrders',
             'user',
             'orderAttachments',

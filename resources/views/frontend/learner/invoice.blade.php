@@ -114,6 +114,12 @@
                 padding: 3px 6px;
                 width: 100%;
             }
+
+            /* Utestående-kort responsiv */
+            .learner-invoice-wrapper .card .row .col-sm-6 {
+                border-left: none !important;
+                padding-top: 12px;
+            }
         }
 
         </style>
@@ -372,7 +378,7 @@
 														<td>{{ $order->total_formatted }}</td>
 														<td>
 															@if ($order->package->course->payment_plan_ids)
-                                                                                                              <button class="btn btn-success btn-xs createInvoiceBtn disabled" data-toggle="modal"
+                                                                                                              <button class="btn btn-xs createInvoiceBtn disabled" style="background:#5F0000;color:#fff;border:none;border-radius:8px;" data-toggle="modal"
                                                                                                               data-target="#createInvoiceModal"
                                                                                                               data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
                                                                                                               data-plan-id="{{ optional($order->paymentPlan)->id }}"
@@ -452,19 +458,64 @@
 									</a>
 								@endif
 
+								{{-- Totalt utestående --}}
+								@if(isset($unpaid) && $unpaid->count() > 0)
+									@php
+										$totalUnpaid = $unpaid->sum(function($inv) {
+											$txSum = $inv->transactions->sum('amount');
+											return $inv->fiken_balance - $txSum;
+										});
+										$nextInvoice = $unpaid->first();
+									@endphp
+									<div class="card mb-4" style="border-left: 4px solid #5F0000; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+										<div class="card-body" style="padding: 20px 24px;">
+											<div class="row align-items-center">
+												<div class="col-sm-6">
+													<div style="font-size: 13px; color: #5D7285; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Totalt utestående</div>
+													<div style="font-size: 28px; font-weight: 700; color: #5F0000; margin-top: 4px;">
+														{{ \App\Http\FrontendHelpers::currencyFormat($totalUnpaid) }}
+													</div>
+													<div style="font-size: 13px; color: #5D7285; margin-top: 2px;">
+														{{ $unpaid->count() }} {{ $unpaid->count() === 1 ? 'ubetalt faktura' : 'ubetalte fakturaer' }}
+													</div>
+												</div>
+												@if($nextInvoice)
+												<div class="col-sm-6" style="border-left: 1px solid #eee;">
+													<div style="font-size: 13px; color: #5D7285; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Neste faktura</div>
+													<div style="margin-top: 6px;">
+														<span style="font-weight: 600; color: #2e3a59;">#{{ $nextInvoice->invoice_number }}</span>
+														<span style="color: #5D7285; margin-left: 8px;">
+															{{ \App\Http\FrontendHelpers::currencyFormat($nextInvoice->fiken_balance - $nextInvoice->transactions->sum('amount')) }}
+														</span>
+													</div>
+													<div style="font-size: 13px; color: #5D7285; margin-top: 2px;">
+														Frist: {{ \Carbon\Carbon::parse($nextInvoice->fiken_dueDate)->format('d.m.Y') }}
+													</div>
+													@if($nextInvoice->kid_number)
+													<div style="font-size: 12px; color: #5D7285; margin-top: 2px;">
+														KID: {{ $nextInvoice->kid_number }}
+													</div>
+													@endif
+												</div>
+												@endif
+											</div>
+										</div>
+									</div>
+								@endif
+
 								<div class="card global-card">
 									<div class="card-body py-0">
 										<table class="table table-global">
 											<thead>
 											<tr>
-												<th>{{ trans('site.learner.invoice-number') }}</th>
-												<th>{{ trans('site.learner.deadline') }}</th>
-												<th>{{ trans('site.learner.remainders') }}</th>
-												<th>{{ trans('site.learner.status') }}</th>
-												<th>{{ trans('site.learner.created') }}</th>
-												<th>{{ trans('site.learner.kid-number') }}</th>
-												<th>{{ trans('site.learner.account-number') }}</th>
-												<th>{{ trans('site.credit-note') }}</th>
+												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.invoice-number') }}</th>
+												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.deadline') }}</th>
+												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.remainders') }}</th>
+												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.status') }}</th>
+												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.created') }}</th>
+												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.kid-number') }}</th>
+												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.account-number') }}</th>
+												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.credit-note') }}</th>
 												<th></th>
 											</tr>
 											</thead>
@@ -496,13 +547,13 @@
 													</td>
 													<td>
 														@if($invoice->fiken_is_paid === 1)
-															<span class="label label-green">{{$status}}</span>
+															<span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#e8f5e9;color:#2e7d32;">{{$status}}</span>
 														@elseif($invoice->fiken_is_paid === 2)
-															<span class="label label-orange">{{$status}}</span>
+															<span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#fff3e0;color:#e65100;">{{$status}}</span>
 														@elseif($invoice->fiken_is_paid === 3)
-															<span class="label label-violet text-uppercase">Kreditert</span>
+															<span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#f3e5f5;color:#7b1fa2;text-transform:uppercase;">Kreditert</span>
 														@else
-															<span class="label label-danger">{{$status}}</span>
+															<span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#ffebee;color:#c62828;">{{$status}}</span>
 														@endif
 													</td>
 													<td>
@@ -529,11 +580,11 @@
 														</a>
 
 														@if ($invoice->fiken_invoice_id && !$invoice->fiken_is_paid)
-															<button class="btn btn-success btn-xs vippsFakturaBtn" 
-															style="margin-top: 5px"
+															<button class="btn btn-xs vippsFakturaBtn"
+															style="margin-top:5px;background:#852635;color:#fff;border:none;border-radius:6px;font-size:11px;padding:4px 10px;"
 																	data-toggle="modal"
 																	data-target="#vippsFakturaModal"
-																	data-action="{{ route('learner.invoice.vipps-e-faktura', 
+																	data-action="{{ route('learner.invoice.vipps-e-faktura',
 																	$invoice->id) }}">
 																	Send som Efaktura
 															</button>
