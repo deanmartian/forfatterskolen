@@ -29,13 +29,16 @@ class CommunityForumController extends Controller
         $profile = Profile::where('user_id', $user->id)->first();
 
         if (!$profile) {
-            $profile = Profile::create([
+            $data = [
                 'id'           => Str::uuid(),
                 'user_id'      => $user->id,
-                'name'         => trim($user->first_name . ' ' . $user->last_name),
                 'badge'        => 'aktiv_elev',
                 'access_level' => 'community_member',
-            ]);
+            ];
+            if (\Schema::hasColumn('profiles', 'name')) {
+                $data['name'] = trim($user->first_name . ' ' . $user->last_name);
+            }
+            $profile = Profile::create($data);
         }
 
         return $profile;
