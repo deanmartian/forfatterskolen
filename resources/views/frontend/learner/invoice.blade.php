@@ -964,11 +964,13 @@
         let invoiceSubmissionInProgress = false;
 
         // Alle betalingsplaner fra DB
-        const allPaymentPlans = @json(App\PaymentPlan::orderBy('division', 'asc')->get()->map(function($p) {
-            return ['id' => $p->id, 'plan' => $p->plan, 'division' => $p->division];
-        }));
-        // Legg til 24 mnd som ekstra
-        allPaymentPlans.push({id: 10, plan: '24 måneder', division: 24});
+        @php
+            $ppPlans = App\PaymentPlan::orderBy('division', 'asc')->get()->map(function($p) {
+                return ['id' => $p->id, 'plan' => $p->plan, 'division' => $p->division];
+            })->values()->toArray();
+            $ppPlans[] = ['id' => 10, 'plan' => '24 måneder', 'division' => 24];
+        @endphp
+        const allPaymentPlans = @json($ppPlans);
 
         let ppTotal = 0;
         let ppSelectedMonths = 0;
