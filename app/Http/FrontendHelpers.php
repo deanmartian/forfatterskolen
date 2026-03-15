@@ -377,6 +377,12 @@ class FrontendHelpers
                 'label' => trans('site.learner.nav.profile'),
                 'is_active' => GlobalRequest::is('account/profile*'),
             ],
+            [
+                'route_name' => 'learner.community.home',
+                'fa-icon' => 'fa fa-comments',
+                'label' => 'Skrivefellesskap',
+                'is_active' => GlobalRequest::is('account/community*'),
+            ],
         ];
 
         return $navs;

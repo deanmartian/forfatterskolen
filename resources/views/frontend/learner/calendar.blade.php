@@ -58,6 +58,9 @@
     .calendar-guide .guide-orange { background: #ffb322; }
     .calendar-guide .guide-inverse { background: #2d2d2d; }
     .calendar-guide .guide-red { background: #f44c3d; }
+    .calendar-guide .guide-sp { background: #7c4dff; }
+    .calendar-guide .guide-teal { background: #26a69a; }
+    .calendar-guide .guide-magenta { background: #e91e63; }
 
     #full-calendar {
         background: #ffffff;
@@ -186,6 +189,60 @@
     .fc-daygrid-dot-event .fc-event-title {
         font-weight: normal;
     }
+
+    /* Kalender responsiv */
+    @media only screen and (max-width: 768px) {
+        #full-calendar {
+            padding: 8px;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 16px;
+        }
+
+        .fc .fc-toolbar {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .fc .fc-toolbar .fc-toolbar-chunk {
+            display: flex;
+            justify-content: center;
+        }
+
+        .fc .fc-button {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        /* Korte dagnavn (Man, Tir, Ons...) */
+        .fc .fc-col-header-cell-cushion {
+            font-size: 11px;
+        }
+
+        .fc .fc-daygrid-day-number {
+            font-size: 12px;
+            padding: 2px 4px;
+        }
+
+        .fc .fc-event {
+            font-size: 10px;
+            padding: 2px 4px;
+        }
+
+        .calendar-guide {
+            gap: 4px !important;
+        }
+
+        .calendar-guide li {
+            font-size: 10px;
+            padding: 3px 6px;
+        }
+
+        .calendar-wrapper {
+            padding-top: 15px !important;
+        }
+    }
 </style>
 @stop
 
@@ -203,6 +260,9 @@
                                                         <li class="guide-orange">{{ trans('site.learner.webinars') }}</li> <!-- course-webinars -->
                                                         <li class="guide-inverse">{{ trans('site.learner.notes-text') }}</li>
                                                         <li class="guide-red">{{ trans('site.learner.coaching-time') }}</li>
+                                                        <li class="guide-sp">Selvpublisering</li>
+                                                        <li class="guide-teal">Språkvask</li>
+                                                        <li class="guide-magenta">Korrektur</li>
                                                 </ul>
                                                 <div class="d-flex justify-content-md-end w-100 w-md-auto">
                                                         <a href="{{ route('learner.calendar.export') }}" class="btn btn-primary" target="_blank" rel="noopener">

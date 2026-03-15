@@ -90,16 +90,14 @@ class PageController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Failed to create shared link: '.$e->getMessage());
-            if (! request()->isJson()) {
-                return AdminHelpers::createMessageBag('Failed to create shared link: '.$e->getMessage());
-
-                return redirect()->back()->with([
-                    'errors' => AdminHelpers::createMessageBag('Failed to create shared link: '.$e->getMessage()),
-                    'alert_type' => 'danger',
-                ]);
+            if (request()->isJson()) {
+                return response()->json(['error' => 'Failed to create shared link: '.$e->getMessage()], 500);
             }
 
-            return null;
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Failed to create shared link: '.$e->getMessage()),
+                'alert_type' => 'danger',
+            ]);
         }
     }
 

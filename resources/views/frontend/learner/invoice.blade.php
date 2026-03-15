@@ -50,10 +50,69 @@
 		}
 
                 /* Media Queries */
-        @media only screen and (max-width: 500px) {
+        @media only screen and (max-width: 768px) {
             .global-nav-tabs {
-                display: inline-grid;
-                                padding-left: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding-left: 0;
+            }
+
+            .global-nav-tabs .nav-item {
+                flex: 0 0 auto;
+            }
+
+            .global-nav-tabs .nav-link {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+
+            .learner-invoice-wrapper .table {
+                font-size: 12px;
+            }
+
+            .learner-invoice-wrapper .table th,
+            .learner-invoice-wrapper .table td {
+                padding: 6px 8px;
+                white-space: nowrap;
+            }
+
+            .invoice-actions {
+                min-width: 120px;
+                max-width: 150px;
+            }
+
+            .invoice-actions .btn {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+
+            .learner-invoice-wrapper .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            /* Kort-layout for fakturaer under smal skjerm */
+            .learner-invoice-wrapper .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        @media only screen and (max-width: 480px) {
+            .global-nav-tabs .nav-link {
+                font-size: 11px;
+                padding: 5px 8px;
+            }
+
+            .invoice-actions {
+                min-width: 100px;
+            }
+
+            .invoice-actions .btn {
+                font-size: 10px;
+                padding: 3px 6px;
+                width: 100%;
             }
         }
 

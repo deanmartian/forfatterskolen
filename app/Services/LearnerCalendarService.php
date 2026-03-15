@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Http\FrontendHelpers;
+use App\CopyEditingManuscript;
+use App\CorrectionManuscript;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -126,6 +128,119 @@ class LearnerCalendarService
                 'color' => '#f00',
                 'all_day' => $this->isAllDayEvent($start),
             ]);
+        }
+
+        // Selvpublisering
+        foreach ($user->selfPublishingList as $sp) {
+            foreach ($sp->tasks ?? [] as $task) {
+                if (!empty($task->deadline)) {
+                    try {
+                        $deadline = Carbon::parse($task->deadline, $timezone)->startOfDay();
+                        $events->push([
+                            'id' => $sp->id,
+                            'type' => 'self-publishing',
+                            'title' => 'Selvpublisering: ' . ($task->title ?? $sp->title ?? 'Oppgave'),
+                            'className' => 'event-sp',
+                            'start' => $deadline->copy(),
+                            'end' => $deadline->copy(),
+                            'color' => '#7c4dff',
+                            'all_day' => true,
+                        ]);
+                    } catch (\Throwable $e) {
+                        continue;
+                    }
+                }
+            }
+        }
+
+        // Språkvask
+        $addedCeIds = [];
+        foreach ($user->copyEditings as $ce) {
+            if (!empty($ce->getRawOriginal('expected_finish')) && !in_array($ce->id, $addedCeIds)) {
+                try {
+                    $finish = Carbon::parse($ce->getRawOriginal('expected_finish'), $timezone)->startOfDay();
+                    $addedCeIds[] = $ce->id;
+                    $events->push([
+                        'id' => $ce->id,
+                        'type' => 'copy-editing',
+                        'title' => 'Språkvask: ' . basename($ce->file ?? 'Manus'),
+                        'className' => 'event-teal',
+                        'start' => $finish->copy(),
+                        'end' => $finish->copy(),
+                        'color' => '#26a69a',
+                        'all_day' => true,
+                    ]);
+                } catch (\Throwable $e) {
+                    continue;
+                }
+            }
+        }
+        // Språkvask via prosjekter
+        $projectCe = CopyEditingManuscript::where('user_id', $user->id)
+            ->whereNotNull('expected_finish')
+            ->whereNotIn('id', $addedCeIds)
+            ->get();
+        foreach ($projectCe as $ce) {
+            try {
+                $finish = Carbon::parse($ce->getRawOriginal('expected_finish'), $timezone)->startOfDay();
+                $events->push([
+                    'id' => $ce->id,
+                    'type' => 'copy-editing',
+                    'title' => 'Språkvask: ' . basename($ce->file ?? 'Manus'),
+                    'className' => 'event-teal',
+                    'start' => $finish->copy(),
+                    'end' => $finish->copy(),
+                    'color' => '#26a69a',
+                    'all_day' => true,
+                ]);
+            } catch (\Throwable $e) {
+                continue;
+            }
+        }
+
+        // Korrektur
+        $addedCrIds = [];
+        foreach ($user->corrections as $cr) {
+            if (!empty($cr->getRawOriginal('expected_finish')) && !in_array($cr->id, $addedCrIds)) {
+                try {
+                    $finish = Carbon::parse($cr->getRawOriginal('expected_finish'), $timezone)->startOfDay();
+                    $addedCrIds[] = $cr->id;
+                    $events->push([
+                        'id' => $cr->id,
+                        'type' => 'correction',
+                        'title' => 'Korrektur: ' . basename($cr->file ?? 'Manus'),
+                        'className' => 'event-magenta',
+                        'start' => $finish->copy(),
+                        'end' => $finish->copy(),
+                        'color' => '#e91e63',
+                        'all_day' => true,
+                    ]);
+                } catch (\Throwable $e) {
+                    continue;
+                }
+            }
+        }
+        // Korrektur via prosjekter
+        $projectCr = CorrectionManuscript::where('user_id', $user->id)
+            ->whereNotNull('expected_finish')
+            ->whereNotIn('id', $addedCrIds)
+            ->get();
+        foreach ($projectCr as $cr) {
+            try {
+                $finish = Carbon::parse($cr->getRawOriginal('expected_finish'), $timezone)->startOfDay();
+                $events->push([
+                    'id' => $cr->id,
+                    'type' => 'correction',
+                    'title' => 'Korrektur: ' . basename($cr->file ?? 'Manus'),
+                    'className' => 'event-magenta',
+                    'start' => $finish->copy(),
+                    'end' => $finish->copy(),
+                    'color' => '#e91e63',
+                    'all_day' => true,
+                ]);
+            } catch (\Throwable $e) {
+                continue;
+            }
         }
 
         return $events;

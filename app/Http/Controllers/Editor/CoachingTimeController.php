@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Editor;
 
 use AdminHelpers;
+use App\CoachingSession;
 use App\CoachingTimeRequest;
 use App\CoachingTimerManuscript;
 use App\EditorTimeSlot;
 use App\Http\Controllers\Controller;
+use App\Services\WherebyService;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -167,6 +169,29 @@ class CoachingTimeController extends Controller
         $manuscript->editor_id = Auth::id();
         $manuscript->editor_time_slot_id = $request->editor_time_slot_id;
         $manuscript->save();
+
+        // Opprett coaching session med Whereby-rom
+        try {
+            $wherebyService = new WherebyService();
+            $slotDate = $request->slot->date . ' ' . $request->slot->start_time;
+            $endDate = Carbon::parse($slotDate, 'UTC')
+                ->addMinutes($request->slot->duration)
+                ->addHour() // Ekstra tid for buffer
+                ->toIso8601ZuluString();
+            $meeting = $wherebyService->createMeeting($endDate);
+
+            CoachingSession::create([
+                'coaching_timer_manuscript_id' => $request->coaching_timer_manuscript_id,
+                'editor_id' => Auth::id(),
+                'student_id' => $manuscript->user_id,
+                'whereby_room_url' => $meeting['roomUrl'],
+                'whereby_host_url' => $meeting['hostRoomUrl'],
+                'whereby_meeting_id' => $meeting['meetingId'],
+                'status' => 'scheduled',
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Kunne ikke opprette Whereby-møte: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Request accepted.'),
                 'alert_type' => 'success']);
