@@ -29,14 +29,20 @@ class CommunityForumController extends Controller
         $profile = Profile::where('user_id', $user->id)->first();
 
         if (!$profile) {
+            $columns = \Schema::getColumnListing('profiles');
             $data = [
-                'id'           => Str::uuid(),
-                'user_id'      => $user->id,
+                'id'      => Str::uuid(),
+                'user_id' => $user->id,
+            ];
+            $optional = [
+                'name'         => trim($user->first_name . ' ' . $user->last_name),
                 'badge'        => 'aktiv_elev',
                 'access_level' => 'community_member',
             ];
-            if (\Schema::hasColumn('profiles', 'name')) {
-                $data['name'] = trim($user->first_name . ' ' . $user->last_name);
+            foreach ($optional as $col => $val) {
+                if (in_array($col, $columns)) {
+                    $data[$col] = $val;
+                }
             }
             $profile = Profile::create($data);
         }
@@ -53,7 +59,7 @@ class CommunityForumController extends Controller
     private function rejectIfSuspended()
     {
         $profile = Profile::where('user_id', Auth::id())->first();
-        if ($profile && $profile->is_suspended) {
+        if ($profile && \Schema::hasColumn('profiles', 'is_suspended') && $profile->is_suspended) {
             abort(403, 'Kontoen din er suspendert.');
         }
     }
