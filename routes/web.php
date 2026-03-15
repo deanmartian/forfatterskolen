@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth;
 use App\Http\Controllers\Backend;
 use App\Http\Controllers\Editor;
 use App\Http\Controllers\Editor\CoachingTimeController;
+use App\Http\Controllers\Editor\CoachingSessionController;
 use App\Http\Controllers\Frontend;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\PaypalController;
@@ -2108,6 +2109,15 @@ Route::domain($editor)->group(function () {
                 Route::post('/request/{id}/accept', 'acceptRequest')->name('request.accept');
                 Route::post('/request/{id}/decline', 'declineRequest')->name('request.decline');
             });
+        });
+
+        Route::prefix('/coaching-sessions')->name('editor.coaching-sessions.')->group(function () {
+            Route::get('/', [CoachingSessionController::class, 'index'])->name('index');
+            Route::get('/{id}', [CoachingSessionController::class, 'show'])->name('show');
+            Route::post('/{id}/start', [CoachingSessionController::class, 'start'])->name('start');
+            Route::post('/{id}/end', [CoachingSessionController::class, 'end'])->name('end');
+            Route::post('/{id}/upload-recording', [CoachingSessionController::class, 'uploadRecording'])->name('upload-recording');
+            Route::get('/student/{studentId}/history', [CoachingSessionController::class, 'studentHistory'])->name('student-history');
         });
     });
 

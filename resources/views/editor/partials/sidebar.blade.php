@@ -21,6 +21,12 @@
                             @case('editors-coaching-time')
                                 <i class="fa fa-users"></i>
                                 @break
+                            @case('editors-coaching-sessions')
+                                <i class="fa fa-video-camera"></i>
+                                @break
+                            @case('editors-messages')
+                                <i class="fa fa-envelope"></i>
+                                @break
                             @case('upcoming-assignment')
                                 <i class="fa fa-clock-o"></i>
                                 @break
@@ -45,6 +51,10 @@
                             {{ trans('site.upcoming-assignment') }}
                         @elseif($page['request_name'] === 'editors-coaching-time')
                             {{ trans('site.coaching-timer-text') }}
+                        @elseif($page['request_name'] === 'editors-coaching-sessions')
+                            Veiledningssamtaler
+                        @elseif($page['request_name'] === 'editors-messages')
+                            Meldinger
                         @elseif($page['request_name'] === 'editors-calendar')
                             {{ trans('site.learner.nav.calendar') }}
                         @else
