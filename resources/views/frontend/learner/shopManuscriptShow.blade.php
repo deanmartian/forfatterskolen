@@ -31,14 +31,23 @@
 						@endif
 					</div>
 
-					<div class="col-sm-12 col-md-5">
+					<div class="col-sm-12 col-md-5 manuscript-show-sidebar">
 						<div class="mb-3">
 							<h3>
 								{{ $shopManuscriptTaken->shop_manuscript->title }}
-	
+
 								@if( $shopManuscriptTaken->status == 'Finished' )
+									@php
+										$finishedFeedback = $shopManuscriptTaken->feedbacks()->first();
+										$finishedDate = null;
+										if ($finishedFeedback && ($finishedFeedback->getAttributes()['approved_at'] ?? null)) {
+											$finishedDate = date_format(date_create($finishedFeedback->getAttributes()['approved_at']), 'd.m.Y');
+										} elseif ($finishedFeedback) {
+											$finishedDate = date_format(date_create($finishedFeedback->getAttributes()['created_at']), 'd.m.Y');
+										}
+									@endphp
 									<p class="custom-badge start rounded-20 mb-0">
-										{{ trans('site.learner.finished') }}
+										{{ trans('site.learner.finished') }}{{ $finishedDate ? ': ' . $finishedDate : '' }}
 									</p>
 								@elseif( $shopManuscriptTaken->status == 'Started' )
 									<p class="custom-badge ended rounded-20 mb-0">
@@ -50,28 +59,38 @@
 									</p>
 								@endif
 							</h3>
-							<a href="{{ route('learner.shop-manuscript.download', [$shopManuscriptTaken->id, 'manuscript']) }}" 
+							<a href="{{ route('learner.shop-manuscript.download', [$shopManuscriptTaken->id, 'manuscript']) }}"
 								class="btn blue-outline-btn">
 								{{ trans('site.learner.download-original-script') }}
 								<i class="fa fa-download"></i>
 							</a>
 						</div>
-						<span class="font-barlow-regular mt-3">{{ trans('site.learner.filename-text') }}</span>:
-							{{ basename($shopManuscriptTaken->file) }}<br />
-						@if($shopManuscriptTaken->words)
-							<span class="font-barlow-regular">{{ trans('site.learner.words-text') }}</span>: {{ basename($shopManuscriptTaken->words) }}<br />
+
+						{{-- Info om margkommentarer når manuset er ferdig --}}
+						@if($shopManuscriptTaken->status == 'Finished')
+							<div class="manuscript-margin-notice">
+								<i class="fa fa-info-circle"></i>
+								<span>Du må laste ned manuset for å se kommentarene i margen.</span>
+							</div>
 						@endif
-							<span class="font-barlow-regular">{{ trans('site.learner.date-uploaded') }}</span>:
-							{{ $shopManuscriptTaken->manuscript_uploaded_date ?
-								\App\Http\FrontendHelpers::formatDate($shopManuscriptTaken->manuscript_uploaded_date) : '' }}<br />
-							<br>
-							@if ($shopManuscriptTaken->synopsis)
-								<a href="{{ route('learner.shop-manuscript.download', [$shopManuscriptTaken->id, 'synopsis']) }}">
-									{{ trans('site.download-synopsis') }}
-								</a>
-								<br>
+
+						<div class="manuscript-file-info">
+							<span class="font-barlow-regular">{{ trans('site.learner.filename-text') }}</span>:
+								{{ basename($shopManuscriptTaken->file) }}<br />
+							@if($shopManuscriptTaken->words)
+								<span class="font-barlow-regular">{{ trans('site.learner.words-text') }}</span>: {{ basename($shopManuscriptTaken->words) }}<br />
 							@endif
-						<br />
+								<span class="font-barlow-regular">{{ trans('site.learner.date-uploaded') }}</span>:
+								{{ $shopManuscriptTaken->manuscript_uploaded_date ?
+									\App\Http\FrontendHelpers::formatDate($shopManuscriptTaken->manuscript_uploaded_date) : '' }}<br />
+								@if ($shopManuscriptTaken->synopsis)
+									<a href="{{ route('learner.shop-manuscript.download', [$shopManuscriptTaken->id, 'synopsis']) }}" class="manuscript-synopsis-link">
+										<i class="fa fa-file-alt"></i> {{ trans('site.download-synopsis') }}
+									</a>
+								@endif
+						</div>
+
+						<hr />
 						<h3>
 							{{ trans('site.learner.feedbacks-text') }}
 						</h3>
@@ -79,14 +98,14 @@
 							@if($shopManuscriptTaken->status == 'Finished')
 								@foreach($shopManuscriptTaken->feedbacks as $feedback)
 									<div class="col-sm-12 mt-3">
-										<a href="{{ route('learner.shop-manuscript.download-feedback', 
+										<a href="{{ route('learner.shop-manuscript.download-feedback',
 										[$shopManuscriptTaken->id, $feedback->id]) }}" class="btn short-red-outline-btn mb-2">
 											{{ trans('site.learner.download-feedback') }}
 											<i class="fa fa-download"></i>
 										</a> <br>
-										<strong>{{ trans('site.learner.notes-text') }}:</strong> 
+										<strong>{{ trans('site.learner.notes-text') }}:</strong>
 										{{ $feedback->notes }} <br />
-										<strong>{{ trans('site.learner.submitted-on') }}:</strong> 
+										<strong>{{ trans('site.learner.submitted-on') }}:</strong>
 										{{ \App\Http\FrontendHelpers::formatDateTimeNor($feedback->created_at) }} <br />
 									</div>
 								@endforeach
@@ -96,35 +115,48 @@
 						<h3 class="font-barlow-semi-bold font-weight-normal">
 							{{ trans('site.learner.comments') }}
 						</h3>
-						@if( $shopManuscriptTaken->feedbacks->count() > 0 )
-                            <?php
-
-							$feedbackFirst = $shopManuscriptTaken->feedbacks[0];
-							$created_at = \Carbon\Carbon::parse($feedbackFirst->created_at);
-
-							// Signed difference in days from now
-							$diff = (int) round(\Carbon\Carbon::now()->diffInDays($created_at, false));
-                            ?>
-							<div class="mt-4">
-								<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
-										class="form-control" required disabled>
-								<div class="text-right mt-4">
-									<button class="btn btn-info btn-sm" type="button" disabled>
-										{{ trans('site.learner.add-comment') }}
+						@php
+							$hasFeedback = $shopManuscriptTaken->feedbacks->count() > 0;
+							$canStillComment = false;
+							if ($hasFeedback) {
+								$feedbackFirst = $shopManuscriptTaken->feedbacks[0];
+								$feedbackCreatedAt = \Carbon\Carbon::parse($feedbackFirst->created_at);
+								$daysSinceFeedback = (int) abs(\Carbon\Carbon::now()->diffInDays($feedbackCreatedAt, false));
+								$canStillComment = $daysSinceFeedback <= 14;
+							}
+							$manuscriptUrl = url('/account/shop-manuscript/' . $shopManuscriptTaken->id);
+							$chatSubject = 'Re: ' . $shopManuscriptTaken->shop_manuscript->title;
+							$chatBody = 'Gjelder manuskript: ' . $shopManuscriptTaken->shop_manuscript->title . "\n" . $manuscriptUrl . "\n\n";
+							$editorId = $shopManuscriptTaken->feedback_user_id;
+							$chatLink = route('learner.messages.create') . '?' . http_build_query([
+								'recipient_id' => $editorId,
+								'subject' => $chatSubject,
+								'body' => $chatBody,
+							]);
+						@endphp
+						@if($hasFeedback)
+							{{-- Etter feedback: kun chat til redaktør --}}
+							<div class="mt-3 manuscript-chat-link-box">
+								@if($canStillComment)
+									<p><i class="fa fa-comments"></i> Har du spørsmål om tilbakemeldingen? Send en melding til redaktøren.</p>
+									<a href="{{ $chatLink }}" class="btn manuscript-chat-btn">
+										<i class="fa fa-envelope"></i> Send melding til redaktør
+									</a>
+								@else
+									<p><i class="fa fa-comments"></i> Kommentarperioden er utløpt.</p>
+									<button class="btn manuscript-chat-btn" disabled>
+										<i class="fa fa-envelope"></i> Send melding til redaktør
 									</button>
-								</div>
+								@endif
 							</div>
 						@else
-							<form method="POST" class="mt-4" action="{{ route('learner.shop-manuscript.post-comment', $shopManuscriptTaken->id) }}">
-								{{ csrf_field() }}
-								<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
-									   class="form-control" required>
-								<div class="text-right mt-4">
-									<button class="btn btn-info btn-sm" type="submit">
-										{{ trans('site.learner.add-comment') }}
-									</button>
-								</div>
-							</form>
+							{{-- Før feedback: chat til redaktør --}}
+							<div class="mt-3 manuscript-chat-link-box">
+								<p><i class="fa fa-comments"></i> Har du spørsmål? Send en melding til redaktøren.</p>
+								<a href="{{ $chatLink }}" class="btn manuscript-chat-btn">
+									<i class="fa fa-envelope"></i> Send melding til redaktør
+								</a>
+							</div>
 						@endif
 
 						<div class="mt-4">
@@ -150,17 +182,17 @@
 						</div>
 
 						@if (!$shopManuscriptTaken->is_manuscript_locked)
-							<div>
-								<button type="button" class="btn btn-primary uploadManuscriptBtn"
+							<div class="manuscript-upload-buttons mt-3">
+								<button type="button" class="btn manuscript-upload-btn uploadManuscriptBtn"
 										data-toggle="modal" data-target="#uploadManuscriptModal"
 										data-action="{{ route('learner.shop-manuscript.upload', $shopManuscriptTaken->id) }}">
-									{{ trans('site.learner.upload-script') }}
+									<i class="fa fa-upload"></i> {{ trans('site.learner.upload-script') }}
 								</button>
 
-								<button type="button" class="btn btn-success uploadSynopsisBtn"
+								<button type="button" class="btn manuscript-synopsis-btn uploadSynopsisBtn"
 										data-toggle="modal" data-target="#uploadSynopsisModal"
 										data-action="{{ route('learner.shop-manuscript.upload_synopsis', $shopManuscriptTaken->id) }}">
-									{{ trans('site.synopsis') }}
+									<i class="fa fa-file-alt"></i> {{ trans('site.synopsis') }}
 								</button>
 							</div>
 						@endif

@@ -1476,6 +1476,256 @@ body.sidebar-open::after {
     color: var(--blue);
 }
 
+/* Manuskript-side: FS-farger i stedet for blått */
+.learner-manuscript-wrapper .blue-outline-btn {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color) !important;
+}
+
+.learner-manuscript-wrapper .blue-outline-btn .fa {
+    color: var(--secondary-color) !important;
+}
+
+.learner-manuscript-wrapper .blue-outline-btn:hover {
+    background-color: var(--secondary-color);
+    color: var(--white) !important;
+}
+
+.learner-manuscript-wrapper .blue-btn {
+    background-color: var(--secondary-red);
+    border-color: var(--secondary-red);
+    color: var(--white);
+}
+
+.learner-manuscript-wrapper .blue-btn:hover {
+    background-color: transparent;
+    color: var(--secondary-red);
+}
+
+.learner-manuscript-wrapper .blue-btn:hover .fa {
+    color: var(--secondary-red);
+}
+
+/* Startet-badge: FS-farge i stedet for blå/lilla */
+.custom-badge.ended {
+    background-color: var(--pink);
+    color: var(--primary-color);
+}
+
+/* === Manuskript detaljside (shopManuscriptShow) === */
+
+/* Info-boks om margkommentarer */
+.manuscript-margin-notice {
+    background-color: var(--pink);
+    border-left: 4px solid var(--secondary-red);
+    padding: 12px 16px;
+    margin-bottom: 15px;
+    border-radius: 0 5px 5px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--primary-color);
+}
+
+.manuscript-margin-notice .fa-info-circle {
+    font-size: 18px;
+    color: var(--secondary-red);
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* Filinformasjon */
+.manuscript-file-info {
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 10px;
+}
+
+.manuscript-synopsis-link {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--secondary-red);
+    font-weight: 600;
+}
+
+.manuscript-synopsis-link:hover {
+    color: var(--primary-color);
+}
+
+/* Chat-lenke boks (erstatter deaktivert kommentarfelt) */
+.manuscript-chat-link-box {
+    background-color: #f8f8f8;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+}
+
+.manuscript-chat-link-box p {
+    color: var(--secondary-color);
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.manuscript-chat-link-box .fa-comments {
+    color: var(--secondary-color);
+    margin-right: 4px;
+}
+
+.manuscript-chat-btn {
+    background-color: var(--secondary-red);
+    color: var(--white) !important;
+    border: 1px solid var(--secondary-red);
+    border-radius: 5px;
+    font-weight: 600;
+    padding: 8px 20px;
+    transition: all 0.2s ease;
+}
+
+.manuscript-chat-btn:hover {
+    background-color: transparent;
+    color: var(--secondary-red) !important;
+}
+
+/* Kommentar-knapp (erstatter btn-info) */
+.manuscript-comment-btn {
+    background-color: var(--secondary-color);
+    color: var(--white) !important;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    font-weight: 600;
+    padding: 6px 16px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.manuscript-comment-btn:hover {
+    background-color: transparent;
+    color: var(--secondary-color) !important;
+}
+
+/* Kommentar-bobler med FS-farger */
+.manuscript-show-sidebar .comment {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+
+.manuscript-show-sidebar .comment.owner {
+    background-color: var(--pink);
+}
+
+/* Upload-knapper */
+.manuscript-upload-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.manuscript-upload-btn {
+    background-color: var(--secondary-red);
+    color: var(--white) !important;
+    border: 1px solid var(--secondary-red);
+    border-radius: 5px;
+    font-weight: 600;
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+}
+
+.manuscript-upload-btn:hover {
+    background-color: transparent;
+    color: var(--secondary-red) !important;
+}
+
+.manuscript-synopsis-btn {
+    background-color: transparent;
+    color: var(--secondary-color) !important;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    font-weight: 600;
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+}
+
+.manuscript-synopsis-btn:hover {
+    background-color: var(--secondary-color);
+    color: var(--white) !important;
+}
+
+/* Download-knapp for originalmanus med FS-farge (scoped til detaljside) */
+.manuscript-show-sidebar .blue-outline-btn {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color) !important;
+}
+
+.manuscript-show-sidebar .blue-outline-btn .fa {
+    color: var(--secondary-color) !important;
+}
+
+.manuscript-show-sidebar .blue-outline-btn:hover {
+    background-color: var(--secondary-color);
+    color: var(--white) !important;
+}
+
+.manuscript-show-sidebar .blue-outline-btn:hover .fa {
+    color: var(--white) !important;
+}
+
+/* Manuskript detaljside — mobil */
+@media only screen and (max-width: 768px) {
+    .manuscript-show-sidebar {
+        margin-top: 20px;
+    }
+
+    .manuscript-show-sidebar h3 {
+        font-size: 18px;
+    }
+
+    .manuscript-show-sidebar iframe {
+        height: 350px !important;
+    }
+
+    .manuscript-show-sidebar .blue-outline-btn {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .manuscript-margin-notice {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
+
+    .manuscript-chat-link-box {
+        padding: 12px;
+    }
+
+    .manuscript-chat-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .manuscript-upload-buttons {
+        flex-direction: column;
+    }
+
+    .manuscript-upload-btn,
+    .manuscript-synopsis-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .manuscript-show-sidebar .comment {
+        max-width: 90%;
+    }
+
+    /* Iframe for dokumentvisning */
+    .learner-container .panel-body iframe {
+        height: 300px !important;
+    }
+}
+
 .light-red-outline-btn {
     background-color: transparent;
     border: 1px solid rgb(95, 0, 0, 28%);
