@@ -32,8 +32,11 @@ body:not(.modal-open) {
     box-shadow: var(--box-shadow-style);
     overflow-x: auto;
     padding: 30px;
+    padding-bottom: 0;
     transition: all 0.3s ease;
     z-index: 9;
+    display: flex;
+    flex-direction: column;
 }
 
 @media only screen and (max-width: 1026px) {
@@ -42,7 +45,7 @@ body:not(.modal-open) {
     }
 
     #sidebar.sidebar-visible {
-        display: block;
+        display: flex;
         width: 280px;
         z-index: 1001;
     }
@@ -128,34 +131,68 @@ body.sidebar-open::after {
     color: var(--primary-color);
 }
 
+#sidebar .nav-sidebar {
+    flex: 1;
+    overflow-y: auto;
+}
+
+#sidebar .sidebar-community-nav {
+    flex: 1;
+    overflow-y: auto;
+}
+
+#sidebar .sidebar-community-label {
+    color: var(--primary-color);
+    font-family: 'Poppins';
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    margin-bottom: 2px;
+}
+
+#sidebar .sidebar-community-nav .nav-sidebar {
+    flex: none;
+    overflow-y: visible;
+}
+
+#sidebar .portal-btn.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+#sidebar .sidebar-bottom {
+    border-top: 1px solid #e8e8e8;
+    padding: 16px 0 20px;
+    margin-top: auto;
+}
+
 #sidebar .learner-details-container {
-    font-size: 18px;
-    margin-top: 30px;
+    font-size: 13px;
+    color: var(--secondary-color);
+    margin-bottom: 12px;
 }
 
-#sidebar .icons-container {
-    margin-top: 30px;
-    display: flex;
-    justify-content: space-between;
-}
-
-#sidebar .icons-container a {
-    background-color: #f5f7fa;
-    border-radius: 10px;
-    display: inline-block;
-    margin-right: 5px;
-    padding: 10px 15px;
+#sidebar .learner-details-container b {
+    margin-left: 4px;
 }
 
 #sidebar .portal-btn {
-    border: 1px solid #9A9A9A;
-    border-radius: 5px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
     color: var(--primary-color);
-    font-family: 'Poppins';
-    font-weight: bold;
-    margin-top: 20px;
-    padding: 15px;
+    display: block;
+    font-size: 13px;
+    padding: 8px 0;
     width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+#sidebar .portal-btn i {
+    margin-right: 6px;
 }
 
 #sidebar .portal-btn:hover {
@@ -165,17 +202,17 @@ body.sidebar-open::after {
 
 #sidebar .logout-btn {
     background-color: var(--primary-color);
-    border-radius: 5px;
+    border-radius: 6px;
     color: var(--white);
-    font-family: 'Poppins';
-    font-weight: bold;
-    margin-top: 20px;
-    padding: 15px;
+    display: block;
+    font-size: 13px;
+    padding: 8px 0;
     width: 100%;
+    text-align: center;
 }
 
 #sidebar .logout-btn i {
-    margin-right: 10px;
+    margin-right: 6px;
 }
 
 #sidebar .logout-btn:hover {

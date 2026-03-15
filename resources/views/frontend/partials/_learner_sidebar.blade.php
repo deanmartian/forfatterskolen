@@ -8,7 +8,40 @@
             FORFATTERSKOLEN
         </span>
     </a>
-    <!-- Sidebar content goes here -->
+
+    @if(Request::is('account/community*'))
+    {{-- Community-navigasjon --}}
+    <div class="sidebar-community-nav">
+        <div class="sidebar-community-label">Skrivefellesskap</div>
+        <ul class="nav nav-sidebar">
+            <li @if(Request::is('account/community') && !Request::is('account/community/*')) class="active" @endif>
+                <a href="{{ route('learner.community.home') }}"><i class="fa fa-home"></i> Hjem</a>
+            </li>
+            <li @if(Request::is('account/community/discussions*')) class="active" @endif>
+                <a href="{{ route('learner.community.discussions') }}"><i class="fa fa-comments"></i> Diskusjoner</a>
+            </li>
+            <li @if(Request::is('account/community/messages*')) class="active" @endif>
+                <a href="{{ route('learner.community.messages') }}"><i class="fa fa-envelope"></i> Meldinger</a>
+            </li>
+            <li @if(Request::is('account/community/members*')) class="active" @endif>
+                <a href="{{ route('learner.community.members') }}"><i class="fa fa-users"></i> Medlemmer</a>
+            </li>
+            <li @if(Request::is('account/community/manuscripts*')) class="active" @endif>
+                <a href="{{ route('learner.community.manuscripts') }}"><i class="fa fa-book"></i> Manusrom</a>
+            </li>
+            <li @if(Request::is('account/community/notifications*')) class="active" @endif>
+                <a href="{{ route('learner.community.notifications') }}"><i class="fa fa-bell"></i> Varsler</a>
+            </li>
+            <li @if(Request::is('account/community/course-groups*')) class="active" @endif>
+                <a href="{{ route('learner.community.courseGroups') }}"><i class="fa fa-graduation-cap"></i> Kursgrupper</a>
+            </li>
+            <li @if(Request::is('account/community/profile*')) class="active" @endif>
+                <a href="{{ route('learner.community.profile') }}"><i class="fa fa-user"></i> Min profil</a>
+            </li>
+        </ul>
+    </div>
+    @else
+    {{-- Vanlig elevportal-navigasjon --}}
     <ul class="nav nav-sidebar">
         @foreach (FrontendHelpers::coursePortalNav() as $nav )
             <li @if($nav['is_active']) class="active" @endif>
@@ -19,37 +52,31 @@
             </li>
         @endforeach
     </ul>
+    @endif
 
-    <div class="learner-details-container">
-        <em>Elevnummer:</em>
-        <b>{{ Auth::id() }}</b>
-    </div>
-
-    <div class="icons-container">
-        <a href="https://www.facebook.com/bliforfatter/" target="_blank">
-            <img src="{{ asset('images-new/icon/facebook.png') }}" alt="facebook-icon">
+    <div class="sidebar-bottom">
+        <div class="learner-details-container">
+            <em>Elevnummer:</em>
+            <b>{{ Auth::id() }}</b>
+        </div>
+        @if(Request::is('account/community*'))
+        <a href="{{ route('learner.dashboard') }}" class="btn portal-btn">
+            <i class="fa fa-graduation-cap"></i> Kursportalen
         </a>
-        <a href="https://twitter.com/Forfatterrektor" target="_blank" class="ml-0">
-            <img src="{{ asset('images-new/icon/twitter.png') }}" alt="twitter-icon">
+        @endif
+        @if(!Request::is('account/community*'))
+        <a href="{{ route('learner.community.home') }}" class="btn portal-btn">
+            <i class="fa fa-comments"></i> Skrivefellesskap
         </a>
-        <a href="https://www.instagram.com/forfatterskolen_norge/" target="_blank">
-            <img src="{{ asset('images-new/icon/instagram.png') }}" alt="instagram-icon">
+        @endif
+        <a href="{{ route('learner.change-portal', 'self-publishing') }}" class="btn portal-btn">
+            <i class="fa fa-book"></i> Selvpubliseringsportal
         </a>
-        <a href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank">
-            <img src="{{ asset('images-new/icon/pinterest.png') }}" alt="pinterest-icon">
-        </a>
-    </div>
-
-    <a href="{{ route('learner.change-portal', 'self-publishing') }}" class="btn portal-btn">
-        Selvpubliseringsportal
-    </a>
-
-    <a href="{{ route('auth.logout-get') }}" style="display: block">
         <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
             {{csrf_field()}}
             <button type="submit" class="btn logout-btn">
                 <i class="fa fa-sign-out-alt"></i> Logg av
             </button>
         </form>
-    </a>
+    </div>
 </div>
