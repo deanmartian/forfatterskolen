@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <button type="submit" class="btn site-btn-global-w-arrow pull-right">
+    <button type="submit" class="btn site-btn-global-w-arrow float-end">
         {{ trans('site.front.login.change-password') }}
     </button>
 </form>

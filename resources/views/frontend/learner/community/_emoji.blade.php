@@ -17,7 +17,7 @@
         document.querySelectorAll('emoji-picker').forEach(function(picker) {
             picker.addEventListener('emoji-click', function(e) {
                 var wrapper = this.closest('.emoji-picker-wrapper');
-                var targetId = wrapper.getAttribute('data-target');
+                var targetId = wrapper.getAttribute('data-bs-target') || wrapper.getAttribute('data-target');
                 var textarea = document.getElementById(targetId) || wrapper.closest('form').querySelector('textarea, input[type="text"]');
                 if (textarea) {
                     var start = textarea.selectionStart;

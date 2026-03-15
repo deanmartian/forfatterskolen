@@ -1,946 +1,946 @@
-{{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
 @section('title')
-<title>Dashboard &rsaquo; Forfatterskolen</title>
+<title>Kontrollpanel &rsaquo; Forfatterskolen</title>
 @stop
 
 @section('styles')
-    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<style>
+/* ── DASHBOARD REDESIGN — scoped under .db-redesign ── */
+.db-redesign {
+    --db-wine: #862736;
+    --db-wine-hover: #9c2e40;
+    --db-wine-dark: #5c1a25;
+    --db-wine-light: rgba(134, 39, 54, 0.08);
+    --db-wine-light-solid: #f4e8ea;
+    --db-cream: #faf8f5;
+    --db-green: #2e7d32;
+    --db-green-bg: #e8f5e9;
+    --db-amber: #e65100;
+    --db-amber-bg: #fff3e0;
+    --db-red: #c62828;
+    --db-red-bg: #fce8e8;
+    --db-blue: #1565c0;
+    --db-blue-bg: #e3f2fd;
+    --db-text: #1a1a1a;
+    --db-text-sec: #5a5550;
+    --db-text-muted: #8a8580;
+    --db-border: rgba(0, 0, 0, 0.08);
+    --db-border-strong: rgba(0, 0, 0, 0.12);
+    --db-font: 'Source Sans 3', -apple-system, sans-serif;
+    --db-radius: 10px;
+    --db-radius-lg: 14px;
+    font-family: var(--db-font);
+    color: var(--db-text);
+    -webkit-font-smoothing: antialiased;
+    padding: 2rem 2.5rem;
+    background: #f5f3f0;
+    min-height: 100vh;
+}
+
+/* Hide topbar on dashboard — its content is integrated into the dashboard */
+#topbar { display: none !important; }
+#main-content { padding-top: 0 !important; margin-top: 0 !important; }
+
+/* Mobile sidebar toggle — reposition since topbar is hidden */
+@media (max-width: 1025px) {
+    .db-redesign .db-mobile-toggle {
+        position: fixed; top: 0.75rem; right: 0.75rem; z-index: 100;
+        background: white; border: 1px solid var(--db-border-strong);
+        border-radius: 8px; padding: 0.5rem 0.75rem; cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+}
+
+/* Welcome */
+.db-welcome { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem; }
+.db-welcome h1 { font-size: 1.5rem; font-weight: 700; color: var(--db-text); margin: 0 0 0.15rem; }
+.db-welcome p { font-size: 0.875rem; color: var(--db-text-sec); margin: 0; }
+.db-welcome__date { font-size: 0.825rem; color: var(--db-text-muted); }
+
+/* Author quote */
+.db-quote {
+    background: var(--db-cream); border: 1px solid var(--db-border);
+    border-left: 3px solid var(--db-wine);
+    border-radius: 0 var(--db-radius) var(--db-radius) 0;
+    padding: 1rem 1.5rem; margin-bottom: 1.5rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+}
+.db-quote__text { font-size: 0.9rem; font-style: italic; color: var(--db-text-sec); line-height: 1.6; }
+.db-quote__author { font-size: 0.78rem; font-weight: 600; color: var(--db-text-muted); font-style: normal; white-space: nowrap; }
+
+/* Alert cards */
+.db-alert { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border-radius: var(--db-radius); margin-bottom: 1.5rem; }
+.db-alert--warning { background: var(--db-amber-bg); border: 1px solid rgba(230, 81, 0, 0.15); }
+.db-alert--danger { background: var(--db-red-bg); border: 1px solid rgba(198, 40, 40, 0.15); }
+.db-alert__icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.db-alert--warning .db-alert__icon { background: rgba(230, 81, 0, 0.12); }
+.db-alert--danger .db-alert__icon { background: rgba(198, 40, 40, 0.12); }
+.db-alert__text { flex: 1; font-size: 0.85rem; color: var(--db-text); }
+.db-alert__text strong { font-weight: 600; }
+.db-alert__action { font-size: 0.8rem; font-weight: 600; color: var(--db-wine); text-decoration: none; white-space: nowrap; padding: 0.4rem 1rem; border: 1px solid var(--db-wine); border-radius: 6px; transition: all 0.15s; }
+.db-alert__action:hover { background: var(--db-wine); color: #fff; text-decoration: none; }
+
+/* Next-up cards */
+.db-next-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+.db-next-card { background: #fff; border: 1px solid var(--db-border); border-radius: var(--db-radius-lg); padding: 1.25rem 1.5rem; display: flex; align-items: flex-start; gap: 1rem; }
+.db-next-card__icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.db-next-card__icon--task { background: var(--db-wine-light-solid); }
+.db-next-card__icon--mentor { background: var(--db-blue-bg); }
+.db-next-card__icon svg { width: 22px; height: 22px; }
+.db-next-card__label { font-size: 0.7rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--db-text-muted); margin-bottom: 0.3rem; }
+.db-next-card__title { font-size: 0.95rem; font-weight: 600; color: var(--db-text); margin-bottom: 0.2rem; }
+.db-next-card__meta { font-size: 0.78rem; color: var(--db-text-muted); }
+.db-next-card__action { display: inline-block; margin-top: 0.75rem; font-size: 0.78rem; font-weight: 600; color: var(--db-wine); text-decoration: none; padding: 0.35rem 0.85rem; border: 1px solid var(--db-wine); border-radius: 5px; transition: all 0.15s; }
+.db-next-card__action:hover { background: var(--db-wine); color: #fff; text-decoration: none; }
+
+/* Quick stats */
+.db-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+.db-stat { background: #fff; border: 1px solid var(--db-border); border-radius: var(--db-radius); padding: 1rem; text-align: center; }
+.db-stat__number { font-size: 1.5rem; font-weight: 700; color: var(--db-text); line-height: 1; margin-bottom: 0.25rem; }
+.db-stat__label { font-size: 0.72rem; color: var(--db-text-muted); }
+
+/* Cards */
+.db-card { background: #fff; border: 1px solid var(--db-border); border-radius: var(--db-radius-lg); overflow: hidden; }
+.db-card__header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem 1rem; }
+.db-card__title { font-size: 1rem; font-weight: 700; color: var(--db-text); margin: 0; }
+.db-card__link { font-size: 0.78rem; font-weight: 600; color: var(--db-wine); text-decoration: none; }
+.db-card__link:hover { color: var(--db-wine-hover); text-decoration: none; }
+.db-card__body { padding: 0 1.5rem 1.5rem; }
+
+/* Grid layout */
+.db-grid { display: grid; grid-template-columns: 1fr 360px; gap: 1.5rem; }
+
+/* Course list */
+.db-course-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.db-course-item { display: flex; align-items: center; gap: 1rem; padding: 0.85rem; border: 1px solid var(--db-border); border-radius: var(--db-radius); transition: border-color 0.15s; text-decoration: none; color: inherit; }
+.db-course-item:hover { border-color: var(--db-border-strong); text-decoration: none; color: inherit; }
+.db-course-item__thumb { width: 56px; height: 56px; border-radius: 8px; background: linear-gradient(135deg, #e8e2da, #d4cec6); flex-shrink: 0; overflow: hidden; }
+.db-course-item__thumb img { width: 100%; height: 100%; object-fit: cover; }
+.db-course-item__info { flex: 1; min-width: 0; }
+.db-course-item__name { font-size: 0.875rem; font-weight: 600; color: var(--db-text); margin-bottom: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.db-course-item__instructor { font-size: 0.75rem; color: var(--db-text-muted); }
+.db-course-item__badge { font-size: 0.65rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 4px; white-space: nowrap; }
+.db-course-item__badge--active { background: var(--db-green-bg); color: var(--db-green); }
+.db-course-item__badge--renewal { background: var(--db-amber-bg); color: var(--db-amber); }
+.db-course-item__badge--hold { background: var(--db-red-bg); color: var(--db-red); }
+.db-course-item__arrow { color: var(--db-text-muted); font-size: 0.85rem; }
+
+/* Mentor timeline */
+.db-mentor-tl { display: flex; flex-direction: column; }
+.db-mentor-item { display: flex; align-items: flex-start; gap: 0.85rem; padding: 0.85rem 0; border-bottom: 1px solid var(--db-border); }
+.db-mentor-item:last-child { border-bottom: none; }
+.db-mentor-item__date { text-align: center; min-width: 42px; flex-shrink: 0; }
+.db-mentor-item__day { font-size: 1.25rem; font-weight: 700; color: var(--db-wine); line-height: 1; }
+.db-mentor-item__month { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; color: var(--db-wine); margin-top: 2px; }
+.db-mentor-item__info { flex: 1; }
+.db-mentor-item__name { font-size: 0.85rem; font-weight: 600; color: var(--db-text); margin-bottom: 0.1rem; }
+.db-mentor-item__topic { font-size: 0.75rem; color: var(--db-text-muted); }
+.db-mentor-item__time { font-size: 0.7rem; color: var(--db-text-muted); white-space: nowrap; }
+.db-mentor-item__badge-live { font-size: 0.6rem; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 3px; background: var(--db-green-bg); color: var(--db-green); display: inline-block; margin-top: 0.15rem; }
+
+/* Calendar items */
+.db-cal-item { display: flex; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--db-border); }
+.db-cal-item:last-child { border-bottom: none; }
+.db-cal-item__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--db-wine); margin-top: 5px; flex-shrink: 0; }
+.db-cal-item__text { font-size: 0.82rem; color: var(--db-text); line-height: 1.5; }
+.db-cal-item__date { font-size: 0.7rem; color: var(--db-text-muted); margin-top: 0.1rem; }
+
+/* Community card */
+.db-community-box { background: var(--db-wine-light-solid); border-radius: 10px; padding: 1.25rem; text-align: center; }
+.db-community-box svg { margin-bottom: 0.5rem; }
+.db-community-box__title { font-size: 0.9rem; font-weight: 600; color: var(--db-text); margin-bottom: 0.2rem; }
+.db-community-box__desc { font-size: 0.78rem; color: var(--db-text-sec); line-height: 1.5; }
+
+/* Quick links */
+.db-quick-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.85rem; border: 1px solid var(--db-border); border-radius: 8px; text-decoration: none; color: var(--db-text); font-size: 0.85rem; font-weight: 500; transition: border-color 0.15s; margin-bottom: 0.5rem; }
+.db-quick-link:hover { border-color: var(--db-border-strong); text-decoration: none; color: var(--db-text); }
+.db-quick-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* Auto-renew toggle */
+.db-auto-renew { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--db-text-muted); margin-bottom: 1.5rem; }
+.db-auto-renew label { margin: 0; cursor: pointer; }
+
+/* ── UPLOAD MODAL REDESIGN ── */
+/* Note: modals render outside .db-redesign, so we use literal colors instead of var(--db-*) */
+.um-modal .modal-dialog { max-width: 480px; }
+.um-modal .modal-content { border: none; border-radius: 14px; overflow: hidden; box-shadow: 0 24px 64px rgba(0,0,0,0.2); }
+
+.um-modal .um-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.08); }
+.um-modal .um-header h3 { font-size: 1.1rem; font-weight: 700; color: #1a1a1a; margin: 0; }
+.um-modal .um-close { width: 32px; height: 32px; border-radius: 8px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.um-modal .um-close:hover { background: rgba(0,0,0,0.05); }
+.um-modal .um-close svg { width: 18px; height: 18px; stroke: #8a8580; stroke-width: 2; }
+
+.um-modal .um-body { padding: 1.5rem; }
+
+/* Context info */
+.um-context { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1rem; background: #faf8f5; border-radius: 10px; margin-bottom: 1.5rem; }
+.um-context-icon { width: 36px; height: 36px; border-radius: 8px; background: #f4e8ea; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.um-context-icon svg { width: 18px; height: 18px; }
+.um-context-text { font-size: 0.825rem; color: #5a5550; line-height: 1.5; }
+.um-context-text strong { color: #1a1a1a; }
+
+/* Upload zone */
+.um-upload-zone { border: 2px dashed rgba(0,0,0,0.12); border-radius: 10px; padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; margin-bottom: 1.25rem; position: relative; }
+.um-upload-zone:hover, .um-upload-zone.dragover { border-color: #862736; background: rgba(134,39,54,0.03); }
+.um-upload-zone__icon { width: 48px; height: 48px; margin: 0 auto 0.75rem; background: #f4e8ea; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.um-upload-zone__icon svg { width: 24px; height: 24px; }
+.um-upload-zone__title { font-size: 0.9rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.2rem; }
+.um-upload-zone__sub { font-size: 0.78rem; color: #8a8580; margin-bottom: 0.75rem; }
+.um-upload-zone__formats { display: flex; justify-content: center; gap: 0.35rem; flex-wrap: wrap; }
+.um-format-tag { font-size: 0.65rem; font-weight: 600; color: #8a8580; background: rgba(0,0,0,0.04); padding: 0.2rem 0.55rem; border-radius: 4px; }
+.um-upload-zone input[type="file"] { display: none; }
+
+/* File selected */
+.um-upload-zone--selected { border-style: solid; border-color: #2e7d32; background: #e8f5e9; padding: 1rem 1.25rem; text-align: left; }
+.um-upload-file { display: flex; align-items: center; gap: 0.75rem; }
+.um-upload-file__icon { width: 40px; height: 40px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.um-upload-file__icon svg { width: 20px; height: 20px; }
+.um-upload-file__info { flex: 1; }
+.um-upload-file__name { font-size: 0.85rem; font-weight: 600; color: #1a1a1a; }
+.um-upload-file__size { font-size: 0.72rem; color: #2e7d32; }
+.um-upload-file__remove { width: 28px; height: 28px; border-radius: 50%; border: none; background: rgba(0,0,0,0.06); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.um-upload-file__remove:hover { background: rgba(0,0,0,0.1); }
+.um-upload-file__remove svg { width: 14px; height: 14px; stroke: #8a8580; stroke-width: 2; }
+
+/* Form fields */
+.um-form-row { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+.um-form-group label { display: block; font-size: 0.78rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.35rem; }
+.um-modal .um-form-group select { width: 100%; padding: 0.6rem 0.85rem; border: 1px solid rgba(0,0,0,0.12) !important; border-radius: 6px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 0.85rem; color: #1a1a1a !important; background: #fff !important; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%238a8580' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.85rem center; padding-right: 2.25rem; transition: border-color 0.15s; }
+.um-modal .um-form-group select:focus { outline: none; border-color: #862736 !important; }
+
+/* Segment buttons */
+.um-segment-label { font-size: 0.78rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.5rem; }
+.um-segment-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; margin-bottom: 1.5rem; }
+.um-modal .um-segment-btn,
+.um-modal .um-segment-btn:focus,
+.um-modal .um-segment-btn:active { padding: 0.55rem 0.25rem; border: 1px solid rgba(0,0,0,0.12) !important; border-radius: 6px; background: #fff !important; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 0.75rem; font-weight: 500; color: #5a5550 !important; cursor: pointer; text-align: center; transition: all 0.15s; box-shadow: none !important; outline: none !important; }
+.um-modal .um-segment-btn:hover { border-color: #862736 !important; color: #862736 !important; }
+.um-modal .um-segment-btn.active,
+.um-modal .um-segment-btn.active:focus,
+.um-modal .um-segment-btn.active:active,
+.um-modal .um-segment-btn.active:hover { background: #862736 !important; border-color: #862736 !important; color: #fff !important; }
+
+/* Word note */
+.um-word-note { display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem 0.85rem; background: rgba(134,39,54,0.05); border-radius: 6px; margin-bottom: 1.5rem; font-size: 0.78rem; color: #5a5550; }
+.um-word-note svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+/* Footer */
+.um-footer { padding: 0 1.5rem 1.5rem; display: flex; gap: 0.75rem; }
+.um-modal .um-btn { flex: 1; padding: 0.75rem; border-radius: 8px; font-family: 'Source Sans 3', -apple-system, sans-serif; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.15s; text-align: center; border: none !important; }
+.um-modal .um-btn--primary { background: #862736 !important; color: #fff !important; }
+.um-modal .um-btn--primary:hover { background: #9c2e40 !important; }
+.um-modal .um-btn--secondary { background: transparent !important; color: #5a5550 !important; border: 1px solid rgba(0,0,0,0.12) !important; }
+.um-modal .um-btn--secondary:hover { background: rgba(0,0,0,0.02) !important; }
+
+/* Responsive */
+@media (max-width: 1100px) { .db-grid { grid-template-columns: 1fr; } }
+@media (max-width: 800px) {
+    .db-redesign { padding: 1.5rem; }
+    .db-next-grid { grid-template-columns: 1fr; }
+    .db-stats { grid-template-columns: 1fr 1fr; }
+}
+</style>
 @stop
 
 @section('content')
-    
-    <div class="learner-container learner-dashboard-wrapper">
-        <div class="container">
-            <h1 class="page-title">
-                {{ trans('site.author-portal-menu.dashboard') }}
-            </h1>
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="card global-card">
-                        <div class="card-header">
-                            <h2>
-                                {{ trans('site.learner.my-course') }}
-                                <a href="{{ route('learner.course') }}" class="float-right view-all">
-                                    {{ trans('site.learner.see-all') }}
-                                    <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </h2>
-                        </div>
-                        <div class="card-body">
-                            @foreach ($coursesTaken as $courseTaken)
-                                <div class="course-item">
-                                    <div class="col-md-7">
-                                        <img data-src="https://www.forfatterskolen.no/{{$courseTaken->package->course->course_image}}" 
-                                            alt="{{ $courseTaken->package->course->title }}">
-                                    </div>
-                                    <div class="col-md-5">
-                                        <h3>
-                                            {{$courseTaken->package->course->title}}
-                                        </h3>
-                                        <p>
-                                            {!! \Illuminate\Support\Str::limit(
-                                                strip_tags($courseTaken->package->course->description), 200
-                                                ) !!}
-                                        </p>
+@php
+    $months_no = ['Jan','Feb','Mar','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Des'];
+    $days_no = ['søndag','mandag','tirsdag','onsdag','torsdag','fredag','lørdag'];
+    $today = \Carbon\Carbon::now();
+    $todayFormatted = $days_no[$today->dayOfWeek] . ' ' . $today->format('d') . '. ' .
+        strtolower($months_no[$today->month - 1]) . ' ' . $today->format('Y');
+    $todayFormatted = ucfirst($todayFormatted);
 
-                                        @if (!Auth::user()->isDisabled)
-                                            @if( $courseTaken->is_active )
-                                                @if($courseTaken->hasStarted)
-                                                    @if($courseTaken->hasEnded)
-                                                        <button class="btn light-red-outline-btn" data-toggle="modal"
-                                                                data-target="#renewAllModal">
-                                                            {{ trans('site.learner.renew-subscription') }}
-                                                        </button>
-                                                    @else
-                                                        <a class="btn light-red-outline-btn"
-                                                            href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
-                                                            {{ trans('site.learner.continue-this-course') }}
-                                                        </a>
-                                                    @endif
-                                                @else
-                                                    <form method="POST" action="{{route('learner.course.take')}}">
-                                                        {{csrf_field()}}
-                                                        <input type="hidden" name="courseTakenId" value="{{$courseTaken->id}}">
-                                                        <button type="submit" class="btn light-red-outline-btn">
-                                                            {{ trans('site.learner.start-course') }}
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            @else
-                                                <a class="btn btn-warning disabled">
-                                                    {{ trans('site.learner.course-on-hold') }}
-                                                </a>
-                                            @endif
-                                        @endif
+    // Wrap arrays into collections for chaining
+    $assignmentsCol = collect($assignments);
+    $coursesTakenCol = collect($coursesTaken);
+
+    // Get next assignment
+    $nextAssignment = $assignmentsCol->first(function($a) {
+        return !$a->manuscripts->where('user_id', Auth::user()->id)->first();
+    });
+
+    // Count active courses
+    $activeCourseCount = $coursesTakenCol->filter(function($ct) {
+        return $ct->is_active && $ct->hasStarted && !$ct->hasEnded;
+    })->count();
+
+    $pendingAssignmentCount = $assignmentsCol->filter(function($a) {
+        return !$a->manuscripts->where('user_id', Auth::user()->id)->first();
+    })->count();
+
+    // Get webinars for timeline
+    $webinarTimeline = DB::table('courses_taken')
+        ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
+        ->join('courses', 'packages.course_id', '=', 'courses.id')
+        ->join('webinars', 'courses.id', '=', 'webinars.course_id')
+        ->select('webinars.*','courses.title as course_title')
+        ->where('user_id', Auth::user()->id)
+        ->where('courses.id', 17)
+        ->whereNotIn('webinars.id', [24, 25, 31])
+        ->where('set_as_replay', 0)
+        ->where('webinars.start_date', '>=', now()->toDateString())
+        ->orderBy('webinars.start_date', 'ASC')
+        ->groupBy('webinars.id')
+        ->limit(4)
+        ->get();
+
+    // Quotes
+    $quotes = [
+        ['text' => 'Start writing, no matter what. The water does not flow until the faucet is turned on.', 'author' => 'Louis L\'Amour'],
+        ['text' => 'You can always edit a bad page. You can\'t edit a blank page.', 'author' => 'Jodi Picoult'],
+        ['text' => 'The first draft is just you telling yourself the story.', 'author' => 'Terry Pratchett'],
+        ['text' => 'A writer is someone for whom writing is more difficult than it is for other people.', 'author' => 'Thomas Mann'],
+    ];
+    $dailyQuote = $quotes[array_rand($quotes)];
+
+    // Invoice alert logic
+    $unpaidInvoice = Auth::user()->invoices()->where('fiken_is_paid', 0)->first();
+    $invoiceAlert = null;
+    if ($unpaidInvoice && $unpaidInvoice->fiken_dueDate) {
+        $daysUntilDue = (int) round(now()->diffInDays(\Carbon\Carbon::parse($unpaidInvoice->fiken_dueDate), false));
+        if ($daysUntilDue < 0) {
+            $invoiceAlert = ['type' => 'danger', 'text' => 'Forfalt faktura: #' . $unpaidInvoice->invoice_number . ' — ' . abs($daysUntilDue) . ' dager over fristen'];
+        } elseif ($daysUntilDue <= 7) {
+            $invoiceAlert = ['type' => 'warning', 'text' => 'Faktura #' . $unpaidInvoice->invoice_number . ' forfaller om ' . $daysUntilDue . ' dager'];
+        }
+    }
+
+    // Calendar entries
+    $uniqueStart = array_unique(array_map(function ($i) {
+        if (\Carbon\Carbon::parse($i['start'])->gte(\Carbon\Carbon::today())) {
+            return $i['start'];
+        }
+    }, $dashboardCalendar));
+    $filteredUniqueStart = array_filter($uniqueStart);
+    sort($filteredUniqueStart);
+@endphp
+
+<div class="db-redesign">
+
+    {{-- Mobile sidebar toggle (since topbar is hidden on dashboard) --}}
+    <button type="button" id="sidebarCollapse" class="db-mobile-toggle d-xl-none">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    {{-- ═══ WELCOME ═══ --}}
+    <div class="db-welcome">
+        <div>
+            <h1>Hei, {{ Auth::user()->first_name ?? Auth::user()->name }}!</h1>
+            <p>Her er oversikten din for denne uken.</p>
+        </div>
+        <span class="db-welcome__date">{{ $todayFormatted }}</span>
+    </div>
+
+    {{-- Auto-renew toggle --}}
+    <div class="db-auto-renew">
+        <label>Automatisk registrert for felleswebinarer</label>
+        <input type="checkbox" data-bs-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
+               class="webinar-auto-register-toggle" data-off="{{ trans('site.front.no') }}"
+               data-size="mini"
+               @if(Auth::user()->userAutoRegisterToCourseWebinar) {{ 'checked' }} @endif>
+    </div>
+
+    {{-- Daily quote --}}
+    <div class="db-quote">
+        <p class="db-quote__text">"{{ $dailyQuote['text'] }}"</p>
+        <span class="db-quote__author">— {{ $dailyQuote['author'] }}</span>
+    </div>
+
+    {{-- Invoice alert --}}
+    @if($invoiceAlert)
+        <div class="db-alert db-alert--{{ $invoiceAlert['type'] }}">
+            <div class="db-alert__icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ $invoiceAlert['type'] === 'danger' ? '#c62828' : '#e65100' }}" stroke-width="1.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="db-alert__text"><strong>{{ $invoiceAlert['text'] }}</strong></div>
+            <a href="{{ route('learner.invoice') }}" class="db-alert__action">Se faktura</a>
+        </div>
+    @endif
+
+    {{-- ═══ NEXT UP ═══ --}}
+    <div class="db-next-grid">
+        <div class="db-next-card">
+            <div class="db-next-card__icon db-next-card__icon--task">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div>
+                <div class="db-next-card__label">Neste oppgave</div>
+                @if($nextAssignment)
+                    <div class="db-next-card__title">{{ $nextAssignment->title }}</div>
+                    @if($nextAssignment->deadline)
+                        <div class="db-next-card__meta">Frist: {{ \Carbon\Carbon::parse($nextAssignment->deadline)->format('d.m.Y') }}</div>
+                    @endif
+                    <button class="db-next-card__action submitManuscriptBtn"
+                            data-bs-toggle="modal" data-bs-target="#submitManuscriptModal"
+                            data-action="{{ route('learner.assignment.add_manuscript', $nextAssignment->id) }}">
+                        Last opp manus
+                    </button>
+                @else
+                    <div class="db-next-card__title" style="color: var(--db-text-muted);">Ingen ventende oppgaver</div>
+                    <div class="db-next-card__meta">Du er à jour!</div>
+                @endif
+            </div>
+        </div>
+        <div class="db-next-card">
+            <div class="db-next-card__icon db-next-card__icon--mentor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            </div>
+            <div>
+                <div class="db-next-card__label">Neste mentormøte</div>
+                @if($webinarTimeline->count())
+                    @php $nextWebinar = $webinarTimeline->first(); @endphp
+                    <div class="db-next-card__title">{{ $nextWebinar->title }}</div>
+                    <div class="db-next-card__meta">
+                        {{ \Carbon\Carbon::parse($nextWebinar->start_date)->format('d.m.Y') }}
+                        kl. {{ \Carbon\Carbon::parse($nextWebinar->start_date)->format('H:i') }}
+                    </div>
+                    <a href="{{ route('learner.webinar') }}" class="db-next-card__action">Se mentormøter</a>
+                @else
+                    <div class="db-next-card__title" style="color: var(--db-text-muted);">Ingen kommende</div>
+                    <div class="db-next-card__meta">Sjekk kalenderen for oppdateringer.</div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    {{-- ═══ QUICK STATS ═══ --}}
+    <div class="db-stats">
+        <div class="db-stat">
+            <div class="db-stat__number">{{ $coursesTaken->count() }}</div>
+            <div class="db-stat__label">Aktive kurs</div>
+        </div>
+        <div class="db-stat">
+            <div class="db-stat__number">{{ $webinarTimeline->count() }}</div>
+            <div class="db-stat__label">Kommende mentormøter</div>
+        </div>
+        <div class="db-stat">
+            <div class="db-stat__number">{{ $pendingAssignmentCount }}</div>
+            <div class="db-stat__label">Oppgaver å levere</div>
+        </div>
+        <div class="db-stat">
+            <div class="db-stat__number">{{ Auth::user()->messages()->count() }}</div>
+            <div class="db-stat__label">Beskjeder</div>
+        </div>
+    </div>
+
+    {{-- ═══ DASHBOARD GRID ═══ --}}
+    <div class="db-grid">
+        {{-- Left column --}}
+        <div>
+            {{-- Mine Kurs --}}
+            <div class="db-card" style="margin-bottom: 1.5rem;">
+                <div class="db-card__header">
+                    <h2 class="db-card__title">Mine kurs</h2>
+                    <a href="{{ route('learner.course') }}" class="db-card__link">Se alle →</a>
+                </div>
+                <div class="db-card__body">
+                    <div class="db-course-list">
+                        @foreach ($coursesTaken as $ct)
+                            <a href="{{ route('learner.course.show', ['id' => $ct->id]) }}" class="db-course-item">
+                                <div class="db-course-item__thumb">
+                                    @if($ct->package && $ct->package->course && $ct->package->course->course_image)
+                                        <img src="https://www.forfatterskolen.no/{{ $ct->package->course->course_image }}" alt="" loading="lazy">
+                                    @endif
+                                </div>
+                                <div class="db-course-item__info">
+                                    <div class="db-course-item__name">{{ $ct->package->course->title ?? '' }}</div>
+                                    <div class="db-course-item__instructor">
+                                        {{ $ct->package->course->instructor ?? 'Forfatterskolen' }}
                                     </div>
                                 </div>
-                            @endforeach
-                            
-                        </div>
-                    </div> <!-- end course card -->
-
-                    <div class="card global-card mt-5">
-                        <div class="card-header">
-                            <h2>
-                                {{ trans('site.learner.my-invoice') }}
-                                <a href="{{ route('learner.invoice') }}" class="float-right view-all">
-                                    {{ trans('site.learner.see-all') }}
-                                    <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </h2>
-                        </div>
-                        <div class="card-body p-0">
-                            <table class="table table-global">
-                                <thead>
-                                    <tr>
-                                        <th class="font-weight-bold">
-                                            {{ trans('site.learner.invoice-number') }}
-                                        </th>
-                                        <th class="font-weight-bold">
-                                            {{ trans('site.learner.deadline') }}
-                                        </th>
-                                        <th class="font-weight-bold">
-                                            {{ trans('site.learner.remainders') }}
-                                        </th>
-                                        <th class="font-weight-bold">
-                                            {{ trans('site.learner.status') }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach(Auth::user()->invoices()->limit(5)->get() as $invoice)
-                                        <?php
-                                            $transactions_sum = $invoice->transactions->sum('amount');
-                                            // remove if the above code is uncomment
-                                            $balance = $invoice->fiken_balance;
-                                            $status = $invoice->fiken_is_paid === 1 ? strtoupper(trans('site.learner.paid'))
-                                                    : ($invoice->fiken_is_paid === 2 ? strtoupper('sendt til inkasso')
-                                                    : strtoupper(trans('site.learner.unpaid')));
-                                        ?>
-                                        <tr>
-                                            <td>
-                                                {{$invoice->invoice_number}}
-                                            </td>
-                                            <td>
-                                                {{ \Carbon\Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y') }}
-                                            </td>
-                                            <td>
-                                                @if($invoice->fiken_is_paid)
-                                                    {{\App\Http\FrontendHelpers::currencyFormat(0)}}
-                                                @else
-                                                    {{\App\Http\FrontendHelpers::currencyFormat($balance - $transactions_sum)}}
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if($invoice->fiken_is_paid === 1)
-                                                    <span class="label label-green">
-                                                        {{ strtoupper(trans('site.learner.paid')) }}
-                                                    </span>
-                                                @elseif($invoice->fiken_is_paid === 2)
-                                                    <span class="label label-warning text-uppercase label-rounded">
-                                                        {{ strtoupper(trans('site.send-to-debt-collection'))  }}
-                                                    </span>
-                                                @elseif($invoice->fiken_is_paid === 3)
-                                                    <span class="label label-violet text-uppercase">
-                                                        {{ strtoupper(trans('site.credited'))  }}
-                                                    </span>
-                                                @else
-                                                    <span class="label label-danger label-rounded">
-                                                        {{ strtoupper(trans('site.learner.unpaid'))  }}</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div> <!-- end invoice card -->
-
-                    <div class="global-card assignment-card mt-4">
-                        <div class="card-header">
-                            <h2>
-                                {{ trans('site.learner.assignment') }}
-                                <a href="{{ route('learner.assignment') }}" class="float-right view-all">
-                                    {{ trans('site.learner.see-all') }}
-                                    <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </h2>
-                        </div>
-                        <div class="card-body py-0">
-                            <table class="table table-global">
-                                <tbody>
-                                    @foreach($assignments as $assignment)
-                                        <?php
-                                        $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first();
-                                        ?>
-                                        <tr>
-                                            <td>{{ $assignment->title }}</td>
-                                            <td width="200" class="text-center">
-                                                @if( $manuscript )
-                                                    @if (!$manuscript->locked)
-                                                        <div>
-                                                            <button type="button" class="btn btn-info editManuscriptBtn"
-                                                                    data-toggle="modal" data-target="#editManuscriptModal"
-                                                                    data-action="{{ route('learner.assignment.replace_manuscript',
-                                                                    $manuscript->id) }}">
-                                                                <i class="fa fa-pen"></i>
-                                                            </button>
-                                                            <button type="button" class="btn btn-danger deleteManuscriptBtn"
-                                                                    data-toggle="modal" data-target="#deleteManuscriptModal"
-                                                                    data-action="{{ route('learner.assignment.delete_manuscript',
-                                                                    $manuscript->id) }}">
-                                                                <i class="fa fa-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    @endif
-                                                @else
-                                                    @if($assignment->for_editor)
-                                                        <button class="btn red-outline-btn submitEditorManuscriptBtn" 
-                                                        data-toggle="modal"
-                                                                data-target="#submitEditorManuscriptModal"
-                                                                data-action="{{ route('learner.assignment.add_manuscript', 
-                                                                $assignment->id) }}">
-                                                            {{ trans('site.learner.upload-script') }}
-                                                        </button>
-                                                    @else
-                                                        <button class="btn red-outline-btn submitManuscriptBtn" data-toggle="modal"
-                                                                data-target="#submitManuscriptModal"
-                                                                data-action="{{ route('learner.assignment.add_manuscript',
-                                                                 $assignment->id) }}">
-                                                            {{ trans('site.learner.upload-script') }}
-                                                        </button>
-                                                    @endif
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div> <!-- end assignment card -->
-                </div>
-                <div class="col-lg-4 right-container">
-                    <div class="global-card">
-                        <div class="card-header">
-                            <h2>
-                                {{ trans('site.login-to') }}:
-                            </h2>
-                        </div>
-                        <div class="card-body pb-0">
-                            <a href="https://www.facebook.com/groups/272814062884940" class="btn site-btn-global w-100">
-                                <b>{{ trans('site.forum') }}</b>
-                                <i class="fa fa-key"></i>
+                                @if($ct->is_active && $ct->hasStarted && !$ct->hasEnded)
+                                    <span class="db-course-item__badge db-course-item__badge--active">Aktiv</span>
+                                @elseif($ct->is_active && $ct->hasStarted && $ct->hasEnded)
+                                    <span class="db-course-item__badge db-course-item__badge--renewal">Forny</span>
+                                @elseif(!$ct->is_active)
+                                    <span class="db-course-item__badge db-course-item__badge--hold">På vent</span>
+                                @endif
+                                <span class="db-course-item__arrow">›</span>
                             </a>
-                        </div>
-                    </div> <!-- end login card -->
+                        @endforeach
+                    </div>
+                </div>
+            </div>
 
-                    <div class="card global-card mt-4">
-                        <div class="card-header">
-                            <h2>
-                                {{ trans('site.learner.calendar') }}
-                                <a href="{{ route('learner.calendar') }}" class="float-right view-all">
-                                    {{ trans('site.learner.see-all') }}
-                                    <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </h2>
+            {{-- Kommende mentormøter --}}
+            <div class="db-card">
+                <div class="db-card__header">
+                    <h2 class="db-card__title">Kommende mentormøter</h2>
+                    <a href="{{ route('learner.webinar') }}" class="db-card__link">Se alle →</a>
+                </div>
+                <div class="db-card__body">
+                    @if($webinarTimeline->count())
+                        <div class="db-mentor-tl">
+                            @foreach($webinarTimeline as $wt)
+                                @php
+                                    $wtDate = \Carbon\Carbon::parse($wt->start_date);
+                                    $isToday = $wtDate->isToday();
+                                    $isTomorrow = $wtDate->isTomorrow();
+                                @endphp
+                                <div class="db-mentor-item">
+                                    <div class="db-mentor-item__date">
+                                        <div class="db-mentor-item__day">{{ $wtDate->format('d') }}</div>
+                                        <div class="db-mentor-item__month">{{ $months_no[$wtDate->month - 1] }}</div>
+                                    </div>
+                                    <div class="db-mentor-item__info">
+                                        <div class="db-mentor-item__name">{{ $wt->title }}</div>
+                                        <div class="db-mentor-item__topic">{{ $wt->description ?: '' }}</div>
+                                        @if($isToday)
+                                            <span class="db-mentor-item__badge-live">I dag</span>
+                                        @elseif($isTomorrow)
+                                            <span class="db-mentor-item__badge-live">I morgen</span>
+                                        @endif
+                                    </div>
+                                    <span class="db-mentor-item__time">{{ $wtDate->format('H:i') }}</span>
+                                </div>
+                            @endforeach
                         </div>
-                        <div class="card-body pb-0">
-                            <?php
-                                // get the unique start
-                                $uniqueStart = array_unique(array_map(function ($i) {
-                                    if (\Carbon\Carbon::parse($i['start'])->gte(\Carbon\Carbon::today())) {
-                                        return $i['start'];
-                                    }
-                                }, $dashboardCalendar));
+                    @else
+                        <p style="font-size: 0.85rem; color: var(--db-text-muted);">Ingen kommende mentormøter.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
 
-                                $filteredUniqueStart = array_filter($uniqueStart); // filter empty
-                                sort($filteredUniqueStart); // sort the result
-                                $counter = 1;
-                            ?>
-                            @foreach($filteredUniqueStart as $k => $start)
-                                <?php
-                                    $parseStart = \Carbon\Carbon::parse($start);
-                                ?>
-                                @if ($counter <= 2)
-                                    <div class="col-md-12 calendar-item">
-                                        <div class="row">
-                                            <div class="col-md-4 text-center d-flex">
-                                                <div class="align-self-center w-100 date-container">
-                                                    <span>
-                                                        {{ ucfirst(\App\Http\FrontendHelpers::convertMonthLanguage(
-                                                            $parseStart->format('n')
-                                                            )) }}
-                                                        </span>
-                                                    <h1>{{ $parseStart->format('d') }}</h1>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-8">
-                                                <?php $calendarCounter = 1;?>
-                                                    @foreach($dashboardCalendar as $calendar)
-                                                        @if ($calendar['start'] == $start && $calendarCounter <= 2)
-                                                            <p>
-                                                                {{ $calendar['title'] }}
-                                                            </p>
-                                                            <?php $calendarCounter++;?>
-                                                        @endif
-                                                    @endforeach
-                                            </div>
+        {{-- Right column --}}
+        <div>
+            {{-- Kalender --}}
+            <div class="db-card" style="margin-bottom: 1.5rem;">
+                <div class="db-card__header">
+                    <h2 class="db-card__title">Kalender</h2>
+                    <a href="{{ route('learner.calendar') }}" class="db-card__link">Se alle →</a>
+                </div>
+                <div class="db-card__body">
+                    @php $calCounter = 0; @endphp
+                    @foreach($filteredUniqueStart as $start)
+                        @if($calCounter < 3)
+                            @php $parseStart = \Carbon\Carbon::parse($start); @endphp
+                            @foreach($dashboardCalendar as $calendar)
+                                @if($calendar['start'] == $start && $calCounter < 3)
+                                    <div class="db-cal-item">
+                                        <span class="db-cal-item__dot"></span>
+                                        <div>
+                                            <div class="db-cal-item__text">{{ $calendar['title'] }}</div>
+                                            <div class="db-cal-item__date">{{ $parseStart->format('d') }}. {{ strtolower($months_no[$parseStart->month - 1]) }} {{ $parseStart->format('Y') }} · {{ $parseStart->format('H:i') != '00:00' ? $parseStart->format('H:i') : '' }}</div>
                                         </div>
                                     </div>
+                                    @php $calCounter++; @endphp
                                 @endif
-                                <?php $counter++?>
                             @endforeach
-                        </div>
-                    </div> <!-- end global-card calendar card -->
-
-                    @if ($freeCourses->count())
-                    <div class="card global-card mt-4">
-                        <div class="card-header">
-                            <h2>
-                                {{ trans('site.learner.free-course-available') }}
-                            </h2>
-                        </div>
-                        <div class="card-body">
-                            @foreach($freeCourses as $free)
-                                <div class="row free-course-row">
-                                    <div class="col-md-5">
-                                        <img data-src="https://www.forfatterskolen.no/{{$free->course_image}}" 
-                                            alt="{{ $free->title }}">
-                                    </div>
-                                    <div class="col-md-7">
-                                        <b>
-                                            {{ $free->title }}
-                                        </b>
-
-                                        <?php
-                                            $course_packages = $free->packages->pluck('id')->toArray();
-                                            $courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)
-                                        ->whereIn('package_id', $course_packages)->first();
-                                        ?>
-                                        @if (!$courseTaken)
-                                            <form action="{{ route('front.course.getFreeCourse', $free->id) }}" method="POST"
-                                                  onsubmit="disableSubmit(this)" class="form-inline">
-                                                {{ csrf_field() }}
-                                                <button class="btn btn-theme" type="submit">
-                                                    {{ trans('site.learner.get-free-course') }}
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div> <!-- end global-card -->
+                        @endif
+                    @endforeach
+                    @if($calCounter === 0)
+                        <p style="font-size: 0.85rem; color: var(--db-text-muted);">Ingen kommende hendelser.</p>
                     @endif
-                </div> <!-- end col-md-4 -->
-            </div> <!-- end row -->
-
-            <div class="divider-center-text">
-                {{ strtoupper(trans('site.learner.my-webinar')) }}
-            </div>
-
-            <?php
-                // separate the id's and display the Repriser first
-                $webinarsRepriser = DB::table('courses_taken')
-                    ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
-                    ->join('courses', 'packages.course_id', '=', 'courses.id')
-                    ->join('webinars', 'courses.id', '=', 'webinars.course_id')
-                    ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title')
-                    ->where('user_id',Auth::user()->id)
-                    ->where('courses.id',17) // just added this line to show all webinar pakke webinars
-                    ->where(function($query){
-                        $query->whereIn('webinars.id',[24, 25, 31]);
-                        $query->orWhere('set_as_replay',1);
-                    })
-                    //->whereIn('webinars.id',[24, 25, 31]) // remove this to return the original
-                    ->orderBy('courses.type', 'ASC')
-                    ->orderBy('webinars.start_date', 'ASC')
-                    ->groupBy('webinars.id')
-                    ->get();
-
-                $webinars = DB::table('courses_taken')
-                    ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
-                    ->join('courses', 'packages.course_id', '=', 'courses.id')
-                    ->join('webinars', 'courses.id', '=', 'webinars.course_id')
-                    ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title')
-                    ->where('user_id',Auth::user()->id)
-                    ->where('courses.id',17) // just added this line to show all webinar pakke webinars
-                    ->whereNotIn('webinars.id',[24, 25, 31])
-                    ->where('set_as_replay',0)
-                    ->orderBy('courses.type', 'ASC')
-                    ->orderBy('webinars.start_date', 'ASC')
-                    ->groupBy('webinars.id')
-                    ->get();
-            ?>
-            <div class="row webinar-wrapper">
-                @foreach($webinarsRepriser as $webinar)
-                    @php
-                        $start_date = Carbon\Carbon::parse($webinar->start_date);
-                        $now = Carbon\Carbon::now();
-
-                        // Ensure days are rounded (Carbon 3 returns float)
-                        $diff = (int) round($now->diffInDays($start_date, false));
-                        $diffWithHours = (int) round($now->diffInHours($start_date, false));
-                    @endphp
-
-                    @if( $diffWithHours >= 0 )
-                        @php
-                            $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
-                            $coursesTakenEndDate = \Carbon\Carbon::parse($webinar->start_date)->subDays(1);
-                            if ($coursesTaken) {
-                                $coursesTakenEndDate = $coursesTaken->end_date ?: 
-                                    \Carbon\Carbon::parse($coursesTaken->started_at)->addYear(1)->format('Y-m-d');
-                            }
-                        @endphp
-                        <div class="col-lg-3 col-md-6 webinar-column">
-                            <div class="global-card card-global">
-                                <?php
-                                    $img_web_link = '#';
-                                    if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id)) {
-                                    $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
-                                    } else {
-                                    $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
-                                    ? 'javascript:void(0)' :route('learner.webinar.register',
-                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]);
-                                    }
-                                ?>
-                                <div class="card-header">
-                                    @if($webinar->link)
-                                        <a href="{{ $img_web_link }}">
-                                            <img src="https://www.forfatterskolen.no/{{ $webinar->image }}" alt="">
-                                        </a>
-                                    @else
-                                        <img src="https://www.forfatterskolen.no/{{ $webinar->image }}" alt="">
-                                    @endif
-                                </div>
-                                <div class="card-body">
-                                    <p>
-                                        <i class="fa fa-calendar-alt"></i>
-                                        {{ str_replace(['_date_', '_time_'],
-                                        [\Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y'),
-                                        \Carbon\Carbon::parse($webinar->start_date)->format('H:i')],
-                                        trans('site.front.our-course.show.start-date')) }}
-                                    </p>
-
-                                    <h3 class="text-center">
-                                        {{ $webinar->title }}
-                                    </h3>
-
-                                    <p class="text-gray my-4 text-center">
-                                        {{ $webinar->description }}
-                                    </p>
-                                </div> <!-- end card-body -->
-
-                                <div class="button-container">
-                                </div>
-
-                                <div>
-                                    @if (!Auth::user()->isDisabled)
-                                        @if( \App\Http\FrontendHelpers::isWebinarAvailable($webinar) )
-                                            <a class="btn w-100" href="{{ $webinar->link }}" target="_blank">
-                                                {{ trans('site.learner.join-webinar') }}
-                                            </a>
-                                        @else
-
-                                            @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
-                                                <a class="btn w-100" 
-                                                href="{{ $coursesTaken && $coursesTaken->hasEnded
-                                                            ? 'javascript:void(0)' : $webinar->link }}" target="_blank">
-                                                    {{ trans('site.learner.replay') }}
-                                                </a>
-                                            @else
-                                                @if($webinar->set_as_replay)
-                                                    <a class="btn w-100" 
-                                                    href="{{ $webinar->link }}" target="_blank">
-                                                        {{ trans('site.learner.replay') }}
-                                                    </a>
-                                                @else
-                                                    @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, 
-                                                    Auth::user()->id))
-                                                        <a class="btn w-100"
-                                                        href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, 
-                                                        Auth::user()->id) }}">
-                                                            {{ trans('site.learner.signed') }}
-                                                        </a>
-                                                    @else
-                                                        {{-- check if have webinar link --}}
-                                                        @if($webinar->link)
-                                                            <a class="btn w-100 webinarRegister"
-                                                            href="{{ \Carbon\Carbon::parse($webinar->start_date)
-                                                            ->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
-                                                                ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                                [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), 
-                                                                $webinar->id]) }}">
-                                                                {{ trans('site.learner.register') }}
-                                                            </a>
-                                                        @else
-                                                            <a href="javascript:void(0)"
-                                                            class="btn w-100 rounded-0 btn-success disabled" disabled>
-                                                                {{ trans('site.registration-is-coming') }}
-                                                            </a>
-                                                        @endif
-                                                    @endif
-                                                @endif
-                                            @endif
-                                        @endif
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                @endforeach
-
-                @foreach($webinars as $webinar)
-                    @php
-                        $start_date = Carbon\Carbon::parse($webinar->start_date);
-                        $now = Carbon\Carbon::now();
-
-                        // Ensure days are rounded (Carbon 3 returns float)
-                        $diff = (int) round($now->diffInDays($start_date, false));
-                        $diffWithHours = (int) round($now->diffInHours($start_date, false));
-                    @endphp
-
-                    @if( $diffWithHours >= 0 )
-                        @php
-                            $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
-                            $coursesTakenEndDate = \Carbon\Carbon::parse($webinar->start_date)->subDays(1);
-                            if ($coursesTaken) {
-                                $coursesTakenEndDate = $coursesTaken->end_date ?: 
-                                    \Carbon\Carbon::parse($coursesTaken->started_at)->addYear(1)->format('Y-m-d');
-                            }
-                        @endphp
-                        <div class="col-lg-3 col-md-6 webinar-column">
-                            <div class="global-card card-global">
-                                <?php
-                                    $img_web_link = '#';
-                                    if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id)) {
-                                    $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
-                                    } else {
-                                    $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
-                                    ? 'javascript:void(0)' :route('learner.webinar.register',
-                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]);
-                                    }
-                                ?>
-                                <div class="card-header">
-                                    @if($webinar->link)
-                                        <a href="{{ $img_web_link }}">
-                                            <img src="https://www.forfatterskolen.no/{{ $webinar->image }}" alt="">
-                                        </a>
-                                    @else
-                                        <img src="https://www.forfatterskolen.no/{{ $webinar->image }}" alt="">
-                                    @endif
-                                </div>
-                                <div class="card-body">
-                                    <p>
-                                        <i class="fa fa-calendar-alt"></i>
-                                        {{ str_replace(['_date_', '_time_'],
-                                        [\Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y'),
-                                        \Carbon\Carbon::parse($webinar->start_date)->format('H:i')],
-                                        trans('site.front.our-course.show.start-date')) }}
-                                    </p>
-
-                                    <h3 class="text-center">
-                                        {{ $webinar->title }}
-                                    </h3>
-
-                                    <p class="text-gray my-4 text-center">
-                                        {{ $webinar->description }}
-                                    </p>
-                                </div> <!-- end card-body -->
-
-                                <div class="button-container">
-                                </div>
-
-                                <div>
-                                    @if (!Auth::user()->isDisabled)
-                                        @if( \App\Http\FrontendHelpers::isWebinarAvailable($webinar) )
-                                            <a class="btn w-100" href="{{ $webinar->link }}" target="_blank">
-                                                {{ trans('site.learner.join-webinar') }}
-                                            </a>
-                                        @else
-
-                                            @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
-                                                <a class="btn w-100" 
-                                                href="{{ $coursesTaken && $coursesTaken->hasEnded
-                                                            ? 'javascript:void(0)' : $webinar->link }}" target="_blank">
-                                                    {{ trans('site.learner.replay') }}
-                                                </a>
-                                            @else
-                                                @if($webinar->set_as_replay)
-                                                    <a class="btn w-100" 
-                                                    href="{{ $webinar->link }}" target="_blank">
-                                                        {{ trans('site.learner.replay') }}
-                                                    </a>
-                                                @else
-                                                    @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, 
-                                                    Auth::user()->id))
-                                                        <a class="btn w-100"
-                                                        href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, 
-                                                        Auth::user()->id) }}">
-                                                            {{ trans('site.learner.signed') }}
-                                                        </a>
-                                                    @else
-                                                        {{-- check if have webinar link --}}
-                                                        @if($webinar->link)
-                                                            <a class="btn w-100 webinarRegister"
-                                                            href="{{ \Carbon\Carbon::parse($webinar->start_date)
-                                                            ->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
-                                                                ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                                [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), 
-                                                                $webinar->id]) }}">
-                                                                {{ trans('site.learner.register') }}
-                                                            </a>
-                                                        @else
-                                                            <a href="javascript:void(0)"
-                                                            class="btn w-100 rounded-0 btn-success disabled" disabled>
-                                                                {{ trans('site.registration-is-coming') }}
-                                                            </a>
-                                                        @endif
-                                                    @endif
-                                                @endif
-                                            @endif
-                                        @endif
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                @endforeach
-            </div>
-        </div>
-    </div> <!-- end learner-dashboard-wrapper -->
-
-    <div id="renewAllModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">
-                        {{ trans('site.learner.renew-all.title') }}
-                    </h4>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ route('learner.renew-all-courses') }}" onsubmit="disableSubmit(this)">
-                        {{ csrf_field() }}
-
-                        <p>
-                            {{ trans('site.learner.renew-all.description') }}
-                        </p>
-                        <div class="text-right margin-top">
-                            <button type="submit" class="btn btn-primary">
-                                {{ trans('site.front.yes') }}
-                            </button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">
-                                {{ trans('site.front.no') }}
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div id="submitEditorManuscriptModal" class="global-modal modal fade" role="dialog">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">
-                        {{ trans('site.learner.upload-script') }}
-                    </h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+            {{-- Skrivefellesskap --}}
+            <div class="db-card" style="margin-bottom: 1.5rem;">
+                <div class="db-card__header">
+                    <h2 class="db-card__title">Skrivefellesskap</h2>
+                    <a href="{{ route('learner.community.home') }}" class="db-card__link">Åpne →</a>
                 </div>
-                <div class="modal-body">
-                    <form method="POST" action="" enctype="multipart/form-data"
-                          onsubmit="disableSubmit(this);">
-                        {{ csrf_field() }}
-                        <div class="form-group mb-2">
-                            <label class="mb-0">* {{ trans('site.learner.manuscript.doc-format-text') }}</label>
-                            <input type="file" class="form-control margin-top" required name="filename"
-                                   accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-                        </div>
-
-                        <div class="form-group mb-2">
-                            <label class="mb-0">
-                                {{ trans('site.front.genre') }}
-                            </label>
-                            <select class="form-control" name="type" required>
-                                <option value="" disabled="disabled" selected>
-                                    {{ trans('site.front.select-genre') }}
-                                </option>
-                                @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-                                    <option value="{{ $type->id }}"> {{ $type->name }} </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            {{ trans('site.learner.manuscript.where-in-manuscript') }} <br>
-                            @foreach(\App\Http\FrontendHelpers::manuscriptType() as $manu)
-                                <input type="radio" name="manu_type" value="{{ $manu['id'] }}" required>
-                                <label class="mb-0">{{ $manu['option'] }}</label> <br>
-                            @endforeach
-                        </div>
-                        <button type="submit" class="btn red-global-btn pull-right margin-top">
-                            {{ trans('site.learner.upload') }}
-                        </button>
-                        <div class="clearfix"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="submitManuscriptModal" class="global-modal modal fade" role="dialog">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">
-                        {{ trans('site.learner.upload-script') }}
-                    </h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this);">
-                        {{ csrf_field() }}
-                        <div class="form-group mb-2">
-                            <label class="mb-0">*
-                            {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
-                            <input type="file" class="form-control margin-top" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
-                        </div>
-
-                        <div class="form-group mb-2">
-                            <label class="mb-0">
-                                {{ trans('site.front.genre') }}
-                            </label>
-                            <select class="form-control" name="type" required>
-                                <option value="" disabled="disabled" selected>
-                                    {{ trans('site.front.select-genre') }}
-                                </option>
-                                @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-                                    <option value="{{ $type->id }}"> {{ $type->name }} </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            {{ trans('site.learner.manuscript.where-in-manuscript') }} <br>
-                            @foreach(\App\Http\FrontendHelpers::manuscriptType() as $manu)
-                                <input type="radio" name="manu_type" value="{{ $manu['id'] }}" required>
-                                <label class="mb-0">{{ $manu['option'] }}</label> <br>
-                            @endforeach
-                        </div>
-                        <button type="submit" class="btn red-global-btn pull-right margin-top">
-                            {{ trans('site.learner.upload') }}
-                        </button>
-                        <div class="clearfix"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="editManuscriptModal" class="global-modal modal fade" role="dialog">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">
-                        {{ trans('site.learner.manuscript.replace-manuscript') }}
-                    </h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
-                        {{ csrf_field() }}
-                        <div class="form-group">
-                            <label>
-                                {{ trans('site.learner.manuscript-text') }}
-                            </label>
-                            <input type="file" class="form-control" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
-                            * {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
-                        </div>
-
-                        <button type="submit" class="btn red-global-btn pull-right margin-top">
-                            {{ trans('site.front.submit') }}
-                        </button>
-                        <div class="clearfix"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="deleteManuscriptModal" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">
-                        {{ trans('site.learner.delete-manuscript.title') }}
-                    </h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    {{ trans('site.learner.delete-manuscript.question') }}
-                    <form method="POST" action="" onsubmit="disableSubmit(this)">
-                        {{ csrf_field() }}
-                        <button type="submit" class="btn btn-danger pull-right margin-top">
-                            {{ trans('site.learner.delete') }}
-                        </button>
-                        <div class="clearfix"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="errorMaxword" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-body text-center">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
-                    {{ strtr(trans('site.learner.error-max-word-text'),
-                    ['_word_count_' => Session::get('editorMaxWord')]) }}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="submitSuccessModal" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-body text-center">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
-                    {{ trans('site.learner.submit-success-text') }}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @if (Auth::user()->need_pass_update)
-        <button class="passUpdateBtn hidden" data-toggle="modal" data-target="#passUpdateModal"></button>
-        <div class="modal fade" role="dialog" id="passUpdateModal" data-backdrop="static">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title">
-                            {{ trans('site.learner.update-password.title') }}
-                        </h3>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="db-card__body">
+                    <div class="db-community-box">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                        <div class="db-community-box__title">Snakk med andre skriveglade</div>
+                        <div class="db-community-box__desc">Del tekster, få tilbakemelding og finn skrivevenner i fellesskapet.</div>
                     </div>
-                    <div class="modal-body">
-                        <p class="font-weight-bold">
-                            {{ trans('site.learner.update-password.enter-new-password') }}
-                        </p>
+                </div>
+            </div>
 
-                        <form action="{{route('learner.password.update')}}" method="POST" onsubmit="disableSubmitOrigText(this)">
-                            {{csrf_field()}}
+            {{-- Hurtigtilgang --}}
+            <div class="db-card">
+                <div class="db-card__header">
+                    <h2 class="db-card__title">Hurtigtilgang</h2>
+                </div>
+                <div class="db-card__body">
+                    <a href="{{ route('learner.assignment') }}" class="db-quick-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Last opp manus
+                    </a>
+                    <a href="{{ route('learner.shop-manuscript') }}" class="db-quick-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                        Mine manusutviklinger
+                    </a>
+                    <a href="{{ route('learner.upgrade') }}" class="db-quick-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        Oppgrader kurspakke
+                    </a>
+                    <a href="{{ route('learner.change-portal', 'self-publishing') }}" class="db-quick-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        Selvpubliseringsportal
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                            <div class="input-group mb-4">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa lock-icon"></i></span>
-                                </div>
-                                <input type="password" name="password" placeholder="{{ trans('site.front.form.password') }}"
-                                       class="form-control no-border-left w-auto" required>
-                            </div>
-                            @if ($errors->has('password'))
-                                <div class="alert alert-danger no-bottom-margin">
-                                    {{ $errors->first('password') }}
-                                </div>
+</div>
+
+{{-- ═══════════ MODALS (preserved from original) ═══════════ --}}
+<div id="renewAllModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{ trans('site.learner.renew-all.title') }}</h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ route('learner.renew-all-courses') }}" onsubmit="disableSubmit(this)">
+                    {{ csrf_field() }}
+                    <p>{{ trans('site.learner.renew-all.description') }}</p>
+                    <div class="text-end margin-top">
+                        <button type="submit" class="btn btn-primary">{{ trans('site.front.yes') }}</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ trans('site.front.no') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ═══ UPLOAD MODAL: Editor (DOC/DOCX only) ═══ --}}
+<div id="submitEditorManuscriptModal" class="um-modal modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this);">
+                {{ csrf_field() }}
+                <div class="um-header">
+                    <h3>Last opp manus</h3>
+                    <button type="button" class="um-close" data-bs-dismiss="modal" aria-label="Lukk">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="um-body">
+                    {{-- Upload zone --}}
+                    <div class="um-upload-zone" id="umZoneEditor" onclick="document.getElementById('umFileEditor').click()">
+                        <div class="um-upload-zone__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <div class="um-upload-zone__title">Dra og slipp filen din her</div>
+                        <div class="um-upload-zone__sub">eller klikk for å velge</div>
+                        <div class="um-upload-zone__formats">
+                            <span class="um-format-tag">.docx</span>
+                            <span class="um-format-tag">.doc</span>
+                        </div>
+                        <input type="file" id="umFileEditor" required name="filename"
+                               accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                    </div>
+
+                    {{-- Genre --}}
+                    <div class="um-form-row">
+                        <div class="um-form-group">
+                            <label>Sjanger</label>
+                            <select name="type" required>
+                                <option value="" disabled selected>Velg sjanger</option>
+                                @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
+                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Hvor i manuset --}}
+                    <div class="um-segment-label">Hvor i manuset er teksten fra?</div>
+                    <div class="um-segment-buttons">
+                        @foreach(\App\Http\FrontendHelpers::manuscriptType() as $manu)
+                            <button type="button" class="um-segment-btn" data-value="{{ $manu['id'] }}" onclick="umSelectSegment(this)">{{ $manu['option'] }}</button>
+                        @endforeach
+                    </div>
+                    <input type="hidden" name="manu_type" required class="um-manu-type-input">
+
+                    {{-- Word note --}}
+                    <div class="um-word-note">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        Godkjente filformater er DOC og DOCX.
+                    </div>
+                </div>
+                <div class="um-footer">
+                    <button type="button" class="um-btn um-btn--secondary" data-bs-dismiss="modal">Avbryt</button>
+                    <button type="submit" class="um-btn um-btn--primary">Last opp manus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- ═══ UPLOAD MODAL: Regular (DOC/DOCX/PDF/ODT/Pages) ═══ --}}
+<div id="submitManuscriptModal" class="um-modal modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this);">
+                {{ csrf_field() }}
+                <div class="um-header">
+                    <h3>Last opp manus</h3>
+                    <button type="button" class="um-close" data-bs-dismiss="modal" aria-label="Lukk">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="um-body">
+                    @if($nextAssignment)
+                    <div class="um-context">
+                        <div class="um-context-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <div class="um-context-text">
+                            <strong>{{ $nextAssignment->title }}</strong><br>
+                            @if($nextAssignment->max_word)
+                                Maks {{ $nextAssignment->max_word }} ord
                             @endif
+                        </div>
+                    </div>
+                    @endif
 
-                            <button type="submit" class="btn site-btn-global pull-right">
-                                {{ trans('site.learner.update-password.update') }}
-                            </button>
-                        </form>
+                    {{-- Upload zone --}}
+                    <div class="um-upload-zone" id="umZoneRegular" onclick="document.getElementById('umFileRegular').click()">
+                        <div class="um-upload-zone__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <div class="um-upload-zone__title">Dra og slipp filen din her</div>
+                        <div class="um-upload-zone__sub">eller klikk for å velge</div>
+                        <div class="um-upload-zone__formats">
+                            <span class="um-format-tag">.docx</span>
+                            <span class="um-format-tag">.doc</span>
+                            <span class="um-format-tag">.pdf</span>
+                            <span class="um-format-tag">.odt</span>
+                            <span class="um-format-tag">.pages</span>
+                        </div>
+                        <input type="file" id="umFileRegular" required name="filename"
+                               accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text, .pages">
+                    </div>
+
+                    {{-- Genre --}}
+                    <div class="um-form-row">
+                        <div class="um-form-group">
+                            <label>Sjanger</label>
+                            <select name="type" required>
+                                <option value="" disabled selected>Velg sjanger</option>
+                                @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
+                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Hvor i manuset --}}
+                    <div class="um-segment-label">Hvor i manuset er teksten fra?</div>
+                    <div class="um-segment-buttons">
+                        @foreach(\App\Http\FrontendHelpers::manuscriptType() as $manu)
+                            <button type="button" class="um-segment-btn" data-value="{{ $manu['id'] }}" onclick="umSelectSegment(this)">{{ $manu['option'] }}</button>
+                        @endforeach
+                    </div>
+                    <input type="hidden" name="manu_type" required class="um-manu-type-input">
+
+                    {{-- Word note --}}
+                    <div class="um-word-note">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        PDF, ODT og Pages konverteres automatisk til DOCX.
                     </div>
                 </div>
-            </div>
-        </div>
-    @endif
-
-    @if (Session::has('passUpdated'))
-        <button class="passUpdatedBtn hidden" data-toggle="modal" data-target="#passUpdatedModal"></button>
-        <div id="passUpdatedModal" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-body text-center">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
-                        <p>
-                            {{ trans('site.learner.update-password.success-text') }}
-                        </p>
-                    </div>
+                <div class="um-footer">
+                    <button type="button" class="um-btn um-btn--secondary" data-bs-dismiss="modal">Avbryt</button>
+                    <button type="submit" class="um-btn um-btn--primary">Last opp manus</button>
                 </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="editManuscriptModal" class="global-modal modal fade" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">{{ trans('site.learner.manuscript.replace-manuscript') }}</h3>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                    {{ csrf_field() }}
+                    <div class="form-group">
+                        <label>{{ trans('site.learner.manuscript-text') }}</label>
+                        <input type="file" class="form-control" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+                        * {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
+                    </div>
+                    <button type="submit" class="btn red-global-btn float-end margin-top">{{ trans('site.front.submit') }}</button>
+                    <div class="clearfix"></div>
+                </form>
             </div>
         </div>
-    @endif
+    </div>
+</div>
+
+<div id="deleteManuscriptModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">{{ trans('site.learner.delete-manuscript.title') }}</h3>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                {{ trans('site.learner.delete-manuscript.question') }}
+                <form method="POST" action="" onsubmit="disableSubmit(this)">
+                    {{ csrf_field() }}
+                    <button type="submit" class="btn btn-danger float-end margin-top">{{ trans('site.learner.delete') }}</button>
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="errorMaxword" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-body text-center">
+        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+        <div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
+        {{ strtr(trans('site.learner.error-max-word-text'), ['_word_count_' => Session::get('editorMaxWord')]) }}
+    </div></div></div>
+</div>
+
+<div id="submitSuccessModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-body text-center">
+        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+        <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
+        {{ trans('site.learner.submit-success-text') }}
+    </div></div></div>
+</div>
+
+@if (Auth::user()->need_pass_update)
+    <button class="passUpdateBtn hidden" data-bs-toggle="modal" data-bs-target="#passUpdateModal"></button>
+    <div class="modal fade" role="dialog" id="passUpdateModal" data-backdrop="static">
+        <div class="modal-dialog" role="document"><div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">{{ trans('site.learner.update-password.title') }}</h3>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="font-weight-bold">{{ trans('site.learner.update-password.enter-new-password') }}</p>
+                <form action="{{ route('learner.password.update') }}" method="POST" onsubmit="disableSubmitOrigText(this)">
+                    {{ csrf_field() }}
+                    <div class="input-group mb-4">
+                        <div class="input-group-prepend"><span class="input-group-text"><i class="fa lock-icon"></i></span></div>
+                        <input type="password" name="password" placeholder="{{ trans('site.front.form.password') }}" class="form-control no-border-left w-auto" required>
+                    </div>
+                    @if ($errors->has('password'))
+                        <div class="alert alert-danger no-bottom-margin">{{ $errors->first('password') }}</div>
+                    @endif
+                    <button type="submit" class="btn site-btn-global float-end">{{ trans('site.learner.update-password.update') }}</button>
+                </form>
+            </div>
+        </div></div>
+    </div>
+@endif
+
+@if (Session::has('passUpdated'))
+    <button class="passUpdatedBtn hidden" data-bs-toggle="modal" data-bs-target="#passUpdatedModal"></button>
+    <div id="passUpdatedModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-body text-center">
+            <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+            <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
+            <p>{{ trans('site.learner.update-password.success-text') }}</p>
+        </div></div></div>
+    </div>
+@endif
 @stop
 
 @section('scripts')
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-    <script>
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<script>
+    @if (Auth::user()->need_pass_update)
+        $(".passUpdateBtn").trigger('click');
+    @endif
+    @if (Session::has('passUpdated'))
+        $(".passUpdatedBtn").trigger('click');
+    @endif
+    @if (Session::has('success'))
+        $('#submitSuccessModal').modal('show');
+    @endif
+    @if (Session::has('errorMaxWord'))
+        $('#errorMaxword').modal('show');
+    @endif
 
-        @if (Auth::user()->need_pass_update)
-            //$("#passUpdateModal").modal('show');
-            $(".passUpdateBtn").trigger('click');
-        @endif
+    $(".renewAllBtn").click(function(){ $('#renewAllModal').find('form').attr('action', $(this).data('action')); });
+    $('.submitEditorManuscriptBtn').click(function(){ $('#submitEditorManuscriptModal').find('form').attr('action', $(this).data('action')); });
+    $('.submitManuscriptBtn').click(function(){ $('#submitManuscriptModal').find('form').attr('action', $(this).data('action')); });
+    $('.editManuscriptBtn').click(function(){ $('#editManuscriptModal').find('form').attr('action', $(this).data('action')); });
+    $('.deleteManuscriptBtn').click(function(){ $('#deleteManuscriptModal').find('form').attr('action', $(this).data('action')); });
 
-        @if (Session::has('passUpdated'))
-            //$('#passUpdatedModal').modal('show');
-            $(".passUpdatedBtn").trigger('click');
-        @endif
+    $(".webinar-auto-register-toggle").change(function(){
+        $.ajax({
+            type:'POST',
+            url:'/account/webinar-auto-register-update',
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data: { 'auto_renew' : $(this).prop('checked') ? 1 : 0 },
+            success: function(data){}
+        });
+    });
 
-        @if (Session::has('success'))
-            $('#submitSuccessModal').modal('show');
-        @endif
+    // ── Upload modal: segment buttons ──
+    window.umSelectSegment = function(btn) {
+        var parent = btn.closest('.um-body');
+        parent.querySelectorAll('.um-segment-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        parent.querySelector('.um-manu-type-input').value = btn.getAttribute('data-value');
+    };
 
-        @if (Session::has('errorMaxWord'))
-            $('#errorMaxword').modal('show');
-        @endif
+    // ── Upload modal: drag & drop + file display ──
+    document.querySelectorAll('.um-upload-zone').forEach(function(zone) {
+        var fileInput = zone.querySelector('input[type="file"]');
 
-        $(".renewAllBtn").click(function(){
-            let form = $('#renewAllModal').find('form');
-            let action = $(this).data('action');
-            form.attr('action', action)
+        zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('dragover'); });
+        zone.addEventListener('dragleave', function() { zone.classList.remove('dragover'); });
+        zone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            zone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                umShowSelectedFile(zone, fileInput);
+            }
         });
 
-        $('.submitEditorManuscriptBtn').click(function(){
-            let form = $('#submitEditorManuscriptModal').find('form');
-            let action = $(this).data('action');
-            form.attr('action', action);
+        fileInput.addEventListener('change', function() {
+            umShowSelectedFile(zone, fileInput);
         });
+    });
 
-        $('.submitManuscriptBtn').click(function(){
-            let form = $('#submitManuscriptModal').find('form');
-            let action = $(this).data('action');
-            form.attr('action', action);
-        });
+    function umShowSelectedFile(zone, fileInput) {
+        if (!fileInput.files.length) return;
+        var file = fileInput.files[0];
+        var sizeKB = Math.round(file.size / 1024);
 
-        $('.editManuscriptBtn').click(function(){
-            let form = $('#editManuscriptModal').find('form');
-            let action = $(this).data('action');
-            form.attr('action', action);
-        });
+        // Replace zone content with file info
+        zone.classList.add('um-upload-zone--selected');
+        zone.setAttribute('onclick', ''); // disable click-to-browse
+        zone.innerHTML = '<div class="um-upload-file">' +
+            '<div class="um-upload-file__icon"><svg viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>' +
+            '<div class="um-upload-file__info"><div class="um-upload-file__name">' + file.name + '</div><div class="um-upload-file__size">' + sizeKB + ' KB</div></div>' +
+            '<button type="button" class="um-upload-file__remove" aria-label="Fjern fil" onclick="umRemoveFile(this)"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
+            '</div>';
+        // Re-append hidden input
+        zone.appendChild(fileInput);
+    }
 
-        $('.deleteManuscriptBtn').click(function(){
-            let form = $('#deleteManuscriptModal').find('form');
-            let action = $(this).data('action');
-            form.attr('action', action)
-        });
+    window.umRemoveFile = function(btn) {
+        var zone = btn.closest('.um-upload-zone');
+        var fileInput = zone.querySelector('input[type="file"]');
+        var inputId = fileInput.id;
 
-        $(".webinar-auto-register-toggle").change(function(){
-            let is_checked = $(this).prop('checked');
-            let check_val = is_checked ? 1 : 0;
-            $.ajax({
-                type:'POST',
-                url:'/account/webinar-auto-register-update',
-                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                data: { 'auto_renew' : check_val },
-                success: function(data){
-                }
-            });
-        });
-    </script>
+        // Reset to empty state
+        fileInput.value = '';
+        zone.classList.remove('um-upload-zone--selected');
+        zone.setAttribute('onclick', "document.getElementById('" + inputId + "').click()");
+        zone.innerHTML = '<div class="um-upload-zone__icon"><svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>' +
+            '<div class="um-upload-zone__title">Dra og slipp filen din her</div>' +
+            '<div class="um-upload-zone__sub">eller klikk for å velge</div>' +
+            '<div class="um-upload-zone__formats">' +
+            (inputId === 'umFileEditor' ? '<span class="um-format-tag">.docx</span><span class="um-format-tag">.doc</span>' :
+            '<span class="um-format-tag">.docx</span><span class="um-format-tag">.doc</span><span class="um-format-tag">.pdf</span><span class="um-format-tag">.odt</span><span class="um-format-tag">.pages</span>') +
+            '</div>';
+        zone.appendChild(fileInput);
+    };
+</script>
 @stop

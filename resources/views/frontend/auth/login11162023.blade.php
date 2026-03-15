@@ -37,22 +37,22 @@ Password Change
 			<div class="col-md-6 left-container" data-bg="https://www.forfatterskolen.no/images-new/login/left-bg.jpg">
 				<ul class="nav flex-column signup-tab" role="tablist">
 					<li class="nav-item">
-						<a data-toggle="tab" href="#login" class="nav-link @if(!Request::input('t')) active @endif" role="tab">
+						<a data-bs-toggle="tab" href="#login" class="nav-link @if(!Request::input('t')) active @endif" role="tab">
 							<span>{{ trans('site.front.form.login') }}</span>
 						</a>
 					</li>
 					<li class="nav-item">
-						<a data-toggle="tab" href="#register" class="nav-link @if(Request::input('t') == 'register') active @endif" role="tab">
+						<a data-bs-toggle="tab" href="#register" class="nav-link @if(Request::input('t') == 'register') active @endif" role="tab">
 							<span>{{ trans('site.front.login.register') }}</span>
 						</a>
 					</li>
 					<li class="nav-item">
-						<a data-toggle="tab" href="#passwordreset" class="nav-link @if(Request::input('t') == 'passwordreset') active @endif" role="tab">
+						<a data-bs-toggle="tab" href="#passwordreset" class="nav-link @if(Request::input('t') == 'passwordreset') active @endif" role="tab">
 							<span>{{ trans('site.front.login.password-reset') }}</span>
 						</a>
 					</li>
 					<li class="nav-item">
-						<a data-toggle="tab" href="#password-change" class="nav-link @if(Request::input('t') == 'password-change') active @endif" role="tab">
+						<a data-bs-toggle="tab" href="#password-change" class="nav-link @if(Request::input('t') == 'password-change') active @endif" role="tab">
 							<span>{{ trans('site.front.login.change-password') }}</span>
 						</a>
 					</li>

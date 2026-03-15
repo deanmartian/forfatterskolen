@@ -22,8 +22,8 @@
 
             <div class="sp-card-body">
                 <section>
-                    <button type="button" class="btn btn-brand btn-xs float-right audioBtn" data-toggle="modal"
-                        data-target="#audioModal" data-type="files">+ Legg til lydfiler</button>
+                    <button type="button" class="btn btn-brand btn-sm float-end audioBtn" data-bs-toggle="modal"
+                        data-bs-target="#audioModal" data-type="files">+ Legg til lydfiler</button>
                     <div class="table-responsive margin-top">
                         <table class="table table-side-bordered table-white">
                             <thead>
@@ -43,8 +43,8 @@
                                             {!! $file->file_link !!}
                                         </td>
                                         <td>                      
-                                            <button class="btn btn-brand btn-xs audioBtn" data-toggle="modal"
-                                                    data-target="#audioModal"
+                                            <button class="btn btn-brand btn-sm audioBtn" data-bs-toggle="modal"
+                                                    data-bs-target="#audioModal"
                                                     data-type="files" data-id="{{ $file->id }}"
                                                     data-record="{{ json_encode($file) }}"
                                                     aria-label="Rediger lydfil">
@@ -59,8 +59,8 @@
                 </section>
 
                 <section class="mt-3">
-                    <button type="button" class="btn btn-brand btn-xs float-right audioBtn" data-toggle="modal"
-                        data-target="#audioModal" data-type="cover">+ Legg til lydbok-omslag</button>
+                    <button type="button" class="btn btn-brand btn-sm float-end audioBtn" data-bs-toggle="modal"
+                        data-bs-target="#audioModal" data-type="cover">+ Legg til lydbok-omslag</button>
                     <div class="table-responsive margin-top">
                         <table class="table table-side-bordered table-white">
                             <thead>
@@ -79,8 +79,8 @@
                                         {!! $cover->file_link !!}
                                     </td>
                                     <td>                      
-                                        <button class="btn btn-brand btn-xs audioBtn" data-toggle="modal"
-                                                data-target="#audioModal"
+                                        <button class="btn btn-brand btn-sm audioBtn" data-bs-toggle="modal"
+                                                data-bs-target="#audioModal"
                                                 data-type="cover" data-id="{{ $cover->id }}"
                                                 data-record="{{ json_encode($cover) }}"
                                                 aria-label="Rediger lydbok-omslag">
@@ -105,7 +105,7 @@
                     <i class="fas fa-headphones" style="color:var(--brand-primary);margin-right:6px"></i>
                     <span class="sp-modal__title-text"></span>
                 </h3>
-                <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -130,7 +130,7 @@
                     </div>
                 </div>
                 <div class="sp-modal__footer">
-                    <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
+                    <button type="button" class="btn-outline-brand" data-bs-dismiss="modal">Avbryt</button>
                     <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
                 </div>
             </form>

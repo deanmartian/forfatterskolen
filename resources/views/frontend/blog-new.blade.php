@@ -22,7 +22,7 @@
                             </div>
 
                             <div class="date-author-cont color-b4 my-4">
-                                <span class="date mr-5">
+                                <span class="date me-5">
                                     <i class="img-icon calendar"></i>
                                     {{ \App\Http\FrontendHelpers::formatDate($mainBlog->created_at) }}
                                 </span>
@@ -59,7 +59,7 @@
                             <span>
                                 {{ trans('site.front.blog.view-our-course') }}
                             </span>
-                            <a href="{{ route('front.course.index') }}" class="btn float-right site-btn-global-w-arrow">
+                            <a href="{{ route('front.course.index') }}" class="btn float-end site-btn-global-w-arrow">
                                 {{ ucwords(trans('site.front.view')) }}
                             </a>
                         </div>
@@ -85,13 +85,13 @@
                                 <a href="" class="btn buy-btn">Testimonials</a>
                             </div>
                             <div class="card-body">
-                                <div id="testimonials-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                                <div id="testimonials-carousel" class="carousel slide" data-bs-ride="carousel" data-interval="false">
 
                                     <!-- Indicators -->
                                     <ul class="carousel-indicators">
-                                        <li data-target="#testimonials-carousel" data-slide-to="0" class="active"></li>
-                                        <li data-target="#testimonials-carousel" data-slide-to="1"></li>
-                                        <li data-target="#testimonials-carousel" data-slide-to="2"></li>
+                                        <li data-bs-target="#testimonials-carousel" data-bs-slide-to="0" class="active"></li>
+                                        <li data-bs-target="#testimonials-carousel" data-bs-slide-to="1"></li>
+                                        <li data-bs-target="#testimonials-carousel" data-bs-slide-to="2"></li>
                                     </ul>
 
                                     <!-- The slideshow -->

@@ -67,10 +67,10 @@
         ?>
 
         @if($checkCourseTakenWithCoaching->count())
-            <div class="text-right mb-3">
+            <div class="text-end mb-3">
                 <button class="btn blue-outline-btn"
-                        data-toggle="modal"
-                        data-target="#addCoachingSessionModal"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addCoachingSessionModal"
                         data-action="{{ route('learner.course-taken.coaching-timer.add') }}"
                         id="addCoachingSessionBtn">
                     {{ trans('site.learner.add-coaching-lesson') }}
@@ -81,7 +81,7 @@
 
         @if(session('success'))
             <div class="alert alert-success">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                <a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
                 {{ session('success') }}
             </div>
         @endif
@@ -146,7 +146,7 @@
 
         <div class="row mb-5">
             <div class="col-md-6">
-                <div class="stats-card text-left">
+                <div class="stats-card text-start">
                     <h3>{{ trans('site.coaching-time-book-editorial-class') }}</h3>
                     <span>{{ trans('site.coaching-time-book-editorial-class-description') }}</span>
                     
@@ -179,7 +179,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="stats-card text-left">
+                <div class="stats-card text-start">
                     <h3>{{ trans('site.coaching-time-my-sessions') }}</h3>
                     @if($bookedSessions->isEmpty())
                         <span>{{ trans('site.coaching-time-no-upcoming-sessions') }}</span>
@@ -246,10 +246,10 @@
 
         {{-- <h3>Hurtighandlinger</h3>
         <div class="row">
-            <div class="col-sm-3"><button class="btn btn-default btn-block">Endre Tidspunkt</button></div>
-            <div class="col-sm-3"><button class="btn btn-default btn-block">Avbryt Booking</button></div>
-            <div class="col-sm-3"><button class="btn btn-default btn-block">Kontakt Redaktør</button></div>
-            <div class="col-sm-3"><button class="btn btn-default btn-block">&nbsp;</button></div>
+            <div class="col-sm-3"><button class="btn btn-light btn-block">Endre Tidspunkt</button></div>
+            <div class="col-sm-3"><button class="btn btn-light btn-block">Avbryt Booking</button></div>
+            <div class="col-sm-3"><button class="btn btn-light btn-block">Kontakt Redaktør</button></div>
+            <div class="col-sm-3"><button class="btn btn-light btn-block">&nbsp;</button></div>
         </div> --}}
 
     </div>
@@ -260,7 +260,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">{{ trans('site.learner.add-coaching-session') }}</h3>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
@@ -287,9 +287,9 @@
                         <input type="hidden" name="plan_type">
                     @endif
 
-                    <div class="text-right mt-4">
+                    <div class="text-end mt-4">
                         <button type="submit" class="btn btn-success">{{ trans('site.front.submit') }}</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.front.cancel') }}</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ trans('site.front.cancel') }}</button>
                     </div>
                 </form>
             </div>

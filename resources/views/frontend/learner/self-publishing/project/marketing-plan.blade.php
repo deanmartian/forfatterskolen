@@ -64,8 +64,8 @@
                                         @endif
                                     @endforeach
 
-                                    <button class="btn btn-brand btn-xs pull-right answerMarketingPlanBtn"
-                                            data-toggle="modal" data-target="#marketingPlanAnswerModal"
+                                    <button class="btn btn-brand btn-sm float-end answerMarketingPlanBtn"
+                                            data-bs-toggle="modal" data-bs-target="#marketingPlanAnswerModal"
                                             data-action="{{ route('learner.project.save-marketing-qa', $project->id) }}"
                                             data-plan="{{ json_encode($marketingPlan) }}">
                                             {{ trans('site.answer-text') }}
@@ -88,7 +88,7 @@
                         <i class="fas fa-comments" style="color:var(--brand-primary);margin-right:6px"></i>
                         <span class="marketing-plan-title">{{ trans('site.answer-text') }}</span>
                     </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                    <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -98,7 +98,7 @@
                         <div class="question-container"></div>
                     </div>
                     <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
+                        <button type="button" class="btn-outline-brand" data-bs-dismiss="modal">Avbryt</button>
                         <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
                     </div>
                 </form>

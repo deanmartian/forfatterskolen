@@ -51,7 +51,7 @@
 
 									@if( $learner->user->id !== Auth::user()->id )
 										<a href="{{route('learner.assignment.manuscript.download', $manuscript->id)}}"
-										   class="pull-right btn site-btn-global site-btn-global-sm w-25">
+										   class="float-end btn site-btn-global site-btn-global-sm w-25">
 											{{ trans('site.learner.download-text') }}
 										</a>
 									@endif
@@ -92,13 +92,13 @@
 										@endif
 									</button>
 									@if( !$feedback->is_active && !$feedback->locked)
-										<button type="button" class="btn btn-danger deleteManuscriptBtn pull-right w-50 rounded-0 font-16"
-												data-toggle="modal" data-target="#deleteManuscriptModal"
+										<button type="button" class="btn btn-danger deleteManuscriptBtn float-end w-50 rounded-0 font-16"
+												data-bs-toggle="modal" data-bs-target="#deleteManuscriptModal"
 												data-action="{{ route('learner.assignment.group.delete_feedback', $feedback->id) }}">
 											<i class="fa fa-trash"></i>
 										</button>
-										<button type="button" class="btn btn-info editManuscriptBtn pull-right w-50 rounded-0 font-16"
-												data-toggle="modal" data-target="#editManuscriptModal"
+										<button type="button" class="btn btn-info editManuscriptBtn float-end w-50 rounded-0 font-16"
+												data-bs-toggle="modal" data-bs-target="#editManuscriptModal"
 												data-action="{{ route('learner.assignment.group.replace_feedback', $feedback->id) }}">
 											<i class="fa fa-pencil"></i>
 										</button>
@@ -108,7 +108,7 @@
 									{{-- if is included when used is $group->learners --}}
 									{{--@if(in_array($learner->id, $could_send_feedback_to))--}}
 										<button type="button" class="btn site-btn-global w-100 rounded-0 submitFeedbackBtn"
-												data-toggle="modal" data-target="#submitFeedbackModal"
+												data-bs-toggle="modal" data-bs-target="#submitFeedbackModal"
 												data-name="Learner {{ $i }}"
 												data-action="{{ route('learner.assignment.group.submit_feedback',
 												['group_id' => $group->id, 'id' => $learner->id]) }}">
@@ -174,7 +174,7 @@
 										@if( $feedback->is_admin ) - {{ trans('site.learner.admin-text') }} @endif
 
 										<a href="{{route('learner.assignment.feedback.download', $feedback->id)}}"
-										   class="pull-right btn site-btn-global site-btn-global-sm w-25">
+										   class="float-end btn site-btn-global site-btn-global-sm w-25">
 											{{ trans('site.learner.download-text') }}
 										</a>
 									</p>
@@ -195,7 +195,7 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 			  <h3 class="modal-title">{{ trans('site.learner.submit-feedback-to') }} <em></em></h3>
-			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			  <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 		  </div>
 		  <div class="modal-body">
 			  <form method="POST" action=""  enctype="multipart/form-data">
@@ -207,7 +207,7 @@
 							 application/pdf, application/vnd.oasis.opendocument.text">
 				  </div>
 
-		      	<button type="submit" class="btn btn-primary pull-right">{{ trans('site.front.submit') }}</button>
+		      	<button type="submit" class="btn btn-primary float-end">{{ trans('site.front.submit') }}</button>
 		      	<div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -220,7 +220,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">{{ trans('site.learner.replace-feedback') }}</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" enctype="multipart/form-data">
@@ -232,7 +232,7 @@
 							   application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.front.submit') }}</button>
+					<button type="submit" class="btn btn-primary float-end">{{ trans('site.front.submit') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -245,7 +245,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">{{ trans('site.learner.delete-feedback') }}</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<p>
@@ -253,7 +253,7 @@
 				</p>
 				<form method="POST" action="">
 					{{ csrf_field() }}
-					<button type="submit" class="btn btn-danger pull-right">{{ trans('site.learner.delete') }}</button>
+					<button type="submit" class="btn btn-danger float-end">{{ trans('site.learner.delete') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>

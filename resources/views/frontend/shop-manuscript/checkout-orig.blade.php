@@ -11,7 +11,7 @@
 	<div class="row">
 		@if(Auth::guest())
 		<div class="col-sm-12">
-			<div class="margin-bottom">Allerede elev? Klikk <a href="#" data-toggle="collapse" data-target="#checkoutLogin">her</a> for å logge inn.</div>
+			<div class="margin-bottom">Allerede elev? Klikk <a href="#" data-bs-toggle="collapse" data-bs-target="#checkoutLogin">her</a> for å logge inn.</div>
 			<form id="checkoutLogin" class="collapse @if($errors->first('login_error')) fade in @endif" action="{{route('frontend.login.checkout.store')}}" method="POST">
 				{{csrf_field()}}
 				<div class="row">

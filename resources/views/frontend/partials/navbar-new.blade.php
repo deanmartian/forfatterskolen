@@ -1,5 +1,5 @@
 <nav id="topNav" class="navbar navbar-expand-md navbar-light">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
         <img src="{{asset('images-new/menu.png')}}" alt="mobile menu toggle">
     </button>
 
@@ -8,14 +8,14 @@
         {{--asset('images-new/logo-tagline.png')--}}
     </a>
 
-    <div class="navbar-collapse collapse pr-0">
+    <div class="navbar-collapse collapse pe-0">
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" href="#"  title="View front page" style="color: #000">Velkommen til Forfatterskolen</a> {{--style="color: #000"--}}
             </li>
         </ul>
 
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ms-auto">
             <li class="nav-item">
                 <a class="nav-link" href="https://twitter.com/Forfatterrektor" target="_blank"
                    title="View twitter page">
@@ -120,15 +120,15 @@
 
             @if (Auth::user())
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" title="Toggle user drop-down">
-                        <span class="nav-user-thumb mr-2" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" title="Toggle user drop-down">
+                        <span class="nav-user-thumb me-2" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
                         Hei {{Auth::user()->first_name}}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
                         <div class="account-details">
                             <div class="row align-items-center mx-0">
                                 <div class="col-sm-4 text-center">
-                                    <span class="user-thumb mr-2" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
+                                    <span class="user-thumb me-2" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
                                 </div>
                                 <div class="col-sm-8 info">
                                     <p>{{ ucfirst(Auth::user()->first_name)}} <br>

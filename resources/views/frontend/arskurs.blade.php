@@ -610,7 +610,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq1" class="collapsed">Hvorfor skal jeg ta dette kurset?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq1" class="collapsed">Hvorfor skal jeg ta dette kurset?</a>
                         </h4>
                     </div>
                     <div id="faq1" class="panel-collapse collapse">
@@ -621,7 +621,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq2" class="collapsed">Hva lærer jeg på kurset?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq2" class="collapsed">Hva lærer jeg på kurset?</a>
                         </h4>
                     </div>
                     <div id="faq2" class="panel-collapse collapse">
@@ -632,7 +632,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq3" class="collapsed">Hvor lenge varer kurset?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq3" class="collapsed">Hvor lenge varer kurset?</a>
                         </h4>
                     </div>
                     <div id="faq3" class="panel-collapse collapse">
@@ -643,7 +643,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq4" class="collapsed">Hvordan er leksjonene lagt opp?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq4" class="collapsed">Hvordan er leksjonene lagt opp?</a>
                         </h4>
                     </div>
                     <div id="faq4" class="panel-collapse collapse">
@@ -654,7 +654,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq5" class="collapsed">Hvor lang tid tar de ulike leksjonene?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq5" class="collapsed">Hvor lang tid tar de ulike leksjonene?</a>
                         </h4>
                     </div>
                     <div id="faq5" class="panel-collapse collapse">
@@ -665,7 +665,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq6" class="collapsed">Hvor mye bør jeg skrive hver dag?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq6" class="collapsed">Hvor mye bør jeg skrive hver dag?</a>
                         </h4>
                     </div>
                     <div id="faq6" class="panel-collapse collapse">
@@ -676,7 +676,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq7" class="collapsed">Hvordan er live webinarene lagt opp?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq7" class="collapsed">Hvordan er live webinarene lagt opp?</a>
                         </h4>
                     </div>
                     <div id="faq7" class="panel-collapse collapse">
@@ -687,7 +687,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq8" class="collapsed">Hvordan får jeg tilbakemelding fra redaktøren?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq8" class="collapsed">Hvordan får jeg tilbakemelding fra redaktøren?</a>
                         </h4>
                     </div>
                     <div id="faq8" class="panel-collapse collapse">
@@ -698,7 +698,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq9" class="collapsed">Hva skjer hvis jeg melder meg på nå, og angrer?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq9" class="collapsed">Hva skjer hvis jeg melder meg på nå, og angrer?</a>
                         </h4>
                     </div>
                     <div id="faq9" class="panel-collapse collapse">
@@ -709,7 +709,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq10" class="collapsed">Hva skjer hvis jeg ikke klarer å skrive ferdig manuset?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq10" class="collapsed">Hva skjer hvis jeg ikke klarer å skrive ferdig manuset?</a>
                         </h4>
                     </div>
                     <div id="faq10" class="panel-collapse collapse">
@@ -720,7 +720,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq11" class="collapsed">Er jeg garantert en utgivelse etter kurset?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq11" class="collapsed">Er jeg garantert en utgivelse etter kurset?</a>
                         </h4>
                     </div>
                     <div id="faq11" class="panel-collapse collapse">
@@ -731,7 +731,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq12" class="collapsed">Må jeg betale hele kurset på en gang?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq12" class="collapsed">Må jeg betale hele kurset på en gang?</a>
                         </h4>
                     </div>
                     <div id="faq12" class="panel-collapse collapse">
@@ -742,7 +742,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq13" class="collapsed">Hva hvis jeg vil bytte redaktør?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq13" class="collapsed">Hva hvis jeg vil bytte redaktør?</a>
                         </h4>
                     </div>
                     <div id="faq13" class="panel-collapse collapse">
@@ -753,7 +753,7 @@
                 <div class="panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#faqAccordion" href="#faq14" class="collapsed">Kan jeg få hjelp med å gi ut bok etter kurset?</a>
+                            <a data-bs-toggle="collapse" data-bs-parent="#faqAccordion" href="#faq14" class="collapsed">Kan jeg få hjelp med å gi ut bok etter kurset?</a>
                         </h4>
                     </div>
                     <div id="faq14" class="panel-collapse collapse">

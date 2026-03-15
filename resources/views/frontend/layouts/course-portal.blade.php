@@ -73,7 +73,7 @@
     {{-- check if advisory could be displayed today and current page is included --}}
     @if($isBetweenDate && in_array(Route::currentRouteName(), $included_pages))
         <div class="alert shop-manuscript-advisory" role="alert" id="fixed_to_bottom_alert">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Lukk"></button>
             {{ $shopManuscriptAdvisory->advisory }}
         </div>
     @endif
@@ -98,7 +98,7 @@
         ?>
             <div class="alert alert-{{ $alert_type }} global-alert-box" style="z-index: 9; min-width: 300px"
                  id="fixed_to_bottom_alert">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Lukk"></button>
                 <ul>
                     @foreach($errors->all() as $error)
                         <li>{!! $error !!}</li>
@@ -112,7 +112,7 @@
 <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js" defer></script>
 <script src="/js/lang.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @yield('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {

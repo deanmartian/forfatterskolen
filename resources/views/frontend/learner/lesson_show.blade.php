@@ -60,13 +60,13 @@
 					@if($nextLesson)
 						@if(FrontendHelpers::isLessonAvailable($courseTaken->started_at, $nextLesson->delay, $nextLesson->period) ||
 						FrontendHelpers::hasLessonAccess($courseTaken, $nextLesson))
-							<a class="btn btn-sm next-lesson-link pull-right" 
+							<a class="btn btn-sm next-lesson-link float-end" 
 								href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 
 								'id' => $nextLesson->id])}}">
 								{{$nextLesson->title}}&nbsp;&nbsp;<i class="fa fa-arrow-right"></i>
 							</a>
 						@else
-							<button type="button" class="btn btn-sm next-lesson-link disabled pull-right">
+							<button type="button" class="btn btn-sm next-lesson-link disabled float-end">
 								{{$nextLesson->title}}&nbsp;&nbsp;<i class="fa fa-arrow-right"></i>
 							</button>
 						@endif

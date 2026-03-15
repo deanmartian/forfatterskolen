@@ -249,14 +249,18 @@ class CommunityForumController extends Controller
             'title'    => 'required|string|max:255',
             'content'  => 'required|string|max:5000',
             'category' => 'required|string|max:100',
+            'image'    => 'nullable|image|mimes:jpeg,png,gif,webp|max:2048',
         ]);
 
+        $imageUrl = $this->uploadPostImage($request);
+
         $discussion = Discussion::create([
-            'id'       => Str::uuid(),
-            'user_id'  => Auth::id(),
-            'title'    => $request->title,
-            'content'  => $request->content,
-            'category' => $request->category,
+            'id'        => Str::uuid(),
+            'user_id'   => Auth::id(),
+            'title'     => $request->title,
+            'content'   => $request->content,
+            'image_url' => $imageUrl,
+            'category'  => $request->category,
         ]);
 
         return redirect()->route('learner.community.discussion', $discussion->id)

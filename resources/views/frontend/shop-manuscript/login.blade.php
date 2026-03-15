@@ -15,19 +15,19 @@
                     <div class="card-body">
                         <ul class="nav global-nav-tabs">
                             <li class="nav-item">
-                                <a data-toggle="tab" href="#login" 
+                                <a data-bs-toggle="tab" href="#login" 
                                 class="nav-link @if(!Request::input('t')) active @endif" role="tab">
                                     <span>{{ trans('site.front.form.login') }}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a data-toggle="tab" href="#register" 
+                                <a data-bs-toggle="tab" href="#register" 
                                 class="nav-link @if(Request::input('t') == 'register') active @endif" role="tab">
                                     <span>{{ trans('site.front.login.register') }}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a data-toggle="tab" href="#passwordreset" class="nav-link 
+                                <a data-bs-toggle="tab" href="#passwordreset" class="nav-link 
                                 @if(Request::input('t') == 'passwordreset') active @endif" role="tab">
                                     <span>{{ trans('site.front.login.password-reset') }}</span>
                                 </a>
@@ -78,7 +78,7 @@
                                             {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
                                             {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display(['data-callback' => 'captchaCB']) !!}
                                         </div>
-                                        <div class="col-md-6 text-right">
+                                        <div class="col-md-6 text-end">
                                             <button type="submit" class="btn site-btn-global">
                                                 {{ trans('site.front.form.login') }}
                                             </button>
@@ -161,7 +161,7 @@
                                             {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
                                             {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display(['data-callback' => 'captchaCB']) !!}
                                         </div>
-                                        <div class="col-md-6 text-right">
+                                        <div class="col-md-6 text-end">
                                             <button type="submit" class="btn site-btn-global-w-arrow">
                                                 {{ trans('site.front.register') }}
                                             </button>
@@ -191,7 +191,7 @@
                                         </div>
                                     </div>
                                     
-                                    <button type="submit" class="btn site-btn-global-w-arrow float-right">
+                                    <button type="submit" class="btn site-btn-global-w-arrow float-end">
                                         {{ trans('site.front.login.password-reset') }}
                                     </button>
                                 </form>

@@ -19,16 +19,16 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 dashboard-course">
-                <a href="{{ route('learner.self-publishing.cover') }}" class="btn btn-default mb-3">
+                <a href="{{ route('learner.self-publishing.cover') }}" class="btn btn-light mb-3">
                     <i class="fa fa-arrow-left"></i> Back
                 </a>
 
                 <div class="card global-card">
                     <div class="page-toolbar mb-3">
-                        <h3 class="float-left"><i class="fa fa-file-text-o"></i> Cover Details</h3>
+                        <h3 class="float-start"><i class="fa fa-file-text-o"></i> Cover Details</h3>
 
-                        <button type="button" class="btn btn-primary pull-right graphicWorkBtn" data-toggle="modal" 
-                                data-target="#graphicWorkModal" data-type="cover" data-id="{{ $cover->id }}"
+                        <button type="button" class="btn btn-primary float-end graphicWorkBtn" data-bs-toggle="modal" 
+                                data-bs-target="#graphicWorkModal" data-type="cover" data-id="{{ $cover->id }}"
                                 data-record="{{ json_encode($cover) }}">
                             <i class="fa fa-edit"></i>
                         </button>
@@ -65,7 +65,7 @@
                                             </a>
                                         @else
                                             @if ($coverFile)
-                                                <a href="{{ $coverFile }}" class="btn btn-success btn-xs" download>
+                                                <a href="{{ $coverFile }}" class="btn btn-success btn-sm" download>
                                                     <i class="fa fa-download"></i>
                                                 </a>
                                                 <a href="{{ asset($coverFile) }}" target="_blank" style="margin-right: 5px">
@@ -138,7 +138,7 @@
             <div class="modal-header">
                 <h4 class="modal-title">
                 </h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <form method="POST" action="{{ route('learner.self-publishing.save-cover', $standardProject->id) }}"
@@ -196,7 +196,7 @@
 
                     <div class="form-group">
                         <label>Backside Text (optional)</label> <br>
-                        <input type="checkbox" data-toggle="toggle" data-on="Text" data-off="Document"
+                        <input type="checkbox" data-bs-toggle="toggle" data-on="Text" data-off="Document"
                             name="backside_type" data-width="100" class="backsideToggle" checked
                             >
 
@@ -225,7 +225,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-success pull-right margin-top">
+                <button type="submit" class="btn btn-success float-end margin-top">
                     {{ trans('site.save') }}
                 </button>
 

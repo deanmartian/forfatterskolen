@@ -4,13 +4,13 @@
             Velkommen til Forfatterskolens portal
         </h3>
     </div>
-    <div class="col-md-6 text-right">
+    <div class="col-md-6 text-end">
         @if (Route::currentRouteName() === 'learner.dashboard')
             <div class="auto-renew-wrapper">
                 <label>
                     Automatisk registert for felleswebinarer
                 </label>
-                <input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
+                <input type="checkbox" data-bs-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
                         class="webinar-auto-register-toggle" data-off="{{ trans('site.front.no') }}"
                         data-size="mini"
                 @if(Auth::user()->userAutoRegisterToCourseWebinar) {{ 'checked' }} @endif>
@@ -18,7 +18,7 @@
         @endif
 
         @if (Route::currentRouteName() === 'learner.invoice')
-            <a href="#" data-toggle="modal" data-target="#redeemModal" class="redeem-gift-link">
+            <a href="#" data-bs-toggle="modal" data-bs-target="#redeemModal" class="redeem-gift-link">
                 <img src="{{ asset('images-new/icon/gift.png') }}" alt="Gaveikon">
             </a>
         @endif
@@ -28,7 +28,7 @@
                 <img src="{{Auth::user()->profile_image}}" alt="User Image" id="user-image">
             </a>
         </div>
-        <button type="button" id="sidebarCollapse" class="btn btn-default d-xl-none">
+        <button type="button" id="sidebarCollapse" class="btn btn-light d-xl-none">
             <span class="glyphicon glyphicon-menu-hamburger"></span>
         </button>
     </div>

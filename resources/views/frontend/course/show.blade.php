@@ -184,7 +184,7 @@
 										<h3 class="modal-title">
 											{{ trans('site.front.our-course.email-exist.login') }}
 										</h3>
-										<button type="button" class="close" data-dismiss="modal">&times;</button>
+										<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 									</div>
 									<div class="modal-body">
 										<p class="font-weight-bold">
@@ -211,7 +211,7 @@
 													   class="form-control no-border-left w-auto" required>
 											</div>
 
-											<button type="submit" class="btn site-btn-global pull-right">
+											<button type="submit" class="btn site-btn-global float-end">
 												{{ trans('site.front.our-course.email-exist.login-button-text') }}
 											</button>
 										</form>
@@ -223,7 +223,7 @@
 
 					@if ( $errors->any() )
 						<div class="alert alert-danger margin-top">
-							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
 								<span aria-hidden="true">&times;</span>
 							</button>
 							<ul>
@@ -240,7 +240,7 @@
 				<div class="theme-tabs">
 					<ul class="nav nav-tabs" role="tablist">
 						<li class="nav-item">
-							<a data-toggle="tab" href="#overview" class="nav-link active" role="tab">
+							<a data-bs-toggle="tab" href="#overview" class="nav-link active" role="tab">
 								<span>
 									{{ trans('site.front.our-course.show.course-plan') }}
 								</span> <!-- check if webinar-pakke -->
@@ -248,20 +248,20 @@
 						</li>
 						@if (!$course->is_free && !$course->hide_price)
 							<li class="nav-item">
-								<a data-toggle="tab" href="#packages" class="nav-link" role="tab">
+								<a data-bs-toggle="tab" href="#packages" class="nav-link" role="tab">
 									<span>{{ trans('site.front.our-course.show.package-details-text') }}</span>
 								</a>
 							</li>
 						@endif
 						<li class="nav-item">
-							<a data-toggle="tab" href="#kursplan" class="nav-link" role="tab">
+							<a data-bs-toggle="tab" href="#kursplan" class="nav-link" role="tab">
 								<span>{{ $course->id == 17 ? trans('site.front.our-course.show.scheduled-webinars') :
 								'Kursplan' }}</span> <!-- check if webinar-pakke -->
 							</a>
 						</li>
 						@if($course->testimonials->count())
 							<li class="nav-item">
-								<a data-toggle="tab" href="#testimonials" class="nav-link" role="tab">
+								<a data-bs-toggle="tab" href="#testimonials" class="nav-link" role="tab">
 									<span>{{ trans('site.front.our-course.show.testimonials') }}</span>
 								</a>
 							</li>
@@ -376,12 +376,12 @@
 									?>
 
 									<div id="webinars-carousel" class="carousel slide global-carousel"
-										 data-ride="carousel" data-interval="false">
+										 data-bs-ride="carousel" data-interval="false">
 
 										<!-- Indicators -->
 										<ul class="carousel-indicators">
 											@for($i=0; $i<=$webinars_chunk->count() - 1;$i++)
-												<li data-target="#webinars-carousel" data-slide-to="{{$i}}"
+												<li data-bs-target="#webinars-carousel" data-bs-slide-to="{{$i}}"
 													@if($i == 0) class="active" @endif></li>
 											@endfor
 										</ul>
@@ -455,10 +455,10 @@
 										</div>
 
 										<!-- Left and right controls -->
-										<a class="carousel-control-prev" href="#webinars-carousel" data-slide="prev">
+										<a class="carousel-control-prev" href="#webinars-carousel" data-bs-slide="prev">
 											<span class="carousel-control-prev-icon"></span>
 										</a>
-										<a class="carousel-control-next" href="#webinars-carousel" data-slide="next">
+										<a class="carousel-control-next" href="#webinars-carousel" data-bs-slide="next">
 											<span class="carousel-control-next-icon"></span>
 										</a>
 
@@ -475,7 +475,7 @@
 											@endif
 
 											@if ($course->course_plan_data)
-												<button class="btn buy-btn" data-toggle="modal" data-target="#coursePlanDataModal">
+												<button class="btn buy-btn" data-bs-toggle="modal" data-bs-target="#coursePlanDataModal">
 													{{ trans('site.view-schedule') }}
 												</button>
 											@endif

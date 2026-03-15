@@ -92,7 +92,7 @@
                                 {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display() !!}
 
                                 <div class="form-group">
-                                    <button type="submit" class="btn site-btn-global-w-arrow pull-right" id="submitOrder"
+                                    <button type="submit" class="btn site-btn-global-w-arrow float-end" id="submitOrder"
                                     disabled>
                                         {{ trans('site.innlevering.button-text') }}
                                     </button>

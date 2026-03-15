@@ -302,8 +302,8 @@
 														<td>
 															@if($order->price)
 																<button class="btn blue-link viewOrderBtn"
-																		data-toggle="modal"
-																		data-target="#viewOrderModal"
+																		data-bs-toggle="modal"
+																		data-bs-target="#viewOrderModal"
 																		data-fields="{{ json_encode($order) }}">
 																	<i class="fas fa-eye"></i>
 																</button>
@@ -322,7 +322,7 @@
 									</div> <!-- end card-body -->
 								</div> <!-- end global-card -->
 
-								<div class="float-right">
+								<div class="float-end">
 									{{ $sveaOrders->appends(request()->except('page'))->links('pagination.short-pagination') }}
 								</div>
 							@elseif( Request::input('tab') == 'regret-form' )
@@ -339,21 +339,21 @@
 											@foreach($orderAttachments as $orderAttachment)
 												<tr>
 													<td>
-														<p class="pull-left">
+														<p class="float-start">
 															{{ $orderAttachment->course_title }}
 														</p>
 
 														<a href="{{ route('learner.course.show', $orderAttachment->course_taken_id) }}" 
-															class="pull-right blue-link">
+															class="float-end blue-link">
 															<i class="fa fa-eye"></i>
 														</a>
 													</td>
 													<td>
-														<p class="pull-left">
+														<p class="float-start">
 															{{ basename($orderAttachment->file_path) }}
 														</p>
 
-														<a href="{{ $orderAttachment->file_path }}?v={{ time() }}" class="pull-right blue-link"
+														<a href="{{ $orderAttachment->file_path }}?v={{ time() }}" class="float-end blue-link"
 															download>
 															<i class="fa fa-download"></i>
 														</a>
@@ -388,11 +388,11 @@
 													<td>{{ $giftPurchase->redeem_code }}</td>
 													<td>
 														@if ($giftPurchase->is_redeemed)
-															<label class="label label-success" style="font-size: 13px">
+															<label class="badge bg-success" style="font-size: 13px">
 																{{ trans('site.front.yes') }}
 															</label>
 														@else
-															<label class="label label-danger" style="font-size: 13px">
+															<label class="badge bg-danger" style="font-size: 13px">
 																{{ trans('site.front.no') }}
 															</label>
 														@endif
@@ -453,8 +453,8 @@
 														<td>{{ $order->total_formatted }}</td>
 														<td>
 															@if ($order->package->course->payment_plan_ids)
-                                                                                                              <button class="btn btn-xs createInvoiceBtn disabled" style="background:#5F0000;color:#fff;border:none;border-radius:8px;" data-toggle="modal"
-                                                                                                              data-target="#createInvoiceModal"
+                                                                                                              <button class="btn btn-sm createInvoiceBtn disabled" style="background:#5F0000;color:#fff;border:none;border-radius:8px;" data-bs-toggle="modal"
+                                                                                                              data-bs-target="#createInvoiceModal"
                                                                                                               data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
                                                                                                               data-plan-id="{{ optional($order->paymentPlan)->id }}"
                                                                                                               data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'
@@ -477,7 +477,7 @@
 									</div>
 								</div>
 
-								<div class="float-right">
+								<div class="float-end">
 										{{ $payLaterOrders->appends(request()->except('page'))->links('pagination.short-pagination') }}
 								</div>
 							@elseif( Request::input('tab') == 'time-register' )
@@ -520,15 +520,15 @@
 								?>
 								@if ($hasVipps)
 									<a href="javascript:void(0)" class="btn short-red-outline-btn mb-4 stopVippsEFakturaBtn" 
-									data-toggle="modal"
-									data-target="#stopVippsEFakturaModal"
+									data-bs-toggle="modal"
+									data-bs-target="#stopVippsEFakturaModal"
 									data-vipps-number="{{ NULL }}">
 										{!! trans('site.stop-vipps-efaktura') !!}
 									</a>
 								@else
 									<a href="javascript:void(0)" class="btn short-red-outline-btn mb-4 setVippsEFakturaBtn" 
-									data-toggle="modal"
-									data-target="#setVippsEFakturaModal"
+									data-bs-toggle="modal"
+									data-bs-target="#setVippsEFakturaModal"
 									data-vipps-number="{{ Auth::user()->address->vipps_phone_numberc }}">
 										{!! trans('site.set-vipps-efaktura') !!}
 									</a>
@@ -656,10 +656,10 @@
 														</a>
 
 														@if ($invoice->fiken_invoice_id && !$invoice->fiken_is_paid)
-															<button class="btn btn-xs vippsFakturaBtn"
+															<button class="btn btn-sm vippsFakturaBtn"
 															style="margin-top:5px;background:#852635;color:#fff;border:none;border-radius:6px;font-size:11px;padding:4px 10px;"
-																	data-toggle="modal"
-																	data-target="#vippsFakturaModal"
+																	data-bs-toggle="modal"
+																	data-bs-target="#vippsFakturaModal"
 																	data-action="{{ route('learner.invoice.vipps-e-faktura',
 																	$invoice->id) }}">
 																	Send som Efaktura
@@ -686,7 +686,7 @@
 															@endif
                                                                                                                 @if($invoice->fiken_is_paid == 1)
                                                                                                                         <a href="{{ route('learner.invoice.receipt.download', $invoice->id) }}"
-                                                                                                                            class="btn btn-info btn-xs"
+                                                                                                                            class="btn btn-info btn-sm"
                                                                                                                             style="margin-top: 5px">
                                                                                                                             Kvittering
                                                                                                                         </a>
@@ -752,7 +752,7 @@
 												</a>
 												@if($invoice->fiken_invoice_id && !$invoice->fiken_is_paid)
 													<button class="btn vippsFakturaBtn" style="background:#852635;color:#fff;flex:1;"
-														data-toggle="modal" data-target="#vippsFakturaModal"
+														data-bs-toggle="modal" data-bs-target="#vippsFakturaModal"
 														data-action="{{ route('learner.invoice.vipps-e-faktura', $invoice->id) }}">
 														eFaktura
 													</button>
@@ -786,7 +786,7 @@
 										</div>
 									@endforeach
 								</div>
-								<div class="float-right">
+								<div class="float-end">
 									{{ $invoices->appends(Request::all())->links('pagination.short-pagination') }}
 								</div>
 
@@ -806,7 +806,7 @@
 					<h4 class="modal-title">
 						VIPPS eFaktura
 					</h4>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 				</div>
 				<div class="modal-body">
 					<form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -817,7 +817,7 @@
 							<input type="text" class="form-control" name="mobile_number" required>
 						</div>
 
-						<button type="submit" class="btn btn-primary pull-right">{{ trans('site.send') }}</button>
+						<button type="submit" class="btn btn-primary float-end">{{ trans('site.send') }}</button>
 						<div class="clearfix"></div>
 					</form>
 				</div>
@@ -832,7 +832,7 @@
 					<h4 class="modal-title">
 						{!! trans('site.vipps-efaktura') !!}
 					</h4>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 				</div>
 				<div class="modal-body">
 					<form method="POST" action="{{ route('learner.set-vipps-e-faktura') }}" onsubmit="disableSubmit(this)">
@@ -845,7 +845,7 @@
 							<input type="text" class="form-control" name="mobile_number" required>
 						</div>
 
-						<button type="submit" class="btn red-global-btn mt-3 pull-right">{{ trans('site.save') }}</button>
+						<button type="submit" class="btn red-global-btn mt-3 float-end">{{ trans('site.save') }}</button>
 						<div class="clearfix"></div>
 					</form>
 				</div>
@@ -860,7 +860,7 @@
 					<h4 class="modal-title">
 						<i class="far fa-flag"></i>
 					</h4>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 				</div>
 				<div class="modal-body">
 					<form method="POST" action="{{ route('learner.set-vipps-e-faktura') }}" onsubmit="disableSubmit(this)">
@@ -874,7 +874,7 @@
 							{!! trans('site.stop-vipps-efaktura-message') !!}
 						</div>
 
-						<button type="submit" class="btn red-global-btn mt-3 pull-right">{{ trans('site.delete') }}</button>
+						<button type="submit" class="btn red-global-btn mt-3 float-end">{{ trans('site.delete') }}</button>
 						<div class="clearfix"></div>
 					</form>
 				</div>
@@ -889,7 +889,7 @@
 					<h4 class="modal-title">
 						<img src="{{ asset('images-new/icon/gift.png') }}">
 					</h4>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 				</div>
 				<div class="modal-body">
 					<form action="{{ route('learner.redeem-gift') }}" method="POST" onsubmit="disableSubmit(this)">
@@ -918,7 +918,7 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" style="padding: 2rem; font-size: 3rem">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal" style="padding: 2rem; font-size: 3rem">&times;</button>
 				</div>
 				<div class="modal-body" style="padding: 22px 30px;">
 
@@ -944,7 +944,7 @@
 							<span>{{ $user->address->zip }} {{ $user->address->city }}</span>
 						</div>
 						<div class="col-sm-6">
-							<span class="mr-2">{{ trans('site.date') }}: </span> <span id="displayDate"></span>
+							<span class="me-2">{{ trans('site.date') }}: </span> <span id="displayDate"></span>
 						</div>
 					</div>
 
@@ -959,7 +959,7 @@
 							<tbody>
 							<tr>
 								<td>
-									<b class="mr-2">Kjøp av:</b>
+									<b class="me-2">Kjøp av:</b>
 									<b class="package-variation"></b>
 									<br>
 
@@ -1031,7 +1031,7 @@
 					<h4 class="modal-title">
 						Order History
 					</h4>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 				</div>
 				<div class="modal-body">
 
@@ -1045,7 +1045,7 @@
 			<div class="modal-content" style="border-radius: 10px; overflow: hidden;">
 				<div class="modal-header" style="border-bottom: 3px solid #5F0000; padding: 16px 24px;">
 					<h4 class="modal-title" style="color: #5F0000; font-weight: 700; font-size: 18px;">Opprett betalingsplan</h4>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 				</div>
 				<div class="modal-body" style="padding: 24px;">
 					<form method="POST" action="" onsubmit="disableSubmit(this)" id="createInvoiceForm">
@@ -1118,8 +1118,8 @@
 							</div>
 						</div>
 
-						<div class="text-right">
-							<button type="button" class="btn" data-dismiss="modal" style="margin-right: 8px;">Avbryt</button>
+						<div class="text-end">
+							<button type="button" class="btn" data-bs-dismiss="modal" style="margin-right: 8px;">Avbryt</button>
 							<button type="submit" class="btn submitInvoice" style="background: #5F0000; color: #fff; border: none; border-radius: 8px; padding: 8px 24px; font-weight: 600;">
 								Opprett betaling
 							</button>
@@ -1316,7 +1316,7 @@
             if (submitButton && submitButton.length) {
                 submitButton.prop('disabled', true).addClass('disabled');
             }
-            var closeButtons = modal.find('[data-dismiss="modal"], .close');
+            var closeButtons = modal.find('[data-bs-dismiss="modal"], .close');
             closeButtons.each(function () {
                 $(this).attr('data-dismiss-disabled', 'true').removeAttr('data-dismiss')
                     .prop('disabled', true).addClass('disabled').css('pointer-events', 'none');

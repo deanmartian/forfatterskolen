@@ -40,7 +40,7 @@
                             </a>
                         @endforeach
                     </td>
-                    <td class="words text-right">
+                    <td class="words text-end">
                         <div class="hint">{{ $chapter->word_count }} words</div>
                     </td>
                 </tr>

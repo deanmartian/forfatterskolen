@@ -21,7 +21,7 @@
                     {{ FrontendHelpers::currencyFormat($order->price) }}
                 </td>
                 <td>
-                    <button class="btn btn-success btn-xs moveOrderBtn" data-toggle="modal" data-target="#moveOrderModal"
+                    <button class="btn btn-success btn-sm moveOrderBtn" data-bs-toggle="modal" data-bs-target="#moveOrderModal"
                     data-action="{{ route('learner.self-publishing.move-to-order', $order->id) }}">
                         Move to Order
                     </button>

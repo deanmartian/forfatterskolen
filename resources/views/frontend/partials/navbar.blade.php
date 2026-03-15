@@ -1,6 +1,6 @@
 <div class="top-navbar">
   Velkommen til Forfatterskolen
-  <div class="pull-right">
+  <div class="float-end">
     <a href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank"><i class="fa fa-pinterest"></i></a>
     <a href="https://www.facebook.com/bliforfatter/" target="_blank"><i class="fa fa-facebook"></i></a>
     <a href="https://twitter.com/Forfatterrektor" target="_blank"><i class="fa fa-twitter"></i></a>
@@ -17,7 +17,7 @@
   </div>
   <div class="container-fluid">
       <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <button type="button" class="navbar-toggle" data-bs-toggle="collapse" data-bs-target="#myNavbar">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span> 
@@ -37,7 +37,7 @@
           <li @if( Route::currentRouteName() == 'front.contact-us' ) class="active" @endif><a href="{{ route('front.contact-us') }}">Kontakt Oss</a></li>
           @if(! Auth::guest() )
           <li>
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-bell-o"></i>
+            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#"><i class="fa fa-bell-o"></i>
               @if(Auth::user()->notifications()->where('is_read',0)->get()->count())
                 <span class="badge badge-danger notif-badge">{{ Auth::user()->notifications()->where('is_read',0)->get()->count() }}</span>
               @endif
@@ -83,7 +83,7 @@
             </ul>
           </li>
           <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#">
               Hei {{Auth::user()->first_name}}
               <i class="fa fa-angle-down"></i>&nbsp;<span class="nav-user-thumb" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
             </a>

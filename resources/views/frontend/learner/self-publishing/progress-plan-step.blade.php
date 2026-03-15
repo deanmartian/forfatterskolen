@@ -15,8 +15,8 @@
                 <div class="card-header">
                     {{ $stepTitle }}
 
-                    <button type="button" class="btn red-global-btn uploadManuscriptBtn py-2 px-6 pull-right"
-                        data-toggle="modal" data-target="#uploadManuscriptModal"
+                    <button type="button" class="btn red-global-btn uploadManuscriptBtn py-2 px-6 float-end"
+                        data-bs-toggle="modal" data-bs-target="#uploadManuscriptModal"
                         style="width: auto;">
                         {{ trans('site.learner.upload-script') }}
                         <i class="fa fa-upload"></i>

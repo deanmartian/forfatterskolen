@@ -25,7 +25,7 @@
 									<div class="circle">
 										<div class="image-preview" data-bg="{{ Auth::user()->profile_image }}"
 											 data-default="{{Auth::user()->profile_image}}"
-											 title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
+											 title="Select Image" data-bs-toggle="tooltip" data-placement="bottom"></div>
 										<input type="file" accept="image/*" name="image">
 									</div>
 								</form>
@@ -82,19 +82,19 @@
 					<div class="card">
 						<div class="card-body p-0">
 							<div class="theme-tabs">
-								<ul class="nav nav-tabs pl-5" role="tablist">
+								<ul class="nav nav-tabs ps-5" role="tablist">
 									<li class="nav-item">
-										<a data-toggle="tab" href="#profile-panel" class="nav-link active" role="tab">
+										<a data-bs-toggle="tab" href="#profile-panel" class="nav-link active" role="tab">
 											<span>{{ trans('site.learner.profile-text') }}</span>
 										</a>
 									</li>
 									<li class="nav-item">
-										<a data-toggle="tab" href="#email-panel" class="nav-link" role="tab">
+										<a data-bs-toggle="tab" href="#email-panel" class="nav-link" role="tab">
 											<span>{{ trans('site.learner.email-addresses-text') }}</span>
 										</a>
 									</li>
 									<li class="nav-item">
-										<a data-toggle="tab" href="#diploma-panel" class="nav-link" role="tab">
+										<a data-bs-toggle="tab" href="#diploma-panel" class="nav-link" role="tab">
 											<span>{{ trans('site.learner.diploma-text') }}</span>
 										</a>
 									</li>
@@ -111,7 +111,7 @@
 													<div class="form-group row">
 														<label class="col-sm-3 col-form-label"></label>
 														<div class="col-sm-9">
-															<h1 class="text-left font-barlow-regular">{{ trans('site.learner.profile-text') }}</h1>
+															<h1 class="text-start font-barlow-regular">{{ trans('site.learner.profile-text') }}</h1>
 														</div>
 													</div>
 
@@ -146,7 +146,7 @@
 													<div class="form-group row">
 														<label class="col-sm-3 col-form-label"></label>
 														<div class="col-sm-9">
-															<h1 class="text-left font-barlow-regular">{{ trans('site.learner.address') }}</h1>
+															<h1 class="text-start font-barlow-regular">{{ trans('site.learner.address') }}</h1>
 														</div>
 													</div>
 
@@ -189,7 +189,7 @@
 													<div class="form-group row">
 														<label class="col-sm-3 col-form-label"></label>
 														<div class="col-sm-9">
-															<h1 class="text-left font-barlow-regular">{{ trans('site.learner.social-text') }}</h1>
+															<h1 class="text-start font-barlow-regular">{{ trans('site.learner.social-text') }}</h1>
 														</div>
 													</div>
 
@@ -216,7 +216,7 @@
 													<div class="form-group row">
 														<label class="col-sm-3 col-form-label"></label>
 														<div class="col-sm-9">
-															<h1 class="text-left font-barlow-regular">{{ trans('site.learner.safety-text') }}</h1>
+															<h1 class="text-start font-barlow-regular">{{ trans('site.learner.safety-text') }}</h1>
 														</div>
 													</div>
 
@@ -241,7 +241,7 @@
 											<section>
 												<div class="col-md-10 text-center">
 													<div class="form-group row mb-0">
-														<div class="col-sm-9 text-left col-md-offset-3">
+														<div class="col-sm-9 text-start col-md-offset-3">
 															<button type="submit" class="btn site-btn-global">
 																{{ trans('site.learner.update-profile-text') }}
 															</button>
@@ -256,7 +256,7 @@
 
 										@if ( $errors->any() )
 											<div class="alert alert-danger mx-4">
-												<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+												<a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
 												<ul>
 													@foreach($errors->all() as $error)
 														<li>{{$error}}</li>
@@ -266,7 +266,7 @@
 										@endif
 										@if(session()->has('profile_success'))
 											<div class="alert alert-success mx-4">
-												<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+												<a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
 												{{ session()->get('profile_success') }}
 											</div>
 										@endif
@@ -366,7 +366,7 @@
                         <div class="modal-content">
                                 <div class="modal-header">
                                         <h3 class="modal-title">{{ trans('site.learner.preview-text') }}</h3>
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                                 </div>
                                 <div class="modal-body">
                                         <iframe src="" frameborder="0" width="100%" height="550">
@@ -377,14 +377,14 @@
         </div>
 
 		<!-- Hidden trigger -->
-		<button id="hiddenTrigger" type="button" data-toggle="modal" data-target="#unsavedAddressModal" style="display:none;"></button>
+		<button id="hiddenTrigger" type="button" data-bs-toggle="modal" data-bs-target="#unsavedAddressModal" style="display:none;"></button>
 
         <div id="unsavedAddressModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 							<h3 class="modal-title">{{ trans('site.save-changes') }}</h3>
-							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 					</div>
 					<div class="modal-body">
 							<p>{{ trans('site.save-new-information-question') }}</p>
@@ -393,7 +393,7 @@
 							<button type="button" class="btn btn-primary save-changes">
 								{{ trans('site.front.yes') }}
 							</button>
-							<button type="button" class="btn btn-secondary discard-changes" data-dismiss="modal">
+							<button type="button" class="btn btn-secondary discard-changes" data-bs-dismiss="modal">
 								{{ trans('site.front.no') }}
 							</button>
 					</div>

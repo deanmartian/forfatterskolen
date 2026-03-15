@@ -102,7 +102,7 @@
                     </div> <!-- end left column -->
                     <div class="col-md-6 presenter-container">
                         <div id="presenter-carousel" class="carousel slide"
-                             data-ride="carousel" data-interval="10000">
+                             data-bs-ride="carousel" data-interval="10000">
 
                             <!-- The slideshow -->
                             <div class="container carousel-inner no-padding">
@@ -116,10 +116,10 @@
                             </div> <!-- end carouse-inner -->
 
                             <!-- Left and right controls -->
-                            <a class="carousel-control-prev" href="#presenter-carousel" data-slide="prev">
+                            <a class="carousel-control-prev" href="#presenter-carousel" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon"></span>
                             </a>
-                            <a class="carousel-control-next" href="#presenter-carousel" data-slide="next">
+                            <a class="carousel-control-next" href="#presenter-carousel" data-bs-slide="next">
                                 <span class="carousel-control-next-icon"></span>
                             </a>
                         </div> <!-- end presenter-carousel -->
@@ -176,20 +176,20 @@
 
                 <div class="col-md-12 px-0 mt-5">
                     <div id="testimonials-carousel" class="carousel slide"
-                         data-ride="carousel" data-interval="10000">
+                         data-bs-ride="carousel" data-interval="10000">
 
                         <!-- Indicators -->
                         <ul class="carousel-indicators">
-                            <li data-target="#testimonials-carousel" data-slide-to="0" class="active"></li>
-                            <li data-target="#testimonials-carousel" data-slide-to="1"></li>
-                            <li data-target="#testimonials-carousel" data-slide-to="2"></li>
-                            <li data-target="#testimonials-carousel" data-slide-to="3"></li>
+                            <li data-bs-target="#testimonials-carousel" data-bs-slide-to="0" class="active"></li>
+                            <li data-bs-target="#testimonials-carousel" data-bs-slide-to="1"></li>
+                            <li data-bs-target="#testimonials-carousel" data-bs-slide-to="2"></li>
+                            <li data-bs-target="#testimonials-carousel" data-bs-slide-to="3"></li>
                         </ul>
 
                         <!-- The slideshow -->
                         <div class="container carousel-inner row">
                             <div class="carousel-item active">
-                                <div class="col-sm-6 col-xs-12 h-100">
+                                <div class="col-sm-6 col-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -203,7 +203,7 @@
                                         </div> <!-- end testimonial-container-->
                                     </div>
                                 </div> <!-- end column -->
-                                <div class="col-sm-6 col-xs-12 h-100">
+                                <div class="col-sm-6 col-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -221,7 +221,7 @@
                             </div>  <!-- end carousel-item -->
 
                             <div class="carousel-item">
-                                <div class="col-sm-6 col-xs-12 h-100">
+                                <div class="col-sm-6 col-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -237,7 +237,7 @@
                                         </div> <!-- end testimonial-container-->
                                     </div>
                                 </div> <!-- end column -->
-                                <div class="col-sm-6 col-xs-12 h-100">
+                                <div class="col-sm-6 col-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -255,7 +255,7 @@
                             </div> <!-- end carousel-item -->
 
                             <div class="carousel-item">
-                                <div class="col-sm-6 col-xs-12 h-100">
+                                <div class="col-sm-6 col-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -269,7 +269,7 @@
                                         </div> <!-- end testimonial-container-->
                                     </div>
                                 </div> <!-- end column -->
-                                <div class="col-sm-6 col-xs-12 h-100">
+                                <div class="col-sm-6 col-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -286,7 +286,7 @@
                             </div> <!-- end carousel-item -->
 
                             <div class="carousel-item">
-                                <div class="col-sm-6 col-xs-12 h-100">
+                                <div class="col-sm-6 col-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -301,7 +301,7 @@
                                         </div> <!-- end testimonial-container-->
                                     </div>
                                 </div> <!-- end column -->
-                                <div class="col-sm-6 col-xs-12 h-100">
+                                <div class="col-sm-6 col-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">

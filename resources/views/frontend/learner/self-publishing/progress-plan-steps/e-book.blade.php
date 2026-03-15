@@ -17,8 +17,8 @@
                 </div>
                 <div class="sp-card-body">
                     <section>
-                        <button type="button" class="btn btn-brand float-right ebookBtn" data-toggle="modal"
-                        data-target="#ebookModal"
+                        <button type="button" class="btn btn-brand float-end ebookBtn" data-bs-toggle="modal"
+                        data-bs-target="#ebookModal"
                         data-type="epub">+ Legg til Epub</button>
                         <div class="table-responsive margin-top">
                             <table class="table table-side-bordered table-white">
@@ -39,8 +39,8 @@
                                                 {!! $epub->file_link !!}
                                             </td>
                                             <td>                      
-                                                <button class="btn btn-brand btn-xs ebookBtn" data-toggle="modal"
-                                                        data-target="#ebookModal"
+                                                <button class="btn btn-brand btn-sm ebookBtn" data-bs-toggle="modal"
+                                                        data-bs-target="#ebookModal"
                                                         data-type="epub" data-id="{{ $epub->id }}"
                                                         data-record="{{ json_encode($epub) }}"
                                                         aria-label="Rediger ePub">
@@ -55,8 +55,8 @@
                     </section>
 
                     <section class="mt-5">
-                        <button type="button" class="btn btn-brand ebookBtn float-right" data-toggle="modal"
-                        data-target="#ebookModal"
+                        <button type="button" class="btn btn-brand ebookBtn float-end" data-bs-toggle="modal"
+                        data-bs-target="#ebookModal"
                                 data-type="mobi">+ Legg til Mobi</button>
                         <div class="table-responsive margin-top">
                             <table class="table table-side-bordered table-white">
@@ -77,8 +77,8 @@
                                                 {!! $mobi->file_link !!}
                                             </td>
                                             <td>                      
-                                                <button class="btn btn-brand btn-xs ebookBtn" data-toggle="modal"
-                                                        data-target="#ebookModal"
+                                                <button class="btn btn-brand btn-sm ebookBtn" data-bs-toggle="modal"
+                                                        data-bs-target="#ebookModal"
                                                         data-type="mobi" data-id="{{ $mobi->id }}"
                                                         data-record="{{ json_encode($mobi) }}"
                                                         aria-label="Rediger Mobi">
@@ -93,8 +93,8 @@
                     </section>
 
                     <section class="mt-5">
-                        <button type="button" class="btn btn-brand ebookBtn float-right" data-toggle="modal"
-                            data-target="#ebookModal"
+                        <button type="button" class="btn btn-brand ebookBtn float-end" data-bs-toggle="modal"
+                            data-bs-target="#ebookModal"
                                 data-type="cover">+ Legg til omslag</button>
                         <div class="table-responsive margin-top">
                             <table class="table table-side-bordered table-white">
@@ -115,8 +115,8 @@
                                                 {!! $cover->file_link !!}
                                             </td>
                                             <td>                      
-                                                <button class="btn btn-brand btn-xs ebookBtn" data-toggle="modal"
-                                                        data-target="#ebookModal"
+                                                <button class="btn btn-brand btn-sm ebookBtn" data-bs-toggle="modal"
+                                                        data-bs-target="#ebookModal"
                                                         data-type="cover" data-id="{{ $cover->id }}"
                                                         data-record="{{ json_encode($cover) }}"
                                                         aria-label="Rediger omslag">
@@ -142,7 +142,7 @@
                         <i class="fas fa-book" style="color:var(--brand-primary);margin-right:6px"></i>
                         <span class="sp-modal__title-text"></span>
                     </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                    <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -174,7 +174,7 @@
                         </div>
                     </div>
                     <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
+                        <button type="button" class="btn-outline-brand" data-bs-dismiss="modal">Avbryt</button>
                         <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
                     </div>
                 </form>

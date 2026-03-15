@@ -63,8 +63,8 @@
                                                 </ul>
                                             @endif
                                         @endforeach
-                                        <button class="btn btn-brand btn-xs pull-right answerMarketingPlanBtn"
-                                            data-toggle="modal" data-target="#marketingPlanAnswerModal"
+                                        <button class="btn btn-brand btn-sm float-end answerMarketingPlanBtn"
+                                            data-bs-toggle="modal" data-bs-target="#marketingPlanAnswerModal"
                                             data-action="{{ route('learner.project.save-marketing-qa', $standardProject->id) }}"
                                             data-plan="{{ json_encode($marketingPlan) }}">
                                             {{ trans('site.answer-text') }}
@@ -87,7 +87,7 @@
                         <i class="fas fa-comments" style="color:var(--brand-primary);margin-right:6px"></i>
                         <span class="marketing-plan-title">{{ trans('site.answer-text') }}</span>
                     </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                    <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -97,7 +97,7 @@
                         <div class="question-container"></div>
                     </div>
                     <div class="sp-modal__footer">
-                        <button type="submit" class="btn btn-brand pull-right">{{ trans('site.save') }}</button>
+                        <button type="submit" class="btn btn-brand float-end">{{ trans('site.save') }}</button>
                         <div class="clearfix"></div>
                     </div>
                 </form>
@@ -132,7 +132,7 @@
                     " value='" + question.id + "'>";
 
                     if (question.sub_question_decoded) {
-                        questions += "<div class='sub-questions ml-5'>";
+                        questions += "<div class='sub-questions ms-5'>";
                             $.each(question.sub_question_decoded, function(k, sub_question){
                                 let answer = question.answers[0] && question.answers[0].sub_answer_decoded[k]
                                     ? question.answers[0].sub_answer_decoded[k] : '';

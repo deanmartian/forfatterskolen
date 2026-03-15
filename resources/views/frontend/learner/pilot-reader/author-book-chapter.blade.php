@@ -116,7 +116,7 @@
                         </button>
                         <a href="{{ route('learner.book-author-book-show', $book->id) }}" class="beta-button">Cancel</a>
                     </form>
-                </div> <!-- end col-xs-offset-2 col-xs-8 margin-top -->
+                </div> <!-- end col-xs-offset-2 col-8 margin-top -->
             </div> <!-- end col-sm-12 -->
         </div> <!-- end col-sm-12 col-md-10 sub-right-content show-book -->
 

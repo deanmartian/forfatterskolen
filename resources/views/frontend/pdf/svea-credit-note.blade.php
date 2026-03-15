@@ -37,7 +37,7 @@
         .receipt-table{
             padding: 0px;
         }
-        .float-right{
+        .float-end{
             float: right;
         }
         .receipt-footer div, .receipt-footer span{
@@ -81,12 +81,12 @@
 
 <div class="row" style="height: 150px">
     <div class="col-sm-12">
-        <div class="w-50 float-left">
+        <div class="w-50 float-start">
             <div class="receipt-logo-container">
                 <img src="{{ url('/images-new/logo-tagline.png') }}" alt="Logo" style="width: 260px;">
             </div>
         </div>
-        <div class="w-50 float-right">
+        <div class="w-50 float-end">
             <div class="receipt-invoice-pink">
                 <span style="font-size: 19px; font-weight: 600;">Kreditnota</span>
                 <div class="receipt-pink-bg">
@@ -106,7 +106,7 @@
 
 <div class="row" style="height: 160px">
     <div class="col-sm-12">
-        <div class="w-50 float-left">
+        <div class="w-50 float-start">
             <div class="receipt-papermoon-address">
                 <span style="font-weight: 600;">{{ trans('site.order-history.fs-name') }}</span> <br>
                 <span style="font-weight: 600;">{{ trans('site.order-history.fs-address1') }}</span> <br>
@@ -114,7 +114,7 @@
                 <span>{{ trans('site.order-history.fs-site') }}</span>
             </div>
         </div>
-        <div class="w-50 float-right">
+        <div class="w-50 float-end">
             @if($order->company)
             <div class="customer-name-address">
                 <span>{{ $order->company->company_name }}</span> <br>
@@ -136,32 +136,32 @@
 <hr style="height: 1px; background-color: #4c8485; border: none;">
 <div class="row receipt-table" style="height: 80px">
     <div class="col-sm-12">
-        <div class="w-48 float-left">
+        <div class="w-48 float-start">
             <div>
-                <span class="float-left">{{ trans('site.order-history.invoice-number') }}</span>
-                <span class="float-right">{{ substr(str_repeat(0, 6).$order->id, - 6) }}</span>
+                <span class="float-start">{{ trans('site.order-history.invoice-number') }}</span>
+                <span class="float-end">{{ substr(str_repeat(0, 6).$order->id, - 6) }}</span>
             </div>
             <div>
                 <span>{{ trans('site.order-history.customer-number') }}</span>
-                <span class="float-right">{{ substr(str_repeat(0, 6).$user->id, - 6) }}</span>
+                <span class="float-end">{{ substr(str_repeat(0, 6).$user->id, - 6) }}</span>
             </div>
             <div>
                 <span>{{ trans('site.order-history.customer-reference') }}</span>
-                <span class="float-right">Sven-Inge Henningsen</span>
+                <span class="float-end">Sven-Inge Henningsen</span>
             </div>
         </div>
-        <div class="w-50 float-right">
+        <div class="w-50 float-end">
             <div>
                 <span>{{ trans('site.order-history.invoice-date') }}</span>
-                <span class="float-right">{{ $order->created_at_formatted }}</span>
+                <span class="float-end">{{ $order->created_at_formatted }}</span>
             </div>
             <div>
                 <span>{{ trans('site.order-history.payment-terms') }}</span>
-                <span class="float-right">{{ $order->payment_plan ? $order->payment_plan->plan : '' }}</span>
+                <span class="float-end">{{ $order->payment_plan ? $order->payment_plan->plan : '' }}</span>
             </div>
             <div>
                 <span>{{ trans('site.order-history.interest') }}</span>
-                <span class="float-right">12%</span>
+                <span class="float-end">12%</span>
             </div>
         </div>
     </div>
@@ -199,18 +199,18 @@
 
 <div class="row receipt-table total-table" style="height: 160px">
     <div class="col-sm-12">
-        <div class="w-50 float-right">
+        <div class="w-50 float-end">
             <div>
                 <span>{{ trans('site.order-history.total-vat') }}</span>
-                <span class="float-right">{{ $order->total_formatted }}</span>
+                <span class="float-end">{{ $order->total_formatted }}</span>
             </div>
             <div>
                 <span>{{ trans('site.order-history.total-to-pay') }}</span>
-                <span class="float-right">{{ $order->total_formatted }}</span>
+                <span class="float-end">{{ $order->total_formatted }}</span>
             </div>
             <div>
                 <span>Kreditert beløp</span>
-                <span class="float-right">-{{ $order->total_formatted }}</span>
+                <span class="float-end">-{{ $order->total_formatted }}</span>
             </div>
         </div>
     </div>
@@ -231,7 +231,7 @@
             <div>{{ trans('site.order-history.fs-country') }} <span>{{ trans('site.order-history.organization') }}</span></div>
             <hr style="height: 1px; background-color: #4c8485; border: none;">
         </div>
-        <div class="w-25 float-right">
+        <div class="w-25 float-end">
             <!-- <div style="padding-left: 20px;">Scanna i bankapp</div>
             <img style="padding: 20px 0px 0px 20px;" src="{{ url('/images-new/receipt-qr.png') }}" alt="Logo" style="width: 100%;"> -->
         </div>
@@ -241,7 +241,7 @@
 <!-- <div class="row">
     <div class="col-sm-12">
         <div class="w-50"></div>
-        <div class="w-50 float-right">
+        <div class="w-50 float-end">
 
             $outputString = preg_replace('/[^0-9]/', ' ', $order->total_formatted);
             echo($outputString);

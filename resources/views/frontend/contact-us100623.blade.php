@@ -97,7 +97,7 @@
                             </div>
 
                             <div class="row contact-info-container">
-                                <div class="col-md-10 pl-0">
+                                <div class="col-md-10 ps-0">
                                     <p>
                                         <i class="sprite marker"></i>
                                         <span>Postboks 9233, 3028 Drammen</span>
@@ -111,7 +111,7 @@
                                         <span>+47 411 23 555</span>
                                     </p>--}}
                                     <p>
-                                        <a href="https://twitter.com/Forfatterrektor" target="_blank" class="ml-0">
+                                        <a href="https://twitter.com/Forfatterrektor" target="_blank" class="ms-0">
                                             <i class="sprite-social twitter"></i>
                                         </a>
                                         <a href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank">
@@ -174,7 +174,7 @@
                                         }
                                     ?>
                                     <div class="alert alert-{{ $alert_type }} mt-4" style="width: 100%">
-                                        <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                                        <a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
                                         <ul>
                                             @foreach($errors->all() as $error)
                                                 <li>{{$error}}</li>

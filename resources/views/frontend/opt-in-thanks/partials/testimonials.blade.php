@@ -5,7 +5,7 @@
         </h1>
 
         <div id="testimonial-carousel" class="carousel slide global-carousel"
-             data-ride="carousel" data-interval="false">
+             data-bs-ride="carousel" data-interval="false">
 
             <?php
             $webinars_chunk = $next_webinars->chunk(3);
@@ -13,7 +13,7 @@
             <!-- Indicators -->
             <ul class="carousel-indicators">
                 @for($i=0; $i<=$webinars_chunk->count() - 1;$i++)
-                    <li data-target="#testimonial-carousel" data-slide-to="{{$i}}"
+                    <li data-bs-target="#testimonial-carousel" data-bs-slide-to="{{$i}}"
                         @if($i == 0) class="active" @endif></li>
                 @endfor
             </ul>

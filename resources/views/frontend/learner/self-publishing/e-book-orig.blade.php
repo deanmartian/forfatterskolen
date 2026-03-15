@@ -16,8 +16,8 @@
                 <div class="card global-card">
                     <div class="card-header">
                         @if ($standardProject)
-                            <button type="button" class="btn btn-success pull-right ebookBtn" data-toggle="modal" 
-                                data-target="#ebookModal" data-type="epub">+ {{ trans('site.add-epub') }}</button>
+                            <button type="button" class="btn btn-success float-end ebookBtn" data-bs-toggle="modal" 
+                                data-bs-target="#ebookModal" data-type="epub">+ {{ trans('site.add-epub') }}</button>
                         @endif
                     </div>
                     <div class="card-body">
@@ -39,14 +39,14 @@
                                             {!! $epub->file_link !!}
                                         </td>
                                         <td>                      
-                                            <button class="btn btn-primary btn-xs ebookBtn" data-toggle="modal"
-                                                    data-target="#ebookModal"
+                                            <button class="btn btn-primary btn-sm ebookBtn" data-bs-toggle="modal"
+                                                    data-bs-target="#ebookModal"
                                                     data-type="epub" data-id="{{ $epub->id }}"
                                                     data-record="{{ json_encode($epub) }}">
                                                 <i class="fa fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-danger btn-xs deleteEbookBtn" data-toggle="modal"
-                                                    data-target="#deleteEbookModal" data-type="epub"
+                                            <button class="btn btn-danger btn-sm deleteEbookBtn" data-bs-toggle="modal"
+                                                    data-bs-target="#deleteEbookModal" data-type="epub"
                                                     data-action="{{ route('learner.self-publishing.delete-ebook', 
                                                     [$epub->project_id, $epub->id]) }}">
                                                 <i class="fa fa-trash"></i>
@@ -62,8 +62,8 @@
                 <div class="card global-card mt-4">
                     <div class="card-header">
                         @if ($standardProject)
-                            <button type="button" class="btn btn-success pull-right ebookBtn" data-toggle="modal" 
-                                data-target="#ebookModal" data-type="mobi">+ {{ trans('site.add-mobi') }}</button>
+                            <button type="button" class="btn btn-success float-end ebookBtn" data-bs-toggle="modal" 
+                                data-bs-target="#ebookModal" data-type="mobi">+ {{ trans('site.add-mobi') }}</button>
                         @endif
                     </div>
                     <div class="card-body">
@@ -85,14 +85,14 @@
                                             {!! $mobi->file_link !!}
                                         </td>
                                         <td>                      
-                                            <button class="btn btn-primary btn-xs ebookBtn" data-toggle="modal"
-                                                    data-target="#ebookModal"
+                                            <button class="btn btn-primary btn-sm ebookBtn" data-bs-toggle="modal"
+                                                    data-bs-target="#ebookModal"
                                                     data-type="mobi" data-id="{{ $mobi->id }}"
                                                     data-record="{{ json_encode($mobi) }}">
                                                 <i class="fa fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-danger btn-xs deleteEbookBtn" data-toggle="modal"
-                                                    data-target="#deleteEbookModal" data-type="mobi"
+                                            <button class="btn btn-danger btn-sm deleteEbookBtn" data-bs-toggle="modal"
+                                                    data-bs-target="#deleteEbookModal" data-type="mobi"
                                                     data-action="{{ route('learner.self-publishing.delete-ebook', 
                                                     [$mobi->project_id, $mobi->id]) }}">
                                                 <i class="fa fa-trash"></i>
@@ -108,8 +108,8 @@
                 <div class="card global-card mt-4">
                     <div class="card-header">
                         @if ($standardProject)
-                            <button type="button" class="btn btn-success pull-right ebookBtn" data-toggle="modal" 
-                            data-target="#ebookModal" data-type="cover">+ {{ trans('site.add-cover') }}</button>
+                            <button type="button" class="btn btn-success float-end ebookBtn" data-bs-toggle="modal" 
+                            data-bs-target="#ebookModal" data-type="cover">+ {{ trans('site.add-cover') }}</button>
                         @endif
                     </div>
                     <div class="card-body">
@@ -131,14 +131,14 @@
                                             {!! $cover->file_link !!}
                                         </td>
                                         <td>                      
-                                            <button class="btn btn-primary btn-xs ebookBtn" data-toggle="modal"
-                                                    data-target="#ebookModal"
+                                            <button class="btn btn-primary btn-sm ebookBtn" data-bs-toggle="modal"
+                                                    data-bs-target="#ebookModal"
                                                     data-type="cover" data-id="{{ $cover->id }}"
                                                     data-record="{{ json_encode($cover) }}">
                                                 <i class="fa fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-danger btn-xs deleteEbookBtn" data-toggle="modal"
-                                                    data-target="#deleteEbookModal" data-type="cover"
+                                            <button class="btn btn-danger btn-sm deleteEbookBtn" data-bs-toggle="modal"
+                                                    data-bs-target="#deleteEbookModal" data-type="cover"
                                                     data-action="{{ route('learner.self-publishing.delete-ebook', 
                                                     [$cover->project_id, $cover->id]) }}">
                                                 <i class="fa fa-trash"></i>
@@ -163,7 +163,7 @@
                 <div class="modal-header">
                     <h4 class="modal-title">
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('learner.self-publishing.save-ebook', $standardProject->id) }}"
@@ -187,7 +187,7 @@
                             <input type="file" class="form-control" name="cover">
                         </div>
 
-                        <button type="submit" class="btn btn-success pull-right margin-top">
+                        <button type="submit" class="btn btn-success float-end margin-top">
                             {{ trans('site.save') }}
                         </button>
 
@@ -205,7 +205,7 @@
             <div class="modal-header">
                 <h4 class="modal-title">
                 </h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -214,7 +214,7 @@
 
                     <p>{{ trans('site.delete-question') }}</p>
 
-                    <button type="submit" class="btn btn-danger pull-right margin-top">
+                    <button type="submit" class="btn btn-danger float-end margin-top">
                         {{ trans('site.delete') }}
                     </button>
 

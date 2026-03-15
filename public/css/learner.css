@@ -25,6 +25,7 @@ body:not(.modal-open) {
 #sidebar {
     height: 100%;
     width: 300px;
+    box-sizing: border-box;
     position: fixed;
     top: 0;
     left: 0;
@@ -2278,4 +2279,111 @@ body.sidebar-open::after {
     .redeem-gift-link {
         margin-right: 0;
     }
+}
+
+/* =============================================
+   Bootstrap 5 Compatibility Layer
+   BS3/BS4 classes that no longer exist in BS5
+   ============================================= */
+
+/* .close button compat (BS3/4 → BS5 uses .btn-close) */
+.close {
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+    appearance: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    opacity: .75;
+}
+
+/* form-group compat (removed in BS5) */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+/* btn-block compat (removed in BS5, use d-grid wrapper) */
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+/* label styling compat (BS3 used .label, BS5 uses .badge) */
+.label {
+    display: inline-block;
+    padding: .25em .4em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+}
+
+.label-success { background-color: #28a745; color: #fff; }
+.label-warning { background-color: #ffc107; color: #212529; }
+.label-primary { background-color: #5F0000; color: #fff; }
+.label-danger { background-color: #dc3545; color: #fff; }
+.label-info { background-color: #17a2b8; color: #fff; }
+.label-default { background-color: #6c757d; color: #fff; }
+
+/* panel compat (BS3 → BS5 card) */
+.panel { background-color: #fff; border: 1px solid #ddd; border-radius: .375rem; margin-bottom: 1rem; }
+.panel-body { padding: 1rem; }
+.panel-heading { padding: .75rem 1rem; border-bottom: 1px solid #ddd; background-color: #f8f9fa; border-radius: .375rem .375rem 0 0; }
+.panel-default { border-color: #ddd; }
+.panel-title { margin: 0; font-size: 1rem; font-weight: 600; }
+
+/* input-group-addon compat */
+.input-group-addon {
+    display: flex;
+    align-items: center;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: .375rem;
+}
+
+/* margin-top / margin-bottom compat (used as standalone classes in some templates) */
+.margin-top { margin-top: 15px; }
+.margin-bottom { margin-bottom: 15px; }
+
+/* badge-danger etc. compat (BS4 → BS5 uses bg-*) */
+.badge-danger { background-color: #dc3545 !important; color: #fff; }
+.badge-success { background-color: #28a745 !important; color: #fff; }
+.badge-warning { background-color: #ffc107 !important; color: #212529; }
+.badge-primary { background-color: #5F0000 !important; color: #fff; }
+.badge-info { background-color: #17a2b8 !important; color: #fff; }
+
+/* navbar-toggle compat for BS3 */
+.navbar-toggle {
+    position: relative;
+    float: right;
+    padding: 9px 10px;
+    margin-right: 15px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
 }

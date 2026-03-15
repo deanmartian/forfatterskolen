@@ -129,15 +129,15 @@
 			<div class="theme-tabs">
 				<ul class="nav nav-tabs">
 					@if (!$course->is_free)
-				  		<li class="active"><a data-toggle="tab" href="#packages"><span>Skrivepakke detaljer</span></a></li>
+				  		<li class="active"><a data-bs-toggle="tab" href="#packages"><span>Skrivepakke detaljer</span></a></li>
 					@endif
 				  <li {{ $course->is_free ? 'class=active' : '' }}>
-					  <a data-toggle="tab" href="#kursplan">
+					  <a data-bs-toggle="tab" href="#kursplan">
 						  <span>{{ $course->id == 17 ? 'Planlagte webinarer' : 'Kursplan' }}</span> <!-- check if webinar-pakke -->
 					  </a>
 				  </li>
 					@if($course->testimonials->count())
-					<li><a data-toggle="tab" href="#testimonial"><span>Tilbakemelding fra elever</span></a></li>
+					<li><a data-bs-toggle="tab" href="#testimonial"><span>Tilbakemelding fra elever</span></a></li>
 					@endif
 				</ul>
 

@@ -22,8 +22,8 @@
 
             <div class="card-body">
                 <section>
-                    <button type="button" class="btn btn-success btn-xs pull-right audioBtn" data-toggle="modal" 
-                        data-target="#audioModal" data-type="files">+ Add Audio Files</button>
+                    <button type="button" class="btn btn-success btn-sm float-end audioBtn" data-bs-toggle="modal" 
+                        data-bs-target="#audioModal" data-type="files">+ Add Audio Files</button>
                     <div class="table-responsive margin-top">
                         <table class="table table-side-bordered table-white">
                             <thead>
@@ -43,8 +43,8 @@
                                             {!! $file->file_link !!}
                                         </td>
                                         <td>                      
-                                            <button class="btn btn-primary btn-xs audioBtn" data-toggle="modal"
-                                                    data-target="#audioModal"
+                                            <button class="btn btn-primary btn-sm audioBtn" data-bs-toggle="modal"
+                                                    data-bs-target="#audioModal"
                                                     data-type="files" data-id="{{ $file->id }}"
                                                     data-record="{{ json_encode($file) }}">
                                                 <i class="fa fa-edit"></i>
@@ -58,8 +58,8 @@
                 </section>
 
                 <section class="mt-3">
-                    <button type="button" class="btn btn-success btn-xs pull-right audioBtn" data-toggle="modal" 
-                        data-target="#audioModal" data-type="cover">+ Add Audio Cover</button>
+                    <button type="button" class="btn btn-success btn-sm float-end audioBtn" data-bs-toggle="modal" 
+                        data-bs-target="#audioModal" data-type="cover">+ Add Audio Cover</button>
                     <div class="table-responsive margin-top">
                         <table class="table table-side-bordered table-white">
                             <thead>
@@ -78,8 +78,8 @@
                                         {!! $cover->file_link !!}
                                     </td>
                                     <td>                      
-                                        <button class="btn btn-primary btn-xs audioBtn" data-toggle="modal"
-                                                data-target="#audioModal"
+                                        <button class="btn btn-primary btn-sm audioBtn" data-bs-toggle="modal"
+                                                data-bs-target="#audioModal"
                                                 data-type="cover" data-id="{{ $cover->id }}"
                                                 data-record="{{ json_encode($cover) }}">
                                             <i class="fa fa-edit"></i>
@@ -101,7 +101,7 @@
             <div class="modal-header">
                 <h4 class="modal-title">
                 </h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <form method="POST" action="{{ route($saveAudioRoute, $standardProject->id) }}"
@@ -120,7 +120,7 @@
                         <input type="file" class="form-control" name="cover">
                     </div>
 
-                    <button type="submit" class="btn btn-success pull-right margin-top">
+                    <button type="submit" class="btn btn-success float-end margin-top">
                         {{ trans('site.save') }}
                     </button>
 

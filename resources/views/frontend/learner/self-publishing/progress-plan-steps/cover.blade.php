@@ -19,8 +19,8 @@
                 <div class="sp-card-header">
                     {{ trans('site.homepage.illustration-cover-design') }}
 
-                    <button type="button" class="btn btn-brand btn-xs pull-right coverBtn" data-toggle="modal" 
-                                data-target="#coverModal" data-type="cover">
+                    <button type="button" class="btn btn-brand btn-sm float-end coverBtn" data-bs-toggle="modal" 
+                                data-bs-target="#coverModal" data-type="cover">
                         + Legg til omslag
                     </button>
                 </div>
@@ -51,7 +51,7 @@
                                                 </a>
                                             @else
                                                 @if ($coverFile)
-                                                    <a href="{{ $coverFile }}" class="btn btn-brand btn-xs" download>
+                                                    <a href="{{ $coverFile }}" class="btn btn-brand btn-sm" download>
                                                         <i class="fa fa-download" aria-hidden="true"></i>
                                                     </a>
                                                     <a href="{{ asset($coverFile) }}" target="_blank" style="margin-right: 5px">
@@ -70,14 +70,14 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <button class="btn btn-outline-brand btn-xs view-cover-btn" data-toggle="modal"
-                                            data-target="#coverDetailsModal"
+                                        <button class="btn btn-outline-brand btn-sm view-cover-btn" data-bs-toggle="modal"
+                                            data-bs-target="#coverDetailsModal"
                                             data-id="{{ $cover->id }}" aria-label="Vis omslag">
                                             <i class="fa fa-eye" aria-hidden="true"></i>
                                         </button>
 
-                                        <button class="btn btn-brand btn-xs coverBtn" data-toggle="modal"
-                                                data-target="#coverModal"
+                                        <button class="btn btn-brand btn-sm coverBtn" data-bs-toggle="modal"
+                                                data-bs-target="#coverModal"
                                                 data-type="cover" data-id="{{ $cover->id }}"
                                                 data-record="{{ json_encode($cover) }}"
                                                 aria-label="Rediger omslag">
@@ -106,7 +106,7 @@
                         <i class="fas fa-palette" style="color:var(--brand-primary);margin-right:6px"></i>
                         <span class="sp-modal__title-text">Omslag</span>
                     </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                    <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -166,7 +166,7 @@
 
                         <div class="sp-form-group">
                             <label class="sp-label">Baksidetekst (valgfritt)</label> <br>
-                            <input type="checkbox" data-toggle="toggle" data-on="Tekst" data-off="Dokument"
+                            <input type="checkbox" data-bs-toggle="toggle" data-on="Tekst" data-off="Dokument"
                                 name="backside_type" data-width="100" class="backsideToggle" checked
                                 >
 
@@ -192,7 +192,7 @@
                         </div>
                     </div>
                     <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
+                        <button type="button" class="btn-outline-brand" data-bs-dismiss="modal">Avbryt</button>
                         <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
                     </div>
                 </form>
@@ -208,7 +208,7 @@
                         <i class="fas fa-palette" style="color:var(--brand-primary);margin-right:6px"></i>
                         Omslagsdetaljer
                     </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                    <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>

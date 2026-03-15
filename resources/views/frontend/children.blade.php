@@ -24,11 +24,11 @@
 
         <div class="first-document">
             @if($primaryVideo)
-            <div class="pull-left left-content">
+            <div class="float-start left-content">
             <iframe src="{{ $primaryVideo->video_url }}?embedType=legacy_api&videoFoam=true&videoWidth=720&chromeless=false&controlsVisibleOnLoad=true&playbar=true&fullscreenButton=true&playerColor=2ca0d9"
                     frameborder="0" height="384" width="681" allowfullscreen="true"></iframe>
             </div>
-            <div class="pull-left right-content">
+            <div class="float-start right-content">
                 <h2>{{ $primaryVideo->title }}</h2>
                 <p class="text-justify">
                     {{ $primaryVideo->description }}

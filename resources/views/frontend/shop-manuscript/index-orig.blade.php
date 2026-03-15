@@ -35,7 +35,7 @@
 							</div>
 						</div>
 						<br />
-						<button class="btn btn-theme" data-toggle="collapse" data-target="#editors">Redaktører</button>
+						<button class="btn btn-theme" data-bs-toggle="collapse" data-bs-target="#editors">Redaktører</button>
 						<div class="collapse margin-top" id="editors">
 							{{-- display 3 items per row --}}
 							@foreach($editors->chunk(3) as $editor_chunk)
@@ -121,7 +121,7 @@
 					  <div class="modal-dialog">
 						<div class="modal-content">
 						  <div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 							<h4 class="modal-title">Regn ut for meg</h4>
 						  </div>
 						  <div class="modal-body">
@@ -137,7 +137,7 @@
 						<h2><span class="highlight">TILBAKEMELDINGER</span> ETTER MANUSUTVIKLING</h2>
 						<div class="row" style="margin-left: 0; margin-right: 0;">
 							<div class="col-sm-8 col-sm-offset-2">
-								<div id="myCarousel" class="carousel slide" data-ride="carousel">
+								<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
 								  <div class="carousel-inner">
 									<div class="item active">
 										<div class="feedback-thumb margin-bottom" style="background-image: url({{ asset('images/shop-manuscript-testimonials/irene.jpg') }})"></div>
@@ -172,10 +172,10 @@
 									</div>
 								   </div>
 								  <ol class="carousel-indicators">
-									<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-									<li data-target="#myCarousel" data-slide-to="1"></li>
-									<li data-target="#myCarousel" data-slide-to="2"></li>
-									<li data-target="#myCarousel" data-slide-to="3"></li>
+									<li data-bs-target="#myCarousel" data-bs-slide-to="0" class="active"></li>
+									<li data-bs-target="#myCarousel" data-bs-slide-to="1"></li>
+									<li data-bs-target="#myCarousel" data-bs-slide-to="2"></li>
+									<li data-bs-target="#myCarousel" data-bs-slide-to="3"></li>
 								  </ol>
 								</div>
 							</div>

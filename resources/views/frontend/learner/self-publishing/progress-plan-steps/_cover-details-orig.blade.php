@@ -29,7 +29,7 @@
                         </a>
                     @else
                         @if ($coverFile)
-                            <a href="{{ $coverFile }}" class="btn btn-success btn-xs" download>
+                            <a href="{{ $coverFile }}" class="btn btn-success btn-sm" download>
                                 <i class="fa fa-download"></i>
                             </a>
                             <a href="{{ asset($coverFile) }}" target="_blank" style="margin-right: 5px">

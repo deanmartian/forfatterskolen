@@ -70,7 +70,7 @@
                                         </label>
                                         <input type="file" name="image" id="cg-image-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;">
                                         <span id="cg-image-name" style="font-size: 12px; color: #888;"></span>
-                                        <div class="emoji-picker-wrapper" data-target="cg-post-textarea">
+                                        <div class="emoji-picker-wrapper" data-bs-target="cg-post-textarea">
                                             <button type="button" class="emoji-toggle-btn btn-action" title="Emoji"><i class="fa fa-smile-o"></i></button>
                                             <div class="emoji-popup"><emoji-picker></emoji-picker></div>
                                         </div>

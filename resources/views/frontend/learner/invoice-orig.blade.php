@@ -65,9 +65,9 @@
 								</td>
 								<td>
 									@if(/*$sale->paid*/ $invoice->fiken_is_paid)
-									<span class="label label-success">{{$status}}</span>
+									<span class="badge bg-success">{{$status}}</span>
 									@else
-									<span class="label label-danger">{{$status}}</span>
+									<span class="badge bg-danger">{{$status}}</span>
 									@endif
 								</td>
 								<td>{{date_format(date_create($invoice->created_at), 'M d, Y H.i')}}</td>
@@ -79,7 +79,7 @@
 					</table>
 				</div>
 
-				<div class="pull-right">
+				<div class="float-end">
 					{{ $invoices->render() }}
 				</div>
 			</div>

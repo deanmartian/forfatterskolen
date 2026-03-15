@@ -117,7 +117,7 @@
                         </div>
 
                         <div class="form-group">
-                            <button type="submit" class="btn site-btn-global pull-right" id="submitOrder">
+                            <button type="submit" class="btn site-btn-global float-end" id="submitOrder">
                                 {{ trans('site.submit-application') }}
                             </button>
                         </div>

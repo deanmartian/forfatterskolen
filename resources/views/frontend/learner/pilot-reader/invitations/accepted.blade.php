@@ -32,10 +32,10 @@
                                     <div class="form-group">
                                         @if($chapter)
                                             <a href="{{ route('learner.book-author-book-view-chapter', ['book_id' => $book->id,
-                                            'chapter_id' => $chapter->id]) }}" class="btn btn-outline-success float-right">Read Now</a>
+                                            'chapter_id' => $chapter->id]) }}" class="btn btn-outline-success float-end">Read Now</a>
                                         @endif
-                                        <a href="{{ route('learner.book-author-book-show', $book->id) }}" class="btn btn-outline-primary float-right mr-1">View Book</a>
-                                        <a href="{{ route('learner.book-author') }}" class="btn btn-outline-info float-right mr-1">Go to Dashboard</a>
+                                        <a href="{{ route('learner.book-author-book-show', $book->id) }}" class="btn btn-outline-primary float-end me-1">View Book</a>
+                                        <a href="{{ route('learner.book-author') }}" class="btn btn-outline-info float-end me-1">Go to Dashboard</a>
                                     </div>
                                 @else
                                     <h1 class="card-title font-weight-light with-border-b pb-2">Invitation Accepted</h1>

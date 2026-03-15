@@ -76,13 +76,13 @@
 			<div class="col-md-12">
 				<div class="card global-card">
 					<div class="card-header">
-						<h2 class="pull-left">
+						<h2 class="float-start">
 							{{ trans('site.front.coaching-timer.title') }}
 						</h2>
 
 						@if ($checkCourseTakenWithCoaching->count())
-							<button class="btn blue-outline-btn pull-right px-4" data-toggle="modal"
-									data-target="#addCoachingSessionModal"
+							<button class="btn blue-outline-btn float-end px-4" data-bs-toggle="modal"
+									data-bs-target="#addCoachingSessionModal"
 									data-action="{{ route('learner.course-taken.coaching-timer.add') }}"
 									id="addCoachingSessionBtn">
 								{{ trans('site.learner.add-coaching-lesson') }}
@@ -143,7 +143,7 @@
 											@endif
 
 											@if (!$coachingTimer->approved_date)
-												<a href="#suggestDateModal" data-toggle="modal"
+												<a href="#suggestDateModal" data-bs-toggle="modal"
 												   class="suggestDateBtn"
 												   data-action="{{ route('learner.coaching-timer.suggest_date', $coachingTimer->id) }}">
 													{{ trans('site.learner.suggest-other-dates') }}</a>
@@ -153,7 +153,7 @@
 										<td>
 											@if ($coachingTimer->status !== 1)
 												<a href="#viewHelpWithModal" class="viewHelpWithBtn font-weight-bold"
-												data-toggle="modal" data-details="{{ $coachingTimer->help_with }}"
+												data-bs-toggle="modal" data-details="{{ $coachingTimer->help_with }}"
 												data-action="{{ route('learner.coaching-timer.help_with', $coachingTimer->id) }}">
 													{{ trans('site.learner.need-help-with-text') }}
 												</a>
@@ -169,8 +169,8 @@
 													<div class="mt-2">
 														{{ \App\Http\FrontendHelpers::formatDateTimeNor($suggested_dates_admin[$i]) }}
 														@if (!$coachingTimer->approved_date)
-															<button class="btn btn-success btn-xs approveDateBtn pull-right"
-																	data-toggle="modal" data-target="#approveDateModal"
+															<button class="btn btn-success btn-sm approveDateBtn float-end"
+																	data-bs-toggle="modal" data-bs-target="#approveDateModal"
 																	data-date="{{ $suggested_dates_admin[$i] }}"
 																	data-action="{{ route('learner.coaching-timer.approve_date', $coachingTimer->id) }}">
 																<i class="fa fa-check"></i>
@@ -182,7 +182,7 @@
 										</td> -->
 										<td class="font-weight-bold">
 											{!! $coachingTimer->approved_date ?
-											"<i class='fa fa-calendar-check mr-2' style='color:#000000'></i>" 
+											"<i class='fa fa-calendar-check me-2' style='color:#000000'></i>" 
 											. \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
 											 : ''!!}
 										</td>
@@ -204,7 +204,7 @@
 											@endif
 
 											@if($coachingTimer->status === 2 && !$coachingTimer->approved_date)
-												<span class="label label-info">
+												<span class="badge bg-info">
 													Pending Approval
 												</span>
 											@endif
@@ -216,7 +216,7 @@
 							</table>
 						</div>
 					</div> <!-- end card-body -->
-					<div class="pull-right">
+					<div class="float-end">
 						{{$coachingTimers->render()}}
 					</div>
 				</div> <!-- end card -->
@@ -231,7 +231,7 @@
             }
             ?>
 			<div class="alert alert-{{ $alert_type }}" id="fixed_to_bottom_alert">
-				<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+				<a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
 				<ul>
 					@foreach($errors->all() as $error)
 						<li>{{$error}}</li>
@@ -249,16 +249,16 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">{{ trans('site.learner.approve-date') }}</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="">
 					{{csrf_field()}}
 					{{ trans('site.learner.approve-date-question') }}
 					<input type="hidden" name="approved_date">
-					<div class="text-right mt-4">
+					<div class="text-end mt-4">
 						<button type="submit" class="btn btn-success">{{ trans('site.learner.approve-date-accept') }}</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.learner.approve-date-decline') }}</button>
+						<button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ trans('site.learner.approve-date-decline') }}</button>
 					</div>
 				</form>
 			</div>
@@ -273,7 +273,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">{{ trans('site.learner.add-coaching-session') }}</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action=""
@@ -310,9 +310,9 @@
 						<input type="hidden" name="plan_type">
 					@endif
 
-					<div class="text-right mt-4">
+					<div class="text-end mt-4">
 						<button type="submit" class="btn btn-success">{{ trans('site.front.submit') }}</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.front.cancel') }}</button>
+						<button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ trans('site.front.cancel') }}</button>
 					</div>
 				</form>
 			</div>
@@ -328,7 +328,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">{{ trans('site.learner-suggest-date-coaching-time') }}</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" id="suggestDateForm"
@@ -350,9 +350,9 @@
 						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
 					</div>
 
-					<div class="text-right mt-4">
+					<div class="text-end mt-4">
 						<button type="submit" class="btn btn-success">{{ trans('site.learner.suggest-text') }}</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.learner.cancel-text') }}</button>
+						<button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ trans('site.learner.cancel-text') }}</button>
 					</div>
 				</form>
 			</div>
@@ -367,14 +367,14 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">{{ trans('site.learner.help-with-text') }}</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form action="" method="post" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<textarea name="help_with" id="" cols="30" rows="10" class="form-control"></textarea>
 
-					<div class="text-right mt-4">
+					<div class="text-end mt-4">
 						<button type="submit" class="btn btn-success">{{ trans('site.front.submit') }}</button>
 					</div>
 				</form>
@@ -449,7 +449,7 @@
                     success: function(data){
                         let tr = $("#coaching-time-" + selectedCoaching.id);
                         tr.find('.consolto-btn').remove();
-                        tr.html('<span class="label label-info">Pending Approval</span>');
+                        tr.html('<span class="badge bg-info">Pending Approval</span>');
                     }
                 });
 			}

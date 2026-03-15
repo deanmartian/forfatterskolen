@@ -15,7 +15,7 @@
         <div class="col-md-2 col-sm-12 left-container">
             {{ trans('site.front.opt-in-thanks.description.left-container-first-number') }}
         </div>
-        <div class="col-md-10 col-sm-12 text-left right-container">
+        <div class="col-md-10 col-sm-12 text-start right-container">
             {{ trans('site.front.opt-in-thanks.description.right-container-first-text') }}
         </div>
     </div> <!-- end point-details-container -->
@@ -24,7 +24,7 @@
         <div class="col-md-2 col-sm-12  left-container">
             {{ trans('site.front.opt-in-thanks.description.left-container-second-number') }}
         </div>
-        <div class="col-md-10 col-sm-12 text-left right-container">
+        <div class="col-md-10 col-sm-12 text-start right-container">
             {{ trans('site.front.opt-in-thanks.description.right-container-second-text') }}
             <?php
                 $displayText = '';

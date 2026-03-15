@@ -2,12 +2,12 @@
     <div class="panel-body">
         <div class="col-md-6">
             <div class="row">
-                <div class="col-xs-3">
+                <div class="col-3">
                     <div class="form-group">
                         <label class="control-label">Total Sold Books</label>
                     </div>
                 </div>
-                <div class="col-xs-9">
+                <div class="col-9">
                     <div class="form-group">
                         <input type="text" class="form-control"
                         value="{{ $totalBookSold }}" disabled>
@@ -16,12 +16,12 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-3">
+                <div class="col-3">
                     <div class="form-group">
                         <label class="control-label">Total Sales</label>
                     </div>
                 </div>
-                <div class="col-xs-9">
+                <div class="col-9">
                     <div class="form-group">
                         <input type="text" class="form-control"
                         value="{{ $totalBookSale }}" disabled>
@@ -30,12 +30,12 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-3">
+                <div class="col-3">
                     <div class="form-group">
                         <label class="control-label">Inventory</label>
                     </div>
                 </div>
-                <div class="col-xs-9">
+                <div class="col-9">
                     <table class="table">
                         <thead>
                             <tr>
@@ -70,12 +70,12 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-3">
+                <div class="col-3">
                     <div class="form-group">
                         <label class="control-label">Order</label>
                     </div>
                 </div>
-                <div class="col-xs-9">
+                <div class="col-9">
                     <div class="form-group">
                         <input type="text" class="form-control"
                         value="{{ $book->inventory->order ?? '' }}" disabled>
@@ -84,12 +84,12 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-3">
+                <div class="col-3">
                     <div class="form-group">
                         <label class="control-label">Reservations</label>
                     </div>
                 </div>
-                <div class="col-xs-9">
+                <div class="col-9">
                     <div class="form-group">
                         <input type="text" class="form-control"
                         value="{{ $book->inventory->reservations ?? '' }}" disabled>

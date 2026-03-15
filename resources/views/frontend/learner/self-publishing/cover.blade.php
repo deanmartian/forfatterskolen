@@ -20,8 +20,8 @@
                             </h1>
 
                             @if ($standardProject)
-                                <button type="button" class="btn btn-success pull-right coverBtn" data-toggle="modal" 
-                                data-target="#coverModal" data-type="cover">
+                                <button type="button" class="btn btn-success float-end coverBtn" data-bs-toggle="modal" 
+                                data-bs-target="#coverModal" data-type="cover">
                                     + {{ trans('site.add-cover') }}
                                 </button>
                             @endif
@@ -54,7 +54,7 @@
                                                         </a>
                                                     @else
                                                         @if ($coverFile)
-                                                            <a href="{{ $coverFile }}" class="btn btn-success btn-xs" download>
+                                                            <a href="{{ $coverFile }}" class="btn btn-success btn-sm" download>
                                                                 <i class="fa fa-download"></i>
                                                             </a>
                                                             <a href="{{ asset($coverFile) }}" target="_blank" style="margin-right: 5px">
@@ -74,12 +74,12 @@
                                             </td>
                                             <td>
                                                 <a href="{{ route('learner.self-publishing.cover-show', $cover->id) }}" 
-                                                    class="btn btn-info btn-xs">
+                                                    class="btn btn-info btn-sm">
                                                     <i class="fa fa-eye"></i>
                                                 </a>
 
-                                                <button class="btn btn-primary btn-xs coverBtn" data-toggle="modal"
-                                                        data-target="#coverModal"
+                                                <button class="btn btn-primary btn-sm coverBtn" data-bs-toggle="modal"
+                                                        data-bs-target="#coverModal"
                                                         data-type="cover" data-id="{{ $cover->id }}"
                                                         data-record="{{ json_encode($cover) }}">
                                                     <i class="fa fa-edit"></i>
@@ -104,7 +104,7 @@
                         <h4 class="modal-title">
                             {{ trans('site.homepage.illustration-cover-design') }}
                         </h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
                         <form method="POST" action="{{ route('learner.self-publishing.save-cover', $standardProject->id) }}"
@@ -166,7 +166,7 @@
 
                             <div class="form-group">
                                 <label>{{ trans('site.backside-text-optional') }}</label> <br>
-                                <input type="checkbox" data-toggle="toggle" data-on="Text" data-off="Document"
+                                <input type="checkbox" data-bs-toggle="toggle" data-on="Text" data-off="Document"
                                     name="backside_type" data-width="100" class="backsideToggle" checked
                                     >
 
@@ -195,7 +195,7 @@
                                 <textarea name="instruction" cols="30" rows="10" class="form-control"></textarea>
                             </div>
 
-                            <button type="submit" class="btn btn-success pull-right margin-top">
+                            <button type="submit" class="btn btn-success float-end margin-top">
                                 {{ trans('site.save') }}
                             </button>
     

@@ -44,16 +44,16 @@
                 FrontendHelpers::hasLessonAccess($courseTaken, $previousLesson))
 					<a class="btn btn-sm btn-primary margin-bottom" href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $previousLesson->id])}}"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;{{$previousLesson->title}}</a>
 				@else
-					<button type="button" class="btn btn-sm btn-default disabled"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;{{$previousLesson->title}}</button>
+					<button type="button" class="btn btn-sm btn-light disabled"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;{{$previousLesson->title}}</button>
 				@endif
 			@endif
 
 			@if($nextLesson)
 				@if(FrontendHelpers::isLessonAvailable($courseTaken->started_at, $nextLesson->delay, $nextLesson->period) ||
                 FrontendHelpers::hasLessonAccess($courseTaken, $nextLesson))
-					<a class="btn btn-sm btn-primary pull-right" href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $nextLesson->id])}}">{{$nextLesson->title}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i></a>
+					<a class="btn btn-sm btn-primary float-end" href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $nextLesson->id])}}">{{$nextLesson->title}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i></a>
 				@else
-					<button type="button" class="btn btn-sm btn-default disabled pull-right">{{$nextLesson->title}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i></button>
+					<button type="button" class="btn btn-sm btn-light disabled float-end">{{$nextLesson->title}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i></button>
 				@endif
 				<div class="clearfix"></div>
 			@endif
@@ -134,16 +134,16 @@
                 FrontendHelpers::hasLessonAccess($courseTaken, $previousLesson))
 					<a class="btn btn-sm btn-primary margin-bottom" href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $previousLesson->id])}}"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;{{$previousLesson->title}}</a>
 				@else
-					<button type="button" class="btn btn-sm btn-default disabled"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;{{$previousLesson->title}}</button>
+					<button type="button" class="btn btn-sm btn-light disabled"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;{{$previousLesson->title}}</button>
 				@endif
 			@endif
 
 			@if($nextLesson)
 				@if(FrontendHelpers::isLessonAvailable($courseTaken->started_at, $nextLesson->delay, $nextLesson->period) ||
                 FrontendHelpers::hasLessonAccess($courseTaken, $nextLesson))
-					<a class="btn btn-sm btn-primary pull-right" href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $nextLesson->id])}}">{{$nextLesson->title}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i></a>
+					<a class="btn btn-sm btn-primary float-end" href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $nextLesson->id])}}">{{$nextLesson->title}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i></a>
 				@else
-					<button type="button" class="btn btn-sm btn-default disabled pull-right">{{$nextLesson->title}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i></button>
+					<button type="button" class="btn btn-sm btn-light disabled float-end">{{$nextLesson->title}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i></button>
 				@endif
 				<div class="clearfix"></div>
 			@endif

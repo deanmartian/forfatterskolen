@@ -35,7 +35,7 @@
                                     <div class="date-time-cont">
                                         <i class="img-icon16 icon-calendar-red"></i>
                                         <span>{{ \App\Http\FrontendHelpers::formatDate($next_webinar->start_date) }}</span>
-                                        <i class="img-icon16 icon-clock-red ml-3"></i>
+                                        <i class="img-icon16 icon-clock-red ms-3"></i>
                                         <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_webinar->start_date) }}</span>
                                     </div>
 
@@ -77,7 +77,7 @@
                                     <div class="date-time-cont">
                                         <i class="img-icon16 icon-calendar-red"></i>
                                         <span>{{ \App\Http\FrontendHelpers::formatDate($next_free_webinar->start_date) }}</span>
-                                        <i class="img-icon16 icon-clock-red ml-3"></i>
+                                        <i class="img-icon16 icon-clock-red ms-3"></i>
                                         <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar->start_date) }}</span>
                                     </div>
 
@@ -96,7 +96,7 @@
                                         <div class="date-time-cont">
                                             <i class="img-icon16 icon-calendar-red"></i>
                                             <span>{{ \App\Http\FrontendHelpers::formatDate($next_workshop->date) }}</span>
-                                            <i class="img-icon16 icon-clock-red ml-3"></i>
+                                            <i class="img-icon16 icon-clock-red ms-3"></i>
                                             <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_workshop->date) }}</span>
                                         </div>
 
@@ -149,12 +149,12 @@
                     <div class="col-md-12">
                         <h1 class="text-center">{{ trans('site.front.student-testimonial.heading') }}</h1>
                         <div id="testimonials-carousel" class="carousel slide global-carousel"
-                             data-ride="carousel" data-interval="15000">
+                             data-bs-ride="carousel" data-interval="15000">
 
                             <ul class="carousel-indicators">
-                                <li data-target="#testimonials-carousel" data-slide-to="0" class="active"></li>
-                                <li data-target="#testimonials-carousel" data-slide-to="1"1></li>
-                                <li data-target="#testimonials-carousel" data-slide-to="2"></li>
+                                <li data-bs-target="#testimonials-carousel" data-bs-slide-to="0" class="active"></li>
+                                <li data-bs-target="#testimonials-carousel" data-bs-slide-to="1"1></li>
+                                <li data-bs-target="#testimonials-carousel" data-bs-slide-to="2"></li>
                             </ul>
 
                             <!-- The slideshow -->
@@ -229,10 +229,10 @@
                             </div> <!-- end carousel-inner -->
 
                             <!-- Left and right controls -->
-                            <a class="carousel-control-prev" href="#testimonials-carousel" data-slide="prev">
+                            <a class="carousel-control-prev" href="#testimonials-carousel" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon"></span>
                             </a>
-                            <a class="carousel-control-next" href="#testimonials-carousel" data-slide="next">
+                            <a class="carousel-control-next" href="#testimonials-carousel" data-bs-slide="next">
                                 <span class="carousel-control-next-icon"></span>
                             </a>
 
@@ -307,8 +307,8 @@
                 <div class="row all-course theme-tabs">
                     <div class="tabs-container">
                         <ul class="nav nav-tabs">
-                            <li><a data-toggle="tab" href="#home" class="active"><span>Populære kurs</span></a></li>
-                            <li><a data-toggle="tab" href="#menu1"><span>Gratis kurs</span></a></li>
+                            <li><a data-bs-toggle="tab" href="#home" class="active"><span>Populære kurs</span></a></li>
+                            <li><a data-bs-toggle="tab" href="#menu1"><span>Gratis kurs</span></a></li>
                         </ul>
                     </div> <!-- end tabs-container -->
 
@@ -338,7 +338,7 @@
                                                             <i class="img-icon16 icon-calendar"></i>
                                                             <span>{{ \App\Http\FrontendHelpers::formatDate($popular_course->start_date) }}</span>
                                                         @endif
-                                                        {{--<i class="img-icon16 icon-clock ml-5"></i>
+                                                        {{--<i class="img-icon16 icon-clock ms-5"></i>
                                                         <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($popular_course->start_date) }}</span>--}}
                                                     </div>
                                                 </div>
@@ -376,7 +376,7 @@
                                                                         <i class="img-icon16 icon-calendar"></i>
                                                                         <span>{{ \App\Http\FrontendHelpers::formatDate($popular_course->start_date) }}</span>
                                                                     @endif
-                                                                    {{--<i class="img-icon16 icon-clock ml-5"></i>
+                                                                    {{--<i class="img-icon16 icon-clock ms-5"></i>
                                                                     <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($popular_course->start_date) }}</span>--}}
                                                                 </div>
                                                             </div>
@@ -416,7 +416,7 @@
                                                             <i class="img-icon16 icon-calendar"></i>
                                                             <span>{{ \App\Http\FrontendHelpers::formatDate($free_course->start_date) }}</span>
                                                         @endif
-                                                        {{--<i class="img-icon16 icon-clock ml-5"></i>
+                                                        {{--<i class="img-icon16 icon-clock ms-5"></i>
                                                         <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($free_course->start_date) }}</span>--}}
                                                     </div>
                                                 </div>
@@ -454,7 +454,7 @@
                                                                         <i class="img-icon16 icon-calendar"></i>
                                                                         <span>{{ \App\Http\FrontendHelpers::formatDate($free_course->start_date) }}</span>
                                                                     @endif
-                                                                    {{--<i class="img-icon16 icon-clock ml-5"></i>
+                                                                    {{--<i class="img-icon16 icon-clock ms-5"></i>
                                                                     <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($popular_course->start_date) }}</span>--}}
                                                                 </div>
                                                             </div>
@@ -506,7 +506,7 @@
                                     {!! $latestPoem->poem !!}
                                 </div>
 
-                                <a class="btn site-btn-global mt-5 pull-right" href="{{ route('front.poems') }}">
+                                <a class="btn site-btn-global mt-5 float-end" href="{{ route('front.poems') }}">
                                     Les flere dikt
                                 </a>
                             </div>
@@ -525,12 +525,12 @@
                     <?php
                         $poems_chunk = $poems->chunk(3);
                     ?>
-                    <div id="poems-carousel" class="carousel slide global-carousel" data-ride="carousel"
+                    <div id="poems-carousel" class="carousel slide global-carousel" data-bs-ride="carousel"
                          data-interval="10000">
                         <!-- Indicators -->
                         <ul class="carousel-indicators">
                             @for($i=0; $i<=$poems_chunk->count() - 1;$i++)
-                                <li data-target="#poems-carousel" data-slide-to="{{$i}}" @if($i == 0) class="active" @endif></li>
+                                <li data-bs-target="#poems-carousel" data-bs-slide-to="{{$i}}" @if($i == 0) class="active" @endif></li>
                             @endfor
                         </ul>
 

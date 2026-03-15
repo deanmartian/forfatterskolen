@@ -11,65 +11,415 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
     </noscript>
     <link rel="stylesheet" href="{{asset('vendor/laraberg/css/laraberg.css')}}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .hero-section {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 3.5rem 2rem 0;
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 3rem;
+            align-items: start;
+            min-height: 85vh;
+        }
+
+        .hero-section__content {
+            padding-top: 2rem;
+        }
+
+        .hero-section__eyebrow {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: #8a8580;
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-section__heading {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2.5rem, 4.5vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
+            max-width: 520px;
+        }
+
+        .hero-section__heading em {
+            font-style: italic;
+            color: var(--secondary-red, #852635);
+        }
+
+        .hero-section__description {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 1.125rem;
+            font-weight: 300;
+            line-height: 1.7;
+            color: #5a5550;
+            max-width: 440px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-section__ctas {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 6px;
+            padding: 0.8rem 1.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .hero-cta--primary {
+            background: var(--secondary-red, #852635);
+            color: #fff;
+            border: 2px solid var(--secondary-red, #852635);
+        }
+
+        .hero-cta--primary:hover {
+            background: #9c2e40;
+            border-color: #9c2e40;
+            transform: translateY(-1px);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .hero-cta--primary .hero-cta__arrow {
+            transition: transform 0.2s;
+        }
+
+        .hero-cta--primary:hover .hero-cta__arrow {
+            transform: translateX(3px);
+        }
+
+        .hero-cta--secondary {
+            background: transparent;
+            color: #1a1a1a;
+            border: 1.5px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-cta--secondary:hover {
+            border-color: var(--secondary-red, #852635);
+            color: var(--secondary-red, #852635);
+            text-decoration: none;
+        }
+
+        .hero-section__stats {
+            display: flex;
+            gap: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-stat__number {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .hero-stat__label {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: #8a8580;
+            letter-spacing: 0.3px;
+        }
+
+        .hero-section__image-wrapper {
+            position: relative;
+            align-self: stretch;
+        }
+
+        .hero-section__image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 560px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #e8e4df;
+        }
+
+        .hero-section__image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+        }
+
+        .hero-section__quote {
+            position: absolute;
+            bottom: 1.5rem;
+            right: -1.5rem;
+            background: #fff;
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            max-width: 260px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .hero-section__quote::before {
+            content: '';
+            position: absolute;
+            top: 1.25rem;
+            left: -4px;
+            width: 4px;
+            height: 32px;
+            background: var(--secondary-red, #852635);
+            border-radius: 2px;
+        }
+
+        .hero-section__quote-text {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-style: italic;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-section__quote-author {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.75rem;
+            color: #8a8580;
+            font-weight: 500;
+        }
+
+        .hero-banner {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 2rem 3rem;
+        }
+
+        .hero-banner__inner {
+            background: #faf8f5;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .hero-banner__left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .hero-banner__icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(134, 39, 54, 0.08);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .hero-banner__icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .hero-banner__title {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.15rem;
+        }
+
+        .hero-banner__sub {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.825rem;
+            color: #5a5550;
+            font-weight: 400;
+        }
+
+        .hero-banner__cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--secondary-red, #852635);
+            text-decoration: none;
+            white-space: nowrap;
+            padding: 0.6rem 1.25rem;
+            border: 1.5px solid var(--secondary-red, #852635);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .hero-banner__cta:hover {
+            background: var(--secondary-red, #852635);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        @media (max-width: 900px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                min-height: auto;
+                padding: 2rem 1.5rem;
+            }
+
+            .hero-section__content {
+                padding-top: 0;
+            }
+
+            .hero-section__image-container {
+                min-height: 400px;
+            }
+
+            .hero-section__quote {
+                right: 1rem;
+            }
+
+            .hero-section__stats {
+                gap: 1.5rem;
+            }
+
+            .hero-banner__inner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-banner__left {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-section__heading {
+                font-size: 2.2rem;
+            }
+
+            .hero-section__stats {
+                flex-wrap: wrap;
+                gap: 1.5rem;
+            }
+
+            .hero-stat {
+                min-width: 80px;
+            }
+        }
+
+        /* Fix: anchor absolute-positioned dates inside their cards */
+        .second-row .content-container {
+            position: relative;
+        }
+    </style>
 @stop
 
 @section('content')
 <div class="front-page-new">
-    <div class="header-new">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h1>
-                        {!! trans('site.front.home.title') !!}
-                    </h1>
-                    <p>
-                        {!! trans('site.front.home.description') !!}
-                    </p>
 
-                    <a href="{{ route('front.course.index') }}" class="btn btn-red" style="margin-right: 20px">
-                        {{ trans('site.front.home.all-course') }}
-                    </a>
-                    <button class="btn btn-outline-red" data-toggle="modal"
-                    data-target="#writingPlanModal">
-                        {{ trans('site.front.home.free-writing-tips') }}
-                    </button>
+    {{-- Hero section --}}
+    <section class="hero-section">
+        <div class="hero-section__content">
+            <p class="hero-section__eyebrow">Din litterære familie siden 2015</p>
+
+            <h1 class="hero-section__heading">
+                For deg som vil gjøre <em>alvor</em> av skrivedrømmen
+            </h1>
+
+            <p class="hero-section__description">
+                Lær skrivehåndverket fra erfarne forfattere og redaktører. Vi hjelper deg fra første utkast til ferdig manus.
+            </p>
+
+            <div class="hero-section__ctas">
+                <a href="{{ route('front.course.index') }}" class="hero-cta hero-cta--primary">
+                    Utforsk våre kurs
+                    <span class="hero-cta__arrow">&rarr;</span>
+                </a>
+                <a href="{{ route('front.free-manuscript.index') }}" class="hero-cta hero-cta--secondary">
+                    Gratis tekstvurdering
+                </a>
+            </div>
+
+            <div class="hero-section__stats">
+                <div class="hero-stat">
+                    <span class="hero-stat__number">15+</span>
+                    <span class="hero-stat__label">Skrivekurs</span>
                 </div>
-                <div class="col-md-6">
-                    <img class="w-100" data-src="https://www.forfatterskolen.no/images-new/home/kristine.png" alt="kristine">
+                <div class="hero-stat">
+                    <span class="hero-stat__number">5000+</span>
+                    <span class="hero-stat__label">Kursdeltagere</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat__number">200+</span>
+                    <span class="hero-stat__label">Utgitte forfattere</span>
                 </div>
             </div>
-        </div> <!-- end container -->
-    </div> <!-- end header-new -->
+        </div>
+
+        <div class="hero-section__image-wrapper">
+            <div class="hero-section__image-container">
+                <img src="https://www.forfatterskolen.no/images-new/home/kristine.png"
+                     alt="Kristine, grunnlegger av Forfatterskolen">
+            </div>
+
+            <div class="hero-section__quote">
+                <p class="hero-section__quote-text">&ldquo;Alle har en historie å fortelle&rdquo;</p>
+                <p class="hero-section__quote-author">&ndash; Kristine, grunnlegger</p>
+            </div>
+        </div>
+    </section>
+
+    {{-- Gratis tekstvurdering banner --}}
+    <div class="hero-banner">
+        <div class="hero-banner__inner">
+            <div class="hero-banner__left">
+                <div class="hero-banner__icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#862736" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="14,2 14,8 20,8" stroke="#862736" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="9" y1="13" x2="15" y2="13" stroke="#862736" stroke-width="1.5" stroke-linecap="round"/>
+                        <line x1="9" y1="17" x2="13" y2="17" stroke="#862736" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="hero-banner__title">Usikker på om teksten din holder?</p>
+                    <p class="hero-banner__sub">Send inn en smakebit og få profesjonell tilbakemelding &mdash; helt gratis.</p>
+                </div>
+            </div>
+            <a href="{{ route('front.free-manuscript.index') }}" class="hero-banner__cta">
+                Prøv gratis &rarr;
+            </a>
+        </div>
+    </div>
 
     <div class="container">
         <div class="col-md-12">
-            <div class="row first-row">
-                <div class="col-md-4">
-                    <h2>
-                        {!! trans('site.front.home.quality-course-count') !!}
-                    </h2>
-                    <p>
-                        {!! trans('site.front.home.quality-course') !!}
-                    </p>
-                </div>
-                <div class="col-md-4">
-                    <h2>
-                        {{ trans('site.front.home.student-count') }}
-                    </h2>
-                    <p>
-                        {!! trans('site.front.home.students') !!}
-                    </p>
-                </div>
-                <div class="col-md-4">
-                    <h2>
-                        {{ trans('site.front.home.mentor-count') }}
-                    </h2>
-                    <p>
-                        {!! trans('site.front.home.mentors') !!}
-                    </p>
-                </div>
-            </div> <!-- end first-row -->
-            
             <div class="row second-row">
                 <h2 class="w-100 text-center">
                     {!! trans('site.front.latest-seminars') !!}
@@ -94,7 +444,7 @@
                                 <div class="date-time-cont">
                                     <i class="img-icon16 icon-calendar"></i>
                                     <span>{{ \App\Http\FrontendHelpers::formatDate($hasNextWebinar ? $next_webinar->start_date : $upcomingSection->date) }}</span>
-                                    <i class="img-icon16 icon-clock ml-3"></i>
+                                    <i class="img-icon16 icon-clock ms-3"></i>
                                     <span>
                                     {{ \App\Http\FrontendHelpers::getTimeFromDT($hasNextWebinar ? $next_webinar->start_date : $upcomingSection->date) }}
                                 </span>
@@ -109,10 +459,10 @@
 
     <div class="popular-courses-row">
         <div class="container">
-            <h2 class="float-left">
+            <h2 class="float-start">
                 {!! trans('site.front.home.most-popular-course') !!}
             </h2>
-            <a href="{{ route('front.course.index') }}" class="btn float-right btn-outline-maroon">
+            <a href="{{ route('front.course.index') }}" class="btn float-end btn-outline-maroon">
                 {{ trans('site.front.home.all-course') }}
             </a>
 
@@ -220,7 +570,7 @@
                                     @endif
                                         <img data-src="https://www.forfatterskolen.no/{{ $author_image }}"
                                              alt="{{ $book->title }}"
-                                             class="img-responsive"
+                                             class="img-fluid"
                                              style="max-height: 320px; width: auto; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border-radius: 4px;">
                                     @if($book->book_image_link)
                                         </a>

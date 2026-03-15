@@ -10,7 +10,7 @@
 
             @if(Auth::guest())
                 <div class="col-sm-12">
-                    <div class="margin-bottom">Allerede elev? Klikk <a href="#" data-toggle="collapse" data-target="#checkoutLogin">her</a> for å logge inn.</div>
+                    <div class="margin-bottom">Allerede elev? Klikk <a href="#" data-bs-toggle="collapse" data-bs-target="#checkoutLogin">her</a> for å logge inn.</div>
                     <form id="checkoutLogin" class="collapse @if($errors->first('login_error')) fade in @endif" action="{{route('frontend.login.checkout.store')}}" method="POST">
                         {{csrf_field()}}
                         <div class="row">
@@ -94,7 +94,7 @@
                                 </div>
                                 <button type="button" class="margin-top btn btn-theme hidden" id="submit-add-on">Submit</button>
                                 @if($data['price'])
-                                    <a href="{{ route('front.other-service-checkout', ['plan_id' => 1, 'has_data' => 0]) }}" class="btn btn-default">Fjem</a>
+                                    <a href="{{ route('front.other-service-checkout', ['plan_id' => 1, 'has_data' => 0]) }}" class="btn btn-light">Fjem</a>
                                 @endif
                                 {{--<span>* Upload Last Opp</span>--}}
                             </div>

@@ -44,7 +44,7 @@
                                         </label>
                                         <input type="file" name="image" id="post-image-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;">
                                         <span id="post-image-name" style="font-size: 12px; color: #888;"></span>
-                                        <div class="emoji-picker-wrapper" data-target="post-textarea">
+                                        <div class="emoji-picker-wrapper" data-bs-target="post-textarea">
                                             <button type="button" class="emoji-toggle-btn btn-action" title="Emoji"><i class="fa fa-smile-o"></i></button>
                                             <div class="emoji-popup"><emoji-picker></emoji-picker></div>
                                         </div>
@@ -100,12 +100,12 @@
                                             </button>
                                         </form>
 
-                                        <button class="btn-action toggle-comments" data-target="comments-{{ $post->id }}">
+                                        <button class="btn-action toggle-comments" data-bs-target="comments-{{ $post->id }}">
                                             <i class="fa fa-comment-o"></i> {{ $post->comments->count() }}
                                         </button>
 
                                         @if($post->user_id === Auth::id() || ($profile && $profile->badge === 'admin'))
-                                            <form action="{{ route('learner.community.deletePost', $post->id) }}" method="POST" class="d-inline float-right" onsubmit="return confirm('Sikker på at du vil slette?')">
+                                            <form action="{{ route('learner.community.deletePost', $post->id) }}" method="POST" class="d-inline float-end" onsubmit="return confirm('Sikker på at du vil slette?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn-action text-danger"><i class="fa fa-trash-o"></i></button>
@@ -191,7 +191,7 @@
 <script>
 document.querySelectorAll('.toggle-comments').forEach(function(btn) {
     btn.addEventListener('click', function() {
-        var target = document.getElementById(this.getAttribute('data-target'));
+        var target = document.getElementById(this.getAttribute('data-bs-target'));
         if (target) {
             target.style.display = target.style.display === 'none' ? 'block' : 'none';
         }

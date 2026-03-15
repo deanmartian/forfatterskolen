@@ -77,7 +77,7 @@
             ?>
             <div class="alert alert-{{ $alert_type }} global-alert-box" style="z-index: 9; min-width: 300px"
                  id="fixed_to_bottom_alert">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                <a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
                 <ul>
                     @foreach($errors->all() as $error)
                         <li>{!! $error !!}</li>

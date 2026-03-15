@@ -3,10 +3,10 @@
 @section('private-content')
     <div class="card-body font-14-body">
         <div class="clearfix">
-            <h1 class="font-weight-light float-left">Group Discussion</h1>
+            <h1 class="font-weight-light float-start">Group Discussion</h1>
             <!-- check if policy is open discussion -->
             @if ($manager || (!$manager && $privateGroup->policy == 1))
-                <button class="btn btn-outline-info btn-sm discussion-btn pull-right mt-3" onclick="methods.showDiscussionDivForm()">New Discussion</button>
+                <button class="btn btn-outline-info btn-sm discussion-btn float-end mt-3" onclick="methods.showDiscussionDivForm()">New Discussion</button>
             @endif
         </div>
         <div class="collapse mt-2" id="discussionDivForm">
@@ -31,8 +31,8 @@
                         <textarea name="message" id="message_editor"></textarea>
                     </div>
                     <div class="form-group clearfix">
-                        <button type="submit" class="btn btn-outline-success btn-sm pull-right">Submit</button>
-                        <button type="button" class="btn btn-outline-danger btn-sm pull-right mr-1" onclick="methods.closeDiscussionDivForm()">Cancel</button>
+                        <button type="submit" class="btn btn-outline-success btn-sm float-end">Submit</button>
+                        <button type="button" class="btn btn-outline-danger btn-sm float-end me-1" onclick="methods.closeDiscussionDivForm()">Cancel</button>
                     </div>
                 </form>
             </div>

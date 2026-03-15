@@ -380,7 +380,7 @@
                 color: #fff;
                 text-decoration: none;
             }
-            .sp-btn-xs { padding: 4px 12px; font-size: 12px; }
+            .sp-btn-sm { padding: 4px 12px; font-size: 12px; }
             .sp-btn-outline {
                 background: transparent;
                 border: 1.5px solid var(--border);
@@ -605,7 +605,7 @@
                 color: var(--brand-dark, #5f1a25);
             }
 
-            .btn-xs-brand {
+            .btn-sm-brand {
                 padding: 4px 12px;
                 font-size: 12px;
             }
@@ -892,7 +892,7 @@
             <div class="alert alert-{{ $alert_type }}" 
                  style="position:fixed;bottom:20px;right:20px;z-index:200;min-width:300px;border-radius:var(--radius);box-shadow:var(--shadow-md);"
                  id="fixed_to_bottom_alert">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                <a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
                 <ul style="margin:0;padding-left:18px;">
                     @foreach($errors->all() as $error)
                         <li>{!! $error !!}</li>

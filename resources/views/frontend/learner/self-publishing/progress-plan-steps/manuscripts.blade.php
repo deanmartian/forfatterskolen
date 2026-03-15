@@ -15,8 +15,8 @@
                 <div class="sp-card-header">
                     {{ $stepTitle }}
 
-                    <button type="button" class="btn btn-brand btn-xs uploadManuscriptBtn pull-right"
-                        data-toggle="modal" data-target="#uploadManuscriptModal"
+                    <button type="button" class="btn btn-brand btn-sm uploadManuscriptBtn float-end"
+                        data-bs-toggle="modal" data-bs-target="#uploadManuscriptModal"
                         data-action="{{ route('learner.progress-plan.manuscript.upload') }}"
                         style="width: auto;">
                         {{ trans('site.learner.upload-script') }}
@@ -59,7 +59,7 @@
                     <i class="fas fa-upload" style="color:var(--brand-primary);margin-right:6px"></i>
                     {{ trans('site.learner.upload-script') }}
                 </h3>
-                <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -78,7 +78,7 @@
                     </div>
                 </div>
                 <div class="sp-modal__footer">
-                    <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
+                    <button type="button" class="btn-outline-brand" data-bs-dismiss="modal">Avbryt</button>
                     <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
                 </div>
             </form>
@@ -96,7 +96,7 @@
                             <i class="fa fa-exclamation-triangle" style="color:#dc2626;margin-right:6px" aria-hidden="true"></i>
                             Feil
                         </h3>
-                        <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                        <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>

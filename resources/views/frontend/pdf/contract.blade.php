@@ -22,11 +22,11 @@
             height: 250px;
         }
 
-        .float-left {
+        .float-start {
             float:left
         }
 
-        .float-right {
+        .float-end {
             float: right;
         }
 
@@ -81,7 +81,7 @@
 {!! $contractDetails !!}
 
     @if ($contract->signature)
-        <div class="float-left">
+        <div class="float-start">
             <p>
                 {{ $contract->signature_label }}
             </p>
@@ -97,7 +97,7 @@
             </div>
         </div>
 
-        <div class="float-right">
+        <div class="float-end">
             <p>
                 {{ $contract->signature_label }}
             </p>

@@ -52,16 +52,16 @@
 									<div class="col-md-3">
 										@if (!$manuscript)
 											@if($assignment->for_editor)
-												<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
-														data-target="#submitEditorManuscriptModal"
+												<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-bs-toggle="modal"
+														data-bs-target="#submitEditorManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														data-show-group-question="{{ $assignment->show_join_group_question }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
 													{{ trans('site.learner.upload-script') }}
 												</button>
 											@else
-												<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-toggle="modal"
-														data-target="#submitManuscriptModal"
+												<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-bs-toggle="modal"
+														data-bs-target="#submitManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														data-show-group-question="{{ $assignment->show_join_group_question }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
@@ -92,14 +92,14 @@
 										@endif
 
 										@if (!$manuscript->locked)
-											<div class="pull-right">
+											<div class="float-end">
 												<button type="button" class="btn btn-sm btn-info editManuscriptBtn"
-														data-toggle="modal" data-target="#editManuscriptModal"
+														data-bs-toggle="modal" data-bs-target="#editManuscriptModal"
 														data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}">
 													<i class="fa fa-pen"></i>
 												</button>
 												<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn"
-														data-toggle="modal" data-target="#deleteManuscriptModal"
+														data-bs-toggle="modal" data-bs-target="#deleteManuscriptModal"
 														data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}">
 													<i class="fa fa-trash"></i>
 												</button>
@@ -201,7 +201,7 @@
 													@if( $feedback->is_admin ) - {{ trans('site.learner.admin-text') }} @endif
 
 													<a href="{{route('learner.assignment.no-group-feedback.download', $feedback->id)}}"
-													   class="pull-right btn site-btn-global site-btn-global-sm" style="width: 20%">
+													   class="float-end btn site-btn-global site-btn-global-sm" style="width: 20%">
 														{{ trans('site.learner.download-text') }}
 													</a>
 												</div>
@@ -252,16 +252,16 @@
 										?>
 										@if (!$manuscript)
 											@if($assignment->for_editor)
-												<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
-														data-target="#submitEditorManuscriptModal"
+												<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-bs-toggle="modal"
+														data-bs-target="#submitEditorManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														data-show-group-question="{{ $assignment->show_join_group_question }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
 													{{ trans('site.learner.upload-script') }}
 												</button>
 											@else
-												<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-toggle="modal"
-														data-target="#submitManuscriptModal"
+												<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-bs-toggle="modal"
+														data-bs-target="#submitManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														data-show-group-question="{{ $assignment->show_join_group_question }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
@@ -292,14 +292,14 @@
 										@endif
 
 										@if (!$manuscript->locked)
-											<div class="pull-right">
+											<div class="float-end">
 												<button type="button" class="btn btn-sm btn-info editManuscriptBtn"
-														data-toggle="modal" data-target="#editManuscriptModal"
+														data-bs-toggle="modal" data-bs-target="#editManuscriptModal"
 														data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}">
 													<i class="fa fa-pencil"></i>
 												</button>
 												<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn"
-														data-toggle="modal" data-target="#deleteManuscriptModal"
+														data-bs-toggle="modal" data-bs-target="#deleteManuscriptModal"
 														data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}">
 													<i class="fa fa-trash"></i>
 												</button>
@@ -326,7 +326,7 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 		  <div class="modal-body text-center">
-		    <button type="button" class="close" data-dismiss="modal">&times;</button>
+		    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 		    <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
 			  <p>
 				  {{ trans('site.learner.submit-success-text') }}
@@ -340,7 +340,7 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-body text-center">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 				<div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
 				<p>
 					{{ strtr(trans('site.learner.error-max-word-text'),
@@ -358,7 +358,7 @@
 				<h3 class="modal-title">
 					{{ trans('site.learner.upload-script') }}
 				</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" enctype="multipart/form-data"
@@ -398,11 +398,11 @@
 					<div class="join-question-container hide">
 						<div class="form-group">
 							<label>{{ trans('site.learner.join-group-question') }}?</label> <br>
-							<input type="checkbox" data-toggle="toggle" data-on="Ja" data-off="Nei" data-size="small" name="join_group">
+							<input type="checkbox" data-bs-toggle="toggle" data-on="Ja" data-off="Nei" data-size="small" name="join_group">
 						</div>
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right">
+					<button type="submit" class="btn btn-primary float-end">
 						{{ trans('site.front.upload') }}
 					</button>
 					<div class="clearfix"></div>
@@ -419,7 +419,7 @@
 		    <h3 class="modal-title">
 				{{ trans('site.learner.upload-script') }}
 			</h3>
-			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			  <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this);">
@@ -459,11 +459,11 @@
 				<div class="join-question-container hide">
 					<div class="form-group">
 						<label>{{ trans('site.learner.join-group-question') }}?</label> <br>
-						<input type="checkbox" data-toggle="toggle" data-on="Ja" data-off="Nei" data-size="small" name="join_group">
+						<input type="checkbox" data-bs-toggle="toggle" data-on="Ja" data-off="Nei" data-size="small" name="join_group">
 					</div>
 				</div>
 
-		      	<button type="submit" class="btn btn-primary pull-right">
+		      	<button type="submit" class="btn btn-primary float-end">
 					{{ trans('site.front.upload') }}
 				</button>
 		      	<div class="clearfix"></div>
@@ -480,7 +480,7 @@
 				<h3 class="modal-title">
 					{{ trans('site.learner.manuscript.replace-manuscript') }}
 				</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
@@ -493,7 +493,7 @@
 						* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right">
+					<button type="submit" class="btn btn-primary float-end">
 						{{ trans('site.front.submit') }}
 					</button>
 					<div class="clearfix"></div>
@@ -510,7 +510,7 @@
 				<h3 class="modal-title">
 					{{ trans('site.learner.delete-manuscript.title') }}
 				</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<p>
@@ -518,7 +518,7 @@
 				</p>
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
-					<button type="submit" class="btn btn-danger pull-right margin-top">
+					<button type="submit" class="btn btn-danger float-end margin-top">
 						{{ trans('site.learner.delete') }}
 					</button>
 					<div class="clearfix"></div>
@@ -533,7 +533,7 @@
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
 				<div class="modal-body text-center">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 					<div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
 					{!! Session::get('manuscript_test_error') !!}
 				</div>

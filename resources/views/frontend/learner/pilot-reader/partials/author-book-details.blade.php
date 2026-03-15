@@ -3,7 +3,7 @@
         <h1>{{ $book->title }}</h1>
         <div class="subhead">
             By {{ $book->display_name ? $book->display_name : $book->author->full_name }}
-            <div class="edit-toggle-buttons pull-right" style="color: #3a3023">
+            <div class="edit-toggle-buttons float-end" style="color: #3a3023">
                 <button class="beta-button" data-fields="{{ json_encode($book) }}"
                         data-display-name="{{ $book->display_name}}"
                         data-author-placeholder="{{ Auth::user()->full_name }}"
@@ -19,7 +19,7 @@
 
 <div class="book-description">
     <h2>About the Book
-        <div class="edit-toggle-buttons pull-right">
+        <div class="edit-toggle-buttons float-end">
             <button class="beta-button" data-fields="{{ json_encode($book) }}"
                     onclick="editAboutBook(this)">
                 <i class="fa fa-pencil"></i>
@@ -34,7 +34,7 @@
 
 <div class="book-critique-guidance">
     <h2>Critique Guidance
-        <div class="edit-toggle-buttons pull-right">
+        <div class="edit-toggle-buttons float-end">
             <button class="beta-button" onclick="editCritique(this)">
                 <i class="fa fa-pencil"></i>
                 <span>Edit</span>
@@ -89,7 +89,7 @@
                     <span>Edit</span>
                 </a>
 
-                <a class="button color danger deleteChapterBtn" data-toggle="modal" data-target="#deleteChapterModal"
+                <a class="button color danger deleteChapterBtn" data-bs-toggle="modal" data-bs-target="#deleteChapterModal"
                    data-action="{{ route('learner.book-author-book-delete-chapter',
                                     ['book_id' => $book->id, 'chapter_id' => $chapter->id]) }}">
                     <i class="fa fa-trash"></i>
@@ -113,7 +113,7 @@
     </a>
 
     <a href="{{--{{ route('learner.book-author-book-import', $book->id) }}--}}#bulkImportsChaptersModal"
-       class="beta-button" data-toggle="modal">
+       class="beta-button" data-bs-toggle="modal">
         <i class="fa fa-download"></i>
         <span>Bulk import chapters</span>
     </a>

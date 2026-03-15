@@ -674,11 +674,29 @@
     margin-bottom: 16px;
 }
 
-/* Responsive */
+/* =============================================
+   Responsive — Tablet (max 768px)
+   ============================================= */
 @media (max-width: 768px) {
+    .community-wrapper {
+        padding-bottom: 20px;
+    }
+
+    .community-title {
+        font-size: 1.3em;
+    }
+
+    .community-subtitle {
+        font-size: 13px;
+        margin-bottom: 14px;
+    }
+
+    /* Nav — horisontal scroll */
     .community-nav {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+        margin-bottom: 16px;
     }
 
     .community-nav a {
@@ -686,8 +704,259 @@
         font-size: 12px;
     }
 
+    /* Cards — kompakt padding */
+    .community-card .card-body {
+        padding: 12px;
+    }
+
+    /* Avatar — mindre på mobil */
+    .avatar-circle {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        font-size: 12px;
+    }
+
+    .avatar-lg {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        font-size: 18px;
+    }
+
+    /* Post form — toolbar wrap */
+    .post-form-toolbar {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    /* Discussions — kompakt */
+    .discussion-title {
+        font-size: 14px;
+    }
+
+    .discussion-preview {
+        font-size: 12px;
+        margin: 2px 0 6px;
+    }
+
+    .discussion-meta {
+        font-size: 11px;
+        gap: 6px;
+    }
+
+    .reply-count-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    /* Messages — chat */
     .chat-bubble {
         max-width: 90%;
+    }
+
+    .chat-messages {
+        max-height: 350px;
+    }
+
+    /* Members — kort */
+    .member-card-name {
+        font-size: 14px;
+        margin: 8px 0 4px;
+    }
+
+    /* Notifications — header stacking */
+    .notification-header-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 10px;
+    }
+
+    /* Emoji picker — mindre og innenfor viewport */
+    emoji-picker {
+        width: 270px;
+        height: 260px;
+    }
+
+    .emoji-popup {
+        left: auto;
+        right: 0;
+    }
+
+    /* Manuscript icon — mindre */
+    .manuscript-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    /* Widget */
+    .widget-title {
+        font-size: 13px;
+    }
+
+    /* Comment form — stack */
+    .comment-form {
+        flex-wrap: wrap;
+    }
+
+    .comment-form .form-control {
+        width: 100%;
+    }
+
+    .comment-form .btn {
+        width: 100%;
+        margin-top: 6px;
+    }
+
+    /* Chat input — stack */
+    .chat-input-form {
+        flex-wrap: wrap;
+    }
+
+    .chat-input-form .form-control {
+        width: 100%;
+    }
+
+    .chat-input-form .btn {
+        width: 100%;
+        margin-top: 6px;
+    }
+}
+
+/* =============================================
+   Responsive — Mobil (max 480px)
+   ============================================= */
+@media (max-width: 480px) {
+    .community-title {
+        font-size: 1.15em;
+    }
+
+    .community-card .card-body {
+        padding: 10px;
+    }
+
+    .avatar-circle {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+        font-size: 11px;
+    }
+
+    .avatar-sm {
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+        font-size: 10px;
+    }
+
+    .avatar-lg {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        font-size: 16px;
+    }
+
+    /* Post */
+    .post-content {
+        font-size: 13px;
+    }
+
+    .post-header strong {
+        font-size: 13px;
+    }
+
+    .post-time {
+        font-size: 11px;
+    }
+
+    .post-actions {
+        gap: 12px;
+    }
+
+    /* Discussion cards — kompakt */
+    .discussion-title {
+        font-size: 13px;
+    }
+
+    .reply-count-circle {
+        display: none;
+    }
+
+    .category-tag {
+        font-size: 10px;
+        padding: 1px 8px;
+    }
+
+    /* Comment */
+    .comment-text {
+        font-size: 12px;
+    }
+
+    .comment-author {
+        font-size: 11px;
+    }
+
+    /* Emoji picker */
+    emoji-picker {
+        width: 250px;
+        height: 240px;
+        --num-columns: 5;
+        --emoji-size: 1.4rem;
+    }
+
+    /* Buttons */
+    .community-btn-primary {
+        font-size: 12px;
+        padding: 7px 14px;
+    }
+
+    .community-btn-outline {
+        font-size: 12px;
+        padding: 5px 12px;
+    }
+
+    /* Coming soon */
+    .coming-soon-wrapper {
+        margin: 20px auto;
+    }
+
+    .coming-soon-title {
+        font-size: 1.4em;
+    }
+
+    .coming-soon-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+
+    .coming-soon-feature {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .coming-soon-feature-icon {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        font-size: 14px;
+    }
+
+    /* Profile */
+    .profile-form-section {
+        padding: 14px;
+    }
+
+    .profile-header {
+        padding: 16px;
+        gap: 14px;
+    }
+
+    .profile-genre-chip {
+        padding: 5px 10px;
+        font-size: 12px;
     }
 }
 

@@ -102,8 +102,8 @@
 									@if( $courseTaken->is_active )
 										@if($courseTaken->hasStarted)
 											@if($courseTaken->hasEnded)
-												<button class="btn btn-info w-100 rounded-0" data-toggle="modal"
-														data-target="#renewAllModal">
+												<button class="btn btn-info w-100 rounded-0" data-bs-toggle="modal"
+														data-bs-target="#renewAllModal">
 													{{ trans('site.learner.renew-subscription') }}
 												</button>
 											@else
@@ -185,7 +185,7 @@
 				<h3 class="modal-title">
 					{{ trans('site.learner.renew-course-text') }}
 				</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('learner.course.renew') }}" enctype="multipart/form-data">
@@ -205,7 +205,7 @@
 						
 
 					<input type="hidden" name="course_id">
-					<div class="text-right margin-top">
+					<div class="text-end margin-top">
 						<button type="submit" class="btn btn-primary">
 							{{ trans('site.learner.renew-text') }}
 						</button>
@@ -227,9 +227,9 @@
 					{{ csrf_field() }}
 
 					<p>{{ trans('site.learner.renew-all.description') }},?</p>
-					<div class="text-right margin-top">
+					<div class="text-end margin-top">
 						<button type="submit" class="btn btn-primary">{{ trans('site.front.yes') }}</button>
-						<button type="button" class="btn btn-danger" data-dismiss="modal">{{ trans('site.front.no') }}</button>
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ trans('site.front.no') }}</button>
 					</div>
 				</form>
 			</div>

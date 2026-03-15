@@ -15,11 +15,11 @@
             vertical-align: top;
         }
 
-        .float-left{
+        .float-start{
             float: right;
         }
 
-        .float-right{
+        .float-end{
             float: right;
         }
 
@@ -30,7 +30,7 @@
             position: absolute;
         }
 
-        .text-right {
+        .text-end {
             text-align: right;
         }
     </style>
@@ -38,7 +38,7 @@
 <body>
     <div class="row" style="height: 120px">
         <div class="col-sm-12">
-            <div class="w-50 float-right">
+            <div class="w-50 float-end">
                 <div class="receipt-logo-container">
                     <img src="https://www.easywrite.se/images/EasyWrite Logo.png" alt="Logo" style="width: 200px;">
                 </div>
@@ -47,7 +47,7 @@
     </div>
 
     <div class="row">
-        <div class="w-50 float-left">
+        <div class="w-50 float-start">
             <span>
                 {{ $customer['Name']  }}
             </span> <br>
@@ -61,7 +61,7 @@
                 </span>
             @endif
         </div>
-        <div class="w-50 float-right" style="margin-left: 400px">
+        <div class="w-50 float-end" style="margin-left: 400px">
             <p>
                 Easywrite AS<br>
                 Lihagen 21, <br>
@@ -107,7 +107,7 @@
                     <th>Quantity</th>
                     <th>Price</th>
                     <th>MVA</th>
-                    <th class="text-right">Total</th>
+                    <th class="text-end">Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -126,32 +126,32 @@
                             <td>
                                 {{ $invoiceLine['VatRate'] * 100 }} %
                             </td>
-                            <td class="text-right">
+                            <td class="text-end">
                                 {{ number_format($invoiceLine['NetAmount'], 2) }}
                             </td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="4" class="text-right">
+                        <td colspan="4" class="text-end">
                             Sum eks. mva
                         </td>
-                        <td class="text-right">
+                        <td class="text-end">
                             {{ number_format($poInvoice['NetAmount'], 2) }}
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="4" class="text-right">
+                        <td colspan="4" class="text-end">
                             {{ $poInvoiceLines[0]['VatRate'] * 100 }}% mva av {{ number_format($poInvoice['NetAmount'], 2) }}
                         </td>
-                        <td class="text-right">
+                        <td class="text-end">
                             {{ number_format($poInvoice['TotalAmount'] - $poInvoice['NetAmount'], 2) }}
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="4" class="text-right">
+                        <td colspan="4" class="text-end">
                             Beløp å betale <b>{{ $poInvoice['CurrencyCode'] }}</b>
                         </td>
-                        <td class="text-right">
+                        <td class="text-end">
                             {{ number_format($poInvoice['TotalAmount'], 2) }}
                         </td>
                     </tr>
@@ -170,32 +170,32 @@
                             <td>
                                 {{ $orderLine['VatRate'] * 100 }} %
                             </td>
-                            <td class="text-right">
+                            <td class="text-end">
                                 {{ number_format($orderLine['NetAmount'], 2) }}
                             </td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="4" class="text-right">
+                        <td colspan="4" class="text-end">
                             Sum eks. mva
                         </td>
-                        <td class="text-right">
+                        <td class="text-end">
                             {{ number_format($order['NetAmount'], 2) }}
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="4" class="text-right">
+                        <td colspan="4" class="text-end">
                             {{ $order['SalesOrderLines'][0]['VatRate'] * 100 }}% mva av {{ number_format($order['NetAmount'], 2) }}
                         </td>
-                        <td class="text-right">
+                        <td class="text-end">
                             {{ number_format($order['TotalAmount'] - $order['NetAmount'], 2) }}
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="4" class="text-right">
+                        <td colspan="4" class="text-end">
                             Beløp å betale <b>{{ $order['CurrencyCode'] }}</b>
                         </td>
-                        <td class="text-right">
+                        <td class="text-end">
                             {{ number_format($order['TotalAmount'], 2) }}
                         </td>
                     </tr>

@@ -21,7 +21,7 @@
                         @include('frontend.learner.pilot-reader.partials.reader-book-details')
                     @endif
 
-                </div><!-- col-xs-offset-2 col-xs-8 margin-top -->
+                </div><!-- col-xs-offset-2 col-8 margin-top -->
 
             </div>
         </div>
@@ -41,9 +41,9 @@
                         {{ method_field('delete') }}
 
                         <p>Are you sure you want to delete this chapter?</p>
-                        <div class="text-right margin-top">
+                        <div class="text-end margin-top">
                             <button type="submit" class="btn btn-primary">ja</button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Nei</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Nei</button>
                         </div>
                     </form>
                 </div>
@@ -56,22 +56,22 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Import Chapters</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" id="customFile" onchange="methods.browseHtmlFile(this)">
                         <label class="custom-file-label" for="customFile">Choose file</label>
-                        <small class="text-danger ml-2 hidden"><i class="fa fa-exclamation-circle"></i> Invalid File</small>
+                        <small class="text-danger ms-2 hidden"><i class="fa fa-exclamation-circle"></i> Invalid File</small>
                     </div>
                     <div class="hidden" id="no-chapters-div" style="margin-top: 20px;">
-                        <small class="text-danger ml-2"><i class="fa fa-exclamation-circle"></i> No Chapter Found</small>
-                        <small class="text-muted ml-2 d-block">Please make sure you added an heading for every chapter and try again.</small>
+                        <small class="text-danger ms-2"><i class="fa fa-exclamation-circle"></i> No Chapter Found</small>
+                        <small class="text-muted ms-2 d-block">Please make sure you added an heading for every chapter and try again.</small>
                     </div>
                     <div class="clearfix" style="margin-top: 15px;"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary disabled" id="import-btn" onclick="methods.extractChapters()" disabled>Import</button>
                 </div>
             </div>
@@ -221,7 +221,7 @@
                     form += '<span class="right-space">By</span> <input type="text" class="form-control" ' +
                     'style="width: 40%;display: inline" value="'+display_name+'" placeholder="'+author_placeholder+'"' +
                     ' name="display_name">';
-                    form += '<div class="edit-toggle-buttons pull-right" style="color: #3a3023">';
+                    form += '<div class="edit-toggle-buttons float-end" style="color: #3a3023">';
                         form += '<button class="beta-button" style="margin-right: 4px" type="submit"><i class="fa fa-check text-color-success"></i><span>Save</span></button>';
                         form += '<a class="beta-button" onclick="cancelAuthorTitle()"><i class="fa fa-remove text-color-danger"></i><span>Cancel</span></a>';
                     form += '</div>';
@@ -238,7 +238,7 @@
             var display = '<h1>{{ $book->title }}</h1>';
             display += '<div class="subhead">';
             display += 'By {{ $book->display_name ? $book->display_name : Auth::user()->full_name }}';
-            display += '<div class="edit-toggle-buttons pull-right" style="color: #3a3023">' +
+            display += '<div class="edit-toggle-buttons float-end" style="color: #3a3023">' +
                 '<button class="beta-button" data-fields="{{ json_encode($book) }}" '
                 + 'data-display-name="{{ $book->display_name}}" data-author-placeholder="{{ Auth::user()->full_name }}" '
                 + 'onclick="editAuthorTitle(this)"> <i class="fa fa-pencil"></i> <span>Edit</span> </button> </div>';
@@ -260,7 +260,7 @@
                     form += '<textarea name="about_book" cols="10" rows="5" class="form-control" required></textarea>';
                 form += '</div>';
 
-                form += '<div class="edit-toggle-buttons pull-right" style="color: #3a3023">';
+                form += '<div class="edit-toggle-buttons float-end" style="color: #3a3023">';
                     form += '<button class="beta-button" style="margin-right: 4px" type="submit"><i class="fa fa-check text-color-success"></i><span>Save</span></button>';
                     form += '<a class="beta-button" onclick="cancelAboutBook()"><i class="fa fa-remove text-color-danger"></i><span>Cancel</span></a>';
                 form += '</div>';
@@ -285,7 +285,7 @@
             book_description_wrapper.empty();
 
             var display = '<h2>About the Book';
-            display += '<div class="edit-toggle-buttons pull-right" style="color: #3a3023">' +
+            display += '<div class="edit-toggle-buttons float-end" style="color: #3a3023">' +
                 '<button class="beta-button" data-fields="{{ json_encode($book) }}" '
                 + 'onclick="editAboutBook(this)"> <i class="fa fa-pencil"></i> <span>Edit</span> </button> </div>';
             display += '</div> </h2>';
@@ -308,7 +308,7 @@
                         form += '<textarea name="critique_guidance" cols="10" rows="5" class="form-control" required></textarea>';
                     form += '</div>';
 
-                    form += '<div class="edit-toggle-buttons pull-right" style="color: #3a3023">';
+                    form += '<div class="edit-toggle-buttons float-end" style="color: #3a3023">';
                         form += '<button class="beta-button" style="margin-right: 4px" type="submit"><i class="fa fa-check text-color-success"></i><span>Save</span></button>';
                         form += '<a class="beta-button" onclick="cancelCritique()"><i class="fa fa-remove text-color-danger"></i><span>Cancel</span></a>';
                     form += '</div>';
@@ -333,7 +333,7 @@
             book_critique_wrapper.empty();
 
             var display = '<h2>Critique Guidance';
-            display += '<div class="edit-toggle-buttons pull-right" style="color: #3a3023">' +
+            display += '<div class="edit-toggle-buttons float-end" style="color: #3a3023">' +
                 '<button class="beta-button" data-fields="{{ json_encode($book) }}" '
                 + 'onclick="editCritique(this)"> <i class="fa fa-pencil"></i> <span>Edit</span> </button> </div>';
             display += '</div> </h2>';

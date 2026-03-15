@@ -36,19 +36,19 @@
                 </p>--}}
 
                 <p>
-                    <a href="https://twitter.com/Forfatterrektor" target="_blank" class="ml-0 mr-3"
+                    <a href="https://twitter.com/Forfatterrektor" target="_blank" class="ms-0 me-3"
                        title="View twitter page">
                         <i class="sprite-social twitter"></i>
                     </a>
-                    <a href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank" class="mr-3"
+                    <a href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank" class="me-3"
                        title="View pinterest page">
                         <i class="sprite-social pinterest"></i>
                     </a>
-                    <a href="https://www.instagram.com/forfatterskolen_norge/" target="_blank" class="mr-3"
+                    <a href="https://www.instagram.com/forfatterskolen_norge/" target="_blank" class="me-3"
                        title="View instagram page">
                         <i class="sprite-social instagram"></i>
                     </a>
-                    <a href="https://www.facebook.com/bliforfatter//" target="_blank" class="mr-3"
+                    <a href="https://www.facebook.com/bliforfatter//" target="_blank" class="me-3"
                        title="View facebook page">
                         <i class="sprite-social facebook"></i>
                     </a>

@@ -27,6 +27,7 @@ use App\CourseDiscount;
 use App\CoursesTaken;
 use App\Diploma;
 use App\EmailConfirmation;
+use App\EmailOutLog;
 use App\Genre;
 use App\GiftPurchase;
 use App\Http\AdminHelpers;
@@ -2246,11 +2247,69 @@ class LearnerController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function privateMessage(): View
+    public function privateMessage(Request $request): View
     {
-        $messages = Auth::user()->messages()->paginate(10);
+        $messages = Auth::user()->messages()->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('frontend.learner.private-message', compact('messages'));
+        $userId = Auth::id();
+        $search = $request->get('search', '');
+        $type = $request->get('type', '');
+        $tab = $request->get('tab', 'epost');
+        $emailId = $request->get('email_id', null);
+
+        $emailLogsQuery = EmailOutLog::where(function($q) use ($userId) {
+            $q->whereRaw("JSON_CONTAINS(learners, ?)", [(string)$userId])
+              ->orWhereRaw("JSON_CONTAINS(learners, ?)", ['"' . $userId . '"']);
+        })->whereNotNull('learners');
+
+        if ($search) {
+            $emailLogsQuery->where('subject', 'LIKE', '%' . $search . '%');
+        }
+
+        if ($type === 'mentor') {
+            $emailLogsQuery->where(function($q) {
+                $q->where('subject', 'LIKE', '%mentormøte%')
+                  ->orWhere('subject', 'LIKE', '%Mentormøte%');
+            });
+        } elseif ($type === 'system') {
+            $emailLogsQuery->where(function($q) {
+                $q->where('subject', 'LIKE', '%abonnement%')
+                  ->orWhere('subject', 'LIKE', '%passord%')
+                  ->orWhere('subject', 'LIKE', '%betaling%')
+                  ->orWhere('subject', 'LIKE', '%faktura%')
+                  ->orWhere('subject', 'LIKE', '%Hjelp,%');
+            });
+        } elseif ($type === 'kurs') {
+            $emailLogsQuery->where('subject', 'NOT LIKE', '%mentormøte%')
+                ->where('subject', 'NOT LIKE', '%Mentormøte%')
+                ->where('subject', 'NOT LIKE', '%abonnement%')
+                ->where('subject', 'NOT LIKE', '%passord%')
+                ->where('subject', 'NOT LIKE', '%betaling%')
+                ->where('subject', 'NOT LIKE', '%faktura%')
+                ->where('subject', 'NOT LIKE', '%Hjelp,%');
+        }
+
+        $emailLogs = $emailLogsQuery->orderBy('created_at', 'desc')->paginate(10);
+        $emailLogs->appends(['search' => $search, 'type' => $type, 'tab' => 'epost']);
+
+        $totalEmails = EmailOutLog::where(function($q) use ($userId) {
+            $q->whereRaw("JSON_CONTAINS(learners, ?)", [(string)$userId])
+              ->orWhereRaw("JSON_CONTAINS(learners, ?)", ['"' . $userId . '"']);
+        })->whereNotNull('learners')->count();
+
+        $selectedEmail = null;
+        if ($emailId) {
+            $selectedEmail = EmailOutLog::where('id', $emailId)
+                ->where(function($q) use ($userId) {
+                    $q->whereRaw("JSON_CONTAINS(learners, ?)", [(string)$userId])
+                      ->orWhereRaw("JSON_CONTAINS(learners, ?)", ['"' . $userId . '"']);
+                })->first();
+        }
+
+        return view('frontend.learner.private-message', compact(
+            'messages', 'emailLogs', 'search', 'type', 'tab',
+            'selectedEmail', 'totalEmails'
+        ));
     }
 
     /**

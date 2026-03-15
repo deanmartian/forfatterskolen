@@ -31,7 +31,7 @@
                                 @endif
 
                                 @if ($book->author->id !== Auth::user()->id)
-                                    <span class="pull-right" style="cursor: pointer; font-size: 16px"
+                                    <span class="float-end" style="cursor: pointer; font-size: 16px"
                                     onclick="bookmark.startBookmarking(this)">
                                         <i class="fa fa-bookmark-o text-danger"></i>
                                     </span>
@@ -60,7 +60,7 @@
                             <nav class="chapters">
                                 @if ($previous)
                                     <a href="{{ route('learner.book-author-book-view-chapter',
-                                        ['book_id' => $book->id, 'chapter_id' => $previous]) }}" class="beta-button pull-left">
+                                        ['book_id' => $book->id, 'chapter_id' => $previous]) }}" class="beta-button float-start">
                                         <i class="fa fa-long-arrow-left"></i>
                                         Previous
                                     </a>
@@ -68,7 +68,7 @@
 
                                 @if ($next)
                                     <a href="{{ route('learner.book-author-book-view-chapter',
-                                        ['book_id' => $book->id, 'chapter_id' => $next]) }}" class="beta-button pull-right">
+                                        ['book_id' => $book->id, 'chapter_id' => $next]) }}" class="beta-button float-end">
                                         <i class="fa fa-long-arrow-right"></i>
                                         Next
                                     </a>
@@ -146,13 +146,13 @@
                                                     <div class="form-group mb-0 clearfix">
                                                         <span class="draft-label right-space {{ $feedback->published === 0 ? '' : 'hidden'}}">Draft</span>
                                                         <i class="fa fa-reply right-space text-muted {{ $feedback->is_reply === 1 ? '' : 'hidden'}}"></i>
-                                                        <span class="text-muted float-left {{ $feedback->published === 0 ? 'mt-1' : ''}}">
+                                                        <span class="text-muted float-start {{ $feedback->published === 0 ? 'mt-1' : ''}}">
                                                             {{ $postedBy }} {{ $feedback->published === 0 ? 'saved' : 'posted'}} at
                                                             {{ \Carbon\Carbon::parse($feedback->created_at)->format('F d H:i a') }}</span>
                                                         @if (!$feedback->is_reply)
                                                             <span class="feedback-marker unmarked">
                                                                 <select onchange="methods.setMark(this, {{ $feedback->id }})"
-                                                                        class="pull-right btn btn-sm select-{{ $feedback->mark }} {{ $feedback->published === 0 ?'hidden' : ''}}">
+                                                                        class="float-end btn btn-sm select-{{ $feedback->mark }} {{ $feedback->published === 0 ?'hidden' : ''}}">
                                                                     @foreach(\App\Http\FrontendHelpers::feedbackMarks() as $feedbackMark)
                                                                         <option value="{{ $feedbackMark['option'] }}"
                                                                         @if($feedbackMark['option'] == $feedback->mark) selected @endif>
@@ -161,12 +161,12 @@
                                                                     @endforeach
                                                                 </select>
                                                             </span>
-                                                            <a class="pull-right edit-note-btn" onclick="methods.editFeedback(this, {{ $feedback }})">
+                                                            <a class="float-end edit-note-btn" onclick="methods.editFeedback(this, {{ $feedback }})">
                                                                 <i class="fa fa-pencil"></i> <span>Edit</span>
                                                             </a>
                                                         @endif
                                                     </div>
-                                                    <div class="{{ $feedback->published === 0 ? 'mt-1' : ''}} ml-2 message-content">
+                                                    <div class="{{ $feedback->published === 0 ? 'mt-1' : ''}} ms-2 message-content">
                                                         {!! $feedback->message ?: $feedback->message !!}
                                                     </div>
                                                     <div class="form-group edit-note-form-container mt-2">
@@ -273,13 +273,13 @@
                                                     <div class="form-group mb-0 clearfix">
                                                         <span class="draft-label right-space {{ $message->published === 0 ? '' : 'hidden'}}">Draft</span>
                                                         <i class="fa fa-reply right-space text-muted {{ $message->is_reply === 1 ? '' : 'hidden'}}"></i>
-                                                        <span class="text-muted float-left {{ $message->published === 0 ? 'mt-1' : ''}}">
+                                                        <span class="text-muted float-start {{ $message->published === 0 ? 'mt-1' : ''}}">
                                                         {{ $postedBy }} {{ $message->published === 0 ? 'saved' : 'posted'}} at
                                                             {{ \Carbon\Carbon::parse($message->created_at)->format('F d H:i a') }}</span>
                                                         @if ($message->is_reply && ($message->reply_from == Auth::user()->id))
                                                             <span class="feedback-marker unmarked">
                                                                 <select onchange="methods.setMark(this, {{ $message->id }})"
-                                                                        class="pull-right btn btn-sm select-{{ $message->mark }} {{ $message->published === 0 ?'hidden' : ''}}">
+                                                                        class="float-end btn btn-sm select-{{ $message->mark }} {{ $message->published === 0 ?'hidden' : ''}}">
                                                                     @foreach(\App\Http\FrontendHelpers::feedbackMarks() as $feedbackMark)
                                                                         <option value="{{ $feedbackMark['option'] }}"
                                                                                 @if($feedbackMark['option'] == $message->mark) selected @endif>
@@ -288,13 +288,13 @@
                                                                     @endforeach
                                                                 </select>
                                                             </span>
-                                                            <a class="pull-right edit-reply-btn" onclick="methods.editReply(this, {{ $message }})">
+                                                            <a class="float-end edit-reply-btn" onclick="methods.editReply(this, {{ $message }})">
                                                                 <i class="fa fa-pencil"></i> <span>Edit</span>
                                                             </a>
                                                         @endif
                                                     </div> <!-- form-group mb-0 clearfix -->
 
-                                                    <div class="{{ $message->published === 0 ? 'mt-1' : ''}} ml-2 message-content">
+                                                    <div class="{{ $message->published === 0 ? 'mt-1' : ''}} ms-2 message-content">
                                                         {!! $message->message ?: $message->message !!}
                                                     </div>
                                                     <div class="form-group edit-note-form-container mt-2">

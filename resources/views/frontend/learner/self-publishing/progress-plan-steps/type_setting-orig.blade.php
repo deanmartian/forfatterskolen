@@ -19,8 +19,8 @@
                 <div class="card-header">
                     {{ $stepTitle }}
 
-                    <button type="button" class="btn btn-primary btn-xs uploadManuscriptBtn pull-right"
-                        data-toggle="modal" data-target="#uploadManuscriptModal"
+                    <button type="button" class="btn btn-primary btn-sm uploadManuscriptBtn float-end"
+                        data-bs-toggle="modal" data-bs-target="#uploadManuscriptModal"
                         data-action="{{ route('learner.progress-plan.type-setting.upload') }}"
                         style="width: auto;">
                         {{ trans('site.learner.upload-script') }}
@@ -57,7 +57,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h3 class="modal-title">{{ trans('site.learner.upload-script') }}</h3>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)">
@@ -70,7 +70,7 @@
                       accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, 
                       application/pdf, application/vnd.oasis.opendocument.text">
                     </div>
-                    <button type="submit" class="btn submit-btn pull-right">{{ trans('site.learner.upload-script') }}</button>
+                    <button type="submit" class="btn submit-btn float-end">{{ trans('site.learner.upload-script') }}</button>
                     <div class="clearfix"></div>
                 </form>
             </div>
@@ -84,7 +84,7 @@
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
                     <div class="modal-body text-center">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                         <div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
                         {!! Session::get('manuscript_test_error') !!}
                     </div>

@@ -14,7 +14,7 @@
         </div>
     </div>
     
-    <button type="submit" class="btn site-btn-global-w-arrow float-right">
+    <button type="submit" class="btn site-btn-global-w-arrow float-end">
         {{ trans('site.front.login.password-reset') }}
     </button>
 </form>

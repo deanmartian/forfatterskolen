@@ -50,7 +50,7 @@
                                             <td>{{ $timeRegister->date }}</td>
                                             <td>{{ $timeRegister->time }}</td>
                                             <td>
-                                                <a href="#" data-toggle="modal" data-target="#timeUsedModal" class="timeUsedBtn"
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#timeUsedModal" class="timeUsedBtn"
                                                 data-time-used-list="{{ json_encode($timeRegister->usedTimes) }}">
                                                     {{ 
                                                         $timeRegister->usedTimesDurationSum && isset($timeRegister->usedTimesDurationSum[0])
@@ -78,7 +78,7 @@
                     <h3 class="modal-title">
                         {{ trans('site.author-portal.time-used') }}
                     </h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive margin-top">

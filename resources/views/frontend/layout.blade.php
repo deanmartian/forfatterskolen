@@ -130,7 +130,7 @@
         {{-- check if advisory could be displayed today and current page is included --}}
         @if($isBetweenDate && in_array(Route::currentRouteName(), $included_pages))
             <div class="alert shop-manuscript-advisory" role="alert" id="fixed_to_bottom_alert">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                <a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
                 {{ $shopManuscriptAdvisory->advisory }}
             </div>
         @endif
@@ -207,7 +207,7 @@
             ?>
             <div class="alert alert-{{ $alert_type }} global-alert-box" style="z-index: 9; min-width: 300px"
                  id="fixed_to_bottom_alert">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                <a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
                 <ul>
                     @foreach($errors->all() as $error)
                         <li>{!! $error !!}</li>

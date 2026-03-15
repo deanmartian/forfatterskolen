@@ -122,7 +122,7 @@
             </a>
 
             <!-- Toggler/collapsibe Button -->
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -287,7 +287,7 @@
         ?>
         <div class="alert alert-{{ $alert_type }} global-alert-box" style="z-index: 9; min-width: 300px"
                 id="fixed_to_bottom_alert">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
             <ul>
                 @foreach($errors->all() as $error)
                     <li>{!! $error !!}</li>

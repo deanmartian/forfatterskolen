@@ -19,8 +19,8 @@
                 <div class="card-header">
                     {{ trans('site.homepage.illustration-cover-design') }}
 
-                    <button type="button" class="btn btn-success btn-xs pull-right coverBtn" data-toggle="modal" 
-                                data-target="#coverModal" data-type="cover">
+                    <button type="button" class="btn btn-success btn-sm float-end coverBtn" data-bs-toggle="modal" 
+                                data-bs-target="#coverModal" data-type="cover">
                         + Add Cover
                     </button>
                 </div>
@@ -51,7 +51,7 @@
                                                 </a>
                                             @else
                                                 @if ($coverFile)
-                                                    <a href="{{ $coverFile }}" class="btn btn-success btn-xs" download>
+                                                    <a href="{{ $coverFile }}" class="btn btn-success btn-sm" download>
                                                         <i class="fa fa-download"></i>
                                                     </a>
                                                     <a href="{{ asset($coverFile) }}" target="_blank" style="margin-right: 5px">
@@ -70,14 +70,14 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <button class="btn btn-info btn-xs view-cover-btn" data-toggle="modal" 
-                                            data-target="#coverDetailsModal"
+                                        <button class="btn btn-info btn-sm view-cover-btn" data-bs-toggle="modal" 
+                                            data-bs-target="#coverDetailsModal"
                                             data-id="{{ $cover->id }}">
                                             <i class="fa fa-eye"></i>
                                         </button>
 
-                                        <button class="btn btn-primary btn-xs coverBtn" data-toggle="modal"
-                                                data-target="#coverModal"
+                                        <button class="btn btn-primary btn-sm coverBtn" data-bs-toggle="modal"
+                                                data-bs-target="#coverModal"
                                                 data-type="cover" data-id="{{ $cover->id }}"
                                                 data-record="{{ json_encode($cover) }}">
                                             <i class="fa fa-edit"></i>
@@ -104,7 +104,7 @@
                     <h4 class="modal-title">
                         Cover
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('learner.self-publishing.save-cover', $standardProject->id) }}"
@@ -161,7 +161,7 @@
 
                         <div class="form-group">
                             <label>Backside Text (optional)</label> <br>
-                            <input type="checkbox" data-toggle="toggle" data-on="Text" data-off="Document"
+                            <input type="checkbox" data-bs-toggle="toggle" data-on="Text" data-off="Document"
                                 name="backside_type" data-width="100" class="backsideToggle" checked
                                 >
 
@@ -182,7 +182,7 @@
                             <textarea name="instruction" cols="30" rows="10" class="form-control"></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-success pull-right margin-top">
+                        <button type="submit" class="btn btn-success float-end margin-top">
                             {{ trans('site.save') }}
                         </button>
 
@@ -200,7 +200,7 @@
                     <h4 class="modal-title">
                         Cover Details
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body" id="coverModalContent" style="overflow: auto">
                     {{-- Table content will be loaded here dynamically --}}

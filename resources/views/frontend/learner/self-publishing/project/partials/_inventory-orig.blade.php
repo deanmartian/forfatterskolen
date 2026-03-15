@@ -2,12 +2,12 @@
     <div class="panel-body">
         <div class="col-md-12">
             <div class="row">
-                <div class="col-xs-3">
+                <div class="col-3">
                     <div class="form-group">
                         <label class="control-label">{{ trans('site.author-portal.total-sold-books') }}</label>
                     </div>
                 </div>
-                <div class="col-xs-9">
+                <div class="col-9">
                     <div class="form-group">
                         <input type="text" class="form-control"
                         value="{{ $totalBookSold }}" disabled>
@@ -16,12 +16,12 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-3">
+                <div class="col-3">
                     <div class="form-group">
                         <label class="control-label">{{ trans('site.author-portal.total-sales') }}</label>
                     </div>
                 </div>
-                <div class="col-xs-9">
+                <div class="col-9">
                     <div class="form-group">
                         <input type="text" class="form-control"
                         value="{{ $totalBookSale }}" disabled>
@@ -30,12 +30,12 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-3">
+                <div class="col-3">
                     <div class="form-group">
                         <label class="control-label">{{ trans('site.author-portal.inventory-text') }}</label>
                     </div>
                 </div>
-                <div class="col-xs-9">
+                <div class="col-9">
                     <table class="table">
                         <thead>
                             <tr>
@@ -68,12 +68,12 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-3">
+                <div class="col-3">
                     <div class="form-group">
                         <label class="control-label">{{ trans('site.author-portal.order-text') }}</label>
                     </div>
                 </div>
-                <div class="col-xs-9">
+                <div class="col-9">
                     <div class="form-group">
                         <input type="text" class="form-control"
                         value="" disabled>
@@ -82,12 +82,12 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-3">
+                <div class="col-3">
                     <div class="form-group">
                         <label class="control-label">{{ trans('site.author-portal.reservations') }}</label>
                     </div>
                 </div>
-                <div class="col-xs-9">
+                <div class="col-9">
                     <div class="form-group">
                         <input type="text" class="form-control"
                         value="" disabled>

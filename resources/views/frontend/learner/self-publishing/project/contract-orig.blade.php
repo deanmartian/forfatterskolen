@@ -57,7 +57,7 @@
 
                                             @if ($contract->signature)
                                                 <a href="{{ $contract->learner_download_link }}"
-                                                   class="button btn btn-info btn-xs" download>Download PDF</a>
+                                                   class="button btn btn-info btn-sm" download>Download PDF</a>
                                             @endif
                                         </td>
                                     </tr>

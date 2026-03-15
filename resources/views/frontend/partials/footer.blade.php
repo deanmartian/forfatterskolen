@@ -30,7 +30,7 @@
 				<div class="col-md-4">
 					<h6>SNARVEIER</h6>
 					<div class="row">
-						<div class="col-xs-6">
+						<div class="col-6">
 							<ul>
 								<li><a href="{{ route('front.contact-us') }}">Om oss</a></li>
 								<li><a href="http://www.forfatterblogg.no" target="_blank">Skriveblogg</a></li>
@@ -54,7 +54,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					Copyright © 2016 Forfatterskolen. All Rights Reserved
-					<div class="social pull-right">
+					<div class="social float-end">
 						<a href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank"><i class="fa fa-pinterest"></i></a>
 					    <a href="https://www.facebook.com/bliforfatter/" target="_blank"><i class="fa fa-facebook"></i></a>
 					    <a href="https://twitter.com/Forfatterrektor" target="_blank"><i class="fa fa-twitter"></i></a>

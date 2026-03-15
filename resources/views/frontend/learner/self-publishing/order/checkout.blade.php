@@ -10,7 +10,7 @@
         <div class="card-body">
             checkout content here
 
-            <a href="{{ route('learner.self-publishing.process-checkout') }}" class="btn btn-dark pull-right" style="margin-top: 20px">
+            <a href="{{ route('learner.self-publishing.process-checkout') }}" class="btn btn-dark float-end" style="margin-top: 20px">
                 Process Payment
             </a>
         </div>

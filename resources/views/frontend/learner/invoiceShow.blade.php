@@ -34,9 +34,9 @@ endif;
 					<h2 class="margin-bottom">Faktura #{{$fikenInvoice->invoiceNumber}}</h2>
 					Status: 
 					@if($sale->paid)
-					<span class="label label-success">{{$status}}</span>
+					<span class="badge bg-success">{{$status}}</span>
 					@else
-					<span class="label label-danger">{{$status}}</span>
+					<span class="badge bg-danger">{{$status}}</span>
 					@endif <br />
 					Opprettet: {{$fikenInvoice->issueDate}} <br />
 					Forfallsdato: {{$fikenInvoice->dueDate}}
@@ -56,7 +56,7 @@ endif;
 										<tr>
 											<th>Metode</th>
 											<th>Betalings metode</th>
-											<th class="text-right">Beløp</th>
+											<th class="text-end">Beløp</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -65,11 +65,11 @@ endif;
 										<tr>
 											<td>{{$transaction->mode}}</td>
 											<td>{{$transaction->mode_transaction}}</td>
-											<td class="text-right">{{FrontendHelpers::currencyFormat($transaction->amount)}}</td>
+											<td class="text-end">{{FrontendHelpers::currencyFormat($transaction->amount)}}</td>
 										</tr>
 										<?php $total += $transaction->amount; ?>
 										@endforeach
-										<tr class="text-right">
+										<tr class="text-end">
 											<td colspan="2"><strong>Totalt</strong></td>
 											<td>{{FrontendHelpers::currencyFormat($total)}}</td>
 										</tr>
@@ -78,7 +78,7 @@ endif;
 											<td colspan="3">Ingen transaksjoner</td>
 										</tr>
 										@endif
-										<tr class="text-right">
+										<tr class="text-end">
 											<td colspan="3">
 												<h4>
 												<strong>Balanse:&nbsp;&nbsp;

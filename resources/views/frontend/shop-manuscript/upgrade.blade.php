@@ -13,7 +13,7 @@
                     <div class="panel panel-default">
                         @if(Auth::guest())
                             <div class="col-sm-12">
-                                <div class="margin-bottom">Allerede elev? Klikk <a href="#" data-toggle="collapse" data-target="#checkoutLogin">her</a> for å logge inn.</div>
+                                <div class="margin-bottom">Allerede elev? Klikk <a href="#" data-bs-toggle="collapse" data-bs-target="#checkoutLogin">her</a> for å logge inn.</div>
                                 <form id="checkoutLogin" class="collapse @if($errors->first('login_error')) fade in @endif" action="{{route('frontend.login.checkout.store')}}" method="POST">
                                     {{csrf_field()}}
                                     <div class="row">
@@ -174,7 +174,7 @@
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
                     <div class="modal-body text-center">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                         <div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
                         {!! Session::get('manuscript_test_error') !!}
                     </div>

@@ -16,8 +16,8 @@
                         </h1>
 
                         @if ($standardProject)
-                            <button type="button" class="btn btn-success pull-right bookFormattingBtn" data-toggle="modal" 
-                            data-target="#bookFormattingModal">
+                            <button type="button" class="btn btn-success float-end bookFormattingBtn" data-bs-toggle="modal" 
+                            data-bs-target="#bookFormattingModal">
                                 + {{ trans('site.add-page-format') }}
                             </button>
                         @endif
@@ -38,7 +38,7 @@
                                         </td>
                                         <td>
                                             <a href="{{ route('learner.self-publishing.page-format-show', $bookFormatting->id) }}" 
-                                                class="btn btn-info btn-xs">
+                                                class="btn btn-info btn-sm">
                                                 <i class="fa fa-eye"></i>
                                             </a>
                                         </td>
@@ -61,7 +61,7 @@
                 <h4 class="modal-title">
                     {{ trans('site.book-formatting') }}
                 </h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <form method="POST" action="{{ route('learner.self-publishing.save-page-format', $standardProject->id) }}" 
@@ -125,7 +125,7 @@
                         <textarea name="description" class="form-control" cols="30" rows="10"></textarea>
                     </div>
 
-                    <div class="text-right">
+                    <div class="text-end">
                         <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
                     </div>
                 </form>

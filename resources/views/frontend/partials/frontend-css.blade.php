@@ -32,11 +32,7 @@
 
 {{--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
       integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">--}}
-<link rel="stylesheet" href="{{asset('css/vendor-bootstrap.min.css')}}">
-{{--<link rel="preload" href="{{asset('css/vendor-bootstrap.min.css')}}"
-      as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript>
-    <link rel="stylesheet" href="{{asset('css/vendor-bootstrap.min.css')}}">
-</noscript>--}}
+{{--<link rel="stylesheet" href="{{asset('css/vendor-bootstrap.min.css')}}">--}}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{{asset('css/front-style.min.css?v='.time())}}">
 <link rel="stylesheet" href="{{asset('css/dark-mode.css?v='.time())}}">

@@ -322,7 +322,7 @@
                             <div class="signature">
                                 <div class="signature-canvas">
                                     <div class="signature-cta">
-                                        <a class="button button-green" data-target="#signContractModal" data-toggle="modal">
+                                        <a class="button button-green" data-bs-target="#signContractModal" data-bs-toggle="modal">
                                             <div class="link-content">
                                                 <i class="fa fa-arrow-right"></i><span>Sign here</span>
                                             </div>
@@ -334,7 +334,7 @@
                     </div>
                 @else
 
-                    <div class="float-left">
+                    <div class="float-start">
                         <h2>
                             {{ $contract->signature_label }}
                         </h2>
@@ -350,7 +350,7 @@
                         </div>
                     </div>
 
-                    <div class="float-right">
+                    <div class="float-end">
                         <h2>
                             {{ $contract->signature_label }}
                         </h2>
@@ -380,7 +380,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title"><em>Sign Contract</em></h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <form method="POST" action="{{ route('front.contract.sign', $contract->code) }}">
@@ -394,7 +394,7 @@
                         <textarea id="signature64" name="signed" style="display: none"></textarea>
                     </div>
 
-                    <button class="btn btn-success mt-3 float-right">{{ trans('site.save') }}</button>
+                    <button class="btn btn-success mt-3 float-end">{{ trans('site.save') }}</button>
                 </form>
             </div>
         </div>
@@ -404,7 +404,7 @@
 
 @if ($message = Session::get('success'))
     <div class="alert alert-success alert-dismissible">
-        <button type="button" class="close" data-dismiss="alert" style="font-size: 2rem">×</button>
+        <button type="button" class="close" data-bs-dismiss="alert" style="font-size: 2rem">×</button>
         <strong>{{ $message }}</strong>
     </div>
 @endif

@@ -18,7 +18,7 @@
 					\Carbon\Carbon::parse($workshop->date)->format('H:i')], trans('site.front.workshop.start-date')) }}
 				</span>
 
-				<div class="sub-header text-left">
+				<div class="sub-header text-start">
 
                     <?php
                     	$availedWorkshop = 0;
@@ -37,10 +37,10 @@
 						</a>
 					@endif
 
-					<div class="col-xs-4 pl-0 presenter-container">
+					<div class="col-4 ps-0 presenter-container">
 						@foreach( $workshop->presenters()->take(1)->get() as $presenter )
 							<div class="workshop-presenter">
-								<div class="presenter-image pull-left" @if( $presenter->image ) style="background-image: url('{{ $presenter->image }}')" @endif></div>
+								<div class="presenter-image float-start" @if( $presenter->image ) style="background-image: url('{{ $presenter->image }}')" @endif></div>
 								<div class="presenter-details">
 									<span class="title">
 										{{ trans('site.front.workshop.presenters') }}
@@ -51,7 +51,7 @@
 							</div>
 						@endforeach
 					</div>
-					<div class="col-xs-8 workshop-info">
+					<div class="col-8 workshop-info">
 						<div class="date-time-cont">
 							<div>
 								<i class="img-icon16 icon-calendar"></i>

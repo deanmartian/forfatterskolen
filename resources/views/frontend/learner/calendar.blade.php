@@ -276,6 +276,21 @@
         }
     }
 
+    /* Listevisning mobil */
+    .fc .fc-list {
+        border-radius: 6px;
+    }
+
+    .fc .fc-list-event-title {
+        font-size: 13px;
+    }
+
+    .fc .fc-list-day-cushion {
+        background: #f3f5f7;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
     @media only screen and (max-width: 480px) {
         .fc .fc-toolbar-title {
             font-size: 14px;
@@ -370,13 +385,16 @@ document.addEventListener('DOMContentLoaded', function() {
     var calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'nb',
         timeZone: 'local',
-        initialView: 'dayGridMonth',
+        initialView: isMobile ? 'listMonth' : 'dayGridMonth',
         dayMaxEventRows: isMobile ? 2 : 4,
-        headerToolbar: {
-            left: 'title',
-            right: 'prev today next dayGridMonth,timeGridWeek,timeGridDay'
-        },
+        headerToolbar: isMobile
+            ? { left: 'prev today next', center: 'title', right: 'listMonth,dayGridMonth' }
+            : { left: 'title', right: 'prev today next dayGridMonth,timeGridWeek,timeGridDay' },
         dayHeaderFormat: { weekday: isMobile ? 'short' : 'long' },
+        views: {
+            listMonth: { buttonText: 'Liste' },
+            dayGridMonth: { buttonText: translations.month }
+        },
         allDayText: translations.allDay,
         buttonText: {
             today: translations.today,

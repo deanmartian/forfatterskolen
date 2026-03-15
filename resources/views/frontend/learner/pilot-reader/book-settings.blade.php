@@ -86,7 +86,7 @@
                     @else
                         @include('frontend.learner.pilot-reader.partials.reader-book-settings')
                     @endif
-                </div><!-- col-xs-offset-2 col-xs-8 margin-top -->
+                </div><!-- col-xs-offset-2 col-8 margin-top -->
 
             </div>
         </div>

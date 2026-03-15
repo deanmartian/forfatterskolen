@@ -17,7 +17,7 @@
             @endif
 
             <div class="row mt-3">
-                <div class="col-md-4 pull-right add-book-div">
+                <div class="col-md-4 float-end add-book-div">
                     <div class="form-group">
                         <div class="input-group-global">
                             <?php

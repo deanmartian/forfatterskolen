@@ -45,9 +45,14 @@
                                 <span class="user-badge">{{ $dProfile->badge }}</span>
                             @endif
                             <span class="text-muted">{{ \Carbon\Carbon::parse($discussion->created_at)->diffForHumans() }}</span>
-                            <span class="category-tag ml-2">{{ $discussion->category }}</span>
+                            <span class="category-tag ms-2">{{ $discussion->category }}</span>
                         </div>
                         <p class="post-content">{{ $discussion->content }}</p>
+                        @if($discussion->image_url)
+                            <div style="margin-top: 10px;">
+                                <img src="{{ $discussion->image_url }}" alt="Diskusjonsbilde" style="max-width: 100%; border-radius: 8px;">
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -90,7 +95,7 @@
                     <div class="form-group">
                         <textarea name="content" id="reply-textarea" class="form-control community-textarea" rows="3" placeholder="Del dine tanker..." required></textarea>
                         <div class="post-form-toolbar" style="justify-content: flex-start;">
-                            <div class="emoji-picker-wrapper" data-target="reply-textarea">
+                            <div class="emoji-picker-wrapper" data-bs-target="reply-textarea">
                                 <button type="button" class="emoji-toggle-btn btn-action" title="Emoji"><i class="fa fa-smile-o"></i></button>
                                 <div class="emoji-popup"><emoji-picker></emoji-picker></div>
                             </div>
