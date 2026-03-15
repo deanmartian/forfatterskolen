@@ -116,6 +116,16 @@ class HomeController extends Controller
             'upcomingSections'));
     }
 
+    public function arskurs(): View
+    {
+        $courseId = Settings::getByName('arskurs_course_id');
+        $course = $courseId ? Course::with('standardPackage', 'packagesIsShow')->find($courseId) : null;
+        $package = $course?->standardPackage ?? $course?->packagesIsShow?->first();
+        $testimonials = Testimonial::active()->where('testimony', 'not like', 'http%')->get();
+
+        return view('frontend.arskurs', compact('course', 'package', 'testimonials'));
+    }
+
     public function sampleAbout()
     {
         return view('frontend.about');

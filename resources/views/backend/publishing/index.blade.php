@@ -10,6 +10,9 @@
 	<div class="navbar-form navbar-right">
 		<div class="form-group">
 			<form role="search" method="get" action="">
+				@if(Request::input('tab'))
+					<input type="hidden" name="tab" value="{{ Request::input('tab') }}">
+				@endif
 				<div class="input-group">
 					<input type="text" class="form-control" name="search" placeholder="{{ trans('site.search-publisher-house') }}..">
 					<span class="input-group-btn">
@@ -67,37 +70,111 @@
 		Tinymce Images
 	</a>
 
-	<div class="table-users table-responsive">
-		<table class="table">
-			<thead>
-		    	<tr>
-			        <th>{{ trans('site.publishing') }}</th>
-			        <th>{{ trans('site.post-address') }}</th>
-			        <th>{{ trans('site.phone') }}</th>
-			        <th>{{ trans('site.genre') }}</th>
-					<th>{{ trans_choice('site.emails', 1) }}</th>
-		      	</tr>
-		    </thead>
+	<ul class="nav nav-tabs margin-top">
+		<li @if(Request::input('tab') == 'publishing' || Request::input('tab') == '') class="active" @endif>
+			<a href="?tab=publishing">Forlag</a>
+		</li>
+		<li @if(Request::input('tab') == 'testimonials') class="active" @endif>
+			<a href="?tab=testimonials">Testimonials</a>
+		</li>
+	</ul>
 
-		    <tbody>
-			@foreach($publishingHouses as $publishingHouse)
-				<tr>
-					<td>
-						<a href="{{ route('admin.publishing.edit', $publishingHouse->id) }}">{{ $publishingHouse->publishing }}</a>
-					</td>
-					<td>{{ $publishingHouse->mail_address }}</td>
-					<td>{{ $publishingHouse->phone }}</td>
-					<td>{{ $publishingHouse->genre ? \App\Http\FrontendHelpers::formatAssignmentType($publishingHouse->genre) : ''}}</td>
-					<td>{{ $publishingHouse->email }}</td>
-				</tr>
-			@endforeach
-		    </tbody>
-		</table>
+	<div class="tab-content">
+		<div class="tab-pane fade in active">
+			@if(Request::input('tab') == 'testimonials')
+
+				<div class="row margin-top">
+					<div class="col-sm-12">
+						<a class="btn btn-success" href="{{ route('admin.testimonial.create') }}">
+							<i class="fa fa-plus"></i> Add Testimonial
+						</a>
+					</div>
+				</div>
+
+				<div class="table-users table-responsive margin-top">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+								<th>Description</th>
+								<th width="500">Testimony</th>
+								<th>Image</th>
+								<th>Status</th>
+								<th width="100"></th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach($testimonials as $testimonial)
+								<tr>
+									<td>{{ $testimonial->id }}</td>
+									<td>{{ $testimonial->name }}</td>
+									<td>{{ $testimonial->description }}</td>
+									<td>{{ Str::limit($testimonial->testimony, 120) }}</td>
+									<td>
+										@if($testimonial->author_image)
+											<img src="{{ asset($testimonial->author_image) }}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:50%;">
+										@else
+											<span class="text-muted">—</span>
+										@endif
+									</td>
+									<td>
+										<span class="{{ $testimonial->status ? 'text-primary' : 'text-danger' }}">
+											{{ $testimonial->statusText }}
+										</span>
+									</td>
+									<td class="text-center">
+										<a href="{{ route('admin.testimonial.edit', $testimonial->id) }}" class="btn btn-xs btn-primary">
+											<i class="fa fa-pencil"></i>
+										</a>
+									</td>
+								</tr>
+							@endforeach
+						</tbody>
+					</table>
+				</div>
+
+				<div class="pull-right">
+					{{ $testimonials->appends(['tab' => 'testimonials'])->render() }}
+				</div>
+
+			@else
+
+				<div class="table-users table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>{{ trans('site.publishing') }}</th>
+								<th>{{ trans('site.post-address') }}</th>
+								<th>{{ trans('site.phone') }}</th>
+								<th>{{ trans('site.genre') }}</th>
+								<th>{{ trans_choice('site.emails', 1) }}</th>
+							</tr>
+						</thead>
+
+						<tbody>
+						@foreach($publishingHouses as $publishingHouse)
+							<tr>
+								<td>
+									<a href="{{ route('admin.publishing.edit', $publishingHouse->id) }}">{{ $publishingHouse->publishing }}</a>
+								</td>
+								<td>{{ $publishingHouse->mail_address }}</td>
+								<td>{{ $publishingHouse->phone }}</td>
+								<td>{{ $publishingHouse->genre ? \App\Http\FrontendHelpers::formatAssignmentType($publishingHouse->genre) : ''}}</td>
+								<td>{{ $publishingHouse->email }}</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+
+				<div class="pull-right">
+					{{ $publishingHouses->appends(['tab' => Request::input('tab', 'publishing')])->render() }}
+				</div>
+
+			@endif
+			<div class="clearfix"></div>
+		</div>
 	</div>
-	
-	<div class="pull-right">
-		{{ $publishingHouses->render() }}
-	</div>
-	<div class="clearfix"></div>
 </div>
 @stop
