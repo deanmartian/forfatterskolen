@@ -43,13 +43,35 @@ body:not(.modal-open) {
 
     #sidebar.sidebar-visible {
         display: block;
+        width: 280px;
+        z-index: 1001;
     }
 }
 
+/* Overstyr d-xl-none — match sidebar breakpoint 1026px */
 #sidebarCollapse {
     color: var(--white);
     background: none;
     border: none;
+    display: none !important;
+}
+
+@media only screen and (max-width: 1026px) {
+    #sidebarCollapse {
+        display: inline-block !important;
+    }
+}
+
+/* Bakgrunnsdekke når sidebar er åpen på mobil */
+body.sidebar-open::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1000;
 }
 
 #sidebar .navbar-brand {
@@ -1721,6 +1743,44 @@ body:not(.modal-open) {
 }
 
 @media only screen and (max-width: 768px) {
+    /* Topbar mobil-layout */
+    #topbar {
+        height: auto;
+        min-height: 60px;
+        padding: 8px 10px;
+        flex-wrap: wrap;
+    }
+
+    #topbar .col-md-6:first-child {
+        display: none;
+    }
+
+    #topbar .col-md-6:last-child {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Dashboard responsive */
+    #main-content {
+        padding: 10px;
+    }
+
+    .global-card {
+        margin-bottom: 15px;
+    }
+
+    .global-card .card-body {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .global-card .card-body table {
+        min-width: 500px;
+    }
+
     .learner-assignment .assignment-container .date-container .fa {
         font-size: 45px;
     }

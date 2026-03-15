@@ -167,12 +167,14 @@
     $("#sidebarCollapse").click(function () {
         sidebar.toggleClass("sidebar-visible");
         mainContainer.toggleClass("enlarge");
+        $("body").toggleClass("sidebar-open");
     });
 
     $("#main-content").click(function() {
         if (window.innerWidth <= 1026 && sidebar.hasClass("sidebar-visible")) {
             sidebar.removeClass("sidebar-visible");
             mainContainer.removeClass("enlarge");
+            $("body").removeClass("sidebar-open");
         }
     });
 
@@ -187,6 +189,7 @@
         if (windowWidth <= 1026) {
             sidebar.removeClass("sidebar-visible");
             mainContainer.removeClass("enlarge");
+            $("body").removeClass("sidebar-open");
         } else {
             sidebar.addClass("sidebar-visible");
             mainContainer.addClass("enlarge");
