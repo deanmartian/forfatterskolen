@@ -2283,10 +2283,40 @@ class LearnerController extends Controller
         $tab = $request->get('tab', 'epost');
         $emailId = $request->get('email_id', null);
 
-        $emailLogsQuery = EmailOutLog::where(function($q) use ($userId) {
-            $q->whereRaw("JSON_CONTAINS(learners, ?)", [(string)$userId])
-              ->orWhereRaw("JSON_CONTAINS(learners, ?)", ['"' . $userId . '"']);
-        })->whereNotNull('learners');
+        // Hent brukerens relaterte IDer for email_history
+        $user = Auth::user();
+        $learnerCoursesTaken = $user->coursesTaken->pluck('id');
+        $learnerInvoices = $user->invoices->pluck('id');
+        $registeredWebinars = $user->registeredWebinars->pluck('id');
+        $learnerAssignmentManuscripts = $user->assignmentManuscripts->pluck('id');
+
+        // Bygg email_history-query (samme logikk som admin-panelet)
+        $emailLogsQuery = DB::table('email_history')
+            ->select('id', 'subject', 'from_email as from_name', 'message', 'created_at')
+            ->whereNull('deleted_at')
+            ->where('created_at', '>=', '2025-01-01')
+            ->where(function ($outer) use ($learnerCoursesTaken, $learnerInvoices, $registeredWebinars, $learnerAssignmentManuscripts, $user) {
+                $outer->where(function ($q) use ($learnerCoursesTaken) {
+                    $q->where('parent', 'LIKE', 'courses-taken%')
+                      ->whereIn('parent_id', $learnerCoursesTaken);
+                })
+                ->orWhere(function ($q) use ($user) {
+                    $q->where('parent', '=', 'learner')
+                      ->where('parent_id', $user->id);
+                })
+                ->orWhere(function ($q) use ($learnerInvoices) {
+                    $q->where('parent', '=', 'invoice')
+                      ->whereIn('parent_id', $learnerInvoices);
+                })
+                ->orWhere(function ($q) use ($registeredWebinars) {
+                    $q->where('parent', '=', 'webinar-registrant')
+                      ->whereIn('parent_id', $registeredWebinars);
+                })
+                ->orWhere(function ($q) use ($learnerAssignmentManuscripts) {
+                    $q->where('parent', 'LIKE', 'assignment-manuscripts%')
+                      ->whereIn('parent_id', $learnerAssignmentManuscripts);
+                });
+            });
 
         if ($search) {
             $emailLogsQuery->where('subject', 'LIKE', '%' . $search . '%');
@@ -2318,18 +2348,41 @@ class LearnerController extends Controller
         $emailLogs = $emailLogsQuery->orderBy('created_at', 'desc')->paginate(10);
         $emailLogs->appends(['search' => $search, 'type' => $type, 'tab' => 'epost']);
 
-        $totalEmails = EmailOutLog::where(function($q) use ($userId) {
-            $q->whereRaw("JSON_CONTAINS(learners, ?)", [(string)$userId])
-              ->orWhereRaw("JSON_CONTAINS(learners, ?)", ['"' . $userId . '"']);
-        })->whereNotNull('learners')->count();
+        // Total e-poster (uten søk/filter)
+        $totalEmailsQuery = DB::table('email_history')
+            ->whereNull('deleted_at')
+            ->where('created_at', '>=', '2025-01-01')
+            ->where(function ($outer) use ($learnerCoursesTaken, $learnerInvoices, $registeredWebinars, $learnerAssignmentManuscripts, $user) {
+                $outer->where(function ($q) use ($learnerCoursesTaken) {
+                    $q->where('parent', 'LIKE', 'courses-taken%')
+                      ->whereIn('parent_id', $learnerCoursesTaken);
+                })
+                ->orWhere(function ($q) use ($user) {
+                    $q->where('parent', '=', 'learner')
+                      ->where('parent_id', $user->id);
+                })
+                ->orWhere(function ($q) use ($learnerInvoices) {
+                    $q->where('parent', '=', 'invoice')
+                      ->whereIn('parent_id', $learnerInvoices);
+                })
+                ->orWhere(function ($q) use ($registeredWebinars) {
+                    $q->where('parent', '=', 'webinar-registrant')
+                      ->whereIn('parent_id', $registeredWebinars);
+                })
+                ->orWhere(function ($q) use ($learnerAssignmentManuscripts) {
+                    $q->where('parent', 'LIKE', 'assignment-manuscripts%')
+                      ->whereIn('parent_id', $learnerAssignmentManuscripts);
+                });
+            });
+        $totalEmails = $totalEmailsQuery->count();
 
         $selectedEmail = null;
         if ($emailId) {
-            $selectedEmail = EmailOutLog::where('id', $emailId)
-                ->where(function($q) use ($userId) {
-                    $q->whereRaw("JSON_CONTAINS(learners, ?)", [(string)$userId])
-                      ->orWhereRaw("JSON_CONTAINS(learners, ?)", ['"' . $userId . '"']);
-                })->first();
+            $selectedEmail = DB::table('email_history')
+                ->select('id', 'subject', 'from_email as from_name', 'message', 'created_at')
+                ->where('id', $emailId)
+                ->whereNull('deleted_at')
+                ->first();
         }
 
         return view('frontend.learner.private-message', compact(
