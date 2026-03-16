@@ -521,11 +521,11 @@
         $priceLabel = 'Estimert pris';
     }
 
-    // Sjangerpåslag
-    $genre = $tempFile['genre'] ?? 'standard';
-    $genreMultiplier = match($genre) {
-        'novelle' => 1.3,
-        'lyrikk' => 1.5,
+    // Sjangerpåslag — beregnes fra genre_id, JS oppdaterer live
+    $selectedGenreId = (int) ($tempFile['genre_id'] ?? 0);
+    $genreMultiplier = match($selectedGenreId) {
+        17 => 1.3,  // Novelle +30%
+        10 => 1.5,  // Lyrikk +50%
         default => 1.0,
     };
     $genreSurcharge = round($basePrice * ($genreMultiplier - 1));
@@ -780,6 +780,33 @@
                     </div>
                 @endif
 
+                {{-- Sjanger --}}
+                <div style="margin-top: 0.85rem;">
+                    <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Sjanger</label>
+                    <select id="genreSelect" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-strong); border-radius: 6px; font-size: 0.825rem; font-family: var(--font-body); background: #fff; appearance: auto; color: var(--text-primary);">
+                        <option value="0" data-multiplier="1">Velg sjanger</option>
+                        @foreach($genres as $g)
+                            <option value="{{ $g->id }}"
+                                data-multiplier="{{ $g->id == 10 ? '1.5' : ($g->id == 17 ? '1.3' : '1') }}"
+                                {{ $selectedGenreId == $g->id ? 'selected' : '' }}>
+                                {{ $g->name }}@if($g->id == 10) (+50%)@elseif($g->id == 17) (+30%)@endif
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Synopsis (valgfritt) --}}
+                <div style="margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid rgba(0,0,0,0.06);">
+                    <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.25rem;">
+                        Kort beskrivelse av manuset <span style="font-weight: 400; color: var(--text-muted);">(valgfritt)</span>
+                    </label>
+                    <textarea id="synopsisText" rows="3" placeholder="Hva handler manuset om? Sjanger, målgruppe, hvor langt du har kommet..."
+                        style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-strong); border-radius: 6px; font-size: 0.8rem; font-family: var(--font-body); resize: vertical; color: var(--text-primary);"></textarea>
+                    <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.25rem;">
+                        Hjelper redaktøren å gi mer relevant tilbakemelding. Du kan også legge dette til senere.
+                    </div>
+                </div>
+
                 {{-- Coaching add-on --}}
                 <div class="coaching-addon">
                     <div class="coaching-addon__header">
@@ -827,12 +854,11 @@
                     <span class="order-row__value">kr {{ number_format($basePrice, 0, ',', ' ') }}</span>
                 </div>
 
-                @if($genreMultiplier > 1)
-                    <div class="order-row">
-                        <span class="order-row__label">Sjangerpåslag ({{ $genre === 'novelle' ? '+30%' : '+50%' }})</span>
-                        <span class="order-row__value">kr {{ number_format($genreSurcharge, 0, ',', ' ') }}</span>
-                    </div>
-                @endif
+                {{-- Sjangerpåslag (vises dynamisk av JS) --}}
+                <div class="order-row" id="genre-surcharge-row" style="{{ $genreMultiplier > 1 ? '' : 'display:none;' }}">
+                    <span class="order-row__label" id="genre-surcharge-label">Sjangerpåslag{{ $genreMultiplier > 1 ? ($selectedGenreId == 17 ? ' (+30%)' : ' (+50%)') : '' }}</span>
+                    <span class="order-row__value" id="genre-surcharge-value">kr {{ number_format($genreSurcharge, 0, ',', ' ') }}</span>
+                </div>
 
                 {{-- Coaching prisrad (vises dynamisk av JS) --}}
                 <div class="order-row" id="coaching-price-row" style="display:none;">
@@ -852,7 +878,8 @@
                             <input type="hidden" name="shop_manuscript_id" value="{{ $shopManuscript->id }}">
                             <input type="hidden" name="price" value="{{ $priceBeforeMva }}" id="hidden-price-mvafri">
                             <input type="hidden" name="additional" value="0" id="hidden-additional-mvafri">
-                            <input type="hidden" name="genre" value="{{ $tempFile['genre'] ?? 'standard' }}">
+                            <input type="hidden" name="genre" value="{{ $selectedGenreId }}" id="hidden-genre-mvafri">
+                            <input type="hidden" name="description" value="" id="hidden-description-mvafri">
                             <input type="hidden" name="payment_plan_id" value="8">
                             <input type="hidden" name="coaching_time_later" value="0" id="hidden-coaching-mvafri">
                             <input type="hidden" name="coaching_price" value="0" id="hidden-coaching-price-mvafri">
@@ -881,7 +908,8 @@
                             <input type="hidden" name="shop_manuscript_id" value="{{ $shopManuscript->id }}">
                             <input type="hidden" name="price" value="{{ $priceBeforeMva }}" id="hidden-price-mva">
                             <input type="hidden" name="additional" value="{{ $mva }}" id="hidden-additional-mva">
-                            <input type="hidden" name="genre" value="{{ $tempFile['genre'] ?? 'standard' }}">
+                            <input type="hidden" name="genre" value="{{ $selectedGenreId }}" id="hidden-genre-mva">
+                            <input type="hidden" name="description" value="" id="hidden-description-mva">
                             <input type="hidden" name="payment_plan_id" value="8">
                             <input type="hidden" name="coaching_time_later" value="0" id="hidden-coaching-mva">
                             <input type="hidden" name="coaching_price" value="0" id="hidden-coaching-price-mva">
@@ -930,23 +958,55 @@
         document.getElementById('checkout-panel-' + tabId).classList.add('active');
     }
 
-    // ── Coaching add-on: live prisoppdatering ──────────────
+    // ── Sjanger + coaching: live prisoppdatering ──────────────
     (function() {
-        var coachingPrices = { '30': 1071, '60': 1521 };
-        var baseManusPris = {{ $priceBeforeMva }};
+        var basePrice = {{ $basePrice }};
         var isMvaFree = {{ $isMvaFree ? 'true' : 'false' }};
+        var coachingPrices = { '30': 1071, '60': 1521 };
 
         function formatKr(n) {
             return 'kr ' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
         }
 
-        function updateCoachingTotal() {
+        function getGenreMultiplier() {
+            var sel = document.getElementById('genreSelect');
+            if (!sel) return 1;
+            return parseFloat(sel.options[sel.selectedIndex].dataset.multiplier) || 1;
+        }
+
+        function getGenreId() {
+            var sel = document.getElementById('genreSelect');
+            return sel ? sel.value : '0';
+        }
+
+        function updateOrderTotal() {
+            // ── Sjanger ──
+            var multiplier = getGenreMultiplier();
+            var genreSurcharge = Math.round(basePrice * (multiplier - 1));
+            var priceBeforeMva = Math.round(basePrice * multiplier);
+            var genreId = getGenreId();
+
+            // Vis/skjul sjangerpåslag-rad
+            var surchargeRow = document.getElementById('genre-surcharge-row');
+            if (surchargeRow) {
+                surchargeRow.style.display = multiplier > 1 ? '' : 'none';
+            }
+            var surchargeLabel = document.getElementById('genre-surcharge-label');
+            if (surchargeLabel && multiplier > 1) {
+                var pct = Math.round((multiplier - 1) * 100);
+                surchargeLabel.textContent = 'Sjangerpåslag (+' + pct + '%)';
+            }
+            var surchargeValue = document.getElementById('genre-surcharge-value');
+            if (surchargeValue) {
+                surchargeValue.textContent = formatKr(genreSurcharge);
+            }
+
+            // ── Coaching ──
             var selected = document.querySelector('input[name="coaching"]:checked');
             var coachingVal = selected ? selected.value : '';
             var coachingPrice = coachingPrices[coachingVal] || 0;
             var coachingDuration = coachingVal || '0';
 
-            // Vis/skjul coaching-prisraden
             var coachingRow = document.getElementById('coaching-price-row');
             if (coachingRow) {
                 coachingRow.style.display = coachingPrice > 0 ? '' : 'none';
@@ -960,31 +1020,30 @@
                 priceDisplay.textContent = coachingPrice > 0 ? formatKr(coachingPrice) : '';
             }
 
-            // Beregn nye totaler
-            var newPriceExMva = baseManusPris + coachingPrice;
-            var newMva = isMvaFree ? 0 : Math.round(newPriceExMva * 0.25);
-            var newTotal = newPriceExMva + newMva;
+            // ── Synopsis ──
+            var synopsisText = document.getElementById('synopsisText');
+            var synopsisVal = synopsisText ? synopsisText.value : '';
 
-            // Oppdater totalverdier
+            // ── Totaler ──
+            var totalExMva = priceBeforeMva + coachingPrice;
+            var newMva = isMvaFree ? 0 : Math.round(totalExMva * 0.25);
+            var newTotal = totalExMva + newMva;
+
             if (isMvaFree) {
-                // Mva-fri elev
                 var totalEl = document.getElementById('order-total-price');
-                if (totalEl) totalEl.textContent = formatKr(newPriceExMva);
+                if (totalEl) totalEl.textContent = formatKr(totalExMva);
 
                 var btnMvafri = document.getElementById('order-btn-mvafri');
-                if (btnMvafri) btnMvafri.innerHTML = 'Bestill og betal ' + formatKr(newPriceExMva) + ' &rarr;';
+                if (btnMvafri) btnMvafri.innerHTML = 'Bestill og betal ' + formatKr(totalExMva) + ' &rarr;';
 
                 // Hidden fields — mva-fri form
-                var hPrice = document.getElementById('hidden-price-mvafri');
-                if (hPrice) hPrice.value = newPriceExMva;
-
-                var hCoaching = document.getElementById('hidden-coaching-mvafri');
-                if (hCoaching) hCoaching.value = coachingDuration;
-
-                var hCoachingPrice = document.getElementById('hidden-coaching-price-mvafri');
-                if (hCoachingPrice) hCoachingPrice.value = coachingPrice;
+                var el = function(id) { return document.getElementById(id); };
+                if (el('hidden-price-mvafri')) el('hidden-price-mvafri').value = totalExMva;
+                if (el('hidden-genre-mvafri')) el('hidden-genre-mvafri').value = genreId;
+                if (el('hidden-description-mvafri')) el('hidden-description-mvafri').value = synopsisVal;
+                if (el('hidden-coaching-mvafri')) el('hidden-coaching-mvafri').value = coachingDuration;
+                if (el('hidden-coaching-price-mvafri')) el('hidden-coaching-price-mvafri').value = coachingPrice;
             } else {
-                // Med mva
                 var mvaVal = document.getElementById('mva-value');
                 if (mvaVal) mvaVal.textContent = formatKr(newMva);
 
@@ -995,23 +1054,33 @@
                 if (btnMva) btnMva.innerHTML = 'Bestill og betal ' + formatKr(newTotal) + ' &rarr;';
 
                 // Hidden fields — mva form
-                var hPrice = document.getElementById('hidden-price-mva');
-                if (hPrice) hPrice.value = newPriceExMva;
-
-                var hAdditional = document.getElementById('hidden-additional-mva');
-                if (hAdditional) hAdditional.value = newMva;
-
-                var hCoaching = document.getElementById('hidden-coaching-mva');
-                if (hCoaching) hCoaching.value = coachingDuration;
-
-                var hCoachingPrice = document.getElementById('hidden-coaching-price-mva');
-                if (hCoachingPrice) hCoachingPrice.value = coachingPrice;
+                var el = function(id) { return document.getElementById(id); };
+                if (el('hidden-price-mva')) el('hidden-price-mva').value = totalExMva;
+                if (el('hidden-additional-mva')) el('hidden-additional-mva').value = newMva;
+                if (el('hidden-genre-mva')) el('hidden-genre-mva').value = genreId;
+                if (el('hidden-description-mva')) el('hidden-description-mva').value = synopsisVal;
+                if (el('hidden-coaching-mva')) el('hidden-coaching-mva').value = coachingDuration;
+                if (el('hidden-coaching-price-mva')) el('hidden-coaching-price-mva').value = coachingPrice;
             }
         }
 
-        // Lytt på coaching-radioknapper
+        // Lytt på sjanger, coaching og synopsis
+        var genreSelect = document.getElementById('genreSelect');
+        if (genreSelect) genreSelect.addEventListener('change', updateOrderTotal);
+
         document.querySelectorAll('input[name="coaching"]').forEach(function(radio) {
-            radio.addEventListener('change', updateCoachingTotal);
+            radio.addEventListener('change', updateOrderTotal);
+        });
+
+        // Synopsis: oppdater hidden fields ved submit (ikke ved hvert tastetrykk)
+        var forms = document.querySelectorAll('#order-form-mvafri, #order-form-mva');
+        forms.forEach(function(form) {
+            form.addEventListener('submit', function() {
+                var synopsisText = document.getElementById('synopsisText');
+                var val = synopsisText ? synopsisText.value : '';
+                var hDesc = form.querySelector('input[name="description"]');
+                if (hDesc) hDesc.value = val;
+            });
         });
     })();
 </script>

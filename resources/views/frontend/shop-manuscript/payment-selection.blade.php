@@ -440,7 +440,7 @@
             <div class="order-summary__body">
                 <div class="order-summary__product">
                     <div class="order-summary__product-name">{{ $shopManuscript->title }}</div>
-                    <div class="order-summary__product-desc">Profesjonell manusutvikling med redaktør</div>
+                    <div class="order-summary__product-desc">Profesjonell manusutvikling med redaktør{{ $genreName ? ' · ' . $genreName : '' }}</div>
                 </div>
 
                 <div class="order-row">
