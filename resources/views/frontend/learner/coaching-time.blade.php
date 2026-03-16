@@ -1,64 +1,370 @@
 @extends('frontend.layouts.course-portal')
 
 @section('title')
-    <title>Coaching Time &rsaquo; Forfatterskolen</title>
+    <title>Coaching &rsaquo; Forfatterskolen</title>
 @endsection
 
 @section('styles')
 <style>
-    .avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: #f5f5f5;
-        line-height: 50px;
-        margin: 0 auto 10px;
-        font-size: 24px;
+    /* ── STATS ROW ────────────────────────────────────── */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.75rem;
     }
 
-    .stats-card {
+    .stat-card {
         background: #fff;
-        border-radius: 4px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        padding: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        padding: 1rem;
         text-align: center;
     }
 
-    .stats-card h2 {
-        margin: 0;
-        font-size: 36px;
+    .stat-card__number {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        line-height: 1;
+        margin-bottom: 0.25rem;
     }
 
-    .stats-card p {
-        margin: 0;
-        font-weight: bold;
+    .stat-card__number--wine { color: #862736; }
+    .stat-card__number--green { color: #2e7d32; }
+
+    .stat-card__label {
+        font-size: 0.72rem;
+        font-weight: 500;
+        color: #8a8580;
+    }
+
+    /* ── CARD ─────────────────────────────────────────── */
+    .coaching-card {
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 14px;
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+    }
+
+    .coaching-card__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.25rem 1.5rem 0.75rem;
+    }
+
+    .coaching-card__title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+
+    .coaching-card__desc {
+        font-size: 0.8rem;
+        color: #8a8580;
+    }
+
+    .coaching-card__body {
+        padding: 0 1.5rem 1.5rem;
+    }
+
+    /* ── SECTION LABEL ────────────────────────────────── */
+    .section-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 1.5px;
         text-transform: uppercase;
-        font-size: 12px;
+        color: #8a8580;
+        margin-bottom: 0.75rem;
     }
 
-    .black-btn {
-        width: 100%;
-        border: 1px solid #e4e4e7;
-        background: #ffffff;
-        border-radius: 5px;
-        color: #000000;
+    /* ── NEXT SESSION CARD ────────────────────────────── */
+    .next-session {
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-left: 3px solid #862736;
+        border-radius: 14px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
     }
 
-    .black-btn:hover {
-        background: #000000;
-        color: #ffffff;
+    .next-session__icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: #f4e8ea;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .next-session__icon svg { width: 24px; height: 24px; }
+
+    .next-session__info { flex: 1; }
+
+    .next-session__label {
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #8a8580;
+        margin-bottom: 0.2rem;
+    }
+
+    .next-session__title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 0.1rem;
+    }
+
+    .next-session__meta {
+        font-size: 0.8rem;
+        color: #8a8580;
+    }
+
+    .next-session__action {
+        flex-shrink: 0;
+    }
+
+    /* ── EDITOR CARDS ─────────────────────────────────── */
+    .editor-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .editor-card {
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        padding: 1.25rem;
+        text-align: center;
+        transition: border-color 0.15s;
+    }
+
+    .editor-card:hover { border-color: rgba(0, 0, 0, 0.12); }
+
+    .editor-card__avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #f4e8ea;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.75rem;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #862736;
+    }
+
+    .editor-card__name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 0.15rem;
+    }
+
+    .editor-card__specialty {
+        font-size: 0.75rem;
+        color: #8a8580;
+        margin-bottom: 0.75rem;
+    }
+
+    .editor-card__availability {
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.2rem 0.55rem;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .editor-card__availability--available { background: #e8f5e9; color: #2e7d32; }
+    .editor-card__availability--busy { background: #fff3e0; color: #e65100; }
+
+    /* ── SESSION LIST ─────────────────────────────────── */
+    .session-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .session-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.85rem 1rem;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        transition: border-color 0.15s;
+    }
+
+    .session-item:hover { border-color: rgba(0, 0, 0, 0.12); }
+
+    .session-item__date {
+        text-align: center;
+        min-width: 42px;
+        flex-shrink: 0;
+    }
+
+    .session-item__day {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #862736;
+        line-height: 1;
+    }
+
+    .session-item__month {
+        font-size: 0.6rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #862736;
+        margin-top: 2px;
+    }
+
+    .session-item__info { flex: 1; }
+
+    .session-item__title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 0.1rem;
+    }
+
+    .session-item__meta {
+        font-size: 0.75rem;
+        color: #8a8580;
+    }
+
+    .session-item__badge {
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 0.2rem 0.55rem;
+        border-radius: 4px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .session-item__badge--completed { background: #e8f5e9; color: #2e7d32; }
+    .session-item__badge--upcoming { background: #e3f2fd; color: #1565c0; }
+
+    /* ── BOOKING SECTION ──────────────────────────────── */
+    .booking-card {
+        background: #faf8f5;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 14px;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .booking-card__title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 0.35rem;
+    }
+
+    .booking-card__desc {
+        font-size: 0.85rem;
+        color: #5a5550;
+        margin-bottom: 1.25rem;
+        max-width: 480px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+    }
+
+    /* ── EMPTY STATE ──────────────────────────────────── */
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #8a8580;
+        font-size: 0.875rem;
+    }
+
+    /* ── BUTTONS ──────────────────────────────────────── */
+    .btn-coaching {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.55rem 1.15rem;
+        border-radius: 6px;
+        font-size: 0.825rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        transition: all 0.15s;
+    }
+
+    .btn-coaching--primary { background: #862736; color: #fff; }
+    .btn-coaching--primary:hover { background: #9c2e40; color: #fff; text-decoration: none; }
+
+    .btn-coaching--secondary {
+        background: transparent;
+        color: #5a5550;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+    .btn-coaching--secondary:hover { border-color: #862736; color: #862736; text-decoration: none; }
+
+    .btn-coaching--outline {
+        background: transparent;
+        color: #862736;
+        border: 1px solid #862736;
+    }
+    .btn-coaching--outline:hover { background: #862736; color: #fff; text-decoration: none; }
+
+    /* ── ADD COACHING BTN ─────────────────────────────── */
+    .add-coaching-btn {
+        margin-bottom: 1rem;
+        text-align: right;
+    }
+
+    /* ── BOOKING FORM ─────────────────────────────────── */
+    .booking-card .form-group { margin-top: 1rem; }
+    .booking-card .form-group label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #5a5550;
+        margin-bottom: 0.35rem;
+        display: block;
+    }
+    .booking-card .form-control {
+        max-width: 360px;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 600px) {
+        .stats-row { grid-template-columns: repeat(2, 1fr); }
+        .editor-grid { grid-template-columns: 1fr; }
+        .next-session { flex-direction: column; align-items: flex-start; }
+        .session-item { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
     }
 </style>
 @stop
 
 @section('content')
 <div class="learner-container coaching-time-wrapper">
-    <div class="container">
-        {{-- <p style="color: red; font-weight:bold">Vennligst ikke bruk denne coaching funksjonen ennå.</p> --}}
-        <h1 class="page-title">
-            {{ trans('site.coaching-timer-text') }}
-        </h1>
+    <div class="container" style="max-width: 880px;">
 
+        {{-- ═══════ PAGE HEADER ═══════ --}}
+        <div style="margin-bottom: 1.5rem;">
+            <h1 class="page-title" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem;">
+                {{ trans('site.coaching-timer-text') }}
+            </h1>
+            <p style="font-size: 0.875rem; color: #5a5550; margin: 0;">
+                Book en-til-en-timer med våre redaktører for personlig veiledning på manuset ditt.
+            </p>
+        </div>
+
+        {{-- ═══════ INLINE PHP: check coaching eligibility ═══════ --}}
         <?php
             $packages = \App\Package::where('has_coaching', '>', 0)->pluck('id');
             $coachingTimerTaken = Auth::user()->coachingTimersTaken()->pluck('course_taken_id');
@@ -66,19 +372,21 @@
                 ->whereNotIn('id', $coachingTimerTaken)->get();
         ?>
 
+        {{-- ═══════ ADD COACHING SESSION BUTTON ═══════ --}}
         @if($checkCourseTakenWithCoaching->count())
-            <div class="text-end mb-3">
-                <button class="btn blue-outline-btn"
+            <div class="add-coaching-btn">
+                <button class="btn-coaching btn-coaching--outline"
                         data-bs-toggle="modal"
                         data-bs-target="#addCoachingSessionModal"
                         data-action="{{ route('learner.course-taken.coaching-timer.add') }}"
                         id="addCoachingSessionBtn">
                     {{ trans('site.learner.add-coaching-lesson') }}
-                    <i class="fa fa-plus"></i>
+                    <i class="fa fa-plus" style="margin-left: 0.25rem;"></i>
                 </button>
             </div>
         @endif
 
+        {{-- ═══════ SUCCESS ALERT ═══════ --}}
         @if(session('success'))
             <div class="alert alert-success">
                 <a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
@@ -86,175 +394,206 @@
             </div>
         @endif
 
+        {{-- ═══════ COMPUTE STATS ═══════ --}}
         @php
             $availableSlots = $editors->reduce(function ($carry, $group) {
                 return $carry + $group->count();
             }, 0);
             $nextSession = $bookedSessions->first();
+
+            // Compute next session date label
+            $nextDateLabel = '–';
+            $nextTimeMeta = '';
+            if ($nextSession) {
+                $nextDate = \Carbon\Carbon::parse(
+                    $nextSession->timeSlot->date.' '.$nextSession->timeSlot->start_time,
+                    'UTC'
+                )->setTimezone(config('app.timezone'));
+                if ($nextDate->isToday()) {
+                    $nextDateLabel = 'I dag';
+                } elseif ($nextDate->isTomorrow()) {
+                    $nextDateLabel = 'I morgen';
+                } elseif ($nextDate->isSameWeek(\Carbon\Carbon::now(config('app.timezone')))) {
+                    $nextDateLabel = ucfirst($nextDate->locale(app()->getLocale())->dayName);
+                } else {
+                    $nextDateLabel = $nextDate->format('d.m');
+                }
+                $nextTimeMeta = $nextDate->format('d.m.Y') . ' kl. ' . $nextDate->format('H:i');
+            }
         @endphp
 
-        <div class="row mb-5">
-            <div class="col-sm-3">
-                <div class="stats-card text-center">
-                    <p>{{ trans('site.coaching-time-my-editors') }}</p>
-                    <h2>{{ $bookedEditorsCount }}</h2>
-                </div>
+        {{-- ═══════ STATS ROW ═══════ --}}
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-card__number">{{ $bookedEditorsCount }}</div>
+                <div class="stat-card__label">{{ trans('site.coaching-time-my-editors') }}</div>
             </div>
-            <div class="col-sm-3">
-                <div class="stats-card">
-                    <p>{{ trans('site.coaching-time-next-editorial') }}</p>
-                    @if($nextSession)
-                        @php
-                            $date = \Carbon\Carbon::parse(
-                                $nextSession->timeSlot->date.' '.$nextSession->timeSlot->start_time,
-                                'UTC'
-                            )->setTimezone(config('app.timezone'));
-                            if ($date->isToday()) {
-                                $dateLabel = 'I dag';
-                            } elseif ($date->isTomorrow()) {
-                                $dateLabel = 'I morgen';
-                            } elseif ($date->isSameWeek(\Carbon\Carbon::now(config('app.timezone')))) {
-                                $dateLabel = ucfirst($date->locale(app()->getLocale())->dayName);
-                            } else {
-                                $dateLabel = $date->format('d.m.Y');
-                            }
-                        @endphp
-                        <h2 style="font-size: 24px">
-                            {{ $dateLabel }} 
-                        </h2>
-                        <p class="text-secondary">
-                            {{ $date->format('H:i') }} - {{ optional($nextSession->editor)->full_name }}
-                        </p>
-                    @else
-                        <h2>-</h2>
-                    @endif
-                </div>
+            <div class="stat-card">
+                <div class="stat-card__number">{{ $nextDateLabel }}</div>
+                <div class="stat-card__label">{{ trans('site.coaching-time-next-editorial') }}</div>
             </div>
-            <div class="col-sm-3">
-                <div class="stats-card">
-                    <p>{{ trans('site.coaching-time-this-month') }}</p>
-                    <h2>{{ $bookedSessionsThisMonth }}</h2>
-                </div>
+            <div class="stat-card">
+                <div class="stat-card__number">{{ $bookedSessionsThisMonth }}</div>
+                <div class="stat-card__label">{{ trans('site.coaching-time-this-month') }}</div>
             </div>
-            <div class="col-sm-3">
-                <div class="stats-card">
-                    <p>{{ trans('site.coaching-time-available-slots') }}</p>
-                    <h2>{{ $availableSlots }}</h2>
-                </div>
+            <div class="stat-card">
+                <div class="stat-card__number stat-card__number--green">{{ $availableSlots }}</div>
+                <div class="stat-card__label">{{ trans('site.coaching-time-available-slots') }}</div>
             </div>
         </div>
 
-        <div class="row mb-5">
-            <div class="col-md-6">
-                <div class="stats-card text-start">
-                    <h3>{{ trans('site.coaching-time-book-editorial-class') }}</h3>
-                    <span>{{ trans('site.coaching-time-book-editorial-class-description') }}</span>
-                    
-                    @if($coachingTimers->count() >= 1)
-                        <form method="GET" action="{{ route('learner.coaching-time.available') }}">
-                            @if($coachingTimers->count() > 1)
-                                <div class="form-group mt-3">
-                                    <label for="coaching_timer_id">
-                                        {{ trans('site.learner.coaching-time') }}
-                                    </label>
-                                    <select name="coaching_timer_id" id="coaching_timer_id" class="form-control">
-                                        @foreach($coachingTimers as $timer)
-                                            <option value="{{ $timer->id }}">
-                                                {{ trans('site.learner.coaching-time') }} - 
-                                                {{ FrontendHelpers::getCoachingTimerPlanType($timer->plan_type) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            @else
-                                <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimers->first()->id }}">
-                            @endif
-                            <button type="submit" class="btn black-btn mt-4">
-                                {{ trans('site.coaching-time-see-available-slots') }}
-                            </button>
-                        </form>
-                    @else
-                        <p class="mt-4">{{ trans('site.coaching-time-no-record') }}</p>
-                    @endif
+        {{-- ═══════ NEXT SESSION (if booked) ═══════ --}}
+        @if($nextSession)
+            <div class="next-session">
+                <div class="next-session__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="next-session__info">
+                    <div class="next-session__label">Neste coaching-time</div>
+                    <div class="next-session__title">Med {{ optional($nextSession->editor)->full_name }}</div>
+                    <div class="next-session__meta">{{ $nextTimeMeta }}</div>
+                </div>
+                <div class="next-session__action">
+                    <a href="{{ route('learner.coaching-time.available') }}" class="btn-coaching btn-coaching--primary">Se ledige tider →</a>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="stats-card text-start">
-                    <h3>{{ trans('site.coaching-time-my-sessions') }}</h3>
-                    @if($bookedSessions->isEmpty())
-                        <span>{{ trans('site.coaching-time-no-upcoming-sessions') }}</span>
+        @endif
+
+        {{-- ═══════ AVAILABLE EDITORS ═══════ --}}
+        @if($editors->count())
+            <div class="coaching-card">
+                <div class="coaching-card__header">
+                    <div>
+                        <div class="coaching-card__title">{{ trans('site.coaching-time-available-book-editors') }}</div>
+                        <div class="coaching-card__desc">Velg en redaktør å booke time med.</div>
+                    </div>
+                </div>
+                <div class="coaching-card__body">
+                    <div class="editor-grid">
+                        @foreach($editors as $editorSlots)
+                            @php $editor = $editorSlots->first()->editor; @endphp
+                            <div class="editor-card">
+                                <div class="editor-card__avatar">
+                                    {{ substr($editor->first_name, 0, 1) . substr($editor->last_name, 0, 1) }}
+                                </div>
+                                <div class="editor-card__name">{{ $editor->full_name }}</div>
+                                <div class="editor-card__specialty">&nbsp;</div>
+                                @if($editorSlots->count() > 0)
+                                    <span class="editor-card__availability editor-card__availability--available">
+                                        {{ $editorSlots->count() }} ledige tider
+                                    </span>
+                                @else
+                                    <span class="editor-card__availability editor-card__availability--busy">
+                                        Fullt booket
+                                    </span>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- ═══════ BOOK COACHING TIME CTA ═══════ --}}
+        <div class="booking-card">
+            <div class="booking-card__title">{{ trans('site.coaching-time-book-editorial-class') }}</div>
+            <div class="booking-card__desc">{{ trans('site.coaching-time-book-editorial-class-description') }}</div>
+
+            @if($coachingTimers->count() >= 1)
+                <form method="GET" action="{{ route('learner.coaching-time.available') }}">
+                    @if($coachingTimers->count() > 1)
+                        <div class="form-group">
+                            <label for="coaching_timer_id">
+                                {{ trans('site.learner.coaching-time') }}
+                            </label>
+                            <select name="coaching_timer_id" id="coaching_timer_id" class="form-control">
+                                @foreach($coachingTimers as $timer)
+                                    <option value="{{ $timer->id }}">
+                                        {{ trans('site.learner.coaching-time') }} -
+                                        {{ FrontendHelpers::getCoachingTimerPlanType($timer->plan_type) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     @else
-                        <ul id="sessions-list" class="list-unstyled mb-0">
+                        <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimers->first()->id }}">
+                    @endif
+                    <button type="submit" class="btn-coaching btn-coaching--primary" style="margin-top: 1rem;">
+                        {{ trans('site.coaching-time-see-available-slots') }}
+                    </button>
+                </form>
+            @else
+                <p style="color: #8a8580; font-size: 0.875rem; margin-top: 0.5rem;">{{ trans('site.coaching-time-no-record') }}</p>
+            @endif
+        </div>
+
+        {{-- ═══════ MY SESSIONS ═══════ --}}
+        <div style="margin-top: 2rem;">
+            <div class="section-label">{{ trans('site.coaching-time-my-sessions') }}</div>
+
+            <div class="coaching-card">
+                <div class="coaching-card__body" style="padding-top: 1.5rem;">
+                    @if($bookedSessions->isEmpty())
+                        <div class="empty-state">
+                            {{ trans('site.coaching-time-no-upcoming-sessions') }}
+                        </div>
+                    @else
+                        <div class="session-list">
                             @foreach($bookedSessions as $session)
                                 @php
-                                    $date = \Carbon\Carbon::parse(
+                                    $sessionDate = \Carbon\Carbon::parse(
                                         $session->timeSlot->date.' '.$session->timeSlot->start_time,
                                         'UTC'
                                     )->setTimezone(config('app.timezone'));
-                                    if ($date->isToday()) {
-                                        $dateLabel = 'I dag';
-                                    } elseif ($date->isTomorrow()) {
-                                        $dateLabel = 'I morgen';
-                                    } elseif ($date->isSameWeek(\Carbon\Carbon::now(config('app.timezone')))) {
-                                        $dateLabel = ucfirst($date->locale(app()->getLocale())->dayName);
+
+                                    if ($sessionDate->isToday()) {
+                                        $sessionDateLabel = 'I dag';
+                                    } elseif ($sessionDate->isTomorrow()) {
+                                        $sessionDateLabel = 'I morgen';
+                                    } elseif ($sessionDate->isSameWeek(\Carbon\Carbon::now(config('app.timezone')))) {
+                                        $sessionDateLabel = ucfirst($sessionDate->locale(app()->getLocale())->dayName);
                                     } else {
-                                        $dateLabel = $date->format('d.m.Y');
+                                        $sessionDateLabel = $sessionDate->format('d.m.Y');
                                     }
                                     $duration = $session->plan_type == 1 ? '60 min' : '30 min';
+
+                                    $norwegianMonths = ['jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des'];
+                                    $monthShort = $norwegianMonths[$sessionDate->month - 1];
                                 @endphp
-                                <li class="mb-3 {{ $loop->iteration > 2 ? 'd-none extra-session' : '' }}">
-                                    <div>{{ $dateLabel }} {{ $date->format('H:i') }}</div>
-                                    <div>{{ $duration }} med {{ optional($session->editor)->full_name }}</div>
-                                </li>
+                                <div class="session-item {{ $loop->iteration > 2 ? 'd-none extra-session' : '' }}">
+                                    <div class="session-item__date">
+                                        <div class="session-item__day">{{ $sessionDate->format('d') }}</div>
+                                        <div class="session-item__month">{{ $monthShort }}</div>
+                                    </div>
+                                    <div class="session-item__info">
+                                        <div class="session-item__title">Med {{ optional($session->editor)->full_name }}</div>
+                                        <div class="session-item__meta">Kl. {{ $sessionDate->format('H:i') }} · {{ $duration }}</div>
+                                    </div>
+                                    @if($sessionDate->isPast())
+                                        <span class="session-item__badge session-item__badge--completed">Gjennomført</span>
+                                    @else
+                                        <span class="session-item__badge session-item__badge--upcoming">Kommende</span>
+                                    @endif
+                                </div>
                             @endforeach
-                        </ul>
+                        </div>
+
                         @if($bookedSessions->count() > 2)
-                            <button id="toggle-sessions" class="btn black-btn mt-3" data-showing="false">
-                                {{ trans('site.coaching-time-see-all-sessions') }}
-                            </button>
+                            <div style="text-align: center; margin-top: 1rem;">
+                                <button id="toggle-sessions" class="btn-coaching btn-coaching--secondary" data-showing="false">
+                                    {{ trans('site.coaching-time-see-all-sessions') }}
+                                </button>
+                            </div>
                         @endif
                     @endif
                 </div>
             </div>
         </div>
 
-        <h3>{{ trans('site.coaching-time-available-book-editors') }}</h3>
-        <div class="row">
-            @foreach($editors as $editorSlots)
-                <div class="col-sm-3">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="media align-items-center">
-                                <div class="media-left">
-                                    <div class="avatar text-center">
-                                        {{ substr($editorSlots->first()->editor->first_name, 0, 1) .''. 
-                                            substr($editorSlots->first()->editor->last_name, 0, 1) }}
-                                    </div>
-                                </div>
-                                <div class="media-body">
-                                    <p class="media-heading" style="margin:0;">
-                                        {{ $editorSlots->first()->editor->full_name }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-
-
-        {{-- <h3>Hurtighandlinger</h3>
-        <div class="row">
-            <div class="col-sm-3"><button class="btn btn-light btn-block">Endre Tidspunkt</button></div>
-            <div class="col-sm-3"><button class="btn btn-light btn-block">Avbryt Booking</button></div>
-            <div class="col-sm-3"><button class="btn btn-light btn-block">Kontakt Redaktør</button></div>
-            <div class="col-sm-3"><button class="btn btn-light btn-block">&nbsp;</button></div>
-        </div> --}}
-
     </div>
 </div>
 
+{{-- ═══════ ADD COACHING SESSION MODAL ═══════ --}}
 <div id="addCoachingSessionModal" class="modal fade" role="dialog" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -303,9 +642,8 @@
 <script>
     let translations = {
         pleaseWait : "{{ trans('site.please-wait') }}"
-               
     };
-    
+
     document.addEventListener('DOMContentLoaded', function () {
         var toggle = document.getElementById('toggle-sessions');
         if (!toggle) {
@@ -318,7 +656,7 @@
                 item.classList.toggle('d-none');
             });
             toggle.setAttribute('data-showing', showing ? 'false' : 'true');
-            toggle.textContent = showing ? 'Se Alle Sesjoner' : 'Skjul Sesjoner';
+            toggle.textContent = showing ? '{{ trans('site.coaching-time-see-all-sessions') }}' : 'Skjul timer';
         });
     });
 
