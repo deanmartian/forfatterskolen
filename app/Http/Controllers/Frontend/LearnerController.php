@@ -2373,35 +2373,10 @@ class LearnerController extends Controller
             $order->save();
         }
 
-        $assignments = [];
-        $coursesTaken = Auth::user()->coursesTaken;
-        $today = Carbon::now();
-
-        $addOns = AssignmentAddon::where('user_id', \Auth::user()->id)->pluck('assignment_id')->toArray();
-
-        foreach ($coursesTaken as $course) {
-            foreach ($course->package->course->assignments as $assignment) {
-
-                $allowed_package = json_decode($assignment->allowed_package);
-                $package_id = $course->package->id;
-                $submission_date = \App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date) ?
-                    Carbon::parse($assignment->submission_date) : Carbon::parse($course->started_at)
-                        ->addDays((int) $assignment->submission_date);
-                // $submission_date =  Carbon::parse($assignment->submission_date);
-
-                // check if the assignment is allowed on the learners package and the submission date is in future
-                // or there's no set package allowed and the submission date is in future
-                if ((! is_null($allowed_package) && ! in_array($package_id, $allowed_package) && $today->lt($submission_date) 
-                    && ! in_array($assignment->id, $addOns))
-                    || (is_null($allowed_package) && $today->lt($submission_date) && ! in_array($assignment->id, $addOns))) {
-                    $assignments[] = $assignment;
-                }
-            }
-        }
-
         $user = Auth::user();
 
         $coursesTaken = CoursesTaken::where('user_id', $user->id)
+            ->where('is_free', 0)
             ->whereDoesntHave('package.course', function ($query) {
                 $query->where('id', 17); // Exclude course with ID 17
             })
@@ -2416,7 +2391,7 @@ class LearnerController extends Controller
                 ->get();
         });
 
-        return view('frontend.learner.upgrade', compact('assignments', 'coursesTaken'));
+        return view('frontend.learner.upgrade', compact('coursesTaken'));
     }
 
     public function takeCourse(Request $request): RedirectResponse
