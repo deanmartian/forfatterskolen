@@ -37,21 +37,31 @@
     padding: 2rem 2.5rem;
     background: #f5f3f0;
     min-height: 100vh;
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 /* Hide topbar on dashboard — its content is integrated into the dashboard */
 #topbar { display: none !important; }
-#main-content { padding-top: 0 !important; margin-top: 0 !important; }
+#main-content { padding-top: 0 !important; margin-top: 0 !important; overflow-x: hidden !important; max-width: 100vw; }
+#main-container { overflow-x: hidden !important; }
 
-/* Mobile sidebar toggle — reposition since topbar is hidden */
-@media (max-width: 1025px) {
-    .db-redesign .db-mobile-toggle {
-        position: fixed; top: 0.75rem; right: 0.75rem; z-index: 100;
-        background: white; border: 1px solid var(--db-border-strong);
-        border-radius: 8px; padding: 0.5rem 0.75rem; cursor: pointer;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+/* Sidebar toggle — alltid synlig (topbar er skjult på dashboard) */
+.db-redesign .db-sidebar-toggle {
+    display: flex !important; position: fixed; top: 16px; left: 16px; z-index: 1050;
+    width: 50px; height: 50px; border-radius: 14px; border: 2px solid rgba(255,255,255,0.3);
+    background: var(--db-wine); align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(134, 39, 54, 0.4), 0 0 0 3px rgba(134, 39, 54, 0.15);
+    padding: 0; transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
 }
+.db-redesign .db-sidebar-toggle:hover {
+    background: var(--db-wine-hover);
+    box-shadow: 0 6px 24px rgba(134, 39, 54, 0.5), 0 0 0 4px rgba(134, 39, 54, 0.2);
+    transform: scale(1.08);
+}
+.db-redesign .db-sidebar-toggle:active { transform: scale(0.95); }
+.db-redesign .db-sidebar-toggle svg { width: 24px; height: 24px; stroke: #fff; stroke-width: 2.5; }
 
 /* Welcome */
 .db-welcome { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem; }
@@ -77,14 +87,14 @@
 .db-alert__icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .db-alert--warning .db-alert__icon { background: rgba(230, 81, 0, 0.12); }
 .db-alert--danger .db-alert__icon { background: rgba(198, 40, 40, 0.12); }
-.db-alert__text { flex: 1; font-size: 0.85rem; color: var(--db-text); }
+.db-alert__text { flex: 1; font-size: 0.85rem; color: var(--db-text); min-width: 0; word-wrap: break-word; overflow-wrap: break-word; }
 .db-alert__text strong { font-weight: 600; }
 .db-alert__action { font-size: 0.8rem; font-weight: 600; color: var(--db-wine); text-decoration: none; white-space: nowrap; padding: 0.4rem 1rem; border: 1px solid var(--db-wine); border-radius: 6px; transition: all 0.15s; }
 .db-alert__action:hover { background: var(--db-wine); color: #fff; text-decoration: none; }
 
 /* Next-up cards */
 .db-next-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
-.db-next-card { background: #fff; border: 1px solid var(--db-border); border-radius: var(--db-radius-lg); padding: 1.25rem 1.5rem; display: flex; align-items: flex-start; gap: 1rem; }
+.db-next-card { background: #fff; border: 1px solid var(--db-border); border-radius: var(--db-radius-lg); padding: 1.25rem 1.5rem; display: flex; align-items: flex-start; gap: 1rem; min-width: 0; }
 .db-next-card__icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .db-next-card__icon--task { background: var(--db-wine-light-solid); }
 .db-next-card__icon--mentor { background: var(--db-blue-bg); }
@@ -102,15 +112,15 @@
 .db-stat__label { font-size: 0.72rem; color: var(--db-text-muted); }
 
 /* Cards */
-.db-card { background: #fff; border: 1px solid var(--db-border); border-radius: var(--db-radius-lg); overflow: hidden; }
+.db-card { background: #fff; border: 1px solid var(--db-border); border-radius: var(--db-radius-lg); overflow: hidden; min-width: 0; }
 .db-card__header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem 1rem; }
 .db-card__title { font-size: 1rem; font-weight: 700; color: var(--db-text); margin: 0; }
 .db-card__link { font-size: 0.78rem; font-weight: 600; color: var(--db-wine); text-decoration: none; }
 .db-card__link:hover { color: var(--db-wine-hover); text-decoration: none; }
-.db-card__body { padding: 0 1.5rem 1.5rem; }
+.db-card__body { padding: 0 1.5rem 1.5rem; min-width: 0; overflow: hidden; }
 
 /* Grid layout */
-.db-grid { display: grid; grid-template-columns: 1fr 360px; gap: 1.5rem; }
+.db-grid { display: grid; grid-template-columns: 1fr 360px; gap: 1.5rem; min-width: 0; }
 
 /* Course list */
 .db-course-list { display: flex; flex-direction: column; gap: 0.6rem; }
@@ -118,7 +128,7 @@
 .db-course-item:hover { border-color: var(--db-border-strong); text-decoration: none; color: inherit; }
 .db-course-item__thumb { width: 56px; height: 56px; border-radius: 8px; background: linear-gradient(135deg, #e8e2da, #d4cec6); flex-shrink: 0; overflow: hidden; }
 .db-course-item__thumb img { width: 100%; height: 100%; object-fit: cover; }
-.db-course-item__info { flex: 1; min-width: 0; }
+.db-course-item__info { flex: 1; min-width: 0; overflow: hidden; }
 .db-course-item__name { font-size: 0.875rem; font-weight: 600; color: var(--db-text); margin-bottom: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .db-course-item__instructor { font-size: 0.75rem; color: var(--db-text-muted); }
 .db-course-item__badge { font-size: 0.65rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 4px; white-space: nowrap; }
@@ -129,26 +139,27 @@
 
 /* Mentor timeline */
 .db-mentor-tl { display: flex; flex-direction: column; }
-.db-mentor-item { display: flex; align-items: flex-start; gap: 0.85rem; padding: 0.85rem 0; border-bottom: 1px solid var(--db-border); }
+.db-mentor-item { display: flex; align-items: flex-start; gap: 0.85rem; padding: 0.85rem 0; border-bottom: 1px solid var(--db-border); min-width: 0; }
 .db-mentor-item:last-child { border-bottom: none; }
 .db-mentor-item__date { text-align: center; min-width: 42px; flex-shrink: 0; }
 .db-mentor-item__day { font-size: 1.25rem; font-weight: 700; color: var(--db-wine); line-height: 1; }
 .db-mentor-item__month { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; color: var(--db-wine); margin-top: 2px; }
-.db-mentor-item__info { flex: 1; }
-.db-mentor-item__name { font-size: 0.85rem; font-weight: 600; color: var(--db-text); margin-bottom: 0.1rem; }
-.db-mentor-item__topic { font-size: 0.75rem; color: var(--db-text-muted); }
+.db-mentor-item__info { flex: 1; min-width: 0; }
+.db-mentor-item__name { font-size: 0.85rem; font-weight: 600; color: var(--db-text); margin-bottom: 0.1rem; word-wrap: break-word; overflow-wrap: break-word; }
+.db-mentor-item__topic { font-size: 0.75rem; color: var(--db-text-muted); word-wrap: break-word; overflow-wrap: break-word; }
 .db-mentor-item__time { font-size: 0.7rem; color: var(--db-text-muted); white-space: nowrap; }
 .db-mentor-item__badge-live { font-size: 0.6rem; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 3px; background: var(--db-green-bg); color: var(--db-green); display: inline-block; margin-top: 0.15rem; }
 
 /* Calendar items */
-.db-cal-item { display: flex; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--db-border); }
+.db-cal-item { display: flex; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--db-border); min-width: 0; }
 .db-cal-item:last-child { border-bottom: none; }
 .db-cal-item__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--db-wine); margin-top: 5px; flex-shrink: 0; }
-.db-cal-item__text { font-size: 0.82rem; color: var(--db-text); line-height: 1.5; }
+.db-cal-item__info { min-width: 0; flex: 1; }
+.db-cal-item__text { font-size: 0.82rem; color: var(--db-text); line-height: 1.5; word-wrap: break-word; overflow-wrap: break-word; }
 .db-cal-item__date { font-size: 0.7rem; color: var(--db-text-muted); margin-top: 0.1rem; }
 
 /* Community card */
-.db-community-box { background: var(--db-wine-light-solid); border-radius: 10px; padding: 1.25rem; text-align: center; }
+.db-community-box { background: var(--db-wine-light-solid); border-radius: 10px; padding: 1.25rem; text-align: center; word-wrap: break-word; overflow-wrap: break-word; }
 .db-community-box svg { margin-bottom: 0.5rem; }
 .db-community-box__title { font-size: 0.9rem; font-weight: 600; color: var(--db-text); margin-bottom: 0.2rem; }
 .db-community-box__desc { font-size: 0.78rem; color: var(--db-text-sec); line-height: 1.5; }
@@ -237,10 +248,33 @@
 
 /* Responsive */
 @media (max-width: 1100px) { .db-grid { grid-template-columns: 1fr; } }
-@media (max-width: 800px) {
-    .db-redesign { padding: 1.5rem; }
+@media (max-width: 1026px) {
+    .db-redesign { padding: 1.5rem 1rem; padding-top: 3.5rem; }
     .db-next-grid { grid-template-columns: 1fr; }
     .db-stats { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+    .db-redesign { padding: 1.25rem 0.75rem; padding-top: 3.5rem; }
+    .db-welcome h1 { font-size: 1.25rem; }
+    .db-quote { flex-direction: column; gap: 0.5rem; padding: 0.85rem 1rem; }
+    .db-quote__author { white-space: normal; }
+    .db-next-card { padding: 1rem; }
+    .db-next-card__icon { width: 36px; height: 36px; }
+    .db-alert { flex-wrap: wrap; gap: 0.75rem; }
+    .db-alert__action { margin-left: auto; }
+}
+@media (max-width: 576px) {
+    .db-redesign { padding: 1rem 0.65rem; padding-top: 3.25rem; }
+    .db-welcome h1 { font-size: 1.1rem; }
+    .db-welcome__date { font-size: 0.75rem; }
+    .db-stats { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .db-stat { padding: 0.75rem 0.5rem; }
+    .db-stat__number { font-size: 1.25rem; }
+    .db-stat__label { font-size: 0.65rem; }
+    .db-next-card__title { font-size: 0.875rem; }
+    .db-card { border-radius: 10px; }
+    .db-card__header { padding: 0.85rem 1rem; }
+    .db-card__body { padding: 0 1rem 1rem; }
 }
 </style>
 @stop
@@ -321,9 +355,9 @@
 
 <div class="db-redesign">
 
-    {{-- Mobile sidebar toggle (since topbar is hidden on dashboard) --}}
-    <button type="button" id="sidebarCollapse" class="db-mobile-toggle d-xl-none">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    {{-- Sidebar toggle (egen knapp, unngår duplikat-ID) --}}
+    <button type="button" id="dbSidebarToggle" class="db-sidebar-toggle" data-sidebar-toggle aria-label="Vis/skjul meny">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
 
     {{-- ═══ WELCOME ═══ --}}
@@ -523,7 +557,7 @@
                                 @if($calendar['start'] == $start && $calCounter < 3)
                                     <div class="db-cal-item">
                                         <span class="db-cal-item__dot"></span>
-                                        <div>
+                                        <div class="db-cal-item__info">
                                             <div class="db-cal-item__text">{{ $calendar['title'] }}</div>
                                             <div class="db-cal-item__date">{{ $parseStart->format('d') }}. {{ strtolower($months_no[$parseStart->month - 1]) }} {{ $parseStart->format('Y') }} · {{ $parseStart->format('H:i') != '00:00' ? $parseStart->format('H:i') : '' }}</div>
                                         </div>
