@@ -13,6 +13,11 @@
     <link rel="stylesheet" href="{{asset('vendor/laraberg/css/laraberg.css')}}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        /* Fjern gammelt rosa bakgrunnsbilde fra .front-page-new */
+        .front-page-new {
+            background-image: none !important;
+        }
+
         .hero-wrapper {
             background: #fff;
             overflow: hidden;
@@ -338,9 +343,227 @@
             }
         }
 
-        /* Fix: anchor absolute-positioned dates inside their cards */
-        .second-row .content-container {
+        /* ── SISTE NYTT ───────────────────────────────────── */
+        .siste-nytt {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .siste-nytt__heading {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Featured announcement */
+        .announcement {
+            background: linear-gradient(135deg, #1c1917 0%, #2a2520 100%);
+            border-radius: 14px;
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 2rem;
+            align-items: center;
             position: relative;
+            overflow: hidden;
+        }
+
+        .announcement::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(134, 39, 54, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .announcement__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #fff;
+            background: #862736;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            margin-bottom: 0.85rem;
+        }
+
+        .announcement__badge-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #4caf50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .announcement__title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .announcement__desc {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+            max-width: 540px;
+            margin-bottom: 1.25rem;
+        }
+
+        .announcement__features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .announcement__feature {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.85);
+            padding: 0.3rem 0.65rem;
+            background: rgba(255,255,255,0.08);
+            border-radius: 20px;
+        }
+
+        .announcement__feature svg { width: 12px; height: 12px; stroke: #4caf50; }
+
+        .announcement__progress {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .announcement__progress-bar {
+            width: 120px; height: 4px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .announcement__progress-fill {
+            height: 100%;
+            background: #862736;
+            border-radius: 2px;
+        }
+
+        .announcement__progress-text {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .announcement__visual {
+            position: relative;
+            width: 200px; height: 160px;
+            flex-shrink: 0;
+        }
+
+        .announcement__mockup {
+            width: 100%; height: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            padding: 0.75rem;
+            gap: 0.5rem;
+        }
+
+        .mockup-bar {
+            height: 6px; border-radius: 3px;
+            background: rgba(255,255,255,0.08);
+        }
+        .mockup-bar--short { width: 40%; }
+        .mockup-bar--medium { width: 65%; }
+        .mockup-bar--long { width: 85%; }
+        .mockup-bar--accent { background: rgba(134, 39, 54, 0.4); width: 50%; }
+
+        .mockup-dots { display: flex; gap: 4px; margin-top: auto; }
+        .mockup-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+        .mockup-dot--done { background: rgba(46, 125, 50, 0.5); }
+
+        /* News cards */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .news-card {
+            background: #faf8f5;
+            border-radius: 14px;
+            padding: 1.5rem;
+            transition: transform 0.15s, box-shadow 0.15s;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .news-card__badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+            align-self: flex-start;
+        }
+
+        .news-card__badge--webinar { background: #862736; color: #fff; }
+        .news-card__badge--reprise { background: #f4e8ea; color: #862736; }
+        .news-card__badge--kurs { background: #e3f2fd; color: #1565c0; }
+
+        .news-card__title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.35rem;
+            line-height: 1.35;
+        }
+
+        .news-card__meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.78rem;
+            color: #8a8580;
+            margin-top: auto;
+            padding-top: 0.75rem;
+        }
+
+        .news-card__meta svg { width: 14px; height: 14px; stroke: #8a8580; flex-shrink: 0; }
+
+        @media (max-width: 768px) {
+            .announcement { grid-template-columns: 1fr; }
+            .announcement__visual { display: none; }
+            .news-grid { grid-template-columns: 1fr; }
         }
     </style>
 @stop
@@ -425,44 +648,98 @@
         </div>
     </div>
 
-    <div class="container">
-        <div class="col-md-12">
-            <div class="row second-row">
-                <h2 class="w-100 text-center">
-                    {!! trans('site.front.latest-seminars') !!}
-                </h2>
+    {{-- ═══════════ SISTE NYTT ═══════════ --}}
+    <section class="siste-nytt">
+        <h2 class="siste-nytt__heading">Siste nytt</h2>
 
-                @foreach($upcomingSections as $k => $upcomingSection)
-                    @php
-                        $hasNextWebinar = $k === 1 && $next_webinar ? true : false;
-                    @endphp
-                    <div class="col-md-4">
-                        <div class="content-container">
-                            <div class="title">
-                                <a href="{{ url($hasNextWebinar ? '/course/17?show_kursplan=1' : $upcomingSection->link) }}" 
-                                    style="color: inherit">
-                                    {{ $hasNextWebinar ? trans('site.front.next-webinar') : $upcomingSection->name }}
-                                </a>
-                            </div>
-                            <h3>
-                                {{ $hasNextWebinar ? $next_webinar->title : $upcomingSection->title }}
-                            </h3>
-                            @if ($upcomingSection->date || $hasNextWebinar)
-                                <div class="date-time-cont">
-                                    <i class="img-icon16 icon-calendar"></i>
-                                    <span>{{ \App\Http\FrontendHelpers::formatDate($hasNextWebinar ? $next_webinar->start_date : $upcomingSection->date) }}</span>
-                                    <i class="img-icon16 icon-clock ms-3"></i>
-                                    <span>
-                                    {{ \App\Http\FrontendHelpers::getTimeFromDT($hasNextWebinar ? $next_webinar->start_date : $upcomingSection->date) }}
-                                </span>
-                                </div>
-                            @endif
-                        </div>
+        {{-- ── Portal-annonse (featured) ──
+             TODO: Fjern eller oppdater dette kortet etter at portal-redesignen er ferdig lansert. --}}
+        <div class="announcement">
+            <div>
+                <div class="announcement__badge">
+                    <span class="announcement__badge-dot"></span>
+                    P&aring;g&aring;ende oppdatering
+                </div>
+                <h3 class="announcement__title">Vi bygger en helt ny elevportal</h3>
+                <p class="announcement__desc">
+                    Forfatterskolen f&aring;r nytt design fra topp til bunn. De f&oslash;rste oppdateringene rulles ut n&aring; i mars &mdash; og mye mer er p&aring; vei utover v&aring;ren.
+                </p>
+                <div class="announcement__features">
+                    <span class="announcement__feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Nytt dashboard
+                    </span>
+                    <span class="announcement__feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Bedre kursoversikt
+                    </span>
+                    <span class="announcement__feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Coaching-bestilling
+                    </span>
+                    <span class="announcement__feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Varslingsinnstillinger
+                    </span>
+                </div>
+                <div class="announcement__progress">
+                    <div class="announcement__progress-bar">
+                        <div class="announcement__progress-fill" style="width: {{ config('portal.redesign_progress', 25) }}%"></div>
                     </div>
-                @endforeach
-            </div> <!-- end second-row-->
-        </div><!-- end col-md-12 -->
-    </div> <!-- end container -->
+                    <span class="announcement__progress-text">Rulles ut l&oslash;pende &middot; Startet mars 2026</span>
+                </div>
+            </div>
+            <div class="announcement__visual">
+                <div class="announcement__mockup">
+                    <div class="mockup-bar mockup-bar--short mockup-bar--accent"></div>
+                    <div class="mockup-bar mockup-bar--long"></div>
+                    <div class="mockup-bar mockup-bar--medium"></div>
+                    <div class="mockup-bar mockup-bar--short"></div>
+                    <div class="mockup-bar mockup-bar--long"></div>
+                    <div class="mockup-dots">
+                        <div class="mockup-dot mockup-dot--done"></div>
+                        <div class="mockup-dot mockup-dot--done"></div>
+                        <div class="mockup-dot"></div>
+                        <div class="mockup-dot"></div>
+                        <div class="mockup-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- ── Nyhetskort ── --}}
+        <div class="news-grid">
+            @foreach($upcomingSections as $k => $upcomingSection)
+                @php
+                    $hasNextWebinar = $k === 1 && $next_webinar ? true : false;
+                    $itemDate = $hasNextWebinar ? $next_webinar->start_date : $upcomingSection->date;
+                    $itemTitle = $hasNextWebinar ? $next_webinar->title : $upcomingSection->title;
+                    $itemLink = $hasNextWebinar ? '/course/17?show_kursplan=1' : $upcomingSection->link;
+                    $itemName = $hasNextWebinar ? trans('site.front.next-webinar') : $upcomingSection->name;
+
+                    // Badge-type basert på navn
+                    $badgeClass = 'news-card__badge--webinar';
+                    if (str_contains(strtolower($itemName), 'reprise')) {
+                        $badgeClass = 'news-card__badge--reprise';
+                    } elseif (str_contains(strtolower($itemName), 'kurs')) {
+                        $badgeClass = 'news-card__badge--kurs';
+                    }
+                @endphp
+                <a href="{{ url($itemLink) }}" class="news-card">
+                    <span class="news-card__badge {{ $badgeClass }}">{{ $itemName }}</span>
+                    <h3 class="news-card__title">{{ $itemTitle }}</h3>
+                    @if ($itemDate)
+                        <div class="news-card__meta">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            {{ \App\Http\FrontendHelpers::formatDate($itemDate) }}
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            {{ \App\Http\FrontendHelpers::getTimeFromDT($itemDate) }}
+                        </div>
+                    @endif
+                </a>
+            @endforeach
+        </div>
+    </section>
 
     <div class="popular-courses-row">
         <div class="container">
