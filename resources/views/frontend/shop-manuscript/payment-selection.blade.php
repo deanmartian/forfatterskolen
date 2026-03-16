@@ -281,6 +281,35 @@
             .manus-checkout .checkout-progress__inner { flex-wrap: wrap; gap: 0.25rem; }
             .manus-checkout .checkout-step__divider { width: 24px; }
         }
+
+        /* Loading overlay */
+        .checkout-loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(2px);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .checkout-loading-overlay.active { display: flex; }
+        .checkout-loading-spinner {
+            width: 40px; height: 40px;
+            border: 3px solid var(--border-strong);
+            border-top-color: var(--wine);
+            border-radius: 50%;
+            animation: ck-spin 0.7s linear infinite;
+        }
+        .checkout-loading-text {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        @keyframes ck-spin { to { transform: rotate(360deg); } }
     </style>
 @stop
 
@@ -316,6 +345,12 @@
                 Betaling
             </div>
         </div>
+    </div>
+
+    {{-- Loading overlay --}}
+    <div class="checkout-loading-overlay" id="checkoutLoading">
+        <div class="checkout-loading-spinner"></div>
+        <div class="checkout-loading-text">Vennligst vent…</div>
     </div>
 
     <div class="checkout-page">
@@ -495,6 +530,29 @@ function selectInstallment(el, value) {
     });
     el.classList.add('selected');
 }
+
+// Loading overlay – vis umiddelbart ved klikk på betalingsknapper
+(function() {
+    var overlay = document.getElementById('checkoutLoading');
+    if (!overlay) return;
+
+    function showLoading() {
+        overlay.classList.add('active');
+    }
+
+    // Alle betalingsknapper: Vipps, kort, faktura
+    document.querySelectorAll('.pay-btn--vipps, .pay-btn--paypal, .pay-btn--faktura').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            showLoading();
+        });
+    });
+
+    // Tilbake-lenke
+    var backLink = document.querySelector('.back-link');
+    if (backLink) {
+        backLink.addEventListener('click', showLoading);
+    }
+})();
 </script>
 
 @stop

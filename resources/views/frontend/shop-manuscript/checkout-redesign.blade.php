@@ -527,6 +527,35 @@
             .manus-checkout .checkout-progress__inner { flex-wrap: wrap; gap: 0.25rem; }
             .manus-checkout .checkout-step__divider { width: 24px; }
         }
+
+        /* Loading overlay – vises umiddelbart ved klikk på knapper */
+        .checkout-loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(2px);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .checkout-loading-overlay.active { display: flex; }
+        .checkout-loading-spinner {
+            width: 40px; height: 40px;
+            border: 3px solid var(--border-strong);
+            border-top-color: var(--wine);
+            border-radius: 50%;
+            animation: ck-spin 0.7s linear infinite;
+        }
+        .checkout-loading-text {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        @keyframes ck-spin { to { transform: rotate(360deg); } }
     </style>
 @stop
 
@@ -608,6 +637,12 @@
                 </div>
             @endauth
         </div>
+    </div>
+
+    {{-- Loading overlay — vises umiddelbart ved knappeklikk --}}
+    <div class="checkout-loading-overlay" id="checkoutLoading">
+        <div class="checkout-loading-spinner"></div>
+        <div class="checkout-loading-text">Vennligst vent…</div>
     </div>
 
     {{-- ═══════════ CHECKOUT LAYOUT ═══════════ --}}
@@ -770,11 +805,37 @@
             <div class="order-summary__body">
                 <div class="order-summary__product">
                     <div class="order-summary__product-name">Manusutvikling</div>
-                    @if($words > 0)
-                        <div class="order-summary__product-desc">{{ number_format($words, 0, ',', ' ') }} ord &middot; Tilbakemelding fra profesjonell redaktør</div>
-                    @else
-                        <div class="order-summary__product-desc">Tilbakemelding fra profesjonell redaktør</div>
-                    @endif
+                    <div class="order-summary__product-desc" id="productDescText">
+                        @if($words > 0)
+                            {{ number_format($words, 0, ',', ' ') }} ord &middot; Tilbakemelding fra profesjonell redaktør
+                        @else
+                            Tilbakemelding fra profesjonell redaktør
+                        @endif
+                    </div>
+
+                    {{-- Sjanger --}}
+                    <div style="margin-top: 0.85rem;">
+                        <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Sjanger</label>
+                        <select id="genreSelect" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-strong); border-radius: 6px; font-size: 0.825rem; font-family: var(--font-body); background: #fff; appearance: auto; color: var(--text-primary);">
+                            <option value="0" data-multiplier="1">Velg sjanger</option>
+                            @foreach($genres as $g)
+                                <option value="{{ $g->id }}"
+                                    data-multiplier="{{ $g->id == 10 ? '1.5' : ($g->id == 17 ? '1.3' : '1') }}"
+                                    {{ $selectedGenreId == $g->id ? 'selected' : '' }}>
+                                    {{ $g->name }}@if($g->id == 10) (+50%)@elseif($g->id == 17) (+30%)@endif
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Kort beskrivelse (valgfritt) --}}
+                    <div style="margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid var(--border);">
+                        <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.25rem;">
+                            Kort beskrivelse av manuset <span style="font-weight: 400; color: var(--text-muted);">(valgfritt)</span>
+                        </label>
+                        <textarea id="descriptionText" rows="2" placeholder="Sjanger, m&aring;lgruppe, hvor langt du har kommet..."
+                            style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-strong); border-radius: 6px; font-size: 0.8rem; font-family: var(--font-body); resize: vertical; color: var(--text-primary);"></textarea>
+                    </div>
 
                     <div class="order-summary__includes">
                         <div class="order-summary__include-item">
@@ -785,58 +846,81 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
                             Kommentarer i margen
                         </div>
-                        @if($words > 5000)
-                        <div class="order-summary__include-item">
+                        <div class="order-summary__include-item" id="synopsisIncludeItem" style="{{ $words > 5000 ? '' : 'display:none;' }}">
                             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
                             Synopsis
                         </div>
-                        @endif
                     </div>
                 </div>
 
-                {{-- Opplastet manus --}}
-                @if($tempFile && isset($tempFile['original_name']))
-                    <div class="order-summary__file">
-                        <div class="order-summary__file-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
-                        </div>
-                        <div class="order-summary__file-info">
-                            <div class="order-summary__file-name">{{ $tempFile['original_name'] }}</div>
-                            <div class="order-summary__file-meta">{{ number_format($tempFile['word_count'] ?? 0, 0, ',', ' ') }} ord &middot; Lastet opp</div>
-                        </div>
-                        <a href="{{ route('front.shop-manuscript.index') }}" class="order-summary__file-change">Endre</a>
-                    </div>
-                @else
-                    <div class="order-summary__no-file">
-                        <div class="order-summary__no-file-text">Ingen manus lastet opp ennå</div>
-                        <div class="order-summary__no-file-hint">Du kan også laste opp manuset etter bestilling.</div>
-                    </div>
-                @endif
-
-                {{-- Sjanger --}}
-                <div style="margin-top: 0.85rem;">
-                    <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Sjanger</label>
-                    <select id="genreSelect" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-strong); border-radius: 6px; font-size: 0.825rem; font-family: var(--font-body); background: #fff; appearance: auto; color: var(--text-primary);">
-                        <option value="0" data-multiplier="1">Velg sjanger</option>
-                        @foreach($genres as $g)
-                            <option value="{{ $g->id }}"
-                                data-multiplier="{{ $g->id == 10 ? '1.5' : ($g->id == 17 ? '1.3' : '1') }}"
-                                {{ $selectedGenreId == $g->id ? 'selected' : '' }}>
-                                {{ $g->name }}@if($g->id == 10) (+50%)@elseif($g->id == 17) (+30%)@endif
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                {{-- Synopsis (valgfritt) --}}
-                <div style="margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid rgba(0,0,0,0.06);">
-                    <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.25rem;">
-                        Kort beskrivelse av manuset <span style="font-weight: 400; color: var(--text-muted);">(valgfritt)</span>
+                {{-- Manus-opplasting — AJAX med ordtelling --}}
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.5rem;">
+                        Manus <span style="font-weight: 400; color: var(--text-muted);">(prisen beregnes fra ordtelling)</span>
                     </label>
-                    <textarea id="synopsisText" rows="3" placeholder="Hva handler manuset om? Sjanger, målgruppe, hvor langt du har kommet..."
-                        style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-strong); border-radius: 6px; font-size: 0.8rem; font-family: var(--font-body); resize: vertical; color: var(--text-primary);"></textarea>
+
+                    {{-- State A: Upload zone --}}
+                    <div id="manuscriptUploadZone" style="{{ ($tempFile && isset($tempFile['original_name'])) ? 'display:none;' : '' }} border: 1px dashed var(--border-strong); border-radius: 8px; padding: 1rem; text-align: center; cursor: pointer; transition: border-color 0.15s;" onclick="document.getElementById('manuscriptFileInput').click()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#8a8580" stroke-width="1.5" stroke-linecap="round" style="width: 24px; height: 24px; margin-bottom: 0.35rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <div style="font-size: 0.85rem; font-weight: 500; color: var(--text-primary);">Last opp manus</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem;">Dra og slipp, eller klikk for &aring; velge (.docx, .pdf, .odt)</div>
+                    </div>
+
+                    {{-- State B: Loading --}}
+                    <div id="manuscriptLoading" style="display: none; text-align: center; padding: 1rem; border: 1px solid var(--border); border-radius: 8px;">
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">Teller ord...</div>
+                    </div>
+
+                    {{-- State C: Resultat --}}
+                    <div id="manuscriptResult" style="{{ ($tempFile && isset($tempFile['original_name'])) ? '' : 'display:none;' }}">
+                        <div class="order-summary__file">
+                            <div class="order-summary__file-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                            </div>
+                            <div class="order-summary__file-info">
+                                <div class="order-summary__file-name" id="manuscriptFileName">{{ $tempFile['original_name'] ?? '' }}</div>
+                                <div class="order-summary__file-meta" id="manuscriptWordCount">
+                                    @if($tempFile && isset($tempFile['word_count']))
+                                        {{ number_format($tempFile['word_count'], 0, ',', ' ') }} ord &middot; ca. {{ round(($tempFile['word_count'] ?? 0) / 350) }} sider
+                                    @endif
+                                </div>
+                            </div>
+                            <a href="#" class="order-summary__file-change" onclick="resetManuscript(event)">Bytt fil</a>
+                        </div>
+                    </div>
+
+                    <input type="file" id="manuscriptFileInput" hidden accept=".doc,.docx,.pdf,.odt,.txt,.rtf,.pages">
+
+                    <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.35rem;">
+                        Du kan ogs&aring; laste opp etter bestilling. Uten manus brukes slider-estimatet for pris.
+                    </div>
+                </div>
+
+                {{-- Synopsis filopplasting (valgfritt) --}}
+                <div style="margin-top: 0.85rem;">
+                    <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.5rem;">
+                        Synopsis <span style="font-weight: 400; color: var(--text-muted);">(valgfritt)</span>
+                    </label>
+
+                    {{-- Upload zone --}}
+                    <div id="synopsisUploadZone" style="border: 1px dashed var(--border-strong); border-radius: 8px; padding: 0.75rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer; transition: border-color 0.15s;" onclick="document.getElementById('synopsisFileInput').click()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#8a8580" stroke-width="1.5" stroke-linecap="round" style="width: 18px; height: 18px; flex-shrink: 0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <span style="font-size: 0.78rem; color: var(--text-muted);">Last opp synopsis (.docx, .pdf)</span>
+                    </div>
+
+                    {{-- Synopsis opplastet --}}
+                    <div id="synopsisResult" style="display: none;">
+                        <div style="display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 0.75rem; background: var(--green-bg); border: 1px solid rgba(46,125,50,0.15); border-radius: 8px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="1.5" stroke-linecap="round" style="width: 16px; height: 16px; flex-shrink: 0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                            <span id="synopsisFileName" style="font-size: 0.78rem; font-weight: 500; color: #1a1a1a; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
+                            <a href="#" style="font-size: 0.72rem; color: #862736; font-weight: 600; text-decoration: none;" onclick="resetSynopsis(event)">Bytt</a>
+                        </div>
+                    </div>
+
+                    <input type="file" id="synopsisFileInput" hidden accept=".doc,.docx,.pdf,.odt">
+
                     <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.25rem;">
-                        Hjelper redaktøren å gi mer relevant tilbakemelding. Du kan også legge dette til senere.
+                        Hjelper redakt&oslash;ren &aring; gi mer relevant tilbakemelding. Kan legges til senere.
                     </div>
                 </div>
 
@@ -850,7 +934,7 @@
                         <span>Legg til coaching &ndash; spar 10%</span>
                     </div>
                     <div class="coaching-addon__desc">
-                        Personlig gjennomgang av tilbakemeldingen med redaktøren.
+                        Personlig gjennomgang av tilbakemeldingen med redakt&oslash;ren.
                     </div>
                     <div class="coaching-addon__options">
                         <label class="coaching-option">
@@ -878,18 +962,19 @@
                             </span>
                         </label>
                     </div>
-                    {{-- Hva trenger du hjelp med — vises kun når coaching er valgt --}}
+                    {{-- Hva trenger du hjelp med — vises kun n&aring;r coaching er valgt --}}
                     <div id="coachingTopicField" style="display: none; margin-top: 0.75rem;">
                         <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.25rem;">
-                            Hva ønsker du hjelp med?
+                            Hva &oslash;nsker du hjelp med?
                         </label>
                         <textarea id="coachingTopicText" rows="2" placeholder="F.eks. struktur, dialog, perspektiv, hvordan komme videre..."
                             style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-strong); border-radius: 6px; font-size: 0.8rem; font-family: var(--font-body); resize: vertical; color: var(--text-primary);"></textarea>
 
-                        <div class="coaching-file-upload">
-                            <label>Last opp manus for gjennomlesing <span>(valgfritt)</span></label>
-                            <input type="file" id="coachingFileInput" accept=".docx,.doc,.pdf,.odt,.pages">
-                            <div class="coaching-file-hint">✓ Gjennomlesing inkludert i manusutvikling.</div>
+                        {{-- Filopplasting for gjennomlesing vises KUN ved selvstendig coaching-kjøp (/manusutvikling/coaching/),
+                             IKKE her — redaktøren leser allerede manuset som del av manusutvikling. --}}
+                        <div style="margin-top: 0.65rem; font-size: 0.75rem; color: var(--green); display: flex; align-items: center; gap: 0.35rem;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width: 14px; height: 14px; flex-shrink: 0;"><polyline points="20 6 9 17 4 12"/></svg>
+                            Gjennomlesing inkludert i manusutvikling.
                         </div>
                     </div>
 
@@ -898,8 +983,8 @@
 
                 {{-- Prisrader --}}
                 <div class="order-row" style="margin-top: 1rem;">
-                    <span class="order-row__label">{{ $priceLabel }}</span>
-                    <span class="order-row__value">kr {{ number_format($basePrice, 0, ',', ' ') }}</span>
+                    <span class="order-row__label" id="basePriceLabel">{{ $priceLabel }}</span>
+                    <span class="order-row__value" id="basePriceValue">kr {{ number_format($basePrice, 0, ',', ' ') }}</span>
                 </div>
 
                 {{-- Sjangerpåslag (vises dynamisk av JS) --}}
@@ -1008,9 +1093,10 @@
         document.getElementById('checkout-panel-' + tabId).classList.add('active');
     }
 
-    // ── Sjanger + coaching: live prisoppdatering ──────────────
+    // ── Sjanger + coaching + manus-opplasting: live prisoppdatering ──────────────
     (function() {
         var basePrice = {{ $basePrice }};
+        var checkoutWordCount = {{ $words ?: 0 }};
         var isMvaFree = {{ $isMvaFree ? 'true' : 'false' }};
         var coachingPrices = { '30': 1071, '60': 1521 };
 
@@ -1029,6 +1115,130 @@
             return sel ? sel.value : '0';
         }
 
+        function getPriceTierLabel(wc) {
+            if (wc <= 5000) return 'Fastpris inntil 5 000 ord';
+            if (wc <= 17500) {
+                var over = wc - 5000;
+                return '1 500 + ' + over.toLocaleString('nb-NO') + ' ord \u00d7 0,112 kr';
+            }
+            var over = wc - 17500;
+            return '2 900 + ' + over.toLocaleString('nb-NO') + ' ord \u00d7 0,15 kr';
+        }
+
+        function calcBasePrice(wc) {
+            if (wc <= 5000) return 1500;
+            if (wc <= 17500) return 1500 + Math.round((wc - 5000) * 0.112);
+            return 2900 + Math.round((wc - 17500) * 0.15);
+        }
+
+        // ── Manus-opplasting (AJAX) ──────────────────────────
+        var manuscriptInput = document.getElementById('manuscriptFileInput');
+        if (manuscriptInput) {
+            manuscriptInput.addEventListener('change', function() {
+                if (!this.files.length) return;
+                var file = this.files[0];
+                var formData = new FormData();
+                formData.append('manuscript', file);
+
+                document.getElementById('manuscriptUploadZone').style.display = 'none';
+                document.getElementById('manuscriptLoading').style.display = 'block';
+                document.getElementById('manuscriptResult').style.display = 'none';
+
+                fetch('{{ route("front.shop-manuscript.store-temp-upload") }}', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
+                    body: formData
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    checkoutWordCount = data.word_count;
+                    basePrice = calcBasePrice(checkoutWordCount);
+
+                    document.getElementById('manuscriptLoading').style.display = 'none';
+                    document.getElementById('manuscriptResult').style.display = 'block';
+                    document.getElementById('manuscriptFileName').textContent = file.name;
+                    document.getElementById('manuscriptWordCount').textContent =
+                        checkoutWordCount.toLocaleString('nb-NO') + ' ord \u00b7 ca. ' + Math.round(checkoutWordCount / 350) + ' sider';
+
+                    // Oppdater produktbeskrivelse
+                    var desc = document.getElementById('productDescText');
+                    if (desc) desc.textContent = checkoutWordCount.toLocaleString('nb-NO') + ' ord \u00b7 Tilbakemelding fra profesjonell redakt\u00f8r';
+
+                    // Vis/skjul «Synopsis» i inkluderer-listen
+                    var synInc = document.getElementById('synopsisIncludeItem');
+                    if (synInc) synInc.style.display = checkoutWordCount > 5000 ? '' : 'none';
+
+                    // Oppdater basispris-rad
+                    var priceLabel = document.getElementById('basePriceLabel');
+                    var priceValue = document.getElementById('basePriceValue');
+                    if (priceLabel) priceLabel.textContent = getPriceTierLabel(checkoutWordCount);
+                    if (priceValue) priceValue.textContent = formatKr(basePrice);
+
+                    updateOrderTotal();
+                })
+                .catch(function() {
+                    document.getElementById('manuscriptLoading').style.display = 'none';
+                    document.getElementById('manuscriptUploadZone').style.display = 'block';
+                    alert('Noe gikk galt med opplastingen. Pr\u00f8v igjen.');
+                });
+            });
+        }
+
+        // Reset manus
+        window.resetManuscript = function(e) {
+            e.preventDefault();
+            checkoutWordCount = 0;
+            basePrice = {{ $basePrice }};
+            document.getElementById('manuscriptFileInput').value = '';
+            document.getElementById('manuscriptUploadZone').style.display = 'block';
+            document.getElementById('manuscriptResult').style.display = 'none';
+
+            // Tilbakestill produktbeskrivelse
+            var desc = document.getElementById('productDescText');
+            if (desc) desc.textContent = 'Tilbakemelding fra profesjonell redakt\u00f8r';
+
+            // Tilbakestill basispris-rad
+            var priceLabel = document.getElementById('basePriceLabel');
+            var priceValue = document.getElementById('basePriceValue');
+            if (priceLabel) priceLabel.textContent = 'Estimert pris';
+            if (priceValue) priceValue.textContent = formatKr({{ $basePrice }});
+
+            updateOrderTotal();
+        };
+
+        // Drag and drop for manus
+        var mZone = document.getElementById('manuscriptUploadZone');
+        if (mZone) {
+            mZone.addEventListener('dragover', function(e) { e.preventDefault(); mZone.style.borderColor = '#862736'; });
+            mZone.addEventListener('dragleave', function() { mZone.style.borderColor = ''; });
+            mZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                mZone.style.borderColor = '';
+                var mi = document.getElementById('manuscriptFileInput');
+                mi.files = e.dataTransfer.files;
+                mi.dispatchEvent(new Event('change'));
+            });
+        }
+
+        // ── Synopsis filopplasting ───────────────────────────
+        var synopsisInput = document.getElementById('synopsisFileInput');
+        if (synopsisInput) {
+            synopsisInput.addEventListener('change', function() {
+                if (!this.files.length) return;
+                document.getElementById('synopsisUploadZone').style.display = 'none';
+                document.getElementById('synopsisResult').style.display = 'block';
+                document.getElementById('synopsisFileName').textContent = this.files[0].name;
+            });
+        }
+
+        window.resetSynopsis = function(e) {
+            e.preventDefault();
+            document.getElementById('synopsisFileInput').value = '';
+            document.getElementById('synopsisUploadZone').style.display = 'flex';
+            document.getElementById('synopsisResult').style.display = 'none';
+        };
+
+        // ── Prisoppdatering ──────────────────────────────────
         function updateOrderTotal() {
             // ── Sjanger ──
             var multiplier = getGenreMultiplier();
@@ -1076,9 +1286,9 @@
                 priceDisplay.textContent = coachingPrice > 0 ? formatKr(coachingPrice) : '';
             }
 
-            // ── Synopsis ──
-            var synopsisText = document.getElementById('synopsisText');
-            var synopsisVal = synopsisText ? synopsisText.value : '';
+            // ── Beskrivelse ──
+            var descText = document.getElementById('descriptionText');
+            var descVal = descText ? descText.value : '';
 
             // ── Totaler ──
             var totalExMva = priceBeforeMva + coachingPrice;
@@ -1096,7 +1306,7 @@
                 var el = function(id) { return document.getElementById(id); };
                 if (el('hidden-price-mvafri')) el('hidden-price-mvafri').value = totalExMva;
                 if (el('hidden-genre-mvafri')) el('hidden-genre-mvafri').value = genreId;
-                if (el('hidden-description-mvafri')) el('hidden-description-mvafri').value = synopsisVal;
+                if (el('hidden-description-mvafri')) el('hidden-description-mvafri').value = descVal;
                 if (el('hidden-coaching-mvafri')) el('hidden-coaching-mvafri').value = coachingDuration;
                 if (el('hidden-coaching-price-mvafri')) el('hidden-coaching-price-mvafri').value = coachingPrice;
                 if (el('hidden-coaching-topic-mvafri')) el('hidden-coaching-topic-mvafri').value = coachingVal ? (document.getElementById('coachingTopicText') || {}).value || '' : '';
@@ -1115,14 +1325,14 @@
                 if (el('hidden-price-mva')) el('hidden-price-mva').value = totalExMva;
                 if (el('hidden-additional-mva')) el('hidden-additional-mva').value = newMva;
                 if (el('hidden-genre-mva')) el('hidden-genre-mva').value = genreId;
-                if (el('hidden-description-mva')) el('hidden-description-mva').value = synopsisVal;
+                if (el('hidden-description-mva')) el('hidden-description-mva').value = descVal;
                 if (el('hidden-coaching-mva')) el('hidden-coaching-mva').value = coachingDuration;
                 if (el('hidden-coaching-price-mva')) el('hidden-coaching-price-mva').value = coachingPrice;
                 if (el('hidden-coaching-topic-mva')) el('hidden-coaching-topic-mva').value = coachingVal ? (document.getElementById('coachingTopicText') || {}).value || '' : '';
             }
         }
 
-        // Lytt på sjanger, coaching og synopsis
+        // Lytt på sjanger og coaching
         var genreSelect = document.getElementById('genreSelect');
         if (genreSelect) genreSelect.addEventListener('change', updateOrderTotal);
 
@@ -1130,25 +1340,69 @@
             radio.addEventListener('change', updateOrderTotal);
         });
 
-        // Synopsis + coaching_topic: oppdater hidden fields ved submit
+        // Beskrivelse + coaching_topic + filer: oppdater hidden fields ved submit
         var forms = document.querySelectorAll('#order-form-mvafri, #order-form-mva');
         forms.forEach(function(form) {
             form.addEventListener('submit', function() {
-                var synopsisText = document.getElementById('synopsisText');
-                var val = synopsisText ? synopsisText.value : '';
+                // Beskrivelse
+                var descText = document.getElementById('descriptionText');
+                var val = descText ? descText.value : '';
                 var hDesc = form.querySelector('input[name="description"]');
                 if (hDesc) hDesc.value = val;
 
+                // Coaching-tema
                 var topicText = document.getElementById('coachingTopicText');
                 var coachingSelected = document.querySelector('input[name="coaching"]:checked');
                 var hTopic = form.querySelector('input[name="coaching_topic"]');
                 if (hTopic) hTopic.value = (coachingSelected && coachingSelected.value && topicText) ? topicText.value : '';
 
-                // Flytt coaching-fil inn i formen slik at den sendes med
-                var coachingFile = document.getElementById('coachingFileInput');
-                if (coachingFile && coachingSelected && coachingSelected.value && coachingFile.files.length > 0) {
-                    coachingFile.setAttribute('name', 'coaching_file');
-                    form.appendChild(coachingFile);
+                // Flytt synopsis-fil inn i formen
+                var synopsisFile = document.getElementById('synopsisFileInput');
+                if (synopsisFile && synopsisFile.files.length > 0) {
+                    synopsisFile.setAttribute('name', 'synopsis');
+                    form.appendChild(synopsisFile);
+                }
+            });
+        });
+    })();
+
+    // ── Loading overlay – vis umiddelbart ved navigasjon / submit ──────────
+    (function() {
+        var overlay = document.getElementById('checkoutLoading');
+        if (!overlay) return;
+
+        function showLoading() {
+            overlay.classList.add('active');
+        }
+
+        // Vipps hurtigkasse-lenke
+        var vippsExpress = document.querySelector('.vipps-express-btn');
+        if (vippsExpress) {
+            vippsExpress.addEventListener('click', showLoading);
+        }
+
+        // Vipps / Google social login-lenker
+        document.querySelectorAll('.social-btn').forEach(function(btn) {
+            btn.addEventListener('click', showLoading);
+        });
+
+        // Login- og registreringsskjemaer
+        document.querySelectorAll('.form-submit').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var form = btn.closest('form');
+                if (form && form.checkValidity()) {
+                    showLoading();
+                }
+            });
+        });
+
+        // Bestill-knapper (order confirm)
+        document.querySelectorAll('.order-confirm').forEach(function(btn) {
+            if (btn.disabled) return;
+            btn.addEventListener('click', function() {
+                var form = btn.closest('form');
+                if (form && form.checkValidity()) {
+                    showLoading();
                 }
             });
         });
