@@ -1,10 +1,5 @@
 <div id="topbar">
-    <div class="col-md-6">
-        <h3>
-            Velkommen til Forfatterskolens portal
-        </h3>
-    </div>
-    <div class="col-md-6 text-end">
+    <div class="topbar-left">
         @if (Route::currentRouteName() === 'learner.dashboard')
             <div class="auto-renew-wrapper">
                 <label>
@@ -22,14 +17,10 @@
                 <img src="{{ asset('images-new/icon/gift.png') }}" alt="Gaveikon">
             </a>
         @endif
-        <div class="user-image-container d-inline-block">
-            <!-- User image and dropdown menu -->
-            <a href="{{ route('learner.profile') }}">
-                <img src="{{Auth::user()->profile_image}}" alt="User Image" id="user-image">
-            </a>
-        </div>
-        <button type="button" id="sidebarCollapse" class="btn d-xl-none" style="
-            display: inline-flex !important; align-items: center; justify-content: center;
+    </div>
+    <div class="topbar-right">
+        <button type="button" id="sidebarCollapse" class="btn" style="
+            align-items: center; justify-content: center;
             width: 44px; height: 44px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);
             background: #862736; padding: 0; cursor: pointer;
             box-shadow: 0 4px 12px rgba(134, 39, 54, 0.35);
