@@ -28,8 +28,8 @@ $urlList = array('pulse', 'board');
                   <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
                     {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
                     <?php
-                      $single = array('support', 'faq', 'admin');
-                      $request_name = in_array($page['request_name'], $single) ?:
+                      $single = array('support', 'faq', 'admin', 'community');
+                      $request_name = in_array($page['request_name'], $single) ? $page['request_name'] :
                           ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
                       ?>
                     <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$request_name) }}</a>
@@ -41,8 +41,8 @@ $urlList = array('pulse', 'board');
                     <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
                       {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
                       <?php
-                        $single = array('support', 'faq', 'admin');
-                        $request_name = in_array($page['request_name'], $single) ?:
+                        $single = array('support', 'faq', 'admin', 'community');
+                        $request_name = in_array($page['request_name'], $single) ? $page['request_name'] :
                             ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
                         ?>
                       <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$request_name) }}</a>
@@ -61,7 +61,7 @@ $urlList = array('pulse', 'board');
                   <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
                     {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
                       <?php
-                      $single = array('support', 'faq', 'admin');
+                      $single = array('support', 'faq', 'admin', 'community');
                       $request_name = in_array($page['request_name'], $single) ? $page['request_name'] :
                           ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
                       ?>
@@ -75,7 +75,7 @@ $urlList = array('pulse', 'board');
                 <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
                   {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
                     <?php
-                    $single = array('support', 'faq', 'admin');
+                    $single = array('support', 'faq', 'admin', 'community');
                     $request_name = in_array($page['request_name'], $single) ? $page['request_name'] :
                         ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
                     ?>
