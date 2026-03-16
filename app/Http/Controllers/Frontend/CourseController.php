@@ -61,6 +61,10 @@ class CourseController extends Controller
             $checkoutRoute = 'front.course.application';
         }
 
+        if ((int) $id === config('courses.romankurs.id')) {
+            return view('frontend.course.show-romankurs', compact('course', 'checkoutRoute'));
+        }
+
         return view('frontend.course.show', compact('course', 'checkoutRoute'));
     }
 
