@@ -157,17 +157,19 @@ class ShopController extends Controller
         }
 
         $packages = $course->packages()->isShow()->where('variation', '!=', 'Editor Package')->get();
-        $package_id = \Request::has('package') ? \Request::get('package') :
-            (isset($packages[1]) ? $packages[1]['id'] : $packages[0]['id']);
+
+        // URL ?package=X takes priority; otherwise use standardPackage or fallback
+        if (\Request::has('package')) {
+            $package_id = \Request::get('package');
+        } elseif ($course->standardPackage) {
+            $package_id = $course->standardPackage->id;
+        } else {
+            $package_id = isset($packages[1]) ? $packages[1]['id'] : $packages[0]['id'];
+        }
 
         // If course_id = 115, override package_id
         if ($course_id == 115) {
             $package_id = 312;
-        }
-
-        // check if the course have set standard package
-        if ($course->standardPackage) {
-            $package_id = $course->standardPackage->id;
         }
 
         $coupon = \request()->has('c') ? \request()->get('c') : '';
@@ -194,8 +196,43 @@ class ShopController extends Controller
         }
 
         // old view svea-checkout
-        return view('frontend.shop.checkout-update', compact('course', 'packages', 'package_id', 'coupon',
+        return view('frontend.shop.checkout-redesign', compact('course', 'packages', 'package_id', 'coupon',
             'hasPaidCourse', 'user', 'startIndex', 'countryCode'));
+    }
+
+    /**
+     * Payment page for rentefri delbetaling
+     */
+    public function payment($course_id, Request $request)
+    {
+        $course = Course::findOrFail($course_id);
+
+        if (Auth::guest()) {
+            return redirect()->route('front.course.checkout', $course_id);
+        }
+
+        $packageId = $request->get('package');
+        $package = $course->packages()->where('id', $packageId)->first();
+        if (! $package) {
+            $package = $course->packages()->isShow()->first();
+        }
+
+        // Calculate price (same as checkout)
+        $isEarlybird = false;
+        $discount = 0;
+        if ((int) $course->id === config('courses.romankurs.id')) {
+            $deadlineStr = config('courses.romankurs.earlybird_deadline');
+            if ($deadlineStr) {
+                $isEarlybird = now()->isBefore(Carbon::parse($deadlineStr));
+                $discount = $isEarlybird ? config('courses.romankurs.earlybird_discount', 5500) : 0;
+            }
+        }
+
+        $price = $package->full_payment_price - $discount;
+        $maxFreeMonths = $course->installment_months_free ?? 6;
+        $coupon = $request->get('c', '');
+
+        return view('frontend.shop.payment', compact('course', 'package', 'price', 'maxFreeMonths', 'discount', 'coupon'));
     }
 
     public function processOrder($course_id, OrderCreateRequest $request)
@@ -413,6 +450,7 @@ class ShopController extends Controller
         $newOrder['type'] = Order::COURSE_TYPE;
         $newOrder['package_id'] = $package->id;
         $newOrder['plan_id'] = $paymentPlan->id;
+        $newOrder['payment_mode_id'] = $paymentMode->id;
 
         $order = Order::create($newOrder);
 
@@ -563,7 +601,14 @@ class ShopController extends Controller
             return response()->json(['redirect_link' => $this->vippsInitiatePayment($vippsData)]);
         }
 
-        return response()->json(['redirect_link' => route('front.course.thank-you', $course_id)]);
+        // Flash data for confirmation page
+        session()->flash('cf_show_confetti', true);
+        if ($request->coupon && isset($discountCoupon) && $discountCoupon) {
+            session()->flash('cf_coupon_code', $request->coupon);
+            session()->flash('cf_coupon_discount', (int)$discountCoupon->discount);
+        }
+
+        return response()->json(['redirect_link' => route('front.course.confirmation', [$course_id, $order->id])]);
     }
 
     /**

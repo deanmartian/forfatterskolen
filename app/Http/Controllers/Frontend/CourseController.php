@@ -325,4 +325,12 @@ class CourseController extends Controller
 
         return view('frontend.shop.thankyou');
     }
+
+    public function confirmation($course_id, $order_id): View
+    {
+        $order = Order::with(['package', 'paymentPlan', 'paymentMode', 'user'])->findOrFail($order_id);
+        $course = Course::findOrFail($course_id);
+
+        return view('frontend.shop.confirmation-redesign', compact('order', 'course'));
+    }
 }

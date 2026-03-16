@@ -9,33 +9,6 @@
     <link rel="alternate" href="{{ config('app.url') }}/en" hreflang="en" />
     <link rel="canonical" href="{{ url()->current() }}">
 
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-PBZBPBN2');</script>
-    <!-- End Google Tag Manager -->
-
-    @if(in_array(Route::currentRouteName(), ['front.free-webinar']))
-    <!-- Event snippet for Webinar_pamelding conversion page In your html page, add the snippet and call
-    gtag_report_conversion when someone clicks on the chosen link or button. -->
-    <script>
-        function gtag_report_conversion(url) {
-            var callback = function () {
-                if (typeof(url) != 'undefined') {
-                    window.location = url;
-                }
-            };
-            gtag('event', 'conversion', {
-                'send_to': 'AW-754620576/3IacCOOq1sIDEKCx6ucC',
-                'event_callback': callback
-            });
-            return false;
-        }
-    </script>
-    @endif
-
     <meta name="google-site-verification" content="PT1CQ7dxKhPpwvuFW6e2o_AVdp10XC-wUvvbHHuY0IE" />
     @include('frontend.partials._meta')
 
@@ -53,6 +26,15 @@
     @yield('styles')
 
     @include('frontend.partials._learner_head_scripts')
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18021112843"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-18021112843');
+    </script>
 </head>
 <body>
 
@@ -290,9 +272,5 @@ e.onload=function(){NDRSL.init("5de00781dd95d15fd33a275f")}},"interactive"===t.r
     }
 </script>
 <script src="https://cdn.helpwise.io/assets/js/livechat.js"></script>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PBZBPBN2"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
 </body>
 </html>
