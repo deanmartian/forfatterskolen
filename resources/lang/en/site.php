@@ -25,6 +25,7 @@ return [
         'yearly_calendar' => 'Yearly Calendar',
         'assigned-webinar' => 'Assigned Webinars',
         'projects' => 'Projects',
+        'community' => 'Community',
     ],
     'total-learners' => 'Total Learners',
     'my-assigned-manuscripts' => 'My assigned manuscripts',

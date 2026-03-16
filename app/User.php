@@ -270,6 +270,11 @@ class User extends Authenticatable
         return $this->hasMany(\App\PageAccess::class);
     }
 
+    public function profile(): HasOne
+    {
+        return $this->hasOne(\App\Models\Profile::class);
+    }
+
     public function wordWritten(): HasMany
     {
         return $this->hasMany(\App\WordWritten::class)->orderBy('date', 'ASC');

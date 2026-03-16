@@ -23,8 +23,6 @@ class DropboxController extends Controller
         $appKey = config('filesystems.disks.dropbox.key');
         $redirectUri = route('dropbox.callback');
 
-        return "https://www.dropbox.com/oauth2/authorize?client_id={$appKey}&token_access_type=offline&response_type=code&redirect_uri={$redirectUri}";
-
         return redirect()->away("https://www.dropbox.com/oauth2/authorize?client_id={$appKey}&token_access_type=offline&response_type=code&redirect_uri={$redirectUri}");
     }
 
@@ -48,14 +46,39 @@ class DropboxController extends Controller
 
         $data = json_decode($response->getBody(), true);
 
-        return $data;
-        $accessToken = $data['access_token'];
+        if (isset($data['access_token'])) {
+            $path = base_path('.env');
+            if (file_exists($path)) {
+                $envContent = file_get_contents($path);
 
-        // Save the access token securely, e.g., in the database or session
-        // session(['dropbox_token' => $accessToken]);
-        // file_put_contents(base_path('.env'), "\nDROPBOX_TOKEN={$accessToken}", FILE_APPEND);
+                // Save access token
+                if (str_contains($envContent, 'DROPBOX_TOKEN=')) {
+                    $envContent = preg_replace('/^DROPBOX_TOKEN=.*$/m', 'DROPBOX_TOKEN=' . $data['access_token'], $envContent);
+                } else {
+                    $envContent .= "\nDROPBOX_TOKEN=" . $data['access_token'] . "\n";
+                }
 
-        return $accessToken;
+                // Save refresh token if provided
+                if (isset($data['refresh_token'])) {
+                    if (str_contains($envContent, 'DROPBOX_REFRESH_TOKEN=')) {
+                        $envContent = preg_replace('/^DROPBOX_REFRESH_TOKEN=.*$/m', 'DROPBOX_REFRESH_TOKEN=' . $data['refresh_token'], $envContent);
+                    } else {
+                        $envContent .= "DROPBOX_REFRESH_TOKEN=" . $data['refresh_token'] . "\n";
+                    }
+                }
+
+                file_put_contents($path, $envContent);
+            }
+
+            \Artisan::call('config:clear');
+
+            return response()->json([
+                'success' => 'Dropbox connected successfully!',
+                'access_token' => $data['access_token'],
+            ]);
+        }
+
+        return response()->json(['error' => 'Failed to get access token from Dropbox.'], 400);
     }
 
     public function refreshDropboxAccessToken(): JsonResponse
@@ -140,12 +163,10 @@ class DropboxController extends Controller
             // Clean up the local temporary file
             unlink($tempFilePath);
 
-            return $dropboxFilePath;
-
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Uploaded'),
                 'alert_type' => 'success',
-                'word_count' => $word_count, // Include word count in the response
+                'word_count' => $word_count,
             ]);
         } catch (\Exception $e) {
             return redirect()->back()->with([
@@ -153,10 +174,6 @@ class DropboxController extends Controller
                 'alert_type' => 'danger',
             ]);
         }
-        /* return $dropboxFilePath;
-
-        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Uploaded'),
-        'alert_type' => 'success']); */
     }
 
     public function createSharedLink($path)
@@ -185,16 +202,14 @@ class DropboxController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Failed to create shared link: '.$e->getMessage());
-            if (! request()->isJson()) {
-                return AdminHelpers::createMessageBag('Failed to create shared link: '.$e->getMessage());
-
-                return redirect()->back()->with([
-                    'errors' => AdminHelpers::createMessageBag('Failed to create shared link: '.$e->getMessage()),
-                    'alert_type' => 'danger',
-                ]);
+            if (request()->isJson()) {
+                return response()->json(['error' => 'Failed to create shared link: '.$e->getMessage()], 500);
             }
 
-            return null;
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Failed to create shared link: '.$e->getMessage()),
+                'alert_type' => 'danger',
+            ]);
         }
     }
 
