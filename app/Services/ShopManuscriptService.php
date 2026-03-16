@@ -581,6 +581,24 @@ class ShopManuscriptService
             $word_count = $tempFile['word_count'];
         }
 
+        // Coaching file upload (valgfritt manus for gjennomlesing)
+        $coachingFilePath = null;
+        $coachingFileName = null;
+        if ($request->hasFile('coaching_file') && $request->file('coaching_file')->isValid()) {
+            $coachingFile = $request->file('coaching_file');
+            $coachingFileName = $coachingFile->getClientOriginalName();
+            $coachingExt = strtolower($coachingFile->getClientOriginalExtension());
+            $coachingDestination = 'storage/coaching-files/';
+
+            if (! is_dir(public_path($coachingDestination))) {
+                mkdir(public_path($coachingDestination), 0755, true);
+            }
+
+            $coachingNewName = time() . '_coaching.' . $coachingExt;
+            $coachingFile->move(public_path($coachingDestination), $coachingNewName);
+            $coachingFilePath = '/' . $coachingDestination . $coachingNewName;
+        }
+
         OrderShopManuscript::create([
             'order_id' => $order_id,
             'genre' => $request->genre,
@@ -590,6 +608,8 @@ class ShopManuscriptService
             'synopsis' => $synopsis,
             'coaching_time_later' => in_array((int) $request->coaching_time_later, [30, 60]) ? (int) $request->coaching_time_later : 0,
             'coaching_topic' => $request->coaching_topic,
+            'coaching_file' => $coachingFilePath,
+            'coaching_file_name' => $coachingFileName,
             'send_to_email' => filter_var($request->send_to_email, FILTER_VALIDATE_BOOLEAN),
         ]);
     }

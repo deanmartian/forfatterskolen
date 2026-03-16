@@ -486,6 +486,39 @@
             color: var(--text-muted);
             margin-top: 0.6rem;
         }
+        .manus-checkout .coaching-file-upload {
+            margin-top: 0.65rem;
+        }
+        .manus-checkout .coaching-file-upload label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        .manus-checkout .coaching-file-upload label span {
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+        .manus-checkout .coaching-file-upload input[type="file"] {
+            width: 100%;
+            padding: 0.45rem 0.6rem;
+            border: 1px dashed var(--border-strong);
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-family: var(--font-body);
+            color: var(--text-secondary);
+            background: #fff;
+            cursor: pointer;
+        }
+        .manus-checkout .coaching-file-upload input[type="file"]:hover {
+            border-color: var(--wine);
+        }
+        .manus-checkout .coaching-file-upload .coaching-file-hint {
+            font-size: 0.68rem;
+            color: var(--green);
+            margin-top: 0.3rem;
+        }
 
         @media (max-width: 768px) {
             .manus-checkout .checkout-page { grid-template-columns: 1fr; }
@@ -852,6 +885,12 @@
                         </label>
                         <textarea id="coachingTopicText" rows="2" placeholder="F.eks. struktur, dialog, perspektiv, hvordan komme videre..."
                             style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-strong); border-radius: 6px; font-size: 0.8rem; font-family: var(--font-body); resize: vertical; color: var(--text-primary);"></textarea>
+
+                        <div class="coaching-file-upload">
+                            <label>Last opp manus for gjennomlesing <span>(valgfritt)</span></label>
+                            <input type="file" id="coachingFileInput" accept=".docx,.doc,.pdf,.odt,.pages">
+                            <div class="coaching-file-hint">✓ Gjennomlesing inkludert i manusutvikling.</div>
+                        </div>
                     </div>
 
                     <div class="coaching-addon__note">Priser eks. mva. Timen bookes etter at tilbakemeldingen er levert.</div>
@@ -882,7 +921,7 @@
                             <span class="order-total__price" id="order-total-price">kr {{ number_format($priceBeforeMva, 0, ',', ' ') }}</span>
                         </div>
                         <div class="order-note">Elevpris &ndash; mva-fri (aktiv undervisning)</div>
-                        <form method="POST" action="{{ route('front.shop-manuscript.create-order', $shopManuscript->id) }}" id="order-form-mvafri">
+                        <form method="POST" action="{{ route('front.shop-manuscript.create-order', $shopManuscript->id) }}" id="order-form-mvafri" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="shop_manuscript_id" value="{{ $shopManuscript->id }}">
                             <input type="hidden" name="price" value="{{ $priceBeforeMva }}" id="hidden-price-mvafri">
@@ -913,7 +952,7 @@
                             <span class="order-total__label">Totalt</span>
                             <span class="order-total__price" id="order-total-price">kr {{ number_format($totalPrice, 0, ',', ' ') }} <span>inkl. mva</span></span>
                         </div>
-                        <form method="POST" action="{{ route('front.shop-manuscript.create-order', $shopManuscript->id) }}" id="order-form-mva">
+                        <form method="POST" action="{{ route('front.shop-manuscript.create-order', $shopManuscript->id) }}" id="order-form-mva" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="shop_manuscript_id" value="{{ $shopManuscript->id }}">
                             <input type="hidden" name="price" value="{{ $priceBeforeMva }}" id="hidden-price-mva">
@@ -1104,6 +1143,13 @@
                 var coachingSelected = document.querySelector('input[name="coaching"]:checked');
                 var hTopic = form.querySelector('input[name="coaching_topic"]');
                 if (hTopic) hTopic.value = (coachingSelected && coachingSelected.value && topicText) ? topicText.value : '';
+
+                // Flytt coaching-fil inn i formen slik at den sendes med
+                var coachingFile = document.getElementById('coachingFileInput');
+                if (coachingFile && coachingSelected && coachingSelected.value && coachingFile.files.length > 0) {
+                    coachingFile.setAttribute('name', 'coaching_file');
+                    form.appendChild(coachingFile);
+                }
             });
         });
     })();
