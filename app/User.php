@@ -265,6 +265,26 @@ class User extends Authenticatable
         return $this->hasMany(\App\Notification::class)->orderBy('created_at', 'desc');
     }
 
+    public function notificationPreferences(): HasMany
+    {
+        return $this->hasMany(\App\UserNotificationPreference::class);
+    }
+
+    public function wantsNotification(string $type): bool
+    {
+        if ($type === 'invoice_overdue') {
+            return true;
+        }
+
+        $pref = $this->notificationPreferences->firstWhere('type', $type);
+
+        if (! $pref) {
+            return $type !== 'course_offers';
+        }
+
+        return $pref->enabled;
+    }
+
     public function pageAccess(): HasMany
     {
         return $this->hasMany(\App\PageAccess::class);
