@@ -1440,8 +1440,9 @@ class ShopManuscriptController extends Controller
     public function freeManuscriptShow(): View
     {
         $action = 'front.free-manuscript.send'; // default
+        $totalEvaluations = FreeManuscript::count();
 
-        return view('frontend.shop-manuscript.free-manuscript', compact('action'));
+        return view('frontend.shop-manuscript.free-manuscript', compact('action', 'totalEvaluations'));
     }
 
     public function freeManuscriptShowOther(): View
@@ -1742,6 +1743,8 @@ class ShopManuscriptController extends Controller
 
             // forget the wordcount
             Session::forget('wordcount');
+
+            Session::flash('submitted_email', $request->email);
 
             return redirect()->route('front.free-manuscript.success');
         }

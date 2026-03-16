@@ -863,12 +863,12 @@
                     <div id="manuscriptUploadZone" style="{{ ($tempFile && isset($tempFile['original_name'])) ? 'display:none;' : '' }} border: 1px dashed var(--border-strong); border-radius: 8px; padding: 1rem; text-align: center; cursor: pointer; transition: border-color 0.15s;" onclick="document.getElementById('manuscriptFileInput').click()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="#8a8580" stroke-width="1.5" stroke-linecap="round" style="width: 24px; height: 24px; margin-bottom: 0.35rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                         <div style="font-size: 0.85rem; font-weight: 500; color: var(--text-primary);">Last opp manus</div>
-                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem;">Dra og slipp, eller klikk for &aring; velge (.docx, .pdf, .odt)</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem;">Dra og slipp, eller klikk for &aring; velge (.docx, .pdf, .odt, .pages)</div>
                     </div>
 
                     {{-- State B: Loading --}}
                     <div id="manuscriptLoading" style="display: none; text-align: center; padding: 1rem; border: 1px solid var(--border); border-radius: 8px;">
-                        <div style="font-size: 0.85rem; color: var(--text-secondary);">Teller ord...</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">Konverterer og teller ord...</div>
                     </div>
 
                     {{-- State C: Resultat --}}
@@ -892,7 +892,7 @@
                     <input type="file" id="manuscriptFileInput" hidden accept=".doc,.docx,.pdf,.odt,.txt,.rtf,.pages">
 
                     <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.35rem;">
-                        Du kan ogs&aring; laste opp etter bestilling. Uten manus brukes slider-estimatet for pris.
+                        Alle formater konverteres automatisk til .docx. Du kan ogs&aring; laste opp etter bestilling.
                     </div>
                 </div>
 
@@ -905,7 +905,7 @@
                     {{-- Upload zone --}}
                     <div id="synopsisUploadZone" style="border: 1px dashed var(--border-strong); border-radius: 8px; padding: 0.75rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer; transition: border-color 0.15s;" onclick="document.getElementById('synopsisFileInput').click()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="#8a8580" stroke-width="1.5" stroke-linecap="round" style="width: 18px; height: 18px; flex-shrink: 0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        <span style="font-size: 0.78rem; color: var(--text-muted);">Last opp synopsis (.docx, .pdf)</span>
+                        <span style="font-size: 0.78rem; color: var(--text-muted);">Last opp synopsis (.docx, .pdf, .pages)</span>
                     </div>
 
                     {{-- Synopsis opplastet --}}
@@ -917,10 +917,10 @@
                         </div>
                     </div>
 
-                    <input type="file" id="synopsisFileInput" hidden accept=".doc,.docx,.pdf,.odt">
+                    <input type="file" id="synopsisFileInput" hidden accept=".doc,.docx,.pdf,.odt,.pages">
 
                     <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.25rem;">
-                        Hjelper redakt&oslash;ren &aring; gi mer relevant tilbakemelding. Kan legges til senere.
+                        Konverteres automatisk til .docx. Kan legges til senere.
                     </div>
                 </div>
 

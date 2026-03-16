@@ -835,7 +835,7 @@ NB! Dersom du ikke er elev, er denne tjenesten momsbelagt.',
         'free-manuscript' => [
             'description' => 'Har du lyst til å få en profesjonell tilbakemelding på din tekst? Skriv inn valgfri tekst i skjemaet under maks 500 ord.',
             'header-title' => 'Prøv en gratis tekstvurdering',
-            'title' => 'Gratis manusutvikling',
+            'title' => 'Gratis tekstvurdering',
             'instruction' => 'Din tekst',
             'max-word-text' => 'Maks 500 ord',
             'note' => 'Kun en innsending per person',
