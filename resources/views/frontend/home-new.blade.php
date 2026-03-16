@@ -13,6 +13,11 @@
     <link rel="stylesheet" href="{{asset('vendor/laraberg/css/laraberg.css')}}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        .hero-wrapper {
+            background: #fff;
+            overflow: hidden;
+        }
+
         .hero-section {
             max-width: 1140px;
             margin: 0 auto;
@@ -344,6 +349,7 @@
 <div class="front-page-new">
 
     {{-- Hero section --}}
+    <div class="hero-wrapper">
     <section class="hero-section">
         <div class="hero-section__content">
             <p class="hero-section__eyebrow">Din litterære familie siden 2015</p>
@@ -394,6 +400,7 @@
             </div>
         </div>
     </section>
+    </div>
 
     {{-- Gratis tekstvurdering banner --}}
     <div class="hero-banner">
