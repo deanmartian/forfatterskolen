@@ -915,6 +915,13 @@
 									</div>
 								@endif
 
+								@if(isset($unpaid) && $unpaid->count() > 0)
+								<div style="background: #f8f5f0; border-left: 3px solid #b8860b; border-radius: 6px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; color: #5a4a3a; line-height: 1.6;">
+									<strong style="color: #5a4a3a;">ℹ️ Om utestående beløp</strong><br>
+									Totalt utestående betyr ikke at enkeltstående fakturaer har gått til forfall. Dersom du ønsker å gjøre en restinnbetaling, kan du gjøre dette på din neste faktura.
+								</div>
+								@endif
+
 								<div class="card global-card">
 									<div class="card-body py-0 fiken-table-wrap">
 										<table class="table table-global fiken-table">
@@ -924,7 +931,7 @@
 												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.deadline') }}</th>
 												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.remainders') }}</th>
 												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.status') }}</th>
-												<th class="col-hide-mobile" style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.created') }}</th>
+												<th class="col-hide-mobile" style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">Innbetalt dato</th>
 												<th style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.kid-number') }}</th>
 												<th class="col-hide-mobile" style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.learner.account-number') }}</th>
 												<th class="col-hide-mobile" style="text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; color: #5D7285;">{{ trans('site.credit-note') }}</th>
@@ -969,12 +976,12 @@
 														@endif
 													</td>
 													<td class="col-hide-mobile">
-														{{ ucfirst(
-																\Carbon\Carbon::parse($invoice->created_at)
-																	->locale('nb')
-																	->translatedFormat('M d, Y H.i')
-															) }}
-														{{-- {{date_format(date_create($invoice->created_at), 'M d, Y H.i')}} --}}</td>
+														@if($invoice->fiken_sale_payment_date)
+														{{ \Carbon\Carbon::parse($invoice->fiken_sale_payment_date)->format('d.m.Y') }}
+													@else
+														—
+													@endif
+												</td>
 													<td> {{ $invoice->kid_number }} </td>
 													<td class="col-hide-mobile"> 9015 18 00393 </td>
 													<td class="col-hide-mobile">
@@ -1080,6 +1087,12 @@
 													<div class="fiken-card-label">Konto</div>
 													<div class="fiken-card-value">9015 18 00393</div>
 												</div>
+												@if($invoice->fiken_sale_payment_date)
+												<div>
+													<div class="fiken-card-label">Innbetalt</div>
+													<div class="fiken-card-value">{{ \Carbon\Carbon::parse($invoice->fiken_sale_payment_date)->format('d.m.Y') }}</div>
+												</div>
+												@endif
 											</div>
 											<div class="fiken-card-actions">
 												<a href="{{ route('learner.download.invoice', $invoice->id) }}?v={{ time() }}"

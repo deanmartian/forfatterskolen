@@ -796,26 +796,42 @@ class LearnerController extends Controller
             ->get();
 
         // Parse individuelle videoer fra leksjonsinnholdet
+        // Robust tilnærming: strip HTML, split på [video] shortcodes
         $replayItems = collect();
         foreach ($replayLessons as $lesson) {
             $content = html_entity_decode($lesson->content);
-            // Fjern HTML-tags men behold struktur
-            // Mønster: tittel-tekst fulgt av [video src="URL"]
-            preg_match_all('/(?:<p[^>]*>|<br\s*\/?>)\s*([^<\[]+?)\s*(?:<\/p>|<br\s*\/?>|\s)*\[video\s+src=["\']([^"\']+)["\']\]/si', $content, $matches, PREG_SET_ORDER);
 
-            if (empty($matches)) {
-                // Prøv alternativt mønster: tittel i egen <p>, video i neste <p>
-                preg_match_all('/<p[^>]*>([^<\[]{5,}?)<\/p>\s*<p[^>]*>\[video\s+src=["\']([^"\']+)["\']\]<\/p>/si', $content, $matches, PREG_SET_ORDER);
-            }
+            // Finn alle [video src="URL"] shortcodes med tilhørende tittel-tekst
+            // Steg 1: Erstatt <br>, </p>, </div>, </h2> etc. med newlines for å bevare struktur
+            $text = preg_replace('/<br\s*\/?>/i', "\n", $content);
+            $text = preg_replace('/<\/(p|div|h[1-6]|li|figure)>/i', "\n", $text);
+            // Steg 2: Strip resterende HTML-tags
+            $text = strip_tags($text);
+            // Steg 3: Decode &nbsp; og trim
+            $text = str_replace(["\xC2\xA0", "&nbsp;"], ' ', $text);
 
-            foreach ($matches as $match) {
-                $title = trim(strip_tags($match[1]));
-                $videoUrl = trim($match[2]);
-                if (empty($title) || empty($videoUrl)) continue;
+            // Steg 4: Finn alle video-shortcodes med tittel-tekst foran
+            // Split teksten på [video ...] shortcodes
+            $parts = preg_split('/(\[video\s+src=["\'][^"\']+["\']\])/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+            for ($i = 0; $i < count($parts) - 1; $i += 2) {
+                $textBefore = $parts[$i];
+                $videoTag = $parts[$i + 1] ?? '';
+
+                // Hent URL fra shortcode
+                if (!preg_match('/\[video\s+src=["\']([^"\']+)["\']\]/', $videoTag, $urlMatch)) continue;
+                $videoUrl = trim($urlMatch[1]);
+                if (empty($videoUrl)) continue;
+
+                // Hent tittel: siste ikke-tomme linje før videoen
+                $lines = array_filter(array_map('trim', explode("\n", $textBefore)), fn($l) => strlen($l) > 1);
+                $title = end($lines) ?: '';
+                if (empty($title)) continue;
+
                 // Ignorer overskrifts-tekster som "Her kommer repriser..."
                 if (str_contains(strtolower($title), 'her kommer')) continue;
 
-                // Prøv å hente dato fra tittelen (DD.MM.YYYY)
+                // Prøv å hente dato fra tittelen (DD.MM.YYYY eller DD.MM.YY)
                 $date = null;
                 if (preg_match('/(\d{2})\.(\d{2})\.(\d{4})/', $title, $dateMatch)) {
                     $date = $dateMatch[3] . '-' . $dateMatch[2] . '-' . $dateMatch[1];
