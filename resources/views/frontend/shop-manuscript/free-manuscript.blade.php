@@ -1,268 +1,374 @@
 @extends('frontend.layout')
 
 @section('title')
-<title>Forfatterskolen &rsaquo; Free Manuscripts</title>
+<title>Gratis tekstvurdering &rsaquo; Forfatterskolen</title>
 @stop
 
 @section('styles')
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .mce-branding {
-            display: none !important;
+        .tekstvurdering {
+            --wine: #862736;
+            --wine-hover: #9c2e40;
+            --wine-light-solid: #f4e8ea;
+            --cream: #faf8f5;
+            --green: #2e7d32;
+            --green-bg: #e8f5e9;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5a5550;
+            --text-muted: #8a8580;
+            --border: rgba(0, 0, 0, 0.08);
+            --border-strong: rgba(0, 0, 0, 0.12);
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Source Sans 3', -apple-system, sans-serif;
+            --radius: 10px;
+            --radius-lg: 14px;
+            font-family: var(--font-body);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── HERO ───────────────────────────────────────── */
+        .tekstvurdering .hero {
+            background: #fff;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .tekstvurdering .hero__badge {
+            display: inline-block;
+            font-size: 0.72rem; font-weight: 600;
+            letter-spacing: 1px; text-transform: uppercase;
+            color: var(--wine);
+            background: var(--wine-light-solid);
+            padding: 0.3rem 0.85rem; border-radius: 20px;
+            margin-bottom: 1.25rem;
+        }
+        .tekstvurdering .hero__title {
+            font-family: var(--font-display);
+            font-size: 2.25rem; font-weight: 700;
+            color: var(--text-primary);
+            max-width: 600px; margin: 0 auto 0.75rem;
+            line-height: 1.2;
+        }
+        .tekstvurdering .hero__sub {
+            font-size: 1.05rem; color: var(--text-secondary);
+            max-width: 520px; margin: 0 auto; line-height: 1.6;
+        }
+
+        /* ── LAYOUT ─────────────────────────────────────── */
+        .tekstvurdering .page {
+            max-width: 960px; margin: 0 auto;
+            padding: 2.5rem 2rem;
+            display: grid; grid-template-columns: 1fr 300px;
+            gap: 2.5rem; align-items: start;
+        }
+
+        /* ── FORM CARD ──────────────────────────────────── */
+        .tekstvurdering .form-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+        }
+        .tekstvurdering .form-card__title {
+            font-size: 1.1rem; font-weight: 700;
+            color: var(--text-primary); margin-bottom: 1.25rem;
+        }
+        .tekstvurdering .form-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;
+        }
+        .tekstvurdering .form-group { margin-bottom: 1rem; }
+        .tekstvurdering .form-group label {
+            display: block; font-size: 0.78rem; font-weight: 600;
+            color: var(--text-primary); margin-bottom: 0.3rem;
+        }
+        .tekstvurdering .form-group input,
+        .tekstvurdering .form-group select,
+        .tekstvurdering .form-group textarea {
+            width: 100%; padding: 0.65rem 0.9rem;
+            border: 1px solid var(--border-strong); border-radius: 6px;
+            font-family: var(--font-body); font-size: 0.875rem;
+            color: var(--text-primary); outline: none;
+            transition: border-color 0.15s; background: #fff;
+        }
+        .tekstvurdering .form-group input:focus,
+        .tekstvurdering .form-group select:focus,
+        .tekstvurdering .form-group textarea:focus { border-color: var(--wine); }
+        .tekstvurdering .form-group input::placeholder,
+        .tekstvurdering .form-group textarea::placeholder { color: var(--text-muted); }
+        .tekstvurdering .form-group textarea {
+            resize: vertical; min-height: 240px; line-height: 1.7;
+        }
+        .tekstvurdering .form-hint {
+            font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem;
+        }
+
+        /* Word counter */
+        .tekstvurdering .textarea-footer {
+            display: flex; align-items: center;
+            justify-content: space-between; margin-top: 0.35rem;
+        }
+        .tekstvurdering .word-counter {
+            font-size: 0.78rem; color: var(--text-muted);
+            transition: color 0.15s;
+        }
+        .tekstvurdering .word-counter.over { color: #c62828; font-weight: 600; }
+        .tekstvurdering .word-counter__bar {
+            width: 120px; height: 3px;
+            background: rgba(0,0,0,0.06); border-radius: 2px; overflow: hidden;
+        }
+        .tekstvurdering .word-counter__fill {
+            height: 100%; background: var(--wine);
+            border-radius: 2px; transition: width 0.2s, background 0.15s;
+        }
+        .tekstvurdering .word-counter__fill.over { background: #c62828; }
+
+        /* Submit */
+        .tekstvurdering .form-submit {
+            width: 100%; padding: 0.85rem;
+            background: var(--wine); color: #fff;
+            border: none; border-radius: 8px;
+            font-family: var(--font-body); font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; transition: background 0.15s; margin-top: 0.5rem;
+        }
+        .tekstvurdering .form-submit:hover { background: var(--wine-hover); }
+        .tekstvurdering .form-submit:disabled {
+            background: rgba(0,0,0,0.1); color: var(--text-muted); cursor: not-allowed;
+        }
+        .tekstvurdering .form-note {
+            font-size: 0.75rem; color: var(--text-muted);
+            text-align: center; margin-top: 0.85rem; line-height: 1.5;
+        }
+
+        /* Alert */
+        .tekstvurdering .form-alert {
+            background: #fef2f2; border: 1px solid #fecaca;
+            border-radius: 8px; padding: 0.75rem 1rem;
+            margin-bottom: 1rem; font-size: 0.82rem; color: #991b1b;
+        }
+
+        /* ── SIDEBAR ────────────────────────────────────── */
+        .tekstvurdering .sidebar {
+            display: flex; flex-direction: column; gap: 1.25rem;
+        }
+        .tekstvurdering .sidebar-card {
+            background: #fff; border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 1.5rem;
+        }
+        .tekstvurdering .sidebar-card__title {
+            font-size: 0.9rem; font-weight: 700;
+            color: var(--text-primary); margin-bottom: 0.85rem;
+        }
+        .tekstvurdering .sidebar-card__list {
+            display: flex; flex-direction: column; gap: 0.6rem;
+        }
+        .tekstvurdering .sidebar-card__item {
+            display: flex; align-items: flex-start; gap: 0.5rem;
+            font-size: 0.825rem; color: var(--text-secondary); line-height: 1.5;
+        }
+        .tekstvurdering .sidebar-card__item svg {
+            width: 16px; height: 16px; stroke: var(--green);
+            flex-shrink: 0; margin-top: 2px;
+        }
+
+        /* Stats */
+        .tekstvurdering .sidebar-stats {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;
+        }
+        .tekstvurdering .sidebar-stat {
+            text-align: center; padding: 0.85rem;
+            background: #fff; border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+        .tekstvurdering .sidebar-stat__number {
+            font-size: 1.25rem; font-weight: 700;
+            color: var(--wine); line-height: 1; margin-bottom: 0.15rem;
+        }
+        .tekstvurdering .sidebar-stat__label {
+            font-size: 0.65rem; color: var(--text-muted);
+        }
+
+        /* Quote */
+        .tekstvurdering .sidebar-quote {
+            background: var(--wine-light-solid);
+            border-radius: var(--radius-lg); padding: 1.5rem;
+        }
+        .tekstvurdering .sidebar-quote__text {
+            font-family: var(--font-display);
+            font-size: 0.95rem; font-style: italic;
+            color: var(--text-primary); line-height: 1.6; margin-bottom: 0.75rem;
+        }
+        .tekstvurdering .sidebar-quote__author {
+            font-size: 0.78rem; font-weight: 600; color: var(--wine);
+        }
+
+        @media (max-width: 768px) {
+            .tekstvurdering .hero__title { font-size: 1.75rem; }
+            .tekstvurdering .page { grid-template-columns: 1fr; }
+            .tekstvurdering .form-row { grid-template-columns: 1fr; }
+            .tekstvurdering .sidebar { order: -1; }
         }
     </style>
 @stop
 
 @section('content')
-<div class="free-manuscript-page free-manuscript-page-new">
-    <div class="header" data-bg="https://www.forfatterskolen.no/images-new/checkout-top.png">
-    </div> <!-- end header-->
+<div class="tekstvurdering">
 
-    <div class="body">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-md-12 col-md-offset-2">
-                    <div class="text-center mb-5">
-                        <h1>{{ trans('site.front.free-manuscript.header-title') }}</h1>
-                        <p>
-                            {{ trans('site.front.free-manuscript.description') }}
-                        </p>
+    {{-- ═══════════ HERO ═══════════ --}}
+    <div class="hero">
+        <span class="hero__badge">Gratis og uforpliktende</span>
+        <h1 class="hero__title">F&aring; en profesjonell vurdering av teksten din</h1>
+        <p class="hero__sub">Send inn opptil 500 ord og f&aring; tilbakemelding fra en av v&aring;re redakt&oslash;rer &mdash; helt gratis.</p>
+    </div>
+
+    {{-- ═══════════ FORM + SIDEBAR ═══════════ --}}
+    <div class="page">
+
+        {{-- LEFT: SKJEMA --}}
+        <div class="form-card">
+            <div class="form-card__title">Send inn din tekst</div>
+
+            @if($errors->any())
+                <div class="form-alert">
+                    @foreach($errors->all() as $error)
+                        {!! $error !!}@if(!$loop->last)<br>@endif
+                    @endforeach
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route($action) }}">
+                @csrf
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fm-name">Fornavn *</label>
+                        <input type="text" id="fm-name" name="name" required placeholder="Ditt fornavn" value="{{ old('name') }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="fm-email">E-post *</label>
+                        <input type="email" id="fm-email" name="email" required placeholder="din@epost.no" value="{{ old('email') }}">
+                        <span class="form-hint">Vi sender tilbakemeldingen hit.</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fm-lastname">Etternavn *</label>
+                    <input type="text" id="fm-lastname" name="last_name" required placeholder="Ditt etternavn" value="{{ old('last_name') }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="fm-genre">Sjanger</label>
+                    <select id="fm-genre" name="genre" required>
+                        <option value="" disabled selected>Velg sjanger</option>
+                        @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
+                            <option value="{{ $type->id }}" {{ old('genre') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fm-text">Din tekst (maks 500 ord) *</label>
+                    <textarea id="fm-text" name="manuscript_content" required placeholder="Lim inn eller skriv teksten din her...">{{ old('manuscript_content') }}</textarea>
+                    <div class="textarea-footer">
+                        <div class="word-counter__bar">
+                            <div class="word-counter__fill" id="wordBar" style="width: 0%;"></div>
+                        </div>
+                        <span class="word-counter" id="wordCounter">0 / 500 ord</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="form-submit" id="submitBtn">Send inn til vurdering</button>
+
+                <p class="form-note">
+                    Du mottar tilbakemeldingen p&aring; e-post innen 3 virkedager.<br>
+                    Kun &eacute;n innsending per person.
+                </p>
+            </form>
+        </div>
+
+        {{-- RIGHT: SIDEBAR --}}
+        <div class="sidebar">
+
+            {{-- Hva du får --}}
+            <div class="sidebar-card">
+                <div class="sidebar-card__title">Hva du f&aring;r</div>
+                <div class="sidebar-card__list">
+                    <div class="sidebar-card__item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Vurdering av spr&aring;k og stil
+                    </div>
+                    <div class="sidebar-card__item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Tilbakemelding p&aring; fortellerstemme
+                    </div>
+                    <div class="sidebar-card__item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Tekstens styrker og forbedringspunkter
+                    </div>
+                    <div class="sidebar-card__item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Konkrete tips til videre arbeid
                     </div>
                 </div>
             </div>
-            <div class="row form-container">
-                <div class="col-lg-8 col-md-12 col-md-offset-2">
-                    <div class="card">
-                        <div class="card-body">
-                            <h2 class="title">
-                                {{ trans('site.front.free-manuscript.title') }}
-                            </h2>
 
-                            <form class="margin-bottom" method="POST" action="{{ route($action) }}">
-                                {{ csrf_field() }}
+            {{-- Stats --}}
+            <div class="sidebar-stats">
+                <div class="sidebar-stat">
+                    <div class="sidebar-stat__number">{{ number_format($totalEvaluations ?? 0, 0, ',', ' ') }}</div>
+                    <div class="sidebar-stat__label">Tekster vurdert</div>
+                </div>
+                <div class="sidebar-stat">
+                    <div class="sidebar-stat__number">3 dager</div>
+                    <div class="sidebar-stat__label">Gjennomsnittlig svartid</div>
+                </div>
+            </div>
 
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa at-icon"></i></span>
-                                    </div>
-                                    <input type="email" name="email" class="form-control no-border-left"
-                                           placeholder="{{ trans('site.front.form.email') }}" required value="{{old('email')}}">
-                                </div>
+            {{-- Sitat --}}
+            <div class="sidebar-quote">
+                <div class="sidebar-quote__text">&laquo;Tilbakemeldingen ga meg troen p&aring; at dette var verdt &aring; jobbe videre med. N&aring; er boken ferdig!&raquo;</div>
+                <div class="sidebar-quote__author">&mdash; Tidligere elev</div>
+            </div>
+        </div>
 
-                                <div class="input-group mt-5">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa user-icon"></i></span>
-                                    </div>
-                                    <input type="text" name="name" class="form-control no-border-left"
-                                           placeholder="{{ trans('site.front.form.first-name') }}" required value="{{old('name')}}">
-                                </div>
-
-                                <div class="input-group mt-5">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa user-icon"></i></span>
-                                    </div>
-                                    <input type="text" name="last_name" class="form-control no-border-left"
-                                           placeholder="{{ trans('site.front.form.last-name') }}" required value="{{old('last_name')}}">
-                                </div>
-
-                                <div class="form-group mt-5">
-                                    <select class="form-control" name="genre" required>
-                                        <option value="" disabled="disabled" selected>{{ ucwords(trans('site.front.select-genre')) }}</option>
-                                        @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-                                            <option value="{{ $type->id }}"> {{ $type->name }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="font-quicksand-regular mb-4" style="font-size: 14px">
-                                        {{ trans('site.front.free-manuscript.instruction') }}
-                                    </label>
-                                    <textarea class="form-control" name="manuscript_content" rows="12"
-                                              placeholder="{{ trans('site.front.free-manuscript.max-word-text') }}"
-                                              id="editor">{{ old('manuscript_content') }}</textarea>
-                                    <span class="note-color">
-                                        *{{ trans('site.front.free-manuscript.note') }}
-                                    </span>
-                                </div>
-
-                                <button type="submit" class="btn site-btn-global w-25">
-                                    {{ trans('site.front.free-manuscript.send') }}
-                                </button>
-                            </form>
-
-                            @if($errors->any())
-                                <div class="alert alert-danger">
-                                    <ul>
-                                        @foreach($errors->all() as $error)
-                                            <li>{!! $error !!}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div> <!-- end column -->
-            </div> <!-- end row -->
-        </div> <!-- end container -->
-    </div> <!-- end body -->
+    </div>
 </div>
 @stop
 
 @section('scripts')
-	<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script>
-(function($){
-    $.fn.textareaCounter = function(options) {
-        // setting the defaults
-        // $("textarea").textareaCounter({ limit: 100 });
-        var defaults = {
-            limit: 100
-        };  
-        var options = $.extend(defaults, options);
+    var textarea = document.getElementById('fm-text');
+    var counter = document.getElementById('wordCounter');
+    var bar = document.getElementById('wordBar');
+    var submitBtn = document.getElementById('submitBtn');
 
-        // and the plugin begins
-        return this.each(function() {
-            var obj, text, wordcount, limited;
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            var words = this.value.trim().split(/\s+/).filter(function(w) { return w.length > 0; }).length;
+            var pct = Math.min((words / 500) * 100, 100);
+            var isOver = words > 500;
 
-            obj = $(this);
-            obj.after('<span style="font-size: 11px; clear: both; margin-top: 3px; display: block;" id="counter-text">Maks '+options.limit+' ord</span>');
+            counter.textContent = words + ' / 500 ord' + (isOver ? ' \u2014 for langt!' : '');
+            counter.className = 'word-counter' + (isOver ? ' over' : '');
 
-            obj.keyup(function() {
-                text = obj.val();
-                if(text === "") {
-                    wordcount = 0;
-                } else {
-                    wordcount = $.trim(text).split(" ").length;
-                }
-                if(wordcount > options.limit) {
-                    $("#counter-text").html('<span style="color: #DD0000;">0 ord igjen</span>');
-                    limited = $.trim(text).split(" ", options.limit);
-                    limited = limited.join(" ");
-                    //$(this).val(limited); this would not allow to add word any further
-					$(".btn-theme").text("Slett noen ord").attr('disabled', true);
-                } else {
-                    $("#counter-text").html((options.limit - wordcount)+' ord igjen');
-                    $(".btn-theme").text("Send inn").attr('disabled', false);
-                }
+            bar.style.width = pct + '%';
+            bar.className = 'word-counter__fill' + (isOver ? ' over' : '');
 
-                $.post('/free-manuscript/set-word-count', {wordcount: wordcount}).then(function(response){
-
-				});
-            });
-        });
-    };
-})(jQuery);
-
-// tinymce
-let editor_config = {
-    path_absolute: "{{ URL::to('/') }}",
-    height: '15em',
-    selector: '#editor',
-    menubar:false,
-    max_word: 500,
-    plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
-        'searchreplace wordcount visualblocks visualchars code fullscreen',
-        'insertdatetime media nonbreaking save table directionality',
-        'emoticons template paste textcolor colorpicker textpattern'],
-    /*toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
-    'alignjustify  | removeformat',*/
-    toolbar1: 'undo redo fontselect fontsizeselect bold italic underline strikethrough \
-                    alignleft aligncenter alignright alignjustify ',
-    toolbar2: 'copy cut bullist numlist outdent indent forecolor backcolor link image searchreplace removeformat fullscreen ' +
-    'leftChev rightChev enDash',
-    relative_urls: false,
-    file_browser_callback : function(field_name, url, type, win) {
-        let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-        let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
-
-        let cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
-        if (type == 'image') {
-            cmsURL = cmsURL + '&type=Images';
-        } else {
-            cmsURL = cmsURL + '&type=Files';
-        }
-
-        tinyMCE.activeEditor.windowManager.open({
-            file : cmsURL,
-            title : 'Filemanager',
-            width : x * 0.8,
-            height : y * 0.8,
-            resizable : 'yes',
-            close_previous : 'no'
-        });
-    },
-
-    setup: function(ed) {
-        ed.on('keyup', function (e) {
-            let event = e;
-            setTimeout(function() {
-                let writtenWords = $('.mce-wordcount').html();
-                writtenWords = parseInt(writtenWords.replace("words", ""));
-                let maxWord = ed.settings.max_word;
-                let limited = "";
-                let content = ed.getContent();
-                let limit = maxWord - writtenWords;
-                if (writtenWords > maxWord) {
-                    //$('.mce-wordcount').css("color", "red");
-                    limited = $.trim(content).split(" ", maxWord);
-                    limited = limited.join(" ");
-
-                    ed.setContent(limited);
-                    limit = 0;
-                } else {
-                    $("#"+ed.id).next('span').css("color","inherit");
-                }
-
-                if (limit <= 0) {
-                    limit = 0;
-                    $("#"+ed.id).next('span').css("color","red");
-                }
-
-                $("#"+ed.id).next('span').text(limit+' ord igjen');
-
-                $.post('/free-manuscript/set-word-count', {wordcount: writtenWords}).then(function(response){
-
-                });
-            }, 320);
-
+            submitBtn.disabled = isOver;
         });
 
-        // add buttons to toolbar
-        ed.addButton('leftChev', {
-            text: '<<',
-            tooltip: '',
-            onclick: function (_) {
-                ed.insertContent("&#171;");
-            }
+        // Trigger on page load if old() text exists
+        textarea.dispatchEvent(new Event('input'));
+    }
+
+    // Disable submit on form submit to prevent double-click
+    var form = document.querySelector('.form-card form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sender...';
         });
-
-        ed.addButton('rightChev', {
-            text: '>>',
-            tooltip: '',
-            onclick: function (_) {
-                ed.insertContent("&#187;");
-            }
-        });
-
-        ed.addButton('enDash', {
-            text: '-',
-            tooltip: '',
-            onclick: function (_) {
-                ed.insertContent("&#8211;");
-            }
-        });
-
-    },
-
-
-};
-tinymce.init(editor_config);
-
-$("textarea").textareaCounter({ limit: 500 });
-
-$("form").on('submit',function(){
-    $("[type=submit]").attr('disabled', 'disabled');
-});
-
+    }
 </script>
 @stop
