@@ -396,10 +396,13 @@
 
         {{-- ═══════ COMPUTE STATS ═══════ --}}
         @php
-            $availableSlots = $editors->reduce(function ($carry, $group) {
-                return $carry + $group->count();
-            }, 0);
             $nextSession = $bookedSessions->first();
+            $completedCount = $bookedSessions->filter(function ($s) {
+                $d = \Carbon\Carbon::parse($s->timeSlot->date.' '.$s->timeSlot->start_time, 'UTC')
+                    ->setTimezone(config('app.timezone'));
+                return $d->isPast();
+            })->count();
+            $activeCount = $bookedSessions->count() - $completedCount;
 
             // Compute next session date label
             $nextDateLabel = '–';
@@ -422,23 +425,19 @@
             }
         @endphp
 
-        {{-- ═══════ STATS ROW ═══════ --}}
-        <div class="stats-row">
+        {{-- ═══════ STATS ROW (3 kort) ═══════ --}}
+        <div class="stats-row" style="grid-template-columns: repeat(3, 1fr);">
             <div class="stat-card">
-                <div class="stat-card__number">{{ $bookedEditorsCount }}</div>
-                <div class="stat-card__label">{{ trans('site.coaching-time-my-editors') }}</div>
+                <div class="stat-card__number">{{ $activeCount }}</div>
+                <div class="stat-card__label">{{ trans('site.coaching-time-booked-sessions') }}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-card__number">{{ $nextDateLabel }}</div>
                 <div class="stat-card__label">{{ trans('site.coaching-time-next-editorial') }}</div>
             </div>
             <div class="stat-card">
-                <div class="stat-card__number">{{ $bookedSessionsThisMonth }}</div>
-                <div class="stat-card__label">{{ trans('site.coaching-time-this-month') }}</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-card__number stat-card__number--green">{{ $availableSlots }}</div>
-                <div class="stat-card__label">{{ trans('site.coaching-time-available-slots') }}</div>
+                <div class="stat-card__number stat-card__number--green">{{ $completedCount }}</div>
+                <div class="stat-card__label">{{ trans('site.coaching-time-completed') }}</div>
             </div>
         </div>
 
@@ -459,47 +458,12 @@
             </div>
         @endif
 
-        {{-- ═══════ AVAILABLE EDITORS ═══════ --}}
-        @if($editors->count())
-            <div class="coaching-card">
-                <div class="coaching-card__header">
-                    <div>
-                        <div class="coaching-card__title">{{ trans('site.coaching-time-available-book-editors') }}</div>
-                        <div class="coaching-card__desc">Velg en redaktør å booke time med.</div>
-                    </div>
-                </div>
-                <div class="coaching-card__body">
-                    <div class="editor-grid">
-                        @foreach($editors as $editorSlots)
-                            @php $editor = $editorSlots->first()->editor; @endphp
-                            <div class="editor-card">
-                                <div class="editor-card__avatar">
-                                    {{ substr($editor->first_name, 0, 1) . substr($editor->last_name, 0, 1) }}
-                                </div>
-                                <div class="editor-card__name">{{ $editor->full_name }}</div>
-                                <div class="editor-card__specialty">&nbsp;</div>
-                                @if($editorSlots->count() > 0)
-                                    <span class="editor-card__availability editor-card__availability--available">
-                                        {{ $editorSlots->count() }} ledige tider
-                                    </span>
-                                @else
-                                    <span class="editor-card__availability editor-card__availability--busy">
-                                        Fullt booket
-                                    </span>
-                                @endif
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        @endif
-
         {{-- ═══════ BOOK COACHING TIME CTA ═══════ --}}
-        <div class="booking-card">
-            <div class="booking-card__title">{{ trans('site.coaching-time-book-editorial-class') }}</div>
-            <div class="booking-card__desc">{{ trans('site.coaching-time-book-editorial-class-description') }}</div>
-
-            @if($coachingTimers->count() >= 1)
+        @if($coachingTimers->count() >= 1)
+            {{-- Elev har coaching-timer fra kurs — vis direkte booking --}}
+            <div class="booking-card">
+                <div class="booking-card__title">{{ trans('site.coaching-time-book-editorial-class') }}</div>
+                <div class="booking-card__desc">{{ trans('site.coaching-time-book-editorial-class-description') }}</div>
                 <form method="GET" action="{{ route('learner.coaching-time.available') }}">
                     @if($coachingTimers->count() > 1)
                         <div class="form-group">
@@ -522,10 +486,8 @@
                         {{ trans('site.coaching-time-see-available-slots') }}
                     </button>
                 </form>
-            @else
-                <p style="color: #8a8580; font-size: 0.875rem; margin-top: 0.5rem;">{{ trans('site.coaching-time-no-record') }}</p>
-            @endif
-        </div>
+            </div>
+        @endif
 
         {{-- ═══════ MY SESSIONS ═══════ --}}
         <div style="margin-top: 2rem;">
@@ -546,39 +508,54 @@
                                         'UTC'
                                     )->setTimezone(config('app.timezone'));
 
-                                    if ($sessionDate->isToday()) {
-                                        $sessionDateLabel = 'I dag';
-                                    } elseif ($sessionDate->isTomorrow()) {
-                                        $sessionDateLabel = 'I morgen';
-                                    } elseif ($sessionDate->isSameWeek(\Carbon\Carbon::now(config('app.timezone')))) {
-                                        $sessionDateLabel = ucfirst($sessionDate->locale(app()->getLocale())->dayName);
-                                    } else {
-                                        $sessionDateLabel = $sessionDate->format('d.m.Y');
-                                    }
                                     $duration = $session->plan_type == 1 ? '60 min' : '30 min';
-
                                     $norwegianMonths = ['jan', 'feb', 'mar', 'apr', 'mai', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'des'];
                                     $monthShort = $norwegianMonths[$sessionDate->month - 1];
+                                    $isCompleted = $sessionDate->isPast();
+                                    $hasEditor = optional($session->editor)->full_name;
                                 @endphp
-                                <div class="session-item {{ $loop->iteration > 2 ? 'd-none extra-session' : '' }}">
-                                    <div class="session-item__date">
-                                        <div class="session-item__day">{{ $sessionDate->format('d') }}</div>
-                                        <div class="session-item__month">{{ $monthShort }}</div>
-                                    </div>
-                                    <div class="session-item__info">
-                                        <div class="session-item__title">Med {{ optional($session->editor)->full_name }}</div>
-                                        <div class="session-item__meta">Kl. {{ $sessionDate->format('H:i') }} · {{ $duration }}</div>
-                                    </div>
-                                    @if($sessionDate->isPast())
-                                        <span class="session-item__badge session-item__badge--completed">Gjennomført</span>
+                                <div class="session-item {{ $loop->iteration > 4 ? 'd-none extra-session' : '' }}"
+                                     style="{{ !$isCompleted && !$hasEditor ? 'border-left: 3px solid #e65100;' : (!$isCompleted ? 'border-left: 3px solid #1565c0;' : '') }}">
+                                    @if($isCompleted || $hasEditor)
+                                        <div class="session-item__date">
+                                            <div class="session-item__day">{{ $sessionDate->format('d') }}</div>
+                                            <div class="session-item__month">{{ $monthShort }}</div>
+                                        </div>
                                     @else
-                                        <span class="session-item__badge session-item__badge--upcoming">Kommende</span>
+                                        <div style="text-align: center; min-width: 42px; flex-shrink: 0;">
+                                            <div style="font-size: 0.7rem; font-weight: 600; color: #e65100;">{{ $duration }}</div>
+                                        </div>
+                                    @endif
+                                    <div class="session-item__info">
+                                        <div class="session-item__title">
+                                            @if($hasEditor)
+                                                Coaching med {{ $hasEditor }}
+                                            @else
+                                                Coaching – {{ $duration }}
+                                            @endif
+                                        </div>
+                                        <div class="session-item__meta">
+                                            @if($isCompleted)
+                                                {{ $duration }} · {{ trans('site.coaching-time-completed') }}
+                                            @elseif($hasEditor)
+                                                {{ $duration }} · Kl. {{ $sessionDate->format('H:i') }}
+                                            @else
+                                                Tildeles redaktør
+                                            @endif
+                                        </div>
+                                    </div>
+                                    @if($isCompleted)
+                                        <span class="session-item__badge session-item__badge--completed">{{ trans('site.coaching-time-completed') }}</span>
+                                    @elseif(!$hasEditor)
+                                        <span class="session-item__badge" style="background: #fff3e0; color: #e65100;">{{ trans('site.coaching-time-waiting-editor') }}</span>
+                                    @else
+                                        <span class="session-item__badge session-item__badge--upcoming">{{ trans('site.coaching-time-scheduled') }}</span>
                                     @endif
                                 </div>
                             @endforeach
                         </div>
 
-                        @if($bookedSessions->count() > 2)
+                        @if($bookedSessions->count() > 4)
                             <div style="text-align: center; margin-top: 1rem;">
                                 <button id="toggle-sessions" class="btn-coaching btn-coaching--secondary" data-showing="false">
                                     {{ trans('site.coaching-time-see-all-sessions') }}
@@ -588,6 +565,13 @@
                     @endif
                 </div>
             </div>
+        </div>
+
+        {{-- ═══════ BESTILL COACHING CTA ═══════ --}}
+        <div class="booking-card" style="margin-top: 1.5rem;">
+            <div class="booking-card__title">{{ trans('site.coaching-time-order-coaching') }}</div>
+            <div class="booking-card__desc">{{ trans('site.coaching-time-order-coaching-desc') }}</div>
+            <a href="/manusutvikling#coaching" class="btn-coaching btn-coaching--primary">{{ trans('site.coaching-time-see-prices') }}</a>
         </div>
 
     </div>
@@ -656,7 +640,7 @@
                 item.classList.toggle('d-none');
             });
             toggle.setAttribute('data-showing', showing ? 'false' : 'true');
-            toggle.textContent = showing ? '{{ trans('site.coaching-time-see-all-sessions') }}' : 'Skjul timer';
+            toggle.textContent = showing ? '{{ trans("site.coaching-time-see-all-sessions") }}' : 'Skjul timer';
         });
     });
 

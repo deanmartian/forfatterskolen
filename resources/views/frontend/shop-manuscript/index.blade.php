@@ -566,6 +566,170 @@
 
         .manus-redesign .manus-info-banner__inner strong { color: var(--wine-dark); }
 
+        /* ── COACHING SECTION ─────────────────────────────── */
+        .manus-redesign .manus-coaching {
+            padding: 4rem 2rem;
+            background: var(--cream);
+        }
+
+        .manus-redesign .manus-coaching__inner {
+            max-width: 720px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .manus-redesign .manus-coaching__badge {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            background: var(--wine-light-solid);
+            color: var(--wine);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .manus-redesign .manus-coaching__title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .manus-redesign .manus-coaching__desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .manus-redesign .manus-coaching__cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            max-width: 620px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .manus-redesign .manus-coaching-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+
+        .manus-redesign .manus-coaching-card:hover {
+            border-color: var(--wine);
+        }
+
+        .manus-redesign .manus-coaching-card--popular {
+            border: 2px solid var(--wine);
+        }
+
+        .manus-redesign .manus-coaching-card__popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--wine);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0.3rem 0.85rem;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .manus-redesign .manus-coaching-card__label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .manus-redesign .manus-coaching-card__price {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--wine);
+            margin-bottom: 0.2rem;
+        }
+
+        .manus-redesign .manus-coaching-card__price-note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
+        }
+
+        .manus-redesign .manus-coaching-card__features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .manus-redesign .manus-coaching-card__features li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.825rem;
+            color: var(--text-secondary);
+            padding: 0.3rem 0;
+        }
+
+        .manus-redesign .manus-coaching-card__features li svg {
+            width: 14px; height: 14px; stroke: #2e7d32; flex-shrink: 0;
+        }
+
+        .manus-redesign .manus-coaching-card__cta {
+            display: inline-block;
+            padding: 0.65rem 1.75rem;
+            border: 2px solid var(--wine);
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--wine);
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .manus-redesign .manus-coaching-card__cta:hover {
+            background: var(--wine);
+            color: #fff;
+        }
+
+        .manus-redesign .manus-coaching-card--popular .manus-coaching-card__cta {
+            background: var(--wine);
+            color: #fff;
+        }
+
+        .manus-redesign .manus-coaching-card--popular .manus-coaching-card__cta:hover {
+            background: var(--wine-hover);
+        }
+
+        .manus-redesign .manus-coaching__note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .manus-redesign .manus-coaching__cards { grid-template-columns: 1fr; }
+        }
+
         /* ── TESTIMONIAL ──────────────────────────────────── */
         .manus-redesign .manus-testimonial { padding: 3rem 2rem 4rem; }
 
@@ -816,6 +980,47 @@
         <div class="manus-testimonial__inner">
             <p class="manus-testimonial__quote">"Tilbakemeldingen fra redaktøren var grundig og konstruktiv. Det ga meg akkurat det dyttet jeg trengte for å ferdigstille manuset og sende det til forlag."</p>
             <p class="manus-testimonial__author"><strong>Utgitt elev</strong> — via Forfatterskolen</p>
+        </div>
+    </section>
+
+    {{-- ═══════════ COACHING ═══════════ --}}
+    <section class="manus-coaching">
+        <div class="manus-coaching__inner">
+            <span class="manus-coaching__badge">Tilleggstjeneste</span>
+            <h2 class="manus-coaching__title">Coaching med redaktør</h2>
+            <p class="manus-coaching__desc">Book en personlig gjennomgang med en av våre erfarne redaktører. Perfekt som supplement til manusutvikling &mdash; eller som en selvstendig tjeneste.</p>
+
+            <div class="manus-coaching__cards">
+                {{-- Halvtime --}}
+                <div class="manus-coaching-card">
+                    <div class="manus-coaching-card__label">Halvtime</div>
+                    <div class="manus-coaching-card__price">kr 1 190</div>
+                    <div class="manus-coaching-card__price-note">eks. mva</div>
+                    <ul class="manus-coaching-card__features">
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> 30 min en-til-en med redaktør</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Fokus på ditt manus</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Video eller telefon</li>
+                    </ul>
+                    <a href="{{ route('front.shop-manuscript.checkout', 3) }}" class="manus-coaching-card__cta">Bestill 30 min &rarr;</a>
+                </div>
+
+                {{-- Hel time --}}
+                <div class="manus-coaching-card manus-coaching-card--popular">
+                    <span class="manus-coaching-card__popular-badge">Mest populær</span>
+                    <div class="manus-coaching-card__label">Hel time</div>
+                    <div class="manus-coaching-card__price">kr 1 690</div>
+                    <div class="manus-coaching-card__price-note">eks. mva</div>
+                    <ul class="manus-coaching-card__features">
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> 60 min en-til-en med redaktør</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Grundig gjennomgang av manus</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Konkrete råd til neste steg</li>
+                        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Video eller telefon</li>
+                    </ul>
+                    <a href="{{ route('front.shop-manuscript.checkout', 3) }}" class="manus-coaching-card__cta">Bestill 60 min &rarr;</a>
+                </div>
+            </div>
+
+            <p class="manus-coaching__note">Spar 10% på coaching når du bestiller sammen med manusutvikling.</p>
         </div>
     </section>
 
