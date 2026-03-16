@@ -361,9 +361,15 @@ class LearnerController extends Controller
 
     public function shopManuscript(): View
     {
-        $shopManuscriptsTaken = Auth::user()->shopManuscriptsTaken()->paginate(4);
+        $all = Auth::user()->shopManuscriptsTaken()
+            ->with(['shop_manuscript', 'feedbacks'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return view('frontend.learner.shop-manuscript', compact('shopManuscriptsTaken'));
+        $active = $all->filter(fn($m) => $m->status !== 'Finished');
+        $completed = $all->filter(fn($m) => $m->status === 'Finished');
+
+        return view('frontend.learner.shop-manuscript', compact('active', 'completed'));
     }
 
     public function shopManuscriptShow($id)

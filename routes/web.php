@@ -445,10 +445,10 @@ Route::domain($front)->group(function () {
         Route::get('/course/{course_id}/lesson/{id}', [Frontend\LearnerController::class, 'lesson'])->name('learner.course.lesson'); // Lesson Page
         Route::get('/course/{course_id}/lesson/{id}/download', [Frontend\LearnerController::class, 'downloadLesson'])->name('learner.course.download-lesson'); // Download Lesson Page
         Route::get('/manuscript/{id}', [Frontend\LearnerController::class, 'manuscriptShow'])->name('learner.manuscript.show'); // Manuscript Single Page
-        Route::get('/shop-manuscript', [Frontend\LearnerController::class, 'shopManuscript'])->name('learner.shop-manuscript'); // Shop Manuscripts Page
-        Route::get('/shop-manuscript/{id}', [Frontend\LearnerController::class, 'shopManuscriptShow'])->name('learner.shop-manuscript.show'); // Shop Manuscript Show Page
-        Route::get('shop-manuscript/{id}/download-script/{type}', [Frontend\LearnerController::class, 'downloadManuscript'])->name('learner.shop-manuscript.download');
-        Route::get('/shop-manuscript/{id}/feedback/{feedback_id}', [Frontend\LearnerController::class, 'downloadManuscriptFeedback'])->name('learner.shop-manuscript.download-feedback'); // Shop Manuscript Show Page
+        Route::get('/manus', [Frontend\LearnerController::class, 'shopManuscript'])->name('learner.shop-manuscript'); // Manusutviklinger
+        Route::get('/manus/{id}', [Frontend\LearnerController::class, 'shopManuscriptShow'])->name('learner.shop-manuscript.show'); // Manusutvikling detalj
+        Route::get('manus/{id}/download-script/{type}', [Frontend\LearnerController::class, 'downloadManuscript'])->name('learner.shop-manuscript.download');
+        Route::get('/manus/{id}/feedback/{feedback_id}', [Frontend\LearnerController::class, 'downloadManuscriptFeedback'])->name('learner.shop-manuscript.download-feedback');
         Route::get('/workshop', [Frontend\LearnerController::class, 'workshop'])->name('learner.workshop'); // Workshops Page
         Route::post('/coaching-timer/{id}/approve_date', [Frontend\LearnerController::class, 'approveCoachingDate'])->name('learner.coaching-timer.approve_date');
         Route::post('/coaching-timer/{id}/suggest_date', [Frontend\LearnerController::class, 'suggestCoachingDate'])->name('learner.coaching-timer.suggest_date');
@@ -506,15 +506,15 @@ Route::domain($front)->group(function () {
         Route::post('/password/update', [Frontend\LearnerController::class, 'passwordUpdate'])->name('learner.password.update'); // Profile Update
         Route::post('/course/take', [Frontend\LearnerController::class, 'takeCourse'])->name('learner.course.take'); // Take Course
         Route::post('/course/{id}/uploadManuscript', [Frontend\LearnerController::class, 'uploadManuscript'])->name('learner.course.uploadManuscript'); // Upload manuscript to course
-        Route::post('/shop-manuscript/{id}/comment', [Frontend\LearnerController::class, 'shopManuscriptPostComment'])->name('learner.shop-manuscript.post-comment'); // Shop Manuscript Show Page
+        Route::post('/manus/{id}/comment', [Frontend\LearnerController::class, 'shopManuscriptPostComment'])->name('learner.shop-manuscript.post-comment');
         Route::post('/assignment/{id}/upload', [Frontend\LearnerController::class, 'assignmentManuscriptUpload'])->name('learner.assignment.add_manuscript'); // Upload assignment manuscript
         Route::post('/group/{group_id}/learner/{id}/submit_feedba', [Frontend\LearnerController::class, 'submit_feedback'])->name('learner.assignment.group.submit_feedback'); // Submit feedback manuscript
         Route::post('/feedback/{id}/replace_feedback', [Frontend\LearnerController::class, 'replaceFeedback'])->name('learner.assignment.group.replace_feedback'); // Submit feedback manuscript
         Route::post('/feedback/{id}/delete_feedback', [Frontend\LearnerController::class, 'deleteFeedback'])->name('learner.assignment.group.delete_feedback'); // Submit feedback manuscript
-        Route::post('/shop-manuscript/{id}/upload', [Frontend\ShopManuscriptController::class, 'upload_manuscript'])->name('learner.shop-manuscript.upload'); // Upload shop manuscript
-        Route::post('/shop-manuscript/{id}/upload-synopsis', [Frontend\ShopManuscriptController::class, 'upload_synopsis'])->name('learner.shop-manuscript.upload_synopsis'); // Upload shop manuscript
-        Route::post('/shop-manuscript/{id}/update-uploaded-manuscript', [Frontend\ShopManuscriptController::class, 'updateUploadedManuscript'])->name('learner.shop-manuscript.update-uploaded-manuscript'); // update Uploade shop manuscript
-        Route::post('/shop-manuscript/{id}/delete-uploaded-manuscript', [Frontend\ShopManuscriptController::class, 'deleteUploadedManuscript'])->name('learner.shop-manuscript.delete-uploaded-manuscript'); // update Uploade shop manuscript
+        Route::post('/manus/{id}/upload', [Frontend\ShopManuscriptController::class, 'upload_manuscript'])->name('learner.shop-manuscript.upload');
+        Route::post('/manus/{id}/upload-synopsis', [Frontend\ShopManuscriptController::class, 'upload_synopsis'])->name('learner.shop-manuscript.upload_synopsis');
+        Route::post('/manus/{id}/update-uploaded-manuscript', [Frontend\ShopManuscriptController::class, 'updateUploadedManuscript'])->name('learner.shop-manuscript.update-uploaded-manuscript');
+        Route::post('/manus/{id}/delete-uploaded-manuscript', [Frontend\ShopManuscriptController::class, 'deleteUploadedManuscript'])->name('learner.shop-manuscript.delete-uploaded-manuscript');
         Route::get('/download/invoice/{id}/credit-note', [Frontend\LearnerController::class, 'downloadCreditNote'])->name('learner.download.credit-note');
         Route::get('/download/time-register-invoice/{id}', [Frontend\LearnerController::class, 'downloadTimeRegisterInvoice'])->name('learner.download.time-register-invoice');
         Route::get('/download/invoice/{url}', [Frontend\LearnerController::class, 'downloadInvoice'])->name('learner.download.invoice')

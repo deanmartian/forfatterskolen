@@ -6,7 +6,7 @@
                 {!! trans('site.learner.nav.course') !!}
             </a>
         </li>
-        <li class="nav-item @if(Request::is('account/shop-manuscript*')) active @endif">
+        <li class="nav-item @if(Request::is('account/manus*')) active @endif">
             <a class="nav-link" href="{{route('learner.shop-manuscript')}}">
                 <i class="sprite-menu file d-block"></i>
                 {!! trans('site.learner.nav.manuscript') !!}

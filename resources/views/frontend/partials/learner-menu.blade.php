@@ -3,7 +3,7 @@
 <li @if(Request::is('account/course*')) class="active" @endif>
 <a href="{{route('learner.course')}}"><i class="fa fa-graduation-cap"></i>&nbsp;&nbsp;Mine kurs</a>
 </li>
-<li @if(Request::is('account/shop-manuscript*')) class="active" @endif>
+<li @if(Request::is('account/manus*')) class="active" @endif>
 <a href="{{route('learner.shop-manuscript')}}"><i class="fa fa-file-text"></i>&nbsp;&nbsp;Manuskripter</a>
 </li>
 <li @if(Request::is('account/workshop*')) class="active" @endif>

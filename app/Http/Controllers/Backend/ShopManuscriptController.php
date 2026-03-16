@@ -327,6 +327,8 @@ class ShopManuscriptController extends Controller
         $shopManuscriptTakenFeedback->save();
 
         $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($id);
+        $shopManuscriptTaken->completed_at = now();
+        $shopManuscriptTaken->save();
 
         // send email
         $to = $shopManuscriptTakenFeedback->shop_manuscript_taken->user->email;
