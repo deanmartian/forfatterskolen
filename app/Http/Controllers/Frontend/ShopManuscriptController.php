@@ -8,6 +8,7 @@ use App\Editor;
 use App\Events\AddToCampaignList;
 use App\Exports\GenericExport;
 use App\FreeManuscript;
+use App\Genre;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Controller;
@@ -79,9 +80,10 @@ class ShopManuscriptController extends Controller
         }
 
         $tempFile = session('temp_uploaded_file');
+        $genres = Genre::orderBy('name')->get();
 
         return view('frontend.shop-manuscript.checkout-redesign', compact(
-            'shopManuscript', 'user', 'userHasPaidCourse', 'tempFile'
+            'shopManuscript', 'user', 'userHasPaidCourse', 'tempFile', 'genres'
         ));
     }
 
@@ -372,9 +374,14 @@ class ShopManuscriptController extends Controller
         $coachingPrices = [30 => 1071, 60 => 1521];
         $coachingPrice = $coachingPrices[$coachingDuration] ?? 0;
 
+        // Genre-navn for visning
+        $genreId = $shopManuscriptOrder ? (int) $shopManuscriptOrder->genre : 0;
+        $genre = $genreId > 0 ? Genre::find($genreId) : null;
+        $genreName = $genre ? $genre->name : null;
+
         return view('frontend.shop-manuscript.payment-selection', compact(
             'order', 'shopManuscript', 'user', 'userHasPaidCourse', 'basePrice', 'mva', 'totalPrice',
-            'coachingDuration', 'coachingPrice'
+            'coachingDuration', 'coachingPrice', 'genreName'
         ));
     }
 
