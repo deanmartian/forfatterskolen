@@ -111,9 +111,12 @@ class HomeController extends Controller
 
         $upcomingSections = UpcomingSection::all();
 
+        $romankurs = Course::with('packagesIsShow')->find(config('courses.romankurs.id'));
+        $romankursPackages = $romankurs ? $romankurs->packagesIsShow : collect();
+
         return view('frontend.home-new', compact('popular_courses', 'free_courses', 'free_webinars',
             'next_webinar', 'next_free_webinar', 'next_workshop', 'latest_blog', 'poems', 'testimonials', 'workshop',
-            'upcomingSections'));
+            'upcomingSections', 'romankurs', 'romankursPackages'));
     }
 
     public function arskurs(): View
