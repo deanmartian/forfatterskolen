@@ -42,7 +42,7 @@
                                 <h3 class="group-label">Invitation Link</h3>
 
                                 <div class="form-group margin-top">
-                                    <input type="checkbox" data-toggle="toggle" data-on="Link Enabled"
+                                    <input type="checkbox" data-bs-toggle="toggle" data-on="Link Enabled"
                                            class="link-toggle" data-off="Link Disabled" data-style="ios"
                                            onchange="settings.getLink('toggle', this)"
                                     @if($invitation_link_enabled)checked @endif>
@@ -103,23 +103,23 @@
                                 <nav>
                                     <ul class="nav nav-tabs">
                                         <li>
-                                            <a href="#nav-pending" data-toggle="tab" onclick="settings.listInvitations(0, 0)">Pending</a>
+                                            <a href="#nav-pending" data-bs-toggle="tab" onclick="settings.listInvitations(0, 0)">Pending</a>
                                         </li>
                                         <li>
-                                            <a href="#nav-decline" data-toggle="tab" onclick="settings.listInvitations(1, 2)">Decline</a>
+                                            <a href="#nav-decline" data-bs-toggle="tab" onclick="settings.listInvitations(1, 2)">Decline</a>
                                         </li>
                                         <li>
-                                            <a href="#nav-readers" data-toggle="tab" onclick="settings.listInvitations(2, 1)">Readers</a>
+                                            <a href="#nav-readers" data-bs-toggle="tab" onclick="settings.listInvitations(2, 1)">Readers</a>
                                         </li>
                                         @if (\App\Http\FrontendHelpers::countReaderWithStatus($book->id, 1))
                                             <li>
-                                                <a href="#nav-finished" data-toggle="tab" onclick="settings.listInvitations(3, 3)">Finished</a>
+                                                <a href="#nav-finished" data-bs-toggle="tab" onclick="settings.listInvitations(3, 3)">Finished</a>
                                             </li>
                                         @endif
 
                                         @if (\App\Http\FrontendHelpers::countReaderWithStatus($book->id, 2))
                                             <li>
-                                                <a href="#nav-quitted" data-toggle="tab" onclick="settings.listInvitations(4, 4)">Quitted</a>
+                                                <a href="#nav-quitted" data-bs-toggle="tab" onclick="settings.listInvitations(4, 4)">Quitted</a>
                                             </li>
                                         @endif
                                     </ul>
@@ -229,7 +229,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Cancel Invitation</h4>
                 </div>
                 <div class="modal-body">
@@ -237,7 +237,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-danger" id="cancelBtn">Ok</button>
-                    <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
@@ -247,7 +247,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                     <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
@@ -255,7 +255,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-danger" id="removeBtn">Ok</button>
-                    <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>

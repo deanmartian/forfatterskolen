@@ -55,13 +55,13 @@
                 <nav>
                     <ul class="nav nav-tabs">
                         <li>
-                            <a href="#nav-pending" data-toggle="tab" onclick="methods.listInvitations(0, 0)">Pending</a>
+                            <a href="#nav-pending" data-bs-toggle="tab" onclick="methods.listInvitations(0, 0)">Pending</a>
                         </li>
                         <li>
-                            <a href="#nav-decline" data-toggle="tab" onclick="methods.listInvitations(1, 2)">Decline</a>
+                            <a href="#nav-decline" data-bs-toggle="tab" onclick="methods.listInvitations(1, 2)">Decline</a>
                         </li>
                         <li>
-                            <a href="#nav-members" data-toggle="tab" onclick="methods.listInvitations(2, 1)">Members</a>
+                            <a href="#nav-members" data-bs-toggle="tab" onclick="methods.listInvitations(2, 1)">Members</a>
                         </li>
                     </ul>
                 </nav>

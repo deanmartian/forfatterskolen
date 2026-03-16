@@ -153,7 +153,7 @@
                                                         </a>
                                                     @else
                                                         @if ($coverFile)
-                                                            <a href="{{ $coverFile }}" class="btn btn-success btn-xs" download>
+                                                            <a href="{{ $coverFile }}" class="btn btn-success btn-sm" download>
                                                                 <i class="fa fa-download"></i>
                                                             </a>
                                                             <a href="{{ asset($coverFile) }}" target="_blank" style="margin-right: 5px">
@@ -200,7 +200,7 @@
                                         </td>
                                         <td>
                                             <a href="{{ url('/dropbox/download/' . trim($barCode->value)) }}" 
-                                                class="btn btn-success btn-xs" download>
+                                                class="btn btn-success btn-sm" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -234,7 +234,7 @@
                                                             <i class="fa fa-download" aria-hidden="true"></i>
                                                         </a>&nbsp;
                                                     @else
-                                                        <a href="{{ $printReady->value }}" class="btn btn-success btn-xs" download>
+                                                        <a href="{{ $printReady->value }}" class="btn btn-success btn-sm" download>
                                                             <i class="fa fa-download"></i>
                                                         </a>
                                                     @endif
@@ -276,11 +276,11 @@
                                         <td>
                                             @if (strpos($sampleBookPDF->value, "project-"))
                                                 <a href="{{ url('/dropbox/download/' . trim($sampleBookPDF->value)) }}" 
-                                                    class="btn btn-success btn-xs">
+                                                    class="btn btn-success btn-sm">
                                                     <i class="fa fa-download" aria-hidden="true"></i>
                                                 </a>
                                             @else
-                                                <a href="{{ $sampleBookPDF->value }}" class="btn btn-success btn-xs" download>
+                                                <a href="{{ $sampleBookPDF->value }}" class="btn btn-success btn-sm" download>
                                                     <i class="fa fa-download"></i>
                                                 </a>
                                             @endif

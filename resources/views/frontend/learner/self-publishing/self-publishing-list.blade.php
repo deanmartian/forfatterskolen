@@ -16,7 +16,7 @@
                             </h1>
 
                             @if ($standardProject)
-                                <a href="{{ route('learner.self-publishing.publishing.order') }}" class="btn btn-primary float-right">
+                                <a href="{{ route('learner.self-publishing.publishing.order') }}" class="btn btn-primary float-end">
                                     {{ trans('site.author-portal.order-text') }}
                                 </a>
                             @endif
@@ -44,9 +44,9 @@
                                             {!! $publishing->dropbox_file_link_with_download !!}
                                             @if(!$publishing->feedback && $publishing->manuscript)
                                                 <br>
-                                                <button class="btn btn-primary btn-xs uploadSelfPublishingManuscriptBtn"
-                                                        data-toggle="modal"
-                                                        data-target="#uploadSelfPublishingManuscriptModal"
+                                                <button class="btn btn-primary btn-sm uploadSelfPublishingManuscriptBtn"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#uploadSelfPublishingManuscriptModal"
                                                         data-action="{{ route('learner.project.self-publishing.upload-manuscript', $publishing->id) }}">
                                                     {{ trans('site.front.form.upload-manuscript') }}
                                                 </button>
@@ -56,11 +56,11 @@
                                             @if($publishing->feedback)
                                                 @if($publishing->feedback->is_approved)
                                                     <a href="{{ $publishing->feedback->manuscript }}"
-                                                       class="btn btn-primary btn-xs margin-top" download="">
+                                                       class="btn btn-primary btn-sm margin-top" download="">
                                                         {{ trans('site.learner.download-feedback') }}
                                                     </a>
                                                 @else
-                                                    <label class="label label-warning" style="margin-right: 5px;">
+                                                    <label class="badge bg-warning" style="margin-right: 5px;">
                                                         {{ trans('site.pending') }}
                                                     </label>
                                                 @endif
@@ -84,7 +84,7 @@
                     <h4 class="modal-title">
                         {{ trans('site.front.form.upload-manuscript') }}
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
@@ -96,7 +96,7 @@
 					    application/vnd.oasis.opendocument.text" multiple>
                         </div>
 
-                        <div class="text-right">
+                        <div class="text-end">
                             <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
                         </div>
                     </form>

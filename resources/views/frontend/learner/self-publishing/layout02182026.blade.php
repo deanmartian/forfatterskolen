@@ -86,7 +86,7 @@
             ?>
             <div class="alert alert-{{ $alert_type }} global-alert-box" style="z-index: 9; min-width: 300px"
                  id="fixed_to_bottom_alert">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                <a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
                 <ul>
                     @foreach($errors->all() as $error)
                         <li>{!! $error !!}</li>
@@ -140,7 +140,7 @@
 
             // Toggle sidebar on button click
             $("#sidebarCollapse").click(function () {
-                $("#sidebar").toggleClass("hidden-xs hidden");
+                $("#sidebar").toggleClass("d-none d-sm-block hidden");
                 $("#main-container").toggleClass("enlarge");
             });
 
@@ -157,10 +157,10 @@
                 var windowWidth = window.innerWidth;
 
                 if (windowWidth <= 1026) {
-                    $("#sidebar").addClass("hidden-xs hidden");
+                    $("#sidebar").addClass("d-none d-sm-block hidden");
                     $("#main-container").removeClass("enlarge");
                 } else {
-                    $("#sidebar").removeClass("hidden-xs hidden");
+                    $("#sidebar").removeClass("d-none d-sm-block hidden");
                     $("#main-container").addClass("enlarge");
                 }
             }

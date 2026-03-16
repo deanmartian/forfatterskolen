@@ -36,11 +36,11 @@
                         <h3 class="no-margin-top">@yield('heading')</h3>
                     </div>
 
-                    <button class="btn btn-primary pull-right light-blue" data-toggle="modal" data-target="#addGoalModal">
+                    <button class="btn btn-primary float-end light-blue" data-bs-toggle="modal" data-bs-target="#addGoalModal">
                         Add Goal
                     </button>
 
-                    <a class="btn btn-default pull-right light-blue" href="{{ route('learner.word-written') }}"
+                    <a class="btn btn-light float-end light-blue" href="{{ route('learner.word-written') }}"
                        style="margin-right: 5px">
                         << BACK
                     </a>
@@ -64,7 +64,7 @@
                                     <td>{{ $goal->from_date }}</td>
                                     <td>{{ $goal->to_date }}</td>
                                     <td>
-                                        <a href="#" data-target="#statisticsModal" data-toggle="modal"
+                                        <a href="#" data-bs-target="#statisticsModal" data-bs-toggle="modal"
                                         class="showStatisticsBtn"
                                         data-action="{{ route('learner.goal-statistic', $goal->id) }}"
                                         data-maximum="{{ $goal->total_words }}"
@@ -74,14 +74,14 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-xs btn-info editGoalBtn" data-toggle="modal"
-                                                data-target="#editGoalModal"
+                                        <button type="button" class="btn btn-sm btn-info editGoalBtn" data-bs-toggle="modal"
+                                                data-bs-target="#editGoalModal"
                                         data-action="{{ route('learner.word-written-goals-update', $goal->id) }}"
                                         data-from="{{ strftime('%Y-%m-%d', strtotime($goal->from_date)) }}"
                                         data-to="{{ strftime('%Y-%m-%d', strtotime($goal->to_date)) }}"
                                         data-total-words="{{ $goal->total_words }}"><i class="fa fa-pencil"></i></button>
-                                        <button type="button" class="btn btn-xs btn-danger deleteGoalBtn" data-toggle="modal"
-                                                data-target="#deleteGoalModal"
+                                        <button type="button" class="btn btn-sm btn-danger deleteGoalBtn" data-bs-toggle="modal"
+                                                data-bs-target="#deleteGoalModal"
                                                 data-action="{{ route('learner.word-written-goals-delete', $goal->id) }}"
                                                 ><i class="fa fa-trash"></i></button>
                                     </td>
@@ -91,7 +91,7 @@
                         </table>
                     </div>
 
-                        <div class="pull-right">
+                        <div class="float-end">
                             {{ $wordsGoal->render() }}
                         </div>
                 </div>
@@ -126,9 +126,9 @@
                             <input type="number" class="form-control" step="1" name="total_words" required>
                         </div>
 
-                        <div class="text-right margin-top">
+                        <div class="text-end margin-top">
                             <button type="submit" class="btn btn-primary">Save</button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </form>
                 </div>
@@ -162,9 +162,9 @@
                             <input type="number" class="form-control" step="1" name="total_words" required>
                         </div>
 
-                        <div class="text-right margin-top">
+                        <div class="text-end margin-top">
                             <button type="submit" class="btn btn-primary">Update</button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </form>
                 </div>
@@ -176,7 +176,7 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Delete goal</h4>
                 </div>
                 <div class="modal-body">
@@ -185,7 +185,7 @@
                     <form method="POST" action="">
                         {{ csrf_field() }}
                         {{ method_field('DELETE') }}
-                        <button type="submit" class="btn btn-danger pull-right margin-top">Delete</button>
+                        <button type="submit" class="btn btn-danger float-end margin-top">Delete</button>
                         <div class="clearfix"></div>
                     </form>
                 </div>
@@ -197,7 +197,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Statistics</h4>
                 </div>
                 <div class="modal-body">

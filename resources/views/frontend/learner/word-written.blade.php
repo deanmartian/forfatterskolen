@@ -36,10 +36,10 @@
                         <h3 class="no-margin-top">@yield('heading')</h3>
                     </div>
 
-                    <button class="btn btn-primary pull-right light-blue" data-toggle="modal" data-target="#addDateModal">
+                    <button class="btn btn-primary float-end light-blue" data-bs-toggle="modal" data-bs-target="#addDateModal">
                         Add Words Written Date
                     </button>
-                    <a class="btn btn-success pull-right light-blue" href="{{ route('learner.word-written-goals') }}"
+                    <a class="btn btn-success float-end light-blue" href="{{ route('learner.word-written-goals') }}"
                     style="margin-right: 5px">
                         Add/View Goals
                     </a>
@@ -65,7 +65,7 @@
                         </table>
                     </div>
 
-                        <div class="pull-right">
+                        <div class="float-end">
                             {{ $words->render() }}
                         </div>
                 </div>
@@ -95,9 +95,9 @@
                             <input type="date" class="form-control" name="date">
                         </div>
 
-                        <div class="text-right margin-top">
+                        <div class="text-end margin-top">
                             <button type="submit" class="btn btn-primary">Save</button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </form>
                 </div>

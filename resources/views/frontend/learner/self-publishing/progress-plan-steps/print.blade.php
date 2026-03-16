@@ -24,8 +24,8 @@
                 <div class="sp-card-header">
                     {{ $stepTitle }}
 
-                    <button type="button" class="btn btn-brand btn-xs pull-right printBtn"
-                        data-toggle="modal" data-target="#printModal"
+                    <button type="button" class="btn btn-brand btn-sm float-end printBtn"
+                        data-bs-toggle="modal" data-bs-target="#printModal"
                         data-print="{{ json_encode($print) }}">
                         Rediger
                         <i class="fa fa-edit" aria-hidden="true"></i>
@@ -166,7 +166,7 @@
                         <i class="fas fa-print" style="color:var(--brand-primary);margin-right:6px"></i>
                         Print Details
                     </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                    <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -281,7 +281,7 @@
                         </div>
                     </div>
                     <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
+                        <button type="button" class="btn-outline-brand" data-bs-dismiss="modal">Avbryt</button>
                         <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
                     </div>
                 </form>

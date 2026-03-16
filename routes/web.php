@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth;
 use App\Http\Controllers\Backend;
 use App\Http\Controllers\Editor;
 use App\Http\Controllers\Editor\CoachingTimeController;
+use App\Http\Controllers\Editor\CoachingSessionController;
 use App\Http\Controllers\Frontend;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\PaypalController;
@@ -1990,6 +1991,8 @@ Route::domain($admin)->group(function () {
             Route::get('/posts', [Backend\CommunityController::class, 'posts'])->name('posts');
             Route::post('/posts/{id}/toggle-pin', [Backend\CommunityController::class, 'togglePinPost'])->name('posts.toggle-pin');
             Route::delete('/posts/{id}', [Backend\CommunityController::class, 'destroyPost'])->name('posts.destroy');
+            Route::post('/posts/bot', [Backend\CommunityController::class, 'storeBotPost'])->name('posts.store-bot');
+            Route::post('/posts/generate-ai', [Backend\CommunityController::class, 'generateAiContent'])->name('posts.generate-ai');
             Route::get('/discussions', [Backend\CommunityController::class, 'discussions'])->name('discussions');
             Route::post('/discussions/{id}/toggle-pin', [Backend\CommunityController::class, 'togglePinDiscussion'])->name('discussions.toggle-pin');
             Route::delete('/discussions/{id}', [Backend\CommunityController::class, 'destroyDiscussion'])->name('discussions.destroy');
@@ -2108,6 +2111,15 @@ Route::domain($editor)->group(function () {
                 Route::post('/request/{id}/accept', 'acceptRequest')->name('request.accept');
                 Route::post('/request/{id}/decline', 'declineRequest')->name('request.decline');
             });
+        });
+
+        Route::prefix('/coaching-sessions')->name('editor.coaching-sessions.')->group(function () {
+            Route::get('/', [CoachingSessionController::class, 'index'])->name('index');
+            Route::get('/{id}', [CoachingSessionController::class, 'show'])->name('show');
+            Route::post('/{id}/start', [CoachingSessionController::class, 'start'])->name('start');
+            Route::post('/{id}/end', [CoachingSessionController::class, 'end'])->name('end');
+            Route::post('/{id}/upload-recording', [CoachingSessionController::class, 'uploadRecording'])->name('upload-recording');
+            Route::get('/student/{studentId}/history', [CoachingSessionController::class, 'studentHistory'])->name('student-history');
         });
     });
 

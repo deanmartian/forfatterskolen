@@ -78,12 +78,12 @@
                                                                             <li class="list-group-item clearfix" id="feedback-li-{{ $message->id }}">
                                                                                 <div class="form-group mb-0 clearfix">
                                                                                     <i class="fa fa-reply right-space text-muted {{ $message->is_reply === 1 ? '' : 'hidden'}}"></i>
-                                                                                    <span class="text-muted float-left {{ $message->published === 0 ? 'mt-1' : ''}}">
+                                                                                    <span class="text-muted float-start {{ $message->published === 0 ? 'mt-1' : ''}}">
                                                                                         {{ $postedBy }} {{ $message->published === 0 ? 'saved' : 'posted'}} at
                                                                                         {{ \Carbon\Carbon::parse($message->created_at)->format('F d H:i a') }}</span>
                                                                                 </div>
 
-                                                                                <div class="{{ $message->published === 0 ? 'mt-1' : ''}} ml-2 message-content">
+                                                                                <div class="{{ $message->published === 0 ? 'mt-1' : ''}} ms-2 message-content">
                                                                                     {!! $message->message ?: $message->message !!}
                                                                                 </div>
                                                                             </li>

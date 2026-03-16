@@ -11,7 +11,7 @@
                             @if(Auth::user()->id === $data['user_id'])
                                 {{ "You've confirmed" }} <strong class="font-italic">{{ $data['email'] }}</strong> {{" as one of you're email. If you want set this as your primary email or view your list of emails, click the \"Profil\" button below"}}
                                 <div class="form-group">
-                                    <a href="/account/profile" class="btn btn-info btn-sm float-right">Profil</a>
+                                    <a href="/account/profile" class="btn btn-info btn-sm float-end">Profil</a>
                                 </div>
                             @else
                                 {{ "Sorry. This confirmation email was sent to "}} <strong>{{ $data['user']->first_name . " " . $data['user']->last_name  }}</strong>{{", but you're already logged in to a different account." }}

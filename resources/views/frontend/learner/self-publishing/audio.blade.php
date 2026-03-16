@@ -16,8 +16,8 @@
                 <div class="card global-card">
                     <div class="card-header">
                         @if ($standardProject)
-                            <button type="button" class="btn btn-success pull-right audioBtn" data-toggle="modal" 
-                            data-target="#audioModal" data-type="files">
+                            <button type="button" class="btn btn-success float-end audioBtn" data-bs-toggle="modal" 
+                            data-bs-target="#audioModal" data-type="files">
                                 + {{ trans('site.add-audio-files') }}
                             </button>
                         @endif
@@ -40,14 +40,14 @@
                                         {!! $file->file_link !!}
                                     </td>
                                     <td>                      
-                                        <button class="btn btn-primary btn-xs audioBtn" data-toggle="modal"
-                                                data-target="#audioModal"
+                                        <button class="btn btn-primary btn-sm audioBtn" data-bs-toggle="modal"
+                                                data-bs-target="#audioModal"
                                                 data-type="files" data-id="{{ $file->id }}"
                                                 data-record="{{ json_encode($file) }}">
                                             <i class="fa fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-danger btn-xs deleteAudioBtn" data-toggle="modal"
-                                                data-target="#deleteAudioModal" data-type="files"
+                                        <button class="btn btn-danger btn-sm deleteAudioBtn" data-bs-toggle="modal"
+                                                data-bs-target="#deleteAudioModal" data-type="files"
                                                 data-action="{{ route('learner.self-publishing.delete-audio', 
                                                 [$file->project_id, $file->id]) }}">
                                             <i class="fa fa-trash"></i>
@@ -62,8 +62,8 @@
                 <div class="card global-card mt-4">
                     <div class="card-header">
                         @if ($standardProject)
-                            <button type="button" class="btn btn-success pull-right audioBtn" data-toggle="modal" 
-                            data-target="#audioModal" data-type="cover">+ {{ trans('site.add-audio-cover') }}</button>
+                            <button type="button" class="btn btn-success float-end audioBtn" data-bs-toggle="modal" 
+                            data-bs-target="#audioModal" data-type="cover">+ {{ trans('site.add-audio-cover') }}</button>
                         @endif
                     </div>
                     <div class="card-body">
@@ -86,14 +86,14 @@
                                         @endif
                                     </td>
                                     <td>                      
-                                        <button class="btn btn-primary btn-xs audioBtn" data-toggle="modal"
-                                                data-target="#audioModal"
+                                        <button class="btn btn-primary btn-sm audioBtn" data-bs-toggle="modal"
+                                                data-bs-target="#audioModal"
                                                 data-type="cover" data-id="{{ $cover->id }}"
                                                 data-record="{{ json_encode($cover) }}">
                                             <i class="fa fa-edit"></i>
                                         </button>
-                                        <button class="btn btn-danger btn-xs deleteAudioBtn" data-toggle="modal"
-                                                data-target="#deleteAudioModal" data-type="cover"
+                                        <button class="btn btn-danger btn-sm deleteAudioBtn" data-bs-toggle="modal"
+                                                data-bs-target="#deleteAudioModal" data-type="cover"
                                                 data-action="{{ route('learner.self-publishing.delete-audio', 
                                                     [$cover->project_id, $cover->id]) }}">
                                             <i class="fa fa-trash"></i>
@@ -116,7 +116,7 @@
                 <div class="modal-header">
                     <h4 class="modal-title">
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('learner.self-publishing.save-audio', $standardProject->id) }}"
@@ -143,7 +143,7 @@
                             ])
                         </div>
 
-                        <button type="submit" class="btn btn-success pull-right margin-top">
+                        <button type="submit" class="btn btn-success float-end margin-top">
                             {{ trans('site.save') }}
                         </button>
 
@@ -160,7 +160,7 @@
                 <div class="modal-header">
                     <h4 class="modal-title">
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -169,7 +169,7 @@
 
                         <p>{{ trans('site.delete-question') }}</p>
 
-                        <button type="submit" class="btn btn-danger pull-right margin-top">
+                        <button type="submit" class="btn btn-danger float-end margin-top">
                             {{ trans('site.delete') }}
                         </button>
 

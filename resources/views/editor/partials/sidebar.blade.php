@@ -12,29 +12,35 @@
                    class="ed-nav-item {{ Route::currentRouteName() === strtolower($page['route']) ? 'active' : '' }}">
                     <span class="ed-nav-item__icon">
                         @switch($page['request_name'])
-                            @case('dashboard')
-                                <i class="fa fa-th-large"></i>
-                                @break
-                            @case('editors-calendar')
-                                <i class="fa fa-calendar"></i>
-                                @break
-                            @case('editors-coaching-time')
-                                <i class="fa fa-users"></i>
+                            @case('pending-assignments')
+                                <i class="fa fa-tasks"></i>
                                 @break
                             @case('upcoming-assignment')
                                 <i class="fa fa-clock-o"></i>
                                 @break
-                            @case('webinars')
-                                <i class="fa fa-video-camera"></i>
-                                @break
-                            @case('archive')
+                            @case('assignment-archive')
                                 <i class="fa fa-archive"></i>
+                                @break
+                            @case('editor-settings')
+                                <i class="fa fa-cog"></i>
+                                @break
+                            @case('assigned-webinar')
+                                <i class="fa fa-video-camera"></i>
                                 @break
                             @case('editors-note')
                                 <i class="fa fa-file-text-o"></i>
                                 @break
-                            @case('settings')
-                                <i class="fa fa-cog"></i>
+                            @case('editors-coaching-time')
+                                <i class="fa fa-users"></i>
+                                @break
+                            @case('editors-coaching-sessions')
+                                <i class="fa fa-video-camera"></i>
+                                @break
+                            @case('editors-messages')
+                                <i class="fa fa-envelope"></i>
+                                @break
+                            @case('editors-calendar')
+                                <i class="fa fa-calendar"></i>
                                 @break
                             @default
                                 <i class="fa fa-circle-o"></i>
@@ -44,7 +50,11 @@
                         @if($page['request_name'] === 'upcoming-assignment')
                             {{ trans('site.upcoming-assignment') }}
                         @elseif($page['request_name'] === 'editors-coaching-time')
-                            {{ trans('site.coaching-timer-text') }}
+                            Coaching timer
+                        @elseif($page['request_name'] === 'editors-coaching-sessions')
+                            Veiledningssamtaler
+                        @elseif($page['request_name'] === 'editors-messages')
+                            Meldinger
                         @elseif($page['request_name'] === 'editors-calendar')
                             {{ trans('site.learner.nav.calendar') }}
                         @else

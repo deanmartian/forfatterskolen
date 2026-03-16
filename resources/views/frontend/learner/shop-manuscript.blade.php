@@ -61,7 +61,7 @@
 											@if( $shopManuscriptTaken->is_active )
 												@if( $shopManuscriptTaken->status == 'Not started' )
 													<button type="button" class="btn red-global-btn uploadManuscriptBtn py-2 px-4 rounded-20"
-															data-toggle="modal" data-target="#uploadManuscriptModal"
+															data-bs-toggle="modal" data-bs-target="#uploadManuscriptModal"
 															data-action="{{ route('learner.shop-manuscript.upload', 
 															$shopManuscriptTaken->id) }}">
 														{{ trans('site.learner.upload-script') }}
@@ -76,14 +76,14 @@
 													@if (!$shopManuscriptTaken->is_manuscript_locked 
 													&& $shopManuscriptTaken->status != 'Finished')
 														<button class="btn btn-success updateManuscriptBtn" type="button" 
-															data-toggle="modal" data-target="#updateUploadedManuscriptModal" 
+															data-bs-toggle="modal" data-bs-target="#updateUploadedManuscriptModal" 
 															data-fields="{{ json_encode($shopManuscriptTaken) }}"
 															data-action="{{ route('learner.shop-manuscript.update-uploaded-manuscript', 
 															$shopManuscriptTaken->id) }}">
 																<i class="fa fa-pen"></i>
 														</button>
 														<button class="btn btn-danger deleteManuscriptBtn" type="button" 
-															data-toggle="modal" data-target="#deleteUploadedManuscriptModal"
+															data-bs-toggle="modal" data-bs-target="#deleteUploadedManuscriptModal"
 															data-action="{{ route('learner.shop-manuscript.delete-uploaded-manuscript',
 															$shopManuscriptTaken->id) }}">
 																<i class="fa fa-trash"></i>
@@ -96,7 +96,7 @@
 														?>
 														<a href="{{ route('learner.shop-manuscript.download-feedback',
 														 [$shopManuscriptTaken->id, $feedback->id]) }}?v={{ time() }}" 
-														 class="btn blue-btn rounded-20 px-4 ml-2">
+														 class="btn blue-btn rounded-20 px-4 ms-2">
 															{{ trans('site.learner.download-feedback') }}
 															<i class="fa fa-download"></i>
 														</a>
@@ -137,7 +137,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title">{{ trans('site.learner.upload-script') }}</h3>
-		  <button type="button" class="close" data-dismiss="modal">&times;</button>
+		  <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
       	<form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)">
@@ -172,7 +172,7 @@
 				<label for="">{{ trans('site.front.form.manuscript-description') }}</label>
 				<textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
 			</div>
-      		<button type="submit" class="btn submit-btn pull-right">{{ trans('site.learner.upload-script') }}</button>
+      		<button type="submit" class="btn submit-btn float-end">{{ trans('site.learner.upload-script') }}</button>
       		<div class="clearfix"></div>
       	</form>
       </div>
@@ -186,7 +186,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">{{ trans('site.learner.upload-script') }}</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)">
@@ -218,7 +218,7 @@
 
 					<div class="form-group synopsis">
 						<label>{{ trans('site.front.form.coaching-time-later-in-manus') }}</label>
-						<input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
+						<input type="checkbox" data-bs-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
 							   class="is-free-toggle" data-off="{{ trans('site.front.no') }}"
 							   name="coaching_time_later">
 					</div>
@@ -227,7 +227,7 @@
 						<label for="">{{ trans('site.front.form.manuscript-description') }}</label>
 						<textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
 					</div>
-					<button type="submit" class="btn submit-btn pull-right">{{ trans('site.learner.upload-script') }}</button>
+					<button type="submit" class="btn submit-btn float-end">{{ trans('site.learner.upload-script') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -241,14 +241,14 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">{{ trans('site.learner.upload-script') }}</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" enctype="multipart/form-data" action="">
 					{{ csrf_field() }}
 					{{ trans('site.learner.delete-manuscript-question') }}
 					<div class="clearfix"></div>
-					<button type="submit" class="btn btn-danger pull-right">{{ trans('site.learner.delete') }}</button>
+					<button type="submit" class="btn btn-danger float-end">{{ trans('site.learner.delete') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -262,7 +262,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">{{ trans('site.learner.upgrade') }}</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 
@@ -272,8 +272,8 @@
 						['<br/>', session('exceed'), session('max_words')] ,
 						trans('site.learner.upgrade-exceed-message')) !!}
 					</p>
-					<button class="btn btn-default" data-dismiss="modal">{{ trans('site.learner.close') }}</button>
-					<a href="{{ url('upgrade-manuscript/'.session('plan').'/checkout') }}" class="btn btn-primary pull-right">{{
+					<button class="btn btn-light" data-bs-dismiss="modal">{{ trans('site.learner.close') }}</button>
+					<a href="{{ url('upgrade-manuscript/'.session('plan').'/checkout') }}" class="btn btn-primary float-end">{{
 					trans('site.learner.upgrade-script') }}</a>
 				</div>
 				<div class="clearfix"></div>
@@ -289,7 +289,7 @@
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
 				<div class="modal-body text-center">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 					<div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
 					{!! Session::get('manuscript_test_error') !!}
 				</div>
@@ -301,7 +301,7 @@
 @if (session('exceed'))
 	<input type="hidden" name="exceed">
 	<button class="btn btn-success exceedBtn d-none" type="button" 
-		data-toggle="modal" data-target="#exceedModal"> 
+		data-bs-toggle="modal" data-bs-target="#exceedModal"> 
 	</button>
 @endif
 

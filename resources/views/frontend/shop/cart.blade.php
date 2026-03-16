@@ -57,12 +57,12 @@
 			<div class="panel panel-default">
 			  <div class="panel-body cart-summary">
 			  	<h4>Order Summary</h4>
-			  	<span class="pull-right">{{FrontendHelpers::currencyFormat($total)}}</span>
+			  	<span class="float-end">{{FrontendHelpers::currencyFormat($total)}}</span>
 			  	Items ({{count($items)}}) 
 			  	<hr />
 			  	<div class="cart-total">
 			  		<strong>
-			  			<span class="pull-right">{{FrontendHelpers::currencyFormat($total)}}</span>
+			  			<span class="float-end">{{FrontendHelpers::currencyFormat($total)}}</span>
 			  			Total
 			  			<div class="clearfix"></div>
 			  		</strong>

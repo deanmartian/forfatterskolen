@@ -22,10 +22,17 @@
                 @endforeach
             </div>
         @endif
+<<<<<<< HEAD
+        <div class="d-flex notification-header-flex" style="justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div>
+                <h1 class="community-title">Diskusjoner</h1>
+                <p class="community-subtitle" style="margin-bottom: 0;">Start eller delta i samtaler om skriving.</p>
+=======
         <div class="d-flex" style="justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div>
                 <h1 class="community-title">Diskusjoner</h1>
                 <p class="community-subtitle">Start eller delta i samtaler om skriving.</p>
+>>>>>>> origin/master
             </div>
             <button class="btn community-btn-primary" onclick="document.getElementById('create-discussion').style.display = document.getElementById('create-discussion').style.display === 'none' ? 'block' : 'none'">
                 <i class="fa fa-plus"></i> Ny diskusjon
@@ -36,7 +43,11 @@
         <div id="create-discussion" class="card community-card mb-4" style="display: none;">
             <div class="card-body">
                 <h4 class="widget-title">Opprett ny diskusjon</h4>
+<<<<<<< HEAD
+                <form action="{{ route('learner.community.storeDiscussion') }}" method="POST" enctype="multipart/form-data">
+=======
                 <form action="{{ route('learner.community.storeDiscussion') }}" method="POST">
+>>>>>>> origin/master
                     @csrf
                     <div class="form-group">
                         <input type="text" name="title" class="form-control" placeholder="Tittel på diskusjonen" required>
@@ -53,7 +64,22 @@
                         </select>
                     </div>
                     <div class="form-group">
+<<<<<<< HEAD
+                        <textarea name="content" id="discussion-textarea" class="form-control community-textarea" rows="4" placeholder="Hva vil du diskutere?" required></textarea>
+                        <div class="post-form-toolbar" style="justify-content: flex-start;">
+                            <label class="btn-action" title="Bilde" style="cursor: pointer; margin: 0;">
+                                <i class="fa fa-camera"></i>
+                                <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;" onchange="document.getElementById('disc-file-name').textContent = this.files[0] ? this.files[0].name : ''">
+                            </label>
+                            <span id="disc-file-name" class="text-muted" style="font-size: 0.85em;"></span>
+                            <div class="emoji-picker-wrapper" data-bs-target="discussion-textarea">
+                                <button type="button" class="emoji-toggle-btn btn-action" title="Emoji"><i class="fa fa-smile-o"></i></button>
+                                <div class="emoji-popup"><emoji-picker></emoji-picker></div>
+                            </div>
+                        </div>
+=======
                         <textarea name="content" class="form-control community-textarea" rows="4" placeholder="Hva vil du diskutere?" required></textarea>
+>>>>>>> origin/master
                     </div>
                     <button type="submit" class="btn community-btn-primary">Publiser diskusjon</button>
                 </form>
@@ -104,3 +130,11 @@
     </div>
 </div>
 @stop
+<<<<<<< HEAD
+
+@section('scripts')
+<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+@include('frontend.learner.community._emoji')
+@stop
+=======
+>>>>>>> origin/master

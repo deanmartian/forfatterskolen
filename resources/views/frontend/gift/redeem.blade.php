@@ -33,7 +33,7 @@
                                            class="form-control no-border-left" required>
                                 </div>
 
-                                <button type="submit" class="btn site-btn-global float-right">{{ trans('site.submit') }}</button>
+                                <button type="submit" class="btn site-btn-global float-end">{{ trans('site.submit') }}</button>
                             </form>
                         </div>
                     </div>

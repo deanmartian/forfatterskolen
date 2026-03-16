@@ -258,7 +258,7 @@
             color: var(--brand-dark, #5f1a25);
         }
 
-        .btn-xs-brand {
+        .btn-sm-brand {
             font-size: 12px;
             padding: 5px 12px;
             border-radius: 6px;
@@ -402,7 +402,7 @@
                                 <div class="sp-card">
                                     <div class="sp-card__header">
                                         <h2>{{ trans('site.sales-distribution-cost') }}</h2>
-                                        <button class="btn-outline-brand btn-xs-brand no-print" onclick="window.print()">
+                                        <button class="btn-outline-brand btn-sm-brand no-print" onclick="window.print()">
                                             <i class="fa fa-print"></i> Skriv ut
                                         </button>
                                     </div>
@@ -457,7 +457,7 @@
                                                                     </div>
                                                                     <a href="{{ route('learner.project.storage-cost.export',
                                                                         [$registration->project_id, $registration->id, $storageCost['year']]) }}"
-                                                                        class="btn-outline-brand btn-xs-brand">
+                                                                        class="btn-outline-brand btn-sm-brand">
                                                                         <i class="fa fa-download"></i> Last ned
                                                                     </a>
                                                                 </td>
@@ -532,7 +532,7 @@
                                             </select>
                                         </div>
                                         <div class="filter-bar__actions">
-                                            <button type="button" class="btn-outline-brand btn-xs-brand" onclick="window.print()">
+                                            <button type="button" class="btn-outline-brand btn-sm-brand" onclick="window.print()">
                                                 <i class="fa fa-print"></i> Eksporter / Skriv ut
                                             </button>
                                         </div>
@@ -572,7 +572,7 @@
                         {{ trans('site.author-portal.book-sales') }}
                         <small class="text-muted d-block selected-month-year" style="font-weight:400;margin-top:2px"></small>
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('site.close') }}">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="{{ trans('site.close') }}">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -612,7 +612,7 @@
             <div class="modal-content" style="border-radius:var(--radius);overflow:hidden">
                 <div class="modal-header">
                     <h3 class="modal-title">Books for sale</h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('learner.save-for-sale-books', $learner->id) }}"
@@ -635,7 +635,7 @@
                             <input type="number" class="form-control" name="price" required>
                         </div>
 
-                        <button class="btn-brand pull-right" type="submit">
+                        <button class="btn-brand float-end" type="submit">
                             {{ trans('site.save') }}
                         </button>
                         <div class="clearfix"></div>
@@ -651,7 +651,7 @@
             <div class="modal-content" style="border-radius:var(--radius);overflow:hidden">
                 <div class="modal-header">
                     <h3 class="modal-title"></h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -660,9 +660,9 @@
 
                         <p>{{ trans('site.delete-item-question') }}</p>
 
-                        <div class="text-right margin-top">
+                        <div class="text-end margin-top">
                             <button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ trans('site.cancel') }}</button>
                         </div>
                     </form>
                 </div>

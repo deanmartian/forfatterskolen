@@ -8,21 +8,21 @@
                     $hasVipps = Auth::user()->address && Auth::user()->address->vipps_phone_number;
                 ?>
                 @if ($hasVipps)
-                    <a href="javascript:void(0)" class="btn btn-danger stopVippsEFakturaBtn" data-toggle="modal"
-                       data-target="#stopVippsEFakturaModal"
+                    <a href="javascript:void(0)" class="btn btn-danger stopVippsEFakturaBtn" data-bs-toggle="modal"
+                       data-bs-target="#stopVippsEFakturaModal"
                        data-vipps-number="{{ NULL }}">
                         {!! trans('site.stop-vipps-efaktura') !!}
                     </a>
                 @else
-                    <a href="javascript:void(0)" class="btn btn-primary setVippsEFakturaBtn" data-toggle="modal"
-                       data-target="#setVippsEFakturaModal"
+                    <a href="javascript:void(0)" class="btn btn-primary setVippsEFakturaBtn" data-bs-toggle="modal"
+                       data-bs-target="#setVippsEFakturaModal"
                        data-vipps-number="{{ Auth::user()->address->vipps_phone_numberc }}">
                         {!! trans('site.set-vipps-efaktura') !!}
                     </a>
                 @endif
             @endif
         </div>
-        {{-- <div class="col-md-5 col-sm-12 float-right">
+        {{-- <div class="col-md-5 col-sm-12 float-end">
             <div class="input-group">
                 <input type="text" class="form-control" name="search" value="{{ Request::input('search') }}"
                        placeholder="{{ trans('site.learner.search-placeholder') }}" required>

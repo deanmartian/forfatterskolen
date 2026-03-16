@@ -17,7 +17,7 @@
 				@if(Session::has('opt-in-message'))
 					<div class="alert alert-success" role="alert">
 						Takk for at du skrev deg på, du vil snart få en epost i innboksen din.
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
@@ -37,7 +37,7 @@
 						<input type="checkbox" name="terms" required>
 						<label>Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}" target="_blank">vilkårene</a></label>
 					</div>
-					<div class="text-right">
+					<div class="text-end">
 						<button type="submit" class="btn btn-theme">Send inn</button>
 					</div>
 				</form>

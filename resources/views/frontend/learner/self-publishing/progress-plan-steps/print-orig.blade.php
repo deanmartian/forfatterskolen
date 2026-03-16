@@ -24,8 +24,8 @@
                 <div class="card-header">
                     {{ $stepTitle }}
 
-                    <button type="button" class="btn btn-primary btn-xs pull-right printBtn"
-                        data-toggle="modal" data-target="#printModal"
+                    <button type="button" class="btn btn-primary btn-sm float-end printBtn"
+                        data-bs-toggle="modal" data-bs-target="#printModal"
                         data-print="{{ json_encode($print) }}">
                         Edit
                         <i class="fa fa-edit"></i>
@@ -165,7 +165,7 @@
                     <h4 class="modal-title">
                         Print Details
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route($savePrintRoute, $standardProject->id) }}"
@@ -278,7 +278,7 @@
                             onkeypress="return numeralsOnly(event)">
                         </div>
     
-                        <button type="submit" class="btn btn-success pull-right margin-top">
+                        <button type="submit" class="btn btn-success float-end margin-top">
                             {{ trans('site.save') }}
                         </button>
     

@@ -19,10 +19,12 @@ class Post extends Model
         'image_url',
         'pinned',
         'course_group_id',
+        'is_bot_post',
     ];
 
     protected $casts = [
-        'pinned' => 'boolean',
+        'pinned'      => 'boolean',
+        'is_bot_post' => 'boolean',
     ];
 
     public function user(): BelongsTo

@@ -49,12 +49,12 @@
                                         @foreach($members as $member)
                                             <li class="list-group-item clearfix">
                                                 <div class="form-group mb-0 clearfix">
-                                                    <span class="text-muted float-left font-14">
+                                                    <span class="text-muted float-start font-14">
                                                         Member Since:
                                                         {{ \Carbon\Carbon::parse($member->created_at)->format('M d') }}
                                                     </span>
 
-                                                    <div class="ml-2 message-content mt-3">
+                                                    <div class="ms-2 message-content mt-3">
                                                         <p class="mb-0">
                                                             <a href="{{ route('learner.private-groups.show', $member->private_group->id) }}">
                                                                 {{ $member->private_group->name }}
@@ -73,7 +73,7 @@
                         </div>
 
                         <p>
-                            <a href="#createPrivateGroupModal" class="beta-button color color1" data-toggle="modal">
+                            <a href="#createPrivateGroupModal" class="beta-button color color1" data-bs-toggle="modal">
                                 <i class="fa fa-plus right-space"></i>Create a New Group</a>
                         </p>
                     </div>

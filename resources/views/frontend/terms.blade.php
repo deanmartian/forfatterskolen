@@ -45,7 +45,7 @@
 									}
 								?>
 								<li class="nav-item">
-									<a data-toggle="tab" href="#{{$data->setting_name}}" class="nav-link {{ $k == 0 ? 'active' : ''}}" role="tab">
+									<a data-bs-toggle="tab" href="#{{$data->setting_name}}" class="nav-link {{ $k == 0 ? 'active' : ''}}" role="tab">
 										<span>{{ $termsTitle }}</span>
 									</a>
 								</li>
@@ -63,7 +63,7 @@
 				</div> <!-- end row -->
 			</div> <!-- end column -->
 		@else
-			<div class="col-xs-12 py-5">
+			<div class="col-12 py-5">
 				{!! $terms !!}
 			</div>
 		@endif

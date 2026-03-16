@@ -18,10 +18,27 @@ use App\Models\ManuscriptFeedback;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Spatie\Dropbox\Client as DropboxClient;
 
 class CommunityForumController extends Controller
 {
     /* ===================== HELPERS ===================== */
+
+    private static $requiredTables = [
+        'profiles', 'posts', 'post_reactions', 'post_comments',
+        'discussions', 'discussion_replies', 'community_notifications',
+        'direct_messages', 'manuscript_projects', 'manuscript_excerpts',
+        'manuscript_feedback', 'manuscript_followers',
+    ];
+
+    public function __construct()
+    {
+        foreach (self::$requiredTables as $table) {
+            if (!\Schema::hasTable($table)) {
+                abort(503, "Community-modulen krever at database-migrasjoner kjøres. Tabell '$table' mangler. Kjør: php artisan migrate");
+            }
+        }
+    }
 
     private function ensureProfile()
     {
@@ -29,13 +46,22 @@ class CommunityForumController extends Controller
         $profile = Profile::where('user_id', $user->id)->first();
 
         if (!$profile) {
-            $profile = Profile::create([
-                'id'           => Str::uuid(),
-                'user_id'      => $user->id,
+            $columns = \Schema::getColumnListing('profiles');
+            $data = [
+                'id'      => Str::uuid(),
+                'user_id' => $user->id,
+            ];
+            $optional = [
                 'name'         => trim($user->first_name . ' ' . $user->last_name),
                 'badge'        => 'aktiv_elev',
                 'access_level' => 'community_member',
-            ]);
+            ];
+            foreach ($optional as $col => $val) {
+                if (in_array($col, $columns)) {
+                    $data[$col] = $val;
+                }
+            }
+            $profile = Profile::create($data);
         }
 
         return $profile;
@@ -47,6 +73,14 @@ class CommunityForumController extends Controller
         return $profile && $profile->badge === 'admin';
     }
 
+    private function rejectIfSuspended()
+    {
+        $profile = Profile::where('user_id', Auth::id())->first();
+        if ($profile && \Schema::hasColumn('profiles', 'is_suspended') && $profile->is_suspended) {
+            abort(403, 'Kontoen din er suspendert.');
+        }
+    }
+
     private function formatName($name)
     {
         return collect(explode(' ', $name))
@@ -54,14 +88,55 @@ class CommunityForumController extends Controller
             ->join(' ');
     }
 
+    private function safeOrderByPinned($query, $table)
+    {
+        if (\Schema::hasColumn($table, 'pinned')) {
+            $query->orderByDesc('pinned');
+        }
+        return $query;
+    }
+
     private function unreadNotificationCount()
     {
+        if (!\Schema::hasTable('community_notifications')) return 0;
         return Notification::where('user_id', Auth::id())->where('read', false)->count();
     }
 
     private function unreadMessageCount()
     {
+        if (!\Schema::hasTable('direct_messages')) return 0;
         return DirectMessage::where('recipient_id', Auth::id())->where('read', false)->count();
+    }
+
+    private function uploadPostImage(Request $request): ?string
+    {
+        if (!$request->hasFile('image')) {
+            return null;
+        }
+
+        $file = $request->file('image');
+        $fileName = 'community_' . Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $destinationPath = 'Forfatterskolen_app/community-images/';
+
+        $file->storeAs($destinationPath, $fileName, 'dropbox');
+
+        try {
+            $dropbox = new DropboxClient(config('filesystems.disks.dropbox.authorization_token'));
+            $dropboxPath = $destinationPath . $fileName;
+
+            $response = $dropbox->listSharedLinks($dropboxPath);
+            if (isset($response[0]['url'])) {
+                return str_replace('?dl=0', '?raw=1', $response[0]['url']);
+            }
+
+            $response = $dropbox->createSharedLinkWithSettings($dropboxPath, [
+                'requested_visibility' => 'public',
+            ]);
+            return str_replace('?dl=0', '?raw=1', $response['url']);
+        } catch (\Exception $e) {
+            \Log::error('Community image upload failed: ' . $e->getMessage());
+            return null;
+        }
     }
 
     /* ===================== HOME / FEED ===================== */
@@ -69,11 +144,10 @@ class CommunityForumController extends Controller
     public function home()
     {
         $profile = $this->ensureProfile();
-        $posts = Post::with(['user.profile', 'reactions', 'comments.user.profile'])
-            ->whereNull('course_group_id')
-            ->orderByDesc('pinned')
-            ->orderByDesc('created_at')
-            ->get();
+        $postsQuery = Post::with(['user.profile', 'reactions', 'comments.user.profile'])
+            ->whereNull('course_group_id');
+        $this->safeOrderByPinned($postsQuery, 'posts');
+        $posts = $postsQuery->orderByDesc('created_at')->get();
 
         return view('frontend.learner.community.home', [
             'posts'   => $posts,
@@ -86,12 +160,19 @@ class CommunityForumController extends Controller
 
     public function storePost(Request $request)
     {
-        $request->validate(['content' => 'required|string|max:2000']);
+        $this->rejectIfSuspended();
+        $request->validate([
+            'content' => 'required|string|max:2000',
+            'image'   => 'nullable|image|mimes:jpeg,png,gif,webp|max:2048',
+        ]);
+
+        $imageUrl = $this->uploadPostImage($request);
 
         Post::create([
-            'id'       => Str::uuid(),
-            'user_id'  => Auth::id(),
-            'content'  => $request->content,
+            'id'        => Str::uuid(),
+            'user_id'   => Auth::id(),
+            'content'   => $request->content,
+            'image_url' => $imageUrl,
         ]);
 
         return redirect()->route('learner.community.home')->with('success', 'Innlegg publisert!');
@@ -99,6 +180,7 @@ class CommunityForumController extends Controller
 
     public function toggleLike($postId)
     {
+        $this->rejectIfSuspended();
         $userId = Auth::id();
         $existing = PostReaction::where('post_id', $postId)->where('user_id', $userId)->first();
 
@@ -118,6 +200,7 @@ class CommunityForumController extends Controller
 
     public function storeComment(Request $request, $postId)
     {
+        $this->rejectIfSuspended();
         $request->validate(['content' => 'required|string|max:1000']);
 
         PostComment::create([
@@ -146,10 +229,9 @@ class CommunityForumController extends Controller
     public function discussions()
     {
         $profile = $this->ensureProfile();
-        $discussions = Discussion::with(['user.profile', 'replies'])
-            ->orderByDesc('pinned')
-            ->orderByDesc('created_at')
-            ->get();
+        $discussionsQuery = Discussion::with(['user.profile', 'replies']);
+        $this->safeOrderByPinned($discussionsQuery, 'discussions');
+        $discussions = $discussionsQuery->orderByDesc('created_at')->get();
 
         return view('frontend.learner.community.discussions', [
             'discussions' => $discussions,
@@ -162,18 +244,23 @@ class CommunityForumController extends Controller
 
     public function storeDiscussion(Request $request)
     {
+        $this->rejectIfSuspended();
         $request->validate([
             'title'    => 'required|string|max:255',
             'content'  => 'required|string|max:5000',
             'category' => 'required|string|max:100',
+            'image'    => 'nullable|image|mimes:jpeg,png,gif,webp|max:2048',
         ]);
 
+        $imageUrl = $this->uploadPostImage($request);
+
         $discussion = Discussion::create([
-            'id'       => Str::uuid(),
-            'user_id'  => Auth::id(),
-            'title'    => $request->title,
-            'content'  => $request->content,
-            'category' => $request->category,
+            'id'        => Str::uuid(),
+            'user_id'   => Auth::id(),
+            'title'     => $request->title,
+            'content'   => $request->content,
+            'image_url' => $imageUrl,
+            'category'  => $request->category,
         ]);
 
         return redirect()->route('learner.community.discussion', $discussion->id)
@@ -196,6 +283,7 @@ class CommunityForumController extends Controller
 
     public function storeReply(Request $request, $discussionId)
     {
+        $this->rejectIfSuspended();
         $request->validate(['content' => 'required|string|max:2000']);
 
         $discussion = Discussion::findOrFail($discussionId);
@@ -435,6 +523,7 @@ class CommunityForumController extends Controller
 
     public function storeManuscript(Request $request)
     {
+        $this->rejectIfSuspended();
         $request->validate([
             'title'       => 'required|string|max:255',
             'genre'       => 'required|string|max:100',
@@ -471,6 +560,7 @@ class CommunityForumController extends Controller
 
     public function storeExcerpt(Request $request, $projectId)
     {
+        $this->rejectIfSuspended();
         $project = ManuscriptProject::findOrFail($projectId);
         if ($project->user_id !== Auth::id()) abort(403);
 
@@ -510,6 +600,7 @@ class CommunityForumController extends Controller
 
     public function storeFeedback(Request $request, $excerptId)
     {
+        $this->rejectIfSuspended();
         $request->validate(['content' => 'required|string|max:5000']);
 
         $excerpt = ManuscriptExcerpt::findOrFail($excerptId);
@@ -538,13 +629,14 @@ class CommunityForumController extends Controller
 
     public function toggleFollow($projectId)
     {
+        $this->rejectIfSuspended();
         $project = ManuscriptProject::findOrFail($projectId);
         $userId = Auth::id();
 
         if ($project->followers()->where('user_id', $userId)->exists()) {
             $project->followers()->detach($userId);
         } else {
-            $project->followers()->attach($userId);
+            $project->followers()->attach($userId, ['id' => Str::uuid()]);
         }
 
         return redirect()->back();
@@ -567,7 +659,7 @@ class CommunityForumController extends Controller
         foreach ($coursesTaken as $ct) {
             if ($ct->package && $ct->package->course) {
                 $course = $ct->package->course;
-                if (!$courses->contains('id', $course->id)) {
+                if (!$courses->contains('id', $course->id) && ($course->show_in_course_groups ?? true)) {
                     $courses->push($course);
                 }
             }
@@ -610,11 +702,10 @@ class CommunityForumController extends Controller
         })->pluck('user_id')->unique();
 
         // Get posts for this course group (course_group_id references courses.id)
-        $posts = Post::where('course_group_id', $courseId)
-            ->with('user', 'comments.user')
-            ->orderByDesc('pinned')
-            ->orderByDesc('created_at')
-            ->get();
+        $cgPostsQuery = Post::where('course_group_id', $courseId)
+            ->with('user', 'comments.user');
+        $this->safeOrderByPinned($cgPostsQuery, 'posts');
+        $posts = $cgPostsQuery->orderByDesc('created_at')->get();
 
         // Get member profiles
         $members = Profile::whereIn('user_id', $learnerIds)->get();
@@ -632,7 +723,11 @@ class CommunityForumController extends Controller
 
     public function storeCourseGroupPost(Request $request, $courseId)
     {
-        $request->validate(['content' => 'required|string|max:2000']);
+        $this->rejectIfSuspended();
+        $request->validate([
+            'content' => 'required|string|max:2000',
+            'image'   => 'nullable|image|mimes:jpeg,png,gif,webp|max:2048',
+        ]);
 
         $user = Auth::user();
         $this->ensureProfile();
@@ -646,10 +741,13 @@ class CommunityForumController extends Controller
             abort(403);
         }
 
+        $imageUrl = $this->uploadPostImage($request);
+
         Post::create([
             'id'              => Str::uuid(),
             'user_id'         => $user->id,
             'content'         => $request->content,
+            'image_url'       => $imageUrl,
             'course_group_id' => $courseId,
         ]);
 
@@ -663,7 +761,9 @@ class CommunityForumController extends Controller
         $profile = $this->ensureProfile();
 
         return view('frontend.learner.community.profile', [
-            'profile' => $profile,
+            'profile'             => $profile,
+            'user'                => Auth::user(),
+            'allGenres'           => \App\Genre::orderBy('name')->pluck('name')->toArray(),
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),
             'activePage'          => 'profile',
@@ -674,11 +774,10 @@ class CommunityForumController extends Controller
     {
         $profile = $this->ensureProfile();
 
-        $data = $request->only(['name', 'author_name', 'bio', 'current_project']);
+        $data = $request->only(['author_name', 'use_author_name', 'bio', 'current_project']);
+        $data['use_author_name'] = $request->has('use_author_name');
 
-        if ($request->has('genres')) {
-            $data['genres'] = array_filter(explode(',', $request->genres));
-        }
+        $data['genres'] = $request->input('genres', []);
 
         $profile->update($data);
 

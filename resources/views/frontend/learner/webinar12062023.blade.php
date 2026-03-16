@@ -77,7 +77,7 @@
                                                         <td>{{ $replayWebinar->title }}</td>
                                                         <td>{{ $replayWebinar->description }}</td>
                                                         <td>
-                                                            <a href="#" data-toggle="modal" data-target="#videoModal"
+                                                            <a href="#" data-bs-toggle="modal" data-bs-target="#videoModal"
                                                              data-record="{{ json_encode($replayWebinar) }}" class="videoBtn">
                                                                 {{ trans('site.view') }}
                                                             </a>
@@ -87,7 +87,7 @@
                                             </tbody>
                                         </table>
 
-                                        <div class="pull-right">
+                                        <div class="float-end">
                                             {{ $replayWebinars->appends(Request::all())->render() }}
                                         </div>
                                     </div>
@@ -515,7 +515,7 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-body text-center">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                     <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
                     <p>
                         {{ trans('site.learner.webinar-register-success') }}
@@ -531,7 +531,7 @@
                 <div class="modal-header">
                     <h3 class="modal-title">
                     </h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body text-center">
                     <div id="video-container"></div>

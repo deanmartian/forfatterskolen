@@ -25,6 +25,7 @@ body:not(.modal-open) {
 #sidebar {
     height: 100%;
     width: 300px;
+    box-sizing: border-box;
     position: fixed;
     top: 0;
     left: 0;
@@ -32,8 +33,11 @@ body:not(.modal-open) {
     box-shadow: var(--box-shadow-style);
     overflow-x: auto;
     padding: 30px;
+    padding-bottom: 0;
     transition: all 0.3s ease;
     z-index: 9;
+    display: flex;
+    flex-direction: column;
 }
 
 @media only screen and (max-width: 1026px) {
@@ -42,14 +46,36 @@ body:not(.modal-open) {
     }
 
     #sidebar.sidebar-visible {
-        display: block;
+        display: flex;
+        width: 280px;
+        z-index: 1001;
     }
 }
 
+/* Overstyr d-xl-none — match sidebar breakpoint 1026px */
 #sidebarCollapse {
     color: var(--white);
     background: none;
     border: none;
+    display: none !important;
+}
+
+@media only screen and (max-width: 1026px) {
+    #sidebarCollapse {
+        display: inline-block !important;
+    }
+}
+
+/* Bakgrunnsdekke når sidebar er åpen på mobil */
+body.sidebar-open::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1000;
 }
 
 #sidebar .navbar-brand {
@@ -106,34 +132,68 @@ body:not(.modal-open) {
     color: var(--primary-color);
 }
 
+#sidebar .nav-sidebar {
+    flex: 1;
+    overflow-y: auto;
+}
+
+#sidebar .sidebar-community-nav {
+    flex: 1;
+    overflow-y: auto;
+}
+
+#sidebar .sidebar-community-label {
+    color: var(--primary-color);
+    font-family: 'Poppins';
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    margin-bottom: 2px;
+}
+
+#sidebar .sidebar-community-nav .nav-sidebar {
+    flex: none;
+    overflow-y: visible;
+}
+
+#sidebar .portal-btn.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+#sidebar .sidebar-bottom {
+    border-top: 1px solid #e8e8e8;
+    padding: 16px 0 20px;
+    margin-top: auto;
+}
+
 #sidebar .learner-details-container {
-    font-size: 18px;
-    margin-top: 30px;
+    font-size: 13px;
+    color: var(--secondary-color);
+    margin-bottom: 12px;
 }
 
-#sidebar .icons-container {
-    margin-top: 30px;
-    display: flex;
-    justify-content: space-between;
-}
-
-#sidebar .icons-container a {
-    background-color: #f5f7fa;
-    border-radius: 10px;
-    display: inline-block;
-    margin-right: 5px;
-    padding: 10px 15px;
+#sidebar .learner-details-container b {
+    margin-left: 4px;
 }
 
 #sidebar .portal-btn {
-    border: 1px solid #9A9A9A;
-    border-radius: 5px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
     color: var(--primary-color);
-    font-family: 'Poppins';
-    font-weight: bold;
-    margin-top: 20px;
-    padding: 15px;
+    display: block;
+    font-size: 13px;
+    padding: 8px 0;
     width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+#sidebar .portal-btn i {
+    margin-right: 6px;
 }
 
 #sidebar .portal-btn:hover {
@@ -143,17 +203,17 @@ body:not(.modal-open) {
 
 #sidebar .logout-btn {
     background-color: var(--primary-color);
-    border-radius: 5px;
+    border-radius: 6px;
     color: var(--white);
-    font-family: 'Poppins';
-    font-weight: bold;
-    margin-top: 20px;
-    padding: 15px;
+    display: block;
+    font-size: 13px;
+    padding: 8px 0;
     width: 100%;
+    text-align: center;
 }
 
 #sidebar .logout-btn i {
-    margin-right: 10px;
+    margin-right: 6px;
 }
 
 #sidebar .logout-btn:hover {
@@ -1454,6 +1514,256 @@ body:not(.modal-open) {
     color: var(--blue);
 }
 
+/* Manuskript-side: FS-farger i stedet for blått */
+.learner-manuscript-wrapper .blue-outline-btn {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color) !important;
+}
+
+.learner-manuscript-wrapper .blue-outline-btn .fa {
+    color: var(--secondary-color) !important;
+}
+
+.learner-manuscript-wrapper .blue-outline-btn:hover {
+    background-color: var(--secondary-color);
+    color: var(--white) !important;
+}
+
+.learner-manuscript-wrapper .blue-btn {
+    background-color: var(--secondary-red);
+    border-color: var(--secondary-red);
+    color: var(--white);
+}
+
+.learner-manuscript-wrapper .blue-btn:hover {
+    background-color: transparent;
+    color: var(--secondary-red);
+}
+
+.learner-manuscript-wrapper .blue-btn:hover .fa {
+    color: var(--secondary-red);
+}
+
+/* Startet-badge: FS-farge i stedet for blå/lilla */
+.custom-badge.ended {
+    background-color: var(--pink);
+    color: var(--primary-color);
+}
+
+/* === Manuskript detaljside (shopManuscriptShow) === */
+
+/* Info-boks om margkommentarer */
+.manuscript-margin-notice {
+    background-color: var(--pink);
+    border-left: 4px solid var(--secondary-red);
+    padding: 12px 16px;
+    margin-bottom: 15px;
+    border-radius: 0 5px 5px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--primary-color);
+}
+
+.manuscript-margin-notice .fa-info-circle {
+    font-size: 18px;
+    color: var(--secondary-red);
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* Filinformasjon */
+.manuscript-file-info {
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 10px;
+}
+
+.manuscript-synopsis-link {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--secondary-red);
+    font-weight: 600;
+}
+
+.manuscript-synopsis-link:hover {
+    color: var(--primary-color);
+}
+
+/* Chat-lenke boks (erstatter deaktivert kommentarfelt) */
+.manuscript-chat-link-box {
+    background-color: #f8f8f8;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+}
+
+.manuscript-chat-link-box p {
+    color: var(--secondary-color);
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.manuscript-chat-link-box .fa-comments {
+    color: var(--secondary-color);
+    margin-right: 4px;
+}
+
+.manuscript-chat-btn {
+    background-color: var(--secondary-red);
+    color: var(--white) !important;
+    border: 1px solid var(--secondary-red);
+    border-radius: 5px;
+    font-weight: 600;
+    padding: 8px 20px;
+    transition: all 0.2s ease;
+}
+
+.manuscript-chat-btn:hover {
+    background-color: transparent;
+    color: var(--secondary-red) !important;
+}
+
+/* Kommentar-knapp (erstatter btn-info) */
+.manuscript-comment-btn {
+    background-color: var(--secondary-color);
+    color: var(--white) !important;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    font-weight: 600;
+    padding: 6px 16px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.manuscript-comment-btn:hover {
+    background-color: transparent;
+    color: var(--secondary-color) !important;
+}
+
+/* Kommentar-bobler med FS-farger */
+.manuscript-show-sidebar .comment {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+
+.manuscript-show-sidebar .comment.owner {
+    background-color: var(--pink);
+}
+
+/* Upload-knapper */
+.manuscript-upload-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.manuscript-upload-btn {
+    background-color: var(--secondary-red);
+    color: var(--white) !important;
+    border: 1px solid var(--secondary-red);
+    border-radius: 5px;
+    font-weight: 600;
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+}
+
+.manuscript-upload-btn:hover {
+    background-color: transparent;
+    color: var(--secondary-red) !important;
+}
+
+.manuscript-synopsis-btn {
+    background-color: transparent;
+    color: var(--secondary-color) !important;
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+    font-weight: 600;
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+}
+
+.manuscript-synopsis-btn:hover {
+    background-color: var(--secondary-color);
+    color: var(--white) !important;
+}
+
+/* Download-knapp for originalmanus med FS-farge (scoped til detaljside) */
+.manuscript-show-sidebar .blue-outline-btn {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color) !important;
+}
+
+.manuscript-show-sidebar .blue-outline-btn .fa {
+    color: var(--secondary-color) !important;
+}
+
+.manuscript-show-sidebar .blue-outline-btn:hover {
+    background-color: var(--secondary-color);
+    color: var(--white) !important;
+}
+
+.manuscript-show-sidebar .blue-outline-btn:hover .fa {
+    color: var(--white) !important;
+}
+
+/* Manuskript detaljside — mobil */
+@media only screen and (max-width: 768px) {
+    .manuscript-show-sidebar {
+        margin-top: 20px;
+    }
+
+    .manuscript-show-sidebar h3 {
+        font-size: 18px;
+    }
+
+    .manuscript-show-sidebar iframe {
+        height: 350px !important;
+    }
+
+    .manuscript-show-sidebar .blue-outline-btn {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .manuscript-margin-notice {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
+
+    .manuscript-chat-link-box {
+        padding: 12px;
+    }
+
+    .manuscript-chat-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .manuscript-upload-buttons {
+        flex-direction: column;
+    }
+
+    .manuscript-upload-btn,
+    .manuscript-synopsis-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .manuscript-show-sidebar .comment {
+        max-width: 90%;
+    }
+
+    /* Iframe for dokumentvisning */
+    .learner-container .panel-body iframe {
+        height: 300px !important;
+    }
+}
+
 .light-red-outline-btn {
     background-color: transparent;
     border: 1px solid rgb(95, 0, 0, 28%);
@@ -1721,6 +2031,44 @@ body:not(.modal-open) {
 }
 
 @media only screen and (max-width: 768px) {
+    /* Topbar mobil-layout */
+    #topbar {
+        height: auto;
+        min-height: 60px;
+        padding: 8px 10px;
+        flex-wrap: wrap;
+    }
+
+    #topbar .col-md-6:first-child {
+        display: none;
+    }
+
+    #topbar .col-md-6:last-child {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Dashboard responsive */
+    #main-content {
+        padding: 10px;
+    }
+
+    .global-card {
+        margin-bottom: 15px;
+    }
+
+    .global-card .card-body {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .global-card .card-body table {
+        min-width: 500px;
+    }
+
     .learner-assignment .assignment-container .date-container .fa {
         font-size: 45px;
     }
@@ -1931,4 +2279,111 @@ body:not(.modal-open) {
     .redeem-gift-link {
         margin-right: 0;
     }
+}
+
+/* =============================================
+   Bootstrap 5 Compatibility Layer
+   BS3/BS4 classes that no longer exist in BS5
+   ============================================= */
+
+/* .close button compat (BS3/4 → BS5 uses .btn-close) */
+.close {
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+    appearance: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    opacity: .75;
+}
+
+/* form-group compat (removed in BS5) */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+/* btn-block compat (removed in BS5, use d-grid wrapper) */
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+/* label styling compat (BS3 used .label, BS5 uses .badge) */
+.label {
+    display: inline-block;
+    padding: .25em .4em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+}
+
+.label-success { background-color: #28a745; color: #fff; }
+.label-warning { background-color: #ffc107; color: #212529; }
+.label-primary { background-color: #5F0000; color: #fff; }
+.label-danger { background-color: #dc3545; color: #fff; }
+.label-info { background-color: #17a2b8; color: #fff; }
+.label-default { background-color: #6c757d; color: #fff; }
+
+/* panel compat (BS3 → BS5 card) */
+.panel { background-color: #fff; border: 1px solid #ddd; border-radius: .375rem; margin-bottom: 1rem; }
+.panel-body { padding: 1rem; }
+.panel-heading { padding: .75rem 1rem; border-bottom: 1px solid #ddd; background-color: #f8f9fa; border-radius: .375rem .375rem 0 0; }
+.panel-default { border-color: #ddd; }
+.panel-title { margin: 0; font-size: 1rem; font-weight: 600; }
+
+/* input-group-addon compat */
+.input-group-addon {
+    display: flex;
+    align-items: center;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: .375rem;
+}
+
+/* margin-top / margin-bottom compat (used as standalone classes in some templates) */
+.margin-top { margin-top: 15px; }
+.margin-bottom { margin-bottom: 15px; }
+
+/* badge-danger etc. compat (BS4 → BS5 uses bg-*) */
+.badge-danger { background-color: #dc3545 !important; color: #fff; }
+.badge-success { background-color: #28a745 !important; color: #fff; }
+.badge-warning { background-color: #ffc107 !important; color: #212529; }
+.badge-primary { background-color: #5F0000 !important; color: #fff; }
+.badge-info { background-color: #17a2b8 !important; color: #fff; }
+
+/* navbar-toggle compat for BS3 */
+.navbar-toggle {
+    position: relative;
+    float: right;
+    padding: 9px 10px;
+    margin-right: 15px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
 }

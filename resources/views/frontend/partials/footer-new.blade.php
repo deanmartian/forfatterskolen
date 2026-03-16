@@ -20,7 +20,7 @@
         <a class="navbar-brand mx-auto" href="{{url('')}}">
         </a>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#footer-body">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#footer-body">
             <img src="{{asset('images-new/menu.png')}}" alt="mobile menu toggle">
         </button>
 
@@ -55,7 +55,7 @@
                 </li>
             </ul>
 
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="https://twitter.com/Forfatterrektor" target="_blank">
                         <i class="sprite-social twitter-white"></i>

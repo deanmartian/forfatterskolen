@@ -36,10 +36,10 @@
             <div class="col-sm-6 col-md-3">
                 <h3 class="text-gray font-weight-normal">Check Us Out</h3>
                 <ul class="list-inline d-flex">
-                    <li class="mr-3"><a href="#"><i class="fa fa-facebook"></i></a></li>
-                    <li class="mr-3"><a href="#"><i class="fa fa-instagram"></i></a></li>
-                    <li class="mr-3"><a href="#"><i class="fa fa-twitter"></i></a></li>
-                    <li class="mr-3"><a href="#"><i class="fa fa-pinterest"></i></a></li>
+                    <li class="me-3"><a href="#"><i class="fa fa-facebook"></i></a></li>
+                    <li class="me-3"><a href="#"><i class="fa fa-instagram"></i></a></li>
+                    <li class="me-3"><a href="#"><i class="fa fa-twitter"></i></a></li>
+                    <li class="me-3"><a href="#"><i class="fa fa-pinterest"></i></a></li>
                 </ul>
             </div>
         </div>

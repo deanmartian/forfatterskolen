@@ -72,7 +72,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ $faq->id }}" class="all-caps collapsed">
+                                        <a data-bs-toggle="collapse" data-bs-parent="#accordion" href="#collapse-{{ $faq->id }}" class="all-caps collapsed">
                                             <i class="img-icon"></i> {{ $faq->title }}
                                         </a>
                                     </h4>
@@ -93,10 +93,10 @@
 
             <div class="row">
                 <div class="col-sm-12 author-container">
-                    <div class="pull-left mr-4">
+                    <div class="float-start me-4">
                         <img data-src="https://www.forfatterskolen.no/images/kristine.png" alt="" class="rounded-circle">
                     </div>
-                    <div class="pull-left">
+                    <div class="float-start">
                         <h2>
                             {!! str_replace('_break_',"<br/>",trans('site.front.faq.person')) !!}
                         </h2>

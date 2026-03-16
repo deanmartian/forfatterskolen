@@ -81,11 +81,11 @@
                                     $author_image = \App\Http\FrontendHelpers::checkJpegImg($book['author_image']);
                                     $book_image = \App\Http\FrontendHelpers::checkJpegImg($book['book_image']);
                                 ?>
-                                <img src="{{ $author_image }}" alt="{{ $book['title'] }}" class="img-responsive pull-left left-image">
+                                <img src="{{ $author_image }}" alt="{{ $book['title'] }}" class="img-fluid float-start left-image">
                                     @if($book['book_image_link'])
                                         <a href="{{$book['book_image_link']}}" target="_blank">
                                             @endif
-                                                <img src="{{ $book_image }}" alt="{{ $book['title'] }}" class="img-responsive pull-right right-image">
+                                                <img src="{{ $book_image }}" alt="{{ $book['title'] }}" class="img-fluid float-end right-image">
                                             @if($book['book_image_link'])
                                         </a>
                                     @endif

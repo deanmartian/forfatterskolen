@@ -20,16 +20,16 @@
 
                     <div class="global-card mt-3">
                         <a href="{{ route('learner.private-groups.discussion', $privateGroup->id) }}"
-                        class="pl-4 fa fa-long-arrow-left"> All Discussions</a>
+                        class="ps-4 fa fa-long-arrow-left"> All Discussions</a>
 
                         <div class="card-body">
                             <div class="clearfix">
-                                <span class="font-weight-light pull-left detail" data-id="subject"
+                                <span class="font-weight-light float-start detail" data-id="subject"
                                 style="font-size: 36px;">
                                     {{ $discussion->subject }}
                                 </span>
                                 @if ($discussion->is_announcement)
-                                <h3 class="pull-right mt-3">
+                                <h3 class="float-end mt-3">
                                     <span class="badge badge-success badge-border-radius py-2 font-24" data-id="is_announcement">
                                         Announcement
                                     </span>
@@ -37,10 +37,10 @@
                                 @endif
                             </div>
                             <div class="clearfix font-weight-light text-muted">
-                                <span class="detail pull-left" data-id="owner">
+                                <span class="detail float-start" data-id="owner">
                                     {{ $discussion->user->full_name }}
                                 </span>
-                                <span class="detail pull-right font-14-body" data-id="created_at">
+                                <span class="detail float-end font-14-body" data-id="created_at">
                                     {{ \Carbon\Carbon::parse($discussion->created_at)->format('M d, h:i A') }}
                                 </span>
                             </div>
@@ -49,14 +49,14 @@
                                     {!! $discussion->message !!}
                                 </div>
                                 @if ($discussion->user->id == Auth::user()->id)
-                                    <button class="btn btn-outline-info btn-sm pull-right" onclick="methods.inlineEdit(this)">Edit</button>
+                                    <button class="btn btn-outline-info btn-sm float-end" onclick="methods.inlineEdit(this)">Edit</button>
                                 @endif
                             </div>
                             <div class="form-group mt-2 display-none">
                                 <textarea name="message" id="message_editor"></textarea>
                                 <div class="form-group clearfix mt-2">
-                                    <button class="btn btn-primary btn-sm pull-right" onclick="methods.inlineSave(this)">Save</button>
-                                    <button class="btn btn-danger btn-sm pull-right mr-1" onclick="methods.inlineCancel(this)">Cancel</button>
+                                    <button class="btn btn-primary btn-sm float-end" onclick="methods.inlineSave(this)">Save</button>
+                                    <button class="btn btn-danger btn-sm float-end me-1" onclick="methods.inlineCancel(this)">Cancel</button>
                                 </div>
                             </div>
                             <hr/>
@@ -67,7 +67,7 @@
                             @if ($manager || (!$manager && $privateGroup->policy !== 3))
                                 <div class="card card-body mt-2">
                                     <div class="form-group clearfix mb-0 pb-0">
-                                        <span class="d-inline-block mt-1">Have something to add?</span> <button class="btn btn-outline-primary btn-sm pull-right" onclick="methods.addForm(this)">Post a reply</button>
+                                        <span class="d-inline-block mt-1">Have something to add?</span> <button class="btn btn-outline-primary btn-sm float-end" onclick="methods.addForm(this)">Post a reply</button>
                                     </div>
                                     <div class="form-group add display-none mb-0 pb-0">
                                     </div>

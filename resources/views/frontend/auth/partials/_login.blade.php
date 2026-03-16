@@ -47,7 +47,7 @@
                 {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
                 {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display(['data-callback' => 'captchaCB']) !!}
             </div>
-            <div class="col-md-6 text-right">
+            <div class="col-md-6 text-end">
                 <button type="submit" class="btn site-btn-global-w-arrow">{{ trans('site.front.form.login') }}</button>
             </div>
         </div>        
@@ -102,7 +102,7 @@
             </div>
         </div>
 
-        <button type="submit" class="btn site-btn-global-w-arrow pull-right">{{ trans('site.front.form.login') }}</button>
+        <button type="submit" class="btn site-btn-global-w-arrow float-end">{{ trans('site.front.form.login') }}</button>
     </form>
 @endif
 

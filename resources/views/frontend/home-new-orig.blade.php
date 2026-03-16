@@ -29,8 +29,8 @@
                     <a href="{{ route('front.course.index') }}" class="btn btn-red" style="margin-right: 20px">
                         {{ trans('site.front.home.all-course') }}
                     </a>
-                    <button class="btn btn-outline-red" data-toggle="modal"
-                    data-target="#writingPlanModal">
+                    <button class="btn btn-outline-red" data-bs-toggle="modal"
+                    data-bs-target="#writingPlanModal">
                         {{ trans('site.front.home.free-writing-tips') }}
                     </button>
                 </div>
@@ -94,7 +94,7 @@
                                 <div class="date-time-cont">
                                     <i class="img-icon16 icon-calendar"></i>
                                     <span>{{ \App\Http\FrontendHelpers::formatDate($hasNextWebinar ? $next_webinar->start_date : $upcomingSection->date) }}</span>
-                                    <i class="img-icon16 icon-clock ml-3"></i>
+                                    <i class="img-icon16 icon-clock ms-3"></i>
                                     <span>
                                     {{ \App\Http\FrontendHelpers::getTimeFromDT($hasNextWebinar ? $next_webinar->start_date : $upcomingSection->date) }}
                                 </span>
@@ -109,10 +109,10 @@
 
     <div class="popular-courses-row">
         <div class="container">
-            <h2 class="float-left">
+            <h2 class="float-start">
                 {!! trans('site.front.home.most-popular-course') !!}
             </h2>
-            <a href="{{ route('front.course.index') }}" class="btn float-right btn-outline-maroon">
+            <a href="{{ route('front.course.index') }}" class="btn float-end btn-outline-maroon">
                 {{ trans('site.front.home.all-course') }}
             </a>
 
@@ -198,12 +198,12 @@
             </h2>
 
             <div class="carousel-onebyone">
-                <div id="video-testimonial-carousel" class="carousel slide mt-4" data-ride="carousel"
+                <div id="video-testimonial-carousel" class="carousel slide mt-4" data-bs-ride="carousel"
                      data-interval="10000">
                     <div class="video-testimonial-row row carousel-inner row w-100 mx-auto" role="listbox">
                         @foreach($testimonials as $k => $testimonial)
                             <div class="carousel-item col-md-3 {{ $k == 0 ? 'active' : '' }}">
-                                <a href="javascript:void(0)" data-toggle="modal" data-target="#vooModal" class="vooBtn"
+                                <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#vooModal" class="vooBtn"
                                    data-link="{{ $testimonial->testimony }}">
                                     <div class="img-container"
                                          data-bg="https://www.forfatterskolen.no/{{ $testimonial->author_image }}">
@@ -220,12 +220,12 @@
                         @endforeach
                     </div> <!-- end carousel-inner -->
 
-                    <a class="carousel-control-prev" href="#video-testimonial-carousel" role="button" data-slide="prev">
+                    <a class="carousel-control-prev" href="#video-testimonial-carousel" role="button" data-bs-slide="prev">
                         <i class="fa fa-chevron-left fa-lg text-muted"></i>
                         <span class="sr-only">Previous</span>
                     </a>
                     <a class="carousel-control-next text-faded" href="#video-testimonial-carousel" role="button"
-                       data-slide="next">
+                       data-bs-slide="next">
                         <i class="fa fa-chevron-right fa-lg text-muted"></i>
                         <span class="sr-only">Next</span>
                     </a>
@@ -284,7 +284,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <iframe allow="autoplay" allowtransparency="true" style="max-width:100%" allowfullscreen="true"

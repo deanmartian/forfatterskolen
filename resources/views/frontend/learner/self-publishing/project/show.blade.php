@@ -9,32 +9,32 @@
         <div class="container">
             <div class="row">
                 <a href="{{ route('learner.project.graphic-work', $project->id) }}"
-                   class="btn mb-3 site-btn-global mr-2">
+                   class="btn mb-3 site-btn-global me-2">
                     {{ trans('site.author-portal.graphic-work') }}
                 </a>
 
                 <a href="{{ route('learner.project.registration', $project->id) }}"
-                   class="btn mb-3 site-btn-global mr-2">
+                   class="btn mb-3 site-btn-global me-2">
                     {{ trans('site.author-portal.registration') }}
                 </a>
 
                 <a href="{{ route('learner.project.marketing', $project->id) }}"
-                   class="btn mb-3 site-btn-global mr-2">
+                   class="btn mb-3 site-btn-global me-2">
                     {{ trans('site.author-portal.marketing') }}
                 </a>
 
                 <a href="{{ route('learner.project.marketing-plan', $project->id) }}"
-                   class="btn mb-3 site-btn-global mr-2">
+                   class="btn mb-3 site-btn-global me-2">
                     {{ trans('site.author-portal.marketing-plan') }}
                 </a>
 
                 <a href="{{ route('learner.project.contract', $project->id) }}"
-                   class="btn mb-3 site-btn-global mr-2">
+                   class="btn mb-3 site-btn-global me-2">
                     {{ trans('site.author-portal.contract') }}
                 </a>
 
                 <a href="{{ route('learner.project.storage', $project->id) }}"
-                    class="btn mb-3 site-btn-global mr-2">
+                    class="btn mb-3 site-btn-global me-2">
                      {{ trans('site.author-portal.storage') }}
                  </a>
 
@@ -50,7 +50,7 @@
                                 {{ trans('site.learner.editor-text') }}
                             </h1>
 
-                            {{-- <a href="{{ route('learner.service.order', [$project->id, 3]) }}" class="btn btn-brand float-right">
+                            {{-- <a href="{{ route('learner.service.order', [$project->id, 3]) }}" class="btn btn-brand float-end">
                                 Order
                             </a> --}}
                         </div>
@@ -77,9 +77,9 @@
                                             {!! $publishing->dropbox_file_link_with_download !!}
                                             @if(!$publishing->feedback)
                                                 <br>
-                                                <button class="btn btn-brand btn-xs uploadSelfPublishingManuscriptBtn"
-                                                        data-toggle="modal"
-                                                        data-target="#uploadSelfPublishingManuscriptModal"
+                                                <button class="btn btn-brand btn-sm uploadSelfPublishingManuscriptBtn"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#uploadSelfPublishingManuscriptModal"
                                                         data-action="{{ route('learner.project.self-publishing.upload-manuscript', $publishing->id) }}">
                                                     {{ trans('site.front.form.upload-manuscript') }}
                                                 </button>
@@ -91,17 +91,17 @@
                                                     @if (strpos($publishing->feedback->manuscript, 'project-'))
                                                         <a href="{{ route('dropbox.download_file',
                                                             trim($publishing->feedback->manuscript)) }}"
-                                                        class="btn btn-brand btn-xs margin-top" download="">
+                                                        class="btn btn-brand btn-sm margin-top" download="">
                                                             {{ trans('site.learner.download-feedback') }}
                                                         </a>
                                                     @else
                                                         <a href="{{ $publishing->feedback->manuscript }}"
-                                                        class="btn btn-brand btn-xs margin-top" download="">
+                                                        class="btn btn-brand btn-sm margin-top" download="">
                                                             {{ trans('site.learner.download-feedback') }}
                                                         </a>
                                                     @endif
                                                 @else
-                                                    <label class="label label-warning" style="margin-right: 5px;">
+                                                    <label class="badge bg-warning" style="margin-right: 5px;">
                                                         {{ trans('site.pending') }}
                                                     </label>
                                                 @endif
@@ -120,7 +120,7 @@
                                 {{ trans('site.learner.copy-editing') }}
                             </h1>
 
-                            {{-- <a href="{{ route('learner.service.order', [$project->id, 1]) }}" class="btn btn-brand float-right">
+                            {{-- <a href="{{ route('learner.service.order', [$project->id, 1]) }}" class="btn btn-brand float-end">
                                 Order
                             </a> --}}
                         </div>
@@ -156,8 +156,8 @@
 
                                                 @if(!$editing->is_locked)
                                                         <br>
-                                                    <button class="btn btn-brand btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
-                                                            data-target="#uploadOtherServiceManuscriptModal"
+                                                    <button class="btn btn-brand btn-sm uploadOtherServiceManuscriptBtn" data-bs-toggle="modal"
+                                                            data-bs-target="#uploadOtherServiceManuscriptModal"
                                                             data-action="{{ route('learner.project.other-service.upload-manuscript',
                                                              ['id' => $editing->id, 'type' => 1]) }}">
                                                         {{ trans('site.front.form.upload-manuscript') }}
@@ -169,11 +169,11 @@
                                             </td>
                                             <td>
                                                 @if( $editing->status == 2 )
-                                                    <span class="label label-success">{{ trans('site.learner.finished') }}</span>
+                                                    <span class="badge bg-success">{{ trans('site.learner.finished') }}</span>
                                                 @elseif( $editing->status == 1 )
-                                                    <span class="label label-primary">{{ trans('site.learner.started') }}</span>
+                                                    <span class="badge bg-primary">{{ trans('site.learner.started') }}</span>
                                                 @elseif( $editing->status == 0 )
-                                                    <span class="label label-warning">{{ trans('site.learner.not-started') }}</span>
+                                                    <span class="badge bg-warning">{{ trans('site.learner.not-started') }}</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -217,7 +217,7 @@
                                 {{ trans('site.front.correction.title') }}
                             </h1>
 
-                            {{-- <a href="{{ route('learner.service.order', [$project->id, 2]) }}" class="btn btn-brand float-right">
+                            {{-- <a href="{{ route('learner.service.order', [$project->id, 2]) }}" class="btn btn-brand float-end">
                                 Order
                             </a> --}}
                         </div>
@@ -245,8 +245,8 @@
 
                                             @if(!$correction->is_locked)
                                                 <br>
-                                                <button class="btn btn-brand btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
-                                                        data-target="#uploadOtherServiceManuscriptModal"
+                                                <button class="btn btn-brand btn-sm uploadOtherServiceManuscriptBtn" data-bs-toggle="modal"
+                                                        data-bs-target="#uploadOtherServiceManuscriptModal"
                                                         data-action="{{ route('learner.project.other-service.upload-manuscript',
                                                          ['id' => $correction->id, 'type' => 2]) }}">
                                                     {{ trans('site.front.form.upload-manuscript') }}
@@ -258,11 +258,11 @@
                                         </td>
                                         <td>
                                             @if( $correction->status == 2 )
-                                                <span class="label label-success">{{ trans('site.learner.finished') }}</span>
+                                                <span class="badge bg-success">{{ trans('site.learner.finished') }}</span>
                                             @elseif( $correction->status == 1 )
-                                                <span class="label label-primary">{{ trans('site.learner.started') }}</span>
+                                                <span class="badge bg-primary">{{ trans('site.learner.started') }}</span>
                                             @elseif( $correction->status == 0 )
-                                                <span class="label label-warning">{{ trans('site.learner.not-started') }}</span>
+                                                <span class="badge bg-warning">{{ trans('site.learner.not-started') }}</span>
                                             @endif
                                         </td>
                                         <td>
@@ -313,7 +313,7 @@
                         <i class="fas fa-upload" style="color:var(--brand-primary);margin-right:6px" aria-hidden="true"></i>
                         {{ trans('site.learner.course-show.upload-manuscript') }}
                     </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                    <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -330,7 +330,7 @@
                         </div>
                     </div>
                     <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
+                        <button type="button" class="btn-outline-brand" data-bs-dismiss="modal">Avbryt</button>
                         <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
                     </div>
                 </form>
@@ -346,7 +346,7 @@
                         <i class="fas fa-upload" style="color:var(--brand-primary);margin-right:6px" aria-hidden="true"></i>
                         {{ trans('site.learner.course-show.upload-manuscript') }}
                     </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                    <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -363,7 +363,7 @@
                         </div>
                     </div>
                     <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
+                        <button type="button" class="btn-outline-brand" data-bs-dismiss="modal">Avbryt</button>
                         <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
                     </div>
                 </form>

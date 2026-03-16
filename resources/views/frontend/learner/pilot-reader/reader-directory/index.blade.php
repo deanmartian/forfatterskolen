@@ -79,8 +79,8 @@
                                         </div>
 
                                         <div class="form-group mt-2">
-                                            <button class="btn btn-outline-success border-color-grey float-right ml-1" type="submit"><i class="fa fa-search"></i> Search</button>
-                                            <button class="btn btn-outline-info border-color-grey float-right" type="reset"><i class="fa fa-redo"></i> Reset</button>
+                                            <button class="btn btn-outline-success border-color-grey float-end ms-1" type="submit"><i class="fa fa-search"></i> Search</button>
+                                            <button class="btn btn-outline-info border-color-grey float-end" type="reset"><i class="fa fa-redo"></i> Reset</button>
                                         </div>
                                     </form>
                                 </div> <!-- end #advancedSearchbox -->
@@ -122,7 +122,7 @@
             <div class="modal-content">
                 <form id="queryReaderForm">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                         <h5 class="modal-title" id="queryReaderModalLongTitle">Querying <span id="author_name"></span></h5>
@@ -139,7 +139,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
                 </form>

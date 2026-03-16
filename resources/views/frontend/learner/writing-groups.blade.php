@@ -60,7 +60,7 @@
                         </table>
                     </div>
 
-                    <div class="pull-right">
+                    <div class="float-end">
                         {{$writingGroups->render()}}
                     </div>
 

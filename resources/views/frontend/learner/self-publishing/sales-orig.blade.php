@@ -197,7 +197,7 @@
                                                                 ? 'Yes' : 'No' }} <br> --}}
                                                                 <a href="{{ route('learner.project.storage-cost.export', 
                                                                     [$registration->project_id, $registration->id, $storageCost['year']]) }}" 
-                                                                    class="btn btn-primary btn-xs">
+                                                                    class="btn btn-primary btn-sm">
                                                                     Download
                                                                 </a>
                                                             </td>
@@ -254,9 +254,9 @@
 
                     {{-- <div class="card global-card mt-5">
                         <div class="card-header">
-                            <button class="btn btn-primary pull-right btn-xs booksForSaleBtn" data-toggle="modal"
+                            <button class="btn btn-primary float-end btn-sm booksForSaleBtn" data-bs-toggle="modal"
                                     data-action=""
-                                    data-target="#booksForSaleModal">
+                                    data-bs-target="#booksForSaleModal">
                                 + Add Books for Sale
                             </button>
 
@@ -285,14 +285,14 @@
                                         <td>{{ $bookForSale->description }}</td>
                                         <td>{{ $bookForSale->price_formatted }}</td>
                                         <td>
-                                            <button class="btn btn-primary btn-xs booksForSaleBtn" data-toggle="modal"
+                                            <button class="btn btn-primary btn-sm booksForSaleBtn" data-bs-toggle="modal"
                                                     data-record="{{ json_encode($bookForSale) }}"
-                                                    data-target="#booksForSaleModal">
+                                                    data-bs-target="#booksForSaleModal">
                                                 <i class="fa fa-edit"></i>
                                             </button>
 
-                                            <button class="btn btn-danger btn-xs deleteRecordBtn" data-toggle="modal"
-                                                    data-target="#deleteRecordModal"
+                                            <button class="btn btn-danger btn-sm deleteRecordBtn" data-bs-toggle="modal"
+                                                    data-bs-target="#deleteRecordModal"
                                                     data-title="Delete Books for Sale"
                                                     data-action="{{ route('learner.delete-for-sale-books', $bookForSale->id) }}">
                                                 <i class="fa fa-trash"></i>
@@ -317,7 +317,7 @@
                         {{ trans('site.author-portal.book-sales') }}
                         <small class="text-muted d-block selected-month-year"></small>
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ trans('site.close') }}">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="{{ trans('site.close') }}">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -356,7 +356,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">Books for sale</h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('learner.save-for-sale-books', $learner->id) }}"
@@ -379,7 +379,7 @@
                             <input type="number" class="form-control" name="price" required>
                         </div>
 
-                        <button class="btn btn-primary pull-right" type="submit">
+                        <button class="btn btn-primary float-end" type="submit">
                             {{ trans('site.save') }}
                         </button>
                         <div class="clearfix"></div>
@@ -394,7 +394,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title"></h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -403,9 +403,9 @@
 
                         <p>{{ trans('site.delete-item-question') }}</p>
 
-                        <div class="text-right margin-top">
+                        <div class="text-end margin-top">
                             <button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ trans('site.cancel') }}</button>
                         </div>
                     </form>
                 </div>

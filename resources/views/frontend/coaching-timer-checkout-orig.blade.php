@@ -17,7 +17,7 @@
                     <div class="panel panel-default">
                         @if(Auth::guest())
                             {{--<div>
-                                Allerede elev? Klikk <a href="#" data-toggle="collapse" data-target="#checkoutLogin"
+                                Allerede elev? Klikk <a href="#" data-bs-toggle="collapse" data-bs-target="#checkoutLogin"
                                 class="font-barlow-regular">her</a> for å logge inn.
                             </div>
                             <form id="checkoutLogin" class="collapse @if($errors->first('login_error')) fade in @endif" action="{{route('frontend.login.checkout.store')}}" method="POST">--}}
@@ -100,7 +100,7 @@
                                     </button>
                                     @if(Session::has('compute_manuscript'))
                                         <a href="{{ route('front.coaching-timer-checkout', $data['plan_id']) }}"
-                                           class="btn btn-default mt-4 btn-common-padding">
+                                           class="btn btn-light mt-4 btn-common-padding">
                                             {{ trans('site.front.cancel') }}
                                         </a>
                                     @endif

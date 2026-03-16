@@ -17,7 +17,7 @@
 					<div class="panel panel-default">
 						@if(Auth::guest())
 							{{--<div>
-								Allerede elev? Klikk <a href="#" data-toggle="collapse" data-target="#checkoutLogin"
+								Allerede elev? Klikk <a href="#" data-bs-toggle="collapse" data-bs-target="#checkoutLogin"
 								class="font-barlow-regular">her</a> for å logge inn.
 							</div>
 							<form id="checkoutLogin" class="collapse @if($errors->first('login_error')) fade in @endif" action="{{route('frontend.login.checkout.store')}}" method="POST">--}}
@@ -126,7 +126,7 @@
 
 									<div class="form-group">
 										<label>{{ trans('site.front.form.coaching-time-later-in-manus') }}</label>
-										<input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
+										<input type="checkbox" data-bs-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
 											   class="is-free-toggle" data-off="{{ trans('site.front.no') }}"
 										name="coaching_time_later">
 									</div>

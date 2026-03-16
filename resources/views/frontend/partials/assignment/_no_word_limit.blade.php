@@ -50,12 +50,12 @@
                                 <div class="col-md-5">
                                     <div class="button-container">
                                         <button type="button" class="btn btn-sm btn-info editManuscriptBtn"
-                                            data-toggle="modal" data-target="#editManuscriptModal"
+                                            data-bs-toggle="modal" data-bs-target="#editManuscriptModal"
                                             data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}">
                                         <i class="fa fa-pencil-alt"></i>
                                         </button>
                                         <button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn"
-                                                data-toggle="modal" data-target="#deleteManuscriptModal"
+                                                data-bs-toggle="modal" data-bs-target="#deleteManuscriptModal"
                                                 data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}">
                                             <i class="fa fa-trash-alt"></i>
                                         </button>
@@ -87,8 +87,8 @@
                                     ->where('user_id', Auth::user()->id)->first())))
                                     @if($assignment->for_editor)
                                         <button class="btn red-outline-btn submitEditorManuscriptBtn" 
-                                        data-toggle="modal"
-                                        data-target="#submitEditorManuscriptModal"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#submitEditorManuscriptModal"
                                         data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
                                         data-show-group-question="{{ $assignment->show_join_group_question }}"
                                         data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
@@ -99,8 +99,8 @@
                                         </button>
                                     @else
                                         <button class="btn red-outline-btn submitManuscriptBtn" 
-                                        data-toggle="modal"
-                                        data-target="#submitManuscriptModal"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#submitManuscriptModal"
                                         data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
                                         data-show-group-question="{{ $assignment->show_join_group_question }}"
                                         data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"

@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="form-group clearfix">
-                    <button class="btn btn-outline-info btn-sm float-right">Save Changes</button>
+                    <button class="btn btn-outline-info btn-sm float-end">Save Changes</button>
                 </div>
             </form>
         </div>

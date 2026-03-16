@@ -7,7 +7,7 @@
 
                     <div class="details">
                         <div class="date-author-cont color-b4 mb-4">
-                            <span class="date mr-5">
+                            <span class="date me-5">
                                 <i class="img-icon calendar"></i>
                                 {{ \App\Http\FrontendHelpers::formatDate($blog->created_at) }}
                             </span>
@@ -34,7 +34,7 @@
                             <span class="social-container">
                                 <a href="http://www.facebook.com/sharer.php?u={{ route('front.read-blog', $blog->id) }}"
                                    target="_new">
-                                    <img data-src="https://www.forfatterskolen.no/images-new/social-icons/facebook.png" class="social-image mr-2">
+                                    <img data-src="https://www.forfatterskolen.no/images-new/social-icons/facebook.png" class="social-image me-2">
                                 </a>
                                 <a href="https://twitter.com/share?url={{ route('front.read-blog', $blog->id) }};text={{ $blog->title }}"
                                    target="_new">

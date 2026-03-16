@@ -23,7 +23,7 @@
                                     <?php
                                         $author_image = $book['author_image'];
                                     ?>
-                                    <img src="{{ $author_image }}" alt="{{ $book['title'] }}" class="img-responsive">
+                                    <img src="{{ $author_image }}" alt="{{ $book['title'] }}" class="img-fluid">
                                 </div>
                                 @else
                                     <?php
@@ -42,7 +42,7 @@
                                         @if($book['book_image_link'])
                                             <a href="{{$book['book_image_link']}}" target="_blank">
                                         @endif
-                                                <img src="{{ $book_image }}" class="img-responsive center-block">
+                                                <img src="{{ $book_image }}" class="img-fluid center-block">
                                         @if($book['book_image_link'])
                                             </a>
                                         @endif
@@ -76,7 +76,7 @@
                                         @if($book['book_image_link'])
                                             <a href="{{$book['book_image_link']}}" target="_blank">
                                                 @endif
-                                                <img src="{{ $book_image }}" class="img-responsive center-block">
+                                                <img src="{{ $book_image }}" class="img-fluid center-block">
                                                 @if($book['book_image_link'])
                                             </a>
                                         @endif
@@ -95,7 +95,7 @@
                                         }
                                     ?>
                                     <div class="author-pix">
-                                        <img src="{{ $author_image }}" alt="{{ $book['title'] }}" class="img-responsive">
+                                        <img src="{{ $author_image }}" alt="{{ $book['title'] }}" class="img-fluid">
                                     </div>
                                 @endif
                             </div>

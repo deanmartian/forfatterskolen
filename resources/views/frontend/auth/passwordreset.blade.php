@@ -32,7 +32,7 @@ Password Reset
 							<label>Bekreft Passordet</label>
 							<input type="password" name="password_confirmation" class="form-control" required>
 						</div>
-						<button type="submit" class="btn btn-primary pull-right">Oppdater Passordet</button>
+						<button type="submit" class="btn btn-primary float-end">Oppdater Passordet</button>
 						<div class="clearfix"></div>
 					</form>
 				</div>

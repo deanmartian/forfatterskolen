@@ -12,7 +12,7 @@
             <small class="d-block text-muted mb-2">You can enable this feature to have reminding reminders sent to your readers if they have not read in more than <input type="number" onkeypress="authorSettings.numberOnly(event)" name="days_of_reminder" class="form-control d-inline-block col-1" disabled onblur="authorSettings.setDaysOfReminder(this.value)"> days. This feature is currently <span class="reminder-status font-weight-bold">disabled</span>.</small>
 
             {{--<div class="form-group margin-top">
-                <input type="checkbox" data-toggle="toggle" data-on=""
+                <input type="checkbox" data-bs-toggle="toggle" data-on=""
                        class="link-toggle" data-off="" data-style="ios"
                        name="is_reading_reminder_on" onchange="authorSettings.toggleReminders(this, 'toggle')">
                 <label class="switch-label">Enable Reading Reminders</label>
@@ -90,7 +90,7 @@
                     <button class="btn btn-success btn-sm" onclick="authorSettings.prepareBookSettingData()">Save All Changes</button>
                 </div>
                 <div class="jumbotron jumbotron-fluid">
-                    <small class="text-muted d-inline-block mr-2">{{ "If you're looking to fully delete a book, not just deactivate it, use this button." }}</small>
+                    <small class="text-muted d-inline-block me-2">{{ "If you're looking to fully delete a book, not just deactivate it, use this button." }}</small>
                     <button class="btn btn-danger btn-sm" onclick="authorSettings.deleteBook()">Delete this book</button>
                 </div>
             </div>

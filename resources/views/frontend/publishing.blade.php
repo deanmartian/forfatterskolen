@@ -44,12 +44,12 @@
                                                 <a href="{{$book['book_image_link']}}" target="_blank">
                                                     @endif
                                                     <img data-src="https://www.forfatterskolen.no/{{ $book_image }}" alt="{{ $book['title'] }}"
-                                                         class="img-responsive pull-right right-image">
+                                                         class="img-fluid float-end right-image">
                                                     @if($book['book_image_link'])
                                                 </a>
                                             @endif
 
-                                            <img data-src="https://www.forfatterskolen.no/{{ $author_image }}" alt="{{ $book['title'] }}" class="img-responsive">
+                                            <img data-src="https://www.forfatterskolen.no/{{ $author_image }}" alt="{{ $book['title'] }}" class="img-fluid">
                                         </div>
                                         <div class="right-container">
                                             <div class="book-title h1">{{ $book['title'] }}</div>

@@ -4,17 +4,17 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title" id="queryReaderDetailModalLongTitle">Reader Query <span class="ml-1" id="status_div">Pending</span></h5>
+                <h5 class="modal-title" id="queryReaderDetailModalLongTitle">Reader Query <span class="ms-1" id="status_div">Pending</span></h5>
             </div>
             <div class="modal-body">
                 <div class="card">
                     <div class="card-body">
                         <div class="with-border-b pb-2 clearfix mb-4">
-                            <h5 class="card-title lead-17 pull-left mb-0 mt-0">Query Letter</h5>
-                            <span class="pull-right text-muted font-weight-light" id="received_div"></span>
+                            <h5 class="card-title lead-17 float-start mb-0 mt-0">Query Letter</h5>
+                            <span class="float-end text-muted font-weight-light" id="received_div"></span>
                         </div>
                         <div class="row">
                             <div class="col-md-3">From</div>
@@ -33,7 +33,7 @@
                         <hr class="my-2"/>
                         <div class="form-group lead-17 mt-2" id="letter_div"></div>
                         <div class="form-group mb-0 clearfix">
-                            <button class="btn btn-info btn-sm pull-right preview-btn" data-toggle="collapse" data-target="#collapseDiv" aria-expanded="false" aria-controls="collapseDiv"><i class="fa fa-book fa-fw"></i> Book Preview</button>
+                            <button class="btn btn-info btn-sm float-end preview-btn" data-bs-toggle="collapse" data-bs-target="#collapseDiv" aria-expanded="false" aria-controls="collapseDiv"><i class="fa fa-book fa-fw"></i> Book Preview</button>
                         </div>
                         <div class="collapse mt-2" id="collapseDiv">
                             <div class="card">
@@ -56,8 +56,8 @@
                 <div class="card mt-3">
                     <div class="card-body">
                         <div class="with-border-b pb-2 clearfix mb-4">
-                            <h5 class="card-title lead-17 pull-left mb-0 mt-0">Decision Letter</h5>
-                            <span class="pull-right text-muted font-weight-light" id="decision_submitted_date_div"></span>
+                            <h5 class="card-title lead-17 float-start mb-0 mt-0">Decision Letter</h5>
+                            <span class="float-end text-muted font-weight-light" id="decision_submitted_date_div"></span>
                         </div>
                         <div class="form-group lead-14 mt-2" id="decision_div">
                             Klaus von has not decided yet
@@ -99,7 +99,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

@@ -50,7 +50,7 @@
                         <div class="editor-slots" id="editor-{{ $loop->index }}">
                             @if($chunks->count() > 1)
                                 <div class="d-flex justify-content-end mb-2">
-                                    <button type="button" class="btn btn-secondary btn-sm prev-btn mr-2 px-3 bg-white" data-editor="{{ $loop->index }}" disabled>
+                                    <button type="button" class="btn btn-secondary btn-sm prev-btn me-2 px-3 bg-white" data-editor="{{ $loop->index }}" disabled>
                                         <i class="fa fa-chevron-left text-dark"></i>
                                     </button>
                                     <button type="button" class="btn btn-secondary btn-sm next-btn px-3 bg-white" data-editor="{{ $loop->index }}">
@@ -119,13 +119,13 @@
     </div>
 
     @if ($coachingTimer)
-        <button data-target="#bookSlotModal" data-toggle="modal" class="hidden" id="bookSlotModalTriggerBtn"></button>
+        <button data-bs-target="#bookSlotModal" data-bs-toggle="modal" class="hidden" id="bookSlotModalTriggerBtn"></button>
         <div id="bookSlotModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3 class="modal-title">{{ trans('site.learner.help-with-text') }}</h3>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
                         <form action="{{ route('learner.coaching-time.request') }}" method="POST" id="bookSlotForm"
@@ -144,7 +144,7 @@
                                     <option value="video">{{ trans('site.video-call') }}</option>
                                 </select>
                             </div>
-                            <div class="text-right mt-4">
+                            <div class="text-end mt-4">
                                 <button type="submit" class="btn btn-primary">
                                     {{ trans('site.coaching-time-book') }}
                                 </button>

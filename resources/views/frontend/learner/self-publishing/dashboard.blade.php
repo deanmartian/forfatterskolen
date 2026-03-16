@@ -224,7 +224,7 @@
                 <i class="fas fa-tasks"></i> {{ trans('site.author-portal.progress-plan') ?? 'Fremdriftsplan' }}
             </a>
             @if ($projects->count() < 1)
-                <a href="#" data-toggle="modal" data-target="#projectModal">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#projectModal">
                     <i class="fas fa-plus"></i> {{ trans('site.author-portal.add-book-project') ?? 'Ny bok' }}
                 </a>
             @endif
@@ -285,7 +285,7 @@
         <div class="sp-card-header">
             <h2>{{ trans('site.author-portal.book-project') }}</h2>
             @if ($projects->count() < 1)
-                <button class="sp-btn sp-btn-primary" data-toggle="modal" data-target="#projectModal">
+                <button class="sp-btn sp-btn-primary" data-bs-toggle="modal" data-bs-target="#projectModal">
                     <i class="fas fa-plus"></i> {{ trans('site.author-portal.add-book-project') }}
                 </button>
             @endif
@@ -339,10 +339,10 @@
                                         {{ trans('site.author-portal.current') }}
                                     </span>
                                 @else
-                                    <button class="sp-btn sp-btn-outline sp-btn-xs standardProjectBtn"
-                                            data-toggle="modal"
+                                    <button class="sp-btn sp-btn-outline sp-btn-sm standardProjectBtn"
+                                            data-bs-toggle="modal"
                                             data-action="{{ route('learner.project.set-standard', $project->id) }}"
-                                            data-target="#standardProjectModal">
+                                            data-bs-target="#standardProjectModal">
                                         {{ trans('site.author-portal.set-standard') }}
                                     </button>
                                 @endif
@@ -419,7 +419,7 @@
                     <h4 class="modal-title">
                         {{ trans('site.author-portal.add-book-project') }}
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('learner.save-project') }}" 
@@ -433,7 +433,7 @@
                             <label>{{ trans('site.description') }}</label>
                             <textarea name="description" cols="30" rows="6" class="form-control"></textarea>
                         </div>
-                        <div class="text-right">
+                        <div class="text-end">
                             <button class="sp-btn sp-btn-primary" type="submit">
                                 {{ trans('site.save') }}
                             </button>
@@ -452,7 +452,7 @@
                     <h4 class="modal-title">
                         {{ trans('site.author-portal.standard-project') }}
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -460,7 +460,7 @@
                         <p>
                             {{ trans('site.author-portal.confirm-set-standard') ?? 'Er du sikker på at du vil sette dette prosjektet som standard?' }}
                         </p>
-                        <div class="text-right">
+                        <div class="text-end">
                             <button class="sp-btn sp-btn-primary" type="submit">
                                 {{ trans('site.save') }}
                             </button>

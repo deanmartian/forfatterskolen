@@ -43,12 +43,12 @@
                             //display renew button when the webinar-pakke is going to expire within a month
                         ?>
                         @if($withinAMonth)
-                            <button class="btn site-btn-global mr-3" data-toggle="modal" data-target="#renewAllModal">
+                            <button class="btn site-btn-global me-3" data-bs-toggle="modal" data-bs-target="#renewAllModal">
                                 {{ trans('site.learner.renew-subscription-text') }}
                             </button>
                         @endif
 
-                        <button class="btn site-btn-global" data-toggle="modal" data-target="#autoRenewModal">
+                        <button class="btn site-btn-global" data-bs-toggle="modal" data-bs-target="#autoRenewModal">
                             {{ trans('site.learner.renew-automatically-text') }}
                         </button>
                     </div> <!-- end row justify-content-end -->
@@ -58,12 +58,12 @@
             <div class="row mt-5">
                 <div class="card global-card w-100">
                     <div class="card-header p-5">
-                        <h4 class="font-weight-normal border d-inline-block p-3 mr-4">
+                        <h4 class="font-weight-normal border d-inline-block p-3 me-4">
                             <span class="theme-text font-barlow-regular">{{ trans('site.learner.subscription-expires-text') }}:</span>
                             {{ $expiredDate }}
                         </h4>
 
-                        <h4 class="font-weight-normal border d-inline-block p-3 mr-4">
+                        <h4 class="font-weight-normal border d-inline-block p-3 me-4">
                             <span class="theme-text font-barlow-regular">Kroner 1490,- (ett år)</span>
                         </h4>
 
@@ -92,7 +92,7 @@
                                     <tr>
                                         <td> {{$courseTaken->package->course->title}}</td>
                                         <td>
-                                            <a href="#viewPackageDescriptionModal" data-toggle="modal" class="viewPackageDescriptionBtn"
+                                            <a href="#viewPackageDescriptionModal" data-bs-toggle="modal" class="viewPackageDescriptionBtn"
                                                data-description="{{ $package->description }}">
                                                 {{ $courseTaken->package->variation }}
                                             </a>
@@ -172,7 +172,7 @@
                                                     @endif
                                                 @endforeach
                                                 {{--<button class="btn btn-primary btn-sm upgradePackageBtn"
-                                                        data-toggle="modal" data-target="#upgradePackageModal"
+                                                        data-bs-toggle="modal" data-bs-target="#upgradePackageModal"
                                                 data-action="{{ route('learner.upgrade-course', $courseTaken->id) }}"
                                                 data-fields="{{ json_encode($packages) }}">Oppgrader pakke</button>--}}
                                             @endif
@@ -361,9 +361,9 @@
                         {{ csrf_field() }}
 
                         <p>{{ trans('site.learner.renew-all.description') }}</p>
-                        <div class="text-right margin-top">
+                        <div class="text-end margin-top">
                             <button type="submit" class="btn btn-primary">{{ trans('site.front.yes') }}</button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">{{ trans('site.front.no') }}</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ trans('site.front.no') }}</button>
                         </div>
                     </form>
                 </div>
@@ -376,7 +376,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">{{ trans('site.learner.courses-expires-text') }}</h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <?php
@@ -402,15 +402,15 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">{{ trans('site.learner.upgrade-package-text') }}</h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="">
                         {{ csrf_field() }}
 
-                        <div class="text-right margin-top">
+                        <div class="text-end margin-top">
                             <button type="submit" class="btn btn-primary btn-sm">{{ trans('site.learner.upgrade-package-text') }}</button>
-                            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{ trans('site.front.cancel') }}</button>
+                            <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">{{ trans('site.front.cancel') }}</button>
                         </div>
                     </form>
                 </div>
@@ -433,7 +433,7 @@
                         </p>
 
                         <input type="hidden" name="auto_renew">
-                        <div class="text-right margin-top">
+                        <div class="text-end margin-top">
                             <button type="submit" class="btn btn-primary btn-sm" id="yesRenew">{{ strtoupper(trans('site.front.yes')) }}</button>
                             <button type="submit" class="btn btn-danger btn-sm" id="noRenew">{{ strtoupper(trans('site.front.no')) }}</button>
                         </div>
@@ -448,7 +448,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">{{ trans('site.learner.course-package-content-text') }}</h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
 

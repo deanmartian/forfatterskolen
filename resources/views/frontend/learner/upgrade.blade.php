@@ -249,7 +249,7 @@
     
                         <h2>
                             {{ trans('site.learner.renew-automatically-text') }}
-                            <input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
+                            <input type="checkbox" data-bs-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
                                 class="webinar-auto-register-toggle" data-off="{{ trans('site.front.no') }}"
                                 data-size="mini" id="auto-renew-toggle"
                                 @if(Auth::user()->auto_renew_courses) {{ 'checked' }} @endif>
@@ -264,11 +264,11 @@
                             @endif
                         </p>
     
-                        <button class="d-none" id="autoRenewBtn" data-toggle="modal" data-target="#autoRenewModal">
+                        <button class="d-none" id="autoRenewBtn" data-bs-toggle="modal" data-bs-target="#autoRenewModal">
                         </button>
-                        <button class="d-none" id="cancelAutoRenewBtn" data-toggle="modal" data-target="#cancelAutoRenewModal">
+                        <button class="d-none" id="cancelAutoRenewBtn" data-bs-toggle="modal" data-bs-target="#cancelAutoRenewModal">
                         </button>
-                        <button class="d-none" id="successAutoRenewBtn" data-toggle="modal" data-target="#successAutoRenewModal">
+                        <button class="d-none" id="successAutoRenewBtn" data-bs-toggle="modal" data-bs-target="#successAutoRenewModal">
                         </button>
     
                         <?php
@@ -291,7 +291,7 @@
                             //display renew button when the webinar-pakke is going to expire within a month
                         ?>
                         @if($withinAMonth)
-                            <button class="red-outline-btn" data-toggle="modal" data-target="#renewAllModal">
+                            <button class="red-outline-btn" data-bs-toggle="modal" data-bs-target="#renewAllModal">
                                 {{ trans('site.learner.renew-subscription-text') }}
                             </button>
                         @endif
@@ -319,12 +319,12 @@
                     </p>
 
                     <input type="hidden" name="auto_renew" value="1">
-                    <div class="text-right mt-4">
-                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal" style="width: 49%"
+                    <div class="text-end mt-4">
+                        <button type="button" class="btn btn-light float-start" data-bs-dismiss="modal" style="width: 49%"
                             onclick="autoRenewToggleOption('off')">
                             {{ trans('site.front.no') }}
                         </button>
-                        <button type="submit" class="btn btn-primary submit-btn pull-right" 
+                        <button type="submit" class="btn btn-primary submit-btn float-end" 
                         style="min-width: auto; padding: 3.75px 7.5px; width: 49%">
                             {{ trans('site.front.yes') }}
                         </button>
@@ -352,12 +352,12 @@
                     </p>
 
                     <input type="hidden" name="auto_renew" value="0">
-                    <div class="text-right mt-4">
-                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal" style="width: 49%"
+                    <div class="text-end mt-4">
+                        <button type="button" class="btn btn-light float-start" data-bs-dismiss="modal" style="width: 49%"
                             onclick="autoRenewToggleOption('on')">
                             {{ trans('site.front.no') }}
                         </button>
-                        <button type="submit" class="btn btn-primary submit-btn pull-right" 
+                        <button type="submit" class="btn btn-primary submit-btn float-end" 
                         style="min-width: auto; padding: 3.75px 7.5px; width: 49%">
                             {{ trans('site.front.yes') }}
                         </button>
@@ -379,11 +379,11 @@
                     {{ csrf_field() }}
 
                     <p>{{ trans('site.learner.renew-all.description') }}</p>
-                    <div class="text-right margin-top">
-                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal" style="width: 49%">
+                    <div class="text-end margin-top">
+                        <button type="button" class="btn btn-light float-start" data-bs-dismiss="modal" style="width: 49%">
                             {{ trans('site.front.no') }}
                         </button>
-                        <button type="submit" class="btn btn-primary submit-btn pull-right" 
+                        <button type="submit" class="btn btn-primary submit-btn float-end" 
                         style="min-width: auto; padding: 3.75px 7.5px; width: 49%">
                             {{ trans('site.front.yes') }}
                         </button>
@@ -408,7 +408,7 @@
                 </h3>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default w-100" data-dismiss="modal">
+                <button type="button" class="btn btn-light w-100" data-bs-dismiss="modal">
                     {{ trans('site.exit') }}
                 </button>
             </div>

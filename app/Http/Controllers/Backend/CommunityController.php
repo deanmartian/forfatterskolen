@@ -8,10 +8,14 @@ use App\Models\CourseGroup;
 use App\Models\Discussion;
 use App\Models\Post;
 use App\Models\Profile;
+use GuzzleHttp\Client;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Spatie\Dropbox\Client as DropboxClient;
 
 class CommunityController extends Controller
 {
@@ -173,6 +177,90 @@ class CommunityController extends Controller
             'errors' => new MessageBag(['Diskusjon slettet.']),
             'alert_type' => 'success',
         ]);
+    }
+
+    /**
+     * Store a new bot post from admin
+     */
+    public function storeBotPost(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'content' => 'required|string|max:5000',
+            'image'   => 'nullable|image|mimes:jpeg,png,gif,webp|max:2048',
+        ]);
+
+        $imageUrl = null;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $fileName = 'community_bot_' . Str::uuid() . '.' . $file->getClientOriginalExtension();
+            $destinationPath = 'Forfatterskolen_app/community-images/';
+            $file->storeAs($destinationPath, $fileName, 'dropbox');
+
+            try {
+                $dropbox = new DropboxClient(config('filesystems.disks.dropbox.authorization_token'));
+                $response = $dropbox->createSharedLinkWithSettings($destinationPath . $fileName, [
+                    'requested_visibility' => 'public',
+                ]);
+                $imageUrl = str_replace('?dl=0', '?raw=1', $response['url']);
+            } catch (\Exception $e) {
+                \Log::error('Bot post image upload failed: ' . $e->getMessage());
+            }
+        }
+
+        Post::create([
+            'id'          => Str::uuid(),
+            'user_id'     => \Auth::id(),
+            'content'     => $request->content,
+            'image_url'   => $imageUrl,
+            'is_bot_post' => true,
+            'pinned'      => $request->has('pinned'),
+        ]);
+
+        return redirect()->back()->with([
+            'errors'     => new MessageBag(['Innlegg fra Forfatterskolen publisert!']),
+            'alert_type' => 'success',
+        ]);
+    }
+
+    /**
+     * Generate AI content for bot post
+     */
+    public function generateAiContent(Request $request): JsonResponse
+    {
+        $request->validate([
+            'prompt' => 'nullable|string|max:500',
+        ]);
+
+        $userPrompt = $request->input('prompt', 'Gi meg et inspirerende skrivetips for forfattere.');
+
+        try {
+            $client = new Client(['base_uri' => 'https://api.openai.com/v1/']);
+            $response = $client->post('chat/completions', [
+                'headers' => [
+                    'Content-Type'  => 'application/json',
+                    'Authorization' => 'Bearer ' . config('services.openai.key'),
+                ],
+                'json' => [
+                    'model'    => 'gpt-4o-mini',
+                    'messages' => [
+                        [
+                            'role'    => 'system',
+                            'content' => 'Du er Forfatterskolen sin assistent. Skriv innlegg på norsk for et skrivefellesskap. Innleggene skal være inspirerende, lærerike og engasjerende for forfattere og skriveglade. Hold det kort og engasjerende (maks 3-4 avsnitt). Ikke bruk markdown-formatering.',
+                        ],
+                        ['role' => 'user', 'content' => $userPrompt],
+                    ],
+                    'temperature' => 0.8,
+                    'max_tokens'  => 500,
+                ],
+            ]);
+
+            $data = json_decode($response->getBody(), true);
+            $content = $data['choices'][0]['message']['content'] ?? '';
+
+            return response()->json(['content' => $content]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Kunne ikke generere innhold: ' . $e->getMessage()], 500);
+        }
     }
 
     /**

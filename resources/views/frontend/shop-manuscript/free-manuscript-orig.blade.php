@@ -63,7 +63,7 @@
 					</small>
 				</div>
 
-				<div class="text-right">
+				<div class="text-end">
 					<button type="submit" class="btn btn-theme">Send inn</button>
 				</div>
 			</form>

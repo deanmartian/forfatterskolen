@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <h5 class="modal-title" id="quittedModalLongTitle"></h5>
@@ -11,8 +11,8 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="clearfix with-border-b">
-                            <span class="text-muted float-right mt-1" id="date_span"></span>
-                            <h4 class="card-title font-weight-light float-left pb-2">
+                            <span class="text-muted float-end mt-1" id="date_span"></span>
+                            <h4 class="card-title font-weight-light float-start pb-2">
                                 Reason For Quitting
                             </h4>
                         </div>
@@ -24,7 +24,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>           
         </div>
     </div>

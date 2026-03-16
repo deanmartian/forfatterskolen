@@ -32,7 +32,7 @@
 
                         <div class="global-card with-border" id="all-notif-{{ $notification->id }}">
                             <div class="card-body">
-                                <i class="pull-right hand text-red text-bold" onclick="layoutMethod.removeNotification({{ $notification->id }})">x</i>
+                                <i class="float-end hand text-red text-bold" onclick="layoutMethod.removeNotification({{ $notification->id }})">x</i>
                                 {!! $notification_message !!}
                             </div>
                         </div>

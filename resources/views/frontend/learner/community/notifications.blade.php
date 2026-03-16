@@ -22,7 +22,7 @@
                 @endforeach
             </div>
         @endif
-        <div class="d-flex" style="justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="d-flex notification-header-flex" style="justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div>
                 <h1 class="community-title">Varsler</h1>
             </div>

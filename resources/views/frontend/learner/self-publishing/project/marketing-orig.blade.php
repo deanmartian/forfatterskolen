@@ -46,7 +46,7 @@
                                         <td>{!! $emailBookstore->file_link !!}</td>
                                         <td>{{ $emailBookstore->date }}</td>
                                         <td>
-                                            <a href="{{ $emailBookstore->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $emailBookstore->value }}" class="btn btn-success btn-sm" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -76,7 +76,7 @@
                                         <td>{!! $emailLibrary->file_link !!}</td>
                                         <td>{{ $emailLibrary->date }}</td>
                                         <td>
-                                            <a href="{{ $emailLibrary->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $emailLibrary->value }}" class="btn btn-success btn-sm" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -106,7 +106,7 @@
                                         <td>{!! $emailPress->file_link !!}</td>
                                         <td>{{ $emailPress->date }}</td>
                                         <td>
-                                            <a href="{{ $emailPress->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $emailPress->value }}" class="btn btn-success btn-sm" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -220,7 +220,7 @@
                                         <td>{!! $culturalCouncil->file_link !!}</td>
                                         <td>{{ $culturalCouncil->is_finished_text }}</td>
                                         <td>
-                                            <a href="{{ $culturalCouncil->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $culturalCouncil->value }}" class="btn btn-success btn-sm" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -247,7 +247,7 @@
                                         <td>{!! $freeWord->file_link !!}</td>
                                         <td>{{ $freeWord->is_finished_text }}</td>
                                         <td>
-                                            <a href="{{ $freeWord->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $freeWord->value }}" class="btn btn-success btn-sm" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -293,7 +293,7 @@
                                         <td>{!! $printEBook->file_link !!}</td>
                                         <td>{{ $printEBook->is_finished_text }}</td>
                                         <td>
-                                            <a href="{{ $printEBook->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $printEBook->value }}" class="btn btn-success btn-sm" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -320,7 +320,7 @@
                                         <td>{!! $sampleBook->file_link !!}</td>
                                         <td>{{ $sampleBook->is_finished_text }}</td>
                                         <td>
-                                            <a href="{{ $sampleBook->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $sampleBook->value }}" class="btn btn-success btn-sm" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
@@ -366,7 +366,7 @@
                                         <td>{!! $pdfPrint->file_link !!}</td>
                                         <td>{{ $pdfPrint->is_finished_text }}</td>
                                         <td>
-                                            <a href="{{ $pdfPrint->value }}" class="btn btn-success btn-xs" download>
+                                            <a href="{{ $pdfPrint->value }}" class="btn btn-success btn-sm" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>

@@ -60,7 +60,7 @@
             {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
             {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display(['data-callback' => 'captchaCB']) !!}
         </div>
-        <div class="col-md-6 text-right">
+        <div class="col-md-6 text-end">
             <button type="submit" class="btn site-btn-global-w-arrow">{{ trans('site.front.register') }}</button>
         </div>
     </div>    

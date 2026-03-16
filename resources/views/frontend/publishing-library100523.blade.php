@@ -65,7 +65,7 @@
                                                     $author_image = \App\Http\FrontendHelpers::checkJpegImg($book['author_image']);
                                                 ?>
                                                 <img data-src="https://www.forfatterskolen.no/{{ $author_image }}"
-                                                     alt="{{ $book['title'] }}" class="img-responsive"
+                                                     alt="{{ $book['title'] }}" class="img-fluid"
                                                      style="max-height: 105px; margin: auto">
                                             </div>
 
@@ -91,12 +91,12 @@
                                                     @if($library->book_link)
                                                         <a href="{{ $library->book_link }}" target="_blank">
                                                             <img data-src="https://www.forfatterskolen.no/{{ $book_image }}" alt="{{ $book['title'] }}"
-                                                                 class="img-responsive pull-right right-image mr-2"
+                                                                 class="img-fluid float-end right-image me-2"
                                                                  style="max-height: 105px; max-width: 105px">
                                                         </a>
                                                     @else
                                                         <img data-src="https://www.forfatterskolen.no/{{ $book_image }}" alt="{{ $book['title'] }}"
-                                                             class="img-responsive pull-right right-image mr-2"
+                                                             class="img-fluid float-end right-image me-2"
                                                              style="max-height: 105px; max-width: 105px">
                                                     @endif
                                                 @endforeach

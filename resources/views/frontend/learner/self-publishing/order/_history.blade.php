@@ -24,7 +24,7 @@
     </tbody>
 </table>
 
-<div class="float-right">
+<div class="float-end">
     {{ $orders->appends(request()->except('page')) }}
 </div>
 

@@ -3,7 +3,7 @@
         <img data-src="https://www.forfatterskolen.no/images-new/logo11.png" alt="Forfatterskolen-logo">
     </a>
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
         {{--<img src="" alt="Menyikon">--}}
         <i></i>
     </button>
@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <ul class="navbar-nav ml-auto">
+    <ul class="navbar-nav ms-auto">
         <li class="nav-item">
             <a class="nav-link" href="https://twitter.com/Forfatterrektor" target="_blank">
                 <i class="sprite-social twitter"></i>
@@ -77,21 +77,21 @@
             <a href="{{ route('learner.dashboard') }}" style="color: #fff">
                 <h2 class="w-100">Kontrollpanel</h2>
             </a>
-            <p class="float-left">
+            <p class="float-start">
                 Velkommen til Forfatterskolens portal
             </p>
 
             @if (Auth::user())
-                <div class="float-right dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
-                        <span class="nav-user-thumb mr-2" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
+                <div class="float-end dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+                        <span class="nav-user-thumb me-2" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
                         Hei {{Auth::user()->first_name}}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
                         <div class="account-details">
                             <div class="row align-items-center mx-0">
                                 <div class="col-sm-4 text-center">
-                                    <span class="user-thumb mr-2" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
+                                    <span class="user-thumb me-2" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
                                 </div>
                                 <div class="col-sm-8 info">
                                     <p>{{ ucfirst(Auth::user()->first_name)}} <br>
@@ -159,7 +159,7 @@
 </div>
 
 <div id="mobile-learner-menu" class="navbar navbar-light">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavMobile">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavMobile">
         <img src="" alt="Åpne meny">
     </button>
 
@@ -208,12 +208,12 @@
 </div>
 
 <div class="portal-menu">
-    <button class="navbar-toggler text-center w-100" type="button" data-toggle="collapse" data-target="#portalNav">
+    <button class="navbar-toggler text-center w-100" type="button" data-bs-toggle="collapse" data-bs-target="#portalNav">
         PORTAL MENY &nbsp;<i class="fa fa-chevron-down font-white"></i>
     </button>
 
     <div class="navbar-collapse collapse" id="portalNav">
-        <div class="col-sm-4 col-xs-6 @if(!Request::is('account/course-webinar') && Request::is('account/course*')) active @endif">
+        <div class="col-sm-4 col-6 @if(!Request::is('account/course-webinar') && Request::is('account/course*')) active @endif">
             <div>
                 <a href="{{route('learner.course')}}">
                     <i class="sprite-menu student-cap d-block"></i>
@@ -221,7 +221,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/shop-manuscript*')) active @endif">
+        <div class="col-sm-4 col-6 @if(Request::is('account/shop-manuscript*')) active @endif">
             <div>
                 <a href="{{route('learner.shop-manuscript')}}">
                     <i class="sprite-menu file d-block"></i>
@@ -229,7 +229,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/workshop*')) active @endif">
+        <div class="col-sm-4 col-6 @if(Request::is('account/workshop*')) active @endif">
             <div>
                 <a href="{{route('learner.workshop')}}">
                     <i class="sprite-menu briefcase d-block"></i>
@@ -237,7 +237,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/webinar*')) active @endif">
+        <div class="col-sm-4 col-6 @if(Request::is('account/webinar*')) active @endif">
             <div>
                 <a href="{{route('learner.webinar')}}">
                     <i class="sprite-menu play-button d-block"></i>
@@ -245,7 +245,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/course-webinar*')) active @endif">
+        <div class="col-sm-4 col-6 @if(Request::is('account/course-webinar*')) active @endif">
             <div>
                 <a href="{{route('learner.course-webinar')}}">
                     <i class="sprite-menu play-button d-block"></i>
@@ -253,7 +253,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/assignment*')) active @endif">
+        <div class="col-sm-4 col-6 @if(Request::is('account/assignment*')) active @endif">
             <div>
                 <a href="{{route('learner.assignment')}}">
                     <i class="sprite-menu agenda d-block"></i>
@@ -261,7 +261,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/calendar*')) active @endif">
+        <div class="col-sm-4 col-6 @if(Request::is('account/calendar*')) active @endif">
             <div>
                 <a href="{{route('learner.calendar')}}">
                     <i class="sprite-menu calendar d-block"></i>
@@ -269,7 +269,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/invoice*')) active @endif">
+        <div class="col-sm-4 col-6 @if(Request::is('account/invoice*')) active @endif">
             <div>
                 <a href="{{route('learner.invoice')}}">
                     <i class="sprite-menu list-on-window d-block"></i>
@@ -277,7 +277,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/upgrade*')) active @endif">
+        <div class="col-sm-4 col-6 @if(Request::is('account/upgrade*')) active @endif">
             <div>
                 <a href="{{route('learner.upgrade')}}">
                     <i class="sprite-menu internet d-block"></i>
@@ -285,7 +285,7 @@
                 </a>
             </div>
         </div>
-        {{--<div class="col-sm-4 col-xs-6 @if(Request::is('account/competition*')) active @endif">
+        {{--<div class="col-sm-4 col-6 @if(Request::is('account/competition*')) active @endif">
             <div>
                 <a href="{{route('learner.competition')}}">
                     <i class="sprite-menu star d-block"></i>
@@ -293,7 +293,7 @@
                 </a>
             </div>
         </div>--}}
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/private-message*')) active @endif">
+        <div class="col-sm-4 col-6 @if(Request::is('account/private-message*')) active @endif">
             <div>
                 <a href="{{route('learner.private-message')}}">
                     <i class="fa fa-comment fa-use-comment d-block"></i>
@@ -301,7 +301,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/profile*')) active @endif">
+        <div class="col-sm-4 col-6 @if(Request::is('account/profile*')) active @endif">
             <div>
                 <a href="{{route('learner.profile')}}">
                     <i class="sprite-menu user d-block"></i>

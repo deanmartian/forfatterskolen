@@ -21,9 +21,9 @@
     <div class="learner-container order-container">
         <div class="container">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#current" data-toggle="tab">Current Orders</a></li>
-                <li><a href="#tab2" data-toggle="tab">Order History</a></li>
-                <li><a href="#tab3" data-toggle="tab">Saved Quotes</a></li>
+                <li class="active"><a href="#current" data-bs-toggle="tab">Current Orders</a></li>
+                <li><a href="#tab2" data-bs-toggle="tab">Order History</a></li>
+                <li><a href="#tab3" data-bs-toggle="tab">Saved Quotes</a></li>
             </ul>
           
             <div class="tab-content">
@@ -56,7 +56,7 @@
                     <h4 class="modal-title">
                         Delete Order
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -67,7 +67,7 @@
                             Are you sure you want to delete this record?
                         </p>
 
-                        <div class="text-right">
+                        <div class="text-end">
                             <button class="btn btn-danger" type="submit">{{ trans('site.delete') }}</button>
                         </div>
                     </form>
@@ -83,7 +83,7 @@
                     <h4 class="modal-title">
                         Save Quote
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -93,7 +93,7 @@
                             Are you sure you want to save this quote?
                         </p>
 
-                        <div class="text-right">
+                        <div class="text-end">
                             <button class="btn btn-success" type="submit">{{ trans('site.submit') }}</button>
                         </div>
                     </form>
@@ -109,7 +109,7 @@
                     <h4 class="modal-title">
                         Move Order
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -119,7 +119,7 @@
                             Are you sure you want to move this order?
                         </p>
 
-                        <div class="text-right">
+                        <div class="text-end">
                             <button class="btn btn-success" type="submit">{{ trans('site.submit') }}</button>
                         </div>
                     </form>

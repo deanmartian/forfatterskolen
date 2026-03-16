@@ -131,6 +131,13 @@
 					@if($course['hide_price']) {{ 'checked' }} @endif>
 				</div>
 
+				<div class="form-group">
+					<label>Vis i kursgrupper</label> <br>
+					<input type="checkbox" data-toggle="toggle" data-on="Ja" name="show_in_course_groups"
+						   data-off="Nei"
+					@if($course['show_in_course_groups'] ?? true) {{ 'checked' }} @endif>
+				</div>
+
 				@if(Request::is('course/*/edit'))
 				<button type="submit" class="btn btn-primary">{{ trans('site.update-course') }}</button>
 				<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCourseModal">{{ trans('site.delete-course') }}</button>

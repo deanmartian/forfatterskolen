@@ -14,8 +14,8 @@
                 <div class="sp-card-header">
                     {{ trans('site.learner.copy-editing') }}
 
-                    <button class="btn btn-brand btn-xs pull-right uploadOtherServiceManuscriptBtn" data-toggle="modal"
-                            data-target="#uploadOtherServiceManuscriptModal"
+                    <button class="btn btn-brand btn-sm float-end uploadOtherServiceManuscriptBtn" data-bs-toggle="modal"
+                            data-bs-target="#uploadOtherServiceManuscriptModal"
                             data-action="{{ route('learner.project.progress-plan.other-service.upload-manuscript', 1) }}">
                         {{ trans('site.front.form.upload-manuscript') }}
                     </button>
@@ -58,8 +58,8 @@
 
                                         @if(!$editing->is_locked && $editing->status !=2)
                                                 <br>
-                                            <button class="btn btn-brand btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
-                                                    data-target="#uploadOtherServiceManuscriptModal"
+                                            <button class="btn btn-brand btn-sm uploadOtherServiceManuscriptBtn" data-bs-toggle="modal"
+                                                    data-bs-target="#uploadOtherServiceManuscriptModal"
                                                     data-id="{{ $editing->id }}"
                                                     data-action="{{ route('learner.project.progress-plan.other-service.upload-manuscript', 1) }}">
                                                 {{ trans('site.front.form.upload-manuscript') }}
@@ -71,11 +71,11 @@
                                     </td>
                                     <td>
                                         @if( $editing->status == 2 )
-                                            <span class="label label-success">{{ trans('site.learner.finished') }}</span>
+                                            <span class="badge bg-success">{{ trans('site.learner.finished') }}</span>
                                         @elseif( $editing->status == 1 )
-                                            <span class="label label-primary">{{ trans('site.learner.started') }}</span>
+                                            <span class="badge bg-primary">{{ trans('site.learner.started') }}</span>
                                         @elseif( $editing->status == 0 )
-                                            <span class="label label-warning">{{ trans('site.learner.not-started') }}</span>
+                                            <span class="badge bg-warning">{{ trans('site.learner.not-started') }}</span>
                                         @endif
                                     </td>
                                     <td>
@@ -123,7 +123,7 @@
                         <i class="fas fa-upload" style="color:var(--brand-primary);margin-right:6px"></i>
                         {{ trans('site.front.form.upload-manuscript') }}
                     </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                    <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -143,7 +143,7 @@
                         </div>
                     </div>
                     <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
+                        <button type="button" class="btn-outline-brand" data-bs-dismiss="modal">Avbryt</button>
                         <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
                     </div>
                 </form>

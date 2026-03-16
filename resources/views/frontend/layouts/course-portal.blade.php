@@ -73,7 +73,7 @@
     {{-- check if advisory could be displayed today and current page is included --}}
     @if($isBetweenDate && in_array(Route::currentRouteName(), $included_pages))
         <div class="alert shop-manuscript-advisory" role="alert" id="fixed_to_bottom_alert">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Lukk"></button>
             {{ $shopManuscriptAdvisory->advisory }}
         </div>
     @endif
@@ -98,7 +98,7 @@
         ?>
             <div class="alert alert-{{ $alert_type }} global-alert-box" style="z-index: 9; min-width: 300px"
                  id="fixed_to_bottom_alert">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Lukk"></button>
                 <ul>
                     @foreach($errors->all() as $error)
                         <li>{!! $error !!}</li>
@@ -112,7 +112,7 @@
 <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js" defer></script>
 <script src="/js/lang.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @yield('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -163,17 +163,23 @@
     // Add an event listener for the window resize event
     window.addEventListener('resize', handleResize);
 
-    // Toggle sidebar on button click
-    $("#sidebarCollapse").click(function () {
+    // Toggle sidebar — attributt-selector matcher ALLE elementer med id="sidebarCollapse"
+    // (jQuery #id matcher bare det første, men [id=...] matcher alle duplikater)
+    $("[id='sidebarCollapse'], [data-sidebar-toggle]").click(function (e) {
+        e.stopPropagation(); // Hindrer #main-content click fra å lukke med en gang
         sidebar.toggleClass("sidebar-visible");
         mainContainer.toggleClass("enlarge");
+        $("body").toggleClass("sidebar-open");
     });
 
-    $("#main-content").click(function() {
-        if (window.innerWidth <= 1026 && sidebar.hasClass("sidebar-visible")) {
-            sidebar.removeClass("sidebar-visible");
-            mainContainer.removeClass("enlarge");
-        }
+    // Lukk sidebar ved klikk utenfor — fanger klikk på #main-content OG body::after overlay
+    $(document).on("click", function(e) {
+        if (!sidebar.hasClass("sidebar-visible")) return;
+        // Ikke lukk hvis klikket var på sidebar eller en toggle-knapp
+        if ($(e.target).closest("#sidebar, [id='sidebarCollapse'], [data-sidebar-toggle]").length) return;
+        sidebar.removeClass("sidebar-visible");
+        mainContainer.removeClass("enlarge");
+        $("body").removeClass("sidebar-open");
     });
 
     function handleResize() {
@@ -187,6 +193,7 @@
         if (windowWidth <= 1026) {
             sidebar.removeClass("sidebar-visible");
             mainContainer.removeClass("enlarge");
+            $("body").removeClass("sidebar-open");
         } else {
             sidebar.addClass("sidebar-visible");
             mainContainer.addClass("enlarge");

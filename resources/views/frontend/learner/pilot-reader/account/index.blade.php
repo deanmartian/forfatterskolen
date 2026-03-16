@@ -58,7 +58,7 @@
                             </div>
 
                             <div class="form-group">
-                                <button type="button" class="btn btn-outline-info btn-sm pull-right" onclick="methods.setUserPreferences()">Save Changes</button>
+                                <button type="button" class="btn btn-outline-info btn-sm float-end" onclick="methods.setUserPreferences()">Save Changes</button>
                             </div>
                         </div>
                     </div>

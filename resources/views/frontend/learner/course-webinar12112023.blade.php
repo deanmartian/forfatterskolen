@@ -396,7 +396,7 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-body text-center">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                     <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
                     <p>
                         {{ trans('site.learner.webinar-register-success') }}

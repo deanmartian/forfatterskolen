@@ -58,7 +58,7 @@
                                     <small class="text-muted d-block">{{ "If you indicate that you are available, you grant BetaBooks permission to allow authors to contact you via the BetaBooks app. You can opt-out at any time." }}</small>
                                 </div>
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-outline-info btn-sm pull-right">Save Changes</button>
+                                    <button type="submit" class="btn btn-outline-info btn-sm float-end">Save Changes</button>
                                 </div>
                             </form>
                         </div>

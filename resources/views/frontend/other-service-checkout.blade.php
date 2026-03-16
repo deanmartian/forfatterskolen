@@ -13,7 +13,7 @@
                     <div class="panel panel-default">
                         @if(Auth::guest())
                             {{--<div>
-                                Allerede elev? Klikk <a href="#" data-toggle="collapse" data-target="#checkoutLogin"
+                                Allerede elev? Klikk <a href="#" data-bs-toggle="collapse" data-bs-target="#checkoutLogin"
                                 class="font-barlow-regular">her</a> for å logge inn.
                             </div>
                             <form id="checkoutLogin" class="collapse @if($errors->first('login_error')) fade in @endif" action="{{route('frontend.login.checkout.store')}}" method="POST">--}}
@@ -104,7 +104,7 @@
                                     </button>
                                     @if($data['price'])
                                         <a href="{{ route('front.other-service-checkout', ['plan' => 1, 'has_data' => 0]) }}"
-                                           class="btn btn-default btn-common-padding">
+                                           class="btn btn-light btn-common-padding">
                                             {{ trans('site.front.correction.fjem') }}
                                         </a>
                                     @endif

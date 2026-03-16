@@ -38,7 +38,7 @@
 								<h4>Profil</h4>
 								<br />
 								<div class="user-image image-file margin-bottom">
-									<div class="image-preview" style="background-image: url('{{Auth::user()->profile_image}}')" data-default="{{Auth::user()->profile_image}}" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
+									<div class="image-preview" style="background-image: url('{{Auth::user()->profile_image}}')" data-default="{{Auth::user()->profile_image}}" title="Select Image" data-bs-toggle="tooltip" data-placement="bottom"></div>
 									<input type="file" accept="image/*" name="image">
 								</div>
 								<div class="form-group">
@@ -105,7 +105,7 @@
 												<div style="border: 1px solid #ccc" class="text-center">
 													<span>{{ $diploma->course->title }}</span>
 
-													<a href="#previewDiplomaModal" data-toggle="modal"
+													<a href="#previewDiplomaModal" data-bs-toggle="modal"
 													   data-diploma="{{asset($diploma->diploma)}}"
 													   class="previewDiplomaBtn darken">
 														<img src="{{ asset('images/diploma.jpg') }}"
@@ -158,7 +158,7 @@
 								<ul class="list-group mt-2" id="email-list">
 								</ul>
 								<div class="form-group mt-1 mb-1">
-									<label class="lead ml-2 mb-1 mt-2">Legg til ny epost adresse</label>
+									<label class="lead ms-2 mb-1 mt-2">Legg til ny epost adresse</label>
 									<div class="input-group-global mb-0">
 										<input type="text" class="form-control" name="email" placeholder="Din nye epost adresse" aria-label="Recipient's email address" aria-describedby="basic-addon2" autocomplete="off" onkeyup="methods.sendConfirmation(event)">
 										<div class="input-group-append">
@@ -181,7 +181,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 					<h4 class="modal-title">Preview</h4>
 				</div>
 				<div class="modal-body">

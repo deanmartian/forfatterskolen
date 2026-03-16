@@ -58,6 +58,9 @@
     .calendar-guide .guide-orange { background: #ffb322; }
     .calendar-guide .guide-inverse { background: #2d2d2d; }
     .calendar-guide .guide-red { background: #f44c3d; }
+    .calendar-guide .guide-sp { background: #7c4dff; }
+    .calendar-guide .guide-teal { background: #26a69a; }
+    .calendar-guide .guide-magenta { background: #e91e63; }
 
     #full-calendar {
         background: #ffffff;
@@ -186,6 +189,140 @@
     .fc-daygrid-dot-event .fc-event-title {
         font-weight: normal;
     }
+
+    /* Kalender responsiv */
+    @media only screen and (max-width: 768px) {
+        #full-calendar {
+            padding: 8px;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 16px;
+        }
+
+        .fc .fc-toolbar {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .fc .fc-toolbar .fc-toolbar-chunk {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .fc .fc-toolbar .fc-toolbar-chunk:first-child {
+            order: -1;
+        }
+
+        .fc .fc-button {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        /* Korte dagnavn (Man, Tir, Ons...) */
+        .fc .fc-col-header-cell-cushion {
+            font-size: 11px;
+        }
+
+        .fc .fc-daygrid-day-number {
+            font-size: 12px;
+            padding: 2px 4px;
+        }
+
+        .fc .fc-event {
+            font-size: 10px;
+            padding: 2px 4px;
+        }
+
+        .calendar-header {
+            padding: 12px 14px;
+        }
+
+        .calendar-guide {
+            gap: 4px !important;
+            justify-content: center;
+        }
+
+        .calendar-guide li {
+            font-size: 10px;
+            padding: 3px 6px;
+        }
+
+        .calendar-wrapper {
+            padding: 10px 8px 20px !important;
+        }
+
+        .calendar-header .d-flex.justify-content-md-end {
+            justify-content: center !important;
+            margin-top: 10px;
+        }
+
+        .calendar-header .btn {
+            font-size: 12px;
+            padding: 6px 14px;
+            width: 100%;
+        }
+
+        /* Begrens antall synlige events per dag */
+        .fc .fc-daygrid-day-frame {
+            min-height: 60px;
+        }
+
+        /* Tooltip touch-vennlig */
+        .fc-event-tooltip {
+            max-width: 250px;
+            font-size: 12px;
+        }
+    }
+
+    /* Listevisning mobil */
+    .fc .fc-list {
+        border-radius: 6px;
+    }
+
+    .fc .fc-list-event-title {
+        font-size: 13px;
+    }
+
+    .fc .fc-list-day-cushion {
+        background: #f3f5f7;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    @media only screen and (max-width: 480px) {
+        .fc .fc-toolbar-title {
+            font-size: 14px;
+        }
+
+        .fc .fc-button {
+            padding: 3px 6px;
+            font-size: 11px;
+        }
+
+        .fc .fc-col-header-cell-cushion {
+            font-size: 10px;
+        }
+
+        .fc .fc-daygrid-day-number {
+            font-size: 11px;
+        }
+
+        .fc .fc-event {
+            font-size: 9px;
+            padding: 1px 3px;
+        }
+
+        .calendar-guide li {
+            font-size: 9px;
+            padding: 2px 5px;
+        }
+
+        .fc .fc-daygrid-day-frame {
+            min-height: 50px;
+        }
+    }
 </style>
 @stop
 
@@ -203,6 +340,9 @@
                                                         <li class="guide-orange">{{ trans('site.learner.webinars') }}</li> <!-- course-webinars -->
                                                         <li class="guide-inverse">{{ trans('site.learner.notes-text') }}</li>
                                                         <li class="guide-red">{{ trans('site.learner.coaching-time') }}</li>
+                                                        <li class="guide-sp">Selvpublisering</li>
+                                                        <li class="guide-teal">Språkvask</li>
+                                                        <li class="guide-magenta">Korrektur</li>
                                                 </ul>
                                                 <div class="d-flex justify-content-md-end w-100 w-md-auto">
                                                         <a href="{{ route('learner.calendar.export') }}" class="btn btn-primary" target="_blank" rel="noopener">
@@ -240,16 +380,21 @@
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('full-calendar');
 
+    var isMobile = window.innerWidth <= 768;
+
     var calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'nb',
         timeZone: 'local',
-        initialView: 'dayGridMonth',
-        dayMaxEventRows: 4,
-        headerToolbar: {
-            left: 'title',
-            right: 'prev today next dayGridMonth,timeGridWeek,timeGridDay'
+        initialView: isMobile ? 'listMonth' : 'dayGridMonth',
+        dayMaxEventRows: isMobile ? 2 : 4,
+        headerToolbar: isMobile
+            ? { left: 'prev today next', center: 'title', right: 'listMonth,dayGridMonth' }
+            : { left: 'title', right: 'prev today next dayGridMonth,timeGridWeek,timeGridDay' },
+        dayHeaderFormat: { weekday: isMobile ? 'short' : 'long' },
+        views: {
+            listMonth: { buttonText: 'Liste' },
+            dayGridMonth: { buttonText: translations.month }
         },
-        dayHeaderFormat: { weekday: 'long' },
         allDayText: translations.allDay,
         buttonText: {
             today: translations.today,

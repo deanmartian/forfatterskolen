@@ -17,8 +17,8 @@
             <div class="form-group display-none welcome-msg-form">
                 <textarea name="welcome_msg" id="welcome_msg_editor"></textarea>
                 <div class="form-group mt-2 clearfix">
-                    <button class="btn btn-primary btn-sm pull-right" onclick="methods.inlineSave(this)">Save</button>
-                    <button class="btn btn-danger btn-sm pull-right mr-1" onclick="methods.inlineCancel(this)">Cancel</button>
+                    <button class="btn btn-primary btn-sm float-end" onclick="methods.inlineSave(this)">Save</button>
+                    <button class="btn btn-danger btn-sm float-end me-1" onclick="methods.inlineCancel(this)">Cancel</button>
                 </div>
             </div> <!-- end form-group display-none welcome-msg-form -->
 
@@ -27,7 +27,7 @@
             </h1>
             @if($manager)
                 <small class="text-muted d-block manager-note">
-                    <h5 class="d-inline-block mr-2"><span class="badge badge-warning text-white">Manager Note</span></h5>
+                    <h5 class="d-inline-block me-2"><span class="badge badge-warning text-white">Manager Note</span></h5>
                     You can add featured books from the "Books" tab.
                 </small>
             @endif
@@ -62,8 +62,8 @@
                                 </h2>
                             </div>
                             <div class="card-footer bg-info-global text-white col-sm-12">
-                                <span class="pull-left">By {{ $featured_book->book->author->full_name }}</span>
-                                <span class="pull-right">Shared on {{ \App\Http\FrontendHelpers::formatByMd($featured_book->created_at) }}</span>
+                                <span class="float-start">By {{ $featured_book->book->author->full_name }}</span>
+                                <span class="float-end">Shared on {{ \App\Http\FrontendHelpers::formatByMd($featured_book->created_at) }}</span>
                             </div>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
             <ul class="list-group font-14-body compact">
                 @if($manager)
                     <li class="text-muted manager-note small">
-                        <h5 class="d-inline-block mr-2"><span class="badge badge-warning text-white">Manager Note</span></h5>
+                        <h5 class="d-inline-block me-2"><span class="badge badge-warning text-white">Manager Note</span></h5>
                         You can make announcements from the discussion page and they will be listed here.
                     </li>
                 @endif

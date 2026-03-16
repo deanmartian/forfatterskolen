@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="col-sm-12 margin-top">
-                    <div class="col-xs-6">
+                    <div class="col-6">
                         <form action="" method="POST">
                             {{ csrf_field() }}
 

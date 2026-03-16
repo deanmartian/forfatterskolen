@@ -53,8 +53,8 @@
         
                                                 @if(!$editing->is_locked && $editing->status !=2)
                                                         <br>
-                                                    <button class="btn btn-primary btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
-                                                            data-target="#uploadOtherServiceManuscriptModal"
+                                                    <button class="btn btn-primary btn-sm uploadOtherServiceManuscriptBtn" data-bs-toggle="modal"
+                                                            data-bs-target="#uploadOtherServiceManuscriptModal"
                                                             data-action="{{ route('learner.project.other-service.upload-manuscript',
                                                                 ['id' => $editing->id, 'type' => 1]) }}">
                                                         {{ trans('site.front.form.upload-manuscript') }}
@@ -66,11 +66,11 @@
                                             </td>
                                             <td>
                                                 @if( $editing->status == 2 )
-                                                    <span class="label label-success">{{ trans('site.learner.finished') }}</span>
+                                                    <span class="badge bg-success">{{ trans('site.learner.finished') }}</span>
                                                 @elseif( $editing->status == 1 )
-                                                    <span class="label label-primary">{{ trans('site.learner.started') }}</span>
+                                                    <span class="badge bg-primary">{{ trans('site.learner.started') }}</span>
                                                 @elseif( $editing->status == 0 )
-                                                    <span class="label label-warning">{{ trans('site.learner.not-started') }}</span>
+                                                    <span class="badge bg-warning">{{ trans('site.learner.not-started') }}</span>
                                                 @endif
                                             </td>
                                             <td>
@@ -119,7 +119,7 @@
                     <h4 class="modal-title">
                         {{ trans('site.front.form.upload-manuscript') }}
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
@@ -131,7 +131,7 @@
 					    application/vnd.oasis.opendocument.text" multiple>
                         </div>
 
-                        <div class="text-right">
+                        <div class="text-end">
                             <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
                         </div>
                     </form>

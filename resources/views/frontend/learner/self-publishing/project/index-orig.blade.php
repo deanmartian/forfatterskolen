@@ -28,7 +28,7 @@
                                 {{ trans('site.author-portal.book-project') }}
                             </h1>
 
-                            <button class="btn btn-primary projectBtn pull-right" data-toggle="modal" data-target="#projectModal">
+                            <button class="btn btn-primary projectBtn float-end" data-bs-toggle="modal" data-bs-target="#projectModal">
                                 {{ trans('site.author-portal.add-book-project') }}
                             </button>
                         </div>
@@ -83,9 +83,9 @@
                                                     {{ trans('site.author-portal.current') }}
                                                 </span>
                                             @else
-                                                <button class="btn btn-primary btn-xs standardProjectBtn" data-toggle="modal" 
+                                                <button class="btn btn-primary btn-sm standardProjectBtn" data-bs-toggle="modal" 
                                                 data-action="{{ route('learner.project.set-standard', $project->id) }}"
-                                                data-target="#standardProjectModal">
+                                                data-bs-target="#standardProjectModal">
                                                     {{ trans('site.author-portal.set-standard') }}
                                                 </button>
                                             @endif
@@ -115,7 +115,7 @@ frameborder="0"
                     <h4 class="modal-title">
                         {{ trans('site.author-portal.add-book-project') }}
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('learner.save-project') }}" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
@@ -130,7 +130,7 @@ frameborder="0"
                             <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
                         </div>
 
-                        <div class="text-right">
+                        <div class="text-end">
                             <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
                         </div>
                     </form>
@@ -147,7 +147,7 @@ frameborder="0"
                     <h4 class="modal-title">
                         {{ trans('site.author-portal.standard-project') }}
                     </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -157,7 +157,7 @@ frameborder="0"
                             Are you sure you want to set this project as <em>standard</em>?
                         </p>
 
-                        <div class="text-right">
+                        <div class="text-end">
                             <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
                         </div>
                     </form>

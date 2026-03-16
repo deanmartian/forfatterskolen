@@ -15,7 +15,7 @@
                                 {{ trans('site.author-portal.book-project') }}
                             </h1>
 
-                            <button class="btn btn-brand projectBtn pull-right" data-toggle="modal" data-target="#projectModal">
+                            <button class="btn btn-brand projectBtn float-end" data-bs-toggle="modal" data-bs-target="#projectModal">
                                 {{ trans('site.author-portal.add-book-project') }}
                             </button>
                         </div>
@@ -70,9 +70,9 @@
                                                     {{ trans('site.author-portal.current') }}
                                                 </span>
                                             @else
-                                                <button class="btn btn-brand btn-xs standardProjectBtn" data-toggle="modal"
+                                                <button class="btn btn-brand btn-sm standardProjectBtn" data-bs-toggle="modal"
                                                 data-action="{{ route('learner.project.set-standard', $project->id) }}"
-                                                data-target="#standardProjectModal">
+                                                data-bs-target="#standardProjectModal">
                                                     {{ trans('site.author-portal.set-standard') }}
                                                 </button>
                                             @endif
@@ -103,7 +103,7 @@ frameborder="0"
                         <i class="fas fa-plus-circle" style="color:var(--brand-primary);margin-right:6px" aria-hidden="true"></i>
                         {{ trans('site.author-portal.add-book-project') }}
                     </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                    <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -121,7 +121,7 @@ frameborder="0"
                         </div>
                     </div>
                     <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
+                        <button type="button" class="btn-outline-brand" data-bs-dismiss="modal">Avbryt</button>
                         <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
                     </div>
                 </form>
@@ -137,7 +137,7 @@ frameborder="0"
                         <i class="fas fa-star" style="color:var(--brand-primary);margin-right:6px" aria-hidden="true"></i>
                         {{ trans('site.author-portal.standard-project') }}
                     </h3>
-                    <button type="button" class="sp-modal__close" data-dismiss="modal" aria-label="Lukk">
+                    <button type="button" class="sp-modal__close" data-bs-dismiss="modal" aria-label="Lukk">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -149,7 +149,7 @@ frameborder="0"
                         </p>
                     </div>
                     <div class="sp-modal__footer">
-                        <button type="button" class="btn-outline-brand" data-dismiss="modal">Avbryt</button>
+                        <button type="button" class="btn-outline-brand" data-bs-dismiss="modal">Avbryt</button>
                         <button type="submit" class="btn-brand">{{ trans('site.save') }}</button>
                     </div>
                 </form>

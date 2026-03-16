@@ -33,15 +33,15 @@
 
 					<div class="col-sm-12 col-md-5">
 						@if( $shopManuscriptTaken->status == 'Finished' )
-							<span class="label label-success">
+							<span class="badge bg-success">
 								{{ trans('site.learner.finished') }}
 							</span>
 						@elseif( $shopManuscriptTaken->status == 'Started' )
-							<span class="label label-primary">
+							<span class="badge bg-primary">
 								{{ trans('site.learner.started') }}
 							</span>
 						@elseif( $shopManuscriptTaken->status == 'Not started' )
-							<span class="label label-warning">
+							<span class="badge bg-warning">
 								{{ trans('site.learner.not-started') }}
 							</span>
 						@endif
@@ -104,7 +104,7 @@
 									{{ csrf_field() }}
 									<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
 										   class="form-control" required>
-									<div class="text-right mt-4">
+									<div class="text-end mt-4">
 										<button class="btn btn-info btn-sm" type="submit">
 											{{ trans('site.learner.add-comment') }}
 										</button>
@@ -114,7 +114,7 @@
 								<div class="mt-4">
 									<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
 										   class="form-control" required disabled>
-									<div class="text-right mt-4">
+									<div class="text-end mt-4">
 										<button class="btn btn-info btn-sm" type="button" disabled>
 											{{ trans('site.learner.add-comment') }}
 										</button>
@@ -126,7 +126,7 @@
 								{{ csrf_field() }}
 								<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
 									   class="form-control" required>
-								<div class="text-right mt-4">
+								<div class="text-end mt-4">
 									<button class="btn btn-info btn-sm" type="submit">
 										{{ trans('site.learner.add-comment') }}
 									</button>
@@ -137,7 +137,7 @@
 						<div class="mt-4">
 							@foreach( $shopManuscriptTaken->comments as $comment )
 								@if( $comment->user_id == Auth::user()->id )
-									<div class="text-right">
+									<div class="text-end">
 										<div class="comment owner">
 											<div>{{ $comment->comment }}</div>
 											<div><small><em>{{ trans('site.learner.you-text') }}</em></small></div>
@@ -159,13 +159,13 @@
 						@if (!$shopManuscriptTaken->is_manuscript_locked)
 							<div>
 								<button type="button" class="btn btn-primary uploadManuscriptBtn"
-										data-toggle="modal" data-target="#uploadManuscriptModal"
+										data-bs-toggle="modal" data-bs-target="#uploadManuscriptModal"
 										data-action="{{ route('learner.shop-manuscript.upload', $shopManuscriptTaken->id) }}">
 									{{ trans('site.learner.upload-script') }}
 								</button>
 
 								<button type="button" class="btn btn-success uploadSynopsisBtn"
-										data-toggle="modal" data-target="#uploadSynopsisModal"
+										data-bs-toggle="modal" data-bs-target="#uploadSynopsisModal"
 										data-action="{{ route('learner.shop-manuscript.upload_synopsis', $shopManuscriptTaken->id) }}">
 									{{ trans('site.synopsis') }}
 								</button>
@@ -177,7 +177,7 @@
 		</div> <!-- end global-panel -->
 
 			@if( $shopManuscriptTaken->status == 'Not started' )
-				<div class="text-right">
+				<div class="text-end">
 					<a class="btn site-btn-global mt-4" href="{{ route('learner.upgrade') }}">
 						{{ trans('site.learner.upgrade') }}
 					</a>
@@ -191,7 +191,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h3 class="modal-title">{{ trans('site.learner.upload-script') }}</h3>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 				</div>
 				<div class="modal-body">
 					<form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmitOrigText(this)">
@@ -214,7 +214,7 @@
 								@endforeach
 							</select>
 						</div>
-						<button type="submit" class="btn btn-primary pull-right">{{ trans('site.learner.upload-script') }}</button>
+						<button type="submit" class="btn btn-primary float-end">{{ trans('site.learner.upload-script') }}</button>
 						<div class="clearfix"></div>
 					</form>
 				</div>
@@ -227,7 +227,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h3 class="modal-title">{{ trans('site.synopsis') }}</h3>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 				</div>
 				<div class="modal-body">
 					<form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmitOrigText(this)">
@@ -238,7 +238,7 @@
 								   accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
 								   application/pdf, application/vnd.oasis.opendocument.text" required>
 						</div>
-						<button type="submit" class="btn btn-primary pull-right">{{ trans('site.front.submit') }}</button>
+						<button type="submit" class="btn btn-primary float-end">{{ trans('site.front.submit') }}</button>
 						<div class="clearfix"></div>
 					</form>
 				</div>
@@ -252,7 +252,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">{{ trans('site.learner.upgrade') }}</h3>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 
@@ -262,8 +262,8 @@
 						['<br/>', session('exceed'), session('max_words')] ,
 						trans('site.learner.upgrade-exceed-message')) !!}
 					</p>
-					<button class="btn btn-default" data-dismiss="modal">{{ trans('site.learner.close') }}</button>
-					<a href="{{ url('upgrade-manuscript/'.session('plan').'/checkout') }}" class="btn btn-primary pull-right">{{
+					<button class="btn btn-light" data-bs-dismiss="modal">{{ trans('site.learner.close') }}</button>
+					<a href="{{ url('upgrade-manuscript/'.session('plan').'/checkout') }}" class="btn btn-primary float-end">{{
 					trans('site.learner.upgrade-script') }}</a>
 				</div>
 				<div class="clearfix"></div>
@@ -279,7 +279,7 @@
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
 				<div class="modal-body text-center">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 					<div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
 					{!! Session::get('manuscript_test_error') !!}
 				</div>
@@ -300,7 +300,7 @@
     }
     ?>
 	<div class="alert alert-{{ $alert_type }} global-alert-box" style="z-index: 9">
-		<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+		<a href="#" class="close" data-bs-dismiss="alert" aria-label="close" title="close">×</a>
 		<ul>
 			@foreach($errors->all() as $error)
 				<li>{!! $error !!}</li>

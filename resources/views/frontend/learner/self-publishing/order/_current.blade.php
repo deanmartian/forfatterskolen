@@ -21,13 +21,13 @@
                     {{ FrontendHelpers::currencyFormat($order->price) }}
                 </td>
                 <td>
-                    <button class="btn btn-success btn-xs saveQuoteBtn" data-toggle="modal" data-target="#saveQuoteModal"
+                    <button class="btn btn-success btn-sm saveQuoteBtn" data-bs-toggle="modal" data-bs-target="#saveQuoteModal"
                     data-action="{{ route('learner.self-publishing.save-quote', $order->id) }}">
                         Save Quote
                     </button>
                     
-                    <button class="btn btn-danger btn-xs deleteOrderBtn" data-toggle="modal" 
-                    data-target="#deleteOrderModal" data-action="{{ route('learner.self-publishing.delete-order', $order->id) }}">
+                    <button class="btn btn-danger btn-sm deleteOrderBtn" data-bs-toggle="modal" 
+                    data-bs-target="#deleteOrderModal" data-action="{{ route('learner.self-publishing.delete-order', $order->id) }}">
                         Delete
                     </button>
                 </td>
@@ -36,7 +36,7 @@
         @if($orders->count())
             <tr>
                 <td></td>
-                <td class="text-right">
+                <td class="text-end">
                     <b>
                         Total:
                     </b>
@@ -51,7 +51,7 @@
 </table>
 
 @if($orders->count())
-    <a href="{{ route('learner.self-publishing.checkout') }}" class="btn btn-dark pull-right" style="margin-top: 20px">
+    <a href="{{ route('learner.self-publishing.checkout') }}" class="btn btn-dark float-end" style="margin-top: 20px">
         Proceed Checkout
     </a>
 @endif

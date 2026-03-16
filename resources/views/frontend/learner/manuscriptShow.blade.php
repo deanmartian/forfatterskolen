@@ -29,15 +29,15 @@
 								</div>
 								<div class="col-sm-12 col-md-5">
 									@if( $manuscript->status == 'Finished' )
-									<span class="label label-success">
+									<span class="badge bg-success">
 										{{ trans('site.learner.finished') }}
 									</span>
 									@elseif( $manuscript->status == 'Started' )
-									<span class="label label-primary">
+									<span class="badge bg-primary">
 										{{ trans('site.learner.started') }}
 									</span>
 									@elseif( $manuscript->status == 'Not started' )
-									<span class="label label-warning">
+									<span class="badge bg-warning">
 										{{ trans('site.learner.not-started') }}
 									</span>
 									@endif

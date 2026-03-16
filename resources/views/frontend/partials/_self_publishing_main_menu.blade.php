@@ -5,10 +5,10 @@
                 <img src="https://app.indiemoon.no/images/front-end/logo.png" alt="Logo">
             </a>
         </div>
-        <ul class="nav navbar-nav ml-auto" style="margin-right: 100px">
+        <ul class="nav navbar-nav ms-auto" style="margin-right: 100px">
             <li><a href="#">Hjem</a></li>
             <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle d-flex" data-toggle="dropdown">
+                <a href="#" class="nav-link dropdown-toggle d-flex" data-bs-toggle="dropdown">
                     Tjenester
                     <span class="dropdown-trigger">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">

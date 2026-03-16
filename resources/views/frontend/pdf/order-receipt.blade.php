@@ -20,14 +20,14 @@
 
 <div class="row" style="height: 130px">
     <div class="col-sm-12">
-        <div class="w-50 float-left">
+        <div class="w-50 float-start">
             <span>Retur:</span> <br>
             <span>Forfatterskolen AS</span> <br>
             <span>Postboks 9233 Kjøsterud</span> <br>
             <span>3064 DRAMMEN</span> <br>
             <span>NORWAY</span>
         </div>
-        <div class="w-50 float-right">
+        <div class="w-50 float-end">
             <img src="{{ url('/images-new/logo-tagline.png') }}" alt="Logo" class="w-100"
                  style="height: 100px;object-fit: contain;">
         </div>
@@ -36,13 +36,13 @@
 
 <div class="row" style="height: 80px">
     <div class="col-sm-12">
-        <div class="w-50 float-left">
+        <div class="w-50 float-start">
             <span>{{ $user->full_name }}</span> <br>
             <span>{{ $user->address->street }}</span> <br>
             <span>{{ $user->address->zip }} {{ $user->address->city }}</span>
         </div>
-        <div class="w-50 float-right">
-            <span class="mr-2">{{ trans('site.date') }}: </span> <span>{{ $order->created_at_formatted }}</span>
+        <div class="w-50 float-end">
+            <span class="me-2">{{ trans('site.date') }}: </span> <span>{{ $order->created_at_formatted }}</span>
         </div>
     </div>
 </div>
@@ -54,7 +54,7 @@
         <tbody>
         <tr>
             <td>
-                <b class="mr-2">Kjøp av:</b>
+                <b class="me-2">Kjøp av:</b>
                 @if ($order->type === 1)
                     <b><i>{{ $order->item }} - {{ $order->package->variation }}</i></b>
                 @else
@@ -72,7 +72,7 @@
     </table>
 </div>
 
-<div class="col-sm-5 ml-auto">
+<div class="col-sm-5 ms-auto">
     <table class="table">
         <tbody>
         <tr>

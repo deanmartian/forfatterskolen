@@ -38,11 +38,11 @@
                                             </a>
                                         </div>
                                         <div class="card-footer text-center">
-                                            <div class="col-xs-6 border-right">
+                                            <div class="col-6 border-right">
                                                 <i class="img-icon16 icon-calendar"></i>
                                                 <span>{{ \App\Http\FrontendHelpers::formatDate($workshop->date) }}</span>
                                             </div>
-                                            <div class="col-xs-6">
+                                            <div class="col-6">
                                                 <i class="img-icon16 icon-clock"></i>
                                                 <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($workshop->date) }}</span>
                                             </div>

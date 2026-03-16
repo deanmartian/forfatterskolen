@@ -19,7 +19,7 @@
                         <div class="card-header">
                             <h1>
                                 {{ trans('site.learner.my-course') }}
-                                <a href="{{ route('learner.course') }}" class="float-right view-all">
+                                <a href="{{ route('learner.course') }}" class="float-end view-all">
                                     {{ trans('site.learner.see-all') }}
                                 </a>
                             </h1>
@@ -43,8 +43,8 @@
                                             @if( $courseTaken->is_active )
                                                 @if($courseTaken->hasStarted)
                                                     @if($courseTaken->hasEnded)
-                                                        <button class="btn site-btn-global" data-toggle="modal"
-                                                                data-target="#renewAllModal">
+                                                        <button class="btn site-btn-global" data-bs-toggle="modal"
+                                                                data-bs-target="#renewAllModal">
                                                             {{ trans('site.learner.renew-subscription') }}
                                                         </button>
                                                     @else
@@ -84,7 +84,7 @@
                                     <label class="d-block">
                                         Automatisk registert for felleswebinarer
                                     </label>
-                                    <input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
+                                    <input type="checkbox" data-bs-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
                                            class="webinar-auto-register-toggle" data-off="{{ trans('site.front.no') }}"
                                            data-size="mini"
                                     @if(Auth::user()->userAutoRegisterToCourseWebinar) {{ 'checked' }} @endif>
@@ -116,7 +116,7 @@
                         <div class="card-header">
                             <h1>
                                 {{ trans('site.learner.calendar') }}
-                                <a href="{{ route('learner.calendar') }}" class="float-right view-all">
+                                <a href="{{ route('learner.calendar') }}" class="float-end view-all">
                                     {{ trans('site.learner.see-more') }}
                                 </a>
                             </h1>
@@ -366,7 +366,7 @@
                                         </div>
                                     @endif
                                 <div class="card-body" style="padding: 0; background-color: #fff; border: 1px solid #e8e8e8">
-                                    <div class="details-container learner-webinar-page text-left" style="border:none">
+                                    <div class="details-container learner-webinar-page text-start" style="border:none">
                                         <div class="webinar-header">
                                             <h4>
                                                 <i class="calendar"></i>
@@ -445,7 +445,7 @@
                         <div class="card-header">
                             <h1>
                                 {{ trans('site.learner.assignment') }}
-                                <a href="{{ route('learner.assignment') }}" class="float-right view-all">
+                                <a href="{{ route('learner.assignment') }}" class="float-end view-all">
                                     {{ trans('site.learner.see-all') }}
                                 </a>
                             </h1>
@@ -464,13 +464,13 @@
                                                     @if (!$manuscript->locked)
                                                         <div>
                                                             <button type="button" class="btn btn-info editManuscriptBtn"
-                                                                    data-toggle="modal" data-target="#editManuscriptModal"
+                                                                    data-bs-toggle="modal" data-bs-target="#editManuscriptModal"
                                                                     data-action="{{ route('learner.assignment.replace_manuscript',
                                                                     $manuscript->id) }}">
                                                                 <i class="fa fa-pen"></i>
                                                             </button>
                                                             <button type="button" class="btn btn-danger deleteManuscriptBtn"
-                                                                    data-toggle="modal" data-target="#deleteManuscriptModal"
+                                                                    data-bs-toggle="modal" data-bs-target="#deleteManuscriptModal"
                                                                     data-action="{{ route('learner.assignment.delete_manuscript',
                                                                     $manuscript->id) }}">
                                                                 <i class="fa fa-trash"></i>
@@ -479,15 +479,15 @@
                                                     @endif
                                                 @else
                                                     @if($assignment->for_editor)
-                                                        <button class="btn site-btn-global submitEditorManuscriptBtn" data-toggle="modal"
-                                                                data-target="#submitEditorManuscriptModal"
+                                                        <button class="btn site-btn-global submitEditorManuscriptBtn" data-bs-toggle="modal"
+                                                                data-bs-target="#submitEditorManuscriptModal"
                                                                 data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
                                                                 {{--@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif--}}>
                                                             {{ trans('site.learner.upload-script') }}
                                                         </button>
                                                     @else
-                                                        <button class="btn site-btn-global submitManuscriptBtn" data-toggle="modal"
-                                                                data-target="#submitManuscriptModal"
+                                                        <button class="btn site-btn-global submitManuscriptBtn" data-bs-toggle="modal"
+                                                                data-bs-target="#submitManuscriptModal"
                                                                 data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
                                                                 {{--@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif--}}>
                                                             {{ trans('site.learner.upload-script') }}
@@ -508,7 +508,7 @@
                         <div class="card-header">
                             <h1>
                                 {{ trans('site.learner.my-invoice') }}
-                                <a href="{{ route('learner.invoice') }}" class="float-right view-all">
+                                <a href="{{ route('learner.invoice') }}" class="float-end view-all">
                                     {{ trans('site.learner.see-all') }}
                                 </a>
                             </h1>
@@ -557,19 +557,19 @@
                                             </td>
                                             <td>
                                                 @if($invoice->fiken_is_paid === 1)
-                                                    <span class="label label-success">
+                                                    <span class="badge bg-success">
                                                         {{ strtoupper(trans('site.learner.paid')) }}
                                                     </span>
                                                 @elseif($invoice->fiken_is_paid === 2)
-                                                    <span class="label label-warning text-uppercase">
+                                                    <span class="badge bg-warning text-uppercase">
                                                         {{ strtoupper('sendt til inkasso')  }}
                                                     </span>
                                                 @elseif($invoice->fiken_is_paid === 3)
-                                                    <span class="label label-primary text-uppercase">
+                                                    <span class="badge bg-primary text-uppercase">
                                                         {{ strtoupper('Kreditert')  }}
                                                     </span>
                                                 @else
-                                                    <span class="label label-danger">UBETALT</span>
+                                                    <span class="badge bg-danger">UBETALT</span>
                                                 @endif
                                             </td>
                                         </tr>
@@ -598,11 +598,11 @@
                         <p>
                             {{ trans('site.learner.renew-all.description') }}
                         </p>
-                        <div class="text-right margin-top">
+                        <div class="text-end margin-top">
                             <button type="submit" class="btn btn-primary">
                                 {{ trans('site.front.yes') }}
                             </button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
                                 {{ trans('site.front.no') }}
                             </button>
                         </div>
@@ -619,7 +619,7 @@
                     <h3 class="modal-title">
                         {{ trans('site.learner.upload-script') }}
                     </h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" enctype="multipart/form-data"
@@ -652,7 +652,7 @@
                                 <label class="mb-0">{{ $manu['option'] }}</label> <br>
                             @endforeach
                         </div>
-                        <button type="submit" class="btn btn-primary pull-right margin-top">
+                        <button type="submit" class="btn btn-primary float-end margin-top">
                             {{ trans('site.learner.upload') }}
                         </button>
                         <div class="clearfix"></div>
@@ -669,7 +669,7 @@
                     <h3 class="modal-title">
                         {{ trans('site.learner.upload-script') }}
                     </h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this);">
@@ -701,7 +701,7 @@
                                 <label class="mb-0">{{ $manu['option'] }}</label> <br>
                             @endforeach
                         </div>
-                        <button type="submit" class="btn btn-primary pull-right margin-top">
+                        <button type="submit" class="btn btn-primary float-end margin-top">
                             {{ trans('site.learner.upload') }}
                         </button>
                         <div class="clearfix"></div>
@@ -718,7 +718,7 @@
                     <h3 class="modal-title">
                         {{ trans('site.learner.manuscript.replace-manuscript') }}
                     </h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
@@ -731,7 +731,7 @@
                             * {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
                         </div>
 
-                        <button type="submit" class="btn btn-primary pull-right margin-top">
+                        <button type="submit" class="btn btn-primary float-end margin-top">
                             {{ trans('site.front.submit') }}
                         </button>
                         <div class="clearfix"></div>
@@ -748,13 +748,13 @@
                     <h3 class="modal-title">
                         {{ trans('site.learner.delete-manuscript.title') }}
                     </h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     {{ trans('site.learner.delete-manuscript.question') }}
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
-                        <button type="submit" class="btn btn-danger pull-right margin-top">
+                        <button type="submit" class="btn btn-danger float-end margin-top">
                             {{ trans('site.learner.delete') }}
                         </button>
                         <div class="clearfix"></div>
@@ -768,7 +768,7 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-body text-center">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                     <div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
                     {{ strtr(trans('site.learner.error-max-word-text'),
                     ['_word_count_' => Session::get('editorMaxWord')]) }}
@@ -781,7 +781,7 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-body text-center">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                     <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
                     {{ trans('site.learner.submit-success-text') }}
                 </div>
@@ -797,7 +797,7 @@
                         <h3 class="modal-title">
                             {{ trans('site.learner.update-password.title') }}
                         </h3>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
                         <p class="font-weight-bold">
@@ -820,7 +820,7 @@
                                 </div>
                             @endif
 
-                            <button type="submit" class="btn site-btn-global pull-right">
+                            <button type="submit" class="btn site-btn-global float-end">
                                 {{ trans('site.learner.update-password.update') }}
                             </button>
                         </form>
@@ -835,7 +835,7 @@
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
                     <div class="modal-body text-center">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                         <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
                         <p>
                             {{ trans('site.learner.update-password.success-text') }}

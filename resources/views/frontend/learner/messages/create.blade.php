@@ -89,12 +89,13 @@
 
                             <div class="form-group">
                                 <label for="recipient_id">Til</label>
+                                @php $selectedRecipient = old('recipient_id', request('recipient_id')); @endphp
                                 <select name="recipient_id" id="recipient_id" class="form-control" required>
                                     <option value="">-- Velg mottaker --</option>
                                     @if($editors->isNotEmpty())
-                                        <optgroup label="Din redaktor">
+                                        <optgroup label="Din redaktør">
                                             @foreach($editors as $editor)
-                                                <option value="{{ $editor->id }}" {{ old('recipient_id') == $editor->id ? 'selected' : '' }}>
+                                                <option value="{{ $editor->id }}" {{ $selectedRecipient == $editor->id ? 'selected' : '' }}>
                                                     {{ $editor->full_name }}
                                                 </option>
                                             @endforeach
@@ -103,7 +104,7 @@
                                     @if($admins->isNotEmpty())
                                         <optgroup label="Administrasjon">
                                             @foreach($admins as $admin)
-                                                <option value="{{ $admin->id }}" {{ old('recipient_id') == $admin->id ? 'selected' : '' }}>
+                                                <option value="{{ $admin->id }}" {{ $selectedRecipient == $admin->id ? 'selected' : '' }}>
                                                     {{ $admin->full_name }}
                                                 </option>
                                             @endforeach
@@ -115,14 +116,14 @@
                             <div class="form-group">
                                 <label for="subject">Emne</label>
                                 <input type="text" name="subject" id="subject" class="form-control"
-                                       value="{{ old('subject') }}" required
+                                       value="{{ old('subject', request('subject')) }}" required
                                        placeholder="Hva handler meldingen om?">
                             </div>
 
                             <div class="form-group">
                                 <label for="body">Melding</label>
                                 <textarea name="body" id="body" class="form-control" rows="8" required
-                                          placeholder="Skriv din melding her...">{{ old('body') }}</textarea>
+                                          placeholder="Skriv din melding her...">{{ old('body', request('body')) }}</textarea>
                             </div>
 
                             <div class="msg-actions">

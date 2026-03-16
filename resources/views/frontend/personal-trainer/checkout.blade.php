@@ -179,7 +179,7 @@
 								@endif
 
 								<div class="form-group">
-									<button type="submit" class="btn site-btn-global-w-arrow pull-right" id="submitOrder">
+									<button type="submit" class="btn site-btn-global-w-arrow float-end" id="submitOrder">
 										Lever søknad
 									</button>
 								</div>

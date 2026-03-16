@@ -28,8 +28,8 @@
                                             to go to your dashboard.
                                         </p>
                                         <div class="form-group">
-                                            <a href="{{ route('learner.private-groups.show', $group->id) }}" class="btn btn-outline-primary float-right mr-1">View Group</a>
-                                            <a href="{{ route('learner.book-author') }}" class="btn btn-outline-info float-right mr-1">Go to Dashboard</a>
+                                            <a href="{{ route('learner.private-groups.show', $group->id) }}" class="btn btn-outline-primary float-end me-1">View Group</a>
+                                            <a href="{{ route('learner.book-author') }}" class="btn btn-outline-info float-end me-1">Go to Dashboard</a>
                                         </div>
                                     @else
                                         <h1 class="card-title font-weight-light with-border-b pb-2">Invitation Accepted</h1>

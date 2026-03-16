@@ -8,1116 +8,1143 @@
     @if ($pageMeta)
         <title>{{ $pageMeta->meta_title }}</title>
     @else
-        <title>Shop Manuscripts &rsaquo; Forfatterskolen</title>
+        <title>Manusutvikling &rsaquo; Forfatterskolen</title>
     @endif
+@stop
+
+@section('styles')
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .manus-redesign {
+            --wine: #862736;
+            --wine-hover: #9c2e40;
+            --wine-dark: #5c1a25;
+            --wine-light: rgba(134, 39, 54, 0.08);
+            --wine-light-solid: #f4e8ea;
+            --cream: #faf8f5;
+            --dark-bg: #1c1917;
+            --dark-surface: rgba(255, 255, 255, 0.06);
+            --dark-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #1a1a1a;
+            --text-secondary: #5a5550;
+            --text-muted: #8a8580;
+            --border: rgba(0, 0, 0, 0.08);
+            --border-strong: rgba(0, 0, 0, 0.12);
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Source Sans 3', -apple-system, sans-serif;
+            --max-width: 1080px;
+            --radius: 10px;
+            --radius-lg: 14px;
+            font-family: var(--font-body);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── HERO ─────────────────────────────────────────── */
+        .manus-redesign .manus-hero {
+            background: var(--dark-bg);
+            padding: 4rem 2rem 3.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .manus-redesign .manus-hero::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(134, 39, 54, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .manus-redesign .manus-hero__inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .manus-redesign .manus-hero__eyebrow {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--wine);
+            margin-bottom: 1rem;
+        }
+
+        .manus-redesign .manus-hero__heading {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.5vw, 2.75rem);
+            font-weight: 700;
+            line-height: 1.15;
+            color: #fff;
+            margin-bottom: 1.25rem;
+        }
+
+        .manus-redesign .manus-hero__heading em { color: var(--wine); font-style: italic; }
+
+        .manus-redesign .manus-hero__description {
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 420px;
+            margin-bottom: 1.75rem;
+        }
+
+        .manus-redesign .manus-hero__cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--wine);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .manus-redesign .manus-hero__cta:hover { background: var(--wine-hover); transform: translateY(-1px); color: #fff; text-decoration: none; }
+
+        .manus-redesign .manus-hero__features { display: flex; flex-direction: column; gap: 0.75rem; }
+
+        .manus-redesign .manus-feature-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: var(--dark-surface);
+            border: 1px solid var(--dark-border);
+            border-radius: var(--radius);
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .manus-redesign .manus-feature-card:hover {
+            border-color: rgba(134, 39, 54, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .manus-redesign .manus-feature-card__icon {
+            width: 40px; height: 40px;
+            background: rgba(134, 39, 54, 0.2);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .manus-redesign .manus-feature-card__icon svg { width: 20px; height: 20px; }
+        .manus-redesign .manus-feature-card__title { font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 0.2rem; }
+        .manus-redesign .manus-feature-card__desc { font-size: 0.8rem; color: rgba(255, 255, 255, 0.5); line-height: 1.5; }
+
+        /* ── HOW IT WORKS ─────────────────────────────────── */
+        .manus-redesign .manus-how-it-works { padding: 4rem 2rem; text-align: center; }
+
+        .manus-redesign .manus-section-heading {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .manus-redesign .manus-section-heading::after {
+            content: '';
+            display: block;
+            width: 40px; height: 3px;
+            background: var(--wine);
+            border-radius: 2px;
+            margin: 0.75rem auto 0;
+        }
+
+        .manus-redesign .manus-section-sub {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-top: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .manus-redesign .manus-steps {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 2rem;
+        }
+
+        .manus-redesign .manus-step { text-align: center; padding: 1.5rem; }
+
+        .manus-redesign .manus-step__number {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: var(--wine-light-solid);
+            color: var(--wine);
+            font-family: var(--font-display);
+            font-size: 1.25rem; font-weight: 700;
+            display: inline-flex; align-items: center; justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .manus-redesign .manus-step__title { font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.4rem; }
+        .manus-redesign .manus-step__desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+
+        /* ── PRICING CARDS ────────────────────────────────── */
+        .manus-redesign .manus-pricing-section {
+            padding: 0 2rem 3rem;
+        }
+
+        .manus-redesign .manus-pricing-section .manus-section-heading { text-align: center; }
+        .manus-redesign .manus-pricing-section .manus-section-sub { text-align: center; }
+
+        .manus-redesign .manus-pricing-cards {
+            max-width: 720px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .manus-redesign .manus-pricing-card {
+            background: var(--cream);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+        }
+
+        .manus-redesign .manus-pricing-card__header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .manus-redesign .manus-pricing-card__icon {
+            width: 32px; height: 32px;
+            background: var(--wine-light-solid);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .manus-redesign .manus-pricing-card__icon svg { width: 16px; height: 16px; }
+
+        .manus-redesign .manus-pricing-card__title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .manus-redesign .manus-pricing-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .manus-redesign .manus-pricing-row:last-of-type { border-bottom: none; }
+
+        .manus-redesign .manus-pricing-row__label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .manus-redesign .manus-pricing-row__value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: right;
+        }
+
+        .manus-redesign .manus-pricing-row__value small {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .manus-redesign .manus-pricing-card__note {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        /* ── CALCULATOR ───────────────────────────────────── */
+        .manus-redesign .manus-calculator-section { padding: 1rem 2rem 4rem; }
+
+        .manus-redesign .manus-calculator {
+            max-width: 720px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .manus-redesign .manus-calculator__header {
+            text-align: center;
+            padding: 2rem 2rem 1rem;
+        }
+
+        .manus-redesign .manus-calculator__heading {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .manus-redesign .manus-calculator__sub {
+            font-size: 0.825rem;
+            color: var(--text-secondary);
+        }
+
+        .manus-redesign .manus-calc-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.25rem;
+            margin: 1.25rem auto 0;
+            background: rgba(0,0,0,0.05);
+            border-radius: 8px;
+            padding: 3px;
+            width: fit-content;
+        }
+
+        .manus-redesign .manus-calc-tab {
+            padding: 0.5rem 1.25rem;
+            border: none;
+            background: transparent;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .manus-redesign .manus-calc-tab.active {
+            background: #fff;
+            color: var(--text-primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .manus-redesign .manus-calculator__body { padding: 1.5rem 2rem 2rem; }
+
+        .manus-redesign .manus-calc-panel { display: none; }
+        .manus-redesign .manus-calc-panel.active { display: block; }
+
+        /* Slider */
+        .manus-redesign .manus-slider-panel { max-width: 100%; margin: 0 auto; text-align: center; }
+
+        .manus-redesign .manus-word-count-display {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .manus-redesign .manus-word-count-display span {
+            font-size: 1rem; font-weight: 400;
+            color: var(--text-muted);
+            font-family: var(--font-body);
+        }
+
+        .manus-redesign .manus-page-estimate {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .manus-redesign .manus-word-slider {
+            width: 100%; height: 6px;
+            -webkit-appearance: none; appearance: none;
+            background: var(--border-strong);
+            border-radius: 3px;
+            outline: none;
+            margin-bottom: 0.5rem;
+        }
+
+        .manus-redesign .manus-word-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px; height: 22px;
+            background: var(--wine); border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .manus-redesign .manus-word-slider::-moz-range-thumb {
+            width: 22px; height: 22px;
+            background: var(--wine); border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .manus-redesign .manus-slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Genre selector */
+        .manus-redesign .manus-genre-select {
+            display: flex; align-items: center; gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .manus-redesign .manus-genre-select label {
+            font-size: 0.825rem; color: var(--text-secondary); font-weight: 500; white-space: nowrap;
+        }
+
+        .manus-redesign .manus-genre-select select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border-strong);
+            border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            background: #fff;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        /* Upload */
+        .manus-redesign .manus-upload-panel { max-width: 100%; margin: 0 auto; }
+
+        .manus-redesign .manus-upload-zone {
+            border: 2px dashed var(--border-strong);
+            border-radius: var(--radius);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .manus-redesign .manus-upload-zone:hover {
+            border-color: var(--wine);
+            background: rgba(134, 39, 54, 0.03);
+        }
+
+        .manus-redesign .manus-upload-zone.dragover {
+            border-color: var(--wine);
+            background: rgba(134, 39, 54, 0.06);
+        }
+
+        .manus-redesign .manus-upload-zone__icon {
+            width: 48px; height: 48px;
+            background: var(--wine-light-solid);
+            border-radius: 12px;
+            display: inline-flex; align-items: center; justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .manus-redesign .manus-upload-zone__icon svg { width: 24px; height: 24px; }
+        .manus-redesign .manus-upload-zone__title { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+        .manus-redesign .manus-upload-zone__sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+
+        .manus-redesign .manus-upload-zone__formats { display: flex; justify-content: center; gap: 0.4rem; flex-wrap: wrap; }
+
+        .manus-redesign .manus-format-badge {
+            font-size: 0.7rem; font-weight: 500;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.04);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .manus-redesign .manus-upload-message {
+            font-size: 0.825rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .manus-redesign .manus-upload-message.error {
+            color: #c0392b;
+        }
+
+        .manus-redesign .manus-upload-message.success {
+            color: #27ae60;
+        }
+
+        /* Price result */
+        .manus-redesign .manus-price-result {
+            background: var(--cream);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem 1.75rem;
+            margin-top: 1.75rem;
+        }
+
+        .manus-redesign .manus-price-result__row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .manus-redesign .manus-price-result__row + .manus-price-result__row {
+            border-top: 1px solid var(--border);
+        }
+
+        .manus-redesign .manus-price-result__label { font-size: 0.85rem; color: var(--text-secondary); }
+        .manus-redesign .manus-price-result__value { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+
+        .manus-redesign .manus-price-result__total {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 1rem 0 0;
+            border-top: 2px solid var(--text-primary);
+            margin-top: 0.5rem;
+        }
+
+        .manus-redesign .manus-price-result__total-label { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+
+        .manus-redesign .manus-price-result__total-price {
+            font-family: var(--font-display);
+            font-size: 1.75rem; font-weight: 700;
+            color: var(--wine);
+        }
+
+        .manus-redesign .manus-price-result__total-price span {
+            font-size: 0.85rem; font-weight: 400;
+            font-family: var(--font-body);
+            color: var(--text-muted);
+        }
+
+        .manus-redesign .manus-price-result__note {
+            font-size: 0.75rem; color: var(--text-muted);
+            margin-top: 0.5rem; text-align: right;
+        }
+
+        .manus-redesign .manus-price-result__cta {
+            display: block; width: 100%;
+            padding: 0.85rem;
+            background: var(--wine); color: #fff;
+            border: none; border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; margin-top: 1.25rem;
+            transition: background 0.2s;
+            text-align: center; text-decoration: none;
+        }
+
+        .manus-redesign .manus-price-result__cta:hover { background: var(--wine-hover); color: #fff; text-decoration: none; }
+
+        /* ── INFO BANNER ──────────────────────────────────── */
+        .manus-redesign .manus-info-banner {
+            max-width: 720px;
+            margin: 0 auto 3rem;
+            padding: 0 2rem;
+        }
+
+        .manus-redesign .manus-info-banner__inner {
+            background: rgba(134, 39, 54, 0.05);
+            border: 1px solid rgba(134, 39, 54, 0.1);
+            border-radius: var(--radius);
+            padding: 1rem 1.5rem;
+            display: flex; align-items: center; gap: 0.75rem;
+            font-size: 0.85rem; color: var(--text-secondary);
+        }
+
+        .manus-redesign .manus-info-banner__inner strong { color: var(--wine-dark); }
+
+        /* ── TESTIMONIAL ──────────────────────────────────── */
+        .manus-redesign .manus-testimonial { padding: 3rem 2rem 4rem; }
+
+        .manus-redesign .manus-testimonial__inner {
+            max-width: 640px; margin: 0 auto; text-align: center;
+        }
+
+        .manus-redesign .manus-testimonial__quote {
+            font-family: var(--font-display);
+            font-size: 1.35rem; font-style: italic;
+            line-height: 1.6; color: var(--text-primary);
+            margin-bottom: 1.25rem;
+        }
+
+        .manus-redesign .manus-testimonial__author {
+            font-size: 0.85rem; font-weight: 500; color: var(--text-secondary);
+        }
+
+        .manus-redesign .manus-testimonial__author strong { color: var(--text-primary); }
+
+        /* ── RESPONSIVE ───────────────────────────────────── */
+        @media (max-width: 900px) {
+            .manus-redesign .manus-hero__inner { grid-template-columns: 1fr; gap: 2rem; }
+        }
+
+        @media (max-width: 600px) {
+            .manus-redesign .manus-steps { grid-template-columns: 1fr; gap: 1rem; }
+            .manus-redesign .manus-pricing-cards { grid-template-columns: 1fr; }
+        }
+    </style>
 @stop
 
 @section('content')
 
-    <div class="manuscript-page manuscript-page-new">
-        <div class="header">
-            <div class="container main-container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h1 class="text-center mb-5">
-                            {{ trans('site.front.shop-manuscript.title') }}
-                        </h1>
-                    </div>
-                    {{--<div class="col-sm-12 top-page-container">
-                        --}}{{--<img src="{{ asset('images-new/adult-reading-book.jpg') }}" alt="">--}}{{--
-                        <iframe src="https://fast.wistia.com/embed/medias/scuv6yv5qy" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
-                    </div>--}}
-                </div>
-            </div>
-        </div>        
+<div class="manus-redesign">
 
-        {{--  data-bg="https://www.forfatterskolen.no/images-new/coffee-book.png" --}}
-        <div class="row second-section mx-0">
-            <div class="container details">
-                <div class="row justify-content-center align-items-center">
-                    <div class="col-md-7">
-                        <div class="title mb-5 h1 mt-0">
-                            {{ trans('site.front.shop-manuscript.first-section.title') }}
-                        </div>
-    
-                        {!! html_entity_decode(trans('site.front.shop-manuscript.first-section.description')) !!}
-                        {{--<button class="btn site-btn-global-w-arrow" data-toggle="modal" data-target="#editorsModal">Redaktører</button>--}}
+    {{-- ═══════════ HERO ═══════════ --}}
+    <section class="manus-hero">
+        <div class="manus-hero__inner">
+            <div>
+                <p class="manus-hero__eyebrow">Profesjonell manusvurdering</p>
+                <h1 class="manus-hero__heading">Få ditt manus vurdert av <em>erfarne redaktører</em></h1>
+                <p class="manus-hero__description">Er du usikker på om utkastet ditt holder? Våre redaktører gir deg grundig tilbakemelding med kommentarer i margen — tekstens svake og sterke sider.</p>
+                <a href="#priskalkulator" class="manus-hero__cta">Beregn pris →</a>
+            </div>
+            <div class="manus-hero__features">
+                <div class="manus-feature-card">
+                    <div class="manus-feature-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#c45" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>
                     </div>
-                    <div class="col-md-5">
-                        <img class="w-100" src="{{ asset('images-new/shop-manuscript/top-right.png') }}" 
-                        alt="shop manuscript top right">
+                    <div>
+                        <div class="manus-feature-card__title">Grundig tilbakemelding</div>
+                        <div class="manus-feature-card__desc">Detaljerte kommentarer i margen med fokus på styrker og svakheter</div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        {{-- data-bg="https://www.forfatterskolen.no/images-new/notebook-pen.png" --}}
-        {{-- <div class="third-section">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-6 left-container">
-                        <img src="{{ asset('images-new/shop-manuscript/notepad.png') }}" class="w-100" alt="notepad">
+                <div class="manus-feature-card">
+                    <div class="manus-feature-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#c45" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     </div>
-                    <div class="col-md-6 details" id="testManuscript">
-                        <h2 class="title mb-4">
-                            {{ trans('site.front.shop-manuscript.form.title') }}
-                        </h2>
-
-                        <form method="POST" enctype="multipart/form-data" action="{{ route('front.shop-manuscript.test_manuscript') }}">
-                            {{ csrf_field() }}
-                            <input type="file" class="hidden" name="manuscript" id="file-upload"
-                            accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
-                            <input type="hidden" name="word_count" id="test-manuscript-word-count">
-                            <label class="mb-4 mt-3">
-                                <span class="instruction">{{ trans('site.front.shop-manuscript.form.instruction') }}</span>
-                                <br>
-                                <span class="note"><i class="info-icon"></i> {{ trans('site.front.shop-manuscript.form.note') }}</span>
-                            </label>
-                            <div class="input-group mb-4">
-                                <input type="text" readonly class="form-control disabled" required>
-                                <div class="input-group-append">
-                                    <button class="btn bg-site-red select-manuscript" type="button">
-                                        {{ trans('site.front.shop-manuscript.form.select-document') }}
-                                    </button>
-                                </div>
-                            </div>
-                            <label for="file-upload" class="file-upload-label">
-                                <div class="file-upload" id="file-upload-area">
-                                    <div class="file-upload-text">
-                                        <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a> for å laste opp filen din eller <br>
-                                        dra filen din hit.
-                                    </div>
-                                  </div>
-                              </label>
-                            <div class="margin-top">
-                                <button class="btn site-btn-global-w-arrow" type="submit">
-                                    {{ trans('site.front.upload') }} 
-                                    <img src="{{ asset('images-new/icon/upload.png') }}" alt="">
-                                </button>
-                            </div>
-
-                            <div class="price-increase-note">
-                                {!! trans('site.shop-manuscript-price-increase-note') !!}
-                            </div>
-                        </form>
+                    <div>
+                        <div class="manus-feature-card__title">Erfarne redaktører</div>
+                        <div class="manus-feature-card__desc">Våre redaktører har lang erfaring med å utvikle manuskripter</div>
                     </div>
                 </div>
-            </div>
-        </div> --}}
-
-        <div class="third-section word-count-section">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-6 left-container">
-                        <img src="{{ asset('images-new/shop-manuscript/notepad.png') }}" class="w-100" alt="notepad illustration">
+                <div class="manus-feature-card">
+                    <div class="manus-feature-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#c45" stroke-width="1.5" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                     </div>
-                    <div class="col-md-6 details" id="wordCountTool">
-                        <form id="wordCountForm" method="POST" action="{{ route('front.shop-manuscript.test_manuscript') }}" 
-                        enctype="multipart/form-data" onsubmit="disableSubmit(this)">
-                            @csrf
-
-                            <h2 class="title mb-4">
-                                {{ trans('site.front.shop-manuscript.form.title') }}
-                            </h2>
-                            <label class="mb-4 mt-3">
-                                <span class="instruction">{{ trans('site.front.shop-manuscript.form.instruction') }}</span>
-                                <br>
-                                <span class="note"><i class="info-icon"></i> {{ trans('site.front.shop-manuscript.form.note') }}</span>
-                            </label>
-
-                            <input type="file" class="hidden" id="word-count-file" name="manuscript" accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/x-iwork-pages-sffpages,.doc,.docx,.pdf,.odt,.pages">
-                            <input type="hidden" name="word_count" id="word-count-hidden">
-                            <label for="word-count-file" class="file-upload-label">
-                                <div class="file-upload" id="word-count-upload-area">
-                                    <div class="file-upload-text" id="word-count-upload-text">
-                                        @php
-                                            $search_string = [
-                                                '[start_link]', '[end_link]'
-                                            ];
-                                            $replace_string = [
-                                                '<a href="javascript:void(0)" class="word-count-file-trigger file-upload-btn">','</a>'
-                                            ];
-                                            $buttonLink = str_replace($search_string, $replace_string, trans('site.click-or-drag-to-upload-file'))
-                                        @endphp
-                                        {!! $buttonLink !!}
-                                    </div>
-                                </div>
-                            </label>
-                            <p id="word-count-conversion-message" class="text-info mt-2 d-none">
-                                {{ trans('site.converting-document-please-wait') }}
-                            </p>
-                            <div id="word-count-conversion-error" class="alert alert-danger d-none mt-2" role="alert"></div>
-                            @error('manuscript')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-
-                            {{-- @if(session('manuscript_test'))
-                                <div class="alert alert-success" role="alert">
-                                    {!! session('manuscript_test') !!}
-                                </div>
-                            @endif --}}
-
-                            @if(session('manuscript_test_error'))
-                                <div class="alert alert-danger" role="alert">
-                                    {!! session('manuscript_test_error') !!}
-                                </div>
-                            @endif
-
-                            <div class="margin-top">
-                                <button class="btn site-btn-global-w-arrow word-count-process-btn" type="submit">
-                                    {{ trans('site.front.upload') }}
-                                    <img src="{{ asset('images-new/icon/upload.png') }}" alt="">
-                                </button>
-                            </div>
-
-                            <div class="price-increase-note">
-                                {!! trans('site.shop-manuscript-price-increase-note') !!}
-                            </div>
-                        </form>
+                    <div>
+                        <div class="manus-feature-card__title">Veien til forlag</div>
+                        <div class="manus-feature-card__desc">Vi har hjulpet mange forfattere med å bli utgitt</div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="fourth-section">
-            <div class="container">
-                <div class="row">
+    {{-- ═══════════ HOW IT WORKS ═══════════ --}}
+    <section class="manus-how-it-works">
+        <h2 class="manus-section-heading">Slik fungerer det</h2>
+        <p class="manus-section-sub">Forfatterskolen tilbyr profesjonell tilbakemelding på ditt manus. En erfaren redaktør vil gi deg en grundig og detaljert tilbakemelding med kommentarer i margen — tekstens svake og sterke sider.</p>
+        <div class="manus-steps">
+            <div class="manus-step">
+                <div class="manus-step__number">1</div>
+                <div class="manus-step__title">Beregn pris</div>
+                <div class="manus-step__desc">Bruk kalkulatoren eller last opp manuset ditt for å få pris basert på antall ord.</div>
+            </div>
+            <div class="manus-step">
+                <div class="manus-step__number">2</div>
+                <div class="manus-step__title">Send inn manus</div>
+                <div class="manus-step__desc">Bestill og last opp manuset. Vi matcher deg med en redaktør som passer din sjanger.</div>
+            </div>
+            <div class="manus-step">
+                <div class="manus-step__number">3</div>
+                <div class="manus-step__title">Få tilbakemelding</div>
+                <div class="manus-step__desc">Motta grundig tilbakemelding med kommentarer i margen innen avtalt tid.</div>
+            </div>
+        </div>
+    </section>
 
-                    <?php
-                        $shopManuscripts_chunk = $shopManuscripts->chunk(3);
-                    ?>
+    {{-- ═══════════ PRICING CARDS ═══════════ --}}
+    <section class="manus-pricing-section">
+        <h2 class="manus-section-heading">Priser</h2>
+        <p class="manus-section-sub">Alle priser er eks. mva.</p>
 
-                    <div id="manuscripts-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
-
-                        <!-- Indicators -->
-                        <ul class="carousel-indicators">
-                            @for($i=0; $i<=$shopManuscripts_chunk->count() - 1;$i++)
-                            <li data-target="#manuscripts-carousel" data-slide-to="{{$i}}" @if($i == 0) class="active" @endif></li>
-                            @endfor
-                        </ul>
-
-                        <!-- The slideshow -->
-                        <div class="container carousel-inner no-padding">
-                            @foreach($shopManuscripts_chunk as $k => $shopManuscripts)
-                                <div class="carousel-item {{ $k==0 ? 'active' : '' }}">
-                                    @foreach($shopManuscripts as $shopManuscript)
-                                        <div class="col-xs-4 col-md-4">
-                                            <div class="panel panel-default">
-                                                <div class="panel-header text-center">
-                                                    <div class="image-wrapper">
-                                                        <img src="{{ asset('images-new/icon/open-book.png') }}" alt="open-book">
-                                                    </div>
-                                                    <h2>{{ $shopManuscript->max_words }} ORD</h2>
-                                                </div>
-                                                <div class="panel-body">
-                                                    <div class="h1">{{ $shopManuscript->title }}</div>
-                                                    <p>{{ $shopManuscript->description }}</p>
-                                                    <div class="h1 price">
-                                                        @if(!Str::contains($shopManuscript->title, 'Start') &&
-                                                        !Str::contains($shopManuscript->title, '1'))
-                                                            @php
-                                                                $extra_price = ($shopManuscript->max_words - 17500) * 
-                                                                FrontendHelpers::manuscriptExcessPerWordPrice();
-                                                                $new_price = $shopManuscript->full_payment_price + $extra_price;
-                                                            @endphp
-                                                            {{ \App\Http\FrontendHelpers::formatCurrency($new_price) }} KR
-                                                        @else
-                                                            {{ \App\Http\FrontendHelpers::formatCurrency($shopManuscript->full_payment_price) }} KR
-                                                        @endif
-                                                    </div>
-                                                    <a class="btn buy-btn" href="{{ route($checkoutRoute, $shopManuscript->id) }}">
-                                                        {{ trans('site.front.buy') }}
-                                                        <i class="fa fa-arrow-right"></i>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endforeach
-                        </div>
+        <div class="manus-pricing-cards">
+            <div class="manus-pricing-card">
+                <div class="manus-pricing-card__header">
+                    <div class="manus-pricing-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
                     </div>
-                    {{-- <div id="manuscripts-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
-
-                        <!-- Indicators -->
-                        <ul class="carousel-indicators">
-                            @for($i=0; $i<=$shopManuscripts_chunk->count() - 1;$i++)
-                            <li data-target="#manuscripts-carousel" data-slide-to="{{$i}}" @if($i == 0) class="active" @endif></li>
-                            @endfor
-                        </ul>
-
-                        <!-- The slideshow -->
-                        <div class="container carousel-inner no-padding">
-                            @foreach($shopManuscripts_chunk as $k => $shopManuscripts)
-                                <div class="carousel-item {{ $k==0 ? 'active' : '' }}">
-                                    @foreach($shopManuscripts as $shopManuscript)
-                                        <div class="col-xs-3 col-sm-3 col-md-3">
-                                            <div class="panel panel-default">
-                                                <div class="overlay"></div>
-                                                <div class="panel-body">
-                                                    <div class="circle">
-                                                        <div class="circle-white">
-                                                            <h3 class="word-count">{{ $shopManuscript->max_words }}</h3>
-                                                            <h2>ORD</h2>
-                                                        </div>
-                                                    </div>
-                                                    <div class="h1">{{ $shopManuscript->title }}</div>
-                                                    <p>{{ $shopManuscript->description }}</p>
-                                                    <div class="h1 price">{{ \App\Http\FrontendHelpers::formatCurrency($shopManuscript->full_payment_price) }} KR</div>
-                                                    <a class="btn buy-btn" href="{{ route($checkoutRoute, $shopManuscript->id) }}">
-                                                        {{ trans('site.front.buy') }}
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <!-- Left and right controls -->
-                        <a class="carousel-control-prev" href="#manuscripts-carousel" data-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </a>
-                        <a class="carousel-control-next" href="#manuscripts-carousel" data-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </a>
-                    </div> --}}
+                    <div class="manus-pricing-card__title">Grunnpris</div>
+                </div>
+                <div class="manus-pricing-row">
+                    <span class="manus-pricing-row__label">Inntil 5 000 ord</span>
+                    <span class="manus-pricing-row__value">1 500 kr</span>
+                </div>
+                <div class="manus-pricing-row">
+                    <span class="manus-pricing-row__label">5 000 – 17 500 ord</span>
+                    <span class="manus-pricing-row__value">0,112 kr/ord</span>
+                </div>
+                <div class="manus-pricing-row">
+                    <span class="manus-pricing-row__label">Over 17 500 ord</span>
+                    <span class="manus-pricing-row__value">2 900 kr <small>+ 0,15 kr/ord</small></span>
                 </div>
             </div>
-        </div> <!-- end fourth section -->
-
-        <div class="last-section" data-bg="https://www.forfatterskolen.no/images-new/shop-manuscript/coaching-bg.png">
-            <div class="container">
-                <div class="text-center">
-                    <div class="coaching-details">
-                        <img data-src="https://www.forfatterskolen.no/images-new/other-services/open-book.png" alt="open book">
-                        <h2>
-                            {{ trans('site.front.coaching-timer.title') }}
-                        </h2> 
+            <div class="manus-pricing-card">
+                <div class="manus-pricing-card__header">
+                    <div class="manus-pricing-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>
                     </div>
+                    <div class="manus-pricing-card__title">Påslag for sjanger</div>
+                </div>
+                <div class="manus-pricing-row">
+                    <span class="manus-pricing-row__label">Novelle</span>
+                    <span class="manus-pricing-row__value">+30%</span>
+                </div>
+                <div class="manus-pricing-row">
+                    <span class="manus-pricing-row__label">Lyrikk</span>
+                    <span class="manus-pricing-row__value">+50%</span>
+                </div>
+                <p class="manus-pricing-card__note">Kortprosa og poesi krever ofte mer detaljert arbeid per ord.</p>
+            </div>
+        </div>
+    </section>
 
-                    <a href="{{ route('front.coaching-timer') }}">
-                        {{ ucwords(trans('site.front.view')) }}
-                        <i class="fa fa-arrow-right"></i>
-                    </a>
+    {{-- ═══════════ CALCULATOR ═══════════ --}}
+    <section class="manus-calculator-section" id="priskalkulator">
+        <div class="manus-calculator">
+            <div class="manus-calculator__header">
+                <h2 class="manus-calculator__heading">Beregn pris for ditt manus</h2>
+                <p class="manus-calculator__sub">Velg antall ord eller last opp manuset ditt for å se pris</p>
+                <div class="manus-calc-tabs">
+                    <button class="manus-calc-tab active" data-tab="slider" onclick="manusCalcSwitchTab('slider')">Bruk slider</button>
+                    <button class="manus-calc-tab" data-tab="upload" onclick="manusCalcSwitchTab('upload')">Last opp manus</button>
+                </div>
+            </div>
+
+            <div class="manus-calculator__body">
+                {{-- Slider panel --}}
+                <div class="manus-calc-panel active" id="manus-panel-slider">
+                    <div class="manus-slider-panel">
+                        <div class="manus-word-count-display" id="manusWordCountDisplay">17 500 <span>ord</span></div>
+                        <div class="manus-page-estimate" id="manusPageEstimate">ca. 50 sider</div>
+                        <input type="range" class="manus-word-slider" id="manusWordSlider" min="1000" max="175000" value="17500" step="500">
+                        <div class="manus-slider-labels">
+                            <span>1 000</span>
+                            <span>50 000</span>
+                            <span>100 000</span>
+                            <span>175 000</span>
+                        </div>
+                        <div class="manus-genre-select">
+                            <label for="manusGenreSelect">Sjanger:</label>
+                            <select id="manusGenreSelect" onchange="manusCalcUpdatePrice()">
+                                <option value="standard">Roman / sakprosa (standard)</option>
+                                <option value="novelle">Novelle (+30%)</option>
+                                <option value="lyrikk">Lyrikk (+50%)</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
-                {{-- <div class="col-sm-5 other-services-container">
-                    <a href="{{ route('front.coaching-timer') }}">
-                        <div class="row box-white">
-                            <div class="col-sm-3">
-                                <img data-src="https://www.forfatterskolen.no/images-new/other-services/open-book.png" alt="open book">
+                {{-- Upload panel --}}
+                <div class="manus-calc-panel" id="manus-panel-upload">
+                    <div class="manus-upload-panel">
+                        <div class="manus-upload-zone" id="manusUploadZone">
+                            <div class="manus-upload-zone__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                             </div>
-
-                            <div class="col-sm-9">
-                                <div class="h1 mt-0">
-                                    {{ trans('site.front.coaching-timer.title') }}
-                                </div>
-                                <a href="{{ route('front.coaching-timer') }}" class="link-with-arrow">
-                                    {{ ucwords(trans('site.front.view')) }}
-                                </a>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="{{ route('front.correction') }}">
-                        <div class="row box-white">
-                            <div class="col-sm-3">
-                                <img data-src="https://www.forfatterskolen.no/images-new/other-services/book.png">
-                            </div>
-
-                            <div class="col-sm-9">
-                                <h1>
-                                    {{ trans('site.front.correction.title') }}
-                                </h1>
-                                <a href="{{ route('front.correction') }}" class="link-with-arrow">
-                                    {{ ucwords(trans('site.front.view')) }}
-                                </a>
+                            <div class="manus-upload-zone__title" id="manusUploadTitle">Dra og slipp fil her</div>
+                            <div class="manus-upload-zone__sub" id="manusUploadSub">eller klikk for å velge</div>
+                            <div class="manus-upload-zone__formats" id="manusUploadFormats">
+                                <span class="manus-format-badge">.doc</span>
+                                <span class="manus-format-badge">.docx</span>
+                                <span class="manus-format-badge">.odt</span>
+                                <span class="manus-format-badge">.pdf</span>
+                                <span class="manus-format-badge">.pages</span>
                             </div>
                         </div>
-                    </a>
-
-                    <a href="{{ route('front.copy-editing') }}">
-                        <div class="row box-white">
-                            <div class="col-sm-3">
-                                <img data-src="https://www.forfatterskolen.no/images-new/other-services/list.png">
-                            </div>
-
-                            <div class="col-sm-9">
-                                <h1>{{ trans('site.front.copy-editing.title') }}</h1>
-                                <a href="{{ route('front.copy-editing') }}" class="link-with-arrow">
-                                    {{ ucwords(trans('site.front.view')) }}
-                                </a>
-                            </div>
+                        <input type="file" id="manusFileInput" hidden accept=".doc,.docx,.pdf,.odt,.pages,application/vnd.apple.pages,application/x-iwork-pages-sffpages">
+                        <div class="manus-upload-message" id="manusUploadMessage" style="display:none;"></div>
+                        <div class="manus-genre-select" style="margin-top: 1.5rem;">
+                            <label for="manusGenreSelect2">Sjanger:</label>
+                            <select id="manusGenreSelect2" onchange="manusCalcUpdatePrice()">
+                                <option value="standard">Roman / sakprosa (standard)</option>
+                                <option value="novelle">Novelle (+30%)</option>
+                                <option value="lyrikk">Lyrikk (+50%)</option>
+                            </select>
                         </div>
-                    </a>
-                </div> --}}
+                    </div>
+                </div>
+
+                {{-- Price result --}}
+                <div class="manus-price-result">
+                    <div class="manus-price-result__row">
+                        <span class="manus-price-result__label">Antall ord</span>
+                        <span class="manus-price-result__value" id="manusResultWords">17 500</span>
+                    </div>
+                    <div class="manus-price-result__row">
+                        <span class="manus-price-result__label">Grunnpris</span>
+                        <span class="manus-price-result__value" id="manusResultBase">2 900 kr</span>
+                    </div>
+                    <div class="manus-price-result__row" id="manusSurchargeRow" style="display: none;">
+                        <span class="manus-price-result__label">Sjangerpåslag</span>
+                        <span class="manus-price-result__value" id="manusSurchargeValue">+30%</span>
+                    </div>
+                    <div class="manus-price-result__total">
+                        <span class="manus-price-result__total-label">Totalt</span>
+                        <span class="manus-price-result__total-price" id="manusTotalPrice">2 900 <span>kr</span></span>
+                    </div>
+                    <div class="manus-price-result__note">Alle priser eks. mva. for ikke-elever.</div>
+                    <a href="#" class="manus-price-result__cta" id="manusCheckoutCta">Bestill manusutvikling →</a>
+                </div>
             </div>
+        </div>
+    </section>
+
+    {{-- ═══════════ INFO BANNER ═══════════ --}}
+    <div class="manus-info-banner">
+        <div class="manus-info-banner__inner">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span><strong>NB!</strong> Dersom du ikke er elev ved Forfatterskolen, er tjenesten momsbelagt (25%).</span>
         </div>
     </div>
 
-    <div class="modal fade" role="dialog" id="editorsModal">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        X
-                    </button>
-                </div>
-                <div class="modal-body">
-                    {{--@foreach($editors->chunk(3) as $editor_chunk)
-                        <div class="row masonry-grid">
-                            @foreach($editor_chunk as $editor)
-                                <div class="col-sm-4 masonry-column">
-                                    <div class="panel panel-default">
-                                        <div class="panel-header">
-                                        </div>
-                                        <div class="panel-body text-center">
-                                            <div class="editor-circle">
-                                                <img src="{{ asset($editor['editor_image']) }}" alt="" class="rounded-circle">
-                                            </div>
-                                            <p>
-                                                <strong class="editor-name">{{ $editor['name'] }}</strong> {{ $editor['description'] }}
-                                            </p>
-                                        </div>
-                                    </div>
+    {{-- ═══════════ TESTIMONIAL ═══════════ --}}
+    <section class="manus-testimonial">
+        <div class="manus-testimonial__inner">
+            <p class="manus-testimonial__quote">"Tilbakemeldingen fra redaktøren var grundig og konstruktiv. Det ga meg akkurat det dyttet jeg trengte for å ferdigstille manuset og sende det til forlag."</p>
+            <p class="manus-testimonial__author"><strong>Utgitt elev</strong> — via Forfatterskolen</p>
+        </div>
+    </section>
+
+</div>
+
+{{-- ═══════════ MODALS (beholdes) ═══════════ --}}
+<div class="modal fade" role="dialog" id="editorsModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card-columns">
+                    @foreach($editors->chunk(3) as $editor_chunk)
+                        <div class="card-container">
+                        @foreach($editor_chunk as $editor)
+                            <div class="card">
+                                <div class="card-header">
                                 </div>
-                            @endforeach
-                        </div>
-                    @endforeach--}}
-                    <div class="card-columns">
-                        @foreach($editors->chunk(3) as $editor_chunk)
-                            <div class="card-container">
-                            @foreach($editor_chunk as $editor)
-                                <div class="card">
-                                    <div class="card-header">
+                                <div class="card-body text-center">
+                                    <div class="editor-circle">
+                                        <img src="{{ asset($editor['editor_image']) }}" alt="editor image" class="rounded-circle">
                                     </div>
-                                    <div class="card-body text-center">
-                                        <div class="editor-circle">
-                                            <img src="{{ asset($editor['editor_image']) }}" alt="editor image" class="rounded-circle">
-                                        </div>
-                                        <p>
-                                            <strong class="editor-name">{{ $editor['name'] }}</strong> {{ $editor['description'] }}
-                                        </p>
-                                    </div>
+                                    <p>
+                                        <strong class="editor-name">{{ $editor['name'] }}</strong> {{ $editor['description'] }}
+                                    </p>
                                 </div>
-                            @endforeach
                             </div>
                         @endforeach
-                    </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    @if(Session::has('manuscript_test'))
-        <div id="manuscriptTestModal" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-body text-center">
-                        {!! Session::get('manuscript_test') !!}
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    @if(Session::has('manuscript_test_error'))
-        <div id="manuscriptTestErrorModal" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-body text-center">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
-                        {!! Session::get('manuscript_test_error') !!}
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    <div id="testManuscriptModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Regn ut for meg</h4>
-                </div>
-                <div class="modal-body">
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <div id="wordCountResultModal" class="modal fade" role="dialog">
+@if(Session::has('manuscript_test'))
+    <div id="manuscriptTestModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-body text-center">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <div id="wordCountResultBody"></div>
+                    {!! Session::get('manuscript_test') !!}
                 </div>
             </div>
         </div>
     </div>
+@endif
+
+@if(Session::has('manuscript_test_error'))
+    <div id="manuscriptTestErrorModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
+                    {!! Session::get('manuscript_test_error') !!}
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
 
 @stop
 
 @section('scripts')
     <script src="https://unpkg.com/mammoth@1.4.21/mammoth.browser.min.js"></script>
     <script>
-        let translations = {
-            convertingPleaseWait : "{{ trans('site.converting-document-please-wait') }}",
-            couldNotConvertTryAgain : "{{ trans('site.could-not-convert-file-please-try-again') }}",
-            releaseToUpload : "{{ trans('site.release-to-upload') }}",
-                
-        };
+        // ── Product data for dynamic checkout URL ──────────
+        var manusProducts = [
+            @foreach($shopManuscripts->sortBy('max_words') as $product)
+            {
+                id: {{ $product->id }},
+                maxWords: {{ $product->max_words }},
+                price: {{ $product->full_payment_price }},
+                checkoutUrl: "{{ route($checkoutRoute, $product->id) }}"
+            },
+            @endforeach
+        ];
 
-        $(document).ready(function(){
-            const getFileExtension = (fileName) => {
-                if (!fileName) {
-                    return '';
+        // ── Pricing logic ──────────────────────────────────
+        var manusGenreMultipliers = { standard: 1, novelle: 1.3, lyrikk: 1.5 };
+
+        function manusCalcBasePrice(words) {
+            if (words <= 5000) return 1500;
+            if (words <= 17500) return 1500 + Math.round((words - 5000) * 0.112);
+            return 2900 + Math.round((words - 17500) * 0.15);
+        }
+
+        function manusFormatNumber(n) {
+            return n.toLocaleString('nb-NO');
+        }
+
+        function manusGetCheckoutUrl(words) {
+            for (var i = 0; i < manusProducts.length; i++) {
+                if (words <= manusProducts[i].maxWords) {
+                    return manusProducts[i].checkoutUrl;
                 }
+            }
+            return manusProducts.length ? manusProducts[manusProducts.length - 1].checkoutUrl : '#';
+        }
 
-                const match = fileName.toLowerCase().match(/\.([^.]+)$/);
-                return match ? match[1] : '';
-            };
+        var manusSlider = document.getElementById('manusWordSlider');
+        var manusActiveTab = 'slider';
 
-            const mammothPreferredExtensions = ['doc', 'docx'];
-            const mammothAvailable = typeof window !== 'undefined'
-                && typeof window.mammoth !== 'undefined'
+        function manusCalcUpdatePrice() {
+            var words = parseInt(manusSlider.value);
+            var genreId = manusActiveTab === 'slider' ? 'manusGenreSelect' : 'manusGenreSelect2';
+            var genre = document.getElementById(genreId).value;
+            var multiplier = manusGenreMultipliers[genre];
+            var basePrice = manusCalcBasePrice(words);
+            var total = Math.round(basePrice * multiplier);
+
+            document.getElementById('manusWordCountDisplay').innerHTML = manusFormatNumber(words) + ' <span>ord</span>';
+            document.getElementById('manusPageEstimate').textContent = 'ca. ' + Math.round(words / 350) + ' sider';
+            document.getElementById('manusResultWords').textContent = manusFormatNumber(words);
+            document.getElementById('manusResultBase').textContent = manusFormatNumber(basePrice) + ' kr';
+
+            var surchargeRow = document.getElementById('manusSurchargeRow');
+            if (genre !== 'standard') {
+                surchargeRow.style.display = 'flex';
+                var surchargeAmount = Math.round(basePrice * (multiplier - 1));
+                document.getElementById('manusSurchargeValue').textContent =
+                    (genre === 'novelle' ? '+30%' : '+50%') + ' → ' + manusFormatNumber(surchargeAmount) + ' kr';
+            } else {
+                surchargeRow.style.display = 'none';
+            }
+
+            document.getElementById('manusTotalPrice').innerHTML = manusFormatNumber(total) + ' <span>kr</span>';
+            document.getElementById('manusCheckoutCta').href = manusGetCheckoutUrl(words);
+        }
+
+        manusSlider.addEventListener('input', manusCalcUpdatePrice);
+        manusCalcUpdatePrice();
+
+        function manusCalcSwitchTab(tabName) {
+            document.querySelectorAll('.manus-calc-tab').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.manus-calc-panel').forEach(function(p) { p.classList.remove('active'); });
+            document.querySelector('[data-tab="' + tabName + '"]').classList.add('active');
+            document.getElementById('manus-panel-' + tabName).classList.add('active');
+            manusActiveTab = tabName;
+        }
+
+        // ── File upload & word count extraction ────────────
+        (function() {
+            var uploadZone = document.getElementById('manusUploadZone');
+            var fileInput = document.getElementById('manusFileInput');
+            var uploadTitle = document.getElementById('manusUploadTitle');
+            var uploadSub = document.getElementById('manusUploadSub');
+            var uploadFormats = document.getElementById('manusUploadFormats');
+            var uploadMessage = document.getElementById('manusUploadMessage');
+
+            var mammothAvailable = typeof window.mammoth !== 'undefined'
                 && typeof window.mammoth.extractRawText === 'function';
+            var mammothExtensions = ['doc', 'docx'];
 
-            const shouldUseMammothForExtension = (extension) => {
-                if (!extension) {
-                    return false;
-                }
+            function getFileExtension(fileName) {
+                if (!fileName) return '';
+                var match = fileName.toLowerCase().match(/\.([^.]+)$/);
+                return match ? match[1] : '';
+            }
 
-                return mammothPreferredExtensions.includes(extension) && mammothAvailable;
-            };
+            function getCsrfToken() {
+                var meta = document.querySelector('meta[name="csrf-token"]');
+                return meta ? meta.getAttribute('content') : null;
+            }
 
-            const wordCountFormElement = document.getElementById('wordCountForm');
-            const wordCountFileInput = document.getElementById('word-count-file');
-            const wordCountUploadArea = document.getElementById('word-count-upload-area');
-            const wordCountUploadText = document.getElementById('word-count-upload-text');
-            const wordCountHiddenInput = document.getElementById('word-count-hidden');
-            const wordCountProcessButton = wordCountFormElement
-                ? wordCountFormElement.querySelector('.word-count-process-btn')
-                : null;
-            const conversionMessageText = translations.convertingPleaseWait;
-            const wordCountConversionMessageElement = document.getElementById('word-count-conversion-message');
-            const wordCountConversionErrorElement = document.getElementById('word-count-conversion-error');
-            let isConvertingWordCountFile = false;
-            let suppressWordCountChangeHandler = false;
+            function createDocxFileName(name) {
+                if (!name) return 'document.docx';
+                var dot = name.lastIndexOf('.');
+                if (dot <= 0) return name + '.docx';
+                return name.substring(0, dot) + '.docx';
+            }
 
-            const setWordCountConversionState = (state) => {
-                isConvertingWordCountFile = !!state;
+            function showMessage(text, type) {
+                uploadMessage.textContent = text;
+                uploadMessage.className = 'manus-upload-message' + (type ? ' ' + type : '');
+                uploadMessage.style.display = 'block';
+            }
 
-                if (wordCountProcessButton) {
-                    wordCountProcessButton.disabled = !!state;
-                }
-            };
+            function hideMessage() {
+                uploadMessage.style.display = 'none';
+            }
 
-            const showWordCountConversionMessage = () => {
-                if (wordCountConversionMessageElement) {
-                    wordCountConversionMessageElement.textContent = conversionMessageText;
-                    wordCountConversionMessageElement.classList.remove('d-none');
-                }
-            };
+            function resetUploadUI() {
+                uploadTitle.textContent = 'Dra og slipp fil her';
+                uploadSub.textContent = 'eller klikk for å velge';
+                uploadFormats.style.display = 'flex';
+                hideMessage();
+            }
 
-            const hideWordCountConversionMessage = () => {
-                if (wordCountConversionMessageElement) {
-                    wordCountConversionMessageElement.classList.add('d-none');
-                }
-            };
+            function countWords(text) {
+                if (typeof text !== 'string') return 0;
+                var normalised = text.replace(/[\r\n\t]+/g, ' ').trim();
+                if (!normalised) return 0;
+                var matches = normalised.match(/\S+/g);
+                return matches ? matches.length : 0;
+            }
 
-            const showWordCountConversionError = (message) => {
-                if (wordCountConversionErrorElement) {
-                    wordCountConversionErrorElement.textContent = message
-                        || translations.couldNotConvertTryAgain;
-                    wordCountConversionErrorElement.classList.remove('d-none');
-                }
-            };
+            function extractWithMammoth(file) {
+                return new Promise(function(resolve, reject) {
+                    if (!mammothAvailable) { resolve(null); return; }
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        var buf = e.target ? e.target.result : null;
+                        if (!buf) { resolve(null); return; }
+                        window.mammoth.extractRawText({ arrayBuffer: buf })
+                            .then(function(result) {
+                                resolve(countWords(result && result.value ? result.value : ''));
+                            })
+                            .catch(reject);
+                    };
+                    reader.onerror = function() { reject(reader.error); };
+                    reader.readAsArrayBuffer(file);
+                });
+            }
 
-            const clearWordCountConversionError = () => {
-                if (wordCountConversionErrorElement) {
-                    wordCountConversionErrorElement.textContent = '';
-                    wordCountConversionErrorElement.classList.add('d-none');
-                }
-            };
-
-            const createDocxFileName = (originalName) => {
-                if (!originalName || typeof originalName !== 'string') {
-                    return 'document.docx';
-                }
-
-                const dotIndex = originalName.lastIndexOf('.');
-
-                if (dotIndex <= 0) {
-                    return originalName.toLowerCase().endsWith('.docx')
-                        ? originalName
-                        : `${originalName}.docx`;
-                }
-
-                const baseName = originalName.substring(0, dotIndex);
-                const extension = originalName.substring(dotIndex + 1).toLowerCase();
-
-                if (extension === 'docx') {
-                    return originalName;
-                }
-
-                return `${baseName}.docx`;
-            };
-
-            const extractFilenameFromContentDisposition = (header) => {
-                if (!header || typeof header !== 'string') {
-                    return null;
-                }
-
-                const utf8Match = header.match(/filename\*=UTF-8''([^;]+)/i);
-                if (utf8Match && utf8Match[1]) {
-                    try {
-                        return decodeURIComponent(utf8Match[1]);
-                    } catch (error) {
-                        console.error('Failed to decode UTF-8 filename', error);
-                    }
-                }
-
-                const quotedMatch = header.match(/filename="?([^";]+)"?/i);
-                if (quotedMatch && quotedMatch[1]) {
-                    return quotedMatch[1];
-                }
-
-                return null;
-            };
-
-            const parseErrorBlob = async (blob) => {
-                if (!blob || typeof blob.text !== 'function') {
-                    return null;
-                }
-
-                const text = await blob.text();
-
-                if (!text) {
-                    return null;
-                }
-
-                try {
-                    return JSON.parse(text);
-                } catch (error) {
-                    return { message: text };
-                }
-            };
-
-            const getCsrfToken = () => {
-                const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-
-                if (!csrfMeta) {
-                    return null;
-                }
-
-                const token = csrfMeta.getAttribute('content');
-
-                return typeof token === 'string' && token.trim() !== '' ? token : null;
-            };
-
-            const convertFileToDocx = async (file) => {
-                const formData = new FormData();
+            async function convertToDocx(file) {
+                var formData = new FormData();
                 formData.append('document', file);
+                var csrf = getCsrfToken();
+                if (csrf) formData.append('_token', csrf);
 
-                const csrfToken = getCsrfToken();
+                var headers = { 'X-Requested-With': 'XMLHttpRequest' };
+                if (csrf) headers['X-CSRF-TOKEN'] = csrf;
 
-                if (csrfToken) {
-                    formData.append('_token', csrfToken);
-                }
-
-                const fallbackName = createDocxFileName(file && file.name ? file.name : null);
-                const mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-
-                if (window.axios) {
-                    try {
-                        const response = await window.axios.post('/documents/convert-to-docx', formData, {
-                            responseType: 'blob',
-                            headers: csrfToken ? { 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' } : { 'X-Requested-With': 'XMLHttpRequest' },
-                        });
-
-                        const headers = response.headers || {};
-                        const contentDisposition = headers['content-disposition'] || headers['Content-Disposition'] || null;
-                        const filename = extractFilenameFromContentDisposition(contentDisposition) || fallbackName;
-                        const responseBlob = response.data instanceof Blob
-                            ? response.data
-                            : new Blob(response.data ? [response.data] : [], { type: mimeType });
-
-                        return new File([responseBlob], filename, { type: mimeType, lastModified: Date.now() });
-                    } catch (error) {
-                        if (error && error.response && error.response.data instanceof Blob) {
-                            try {
-                                const parsed = await parseErrorBlob(error.response.data);
-                                if (parsed) {
-                                    error.response.data = parsed;
-                                }
-                            } catch (parseError) {
-                                console.error('Failed to parse conversion error response', parseError);
-                            }
-                        }
-
-                        if (!error.response || !error.response.data) {
-                            error.response = error.response || {};
-                            error.response.data = {
-                                errors: {
-                                    manuscript: [translations.couldNotConvertTryAgain],
-                                },
-                                message: translations.couldNotConvertTryAgain
-                            };
-                        }
-
-                        throw error;
-                    }
-                }
-
-                const headers = { 'X-Requested-With': 'XMLHttpRequest' };
-
-                if (csrfToken) {
-                    headers['X-CSRF-TOKEN'] = csrfToken;
-                }
-
-                const response = await fetch('/documents/convert-to-docx', {
+                var response = await fetch('/documents/convert-to-docx', {
                     method: 'POST',
                     body: formData,
-                    headers,
+                    headers: headers
                 });
-
-                const contentDisposition = response.headers
-                    ? (response.headers.get('content-disposition') || response.headers.get('Content-Disposition'))
-                    : null;
 
                 if (!response.ok) {
-                    const error = new Error(translations.couldNotConvertTryAgain);
-                    let errorData = null;
-
-                    try {
-                        errorData = await response.clone().json();
-                    } catch (jsonError) {
-                        try {
-                            errorData = { message: await response.text() };
-                        } catch (textError) {
-                            errorData = null;
-                        }
-                    }
-
-                    error.response = {
-                        status: response.status,
-                        data: errorData || {
-                            errors: {
-                                manuscript: [translations.couldNotConvertTryAgain],
-                            },
-                            message: translations.couldNotConvertTryAgain
-                        }
-                    };
-
-                    throw error;
+                    throw new Error('Konvertering feilet');
                 }
 
-                const data = await response.blob();
-                const filename = extractFilenameFromContentDisposition(contentDisposition) || fallbackName;
-                const responseBlob = data instanceof Blob ? data : new Blob([data], { type: mimeType });
-
-                return new File([responseBlob], filename, { type: mimeType, lastModified: Date.now() });
-            };
-
-            const getErrorMessageFromConversion = (error) => {
-                if (!error) {
-                    return translations.couldNotConvertTryAgain;
-                }
-
-                if (error.response && error.response.data) {
-                    const data = error.response.data;
-
-                    if (data.errors && data.errors.manuscript && data.errors.manuscript.length) {
-                        return data.errors.manuscript[0];
-                    }
-
-                    if (typeof data.message === 'string' && data.message.trim() !== '') {
-                        return data.message;
-                    }
-                }
-
-                if (error.message && error.message.trim() !== '') {
-                    return error.message;
-                }
-
-                return translations.couldNotConvertTryAgain;
-            };
-
-            const assignFilesToInput = (input, file) => {
-                if (!input || !file) {
-                    return false;
-                }
-
-                const files = Array.isArray(file) ? file : [file];
-
-                try {
-                    if (typeof DataTransfer !== 'undefined') {
-                        const dataTransfer = new DataTransfer();
-                        files.forEach((item) => dataTransfer.items.add(item));
-                        input.files = dataTransfer.files;
-                        return true;
-                    }
-                } catch (error) {
-                    console.warn('DataTransfer is not available for file assignment.', error);
-                }
-
-                try {
-                    if (typeof ClipboardEvent !== 'undefined') {
-                        const clipboardEvent = new ClipboardEvent('');
-                        if (clipboardEvent.clipboardData) {
-                            files.forEach((item) => clipboardEvent.clipboardData.items.add(item));
-                            input.files = clipboardEvent.clipboardData.files;
-                            return true;
-                        }
-                    }
-                } catch (error) {
-                    console.warn('ClipboardEvent fallback failed for file assignment.', error);
-                }
-
-                return false;
-            };
-
-            const countWordsFromText = (text) => {
-                if (typeof text !== 'string') {
-                    return 0;
-                }
-
-                const normalised = text.replace(/[\r\n\t]+/g, ' ').trim();
-                if (!normalised) {
-                    return 0;
-                }
-
-                const matches = normalised.match(/\S+/g);
-                return matches ? matches.length : 0;
-            };
-
-            const extractWordCountWithMammoth = (file) => new Promise((resolve, reject) => {
-                if (!file || !mammothAvailable) {
-                    resolve(null);
-                    return;
-                }
-
-                const reader = new FileReader();
-
-                reader.onload = (event) => {
-                    const arrayBuffer = event.target ? event.target.result : null;
-
-                    if (!arrayBuffer) {
-                        resolve(null);
-                        return;
-                    }
-
-                    window.mammoth.extractRawText({ arrayBuffer })
-                        .then((result) => {
-                            const text = result && typeof result.value === 'string' ? result.value : '';
-                            resolve(countWordsFromText(text));
-                        })
-                        .catch((error) => {
-                            reject(error);
-                        });
-                };
-
-                reader.onerror = () => {
-                    reject(reader.error || new Error('Kunne ikke lese dokumentet.'));
-                };
-
-                try {
-                    reader.readAsArrayBuffer(file);
-                } catch (error) {
-                    reject(error);
-                }
-            });
-
-            @if(Session::has('manuscript_test'))
-                $('#manuscriptTestModal').modal('show');
-            @endif
-
-            @if(Session::has('manuscript_test_error'))
-                $('#manuscriptTestErrorModal').modal('show');
-            @endif
-
-            let form = $('#testManuscript form');
-            $('.file-upload-btn').click(function(){
-                form.find('input[type=file]').click();
-            });
-            form.find('input[type=text]').click(function(){
-                form.find('input[type=file]').click();
-            });
-            form.find('input[type=file]').on('change', function(){
-                let file = $(this).val().split('\\').pop();
-                form.find('input[type=text]').val(file);
-            });
-            form.on('submit', function(e){
-                let file = form.find('input[type=file]').val().split('\\').pop();
-                if( file == '' ){
-                    alert('Please select a document file.');
-                    e.preventDefault();
-                }
-            });
-
-            const manuscriptTestFormElement = document.querySelector('#testManuscript form');
-            const manuscriptTestHiddenInput = document.getElementById('test-manuscript-word-count');
-            const manuscriptTestFileInput = document.getElementById('file-upload');
-            let manuscriptSubmittingWithMammoth = false;
-
-            if (manuscriptTestFormElement && manuscriptTestFileInput) {
-                manuscriptTestFormElement.addEventListener('submit', (event) => {
-                    if (manuscriptSubmittingWithMammoth) {
-                        manuscriptSubmittingWithMammoth = false;
-                        return;
-                    }
-
-                    const files = manuscriptTestFileInput.files;
-                    if (!files || !files.length) {
-                        if (manuscriptTestHiddenInput) {
-                            manuscriptTestHiddenInput.value = '';
-                        }
-
-                        return;
-                    }
-
-                    const [file] = files;
-                    const extension = getFileExtension(file.name || manuscriptTestFileInput.value);
-
-                    if (!shouldUseMammothForExtension(extension)) {
-                        if (manuscriptTestHiddenInput) {
-                            manuscriptTestHiddenInput.value = '';
-                        }
-
-                        return;
-                    }
-
-                    event.preventDefault();
-
-                    extractWordCountWithMammoth(file)
-                        .then((wordCount) => {
-                            if (manuscriptTestHiddenInput) {
-                                manuscriptTestHiddenInput.value = Number.isInteger(wordCount) && wordCount > 0
-                                    ? wordCount
-                                    : '';
-                            }
-                        })
-                        .catch((error) => {
-                            console.error('Unable to count words with Mammoth for manuscript test form', error);
-                            if (manuscriptTestHiddenInput) {
-                                manuscriptTestHiddenInput.value = '';
-                            }
-                        })
-                        .finally(() => {
-                            manuscriptSubmittingWithMammoth = true;
-                            manuscriptTestFormElement.submit();
-                        });
-                });
+                var blob = await response.blob();
+                var mime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                return new File([blob], createDocxFileName(file.name), { type: mime, lastModified: Date.now() });
             }
 
-            const defaultWordCountText = wordCountUploadText ? wordCountUploadText.innerHTML : '';
-            let wordCountSubmittingWithMammoth = false;
+            async function handleFile(files) {
+                if (!files || !files.length) return;
+                var file = files[0];
 
-            const updateWordCountText = (text) => {
-                if (wordCountUploadText) {
-                    wordCountUploadText.innerHTML = text;
-                }
-            };
+                uploadTitle.textContent = file.name;
+                uploadSub.textContent = 'Teller ord...';
+                uploadFormats.style.display = 'none';
+                hideMessage();
 
-            const resetUploadText = () => {
-                updateWordCountText(defaultWordCountText);
-            };
+                var ext = getFileExtension(file.name);
+                var processedFile = file;
 
-            const selectWordCountFile = async (files) => {
-                clearWordCountConversionError();
-
-                if (!files || !files.length) {
-                    hideWordCountConversionMessage();
-                    setWordCountConversionState(false);
-                    resetUploadText();
-                    if (wordCountHiddenInput) {
-                        wordCountHiddenInput.value = '';
-                    }
-                    return;
-                }
-
-                const [selectedFile] = files;
-
-                if (!selectedFile) {
-                    hideWordCountConversionMessage();
-                    setWordCountConversionState(false);
-                    resetUploadText();
-                    if (wordCountHiddenInput) {
-                        wordCountHiddenInput.value = '';
-                    }
-                    return;
-                }
-
-                updateWordCountText(selectedFile.name);
-                if (wordCountHiddenInput) {
-                    wordCountHiddenInput.value = '';
-                }
-
-                const extension = getFileExtension(selectedFile.name);
-                let processedFile = selectedFile;
-                let conversionFailed = false;
-
-                if (extension !== 'docx') {
-                    setWordCountConversionState(true);
-                    showWordCountConversionMessage();
-
+                // Convert all non-docx formats (doc, pdf, odt, pages) to docx via server
+                if (ext !== 'docx') {
                     try {
-                        processedFile = await convertFileToDocx(selectedFile);
-                    } catch (error) {
-                        conversionFailed = true;
-                        showWordCountConversionError(getErrorMessageFromConversion(error));
-                        if (wordCountFileInput) {
-                            suppressWordCountChangeHandler = true;
-                            wordCountFileInput.value = '';
-                            window.setTimeout(() => {
-                                suppressWordCountChangeHandler = false;
-                            }, 0);
-                        }
-                        resetUploadText();
-                    } finally {
-                        hideWordCountConversionMessage();
-                        setWordCountConversionState(false);
-                    }
-                } else {
-                    hideWordCountConversionMessage();
-                    setWordCountConversionState(false);
-                }
-
-                if (conversionFailed) {
-                    return;
-                }
-
-                if (processedFile && processedFile.name) {
-                    updateWordCountText(processedFile.name);
-                }
-
-                if (wordCountFileInput) {
-                    suppressWordCountChangeHandler = true;
-                    const assigned = assignFilesToInput(wordCountFileInput, processedFile);
-                    window.setTimeout(() => {
-                        suppressWordCountChangeHandler = false;
-                    }, 0);
-
-                    if (!assigned) {
-                        showWordCountConversionError('Kunne ikke legge til den konverterte filen automatisk. Prøv igjen i en annen nettleser eller kontakt oss.');
-                        wordCountFileInput.value = '';
-                        resetUploadText();
+                        showMessage('Konverterer fil...', '');
+                        processedFile = await convertToDocx(file);
+                        hideMessage();
+                    } catch (err) {
+                        uploadSub.textContent = '';
+                        showMessage('Kunne ikke konvertere filen. Last opp som .docx i stedet, eller bruk slideren for å beregne pris manuelt.', 'error');
                         return;
                     }
                 }
 
-                if (wordCountHiddenInput) {
-                    wordCountHiddenInput.value = '';
-                }
-            };
+                // Extract word count with mammoth
+                try {
+                    var wordCount = await extractWithMammoth(processedFile);
+                    if (wordCount && wordCount > 0) {
+                        uploadSub.textContent = manusFormatNumber(wordCount) + ' ord funnet';
+                        showMessage('Ordtelling fullført! Prisen er oppdatert nedenfor.', 'success');
 
-            if (wordCountFileInput) {
-                wordCountFileInput.addEventListener('change', async (event) => {
-                    if (suppressWordCountChangeHandler) {
-                        return;
-                    }
-
-                    await selectWordCountFile(event.target.files);
-                });
-            }
-
-            document.querySelectorAll('.word-count-file-trigger').forEach((button) => {
-                button.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    if (wordCountFileInput) {
-                        wordCountFileInput.click();
-                    }
-                });
-            });
-
-            if (wordCountUploadArea) {
-                wordCountUploadArea.addEventListener('dragover', (event) => {
-                    event.preventDefault();
-                    wordCountUploadArea.classList.add('dragover');
-                });
-
-                wordCountUploadArea.addEventListener('dragleave', () => {
-                    wordCountUploadArea.classList.remove('dragover');
-                    resetUploadText();
-                });
-
-                wordCountUploadArea.addEventListener('drop', async (event) => {
-                    event.preventDefault();
-                    wordCountUploadArea.classList.remove('dragover');
-                    const files = event.dataTransfer ? event.dataTransfer.files : null;
-
-                    if (files && files.length) {
-                        await selectWordCountFile(files);
+                        // Update slider and price
+                        var clampedWords = Math.min(Math.max(wordCount, 1000), 175000);
+                        manusSlider.value = clampedWords;
+                        manusCalcUpdatePrice();
                     } else {
-                        resetUploadText();
+                        uploadSub.textContent = '';
+                        showMessage('Kunne ikke telle ord i filen. Bruk slideren i stedet.', 'error');
                     }
-                });
+                } catch (err) {
+                    uploadSub.textContent = '';
+                    showMessage('Kunne ikke lese filen. Bruk slideren i stedet.', 'error');
+                }
             }
 
-            if (wordCountFormElement && wordCountFileInput) {
-                wordCountFormElement.addEventListener('submit', (event) => {
-                    if (isConvertingWordCountFile) {
-                        event.preventDefault();
-                        return;
-                    }
+            // Click to upload
+            uploadZone.addEventListener('click', function() {
+                fileInput.click();
+            });
 
-                    if (wordCountSubmittingWithMammoth) {
-                        wordCountSubmittingWithMammoth = false;
-                        return;
-                    }
+            fileInput.addEventListener('change', function(e) {
+                handleFile(e.target.files);
+            });
 
-                    const files = wordCountFileInput.files;
+            // Drag and drop
+            uploadZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadZone.classList.add('dragover');
+            });
 
-                    if (!files || !files.length) {
-                        if (wordCountHiddenInput) {
-                            wordCountHiddenInput.value = '';
-                        }
+            uploadZone.addEventListener('dragleave', function() {
+                uploadZone.classList.remove('dragover');
+            });
 
-                        return;
-                    }
+            uploadZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadZone.classList.remove('dragover');
+                var files = e.dataTransfer ? e.dataTransfer.files : null;
+                if (files && files.length) {
+                    handleFile(files);
+                }
+            });
+        })();
 
-                    const [file] = files;
-                    const extension = getFileExtension(file.name || wordCountFileInput.value);
-
-                    if (!shouldUseMammothForExtension(extension)) {
-                        if (wordCountHiddenInput) {
-                            wordCountHiddenInput.value = '';
-                        }
-
-                        return;
-                    }
-
-                    event.preventDefault();
-
-                    extractWordCountWithMammoth(file)
-                        .then((wordCount) => {
-                            if (wordCountHiddenInput) {
-                                wordCountHiddenInput.value = Number.isInteger(wordCount) && wordCount > 0
-                                    ? wordCount
-                                    : '';
-                            }
-                        })
-                        .catch((error) => {
-                            console.error('Unable to count words with Mammoth for word count form', error);
-                            if (wordCountHiddenInput) {
-                                wordCountHiddenInput.value = '';
-                            }
-                        })
-                        .finally(() => {
-                            wordCountSubmittingWithMammoth = true;
-                            wordCountFormElement.submit();
-                        });
-                });
-            }
-
-        });
+        // ── Session modals ─────────────────────────────────
+        @if(Session::has('manuscript_test'))
+            (function() {
+                var el = document.getElementById('manuscriptTestModal');
+                if (el) new bootstrap.Modal(el).show();
+            })();
+        @endif
+        @if(Session::has('manuscript_test_error'))
+            (function() {
+                var el = document.getElementById('manuscriptTestErrorModal');
+                if (el) new bootstrap.Modal(el).show();
+            })();
+        @endif
     </script>
 @stop

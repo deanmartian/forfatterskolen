@@ -33,7 +33,7 @@
                             <div class="col-md-3">
                                 <i class="fa fa-calendar-check"></i>
                             </div>
-                            <div class="col-md-9 pl-0">
+                            <div class="col-md-9 ps-0">
                                 <h3>
                                     {{ \App\Http\FrontendHelpers::formatDateTimeNor(
                                         $submission_date_formatted) }}
