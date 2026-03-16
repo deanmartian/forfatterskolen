@@ -747,104 +747,124 @@ class LearnerController extends Controller
 
     public function courseWebinar(Request $request)
     {
-        $isPost = 0;
-        $isReplay = 0;
-        $searchResult = [];
+        $userId = Auth::user()->id;
 
-        /* if ($request->exists('search_upcoming')) {
-            $query = DB::table('courses_taken')
-                ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
-                ->join('courses', 'packages.course_id', '=', 'courses.id')
-                ->join('webinars', 'courses.id', '=', 'webinars.course_id')
-                ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title')
-                ->where('user_id',Auth::user()->id)
-                ->where('courses.id','!=',17) // just added this line to show all webinar pakke webinars
-                ->whereNotIn('webinars.id',[24, 25, 31])
-                ->where('webinars.start_date', '>=' ,Carbon::today())
-                ->where('webinars.title','LIKE','%'.$request->search_upcoming.'%')
-                ->where('set_as_replay',0)
-                ->orderBy('courses.type', 'ASC')
-                ->orderBy('webinars.start_date', 'ASC');
+        // Base query: user's course webinars (excluding webinar-pakke course_id=17)
+        $baseSelect = [
+            'webinars.*',
+            'courses_taken.id as courses_taken_id',
+            'courses.title as course_title',
+            'courses.id as cw_course_id',
+            'courses_taken.deleted_at',
+            'courses_taken.end_date as courses_taken_end_date',
+        ];
 
-            $searchResult = $query->get();
-            $isPost = 1;
-        }
-
-        // check if webinar-pakke is replay
-        $webinarsRepriser = DB::table('courses_taken')
+        // ── UPCOMING: kommende kurswebinarer ──
+        $upcoming = DB::table('courses_taken')
             ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
             ->join('courses', 'packages.course_id', '=', 'courses.id')
             ->join('webinars', 'courses.id', '=', 'webinars.course_id')
-            ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title')
-            ->where('user_id',Auth::user()->id)
-            ->where('courses.id','!=',17) // just added this line to show all webinar pakke webinars
-            ->where(function($query){
-                $query->whereIn('webinars.id',[24, 25, 31]);
-                $query->orWhere('set_as_replay',1);
-            })
-            //->whereIn('webinars.id',[24, 25, 31]) // remove this to return the original
-            ->orderBy('courses.type', 'ASC')
+            ->select($baseSelect)
+            ->where('user_id', $userId)
+            ->where('courses.id', '!=', 17)
+            ->whereNull('courses_taken.deleted_at')
+            ->whereNotIn('webinars.id', [24, 25, 31])
+            ->where('set_as_replay', 0)
+            ->where('webinars.start_date', '>=', Carbon::now()->subHour())
             ->orderBy('webinars.start_date', 'ASC')
             ->get();
 
-        if ($request->exists('search_replay') && $webinarsRepriser) {
-            $searchResult = LessonContent::where('title', 'like', '%'.$request->search_replay.'%')
-                ->get();
-            $isPost = 1;
-            $isReplay = 1;
-        } */
-
-        /* this is new query until the end, the top is the old function/query */
-        $webinars = DB::table('courses_taken')
+        // ── REPLAYS: hent individuelle repriser fra leksjonssider ──
+        // Finn brukerens kurs-IDer
+        $userCourseIds = DB::table('courses_taken')
             ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
-            ->join('courses', 'packages.course_id', '=', 'courses.id')
-            ->join('webinars', 'courses.id', '=', 'webinars.course_id')
-            ->select(
-                'webinars.*',
-                'courses_taken.id as courses_taken_id',
-                'courses.title as course_title',
-                'courses_taken.deleted_at',
-                DB::raw('TIMESTAMPDIFF(HOUR, NOW(), webinars.start_date) as diffWithHours')
-            )
-            ->where('user_id', Auth::user()->id)
-            ->where('courses.id', '!=', 17) // just added this line to show all webinar pakke webinars
-            ->whereNull('courses_taken.deleted_at');
+            ->where('user_id', $userId)
+            ->whereNull('courses_taken.deleted_at')
+            ->where('packages.course_id', '!=', 17)
+            ->pluck('packages.course_id')
+            ->unique();
 
-        if ($request->exists('search_upcoming')) {
-            $webinars = $webinars->whereNotIn('webinars.id', [24, 25, 31])
-                ->where('webinars.start_date', '>=', Carbon::today())
-                ->where('webinars.title', 'LIKE', '%'.$request->search_upcoming.'%')
-                ->where('set_as_replay', 0);
-        } else {
-            $webinars = $webinars->where(function ($query) {
-                $query->where(function ($subQuery) {
-                    $subQuery->whereIn('webinars.id', [24, 25, 31]);
-                    $subQuery->orWhere('set_as_replay', 1);
-                });
+        // Finn reprise-leksjoner for brukerens kurs
+        $replayLessons = DB::table('lessons')
+            ->join('courses', 'lessons.course_id', '=', 'courses.id')
+            ->whereIn('courses.id', $userCourseIds)
+            ->where(function ($q) {
+                $q->where('lessons.title', 'LIKE', '%repris%')
+                  ->orWhere('lessons.title', 'LIKE', '%Repris%');
+            })
+            ->select('lessons.id', 'lessons.title as lesson_title', 'lessons.content', 'courses.title as course_title', 'courses.id as course_id')
+            ->get();
 
-                $query->orWhere(function ($subQuery) {
-                    $subQuery->whereNotIn('webinars.id', [24, 25, 31])
-                        ->where('set_as_replay', 0);
-                });
-            });
+        // Parse individuelle videoer fra leksjonsinnholdet
+        $replayItems = collect();
+        foreach ($replayLessons as $lesson) {
+            $content = html_entity_decode($lesson->content);
+            // Fjern HTML-tags men behold struktur
+            // Mønster: tittel-tekst fulgt av [video src="URL"]
+            preg_match_all('/(?:<p[^>]*>|<br\s*\/?>)\s*([^<\[]+?)\s*(?:<\/p>|<br\s*\/?>|\s)*\[video\s+src=["\']([^"\']+)["\']\]/si', $content, $matches, PREG_SET_ORDER);
+
+            if (empty($matches)) {
+                // Prøv alternativt mønster: tittel i egen <p>, video i neste <p>
+                preg_match_all('/<p[^>]*>([^<\[]{5,}?)<\/p>\s*<p[^>]*>\[video\s+src=["\']([^"\']+)["\']\]<\/p>/si', $content, $matches, PREG_SET_ORDER);
+            }
+
+            foreach ($matches as $match) {
+                $title = trim(strip_tags($match[1]));
+                $videoUrl = trim($match[2]);
+                if (empty($title) || empty($videoUrl)) continue;
+                // Ignorer overskrifts-tekster som "Her kommer repriser..."
+                if (str_contains(strtolower($title), 'her kommer')) continue;
+
+                // Prøv å hente dato fra tittelen (DD.MM.YYYY)
+                $date = null;
+                if (preg_match('/(\d{2})\.(\d{2})\.(\d{4})/', $title, $dateMatch)) {
+                    $date = $dateMatch[3] . '-' . $dateMatch[2] . '-' . $dateMatch[1];
+                } elseif (preg_match('/(\d{2})\.(\d{2})\.(\d{2})$/', $title, $dateMatch)) {
+                    $date = '20' . $dateMatch[3] . '-' . $dateMatch[2] . '-' . $dateMatch[1];
+                }
+
+                $replayItems->push((object) [
+                    'title' => $title,
+                    'video_url' => $videoUrl,
+                    'course_title' => $lesson->course_title,
+                    'course_id' => $lesson->course_id,
+                    'date' => $date,
+                    'lesson_id' => $lesson->id,
+                ]);
+            }
         }
 
-        $webinars = $webinars->orderBy('courses.type', 'ASC')
-            ->orderBy('webinars.set_as_replay', 'DESC')
-            ->orderBy('webinars.start_date', 'ASC')
-            ->having('diffWithHours', '>=', 0) // filter results after 'SELECT'
-            ->get()
-            ->paginate(8);
+        // Sorter med nyeste først
+        $replayItems = $replayItems->sortByDesc('date')->values();
 
-        $lessonContents = [];
-        if ($request->exists('search_replay')) {
-            $lessonContents = LessonContent::where('title', 'like', '%'.$request->search_replay.'%')
-                ->paginate(8);
-            $isReplay = 1;
+        // Søk i repriser
+        if ($request->filled('search_replay')) {
+            $searchTerm = strtolower($request->search_replay);
+            $replayItems = $replayItems->filter(function ($item) use ($searchTerm) {
+                return str_contains(strtolower($item->title), $searchTerm)
+                    || str_contains(strtolower($item->course_title), $searchTerm);
+            })->values();
         }
 
-        return view('frontend.learner.course-webinar', compact('isReplay', 'webinars', 'lessonContents',
-            /* 'webinarsRepriser', 'isPost', 'searchResult' */));
+        // Manuell paginering
+        $page = $request->get('page', 1);
+        $perPage = 10;
+        $total = $replayItems->count();
+        $replays = new \Illuminate\Pagination\LengthAwarePaginator(
+            $replayItems->forPage($page, $perPage)->values(),
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        // ── User's courses for filter dropdown ──
+        $allCourseNames = $upcoming->pluck('course_title')->merge($replayItems->pluck('course_title'))->unique()->values();
+        $userCourses = $allCourseNames;
+
+        return view('frontend.learner.course-webinar', compact(
+            'upcoming', 'replays', 'userCourses'
+        ));
     }
 
     public function courseShow($id)
