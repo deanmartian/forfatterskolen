@@ -3482,6 +3482,24 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
+    public function profileUpdateNotifications(Request $request): RedirectResponse
+    {
+        $types = [
+            'weekly_course_update', 'mentor_reminder', 'feedback_ready',
+            'task_reminder', 'invoice_due_reminder', 'payment_receipt',
+            'newsletter', 'course_offers',
+        ];
+
+        foreach ($types as $type) {
+            Auth::user()->notificationPreferences()->updateOrCreate(
+                ['type' => $type],
+                ['enabled' => $request->boolean($type)]
+            );
+        }
+
+        return redirect()->back()->with('profile_success', 'Innstillinger lagret.');
+    }
+
     public function passwordUpdate(Request $request): RedirectResponse
     {
         $request->validate([

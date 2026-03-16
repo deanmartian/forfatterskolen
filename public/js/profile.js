@@ -9,20 +9,21 @@ const methods = {
                 let secondary = response.secondary;
                 email_list.html("");
                 email_list.append(`
-                <li class="list-group-item py-3 px-4"> 
-                    <span class="pull-left mt-0">${ primary.email }</span>
-                    <h5 class="pull-right mb-0 mt-0"><span class="badge badge-success py-2 px-4">Hoved</span></h5>   
-                </li>
-            `);
+                    <div class="pf-email-item">
+                        <span class="pf-email-item__address">${ primary.email }</span>
+                        <span class="pf-email-item__badge">Hoved</span>
+                    </div>
+                `);
                 $.each( secondary, function(key, value){
                     email_list.append(`
-                    <li class="list-group-item py-3 px-4"> 
-                        <span class="pull-left mt-0">${ value.email }</span>
-                        <h5 class="pull-right mb-0 mt-0"><span class="badge badge-info py-2 px-4 mr-2 hand" 
-                        onclick="methods.setPrimaryEmail(${ value.id }, this)">Set Primary</span>
-                        <span class="badge badge-danger py-2 px-4 hand" onclick="methods.removeSecondaryEmail(${ value.id })">Remove</span></h5>   
-                    </li>
-                `)
+                        <div class="pf-email-item">
+                            <span class="pf-email-item__address">${ value.email }</span>
+                            <div class="pf-email-item__actions">
+                                <button class="pf-btn pf-btn--secondary" onclick="methods.setPrimaryEmail(${ value.id }, this)">Sett som hoved</button>
+                                <button class="pf-btn pf-btn--secondary" style="color:#c62828;border-color:rgba(198,40,40,0.3)" onclick="methods.removeSecondaryEmail(${ value.id })">Fjern</button>
+                            </div>
+                        </div>
+                    `)
                 })
             })
     },
@@ -124,29 +125,31 @@ const methods = {
     },
 
     setLoadingIcon : function(btn){
-        let icon = btn.find("i");
-        let spinner = "fa fa-spinner fa-pulse fa-fw";
-        let plus = "plus";
-        let has_spinner = icon.hasClass('fa-spinner');
-        has_spinner? btn.removeClass("disabled") : btn.addClass("disabled");
-        btn.prop('disabled', !has_spinner);
-        icon.removeClass(has_spinner? spinner : plus).addClass(has_spinner? plus : spinner)
+        let isLoading = btn.data('loading');
+        if (!isLoading) {
+            btn.data('original-text', btn.html());
+            btn.html('<i class="fa fa-spinner fa-pulse fa-fw"></i>');
+            btn.addClass("disabled").prop('disabled', true);
+            btn.data('loading', true);
+        } else {
+            btn.html(btn.data('original-text'));
+            btn.removeClass("disabled").prop('disabled', false);
+            btn.data('loading', false);
+        }
     },
 
     setError : function(errors, form){
         $.each(errors, function(key, error){
-            form.find(`[name='${ key }']`).closest('.form-group').append(`<small class='text-danger'><i class='fa fa-exclamation-circle'></i> ${ error[0] }</small>`)
+            var input = form.find(`[name='${ key }']`);
+            var parent = input.closest('.form-group, .pf-email-add');
+            parent.append(`<small class='text-danger' style="display:block;margin-top:0.25rem;font-size:0.78rem;"><i class='fa fa-exclamation-circle'></i> ${ error[0] }</small>`)
         })
     },
     clearError : function(form){
-        form.find('.form-group').each(function(){
-            $(this).find('.text-danger').remove()
-        })
+        form.find('.text-danger').remove();
     },
     clearInputs : function(form){
-        form.find('.form-group').each(function(){
-            $(this).find('input').val('')
-        })
+        form.find('input').not('[type=hidden]').val('');
     },
 };
 
