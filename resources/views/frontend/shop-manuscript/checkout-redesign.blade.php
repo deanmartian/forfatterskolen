@@ -845,6 +845,15 @@
                             </span>
                         </label>
                     </div>
+                    {{-- Hva trenger du hjelp med — vises kun når coaching er valgt --}}
+                    <div id="coachingTopicField" style="display: none; margin-top: 0.75rem;">
+                        <label style="font-size: 0.72rem; font-weight: 600; color: var(--text-primary); display: block; margin-bottom: 0.25rem;">
+                            Hva ønsker du hjelp med?
+                        </label>
+                        <textarea id="coachingTopicText" rows="2" placeholder="F.eks. struktur, dialog, perspektiv, hvordan komme videre..."
+                            style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-strong); border-radius: 6px; font-size: 0.8rem; font-family: var(--font-body); resize: vertical; color: var(--text-primary);"></textarea>
+                    </div>
+
                     <div class="coaching-addon__note">Priser eks. mva. Timen bookes etter at tilbakemeldingen er levert.</div>
                 </div>
 
@@ -883,6 +892,7 @@
                             <input type="hidden" name="payment_plan_id" value="8">
                             <input type="hidden" name="coaching_time_later" value="0" id="hidden-coaching-mvafri">
                             <input type="hidden" name="coaching_price" value="0" id="hidden-coaching-price-mvafri">
+                            <input type="hidden" name="coaching_topic" value="" id="hidden-coaching-topic-mvafri">
                             <input type="hidden" name="email" value="{{ Auth::user()->email }}">
                             <input type="hidden" name="first_name" value="{{ Auth::user()->first_name }}">
                             <input type="hidden" name="last_name" value="{{ Auth::user()->last_name }}">
@@ -913,6 +923,7 @@
                             <input type="hidden" name="payment_plan_id" value="8">
                             <input type="hidden" name="coaching_time_later" value="0" id="hidden-coaching-mva">
                             <input type="hidden" name="coaching_price" value="0" id="hidden-coaching-price-mva">
+                            <input type="hidden" name="coaching_topic" value="" id="hidden-coaching-topic-mva">
                             <input type="hidden" name="email" value="{{ Auth::user()->email }}">
                             <input type="hidden" name="first_name" value="{{ Auth::user()->first_name }}">
                             <input type="hidden" name="last_name" value="{{ Auth::user()->last_name }}">
@@ -1007,6 +1018,12 @@
             var coachingPrice = coachingPrices[coachingVal] || 0;
             var coachingDuration = coachingVal || '0';
 
+            // Vis/skjul coaching-tema felt
+            var topicField = document.getElementById('coachingTopicField');
+            if (topicField) {
+                topicField.style.display = coachingVal ? 'block' : 'none';
+            }
+
             var coachingRow = document.getElementById('coaching-price-row');
             if (coachingRow) {
                 coachingRow.style.display = coachingPrice > 0 ? '' : 'none';
@@ -1043,6 +1060,7 @@
                 if (el('hidden-description-mvafri')) el('hidden-description-mvafri').value = synopsisVal;
                 if (el('hidden-coaching-mvafri')) el('hidden-coaching-mvafri').value = coachingDuration;
                 if (el('hidden-coaching-price-mvafri')) el('hidden-coaching-price-mvafri').value = coachingPrice;
+                if (el('hidden-coaching-topic-mvafri')) el('hidden-coaching-topic-mvafri').value = coachingVal ? (document.getElementById('coachingTopicText') || {}).value || '' : '';
             } else {
                 var mvaVal = document.getElementById('mva-value');
                 if (mvaVal) mvaVal.textContent = formatKr(newMva);
@@ -1061,6 +1079,7 @@
                 if (el('hidden-description-mva')) el('hidden-description-mva').value = synopsisVal;
                 if (el('hidden-coaching-mva')) el('hidden-coaching-mva').value = coachingDuration;
                 if (el('hidden-coaching-price-mva')) el('hidden-coaching-price-mva').value = coachingPrice;
+                if (el('hidden-coaching-topic-mva')) el('hidden-coaching-topic-mva').value = coachingVal ? (document.getElementById('coachingTopicText') || {}).value || '' : '';
             }
         }
 
@@ -1072,7 +1091,7 @@
             radio.addEventListener('change', updateOrderTotal);
         });
 
-        // Synopsis: oppdater hidden fields ved submit (ikke ved hvert tastetrykk)
+        // Synopsis + coaching_topic: oppdater hidden fields ved submit
         var forms = document.querySelectorAll('#order-form-mvafri, #order-form-mva');
         forms.forEach(function(form) {
             form.addEventListener('submit', function() {
@@ -1080,6 +1099,11 @@
                 var val = synopsisText ? synopsisText.value : '';
                 var hDesc = form.querySelector('input[name="description"]');
                 if (hDesc) hDesc.value = val;
+
+                var topicText = document.getElementById('coachingTopicText');
+                var coachingSelected = document.querySelector('input[name="coaching"]:checked');
+                var hTopic = form.querySelector('input[name="coaching_topic"]');
+                if (hTopic) hTopic.value = (coachingSelected && coachingSelected.value && topicText) ? topicText.value : '';
             });
         });
     })();
