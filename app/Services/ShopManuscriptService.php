@@ -588,7 +588,7 @@ class ShopManuscriptService
             'words' => $word_count,
             'description' => $request->description,
             'synopsis' => $synopsis,
-            'coaching_time_later' => filter_var($request->coaching_time_later, FILTER_VALIDATE_BOOLEAN),
+            'coaching_time_later' => in_array((int) $request->coaching_time_later, [30, 60]) ? (int) $request->coaching_time_later : 0,
             'send_to_email' => filter_var($request->send_to_email, FILTER_VALIDATE_BOOLEAN),
         ]);
     }
@@ -694,5 +694,113 @@ class ShopManuscriptService
         $invoice = new FikenInvoice;
         $invoice->create_invoice($invoice_fields);
         Log::info('after create invoice');
+    }
+
+    /**
+     * Opprett Fiken-faktura for ny betalingsflyt (Vipps/Kredittkort/Faktura)
+     *
+     * @param Order $order
+     * @param string $paymentMethod  'Vipps', 'Kredittkort', eller 'Faktura'
+     * @param bool $hasVat           true = med mva, false = uten mva (aktiv elev)
+     * @param string $installmentPlan 'full' eller '3months'
+     */
+    public function createInvoiceForOrder(Order $order, string $paymentMethod, bool $hasVat, string $installmentPlan = 'full')
+    {
+        $user = $order->user;
+        $shopManuscript = ShopManuscript::find($order->item_id);
+        $basePrice = $order->price;
+        $mva = $order->additional ?? 0;
+
+        // Velg riktig Fiken produkt-ID
+        $productId = $hasVat ? 5686476118 : 884373255;
+
+        if ($installmentPlan === '3months') {
+            // 3 måneder delbetaling — 3 fakturaer
+            $totalPrice = $basePrice + $mva;
+            $perInstallment = round($totalPrice / 3);
+            $perInstallmentBase = round($basePrice / 3);
+            $perInstallmentMva = round($mva / 3);
+
+            for ($i = 1; $i <= 3; $i++) {
+                // Siste faktura tar rest for å unngå avrundingsfeil
+                if ($i === 3) {
+                    $thisBase = $basePrice - ($perInstallmentBase * 2);
+                    $thisMva = $mva - ($perInstallmentMva * 2);
+                } else {
+                    $thisBase = $perInstallmentBase;
+                    $thisMva = $perInstallmentMva;
+                }
+
+                $dueDate = Carbon::now()->addMonths($i)->format('Y-m-d');
+
+                $comment = '(Manuskript: ' . $shopManuscript->title;
+                $shopManuscriptOrder = $order->shopManuscriptOrder;
+                if ($shopManuscriptOrder && $shopManuscriptOrder->coaching_time_later > 0) {
+                    $comment .= ', Coaching: ' . $shopManuscriptOrder->coaching_time_later . ' min';
+                }
+                $comment .= ', Betalingsmodus: ' . $paymentMethod . ', ';
+                $comment .= 'Betalingsplan: 3 måneder - del ' . $i . ' av 3)';
+
+                $invoice_fields = [
+                    'user_id' => $user->id,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'netAmount' => $thisBase * 100,
+                    'dueDate' => $dueDate,
+                    'description' => 'Kursordrefaktura',
+                    'productID' => $productId,
+                    'email' => $user->email,
+                    'telephone' => optional($user->address)->phone,
+                    'address' => optional($user->address)->street,
+                    'postalPlace' => optional($user->address)->city,
+                    'postalCode' => optional($user->address)->zip,
+                    'comment' => $comment,
+                    'payment_mode' => $paymentMethod,
+                    'index' => $i, // Kun faktura 1 sendes automatisk
+                ];
+
+                if ($hasVat) {
+                    $invoice_fields['vat'] = $thisMva * 100;
+                }
+
+                $invoice = new FikenInvoice;
+                $invoice->create_invoice($invoice_fields, $hasVat);
+            }
+        } else {
+            // Hele beløpet — én faktura
+            $dueDate = Carbon::now()->addDays($shopManuscript->full_price_due_date)->format('Y-m-d');
+
+            $comment = '(Manuskript: ' . $shopManuscript->title;
+            $shopManuscriptOrder = $order->shopManuscriptOrder;
+            if ($shopManuscriptOrder && $shopManuscriptOrder->coaching_time_later > 0) {
+                $comment .= ', Coaching: ' . $shopManuscriptOrder->coaching_time_later . ' min';
+            }
+            $comment .= ', Betalingsmodus: ' . $paymentMethod . ', ';
+            $comment .= 'Betalingsplan: Hele beløpet)';
+
+            $invoice_fields = [
+                'user_id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'netAmount' => $basePrice * 100,
+                'dueDate' => $dueDate,
+                'description' => 'Kursordrefaktura',
+                'productID' => $productId,
+                'email' => $user->email,
+                'telephone' => optional($user->address)->phone,
+                'address' => optional($user->address)->street,
+                'postalPlace' => optional($user->address)->city,
+                'postalCode' => optional($user->address)->zip,
+                'comment' => $comment,
+                'payment_mode' => $paymentMethod,
+            ];
+
+            if ($hasVat) {
+                $invoice_fields['vat'] = $mva * 100;
+            }
+
+            $invoice = new FikenInvoice;
+            $invoice->create_invoice($invoice_fields, $hasVat);
+        }
     }
 }
