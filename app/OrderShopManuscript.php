@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class OrderShopManuscript extends Model
 {
     protected $fillable = ['order_id', 'genre', 'file', 'words', 'description', 'synopsis', 'coaching_time_later',
-        'send_to_email'];
+        'coaching_topic', 'send_to_email'];
 
     public function order(): BelongsTo
     {

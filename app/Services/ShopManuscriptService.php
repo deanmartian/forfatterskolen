@@ -589,6 +589,7 @@ class ShopManuscriptService
             'description' => $request->description,
             'synopsis' => $synopsis,
             'coaching_time_later' => in_array((int) $request->coaching_time_later, [30, 60]) ? (int) $request->coaching_time_later : 0,
+            'coaching_topic' => $request->coaching_topic,
             'send_to_email' => filter_var($request->send_to_email, FILTER_VALIDATE_BOOLEAN),
         ]);
     }
