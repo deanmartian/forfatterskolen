@@ -271,6 +271,7 @@ Route::domain($front)->group(function () {
             Route::get('/{id}/checkout-svea', [Frontend\ShopController::class, 'sveaCheckout'])->name('front.course.svea-checkout'); // Checkout
             Route::post('/{id}/checkout/process-order', [Frontend\ShopController::class, 'processOrder'])->name('front.course.process_order'); // Place Order
             Route::get('/{id}/thank-you', [Frontend\CourseController::class, 'thankyou'])->name('front.course.thank-you'); // Checkout
+            Route::get('/{id}/confirmation/{order}', [Frontend\CourseController::class, 'confirmation'])->name('front.course.confirmation'); // Confirmation
             Route::post('/{id}/checkout/validate-form', [Frontend\ShopController::class, 'validateCheckoutForm'])->name('front.course.checkout.validate-form');
             Route::post('/{id}/checkout/vipps', [Frontend\ShopController::class, 'vippsCheckout'])->name('front.course.checkout.vipps');
             Route::get('/{id}/checkout/process-vipps', [Frontend\ShopController::class, 'processVipps'])->name('front.course.checkout.process-vipps');
@@ -278,6 +279,7 @@ Route::domain($front)->group(function () {
             Route::post('/{id}/proceed-checkout', [Frontend\ShopController::class, 'proceedCheckout'])->name('front.course.proceed-checkout'); // Checkout
             Route::get('/{id}/discount/{coupon}', [Frontend\ShopController::class, 'applyDiscount'])->name('front.course.apply-discount'); // Checkout
             Route::post('/{id}/checkout/place_order', [Frontend\ShopController::class, 'place_order'])->name('front.course.place_order'); // Place Order
+            Route::get('/{id}/payment', [Frontend\ShopController::class, 'payment'])->name('front.course.payment'); // Payment (delbetaling)
             Route::post('/{id}/checkout/place_order_test', [Frontend\ShopController::class, 'place_order_test'])->name('front.course.place_order_test'); // Place Order
             Route::get('/{id}/check_discount/', [Frontend\ShopController::class, 'checkDiscount'])->name('front.course.checkDiscount'); // Check Discount
             Route::get('/{id}/check_coupon_discount/{coupon}', [Frontend\ShopController::class, 'checkCouponDiscount'])->name('front.course.checkCouponDiscount'); // Check Coupon Discount
