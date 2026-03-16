@@ -255,7 +255,7 @@
 
                     {{-- Tab content --}}
                     <div class="tab-content">
-                        <div class="tab-pane fade in active">
+                        <div class="tab-pane fade show active">
                             @if( Request::input('tab') == 'various')
                                 @include('frontend.learner.self-publishing.project.partials._various')
                             @elseif( Request::input('tab') == 'inventory')

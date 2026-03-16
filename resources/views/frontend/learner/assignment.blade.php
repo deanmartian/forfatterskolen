@@ -25,14 +25,18 @@
 .op-redesign .op-header h1 { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin-bottom: 0.25rem; }
 .op-redesign .op-header p { font-size: 0.875rem; color: #5a5550; margin: 0; }
 
-/* ── SIDEBAR TOGGLE (alltid synlig) ──────────────────── */
+/* ── SIDEBAR TOGGLE — vinrød, stor og tydelig ──────────────────── */
 .op-redesign .op-sidebar-toggle {
-	display: flex !important; position: fixed; top: 12px; left: 12px; z-index: 1050;
-	width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.12);
-	background: #fff; align-items: center; justify-content: center; cursor: pointer;
-	box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 0;
+	display: none; position: fixed; top: 16px; left: 16px; z-index: 1050;
+	width: 50px; height: 50px; border-radius: 14px; border: 2px solid rgba(255,255,255,0.3);
+	background: #862736; align-items: center; justify-content: center; cursor: pointer;
+	box-shadow: 0 4px 16px rgba(134, 39, 54, 0.4), 0 0 0 3px rgba(134, 39, 54, 0.15);
+	padding: 0; transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
 }
-.op-redesign .op-sidebar-toggle svg { width: 20px; height: 20px; stroke: #1a1a1a; }
+.op-redesign .op-sidebar-toggle:hover { background: #9c2e40; transform: scale(1.05); }
+.op-redesign .op-sidebar-toggle:active { transform: scale(0.96); }
+.op-redesign .op-sidebar-toggle svg { width: 24px; height: 24px; stroke: #fff; stroke-width: 2.5; }
+@media (max-width: 1026px) { .op-redesign .op-sidebar-toggle { display: flex !important; } }
 
 /* ── TABS ─────────────────────────────────────────── */
 .op-redesign .op-tabs {

@@ -43,7 +43,7 @@
                             </ul>
 
                             <div class="tab-content">
-                                <div class="tab-pane fade in active">
+                                <div class="tab-pane fade show active">
                                     @if( Request::input('tab') == 'inventory' || Request::input('tab') == '')
                                         @include('frontend.learner.self-publishing.book-for-sale-partials._inventory')
                                      @elseif (Request::input('tab') == 'sales-report')

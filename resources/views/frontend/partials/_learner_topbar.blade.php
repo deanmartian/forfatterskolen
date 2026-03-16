@@ -28,8 +28,15 @@
                 <img src="{{Auth::user()->profile_image}}" alt="User Image" id="user-image">
             </a>
         </div>
-        <button type="button" id="sidebarCollapse" class="btn btn-light d-xl-none">
-            <span class="glyphicon glyphicon-menu-hamburger"></span>
+        <button type="button" id="sidebarCollapse" class="btn d-xl-none" style="
+            display: inline-flex !important; align-items: center; justify-content: center;
+            width: 44px; height: 44px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);
+            background: #862736; padding: 0; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(134, 39, 54, 0.35);
+        ">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+                <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
+            </svg>
         </button>
     </div>
 </div>

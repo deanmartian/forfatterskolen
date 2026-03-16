@@ -101,7 +101,7 @@
 								</ul> <!-- end nav-tabs-->
 
 								<div class="tab-content p-0">
-									<div id="profile-panel" class="tab-pane fade in active" role="tabpanel">
+									<div id="profile-panel" class="tab-pane fade show active" role="tabpanel">
                                                                                 <form id="profileForm" method="POST" action="{{route('learner.profile.update')}}" enctype="multipart/form-data"
                                                                                 onsubmit="disableSubmit(this)">
 											{{csrf_field()}}

@@ -165,7 +165,7 @@
                     </div> <!-- end tabs-container -->
 
                     <div class="tab-content">
-                        <div id="home" class="tab-pane fade in active">
+                        <div id="home" class="tab-pane fade show active">
                             <div class="container">
                                 <?php $featured = 0 ?>
                                 @foreach( $popular_courses as $popular_course )

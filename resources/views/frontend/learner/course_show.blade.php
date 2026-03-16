@@ -23,14 +23,32 @@
 
 .cv-inner { max-width: 880px; }
 
-/* Mobile sidebar toggle */
-@media (max-width: 1025px) {
-    .cv-redesign .cv-mobile-toggle {
-        position: fixed; top: 0.75rem; right: 0.75rem; z-index: 100;
-        background: #fff; border: 1px solid rgba(0,0,0,0.12);
-        border-radius: 8px; padding: 0.5rem 0.75rem; cursor: pointer;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+/* Mobile sidebar toggle — vinrød, stor og tydelig */
+.cv-redesign .cv-sidebar-toggle {
+    display: none;
+}
+@media (max-width: 1026px) {
+    .cv-redesign .cv-sidebar-toggle {
+        display: flex !important;
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        z-index: 1050;
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        border: 2px solid rgba(255,255,255,0.3);
+        background: #862736;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(134, 39, 54, 0.4), 0 0 0 3px rgba(134, 39, 54, 0.15);
+        padding: 0;
+        transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
     }
+    .cv-redesign .cv-sidebar-toggle:hover { background: #9c2e40; transform: scale(1.05); }
+    .cv-redesign .cv-sidebar-toggle:active { transform: scale(0.96); }
+    .cv-redesign .cv-sidebar-toggle svg { width: 24px; height: 24px; stroke: #fff; stroke-width: 2.5; }
 }
 
 /* ── COURSE HEADER ── */
@@ -191,12 +209,26 @@
 .cv-webinars__empty { text-align: center; padding: 2rem; color: #8a8580; font-size: 0.85rem; }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 600px) {
+#main-content { overflow-x: hidden !important; max-width: 100vw; }
+#main-container { overflow-x: hidden !important; }
+
+@media (max-width: 768px) {
+    .cv-redesign { padding: 1.25rem 1rem; padding-top: 80px; }
+    .cv-inner { max-width: 100%; }
     .cv-quick { flex-direction: column; }
     .cv-module { padding: 0.85rem 1rem; }
-    .cv-redesign { padding: 1.5rem; }
-    .cv-header { padding: 1.25rem 1.5rem; }
-    .cv-kursplan { padding: 1.5rem; }
+    .cv-header { padding: 1.25rem 1rem; border-radius: 12px; }
+    .cv-kursplan { padding: 1.25rem 1rem; }
+    .cv-header__title { font-size: 1.15rem; }
+    .cv-redesign, .cv-inner, .cv-header, .cv-module, .cv-kursplan { min-width: 0; }
+    .cv-header__title, .cv-header__instructor, .cv-module__title {
+        word-wrap: break-word; overflow-wrap: break-word;
+    }
+}
+@media (max-width: 480px) {
+    .cv-redesign { padding: 1rem 0.75rem; padding-top: 76px; }
+    .cv-header { padding: 1rem 0.85rem; }
+    .cv-header__title { font-size: 1.05rem; }
 }
 </style>
 @stop
@@ -259,10 +291,12 @@
 
 <div class="cv-redesign">
 
-    {{-- Mobile sidebar toggle --}}
-    <button id="sidebarCollapse" class="cv-mobile-toggle d-xl-none">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    {{-- Mobile sidebar toggle — vinrød, stor og tydelig --}}
+    <button class="cv-sidebar-toggle" data-sidebar-toggle aria-label="Meny">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round">
+            <line x1="4" y1="7" x2="20" y2="7"/>
+            <line x1="4" y1="12" x2="20" y2="12"/>
+            <line x1="4" y1="17" x2="20" y2="17"/>
         </svg>
     </button>
 
@@ -524,5 +558,16 @@
     @if (Session::has('success'))
         $('#submitSuccessModal').modal('show');
     @endif
+
+    /* Auto-collapse sidebar on mobile */
+    setTimeout(function() {
+        var sidebar = document.getElementById('sidebar');
+        var mainContainer = document.getElementById('main-container');
+        if (window.innerWidth <= 1026 && sidebar) {
+            sidebar.classList.remove('sidebar-visible');
+            if (mainContainer) mainContainer.classList.remove('enlarge');
+            document.body.classList.remove('sidebar-open');
+        }
+    }, 150);
 </script>
 @stop

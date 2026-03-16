@@ -348,7 +348,7 @@
 
                     {{-- ══════ Tab content ══════ --}}
                     <div class="tab-content">
-                        <div class="tab-pane fade in active">
+                        <div class="tab-pane fade show active">
 
                             {{-- ────── Distribution tab ────── --}}
                             @if( Request::input('tab') == 'distribution')
