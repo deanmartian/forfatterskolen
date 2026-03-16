@@ -63,29 +63,26 @@ class ShopManuscriptController extends Controller
     public function checkout($id): View
     {
         $shopManuscript = ShopManuscript::findOrFail($id);
-        $user = \Auth::user();
-        $userHasPaidCourse = FrontendHelpers::userHasPaidCourse();
+        $user = Auth::user();
+        $userHasPaidCourse = false;
 
         if ($user) {
             $user['address'] = $user->address;
+            // Aktiv elev = har aktivt kurs 17 (mentormøter) som ikke er utløpt
+            $userHasPaidCourse = $user->activePaidCoursesTakenNotExpired()
+                ->whereHas('package', fn($q) => $q->where('course_id', 17))
+                ->exists();
             $user->checkoutLogs()->firstOrCreate([
                 'parent' => 'shop-manuscript',
                 'parent_id' => $shopManuscript->id,
             ]);
-        } else {
-            return view('frontend.shop-manuscript.login');
-        }
-        $assignmentTypes = FrontendHelpers::assignmentType();
-        $originalPrice = $shopManuscript->full_payment_price;
-        if (! Str::contains($shopManuscript->title, 'Start') && ! Str::contains($shopManuscript->title, '1')) {
-            $extra_price = ($shopManuscript->max_words - 17500) * FrontendHelpers::manuscriptExcessPerWordPrice();
-            //if (!session()->has('temp_uploaded_file')) {
-                $originalPrice = $shopManuscript->full_payment_price + $extra_price;
-            //}
         }
 
-        return view('frontend.shop-manuscript.checkout-svea', compact('shopManuscript', 'user', 'assignmentTypes',
-            'userHasPaidCourse', 'originalPrice'));
+        $tempFile = session('temp_uploaded_file');
+
+        return view('frontend.shop-manuscript.checkout-redesign', compact(
+            'shopManuscript', 'user', 'userHasPaidCourse', 'tempFile'
+        ));
     }
 
     /**
@@ -295,13 +292,267 @@ class ShopManuscriptController extends Controller
     }
 
     /**
+     * Opprett ordre og redirect til betalingsside
+     */
+    public function createOrderAndRedirect($id, Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
+    {
+        $request->validate([
+            'street' => 'required',
+            'zip' => 'required',
+            'city' => 'required',
+            'phone' => 'required',
+        ]);
+
+        $user = Auth::user();
+
+        // Oppdater adresse
+        Address::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'street' => $request->street,
+                'zip' => $request->zip,
+                'city' => $request->city,
+                'phone' => $request->phone,
+            ]
+        );
+
+        // Coaching add-on: legg coaching-pris til i price
+        $coachingPrice = (int) $request->input('coaching_price', 0);
+        $coachingDuration = (int) $request->input('coaching_time_later', 0);
+        $originalPrice = (int) $request->input('price', 0);
+
+        if ($coachingPrice > 0 && in_array($coachingDuration, [30, 60])) {
+            // Inkluder coaching i totalpris (price = manus eks. mva + coaching eks. mva)
+            $request->merge(['price' => $originalPrice + $coachingPrice]);
+        }
+
+        // Opprett ordre via service
+        $orderRecord = $shopManuscriptService->createOrder($request);
+
+        // Opprett OrderShopManuscript med temp-fil fra session
+        $tempFile = session('temp_uploaded_file');
+        if ($tempFile) {
+            $request->merge(['temp_file' => 'true']);
+            $shopManuscriptService->createOrderShopManuscript($orderRecord->id, $request);
+        }
+
+        return redirect()->route('front.shop-manuscript.payment-selection', [
+            'id' => $id,
+            'order_id' => $orderRecord->id,
+        ]);
+    }
+
+    /**
+     * Vis betalingsvalg-side
+     */
+    public function paymentSelection($id, $order_id, Request $request): View
+    {
+        $order = Order::findOrFail($order_id);
+        $user = Auth::user();
+
+        // Verifiser at ordren tilhører innlogget bruker
+        if ($order->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $shopManuscript = ShopManuscript::findOrFail($id);
+
+        // Sjekk om aktiv elev (kurs 17) for mva-fritak
+        $userHasPaidCourse = $user->activePaidCoursesTakenNotExpired()
+            ->whereHas('package', fn($q) => $q->where('course_id', 17))
+            ->exists();
+
+        $basePrice = $order->price;
+        $mva = $order->additional ?? 0;
+        $totalPrice = $basePrice + $mva;
+
+        // Coaching-info fra OrderShopManuscript
+        $shopManuscriptOrder = $order->shopManuscriptOrder;
+        $coachingDuration = $shopManuscriptOrder ? (int) $shopManuscriptOrder->coaching_time_later : 0;
+        $coachingPrices = [30 => 1071, 60 => 1521];
+        $coachingPrice = $coachingPrices[$coachingDuration] ?? 0;
+
+        return view('frontend.shop-manuscript.payment-selection', compact(
+            'order', 'shopManuscript', 'user', 'userHasPaidCourse', 'basePrice', 'mva', 'totalPrice',
+            'coachingDuration', 'coachingPrice'
+        ));
+    }
+
+    /**
+     * Prosesser Vipps-betaling
+     */
+    public function processPaymentVipps($id, $order_id, Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
+    {
+        $order = Order::findOrFail($order_id);
+        $user = Auth::user();
+
+        if ($order->user_id !== $user->id) {
+            abort(403);
+        }
+
+        // Sett payment_mode til Vipps (id=5)
+        $order->payment_mode_id = 5;
+        $order->save();
+
+        $price = ($order->price + ($order->additional ?? 0)) - ($order->discount ?? 0);
+        $orderId = $order->id . '-' . $user->id;
+        $shopManuscript = ShopManuscript::find($order->item_id);
+
+        $vippsData = [
+            'amount' => $price * 100,
+            'orderId' => $orderId,
+            'transactionText' => $shopManuscript->title,
+            'is_ajax' => true,
+            'vipps_phone_number' => optional($user->address)->vipps_phone_number,
+            'fallbackUrl' => url('/manusutvikling/' . $id . '/thankyou?ord=' . $order->id),
+        ];
+
+        return redirect()->to($this->vippsInitiatePayment($vippsData));
+    }
+
+    /**
+     * Prosesser PayPal/kredittkort-betaling
+     */
+    public function processPaymentPaypal($id, $order_id, Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
+    {
+        $order = Order::findOrFail($order_id);
+        $user = Auth::user();
+
+        if ($order->user_id !== $user->id) {
+            abort(403);
+        }
+
+        // Sett payment_mode til Paypal (id=4)
+        $order->payment_mode_id = 4;
+        $order->save();
+
+        $totalPrice = ($order->price + ($order->additional ?? 0)) - ($order->discount ?? 0);
+
+        // Sjekk om aktiv elev for mva-fritak
+        $userHasPaidCourse = $user->activePaidCoursesTakenNotExpired()
+            ->whereHas('package', fn($q) => $q->where('course_id', 17))
+            ->exists();
+        $hasVat = !$userHasPaidCourse;
+
+        // Opprett Fiken-faktura (sendes IKKE — payment_mode = 'Kredittkort')
+        $shopManuscriptService->createInvoiceForOrder($order, 'Kredittkort', $hasVat);
+
+        // Lagre session-data for PayPal return
+        session([
+            'paypal_order_id' => $order->id,
+            'paypal_manuscript_id' => $id,
+        ]);
+
+        $paypal = new Paypal;
+        $response = $paypal->purchase([
+            'amount' => $paypal->formatAmount($totalPrice),
+            'transactionId' => $order->id,
+            'currency' => 'NOK',
+            'cancelUrl' => url('/manusutvikling/' . $id . '/payment/' . $order->id),
+            'returnUrl' => route('front.shop-manuscript.paypal-return', ['id' => $id, 'order_id' => $order->id]),
+        ]);
+
+        if ($response->isRedirect()) {
+            $response->redirect();
+        }
+
+        return redirect()->route('front.shop-manuscript.payment-selection', ['id' => $id, 'order_id' => $order->id])
+            ->with('error', 'Kunne ikke starte PayPal-betaling. Prøv igjen.');
+    }
+
+    /**
+     * PayPal return callback
+     */
+    public function paypalReturn($id, $order_id, Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
+    {
+        $order = Order::findOrFail($order_id);
+        $user = Auth::user();
+
+        if ($order->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $totalPrice = ($order->price + ($order->additional ?? 0)) - ($order->discount ?? 0);
+
+        $paypal = new Paypal;
+        $response = $paypal->complete([
+            'amount' => $paypal->formatAmount($totalPrice),
+            'transactionId' => $order->id,
+            'currency' => 'NOK',
+            'cancelUrl' => url('/manusutvikling/' . $id . '/payment/' . $order->id),
+            'returnUrl' => route('front.shop-manuscript.paypal-return', ['id' => $id, 'order_id' => $order->id]),
+            'notifyUrl' => $paypal->getNotifyUrl($order->id),
+        ]);
+
+        if ($response->isSuccessful()) {
+            // Fullfør ordren
+            if (!$order->is_processed) {
+                $shopManuscriptTaken = $shopManuscriptService->addShopManuscriptToLearner($order);
+                $shopManuscriptService->notifyAdmin($order);
+                $shopManuscriptService->notifyUser($order, $shopManuscriptTaken);
+                $order->is_processed = 1;
+                $order->save();
+            }
+
+            session()->forget(['temp_uploaded_file', 'paypal_order_id', 'paypal_manuscript_id']);
+
+            return redirect('/manusutvikling/' . $id . '/thankyou?ord=' . $order->id);
+        }
+
+        return redirect()->route('front.shop-manuscript.payment-selection', ['id' => $id, 'order_id' => $order->id])
+            ->with('error', 'PayPal-betalingen mislyktes. Prøv igjen.');
+    }
+
+    /**
+     * Prosesser faktura-betaling via Fiken
+     */
+    public function processPaymentFaktura($id, $order_id, Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
+    {
+        $order = Order::findOrFail($order_id);
+        $user = Auth::user();
+
+        if ($order->user_id !== $user->id) {
+            abort(403);
+        }
+
+        // Sett payment_mode til Faktura (id=3)
+        $order->payment_mode_id = 3;
+        $order->is_pay_later = 1;
+        $order->save();
+
+        $installmentPlan = $request->input('installment_plan', 'full');
+
+        // Sjekk om aktiv elev for mva-fritak
+        $userHasPaidCourse = $user->activePaidCoursesTakenNotExpired()
+            ->whereHas('package', fn($q) => $q->where('course_id', 17))
+            ->exists();
+        $hasVat = !$userHasPaidCourse;
+
+        // Opprett Fiken-faktura(er) — sendes automatisk for Faktura-modus
+        $shopManuscriptService->createInvoiceForOrder($order, 'Faktura', $hasVat, $installmentPlan);
+
+        // Fullfør ordren
+        if (!$order->is_processed) {
+            $shopManuscriptTaken = $shopManuscriptService->addShopManuscriptToLearner($order);
+            $shopManuscriptService->notifyAdmin($order);
+            $shopManuscriptService->notifyUser($order, $shopManuscriptTaken);
+            $order->is_processed = 1;
+            $order->save();
+        }
+
+        session()->forget('temp_uploaded_file');
+
+        return redirect('/manusutvikling/' . $id . '/thankyou?ord=' . $order->id);
+    }
+
+    /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function thankyou($id, Request $request, ShopManuscriptService $shopManuscriptService): View
     {
-        // check if from svea payment
-        if ($request->has('svea_ord') || $request->has('pl_ord')) {
-            $order_id = $request->input('svea_ord') ?? $request->input('pl_ord');
+        // check if from svea payment or pay later or new payment flow
+        if ($request->has('svea_ord') || $request->has('pl_ord') || $request->has('ord')) {
+            $order_id = $request->input('svea_ord') ?? $request->input('pl_ord') ?? $request->input('ord');
             $order = Order::find($order_id);
 
             if ($request->has('svea_ord')) {

@@ -73,8 +73,9 @@ Route::domain($front)->group(function () {
         Route::get('/webinartakk', [Frontend\HomeController::class, 'webinarThanks'])->name('front.webinar-thanks'); // Support Article
         Route::get('/children', [Frontend\HomeController::class, 'children'])->name('front.children');
         Route::view('/subscribe-success', 'frontend.subscribe-success')->name('front.subscribe-success'); // Homepage
-        Route::get('/shop-manuscript', [Frontend\ShopManuscriptController::class, 'index'])->name('front.shop-manuscript.index'); // Shop Manuscript Listing
-        Route::get('/shop-manuscript/export-single-bought', [Frontend\ShopManuscriptController::class, 'exportSingleBought']); // Shop Manuscript Listing
+        Route::get('/manusutvikling', [Frontend\ShopManuscriptController::class, 'index'])->name('front.shop-manuscript.index'); // Shop Manuscript Listing
+        Route::get('/manusutvikling/export-single-bought', [Frontend\ShopManuscriptController::class, 'exportSingleBought']); // Shop Manuscript Listing
+        Route::redirect('/shop-manuscript', '/manusutvikling', 301); // 301-redirect fra gammel URL
         Route::get('/blog', [Frontend\HomeController::class, 'blog'])->name('front.blog'); // Blog Page
         Route::get('/blog/{id}', [Frontend\HomeController::class, 'readBlog'])->name('front.read-blog'); // Blog Page
         Route::get('/publishing', [Frontend\HomeController::class, 'publishing'])->name('front.publishing'); // Forlag page
@@ -171,7 +172,7 @@ Route::domain($front)->group(function () {
 
         Route::get('/forget-session-key/{key}', [Frontend\HomeController::class, 'forgetSessionKey']);
 
-        Route::prefix('shop-manuscript')->group(function () {
+        Route::prefix('manusutvikling')->group(function () {
             Route::get('/{id}/checkout', [Frontend\ShopManuscriptController::class, 'checkout'])->name('front.shop-manuscript.checkout'); // Checkout Shop Manuscript
             Route::post('/{id}/place_order', [Frontend\ShopManuscriptController::class, 'place_order'])->name('front.shop-manuscript.place_order'); // Checkout Shop Manuscript
             Route::get('/{id}/cancelled-order', [Frontend\ShopManuscriptController::class, 'orderCancelled'])->name('front.shop-manuscript.cancelled-order'); // Checkout
@@ -180,9 +181,26 @@ Route::domain($front)->group(function () {
             Route::post('/{id}/checkout/vipps', [Frontend\ShopManuscriptController::class, 'vippsCheckout'])->name('front.shop-manuscript.vipps');
             Route::get('/{id}/checkout/process-vipps', [Frontend\ShopManuscriptController::class, 'processVipps'])->name('front.shop-manuscript.checkout.process-vipps');
             Route::get('/{id}/thankyou', [Frontend\ShopManuscriptController::class, 'thankyou'])->name('front.shop-manuscript.thankyou');
-        });
 
-        Route::get('/shop-manuscript/payment/paypal/{invoice_id}', [Frontend\ShopManuscriptController::class, 'paypalPayment'])->name('front.shop-manuscript.paypal-payment'); // Paypal Payment
+            // Betalingsflyt — opprett ordre og velg betalingsmetode
+            Route::post('/{id}/create-order', [Frontend\ShopManuscriptController::class, 'createOrderAndRedirect'])
+                ->name('front.shop-manuscript.create-order')->middleware('auth');
+            Route::get('/{id}/payment/{order_id}', [Frontend\ShopManuscriptController::class, 'paymentSelection'])
+                ->name('front.shop-manuscript.payment-selection')->middleware('auth');
+            Route::post('/{id}/payment/{order_id}/vipps', [Frontend\ShopManuscriptController::class, 'processPaymentVipps'])
+                ->name('front.shop-manuscript.payment.vipps')->middleware('auth');
+            Route::post('/{id}/payment/{order_id}/paypal', [Frontend\ShopManuscriptController::class, 'processPaymentPaypal'])
+                ->name('front.shop-manuscript.payment.paypal')->middleware('auth');
+            Route::post('/{id}/payment/{order_id}/faktura', [Frontend\ShopManuscriptController::class, 'processPaymentFaktura'])
+                ->name('front.shop-manuscript.payment.faktura')->middleware('auth');
+            Route::get('/{id}/payment/{order_id}/paypal-return', [Frontend\ShopManuscriptController::class, 'paypalReturn'])
+                ->name('front.shop-manuscript.paypal-return')->middleware('auth');
+        });
+        // 301-redirects fra gamle shop-manuscript checkout URLer
+        Route::get('/shop-manuscript/{id}/checkout', fn($id) => redirect("/manusutvikling/{id}/checkout", 301));
+        Route::get('/shop-manuscript/{id}/thankyou', fn($id) => redirect("/manusutvikling/{id}/thankyou", 301));
+
+        Route::get('/manusutvikling/payment/paypal/{invoice_id}', [Frontend\ShopManuscriptController::class, 'paypalPayment'])->name('front.shop-manuscript.paypal-payment'); // Paypal Payment
         Route::post('/upgrade-manuscript/{id}/place_upgrade', [Frontend\ShopManuscriptController::class, 'upgradeManuscript'])->name('front.shop-manuscript.upgrade-manuscript'); // Checkout Shop Manuscript
 
         Route::get('/email/confirmation/{token}', [Frontend\HomeController::class, 'emailConfirmation'])->name('front.email-confirmation');
@@ -205,7 +223,7 @@ Route::domain($front)->group(function () {
 
         // Test Manuscript (Shop Manuscript)
         Route::post('/test_manuscript', [Frontend\ShopManuscriptController::class, 'test_manuscript'])->name('front.shop-manuscript.test_manuscript'); // Test count shop manuscript
-        Route::post('/shop-manuscript/store-temp-upload', [Frontend\ShopManuscriptController::class, 'storeTempUploadedFile'])->name('front.shop-manuscript.store-temp-upload');
+        Route::post('/manusutvikling/store-temp-upload', [Frontend\ShopManuscriptController::class, 'storeTempUploadedFile'])->name('front.shop-manuscript.store-temp-upload');
         Route::post('/documents/convert-to-docx', [Frontend\DocumentConversionController::class, 'convertToDocx'])->name('front.documents.convert-to-docx');
 
         // Pay IPN

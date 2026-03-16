@@ -263,6 +263,9 @@ class LoginController extends Controller
 
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 2])) {
                 // Authentication passed...
+                if ($request->filled('redirect_url')) {
+                    return redirect()->to($request->redirect_url);
+                }
                 return redirect()->back();
             }
 
