@@ -221,7 +221,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-6 @if(Request::is('account/shop-manuscript*')) active @endif">
+        <div class="col-sm-4 col-6 @if(Request::is('account/manus*')) active @endif">
             <div>
                 <a href="{{route('learner.shop-manuscript')}}">
                     <i class="sprite-menu file d-block"></i>
