@@ -219,6 +219,13 @@
 }
 .fw-search-bar__input:focus { border-color: var(--fw-wine); }
 .fw-search-bar__input::placeholder { color: var(--fw-text-muted); }
+.fw-search-bar__clear {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--fw-border-strong);
+    background: #fff; color: var(--fw-text-muted); font-size: 1rem;
+    text-decoration: none; flex-shrink: 0; transition: all 0.15s;
+}
+.fw-search-bar__clear:hover { border-color: var(--fw-wine); color: var(--fw-wine); text-decoration: none; }
 
 .fw-reprise-list {
     background: #fff; border: 1px solid var(--fw-border);
@@ -505,11 +512,14 @@
     {{-- ═══════════ TAB 2: REPRISER ═══════════ --}}
     <div class="fw-panel {{ $activeTab === 'replay' ? 'active' : '' }}" id="panel-reprise">
 
-        <form class="fw-search-bar" method="get" action="{{ route('learner.webinar') }}">
+        <form class="fw-search-bar" method="get" action="{{ route('learner.webinar') }}" onsubmit="if(!this.search_replay.value.trim()){window.location='{{ route('learner.webinar') }}?tab=replay';return false;}">
             <input type="hidden" name="tab" value="replay">
             <input type="text" class="fw-search-bar__input" name="search_replay"
                    value="{{ Request::input('search_replay') }}"
                    placeholder="Søk etter mentor, tema eller dato...">
+            @if(Request::input('search_replay'))
+                <a href="{{ route('learner.webinar') }}?tab=replay" class="fw-search-bar__clear" title="Nullstill søk">✕</a>
+            @endif
         </form>
 
         @if(isset($replayWebinars) && $replayWebinars->count() > 0)

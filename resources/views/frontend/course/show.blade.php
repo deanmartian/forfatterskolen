@@ -270,7 +270,7 @@
 
 					<div class="tab-content course-tabs pt-0">
 
-						<div id="overview" class="tab-pane fade in active" role="tabpanel">
+						<div id="overview" class="tab-pane fade show active" role="tabpanel">
 							<div class="row">
 								<div class="col-md-8">
 									<div class="left-container">

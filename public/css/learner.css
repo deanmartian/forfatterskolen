@@ -54,15 +54,12 @@ body:not(.modal-open) {
 
 /* Overstyr d-xl-none — match sidebar breakpoint 1026px */
 #sidebarCollapse {
-    color: var(--white);
-    background: none;
-    border: none;
     display: none !important;
 }
 
 @media only screen and (max-width: 1026px) {
     #sidebarCollapse {
-        display: inline-block !important;
+        display: inline-flex !important;
     }
 }
 

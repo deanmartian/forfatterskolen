@@ -2,7 +2,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('title')
-<title>Invoices &rsaquo; Forfatterskolen</title>
+<title>Fakturaer &rsaquo; Forfatterskolen</title>
 @stop
 
 @section('heading') {{ trans('site.learner.my-invoice') }} @stop
@@ -15,6 +15,28 @@
 			border: 1px solid #ddd;
 			border-bottom-color: transparent;
 		} */
+
+		/* Fjern grå understreking på inaktive faner */
+		#invoiceTabs .nav-link {
+			border-bottom: none !important;
+			cursor: pointer;
+		}
+		#invoiceTabs .nav-link.active {
+			border-bottom: 3px solid #E83A47 !important;
+			font-weight: bold;
+			color: #000;
+		}
+
+		/* Fiken-tabell: scroll horisontalt inne i sin boks, ikke hele siden */
+		.fiken-table-wrap {
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		/* Forhindre at hele siden får horisontal overflow */
+		.learner-invoice-wrapper {
+			overflow-x: hidden;
+		}
 
 		#viewOrderModal table.no-border td {
 			border: none;
@@ -49,8 +71,65 @@
 			display: block;
 		}
 
-                /* Faktura-kort mobil */
+                /* Mobil-kort — generisk for alle faner */
+        .inv-mobile-cards { display: none; }
         .fiken-mobile-cards { display: none; }
+
+        .inv-card {
+            background: #fff;
+            border: 1px solid #e4e8ed;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        .inv-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .inv-card-title {
+            font-weight: 700;
+            color: #2e3a59;
+            font-size: 14px;
+            flex: 1;
+            margin-right: 8px;
+        }
+
+        .inv-card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 12px;
+            margin-bottom: 12px;
+        }
+
+        .inv-card-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #5D7285;
+            font-weight: 600;
+        }
+
+        .inv-card-value {
+            font-size: 13px;
+            color: #2e3a59;
+        }
+
+        .inv-card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .inv-card-actions .btn {
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 8px;
+        }
 
         .fiken-card {
             background: #fff;
@@ -148,32 +227,11 @@
                 border-color: #5F0000;
             }
 
-            /* Skjul desktop tabell, vis kort */
+            /* Skjul desktop tabell, vis mobilkort */
             .fiken-table-wrap { display: none; }
             .fiken-mobile-cards { display: block; }
-
-            /* Andre tabeller generelt */
-            .learner-invoice-wrapper .table {
-                font-size: 12px;
-            }
-
-            .learner-invoice-wrapper .table th,
-            .learner-invoice-wrapper .table td {
-                padding: 6px 8px;
-                white-space: normal;
-                word-break: break-word;
-            }
-
-            .invoice-actions {
-                min-width: auto;
-                max-width: none;
-                white-space: normal;
-            }
-
-            .invoice-actions .btn {
-                font-size: 11px;
-                padding: 4px 8px;
-            }
+            .inv-desktop-table { display: none; }
+            .inv-mobile-cards { display: block; }
 
             .learner-invoice-wrapper .container {
                 padding-left: 8px;
@@ -195,6 +253,8 @@
 
             .fiken-card { padding: 12px; }
             .fiken-card-value { font-size: 12px; }
+            .inv-card { padding: 12px; }
+            .inv-card-value { font-size: 12px; }
         }
 
         </style>
@@ -217,77 +277,66 @@
 									'label' => 'Svea'
 							],
 							[
-									'name' => 'regret-form',
-									'label' => 'Angreskjema'
-							],
-							[
 								'name' => 'gift',
-								'label' => trans('site.gift-purchases')
+								'label' => 'Gavekjøp'
 							],
-							/* [
-								'name' => 'redeem',
-								'label' => 'Redeem Gift'
-							], */
 							[
 								'name' => 'order-history',
-								'label' => trans('site.order-history.title')
+								'label' => 'Kjøpshistorikk'
 							],
 							[
 									'name' => 'pay-later',
-									'label' => trans('site.pay-later')
+									'label' => 'Betal senere'
 							],
-							/* [
-								'name' => 'time-register',
-								'label' => 'Time Register'
-							] */
 						]
 					@endphp
 
-					<ul class="nav global-nav-tabs">
+					@php
+						$activeTab = Request::input('tab', 'fiken');
+						if (!in_array($activeTab, array_column($tabWithLabel, 'name'))) $activeTab = 'fiken';
+					@endphp
+
+					<ul class="nav global-nav-tabs" id="invoiceTabs">
 						<li class="nav-item">
-							<a href="?tab=fiken" 
-							class="nav-link {{ !in_array(Request::input('tab'), array_column($tabWithLabel, 'name')) ? 'active' : '' }}">
+							<a href="javascript:void(0)" data-tab="fiken"
+							class="nav-link {{ $activeTab === 'fiken' ? 'active' : '' }}">
 								Fiken
 							</a>
 						</li>
 
 						@foreach($tabWithLabel as $tab)
 							<li class="nav-item">
-								<a href="?tab={{ $tab['name'] }}" 
-								class="nav-link {{  ( Request::input('tab') == $tab['name'] ) ? 'active' : '' }}">
+								<a href="javascript:void(0)" data-tab="{{ $tab['name'] }}"
+								class="nav-link {{ $activeTab === $tab['name'] ? 'active' : '' }}">
 									{{ $tab['label'] }}
 								</a>
 							</li>
 						@endforeach
 					</ul>
 
+					<div class="tab-content pt-4">
 
-					<div class="tab-content">
-						<div class="tab-pane fade in active pt-4">
+						{{-- ═══ SVEA ═══ --}}
+						<div class="inv-tab-panel" data-panel="svea" @if($activeTab !== 'svea') style="display:none;" @endif>
 
-							@if( Request::input('tab') == 'svea' )
-
-								<div class="card global-card">
+								{{-- Desktop tabell --}}
+								<div class="card global-card inv-desktop-table">
 									<div class="card-body py-0">
 										<table class="table table-global">
 											<thead>
 												<tr>
-													<th>{{ trans('site.item') }}</th>
-													<th>{{ trans_choice('site.packages', 1) }}</th>
-													<th>{{ trans('site.credit-note') }}</th>
-													<th>{{ trans('site.date') }}</th>
+													<th>Produkt</th>
+													<th>Pakke</th>
+													<th>Kreditnota</th>
+													<th>Dato</th>
 													<th width="150"></th>
 												</tr>
 											</thead>
 											<tbody>
 												@foreach($sveaOrders as $order)
 													<tr>
-														<td>
-															{{ $order->item }}
-														</td>
-														<td>
-															{{ $order->packageVariation }}
-														</td>
+														<td>{{ $order->item }}</td>
+														<td>{{ $order->packageVariation }}</td>
 														<td>
 															@if ($order->is_credited_amount)
 																<a href="{{ route('learner.order.download-credited', $order->id) }}"
@@ -296,9 +345,7 @@
 																</a>
 															@endif
 														</td>
-														<td>
-															{{ $order->created_at_formatted }}
-														</td>
+														<td>{{ $order->created_at_formatted }}</td>
 														<td>
 															@if($order->price)
 																<button class="btn blue-link viewOrderBtn"
@@ -307,7 +354,6 @@
 																		data-fields="{{ json_encode($order) }}">
 																	<i class="fas fa-eye"></i>
 																</button>
-
 																<button class="btn blue-link downloadReceipt"
 																		style="margin-left: 5px"
 																		data-fields="{{ json_encode($order) }}">
@@ -319,62 +365,125 @@
 												@endforeach
 											</tbody>
 										</table>
-									</div> <!-- end card-body -->
-								</div> <!-- end global-card -->
+									</div>
+								</div>
+
+								{{-- Mobilkort --}}
+								<div class="inv-mobile-cards">
+									@foreach($sveaOrders as $order)
+										<div class="inv-card">
+											<div class="inv-card-header">
+												<span class="inv-card-title">{{ $order->item }}</span>
+											</div>
+											<div class="inv-card-grid">
+												<div>
+													<div class="inv-card-label">Pakke</div>
+													<div class="inv-card-value">{{ $order->packageVariation }}</div>
+												</div>
+												<div>
+													<div class="inv-card-label">Dato</div>
+													<div class="inv-card-value">{{ $order->created_at_formatted }}</div>
+												</div>
+											</div>
+											<div class="inv-card-actions">
+												@if ($order->is_credited_amount)
+													<a href="{{ route('learner.order.download-credited', $order->id) }}"
+														class="btn" style="background:#5D7285;color:#fff;flex:1;">
+														<i class="fa fa-download"></i> Kreditnota
+													</a>
+												@endif
+												@if($order->price)
+													<button class="btn viewOrderBtn" style="background:#5F0000;color:#fff;flex:1;"
+															data-bs-toggle="modal"
+															data-bs-target="#viewOrderModal"
+															data-fields="{{ json_encode($order) }}">
+														<i class="fas fa-eye"></i> Vis
+													</button>
+													<button class="btn downloadReceipt" style="background:#2e3a59;color:#fff;flex:1;"
+															data-fields="{{ json_encode($order) }}">
+														<i class="fa fa-download"></i> Kvittering
+													</button>
+												@endif
+											</div>
+										</div>
+									@endforeach
+								</div>
 
 								<div class="float-end">
 									{{ $sveaOrders->appends(request()->except('page'))->links('pagination.short-pagination') }}
 								</div>
-							@elseif( Request::input('tab') == 'regret-form' )
-								<div class="card global-card">
+						</div>
+						{{-- ═══ ANGRESKJEMA (skjult, innhold flyttet til Kjøpshistorikk) ═══ --}}
+						<div class="inv-tab-panel" data-panel="regret-form" style="display:none;">
+								{{-- Desktop tabell --}}
+								<div class="card global-card inv-desktop-table">
 									<div class="card-body py-0">
 										<table class="table table-global">
 										<thead>
 											<tr>
-												<th>{{ trans_choice('site.courses', 1) }}</th>
-												<th>{{ trans('site.learner.files-text') }}</th>
+												<th>Kurs</th>
+												<th>Fil</th>
 											</tr>
 										</thead>
 										<tbody>
 											@foreach($orderAttachments as $orderAttachment)
 												<tr>
 													<td>
-														<p class="float-start">
-															{{ $orderAttachment->course_title }}
-														</p>
-
-														<a href="{{ route('learner.course.show', $orderAttachment->course_taken_id) }}" 
+														<p class="float-start">{{ $orderAttachment->course_title }}</p>
+														<a href="{{ route('learner.course.show', $orderAttachment->course_taken_id) }}"
 															class="float-end blue-link">
 															<i class="fa fa-eye"></i>
 														</a>
 													</td>
 													<td>
-														<p class="float-start">
-															{{ basename($orderAttachment->file_path) }}
-														</p>
-
+														<p class="float-start">{{ basename($orderAttachment->file_path) }}</p>
 														<a href="{{ $orderAttachment->file_path }}?v={{ time() }}" class="float-end blue-link"
 															download>
 															<i class="fa fa-download"></i>
 														</a>
 													</td>
-													<td></td>
 												</tr>
 											@endforeach
 											</tbody>
 										</table>
 									</div>
 								</div>
-							@elseif( Request::input('tab') == 'gift' )
 
-								<div class="card global-card">
+								{{-- Mobilkort --}}
+								<div class="inv-mobile-cards">
+									@foreach($orderAttachments as $orderAttachment)
+										<div class="inv-card">
+											<div class="inv-card-header">
+												<span class="inv-card-title">{{ $orderAttachment->course_title }}</span>
+											</div>
+											<div class="inv-card-actions">
+												<a href="{{ route('learner.course.show', $orderAttachment->course_taken_id) }}"
+													class="btn" style="background:#5F0000;color:#fff;flex:1;">
+													<i class="fa fa-eye"></i> Vis kurs
+												</a>
+												<a href="{{ $orderAttachment->file_path }}?v={{ time() }}"
+													class="btn" style="background:#2e3a59;color:#fff;flex:1;" download>
+													<i class="fa fa-download"></i> {{ basename($orderAttachment->file_path) }}
+												</a>
+											</div>
+										</div>
+									@endforeach
+								</div>
+
+						</div>
+
+						{{-- ═══ GAVEKJØP ═══ --}}
+						<div class="inv-tab-panel" data-panel="gift" @if($activeTab !== 'gift') style="display:none;" @endif>
+
+								{{-- Desktop tabell --}}
+								<div class="card global-card inv-desktop-table">
 									<div class="card-body py-0">
 										<table class="table table-global">
 											<thead>
 											<tr>
-												<th>{{ trans('site.item') }}</th>
-												<th>{{ trans('site.redeem-code') }}</th>
-												<th>{{ trans('site.redeemed') }}</th>
+												<th>Produkt</th>
+												<th>Innløsningskode</th>
+												<th>Innløst</th>
 											</tr>
 											</thead>
 											<tbody>
@@ -388,15 +497,10 @@
 													<td>{{ $giftPurchase->redeem_code }}</td>
 													<td>
 														@if ($giftPurchase->is_redeemed)
-															<label class="badge bg-success" style="font-size: 13px">
-																{{ trans('site.front.yes') }}
-															</label>
+															<label class="badge bg-success" style="font-size: 13px">Ja</label>
 														@else
-															<label class="badge bg-danger" style="font-size: 13px">
-																{{ trans('site.front.no') }}
-															</label>
+															<label class="badge bg-danger" style="font-size: 13px">Nei</label>
 														@endif
-
 													</td>
 												</tr>
 											@endforeach
@@ -405,7 +509,36 @@
 									</div>
 								</div>
 
-							@elseif( Request::input('tab') == 'redeem' )
+								{{-- Mobilkort --}}
+								<div class="inv-mobile-cards">
+									@foreach($giftPurchases as $giftPurchase)
+										<div class="inv-card">
+											<div class="inv-card-header">
+												<span class="inv-card-title">
+													<a href="{{ $giftPurchase->item_link }}" style="color:#2e3a59;text-decoration:none;">
+														{{ $giftPurchase->item_name }}
+													</a>
+												</span>
+												@if ($giftPurchase->is_redeemed)
+													<span class="badge bg-success" style="font-size:11px;">Ja</span>
+												@else
+													<span class="badge bg-danger" style="font-size:11px;">Nei</span>
+												@endif
+											</div>
+											<div class="inv-card-grid">
+												<div>
+													<div class="inv-card-label">Innløsningskode</div>
+													<div class="inv-card-value" style="font-family:monospace;letter-spacing:1px;">{{ $giftPurchase->redeem_code }}</div>
+												</div>
+											</div>
+										</div>
+									@endforeach
+								</div>
+
+						</div>
+
+						{{-- ═══ INNLØS KODE (skjult panel) ═══ --}}
+						<div class="inv-tab-panel" data-panel="redeem" style="display:none;">
 								<div class="card global-card">
 									<div class="card-body">
 										<div class="col-md-4 col-md-offset-4">
@@ -426,17 +559,171 @@
 									</div>
 								</div>
 
-							@elseif(Request::input('tab') == 'order-history')
-								<order-history :order-history="{{ json_encode($orderHistory) }}"
-											   :user="{{ json_encode(Auth::user()) }}"></order-history>
-							@elseif( Request::input('tab') == 'pay-later' )
-								<div class="card global-card">
+						</div>
+
+						{{-- ═══ KJØPSHISTORIKK ═══ --}}
+						<div class="inv-tab-panel" data-panel="order-history" @if($activeTab !== 'order-history') style="display:none;" @endif>
+
+								{{-- Desktop tabell --}}
+								<div class="card global-card inv-desktop-table">
+									<div class="card-body py-0">
+										<table class="table table-global">
+											<thead>
+												<tr>
+													<th>Produkt</th>
+													<th>Pakke</th>
+													<th>Dato</th>
+													<th>Totalt</th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody>
+												@forelse($orderHistory as $order)
+													@php
+														$orderAttFiles = $orderAttachments->filter(function($a) use ($order) {
+															return $a->course_id == $order->item_id || $a->package_id == $order->package_id;
+														});
+													@endphp
+													<tr>
+														<td>
+															<div style="font-weight:600;">{{ $order->item }}</div>
+															@if($orderAttFiles->count() > 0)
+																<div style="margin-top:6px;">
+																	@foreach($orderAttFiles as $att)
+																		<a href="{{ $att->file_path }}?v={{ time() }}"
+																			class="btn btn-sm" download
+																			style="background:#f0f0f0;color:#2e3a59;border:1px solid #dee2e6;border-radius:6px;font-size:11px;margin-right:4px;margin-bottom:4px;">
+																			<i class="fa fa-file-alt" style="color:#5F0000;margin-right:3px;"></i>
+																			Angreskjema
+																		</a>
+																	@endforeach
+																</div>
+															@endif
+														</td>
+														<td>{{ $order->packageVariation }}</td>
+														<td>{{ $order->created_at_formatted }}</td>
+														<td style="font-weight:600;">{{ $order->total_formatted }}</td>
+														<td>
+															@if($order->price)
+																<div style="display:flex;gap:6px;align-items:center;">
+																	<button class="btn btn-sm ohViewBtn"
+																		style="background:#5F0000;color:#fff;border:none;border-radius:6px;font-size:11px;padding:4px 10px;"
+																		data-bs-toggle="modal"
+																		data-bs-target="#ohViewModal"
+																		data-order='@json($order)'>
+																		<i class="fas fa-eye"></i> Vis
+																	</button>
+																	<a href="/account/order/{{ $order->id }}/download/"
+																		class="btn btn-sm"
+																		style="background:#2e3a59;color:#fff;border:none;border-radius:6px;font-size:11px;padding:4px 10px;">
+																		<i class="fas fa-download"></i>
+																	</a>
+																	<button class="btn btn-sm ohCompanyBtn"
+																		style="background:#fff;color:#2e3a59;border:1px solid #dee2e6;border-radius:6px;font-size:11px;padding:4px 10px;"
+																		data-bs-toggle="modal"
+																		data-bs-target="#ohCompanyModal"
+																		data-order-id="{{ $order->id }}"
+																		data-company='@json($order->company)'>
+																		Rediger Bedrift
+																	</button>
+																</div>
+															@endif
+														</td>
+													</tr>
+												@empty
+													<tr><td colspan="5" class="text-center" style="color:#5D7285;">Ingen kjøp registrert.</td></tr>
+												@endforelse
+											</tbody>
+										</table>
+									</div>
+								</div>
+
+								{{-- Mobilkort --}}
+								<div class="inv-mobile-cards">
+									@forelse($orderHistory as $order)
+										@php
+											$orderAttFiles = $orderAttachments->filter(function($a) use ($order) {
+												return $a->course_id == $order->item_id || $a->package_id == $order->package_id;
+											});
+										@endphp
+										<div class="inv-card">
+											<div class="inv-card-header">
+												<span class="inv-card-title">{{ $order->item }}</span>
+											</div>
+											<div class="inv-card-grid">
+												<div>
+													<div class="inv-card-label">Pakke</div>
+													<div class="inv-card-value">{{ $order->packageVariation }}</div>
+												</div>
+												<div>
+													<div class="inv-card-label">Dato</div>
+													<div class="inv-card-value">{{ $order->created_at_formatted }}</div>
+												</div>
+												<div>
+													<div class="inv-card-label">Totalt</div>
+													<div class="inv-card-value" style="font-weight:700;color:#5F0000;">{{ $order->total_formatted }}</div>
+												</div>
+												@if(optional($order->paymentPlan)->plan)
+												<div>
+													<div class="inv-card-label">Betalingsplan</div>
+													<div class="inv-card-value">{{ $order->paymentPlan->plan }}</div>
+												</div>
+												@endif
+											</div>
+
+											{{-- Angreskjema-filer --}}
+											@if($orderAttFiles->count() > 0)
+												<div style="margin-bottom:10px;">
+													@foreach($orderAttFiles as $att)
+														<a href="{{ $att->file_path }}?v={{ time() }}"
+															class="btn btn-sm d-inline-block" download
+															style="background:#f8f4f0;color:#5F0000;border:1px solid #e0d6cc;border-radius:6px;font-size:11px;margin-bottom:4px;">
+															<i class="fa fa-file-alt" style="margin-right:3px;"></i>
+															Angreskjema
+														</a>
+													@endforeach
+												</div>
+											@endif
+
+											<div class="inv-card-actions">
+												@if($order->price)
+													<button class="btn ohViewBtn" style="background:#5F0000;color:#fff;flex:1;"
+														data-bs-toggle="modal"
+														data-bs-target="#ohViewModal"
+														data-order='@json($order)'>
+														<i class="fas fa-eye"></i> Vis
+													</button>
+													<a href="/account/order/{{ $order->id }}/download/"
+														class="btn" style="background:#2e3a59;color:#fff;flex:1;">
+														<i class="fas fa-download"></i> Last ned
+													</a>
+													<button class="btn ohCompanyBtn" style="background:#fff;color:#2e3a59;border:1px solid #dee2e6;flex:1;"
+														data-bs-toggle="modal"
+														data-bs-target="#ohCompanyModal"
+														data-order-id="{{ $order->id }}"
+														data-company='@json($order->company)'>
+														Bedrift
+													</button>
+												@endif
+											</div>
+										</div>
+									@empty
+										<div class="inv-card text-center" style="color:#5D7285;">
+											Ingen kjøp registrert.
+										</div>
+									@endforelse
+								</div>
+						</div>
+
+						{{-- ═══ BETAL SENERE ═══ --}}
+						<div class="inv-tab-panel" data-panel="pay-later" @if($activeTab !== 'pay-later') style="display:none;" @endif>
+								{{-- Desktop tabell --}}
+								<div class="card global-card inv-desktop-table">
 									<div class="card-body py-0">
 										<table class="table table-global">
 											<thead>
 												<tr>
 													<th>{{ trans('site.front.form.course-package') }}</th>
-													{{-- <th>{{ trans('site.front.form.payment-plan') }}</th> --}}
 													<th>{{ trans('site.front.form.payment-method') }}</th>
 													<th>{{ trans('site.date') }}</th>
 													<th>{{ trans('site.front.total') }}</th>
@@ -447,28 +734,28 @@
 												@forelse($payLaterOrders as $order)
 													<tr>
 														<td>{{ $order->packageVariation }}</td>
-														{{-- <td>{{ optional($order->paymentPlan)->plan }}</td> --}}
 														<td>{{ optional($order->paymentMode)->mode }}</td>
 														<td>{{ $order->created_at_formatted }}</td>
 														<td>{{ $order->total_formatted }}</td>
 														<td>
-															@if ($order->package->course->payment_plan_ids)
-                                                                                                              <button class="btn btn-sm createInvoiceBtn disabled" style="background:#5F0000;color:#fff;border:none;border-radius:8px;" data-bs-toggle="modal"
-                                                                                                              data-bs-target="#createInvoiceModal"
-                                                                                                              data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
-                                                                                                              data-plan-id="{{ optional($order->paymentPlan)->id }}"
-                                                                                                              data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'
-                                                                                                              data-total="{{ $order->price - $order->discount }}"
-                                                                                                              disabled style="pointer-events: none;">
-                                                                                                                      + {{ trans('site.create-invoice') }}
-                                                                                                             </button>
+															@if (optional(optional($order->package)->course)->payment_plan_ids)
+																<button class="btn btn-sm createInvoiceBtn"
+																	style="background:#5F0000;color:#fff;border:none;border-radius:8px;cursor:pointer;"
+																	data-bs-toggle="modal"
+																	data-bs-target="#createInvoiceModal"
+																	data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
+																	data-plan-id="{{ optional($order->paymentPlan)->id }}"
+																	data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'
+																	data-total="{{ $order->price - $order->discount }}">
+																	+ Opprett faktura
+																</button>
 															@endif
 														</td>
 													</tr>
 												@empty
 													<tr>
-														<td colspan="6" class="text-center">
-															{{ trans('site.pay-later-no-record') }}
+														<td colspan="5" class="text-center">
+															Ingen bestillinger med betal senere.
 														</td>
 													</tr>
 												@endforelse
@@ -477,10 +764,56 @@
 									</div>
 								</div>
 
+								{{-- Mobilkort --}}
+								<div class="inv-mobile-cards">
+									@forelse($payLaterOrders as $order)
+										<div class="inv-card">
+											<div class="inv-card-header">
+												<span class="inv-card-title">{{ $order->packageVariation }}</span>
+											</div>
+											<div class="inv-card-grid">
+												<div>
+													<div class="inv-card-label">Betalingsmetode</div>
+													<div class="inv-card-value">{{ optional($order->paymentMode)->mode }}</div>
+												</div>
+												<div>
+													<div class="inv-card-label">Dato</div>
+													<div class="inv-card-value">{{ $order->created_at_formatted }}</div>
+												</div>
+												<div>
+													<div class="inv-card-label">Totalt</div>
+													<div class="inv-card-value" style="font-weight:700;color:#5F0000;">{{ $order->total_formatted }}</div>
+												</div>
+											</div>
+											<div class="inv-card-actions">
+												@if (optional(optional($order->package)->course)->payment_plan_ids)
+													<button class="btn createInvoiceBtn"
+														style="background:#5F0000;color:#fff;border:none;flex:1;"
+														data-bs-toggle="modal"
+														data-bs-target="#createInvoiceModal"
+														data-action="{{ route('learner.invoice.pay-later.generate', $order->id) }}"
+														data-plan-id="{{ optional($order->paymentPlan)->id }}"
+														data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'
+														data-total="{{ $order->price - $order->discount }}">
+														+ Opprett faktura
+													</button>
+												@endif
+											</div>
+										</div>
+									@empty
+										<div class="inv-card text-center" style="color:#5D7285;">
+											Ingen bestillinger med betal senere.
+										</div>
+									@endforelse
+								</div>
+
 								<div class="float-end">
 										{{ $payLaterOrders->appends(request()->except('page'))->links('pagination.short-pagination') }}
 								</div>
-							@elseif( Request::input('tab') == 'time-register' )
+						</div>
+
+						{{-- ═══ TIMEREGISTRERING (skjult panel) ═══ --}}
+						<div class="inv-tab-panel" data-panel="time-register" style="display:none;">
 								<div class="card global-card">
 									<div class="card-body py-0">
 										<table class="table table-global">
@@ -513,7 +846,10 @@
 										</table>
 									</div>
 								</div>
-							@else
+						</div>
+
+						{{-- ═══ FIKEN ═══ --}}
+						<div class="inv-tab-panel" data-panel="fiken" @if($activeTab !== 'fiken') style="display:none;" @endif>
 
 								<?php
 									$hasVipps = Auth::user()->address && Auth::user()->address->vipps_phone_number;
@@ -522,14 +858,14 @@
 									<a href="javascript:void(0)" class="btn short-red-outline-btn mb-4 stopVippsEFakturaBtn" 
 									data-bs-toggle="modal"
 									data-bs-target="#stopVippsEFakturaModal"
-									data-vipps-number="{{ NULL }}">
+									data-vipps-number="{{ optional(Auth::user()->address)->vipps_phone_number }}">
 										{!! trans('site.stop-vipps-efaktura') !!}
 									</a>
 								@else
 									<a href="javascript:void(0)" class="btn short-red-outline-btn mb-4 setVippsEFakturaBtn" 
 									data-bs-toggle="modal"
 									data-bs-target="#setVippsEFakturaModal"
-									data-vipps-number="{{ Auth::user()->address->vipps_phone_numberc }}">
+									data-vipps-number="{{ optional(Auth::user()->address)->vipps_phone_number }}">
 										{!! trans('site.set-vipps-efaktura') !!}
 									</a>
 								@endif
@@ -790,9 +1126,8 @@
 									{{ $invoices->appends(Request::all())->links('pagination.short-pagination') }}
 								</div>
 
-							@endif
-
-						</div> <!-- end tab-pane -->
+						</div>
+						{{-- /FIKEN --}}
 					</div> <!-- end tab-content -->
 				</div> <!-- end col-sm-12 -->
 			</div> <!-- end row -->
@@ -1131,6 +1466,107 @@
 		</div>
 	</div>
 
+	{{-- Vis ordre modal (Kjøpshistorikk) --}}
+	<div id="ohViewModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content" style="border-radius:12px;overflow:hidden;">
+				<div class="modal-header" style="background:#5F0000;color:#fff;border:none;padding:16px 24px;">
+					<h5 class="modal-title" style="font-weight:600;">Ordredetaljer</h5>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body" style="padding:24px;">
+					<div class="row mb-3">
+						<div class="col-6">
+							<img src="/images-new/logo-tagline.png" alt="Logo" style="height:60px;object-fit:contain;">
+						</div>
+						<div class="col-6 text-end" id="ohViewCustomer"></div>
+					</div>
+					<hr>
+					<div class="row mb-3">
+						<div class="col-sm-6">
+							<div style="font-size:12px;color:#5D7285;">Ordrenummer</div>
+							<div style="font-weight:600;" id="ohViewOrderNr"></div>
+						</div>
+						<div class="col-sm-3">
+							<div style="font-size:12px;color:#5D7285;">Dato</div>
+							<div id="ohViewDate"></div>
+						</div>
+						<div class="col-sm-3">
+							<div style="font-size:12px;color:#5D7285;">Betalingsplan</div>
+							<div id="ohViewPlan"></div>
+						</div>
+					</div>
+					<hr>
+					<table class="table" style="margin-bottom:0;">
+						<thead><tr>
+							<th style="font-size:12px;color:#5D7285;">Beskrivelse</th>
+							<th style="font-size:12px;color:#5D7285;">MVA</th>
+							<th style="font-size:12px;color:#5D7285;">Antall</th>
+							<th style="font-size:12px;color:#5D7285;text-align:right;">Pris</th>
+							<th style="font-size:12px;color:#5D7285;text-align:right;">Sum</th>
+						</tr></thead>
+						<tbody>
+							<tr>
+								<td id="ohViewProduct" style="font-weight:600;"></td>
+								<td id="ohViewVat"></td>
+								<td>1 stk</td>
+								<td style="text-align:right;" id="ohViewPrice"></td>
+								<td style="text-align:right;font-weight:600;" id="ohViewTotal"></td>
+							</tr>
+						</tbody>
+					</table>
+					<hr>
+					<div class="text-end">
+						<span style="font-size:12px;color:#5D7285;">Totalt å betale:</span>
+						<span style="font-size:20px;font-weight:700;color:#5F0000;margin-left:8px;" id="ohViewGrandTotal"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{{-- Rediger bedrift modal (Kjøpshistorikk) --}}
+	<div id="ohCompanyModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content" style="border-radius:12px;overflow:hidden;">
+				<div class="modal-header" style="background:#5F0000;color:#fff;border:none;padding:16px 24px;">
+					<h5 class="modal-title" style="font-weight:600;">Rediger Bedrift</h5>
+					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body" style="padding:24px;">
+					<input type="hidden" id="ohCompanyOrderId">
+					<input type="hidden" id="ohCompanyId">
+					<div class="mb-3">
+						<label class="form-label" style="font-size:13px;font-weight:600;">Organisasjonsnummer</label>
+						<input type="text" class="form-control" id="ohCompanyCustNr" style="border-radius:8px;">
+					</div>
+					<div class="mb-3">
+						<label class="form-label" style="font-size:13px;font-weight:600;">Bedriftsnavn</label>
+						<input type="text" class="form-control" id="ohCompanyName" style="border-radius:8px;">
+					</div>
+					<div class="mb-3">
+						<label class="form-label" style="font-size:13px;font-weight:600;">Adresse</label>
+						<input type="text" class="form-control" id="ohCompanyStreet" style="border-radius:8px;">
+					</div>
+					<div class="row">
+						<div class="col-4 mb-3">
+							<label class="form-label" style="font-size:13px;font-weight:600;">Postnr</label>
+							<input type="text" class="form-control" id="ohCompanyPostNr" style="border-radius:8px;">
+						</div>
+						<div class="col-8 mb-3">
+							<label class="form-label" style="font-size:13px;font-weight:600;">Sted</label>
+							<input type="text" class="form-control" id="ohCompanyPlace" style="border-radius:8px;">
+						</div>
+					</div>
+					<button class="btn w-100" id="ohCompanySaveBtn"
+						style="background:#5F0000;color:#fff;border:none;border-radius:8px;padding:10px;font-weight:600;">
+						Lagre
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 @stop
 
 @section('scripts')
@@ -1439,22 +1875,7 @@
         });
 
         // createInvoiceBtn — åpne modal med riktige data
-        var createInvoiceReady = false;
-        var createInvoiceButtons = $(".createInvoiceBtn");
-        createInvoiceButtons.prop('disabled', true).addClass('disabled').css('pointer-events', 'none');
-
-        $(window).on('load', function () {
-            createInvoiceReady = true;
-            createInvoiceButtons.prop('disabled', false).removeClass('disabled').css('pointer-events', '');
-        });
-
         $(".createInvoiceBtn").click(function(event) {
-            if (!createInvoiceReady) {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-                return false;
-            }
-
             var action = $(this).data('action');
             var modal = $("#createInvoiceModal");
             modal.find('form').attr('action', action);
@@ -1503,6 +1924,106 @@
             if (firstCard.length) {
                 selectPlan(parseInt(firstCard.data('plan-id'), 10), parseInt(firstCard.data('division'), 10));
             }
+        });
+        // ═══ Kjøpshistorikk — Vis ordre modal ═══
+        $(document).on('click', '.ohViewBtn', function() {
+            var order = $(this).data('order');
+            if (!order) return;
+            $('#ohViewOrderNr').text(String(order.id).padStart(6, '0'));
+            $('#ohViewDate').text(order.created_at_formatted || '');
+            $('#ohViewPlan').text(order.payment_plan ? order.payment_plan.plan : '-');
+            $('#ohViewProduct').text(order.packageVariation || order.item || '');
+            $('#ohViewVat').text([2,7,9,10].includes(order.type) ? '25%' : '0%');
+            $('#ohViewPrice').text(order.price_formatted || '');
+            $('#ohViewTotal').text(order.total_formatted || '');
+            $('#ohViewGrandTotal').text(order.total_formatted || '');
+
+            var custHtml = '';
+            if (order.company && order.company.company_name) {
+                custHtml = '<div style="font-weight:600;">' + order.company.company_name + '</div>'
+                    + '<div>' + (order.company.street_address || '') + '</div>'
+                    + '<div>' + (order.company.post_number || '') + ' ' + (order.company.place || '') + '</div>';
+            }
+            $('#ohViewCustomer').html(custHtml);
+        });
+
+        // ═══ Kjøpshistorikk — Rediger bedrift modal ═══
+        $(document).on('click', '.ohCompanyBtn', function() {
+            var orderId = $(this).data('order-id');
+            var company = $(this).data('company') || {};
+            $('#ohCompanyOrderId').val(orderId);
+            $('#ohCompanyId').val(company.id || '');
+            $('#ohCompanyCustNr').val(company.customer_number || '');
+            $('#ohCompanyName').val(company.company_name || '');
+            $('#ohCompanyStreet').val(company.street_address || '');
+            $('#ohCompanyPostNr').val(company.post_number || '');
+            $('#ohCompanyPlace').val(company.place || '');
+        });
+
+        $('#ohCompanySaveBtn').on('click', function() {
+            var orderId = $('#ohCompanyOrderId').val();
+            var data = {
+                id: $('#ohCompanyId').val(),
+                order_id: orderId,
+                customer_number: $('#ohCompanyCustNr').val(),
+                company_name: $('#ohCompanyName').val(),
+                street_address: $('#ohCompanyStreet').val(),
+                post_number: $('#ohCompanyPostNr').val(),
+                place: $('#ohCompanyPlace').val()
+            };
+            $.ajax({
+                url: '/account/order/' + orderId + '/save-company',
+                method: 'POST',
+                data: data,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                success: function() {
+                    bootstrap.Modal.getInstance(document.getElementById('ohCompanyModal')).hide();
+                    window.swal ? window.swal.fire({ icon:'success', title:'Lagret!', timer:1500, showConfirmButton:false })
+                                : alert('Lagret!');
+                    location.reload();
+                },
+                error: function() {
+                    alert('Kunne ikke lagre. Prøv igjen.');
+                }
+            });
+        });
+
+        // ═══ Tab-bytte uten side-reload ═══
+        $('#invoiceTabs').on('click', 'a[data-tab]', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Hindrer at document-click-handler kollapser sidebaren
+            var tab = $(this).data('tab');
+
+            // Oppdater aktiv fane i navigasjonen
+            $('#invoiceTabs .nav-link').removeClass('active');
+            $(this).addClass('active');
+
+            // Vis/skjul paneler
+            $('.inv-tab-panel').hide();
+            $('.inv-tab-panel[data-panel="' + tab + '"]').show();
+
+            // Oppdater URL uten reload
+            var url = new URL(window.location);
+            if (tab === 'fiken') {
+                url.searchParams.delete('tab');
+            } else {
+                url.searchParams.set('tab', tab);
+            }
+            history.pushState({tab: tab}, '', url);
+        });
+
+        // Håndter tilbake/frem i nettleseren
+        window.addEventListener('popstate', function(e) {
+            var tab = (e.state && e.state.tab) ? e.state.tab : 'fiken';
+            var url = new URL(window.location);
+            if (!tab || tab === 'fiken') {
+                tab = url.searchParams.get('tab') || 'fiken';
+            }
+
+            $('#invoiceTabs .nav-link').removeClass('active');
+            $('#invoiceTabs a[data-tab="' + tab + '"]').addClass('active');
+            $('.inv-tab-panel').hide();
+            $('.inv-tab-panel[data-panel="' + tab + '"]').show();
         });
 	</script>
 @stop
