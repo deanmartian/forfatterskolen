@@ -565,6 +565,313 @@
             .announcement__visual { display: none; }
             .news-grid { grid-template-columns: 1fr; }
         }
+
+        /* ── ROMANKURS / NESTE KURSSTART ─────────────────── */
+        .kurs-section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .kurs-section__header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .kurs-section__heading {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .kurs-section__sub {
+            font-size: 1rem;
+            color: #5a5550;
+        }
+
+        /* Earlybird countdown */
+        .earlybird-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            background: linear-gradient(135deg, #1c1917, #2a2520);
+            border-radius: 14px;
+            padding: 1.25rem 2rem;
+            margin-bottom: 2rem;
+            color: #fff;
+            flex-wrap: wrap;
+        }
+
+        .earlybird-banner__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #1c1917;
+            background: #ffd54f;
+            padding: 0.3rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .earlybird-banner__text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .earlybird-banner__text strong { color: #ffd54f; }
+
+        .earlybird-countdown {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .earlybird-countdown__unit {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 0.4rem 0.6rem;
+            min-width: 48px;
+        }
+
+        .earlybird-countdown__number {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .earlybird-countdown__label {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 2px;
+        }
+
+        /* Course hero card */
+        .course-hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            align-items: start;
+            background: #faf8f5;
+            border-radius: 14px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .course-hero__eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #862736;
+            margin-bottom: 0.75rem;
+        }
+
+        .course-hero__eyebrow-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #2e7d32;
+        }
+
+        .course-hero__title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+            line-height: 1.25;
+        }
+
+        .course-hero__date {
+            font-size: 0.875rem;
+            color: #8a8580;
+            margin-bottom: 1rem;
+        }
+
+        .course-hero__desc {
+            font-size: 0.9rem;
+            color: #5a5550;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .course-hero__features {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .course-hero__feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.825rem;
+            color: #5a5550;
+        }
+
+        .course-hero__feature svg { width: 16px; height: 16px; stroke: #2e7d32; flex-shrink: 0; }
+
+        .course-hero__social-proof {
+            font-size: 0.78rem;
+            color: #8a8580;
+            font-style: italic;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0,0,0,0.08);
+        }
+
+        /* Pricing cards */
+        .pricing-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .pricing-card {
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .pricing-card:hover {
+            border-color: rgba(134,39,54,0.2);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .pricing-card--popular {
+            border: 2px solid #862736;
+            position: relative;
+        }
+
+        .pricing-card__popular-badge {
+            position: absolute;
+            top: -10px;
+            left: 1.5rem;
+            background: #862736;
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 0.2rem 0.65rem;
+            border-radius: 4px;
+        }
+
+        .pricing-card__info { flex: 1; }
+
+        .pricing-card__name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.15rem;
+        }
+
+        .pricing-card__desc {
+            font-size: 0.75rem;
+            color: #8a8580;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .pricing-card__price {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .pricing-card__earlybird {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #862736;
+            line-height: 1;
+        }
+
+        .pricing-card__original {
+            font-size: 0.75rem;
+            color: #8a8580;
+            text-decoration: line-through;
+            margin-top: 0.15rem;
+        }
+
+        .pricing-card__save {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 0.15rem 0.45rem;
+            border-radius: 3px;
+            margin-top: 0.3rem;
+            display: inline-block;
+        }
+
+        .pricing-card__cta { flex-shrink: 0; }
+
+        .btn-wine {
+            display: inline-block;
+            padding: 0.6rem 1.25rem;
+            background: #862736;
+            color: #fff;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.825rem;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-wine:hover { background: #9c2e40; color: #fff; text-decoration: none; }
+
+        .btn-wine-outline {
+            display: inline-block;
+            padding: 0.6rem 1.25rem;
+            background: transparent;
+            color: #862736;
+            border: 1.5px solid #862736;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.825rem;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-wine-outline:hover { background: #862736; color: #fff; text-decoration: none; }
+
+        .pricing-note {
+            font-size: 0.72rem;
+            color: #8a8580;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.5;
+        }
+
+        .kurs-section__footer {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .course-hero { grid-template-columns: 1fr; }
+            .earlybird-banner { flex-direction: column; text-align: center; }
+            .pricing-card { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+            .pricing-card__price { text-align: left; }
+        }
     </style>
 @stop
 
@@ -741,45 +1048,132 @@
         </div>
     </section>
 
-    <div class="popular-courses-row">
-        <div class="container">
-            <h2 class="float-start">
-                {!! trans('site.front.home.most-popular-course') !!}
-            </h2>
-            <a href="{{ route('front.course.index') }}" class="btn float-end btn-outline-maroon">
-                {{ trans('site.front.home.all-course') }}
-            </a>
+    {{-- ═══════════ NESTE KURSSTART / ROMANKURS ═══════════ --}}
+    @if($romankurs)
+    @php
+        $earlybirdDeadline = \Carbon\Carbon::parse(config('courses.romankurs.earlybird_deadline'));
+        $isEarlybird = now()->isBefore($earlybirdDeadline);
+        $discount = config('courses.romankurs.earlybird_discount');
+    @endphp
+    <section class="kurs-section">
+        <div class="kurs-section__header">
+            <h2 class="kurs-section__heading">Neste kursstart</h2>
+            @if($isEarlybird)
+                <p class="kurs-section__sub">Sikre deg plassen til earlybird-pris &mdash; prisen &oslash;ker 1. april.</p>
+            @else
+                <p class="kurs-section__sub">Sikre deg plassen &mdash; begrenset antall plasser.</p>
+            @endif
+        </div>
 
-            <div class="clearfix"></div>
+        {{-- Earlybird countdown --}}
+        @if($isEarlybird)
+        <div class="earlybird-banner">
+            <span class="earlybird-banner__badge">&#9889; Earlybird</span>
+            <span class="earlybird-banner__text">Spar <strong>kr {{ number_format($discount, 0, ',', ' ') }}</strong> &mdash; tilbudet gjelder til 1. april</span>
+            <div class="earlybird-countdown" id="earlybirdCountdown">
+                <div class="earlybird-countdown__unit">
+                    <div class="earlybird-countdown__number" id="ebDays">--</div>
+                    <div class="earlybird-countdown__label">Dager</div>
+                </div>
+                <div class="earlybird-countdown__unit">
+                    <div class="earlybird-countdown__number" id="ebHours">--</div>
+                    <div class="earlybird-countdown__label">Timer</div>
+                </div>
+                <div class="earlybird-countdown__unit">
+                    <div class="earlybird-countdown__number" id="ebMins">--</div>
+                    <div class="earlybird-countdown__label">Min</div>
+                </div>
+            </div>
+        </div>
+        @endif
 
-            <div class="row">
-                @foreach( $popular_courses as $popular_course )
-                    <div class="col-md-4 course-container">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <div class="image-container">
-                                    <img src="https://www.forfatterskolen.no/{{ $popular_course->course_image }}">
-                                    <span>{{ trans('site.front.course-text') }}</span>
+        {{-- Course hero card --}}
+        <div class="course-hero">
+            <div class="course-hero__info">
+                <div class="course-hero__eyebrow">
+                    <span class="course-hero__eyebrow-dot"></span>
+                    P&aring;melding &aring;pen
+                </div>
+                <h3 class="course-hero__title">{{ $romankurs->title }}</h3>
+                <p class="course-hero__date">Oppstart 20. april 2026 &middot; 10 uker intensivt + 1 &aring;r tilgang</p>
+
+                <p class="course-hero__desc">
+                    L&aelig;r skriveh&aring;ndverket fra erfarne forfattere og redakt&oslash;rer. 10 moduler,
+                    ukentlige webinarer, profesjonell tilbakemelding p&aring; manus og tilgang til
+                    menterm&oslash;ter med kjente norske forfattere.
+                </p>
+
+                <div class="course-hero__features">
+                    <div class="course-hero__feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        10 kursmoduler + live webinarer
+                    </div>
+                    <div class="course-hero__feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Tilbakemelding fra profesjonell redakt&oslash;r
+                    </div>
+                    <div class="course-hero__feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Menterm&oslash;ter med kjente forfattere i ett &aring;r
+                    </div>
+                    <div class="course-hero__feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        14 dagers angrefrist &mdash; ingen risiko
+                    </div>
+                </div>
+
+                <p class="course-hero__social-proof">
+                    &ldquo;Det lureste jeg har gjort er &aring; melde meg p&aring; romankurs hos Forfatterskolen. S&aring; mye kunnskap, s&aring; profesjonelt og s&aring; mange flinke folk.&rdquo;
+                </p>
+            </div>
+
+            {{-- Pricing cards --}}
+            <div>
+                <div class="pricing-cards">
+                    @foreach($romankursPackages as $package)
+                        <div class="pricing-card {{ $package->is_standard ? 'pricing-card--popular' : '' }}">
+                            @if($package->is_standard)
+                                <span class="pricing-card__popular-badge">MEST VALGT</span>
+                            @endif
+                            <div class="pricing-card__info">
+                                <div class="pricing-card__name">{{ $package->variation }}</div>
+                                <div class="pricing-card__desc">{{ $package->description }}</div>
+                            </div>
+                            <div class="pricing-card__price">
+                                <div class="pricing-card__earlybird">
+                                    kr {{ number_format($package->calculated_price, 0, ',', ' ') }}
                                 </div>
-
-                                <h3 class="font-montserrat-semibold" itemprop="headline">
-                                    {{ \Illuminate\Support\Str::limit(strip_tags($popular_course->title), 40)}}
-                                </h3>
-
-                                <p class="font-montserrat-light mt-4"
-                                    itemprop="about">{!! \Illuminate\Support\Str::limit(strip_tags($popular_course->description), 110) !!}</p>
-                                <a href="{{ route('front.course.show', $popular_course->id) }}"
-                                    class="site-btn-global rounded-0 mt-3 d-inline-block"
-                                    title="View course details" itemprop="url">
-                                    {{ trans('site.front.view') }}
-                                </a>
+                                @if($package->full_payment_is_sale)
+                                    <div class="pricing-card__original">
+                                        kr {{ number_format($package->full_payment_price, 0, ',', ' ') }}
+                                    </div>
+                                    <span class="pricing-card__save">
+                                        Spar {{ number_format($package->sale_discount, 0, ',', ' ') }}
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="pricing-card__cta">
+                                <a href="/course/{{ config('courses.romankurs.id') }}/checkout?package={{ $package->id }}"
+                                   class="{{ $package->is_standard ? 'btn-wine' : 'btn-wine-outline' }}">Velg</a>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
+
+                <p class="pricing-note">
+                    @if($isEarlybird)
+                        Earlybird-pris gjelder til 1. april 2026. Deretter g&aring;r prisen opp.<br>
+                    @endif
+                    Avbetaling tilgjengelig. Bestill n&aring;, betal senere.
+                </p>
             </div>
-        </div> <!-- end container -->
-    </div> <!-- end popular-courses-new -->
+        </div>
+
+        <div class="kurs-section__footer">
+            <a href="{{ route('front.course.index') }}" class="btn-wine-outline">Alle kurs &rarr;</a>
+        </div>
+    </section>
+    @endif
 
     <div class="online-courses-row">
         <div class="container">
@@ -1010,5 +1404,36 @@
         function captchaCB(captcha) {
             $("#writingPlanModal").find('[name=captcha]').val(captcha);
         }
+
+        // Earlybird countdown
+        (function() {
+            var deadlineStr = '{{ config("courses.romankurs.earlybird_deadline") }}';
+            if (!deadlineStr) return;
+            var deadline = new Date(deadlineStr + 'T00:00:00');
+            var daysEl = document.getElementById('ebDays');
+            var hoursEl = document.getElementById('ebHours');
+            var minsEl = document.getElementById('ebMins');
+            if (!daysEl || !hoursEl || !minsEl) return;
+
+            function update() {
+                var now = new Date();
+                var diff = deadline - now;
+                if (diff <= 0) {
+                    var banner = document.querySelector('.earlybird-banner');
+                    if (banner) {
+                        banner.innerHTML = '<span class="earlybird-banner__badge">&#9889; Earlybird</span><span class="earlybird-banner__text">Earlybird er avsluttet</span>';
+                    }
+                    return;
+                }
+                var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                daysEl.textContent = days;
+                hoursEl.textContent = hours;
+                minsEl.textContent = mins;
+            }
+            update();
+            setInterval(update, 60000);
+        })();
     </script>
 @stop
