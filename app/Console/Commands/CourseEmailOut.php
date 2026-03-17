@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\AssignmentManuscript;
 use App\Course;
 use App\CoursesTaken;
 use App\CronLog;
@@ -439,6 +440,11 @@ class CourseEmailOut extends Command
      */
     private function sendBrandedOrLegacy(EmailOut $emailOut, User $user, string $message, string $attachmentText, ?string $trackType = null, $trackId = null): void
     {
+        // Smart filter: skip users who already submitted for reminder/deadline emails
+        if ($this->shouldSkipForSubmitted($emailOut, $user)) {
+            return;
+        }
+
         if ($emailOut->template_type) {
             $course = $emailOut->course;
             if ($course) {
@@ -465,5 +471,34 @@ class CourseEmailOut extends Command
         }
 
         return '';
+    }
+
+    /**
+     * Check if user has already submitted the assignment — skip reminder/deadline if so.
+     */
+    private function shouldSkipForSubmitted(EmailOut $emailOut, User $user): bool
+    {
+        if (!in_array($emailOut->template_type, ['assignment_reminder', 'assignment_deadline'])) {
+            return false;
+        }
+
+        $tplData = is_array($emailOut->template_data) ? $emailOut->template_data : (json_decode($emailOut->template_data, true) ?? []);
+        $assignmentTitle = $tplData['assignmentTitle'] ?? null;
+        if (!$assignmentTitle) {
+            return false;
+        }
+
+        // Find the assignment by title and course
+        $assignment = \App\Assignment::where('course_id', $emailOut->course_id)
+            ->where('title', $assignmentTitle)
+            ->first();
+
+        if (!$assignment) {
+            return false;
+        }
+
+        return AssignmentManuscript::where('assignment_id', $assignment->id)
+            ->where('user_id', $user->id)
+            ->exists();
     }
 }
