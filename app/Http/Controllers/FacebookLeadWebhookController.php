@@ -9,6 +9,7 @@ use App\FreeWebinar;
 use App\Http\AdminHelpers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class FacebookLeadWebhookController extends Controller
 {
@@ -28,9 +29,28 @@ class FacebookLeadWebhookController extends Controller
 
     /**
      * Motta leads fra Facebook Lead Ads (POST)
+     * Verifiserer X-Hub-Signature-256 før prosessering
      */
     public function handle(Request $request)
     {
+        // Valider webhook-signatur fra Facebook
+        $signature = $request->header('X-Hub-Signature-256');
+        $appSecret = config('services.facebook_ads.app_secret');
+
+        if ($appSecret && $signature) {
+            $expectedHash = 'sha256=' . hash_hmac('sha256', $request->getContent(), $appSecret);
+            if (!hash_equals($expectedHash, $signature)) {
+                Log::warning('Facebook Lead Webhook: Ugyldig signatur', [
+                    'expected' => $expectedHash,
+                    'received' => $signature,
+                ]);
+                return response('Invalid signature', 403);
+            }
+        } elseif ($appSecret && !$signature) {
+            Log::warning('Facebook Lead Webhook: Mangler X-Hub-Signature-256 header');
+            return response('Missing signature', 403);
+        }
+
         Log::info('Facebook Lead Webhook mottatt', ['payload' => $request->all()]);
 
         $leads = FacebookAdsService::parseLeadWebhook($request->all());
@@ -52,6 +72,7 @@ class FacebookLeadWebhookController extends Controller
 
         $firstName = $lead['first_name'] ?? '';
         $lastName = $lead['last_name'] ?? '';
+        $formId = $lead['form_id'] ?? null;
 
         Log::info("Facebook Lead: {$email} ({$firstName} {$lastName})");
 
@@ -59,7 +80,7 @@ class FacebookLeadWebhookController extends Controller
         $user = User::where('email', $email)->first();
 
         if (!$user) {
-            $defaultPassword = 'Z5C5E5M2jv';
+            $defaultPassword = Str::random(12);
             $user = User::create([
                 'email' => $email,
                 'first_name' => $firstName,
@@ -86,8 +107,8 @@ class FacebookLeadWebhookController extends Controller
             Log::warning("ActiveCampaign feilet for {$email}: {$e->getMessage()}");
         }
 
-        // 3. Registrer til neste kommende webinar i BigMarker (hvis det finnes)
-        $this->registerToUpcomingWebinar($user);
+        // 3. Registrer til riktig webinar basert på form_id, eller neste kommende
+        $this->registerToUpcomingWebinar($user, $formId);
     }
 
     /**
@@ -133,14 +154,24 @@ class FacebookLeadWebhookController extends Controller
     }
 
     /**
-     * Registrer bruker til neste kommende gratis webinar i BigMarker
+     * Registrer bruker til riktig webinar (via form_id) eller neste kommende
      */
-    private function registerToUpcomingWebinar(User $user): void
+    private function registerToUpcomingWebinar(User $user, ?string $formId = null): void
     {
         try {
-            $webinar = FreeWebinar::where('start_date', '>=', now())
-                ->orderBy('start_date')
-                ->first();
+            // Prøv å finne webinar via Facebook lead form ID først
+            $webinar = null;
+            if ($formId) {
+                $webinar = FreeWebinar::where('facebook_lead_form_id', $formId)
+                    ->first();
+            }
+
+            // Fallback: neste kommende webinar
+            if (!$webinar) {
+                $webinar = FreeWebinar::where('start_date', '>=', now())
+                    ->orderBy('start_date')
+                    ->first();
+            }
 
             if (!$webinar || !$webinar->gtwebinar_id) return;
 
