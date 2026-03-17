@@ -872,6 +872,267 @@
             .pricing-card { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
             .pricing-card__price { text-align: left; }
         }
+
+        /* ── NETTKURS FORDELER ────────────────────────────── */
+        .benefits-section {
+            padding: 4rem 0;
+        }
+
+        .benefits-section__inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .benefits-section__heading {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            color: #1a1a1a;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .benefit-card {
+            background: #faf8f5;
+            border-radius: 14px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+
+        .benefit-card__icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            background: rgba(134, 39, 54, 0.08);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .benefit-card__icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: #862736;
+        }
+
+        .benefit-card__title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #1a1a1a;
+        }
+
+        .benefit-card__desc {
+            font-size: 0.85rem;
+            color: #5a5550;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .benefits-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── GRATIS TEKSTVURDERING CTA ───────────────────── */
+        .cta-section {
+            padding: 4rem 0;
+        }
+
+        .cta-card {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #862736, #5c1a25);
+            border-radius: 14px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .cta-card__title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .cta-card__desc {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .cta-card__btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: #fff;
+            color: #862736;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .cta-card__btn:hover {
+            background: #faf8f5;
+            transform: translateY(-1px);
+        }
+
+        /* ── NEWSLETTER STRIP ────────────────────────────── */
+        .newsletter-strip {
+            background: #1c1917;
+            padding: 2rem 0;
+        }
+
+        .newsletter-strip__inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .newsletter-strip__title {
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .newsletter-strip__sub {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+        }
+
+        .newsletter-strip__form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .newsletter-strip__input {
+            padding: 0.6rem 1rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 0.85rem;
+            width: 260px;
+            font-family: inherit;
+        }
+
+        .newsletter-strip__input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        .newsletter-strip__btn {
+            padding: 0.6rem 1.25rem;
+            background: #862736;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .newsletter-strip__btn:hover {
+            background: #9c2e40;
+        }
+
+        @media (max-width: 768px) {
+            .newsletter-strip__inner {
+                flex-direction: column;
+                text-align: center;
+            }
+            .newsletter-strip__form {
+                flex-direction: column;
+                width: 100%;
+            }
+            .newsletter-strip__input {
+                width: 100%;
+            }
+        }
+
+        /* ── MØT MENTORENE ──────────────────────────────── */
+        .mentors-section {
+            padding: 4rem 0;
+            background: #faf8f5;
+        }
+
+        .mentors-section__inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .mentors-section__heading {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .mentors-section__desc {
+            font-size: 0.95rem;
+            color: #5a5550;
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
+        }
+
+        .mentors-section__names {
+            font-size: 0.8rem;
+            color: #8a8580;
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
+        }
+
+        .mentors-section__btn {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            border: 1.5px solid #862736;
+            border-radius: 8px;
+            color: #862736;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .mentors-section__btn:hover {
+            background: #862736;
+            color: #fff;
+        }
+
+        .mentors-section__image img {
+            width: 100%;
+            border-radius: 14px;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            .mentors-section__inner {
+                grid-template-columns: 1fr;
+            }
+            .mentors-section__image {
+                order: -1;
+            }
+        }
     </style>
 @stop
 
@@ -1175,49 +1436,54 @@
     </section>
     @endif
 
-    <div class="online-courses-row">
-        <div class="container">
-            <div class="top-container">
-                <img data-src="https://www.forfatterskolen.no/images-new/home/online-course.png" alt="online-course"
-                 class="inline-course-img">
-                <div class="details">
-                    <h2>{!! trans('site.front.home.advantages-of-online-course') !!}</h2>
-                    <p>
-                        {!! trans('site.front.home.advantages-of-online-course-description') !!} 
-                    </p>
-                    <ul>
-                        <li>
-                            <img data-src="https://www.forfatterskolen.no/images-new/home/arrow.svg" alt="arrow">
-                            {!! trans('site.front.home.advantages-of-online-course-1') !!}
-                        </li>
-                        <li>
-                            <img data-src="https://www.forfatterskolen.no/images-new/home/arrow.svg" alt="arrow">
-                            {!! trans('site.front.home.advantages-of-online-course-2') !!}
-                        </li>
-                        <li>
-                            <img data-src="https://www.forfatterskolen.no/images-new/home/arrow.svg" alt="arrow">
-                            {!! trans('site.front.home.advantages-of-online-course-3') !!}
-                        </li>
-                    </ul>
+    {{-- ═══════════ NETTKURS FORDELER ═══════════ --}}
+    <section class="benefits-section">
+        <div class="benefits-section__inner">
+            <h2 class="benefits-section__heading">Hva er fordelene ved nettkurs?</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div class="benefit-card__title">I ditt eget tempo</div>
+                    <div class="benefit-card__desc">Ta kurset hvor som helst, n&aring;r det passer deg. Du har tilgang til alt materialet i ett helt &aring;r.</div>
                 </div>
-            </div> <!-- end top-container -->
-
-            <div class="bottom-container">
-                <div class="col-md-5">
-                    <h2>
-                        {!! trans('site.front.home.meet-your-mentors') !!}
-                    </h2>
-                    <p>
-                        {!! trans('site.front.home.meet-your-mentors-details') !!}
-                    </p>
-
-                    <a href="{{ route('front.course.show', 17) }}" class="btn btn-red">
-                        {!! trans('site.front.home.see-more-mentors') !!}
-                    </a>
+                <div class="benefit-card">
+                    <div class="benefit-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                    </div>
+                    <div class="benefit-card__title">Profesjonell tilbakemelding</div>
+                    <div class="benefit-card__desc">Tilbakemelding p&aring; manus fra erfaren redakt&oslash;r. Konkrete tips til forbedring.</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div class="benefit-card__title">Skrivemilj&oslash; som b&aelig;rer deg</div>
+                    <div class="benefit-card__desc">Bli del av et yrende fellesskap med hundrevis av skriveglade. Livslangt medlemskap.</div>
                 </div>
             </div>
-        </div> <!-- end container -->
-    </div> <!-- end online-courses-row-->
+        </div>
+    </section>
+
+    {{-- ═══════════ MØT MENTORENE DINE ═══════════ --}}
+    <section class="mentors-section">
+        <div class="mentors-section__inner">
+            <div class="mentors-section__text">
+                <h2 class="mentors-section__heading">M&oslash;t mentorene dine</h2>
+                <p class="mentors-section__desc">
+                    Hver mandag har vi treff med kjente forfattere p&aring; skjermen. Du l&aelig;rer av landets beste skrivementorer, og av og til redigerer rektor innsendte tekster live.
+                </p>
+                <p class="mentors-section__names">
+                    Blant gjestene: Maja Lunde, Tom Egeland, Ingvar Ambj&oslash;rnsen, Herbj&oslash;rg Wassmo, Gro Dahle, Simon Stranger, Gunnar Staalesen og mange flere. 100+ timer i arkivet.
+                </p>
+                <a href="{{ route('front.course.show', 17) }}" class="mentors-section__btn">Les mer om mentoerm&oslash;ter &rarr;</a>
+            </div>
+            <div class="mentors-section__image">
+                <img src="https://www.forfatterskolen.no/images-new/home/online-course.png" alt="Skriving p&aring; laptop">
+            </div>
+        </div>
+    </section>
 
     {{-- ============================================================
         NYTT: Utgitte elever (erstatter video-testimonial karusellen)
@@ -1279,25 +1545,16 @@
         </div>
     </div> <!-- end testimonials-row -->
 
-    <div class="professional-feedback-wrapper">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-5 text-center">
-                    <img src="https://www.forfatterskolen.no/{{ '/images-new/illustrationcomputer.png' }}" 
-                    alt="illustration-computer">
-                </div>
-                <div class="col-md-7">
-                    <h2>
-                        {!! trans('site.front.home.like-pro-feedback') !!}
-                    </h2>
-
-                    <a href="{{ route('front.free-manuscript.index') }}" class="btn site-btn-global mt-5">
-                        {!! trans('site.front.home.like-pro-feedback-yes') !!}
-                    </a>
-                </div>
-            </div>
+    {{-- ═══════════ GRATIS TEKSTVURDERING CTA ═══════════ --}}
+    <section class="cta-section">
+        <div class="cta-card">
+            <h2 class="cta-card__title">Vil du ha profesjonell tilbakemelding &mdash; helt gratis?</h2>
+            <p class="cta-card__desc">Send inn opptil 500 ord og f&aring; en vurdering fra en av v&aring;re redakt&oslash;rer. Uforpliktende.</p>
+            <a href="{{ route('front.free-manuscript.index') }}" class="cta-card__btn">Ja, dette vil jeg ha! &rarr;</a>
         </div>
-    </div>
+    </section>
+
+
 </div> <!-- end front-page-new -->
 
 @if(!isset($_COOKIE['_gdpr']))

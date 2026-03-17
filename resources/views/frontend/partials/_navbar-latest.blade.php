@@ -181,6 +181,14 @@
     background: rgba(0,0,0,0.03);
     color: var(--fs-text);
 }
+.fs-nav__dropdown-group-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8a8580;
+    padding: 0.5rem 1rem 0.25rem;
+}
 .fs-nav__dropdown-divider {
     height: 1px;
     background: var(--fs-border);
@@ -328,14 +336,21 @@
                                 {{ Auth::user()->email }}
                             </div>
                         </div>
-                        <a href="{{ route('learner.course') }}" class="fs-nav__dropdown-item">Mine Kurs</a>
-                        <a href="{{ route('learner.shop-manuscript') }}" class="fs-nav__dropdown-item">Manuskripter</a>
-                        <a href="{{ route('learner.workshop') }}" class="fs-nav__dropdown-item">Workshops</a>
-                        <a href="{{ route('learner.webinar') }}" class="fs-nav__dropdown-item">Webinars</a>
+
+                        <a href="{{ route('learner.dashboard') }}" class="fs-nav__dropdown-item">Oversikt</a>
+
+                        <div class="fs-nav__dropdown-group-label">L&aelig;ring</div>
+                        <a href="{{ route('learner.course') }}" class="fs-nav__dropdown-item">Mine kurs</a>
                         <a href="{{ route('learner.assignment') }}" class="fs-nav__dropdown-item">Oppgaver</a>
-                        <a href="{{ route('learner.calendar') }}" class="fs-nav__dropdown-item">Kalender</a>
+                        <a href="{{ route('learner.webinar') }}" class="fs-nav__dropdown-item">Webinarer</a>
+                        <a href="{{ route('learner.shop-manuscript') }}" class="fs-nav__dropdown-item">Manusutviklinger</a>
+                        <a href="{{ route('learner.workshop') }}" class="fs-nav__dropdown-item">Coaching</a>
+
+                        <div class="fs-nav__dropdown-divider"></div>
+
                         <a href="{{ route('learner.profile') }}" class="fs-nav__dropdown-item">Profil</a>
                         <a href="{{ route('learner.invoice') }}" class="fs-nav__dropdown-item">Fakturaer</a>
+
                         <div class="fs-nav__dropdown-divider"></div>
                         <form method="POST" action="{{ route('auth.logout') }}">
                             @csrf
