@@ -120,7 +120,7 @@
         display: flex;
         gap: 0.5rem;
         flex: 1;
-        max-width: 440px;
+        max-width: 540px;
         min-width: 280px;
     }
 
@@ -380,6 +380,13 @@
         </div>
         <div class="footer-newsletter__form">
             <input
+                type="text"
+                class="footer-newsletter__input"
+                placeholder="Fornavn"
+                id="footer-newsletter-name"
+                aria-label="Fornavn for nyhetsbrev"
+            >
+            <input
                 type="email"
                 class="footer-newsletter__input"
                 placeholder="Din e-postadresse"
@@ -474,8 +481,13 @@
 
 <script>
 function openNewsletterModal() {
+    var name = document.getElementById('footer-newsletter-name').value;
     var email = document.getElementById('footer-newsletter-email').value;
     var modal = new bootstrap.Modal(document.getElementById('writingPlanModal'));
+    if (name) {
+        var nameInput = document.querySelector('#writingPlanModal input[name="name"]');
+        if (nameInput) nameInput.value = name;
+    }
     if (email) {
         var emailInput = document.querySelector('#writingPlanModal input[name="email"]');
         if (emailInput) emailInput.value = email;
