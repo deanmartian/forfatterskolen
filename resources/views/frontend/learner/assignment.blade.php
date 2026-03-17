@@ -1314,17 +1314,17 @@
 	$('.submitManuscriptBtn').click(function(){
 		let form = $('#submitManuscriptModal').find("form");
 		let action = $(this).data('action');
-		let show_group_question = $(this).data('show-group-question');
-		let send_letter_to_editor = $(this).data('send-letter-to-editor');
+		let show_group_question = parseInt($(this).data('show-group-question'));
+		let send_letter_to_editor = parseInt($(this).data('send-letter-to-editor'));
 		form.attr('action', action);
 
-		if (show_group_question) {
+		if (show_group_question === 1) {
 			form.find('.join-question-container').removeClass('hide');
 		} else {
 			form.find('.join-question-container').addClass('hide');
 		}
 
-		if (send_letter_to_editor) {
+		if (send_letter_to_editor === 1) {
 			form.find('.letter-to-editor').removeClass('hide');
 		} else {
 			form.find('.letter-to-editor').addClass('hide');
@@ -1354,17 +1354,17 @@
 		}
 		let form = $('#submitEditorManuscriptModal').find("form");
 		let action = $(this).data('action');
-		let show_group_question = $(this).data('show-group-question');
-		let send_letter_to_editor = $(this).data('send-letter-to-editor');
+		let show_group_question = parseInt($(this).data('show-group-question'));
+		let send_letter_to_editor = parseInt($(this).data('send-letter-to-editor'));
 		form.attr('action', action);
 
-		if (show_group_question) {
+		if (show_group_question === 1) {
 			form.find('.join-question-container').removeClass('hide');
 		} else {
 			form.find('.join-question-container').addClass('hide');
 		}
 
-		if (send_letter_to_editor) {
+		if (send_letter_to_editor === 1) {
 			form.find('.letter-to-editor').removeClass('hide');
 		} else {
 			form.find('.letter-to-editor').addClass('hide');

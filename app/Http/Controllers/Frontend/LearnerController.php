@@ -1150,7 +1150,7 @@ class LearnerController extends Controller
                                 $assignmentSubmissionDate = $assignmentSubmissionDates[$assignment->id] ??
                                 $assignment->submission_date;
                                 // added the && to check if the course taken is not yet expired
-                                if (\Carbon\Carbon::parse($assignmentSubmissionDate)->gt(Carbon::now()->subDay()) &&
+                                if (\Carbon\Carbon::parse($assignmentSubmissionDate)->gt(Carbon::now()) &&
                                     \Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
                                     if ($assignment->max_words === 0) {
                                         $noWordLimitAssignments[] = $assignment;
