@@ -141,6 +141,11 @@ Route::domain($front)->group(function () {
         Route::post('/personal-trainer/send', [Frontend\HomeController::class, 'personalTrainerSend'])->name('front.personal-trainer.send');
         Route::get('/personal-trainer/thank-you', [Frontend\HomeController::class, 'personalTrainerThanks'])->name('front.personal-trainer.thank-you');
 
+        // Juleantologi
+        Route::get('/juleantologi', [Frontend\AnthologyController::class, 'show'])->name('front.anthology');
+        Route::post('/juleantologi/submit', [Frontend\AnthologyController::class, 'submit'])->name('front.anthology.submit');
+        Route::get('/juleantologi/takk', [Frontend\AnthologyController::class, 'takk'])->name('front.anthology.takk');
+
         Route::get('/innlevering', [Frontend\HomeController::class, 'skrive2020'])->name('front.skrive2020');
         Route::post('/innlevering/send', [Frontend\HomeController::class, 'innleveringCompetitionSend'])->name('front.innlevering.send');
         Route::get('/takk', [Frontend\HomeController::class, 'innleveringCompetitionThanks'])->name('front.innlevering.thank-you');
@@ -1054,6 +1059,14 @@ Route::domain($admin)->group(function () {
                 'destroy' => 'admin.free-course.destroy',
             ],
         ])->except('show', 'create', 'edit');
+
+        // Antologi
+        Route::get('anthology', [Backend\AnthologyController::class, 'index'])->name('admin.anthology.index');
+        Route::put('anthology/{id}/status', [Backend\AnthologyController::class, 'updateStatus'])->name('admin.anthology.update-status');
+        Route::post('anthology/{id}/feedback', [Backend\AnthologyController::class, 'sendFeedback'])->name('admin.anthology.send-feedback');
+        Route::get('anthology/{id}/download', [Backend\AnthologyController::class, 'download'])->name('admin.anthology.download');
+        Route::get('anthology/export', [Backend\AnthologyController::class, 'export'])->name('admin.anthology.export');
+        Route::post('anthology/bulk-status', [Backend\AnthologyController::class, 'bulkStatus'])->name('admin.anthology.bulk-status');
 
         Route::post('free-course/webinar', [Backend\FreeCourseController::class, 'storeWebinar'])->name('admin.free-webinar.store');
         Route::put('free-course/webinar/{id}/update', [Backend\FreeCourseController::class, 'updateWebinar'])->name('admin.free-webinar.update');
