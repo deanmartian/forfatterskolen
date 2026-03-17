@@ -52,6 +52,7 @@
                                         'assignment_reminder' => ['Påminnelse', 'warning'],
                                         'assignment_deadline' => ['Frist', 'danger'],
                                         'feedback_ready' => ['Tilbakemelding', 'info'],
+                                        'weekly_update' => ['Ukebrev', 'default'],
                                     ];
                                     $label = $typeLabels[$email->template_type] ?? [$email->template_type, 'default'];
                                 @endphp
