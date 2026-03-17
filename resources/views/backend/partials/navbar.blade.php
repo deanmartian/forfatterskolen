@@ -8,7 +8,7 @@ $urlList = array('pulse', 'board');
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#fatterNavbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
-        <span class="icon-bar"></span> 
+        <span class="icon-bar"></span>
       </button>
     </div>
     <div class="collapse navbar-collapse" id="fatterNavbar">

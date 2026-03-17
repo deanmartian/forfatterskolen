@@ -1,0 +1,1869 @@
+/* ═══════════════════════════════════════════════════════
+   Forfatterskolen Admin Portal – Backend v2 Overrides
+   Modernizes Bootstrap 3 components to match editor-v2
+   ═══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ── CSS Variables (Forfatterskolen Brand) ─────────── */
+:root {
+    --bg: #F6F4F0;
+    --surface: #FFFFFF;
+    --surface-hover: #FAFAF8;
+    --wine: #862736;
+    --wine-light: #A83347;
+    --wine-dark: #6B1F2B;
+    --wine-muted: rgba(134,39,54,0.08);
+    --wine-glow: rgba(134,39,54,0.12);
+    --ink: #1A1A1A;
+    --ink-soft: #4A4A4A;
+    --ink-muted: #8E8E8E;
+    --border: #E8E4DE;
+    --border-light: #F0EDE8;
+    --success: #2D8F5E;
+    --success-bg: rgba(45,143,94,0.08);
+    --warning: #D4870E;
+    --warning-bg: rgba(212,135,14,0.08);
+    --pending: #6B7280;
+    --pending-bg: rgba(107,114,128,0.08);
+    --accent: #3B6BCC;
+    --accent-bg: rgba(59,107,204,0.06);
+    --red: #DC3545;
+    --red-bg: rgba(220,53,69,0.07);
+    --purple: #7C5CFC;
+    --purple-bg: rgba(124,92,252,0.07);
+
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body: 'DM Sans', 'Helvetica Neue', sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+    --sidebar-width: 250px;
+    --header-height: 56px;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-xs: 6px;
+}
+
+/* ── ED Sidebar ────────────────────────────────────── */
+.ed-sidebar {
+    width: var(--sidebar-width);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.ed-sidebar__logo {
+    padding: 24px 20px 18px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.ed-sidebar__logo-title {
+    font-family: var(--font-display);
+    font-size: 19px;
+    color: var(--wine);
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.ed-sidebar__logo-sub {
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    color: var(--ink-muted);
+    margin-top: 2px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.ed-sidebar__nav {
+    padding: 14px 10px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    list-style: none;
+    margin: 0;
+}
+
+.ed-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 14px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--ink-soft);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.12s;
+}
+
+.ed-nav-item:hover {
+    background: rgba(0,0,0,0.03);
+    text-decoration: none;
+    color: var(--ink-soft);
+}
+
+.ed-nav-item.active {
+    background: var(--wine-muted);
+    color: var(--wine);
+    font-weight: 600;
+}
+
+.ed-nav-item.active:hover {
+    background: var(--wine-glow);
+    color: var(--wine);
+}
+
+.ed-nav-item__icon {
+    display: flex;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+}
+
+.ed-nav-item__icon i {
+    font-size: 15px;
+    line-height: 18px;
+    width: 18px;
+    text-align: center;
+}
+
+.ed-nav-item__label { flex: 1; }
+
+.ed-nav-item__badge {
+    background: var(--wine);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-family: var(--font-mono);
+}
+
+.ed-sidebar__user {
+    padding: 14px 14px 18px;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ed-sidebar__avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--wine), var(--wine-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.ed-sidebar__user-name {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.ed-sidebar__user-role {
+    font-size: 11px;
+    color: var(--ink-muted);
+}
+
+/* ── ED Buttons ────────────────────────────────────── */
+.ed-btn {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-xs);
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.12s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ed-btn--ghost {
+    background: transparent;
+    color: var(--ink-muted);
+    border: 1px solid var(--border);
+}
+
+.ed-btn--ghost:hover {
+    background: var(--bg);
+    color: var(--ink);
+}
+
+.ed-btn--sm {
+    font-size: 11px;
+    padding: 4px 8px;
+}
+
+/* ── ED Header (top bar) ───────────────────────────── */
+.ed-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: var(--header-height);
+    margin-left: var(--sidebar-width);
+}
+
+.ed-header__title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    margin: 0;
+    font-weight: 400;
+}
+
+.ed-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* ── ED Content (main content area) ────────────────── */
+.ed-content {
+    margin-left: var(--sidebar-width);
+    padding: 24px 28px;
+    min-height: calc(100vh - var(--header-height));
+}
+
+/* ── Push all body content right of sidebar ────────── */
+body {
+    padding-left: var(--sidebar-width);
+}
+
+/* ── Dashboard Layout ───────────────────────────────── */
+.dashboard-left {
+    padding: 0 !important;
+}
+
+.ed-content > .col-sm-12,
+.ed-content > .row > .col-sm-12,
+.ed-content > .col-md-10 {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.ed-content .row {
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+.ed-content .row > [class*="col-"] {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* Two-column dashboard: left (assignments) + right (pending) */
+.ed-content > .col-md-10 > .row > .col-md-5,
+.ed-content > .col-md-10 > .row > .col-md-7 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* Dashboard: give left column more space */
+@media (min-width: 992px) {
+    .dashboard-left > .row > .col-md-5 { width: 58.33333%; }
+    .dashboard-left > .row > .col-md-7 { width: 41.66667%; }
+}
+
+/* ── Panels → Modern Cards ──────────────────────────── */
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: none;
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: box-shadow 0.2s;
+}
+
+.panel:hover {
+    box-shadow: 0 4px 16px rgba(134,39,54,0.04);
+}
+
+.panel-default {
+    border-color: var(--border);
+}
+
+.panel-default > .panel-heading {
+    background: transparent;
+    border-bottom: 1px solid var(--border-light);
+    padding: 16px 24px;
+    color: var(--ink);
+}
+
+.panel-heading h4 {
+    font-family: var(--font-display);
+    font-size: 17px;
+    color: var(--ink);
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+}
+
+.panel-body {
+    padding: 20px 24px;
+}
+
+/* Summary stat panel (Total Learners) */
+.panel.text-center .panel-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 24px 24px;
+}
+
+.panel.text-center .panel-body h3 {
+    font-family: var(--font-display);
+    font-size: 32px;
+    color: var(--wine);
+    margin: 0;
+    line-height: 1;
+}
+
+.panel.text-center {
+    border-left: 4px solid var(--wine);
+}
+
+/* ── Tables ─────────────────────────────────────────── */
+.panel .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+.panel .table > thead > tr > th {
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 10px 16px;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border-light);
+    background: #FAFAF8;
+    border-top: none;
+}
+
+.panel .table > tbody > tr > td {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--ink-soft);
+    padding: 11px 16px;
+    border-top: none;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+    line-height: 1.5;
+}
+
+.panel .table > tbody > tr:last-child > td {
+    border-bottom: none;
+}
+
+.panel .table > tbody > tr {
+    transition: background 0.1s;
+}
+
+.panel .table > tbody > tr:hover {
+    background: var(--surface-hover);
+}
+
+.panel .table > tbody > tr > td a {
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.panel .table > tbody > tr > td a:hover {
+    color: var(--wine);
+}
+
+/* ── Buttons ────────────────────────────────────────── */
+.btn {
+    font-family: var(--font-body);
+    font-weight: 600;
+    border-radius: 7px;
+    transition: all 0.15s;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.btn-xs, .btn-group-xs > .btn {
+    padding: 4px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+    line-height: 1.5;
+}
+
+.btn-primary {
+    background: var(--wine);
+    border-color: var(--wine);
+    color: white;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active,
+.btn-primary.active, .open > .dropdown-toggle.btn-primary {
+    background: var(--wine-light);
+    border-color: var(--wine-light);
+    color: white;
+}
+
+.btn-success {
+    background: var(--success-bg);
+    border-color: rgba(45,143,94,0.2);
+    color: var(--success);
+}
+
+.btn-success:hover, .btn-success:focus {
+    background: var(--success);
+    border-color: var(--success);
+    color: white;
+}
+
+.btn-warning {
+    background: var(--warning-bg);
+    border-color: rgba(212,135,14,0.2);
+    color: var(--warning);
+}
+
+.btn-warning:hover, .btn-warning:focus {
+    background: var(--warning);
+    border-color: var(--warning);
+    color: white;
+}
+
+.btn-danger {
+    background: var(--red-bg);
+    border-color: rgba(220,53,69,0.15);
+    color: var(--red);
+}
+
+.btn-danger:hover, .btn-danger:focus {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+}
+
+.btn-default {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--ink-soft);
+}
+
+.btn-default:hover, .btn-default:focus {
+    background: var(--bg);
+    border-color: var(--border);
+    color: var(--ink);
+}
+
+/* ── Status Labels → Badges ─────────────────────────── */
+.label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+}
+
+.label-success {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.label-primary {
+    background: var(--accent-bg);
+    color: var(--accent);
+}
+
+.label-warning {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.label-danger {
+    background: var(--red-bg);
+    color: var(--red);
+}
+
+.label-info {
+    background: var(--accent-bg);
+    color: var(--accent);
+}
+
+/* ── Inline Forms / Action Cells ────────────────────── */
+.inline-block {
+    display: inline-block;
+}
+
+td .btn + .btn,
+td .btn + form,
+td form + .btn,
+td form + form {
+    margin-left: 4px;
+}
+
+td form.inline-block {
+    display: inline-block;
+}
+
+/* ── DataTables Integration ─────────────────────────── */
+.dataTables_wrapper {
+    padding: 0 16px 16px;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    padding: 12px 0;
+}
+
+table.dataTable {
+    border-collapse: collapse !important;
+}
+
+table.dataTable thead th {
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-bottom: 1px solid var(--border-light) !important;
+    background: #FAFAF8;
+}
+
+table.dataTable tbody td {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--border-light);
+}
+
+table.dataTable tbody tr:hover {
+    background: var(--surface-hover) !important;
+}
+
+/* ── Checkbox Toggle Overrides ──────────────────────── */
+.toggle.btn {
+    border-radius: 20px !important;
+    min-height: 24px;
+    min-width: 60px;
+}
+
+.toggle-on.btn {
+    border-radius: 20px !important;
+}
+
+.toggle-off.btn {
+    border-radius: 20px !important;
+}
+
+.toggle .toggle-handle {
+    border-radius: 50% !important;
+}
+
+/* ── Table Responsive ───────────────────────────────── */
+.table-responsive {
+    border: none;
+    overflow-x: auto;
+}
+
+/* ── Margin / Spacing Helpers ───────────────────────── */
+.margin-top {
+    margin-top: 6px;
+}
+
+/* ── Alert Overrides ────────────────────────────────── */
+.global-alert-box {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    left: auto;
+    width: auto;
+    max-width: 480px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 13px;
+    z-index: 1050 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.alert-danger {
+    background: #FEF2F2;
+    border-color: rgba(220,53,69,0.2);
+    color: var(--red);
+}
+
+.alert-success {
+    background: #F0FDF4;
+    border-color: rgba(45,143,94,0.2);
+    color: var(--success);
+}
+
+.alert-warning {
+    background: #FFFBEB;
+    border-color: rgba(212,135,14,0.2);
+    color: var(--warning);
+}
+
+/* ── Empty State ────────────────────────────────────── */
+.panel .table > tbody:empty::after,
+.panel .table > tbody > tr:only-child > td:only-child:empty::after {
+    content: "No data";
+    display: block;
+    text-align: center;
+    padding: 24px;
+    color: var(--ink-muted);
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* ── Scrollbar Styling ──────────────────────────────── */
+.panel::-webkit-scrollbar,
+.table-responsive::-webkit-scrollbar {
+    height: 6px;
+}
+
+.panel::-webkit-scrollbar-track,
+.table-responsive::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+.panel::-webkit-scrollbar-thumb,
+.table-responsive::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+
+.panel::-webkit-scrollbar-thumb:hover,
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: var(--ink-muted);
+}
+
+/* ── Footer ─────────────────────────────────────────── */
+footer.main-footer, .main-footer {
+    display: none;
+}
+
+/* ── Hide old navbar remnants ───────────────────────── */
+.navbar, .navbar-default, .main-header {
+    display: none !important;
+}
+
+/* ── Breadcrumbs ────────────────────────────────────── */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 20px;
+    font-family: var(--font-body);
+    font-size: 13px;
+}
+
+.breadcrumb > li + li:before {
+    color: var(--ink-muted);
+    content: "›";
+    padding: 0 6px;
+}
+
+.breadcrumb > .active {
+    color: var(--ink-muted);
+}
+
+/* ── Select2 Overrides ──────────────────────────────── */
+.select2-container--default .select2-selection--single {
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    height: 36px;
+    padding: 4px 8px;
+}
+
+.select2-container--default .select2-selection--single:focus {
+    border-color: var(--wine);
+}
+
+.select2-dropdown {
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+/* ── Page-specific: Dashboard two-col grid ──────────── */
+@media (min-width: 992px) {
+    .ed-content > .col-md-10 > .row:first-child {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .ed-content > .col-md-10 > .row:first-child > .col-md-5,
+    .ed-content > .col-md-10 > .row:first-child > .col-md-7 {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* ── Recent Activities Sidebar ───────────────────────── */
+.dashboard-right {
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    border-radius: 0;
+    min-height: auto;
+    padding: 20px 16px 20px 20px;
+    position: sticky;
+    top: var(--header-height);
+    max-height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+}
+
+.actitities-header {
+    font-family: var(--font-display);
+    font-size: 16px;
+    color: var(--ink);
+    font-weight: 400;
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.dashboard-activity {
+    padding-left: 18px;
+    color: var(--success) !important;
+}
+
+.dashboard-activity:before {
+    background-color: var(--border) !important;
+    width: 1.5px;
+}
+
+.dashboard-activity:after {
+    border-color: var(--success) !important;
+    width: 8px;
+    height: 8px;
+    background-color: var(--surface) !important;
+    border-width: 2px;
+}
+
+.dashboard-activity > p {
+    color: var(--ink-soft);
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    line-height: 1.5;
+    padding-bottom: 14px;
+}
+
+.dashboard-activity > p strong,
+.dashboard-activity > p b {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.dashboard-activity .activ-time {
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    color: var(--ink-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+}
+
+/* ── Smooth link underlines ─────────────────────────── */
+.panel a {
+    transition: color 0.15s;
+}
+
+/* ── Collapsible Panel Headers (UX improvement) ─────── */
+.panel-heading {
+    cursor: default;
+}
+
+/* ── Well / Info boxes ──────────────────────────────── */
+.well {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: none;
+}
+
+/* ── Progress bars ──────────────────────────────────── */
+.progress {
+    border-radius: 10px;
+    background: var(--bg);
+    height: 8px;
+    box-shadow: none;
+}
+
+.progress-bar {
+    background: var(--wine);
+    border-radius: 10px;
+}
+
+/* ── Tooltip/Popover ────────────────────────────────── */
+.tooltip-inner {
+    font-family: var(--font-body);
+    font-size: 12px;
+    border-radius: var(--radius-xs);
+    padding: 6px 10px;
+}
+
+.popover {
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    font-family: var(--font-body);
+}
+
+/* ── Badge (Bootstrap) ──────────────────────────────── */
+.badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+
+/* ── Nav Tabs (used on sub-pages) ───────────────────── */
+.nav-tabs {
+    border-bottom: 1px solid var(--border);
+}
+
+.nav-tabs > li > a {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    border: none;
+    border-radius: 0;
+    padding: 10px 18px;
+    margin-bottom: -1px;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-tabs > li > a:hover {
+    border-color: transparent;
+    border-bottom-color: var(--border);
+    background: transparent;
+    color: var(--ink);
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+    border: none;
+    border-bottom: 2px solid var(--wine);
+    color: var(--wine);
+    background: transparent;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Hamburger Button ───────────────────────────────── */
+.ed-hamburger {
+    display: none;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 98;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.15s;
+}
+
+.ed-hamburger:hover {
+    background: var(--bg);
+}
+
+/* ── Overlay (when sidebar is open on mobile) ───────── */
+.ed-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 99;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.ed-overlay.open {
+    display: block;
+    opacity: 1;
+}
+
+/* ── Mobile: up to 991px ────────────────────────────── */
+@media (max-width: 991px) {
+    /* Show hamburger */
+    .ed-hamburger {
+        display: flex;
+    }
+
+    /* Sidebar: hidden off-screen, slide in when .open */
+    .ed-sidebar {
+        left: -260px;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: none;
+    }
+
+    .ed-sidebar.open {
+        left: 0;
+        box-shadow: 8px 0 24px rgba(0,0,0,0.15);
+    }
+
+    /* Remove sidebar padding on mobile */
+    body {
+        padding-left: 0;
+    }
+
+    /* Header adjustments */
+    .ed-header {
+        margin-left: 0;
+        padding: 10px 14px;
+        gap: 10px;
+    }
+
+    .ed-header__title {
+        font-size: 17px;
+    }
+
+    /* Content padding */
+    .ed-content {
+        margin-left: 0;
+        padding: 14px;
+    }
+
+    /* Dashboard layout: force full-width stacking */
+    .dashboard-left,
+    .ed-content > .col-sm-12,
+    .ed-content > .col-md-10 {
+        width: 100% !important;
+        float: none !important;
+        padding: 0 !important;
+    }
+
+    .ed-content .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .ed-content .row > [class*="col-"] {
+        width: 100% !important;
+        float: none !important;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* Recent Activities sidebar: stack below main content */
+    .dashboard-right {
+        width: 100% !important;
+        float: none !important;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        position: static;
+        max-height: none;
+        overflow-y: visible;
+        padding: 16px 14px;
+    }
+
+    /* Panels: reduce padding and border-radius */
+    .panel {
+        border-radius: var(--radius-sm);
+        margin-bottom: 14px;
+    }
+
+    .panel-default > .panel-heading {
+        padding: 12px 14px;
+    }
+
+    .panel-heading h4 {
+        font-size: 15px;
+    }
+
+    .panel-body {
+        padding: 14px;
+    }
+
+    /* Tables: horizontal scroll wrapper */
+    .panel {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .panel .table {
+        min-width: 500px;
+    }
+
+    .panel .table > thead > tr > th {
+        padding: 8px 10px;
+        font-size: 10px;
+    }
+
+    .panel .table > tbody > tr > td {
+        padding: 9px 10px;
+        font-size: 12.5px;
+    }
+
+    /* Stat card */
+    .panel.text-center .panel-body h3 {
+        font-size: 26px;
+    }
+
+    /* Buttons: slightly larger tap targets */
+    .btn-xs, .btn-group-xs > .btn {
+        padding: 6px 12px;
+        font-size: 11.5px;
+    }
+
+    /* DataTables */
+    .dataTables_wrapper {
+        padding: 0 10px 10px;
+    }
+
+    table.dataTable {
+        min-width: 500px;
+    }
+
+    /* Footer */
+    .ed-footer {
+        padding: 20px 0 10px;
+    }
+}
+
+/* ── Small phones: up to 576px ──────────────────────── */
+@media (max-width: 576px) {
+    .ed-header {
+        padding: 8px 10px;
+    }
+
+    .ed-header__title {
+        font-size: 15px;
+    }
+
+    .ed-content {
+        padding: 10px;
+    }
+
+    .panel {
+        border-radius: var(--radius-xs);
+        margin-bottom: 12px;
+    }
+
+    .panel-default > .panel-heading {
+        padding: 10px 12px;
+    }
+
+    .panel-heading h4 {
+        font-size: 14px;
+    }
+
+    .panel .table {
+        min-width: 420px;
+    }
+
+    .panel .table > thead > tr > th {
+        padding: 7px 8px;
+        font-size: 9.5px;
+    }
+
+    .panel .table > tbody > tr > td {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    .panel.text-center .panel-body {
+        padding: 16px 12px;
+    }
+
+    .panel.text-center .panel-body h3 {
+        font-size: 22px;
+    }
+
+    /* Buttons stacking in table cells */
+    td .btn-xs {
+        margin-bottom: 3px;
+    }
+
+    /* Activity feed */
+    .actitities-header {
+        font-size: 14px;
+    }
+
+    .dashboard-activity > p {
+        font-size: 12px;
+    }
+
+    .dashboard-activity .activ-time {
+        font-size: 10px;
+    }
+
+    /* Toggle switches */
+    .toggle.btn {
+        min-width: 50px;
+    }
+}
+
+/* ── Tablet: 768px to 991px ─────────────────────────── */
+@media (min-width: 768px) and (max-width: 991px) {
+    /* Allow two columns on tablet for some sections */
+    .ed-content > .col-md-10 > .row:first-child {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .ed-content > .col-md-10 > .row:first-child > .col-md-5,
+    .ed-content > .col-md-10 > .row:first-child > .col-md-7 {
+        width: 50% !important;
+        float: left !important;
+    }
+
+    .panel .table {
+        min-width: 400px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════
+   PHASE 2 — Global Admin Redesign
+   Page Toolbar, Forms, Modals, Pagination, Sidebar, etc.
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Page Toolbar ──────────────────────────────────── */
+.page-toolbar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    padding: 16px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.page-toolbar h3,
+.page-toolbar h4 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.01em;
+    flex-shrink: 0;
+}
+
+.page-toolbar h3 .fa,
+.page-toolbar h4 .fa {
+    color: var(--wine);
+    margin-right: 8px;
+    font-size: 0.85em;
+}
+
+.page-toolbar .navbar-form,
+.page-toolbar form.navbar-form {
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    align-items: center;
+}
+
+.page-toolbar .navbar-right {
+    margin-right: 0;
+    float: none !important;
+}
+
+.page-toolbar .form-control {
+    max-width: 240px;
+}
+
+.page-toolbar .btn {
+    white-space: nowrap;
+}
+
+/* ── Form Controls ─────────────────────────────────── */
+.form-control {
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--ink);
+    padding: 8px 12px;
+    height: auto;
+    min-height: 38px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    background: var(--surface);
+    box-shadow: none;
+}
+
+.form-control:focus {
+    border-color: var(--wine);
+    box-shadow: 0 0 0 3px rgba(134,39,54,0.08);
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: var(--ink-muted);
+    opacity: 0.7;
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group > label,
+.control-label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+
+.form-horizontal .control-label {
+    text-align: left;
+}
+
+.help-block {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    line-height: 1.5;
+}
+
+.has-error .form-control {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(220,53,69,0.08);
+}
+
+.has-error .help-block,
+.has-error .control-label {
+    color: var(--red);
+}
+
+.has-success .form-control {
+    border-color: var(--success);
+}
+
+/* Input groups */
+.input-group-addon {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    color: var(--ink-muted);
+    font-size: 13px;
+}
+
+.input-group .form-control:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group .form-control:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.input-group-addon:first-child {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group-addon:last-child {
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* ── Checkbox & Radio ──────────────────────────────── */
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: var(--wine);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.checkbox label,
+.radio label {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--ink-soft);
+    padding-left: 4px;
+    cursor: pointer;
+}
+
+.form-check-input {
+    accent-color: var(--wine);
+}
+
+/* ── Modals ────────────────────────────────────────── */
+.modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.modal-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-light);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-header .modal-title,
+.modal-header h4 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+.modal-header .close {
+    font-size: 24px;
+    color: var(--ink-muted);
+    opacity: 0.6;
+    text-shadow: none;
+    margin: 0;
+    padding: 0;
+    transition: opacity 0.15s;
+}
+
+.modal-header .close:hover {
+    opacity: 1;
+    color: var(--ink);
+}
+
+.modal-body {
+    padding: 24px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+}
+
+.modal-footer {
+    background: var(--bg);
+    border-top: 1px solid var(--border-light);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.modal-backdrop.in {
+    opacity: 0.4;
+}
+
+/* ── Pagination ────────────────────────────────────── */
+.pagination {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.pagination > li > a,
+.pagination > li > span {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--ink-soft);
+    border: 1px solid var(--border);
+    border-radius: 7px !important;
+    padding: 7px 13px;
+    margin: 0;
+    transition: all 0.15s;
+    background: var(--surface);
+}
+
+.pagination > li > a:hover {
+    background: var(--bg);
+    border-color: var(--border);
+    color: var(--ink);
+}
+
+.pagination > .active > a,
+.pagination > .active > a:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span {
+    background: var(--wine);
+    border-color: var(--wine);
+    color: #fff;
+}
+
+.pagination > .disabled > a,
+.pagination > .disabled > span {
+    background: var(--surface);
+    border-color: var(--border-light);
+    color: var(--ink-muted);
+    opacity: 0.5;
+}
+
+/* ── Course Sub-Menu Sidebar ───────────────────────── */
+.course-container {
+    background: var(--surface);
+    border-radius: 0;
+}
+
+.sub-menu {
+    background: #1e2330;
+    min-height: 100vh;
+    padding-top: 20px;
+}
+
+.sub-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sub-menu ul li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 20px;
+    color: rgba(255,255,255,0.65);
+    font-family: var(--font-body);
+    font-size: 13px;
+    text-decoration: none;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+}
+
+.sub-menu ul li a:hover {
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    border-left-color: rgba(255,255,255,0.2);
+}
+
+.sub-menu ul li.active a,
+.sub-menu ul li a.active {
+    background: rgba(134,39,54,0.25);
+    color: #fff;
+    border-left-color: var(--wine);
+    font-weight: 600;
+}
+
+.sub-menu ul li a .fa {
+    width: 18px;
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.sub-menu ul li.active a .fa,
+.sub-menu ul li a.active .fa {
+    opacity: 1;
+}
+
+.sub-right-content {
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 24px 30px;
+}
+
+/* ── Dropdown Menus ────────────────────────────────── */
+.dropdown-menu {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.03);
+    padding: 6px;
+    font-family: var(--font-body);
+    min-width: 180px;
+}
+
+.dropdown-menu > li > a {
+    font-size: 13px;
+    color: var(--ink-soft);
+    padding: 8px 14px;
+    border-radius: 5px;
+    transition: all 0.12s;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    background: var(--bg);
+    color: var(--ink);
+}
+
+.dropdown-menu > li.active > a,
+.dropdown-menu > li.active > a:hover {
+    background: var(--wine);
+    color: #fff;
+}
+
+.dropdown-menu .divider {
+    margin: 6px 0;
+    background-color: var(--border-light);
+}
+
+/* ── Label: default variant ────────────────────────── */
+.label-default {
+    background: var(--bg);
+    color: var(--ink-muted);
+    border: 1px solid var(--border);
+}
+
+/* ── Thumbnails / Image containers ─────────────────── */
+.thumbnail {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px;
+    background: var(--surface);
+    transition: box-shadow 0.2s;
+}
+
+.thumbnail:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+/* ── Table outside panels (direct tables) ──────────── */
+.table-users .table,
+.table-responsive > .table {
+    border-collapse: collapse;
+}
+
+.table-users .table > thead > tr > th,
+.table-responsive > .table > thead > tr > th {
+    font-family: var(--font-body);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-light);
+    border-top: none;
+    background: #FAFAF8;
+    white-space: nowrap;
+}
+
+.table-users .table > tbody > tr > td,
+.table-responsive > .table > tbody > tr > td {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--ink-soft);
+    padding: 11px 16px;
+    border-top: none;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+}
+
+.table-users .table > tbody > tr:hover,
+.table-responsive > .table > tbody > tr:hover {
+    background: var(--surface-hover);
+}
+
+.table-users .table > tbody > tr > td a {
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.table-users .table > tbody > tr > td a:hover {
+    color: var(--wine);
+}
+
+/* ── Striped table override ────────────────────────── */
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: rgba(0,0,0,0.015);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd):hover {
+    background-color: var(--surface-hover);
+}
+
+/* ── Body & global typography ──────────────────────── */
+body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    color: var(--ink);
+    font-weight: 400;
+}
+
+a {
+    color: var(--accent);
+    transition: color 0.15s;
+}
+
+a:hover {
+    color: var(--wine);
+    text-decoration: none;
+}
+
+/* ── Page header (h1/h2 on top of content) ─────────── */
+.page-header {
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 12px;
+    margin: 0 0 24px;
+}
+
+/* ── List groups ───────────────────────────────────── */
+.list-group-item {
+    border-color: var(--border-light);
+    padding: 12px 16px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--ink-soft);
+    transition: background 0.12s;
+}
+
+.list-group-item:first-child {
+    border-top-left-radius: var(--radius);
+    border-top-right-radius: var(--radius);
+}
+
+.list-group-item:last-child {
+    border-bottom-left-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+}
+
+.list-group-item:hover {
+    background: var(--bg);
+}
+
+.list-group-item.active,
+.list-group-item.active:hover {
+    background: var(--wine);
+    border-color: var(--wine);
+    color: #fff;
+}
+
+/* ── Jumbotron ─────────────────────────────────────── */
+.jumbotron {
+    background: var(--bg);
+    border-radius: var(--radius);
+    padding: 30px;
+}
+
+/* ── Tab Content padding ───────────────────────────── */
+.tab-content {
+    padding-top: 20px;
+}
+
+/* ── TinyMCE editor container ──────────────────────── */
+.mce-tinymce {
+    border-radius: var(--radius-sm) !important;
+    border-color: var(--border) !important;
+}
+
+/* ── File upload areas ─────────────────────────────── */
+.fileuploader {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.fileuploader:hover {
+    border-color: var(--wine);
+    background: rgba(134,39,54,0.02);
+}
+
+/* ── Inline action buttons in table cells ──────────── */
+td .btn-xs {
+    padding: 4px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+}
+
+td form {
+    display: inline-block;
+}
+
+/* ── Global row spacing inside panels ──────────────── */
+.panel-body .row + .row {
+    margin-top: 12px;
+}
+
+/* ── Loading/disabled state ────────────────────────── */
+.btn.disabled, .btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Select element styling ────────────────────────── */
+select.form-control {
+    appearance: auto;
+    padding-right: 28px;
+}
+
+/* ── Image previews in admin ───────────────────────── */
+.img-responsive,
+.img-thumbnail {
+    border-radius: var(--radius-sm);
+    max-width: 100%;
+}
+
+.img-thumbnail {
+    border-color: var(--border);
+    padding: 4px;
+}
+
+/* ── Section dividers ──────────────────────────────── */
+hr {
+    border-color: var(--border-light);
+    margin: 24px 0;
+}
+
+/* ══ Page Toolbar Mobile ═══════════════════════════════ */
+@media (max-width: 991px) {
+    .page-toolbar {
+        padding: 12px 16px;
+        border-radius: var(--radius-sm);
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .page-toolbar h3,
+    .page-toolbar h4 {
+        font-size: 18px;
+    }
+
+    .page-toolbar .navbar-form,
+    .page-toolbar form.navbar-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .page-toolbar .form-control {
+        max-width: none;
+    }
+
+    /* Modals full-width on mobile */
+    .modal-dialog {
+        margin: 10px;
+    }
+
+    .modal-content {
+        border-radius: var(--radius-sm);
+    }
+
+    .modal-header {
+        padding: 16px 18px;
+    }
+
+    .modal-body {
+        padding: 18px;
+    }
+
+    .modal-footer {
+        padding: 14px 18px;
+    }
+
+    /* Course sidebar stacks vertically */
+    .sub-menu {
+        min-height: auto;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .sub-right-content {
+        padding: 16px;
+    }
+
+    /* Pagination wraps nicely */
+    .pagination > li > a,
+    .pagination > li > span {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .page-toolbar h3,
+    .page-toolbar h4 {
+        font-size: 16px;
+    }
+
+    .page-toolbar {
+        padding: 10px 12px;
+    }
+
+    .modal-dialog {
+        margin: 5px;
+    }
+
+    .sub-menu ul li a {
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+}
+
+/* ── Print styles ───────────────────────────────────── */
+@media print {
+    .ed-sidebar, .ed-header, .ed-hamburger, .ed-overlay {
+        display: none !important;
+    }
+    .ed-main {
+        margin-left: 0 !important;
+    }
+    .panel {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}

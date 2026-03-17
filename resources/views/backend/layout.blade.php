@@ -10,6 +10,11 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
     </head>
     <body>
+        @include('backend.partials.sidebar')
+        <div class="ed-overlay" id="edOverlay"></div>
+        <button type="button" class="ed-hamburger" id="edHamburger" aria-label="Meny">
+            <i class="fa fa-bars"></i>
+        </button>
         @include('backend.partials.navbar')
         @yield('content')
         <div id="changePasswordModal" class="modal fade" role="dialog" data-backdrop="false">
@@ -371,6 +376,25 @@
                 parentContainer.find('.select2').show();
                 parentContainer.find('.hidden-container').hide();
             }
+        </script>
+        <script>
+            // Sidebar toggle for mobile
+            (function() {
+                var hamburger = document.getElementById('edHamburger');
+                var sidebar = document.getElementById('edSidebar');
+                var overlay = document.getElementById('edOverlay');
+                if (!hamburger || !sidebar || !overlay) return;
+
+                hamburger.addEventListener('click', function() {
+                    sidebar.classList.toggle('open');
+                    overlay.classList.toggle('open');
+                });
+
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('open');
+                });
+            })();
         </script>
         @yield('scripts')
     </body>
