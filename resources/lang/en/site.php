@@ -26,6 +26,7 @@ return [
         'assigned-webinar' => 'Assigned Webinars',
         'projects' => 'Projects',
         'community' => 'Community',
+        'emails' => 'E-poster',
     ],
     'total-learners' => 'Total Learners',
     'my-assigned-manuscripts' => 'My assigned manuscripts',

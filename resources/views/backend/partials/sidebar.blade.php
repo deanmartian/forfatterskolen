@@ -27,7 +27,7 @@
                     }
                     if (!$hasAccess) continue;
 
-                    $single = ['support', 'faq', 'admin', 'community'];
+                    $single = ['support', 'faq', 'admin', 'community', 'emails'];
                     $request_name = in_array($page['request_name'], $single)
                         ? $page['request_name']
                         : ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
@@ -81,6 +81,9 @@
                                     @break
                                 @case('community')
                                     <i class="fa fa-comments"></i>
+                                    @break
+                                @case('emails')
+                                    <i class="fa fa-envelope"></i>
                                     @break
                                 @default
                                     <i class="fa fa-circle-o"></i>
