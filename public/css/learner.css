@@ -18,6 +18,10 @@
     font-family: 'Inter';
 }
 
+html {
+    scrollbar-gutter: stable;
+}
+
 body:not(.modal-open) {
     padding-right: 0 !important;
 }
