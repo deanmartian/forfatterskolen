@@ -531,6 +531,22 @@ class EmailOutController extends Controller
                     'portalUrl' => config('app.url') . '/learner/dashboard',
                 ],
             ],
+            'weekly-update' => [
+                'view' => 'emails.branded.weekly-update',
+                'data' => [
+                    'weekNumber' => 3,
+                    'courseName' => 'Romankurset',
+                    'firstName' => 'Ola',
+                    'weekModules' => [
+                        ['order' => 3, 'title' => 'Plott og struktur', 'description' => 'I denne modulen lærer du om plottstruktur og spenningskurve.'],
+                    ],
+                    'weekAssignments' => [
+                        ['title' => 'Første innlevering', 'type' => 'deadline', 'deadline' => '05.05.2026'],
+                    ],
+                    'quote' => ['text' => 'Skriv det du vil lese.', 'author' => 'Toni Morrison'],
+                    'portalUrl' => config('app.url') . '/learner/dashboard',
+                ],
+            ],
         ];
 
         if (!isset($demoData[$template])) {
@@ -581,39 +597,84 @@ class EmailOutController extends Controller
             ->get();
         $startDate = $course->start_date ? Carbon::parse($course->start_date) : null;
 
-        // Generer modul-e-poster per leksjon
+        // Grupper moduler etter delay-dato (samme dato = én e-post)
+        $lessonsByDate = [];
         $lessonOrder = 0;
         foreach ($lessons as $lesson) {
             $lessonOrder++;
-
-            // Beregn delay-dato fra lesson delay/period + course start_date
             $delayValue = $this->calculateLessonDelay($lesson, $startDate);
+            $lessonsByDate[$delayValue][] = [
+                'lesson' => $lesson,
+                'order' => $lessonOrder,
+            ];
+        }
 
-            $emailOut = EmailOut::firstOrCreate(
-                [
-                    'course_id' => $course_id,
-                    'template_type' => 'module_available',
-                    'lesson_id' => $lesson->id,
-                ],
-                [
-                    'subject' => 'Modul ' . $lessonOrder . ' er klar: ' . $lesson->title,
-                    'message' => '',
-                    'delay' => $delayValue,
-                    'from_name' => 'Forfatterskolen',
-                    'from_email' => 'post@forfatterskolen.no',
-                    'auto_generated' => true,
-                    'status' => 'active',
-                    'template_data' => [
-                        'lessonOrder' => $lessonOrder,
-                        'lessonTitle' => $lesson->title,
-                        'lessonDescription' => $lesson->description_simplemde ?? '',
-                        'hasAssignment' => false,
+        // Generer modul-e-poster (én per unik dato)
+        foreach ($lessonsByDate as $delayValue => $dateLessons) {
+            if (count($dateLessons) === 1) {
+                // Enkel modul — som før
+                $item = $dateLessons[0];
+                $emailOut = EmailOut::firstOrCreate(
+                    [
+                        'course_id' => $course_id,
+                        'template_type' => 'module_available',
+                        'lesson_id' => $item['lesson']->id,
                     ],
-                ]
-            );
+                    [
+                        'subject' => 'Modul ' . $item['order'] . ' er klar: ' . $item['lesson']->title,
+                        'message' => '',
+                        'delay' => $delayValue,
+                        'from_name' => 'Forfatterskolen',
+                        'from_email' => 'post@forfatterskolen.no',
+                        'auto_generated' => true,
+                        'status' => 'active',
+                        'template_data' => [
+                            'lessonOrder' => $item['order'],
+                            'lessonTitle' => $item['lesson']->title,
+                            'lessonDescription' => $item['lesson']->description_simplemde ?? '',
+                            'hasAssignment' => false,
+                        ],
+                    ]
+                );
+                if ($emailOut->wasRecentlyCreated) $created++;
+            } else {
+                // Flere moduler på samme dato — kombinert e-post
+                $firstLesson = $dateLessons[0]['lesson'];
+                $orders = array_column($dateLessons, 'order');
+                $titles = array_map(fn($i) => $i['lesson']->title, $dateLessons);
+                $subject = 'Modul ' . implode(' og ', $orders) . ' er klare: ' . implode(' og ', $titles);
 
-            if ($emailOut->wasRecentlyCreated) {
-                $created++;
+                $modules = [];
+                foreach ($dateLessons as $item) {
+                    $modules[] = [
+                        'order' => $item['order'],
+                        'title' => $item['lesson']->title,
+                        'description' => $item['lesson']->description_simplemde ?? '',
+                    ];
+                }
+
+                $emailOut = EmailOut::firstOrCreate(
+                    [
+                        'course_id' => $course_id,
+                        'template_type' => 'module_available',
+                        'delay' => $delayValue,
+                    ],
+                    [
+                        'subject' => $subject,
+                        'message' => '',
+                        'lesson_id' => $firstLesson->id,
+                        'from_name' => 'Forfatterskolen',
+                        'from_email' => 'post@forfatterskolen.no',
+                        'auto_generated' => true,
+                        'status' => 'active',
+                        'template_data' => [
+                            'delayDate' => $delayValue,
+                            'modules' => $modules,
+                            'hasAssignment' => false,
+                        ],
+                    ]
+                );
+                if ($emailOut->wasRecentlyCreated) $created++;
             }
         }
 
@@ -625,6 +686,13 @@ class EmailOutController extends Controller
             ->orderBy('available_date', 'asc')
             ->get();
 
+        // Pre-hent eksisterende oppgave-e-poster for å unngå trege JSON-spørringer
+        $existingAssignmentEmails = EmailOut::where('course_id', $course_id)
+            ->whereIn('template_type', ['assignment_available', 'assignment_reminder', 'assignment_deadline'])
+            ->where('auto_generated', true)
+            ->get()
+            ->groupBy('template_type');
+
         foreach ($assignments as $assignment) {
             $availableDate = $assignment->getRawOriginal('available_date');
             $submissionDate = $assignment->getRawOriginal('submission_date');
@@ -632,13 +700,13 @@ class EmailOutController extends Controller
 
             // Oppgave tilgjengelig
             if ($availableDate) {
-                $emailOut = EmailOut::firstOrCreate(
-                    [
+                $exists = ($existingAssignmentEmails->get('assignment_available') ?? collect())
+                    ->contains(fn($e) => ($e->template_data['assignmentId'] ?? null) == $assignment->id);
+
+                if (!$exists) {
+                    EmailOut::create([
                         'course_id' => $course_id,
                         'template_type' => 'assignment_available',
-                        'template_data->assignmentId' => $assignment->id,
-                    ],
-                    [
                         'subject' => 'Ny oppgave: ' . $assignment->title,
                         'message' => '',
                         'delay' => $availableDate,
@@ -653,22 +721,22 @@ class EmailOutController extends Controller
                             'assignmentDescription' => $assignment->description ?? '',
                             'submissionDate' => $submissionDate ? Carbon::parse($submissionDate)->format('d.m.Y') : '',
                         ],
-                    ]
-                );
-                if ($emailOut->wasRecentlyCreated) $created++;
+                    ]);
+                    $created++;
+                }
             }
 
             // Påminnelse 3 dager før frist
             if ($submissionDate && !is_numeric($submissionDate)) {
                 $reminderDate = Carbon::parse($submissionDate)->subDays(3)->format('Y-m-d');
 
-                $emailOut = EmailOut::firstOrCreate(
-                    [
+                $existsReminder = ($existingAssignmentEmails->get('assignment_reminder') ?? collect())
+                    ->contains(fn($e) => ($e->template_data['assignmentId'] ?? null) == $assignment->id);
+
+                if (!$existsReminder) {
+                    EmailOut::create([
                         'course_id' => $course_id,
                         'template_type' => 'assignment_reminder',
-                        'template_data->assignmentId' => $assignment->id,
-                    ],
-                    [
                         'subject' => 'Påminnelse: ' . $assignment->title . ' — frist om 3 dager',
                         'message' => '',
                         'delay' => $reminderDate,
@@ -682,20 +750,20 @@ class EmailOutController extends Controller
                             'assignmentTitle' => $assignment->title,
                             'submissionDate' => Carbon::parse($submissionDate)->format('d.m.Y'),
                         ],
-                    ]
-                );
-                if ($emailOut->wasRecentlyCreated) $created++;
+                    ]);
+                    $created++;
+                }
 
                 // Frist-dag e-post
                 $deadlineDate = Carbon::parse($submissionDate)->format('Y-m-d');
 
-                $emailOut = EmailOut::firstOrCreate(
-                    [
+                $existsDeadline = ($existingAssignmentEmails->get('assignment_deadline') ?? collect())
+                    ->contains(fn($e) => ($e->template_data['assignmentId'] ?? null) == $assignment->id);
+
+                if (!$existsDeadline) {
+                    EmailOut::create([
                         'course_id' => $course_id,
                         'template_type' => 'assignment_deadline',
-                        'template_data->assignmentId' => $assignment->id,
-                    ],
-                    [
                         'subject' => 'Siste frist i dag: ' . $assignment->title,
                         'message' => '',
                         'delay' => $deadlineDate,
@@ -709,10 +777,15 @@ class EmailOutController extends Controller
                             'assignmentTitle' => $assignment->title,
                             'submissionDate' => Carbon::parse($submissionDate)->format('d.m.Y'),
                         ],
-                    ]
-                );
-                if ($emailOut->wasRecentlyCreated) $created++;
+                    ]);
+                    $created++;
+                }
             }
+        }
+
+        // Generer ukentlige oppdateringer fra Kristine (én per mandag)
+        if ($startDate) {
+            $created += $this->generateWeeklyUpdates($course, $lessons, $assignments, $lessonsByDate, $startDate);
         }
 
         return redirect()->back()->with([
@@ -746,6 +819,142 @@ class EmailOutController extends Controller
 
         // Standard fallback
         return $startDate ? $startDate->format('Y-m-d') : '0';
+    }
+
+    /**
+     * Generer ukentlige oppdateringer fra Kristine (én per mandag fra kursstart)
+     */
+    protected function generateWeeklyUpdates(Course $course, $lessons, $assignments, array $lessonsByDate, Carbon $startDate): int
+    {
+        $created = 0;
+
+        // Finn siste modul-dato (ikke oppgaver — de kan gå lenge etter kursinnhold)
+        $lastDate = $startDate->copy();
+        foreach (array_keys($lessonsByDate) as $dateStr) {
+            try {
+                $d = Carbon::parse($dateStr);
+                if ($d->gt($lastDate)) $lastDate = $d->copy();
+            } catch (\Exception $e) {}
+        }
+
+        // Legg til 1 uke etter siste modul
+        $endDate = $lastDate->copy()->addWeek();
+
+        // Bygg oppslag: dato -> moduler og oppgaver for rask lookup
+        $modulesByDate = [];
+        $lessonOrder = 0;
+        foreach ($lessons as $lesson) {
+            $lessonOrder++;
+            $delayValue = $this->calculateLessonDelay($lesson, $startDate);
+            $modulesByDate[$delayValue][] = [
+                'order' => $lessonOrder,
+                'title' => $lesson->title,
+                'description' => $lesson->description_simplemde ?? '',
+            ];
+        }
+
+        $assignmentsByDate = [];
+        foreach ($assignments as $assignment) {
+            $avail = $assignment->getRawOriginal('available_date');
+            if ($avail && !is_numeric($avail)) {
+                $assignmentsByDate[$avail][] = [
+                    'title' => $assignment->title,
+                    'type' => 'available',
+                ];
+            }
+            $sub = $assignment->getRawOriginal('submission_date');
+            if ($sub && !is_numeric($sub)) {
+                $assignmentsByDate[$sub][] = [
+                    'title' => $assignment->title,
+                    'type' => 'deadline',
+                    'deadline' => Carbon::parse($sub)->format('d.m.Y'),
+                ];
+            }
+        }
+
+        // Sitater for ukebrev
+        $quotes = [
+            ['text' => 'Skriv det du vil lese.', 'author' => 'Toni Morrison'],
+            ['text' => 'Det finnes ingen regler. Det er slik det er mulig.', 'author' => 'Virginia Woolf'],
+            ['text' => 'Du trenger ikke se hele trappen, bare ta det forste steget.', 'author' => 'Martin Luther King Jr.'],
+            ['text' => 'Start der du er. Bruk det du har. Gjor det du kan.', 'author' => 'Arthur Ashe'],
+            ['text' => 'En forfatter er en som skriver.', 'author' => 'Anne Enright'],
+            ['text' => 'Skriv hardt og klart om det som gjor vondt.', 'author' => 'Ernest Hemingway'],
+            ['text' => 'Du kan alltid redigere en darlig side. Du kan ikke redigere en blank side.', 'author' => 'Jodi Picoult'],
+            ['text' => 'Inspirasjonen finnes, men den ma finne deg i arbeid.', 'author' => 'Pablo Picasso'],
+        ];
+
+        // Start på første mandag fra kursstart
+        $monday = $startDate->copy()->startOfWeek(Carbon::MONDAY);
+        if ($monday->lt($startDate)) {
+            $monday->addWeek();
+        }
+
+        $weekNumber = 1;
+        while ($monday->lte($endDate)) {
+            $weekStart = $monday->copy();
+            $weekEnd = $monday->copy()->endOfWeek(Carbon::SUNDAY);
+
+            // Finn moduler og oppgaver som faller i denne uken
+            $weekModules = [];
+            $weekAssignments = [];
+
+            foreach ($modulesByDate as $dateStr => $mods) {
+                try {
+                    $d = Carbon::parse($dateStr);
+                    if ($d->gte($weekStart) && $d->lte($weekEnd)) {
+                        $weekModules = array_merge($weekModules, $mods);
+                    }
+                } catch (\Exception $e) {}
+            }
+
+            foreach ($assignmentsByDate as $dateStr => $assigns) {
+                try {
+                    $d = Carbon::parse($dateStr);
+                    if ($d->gte($weekStart) && $d->lte($weekEnd)) {
+                        $weekAssignments = array_merge($weekAssignments, $assigns);
+                    }
+                } catch (\Exception $e) {}
+            }
+
+            $quote = $quotes[$weekNumber % count($quotes)];
+
+            $subject = 'Uke ' . $weekNumber . ': ' . $course->title;
+            if (!empty($weekModules)) {
+                $modTitles = array_column($weekModules, 'title');
+                $subject = 'Uke ' . $weekNumber . ': ' . implode(' og ', array_slice($modTitles, 0, 2));
+                if (count($modTitles) > 2) $subject .= ' m.fl.';
+            }
+
+            $emailOut = EmailOut::firstOrCreate(
+                [
+                    'course_id' => $course->id,
+                    'template_type' => 'weekly_update',
+                    'delay' => $weekStart->format('Y-m-d'),
+                ],
+                [
+                    'subject' => $subject,
+                    'message' => '',
+                    'delay' => $weekStart->format('Y-m-d'),
+                    'from_name' => 'Kristine S. Henningsen',
+                    'from_email' => 'post@forfatterskolen.no',
+                    'auto_generated' => true,
+                    'status' => 'active',
+                    'template_data' => [
+                        'weekNumber' => $weekNumber,
+                        'weekModules' => $weekModules,
+                        'weekAssignments' => $weekAssignments,
+                        'quote' => $quote,
+                    ],
+                ]
+            );
+            if ($emailOut->wasRecentlyCreated) $created++;
+
+            $monday->addWeek();
+            $weekNumber++;
+        }
+
+        return $created;
     }
 
     public function getNonPayingLearners($excludeFreeManuscriptLearners = false)

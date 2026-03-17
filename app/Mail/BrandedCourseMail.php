@@ -35,6 +35,7 @@ class BrandedCourseMail extends Mailable
             'assignment_reminder' => 'emails.branded.assignment-reminder',
             'assignment_deadline' => 'emails.branded.assignment-deadline',
             'feedback_ready' => 'emails.branded.feedback-ready',
+            'weekly_update' => 'emails.branded.weekly-update',
         ];
 
         $templateType = $this->emailOut->template_type;
@@ -76,8 +77,14 @@ class BrandedCourseMail extends Mailable
         // Calculate progression for module_available
         if ($this->emailOut->template_type === 'module_available') {
             $totalLessons = $this->course->lessons()->count();
-            $lessonOrder = $data['lessonOrder'] ?? 1;
-            $data['progressPercent'] = $totalLessons > 0 ? round(($lessonOrder / $totalLessons) * 100) : 0;
+            if (!empty($data['modules'])) {
+                // Kombinert e-post — bruk høyeste modul-ordre for progresjon
+                $maxOrder = max(array_column($data['modules'], 'order'));
+                $data['progressPercent'] = $totalLessons > 0 ? round(($maxOrder / $totalLessons) * 100) : 0;
+            } else {
+                $lessonOrder = $data['lessonOrder'] ?? 1;
+                $data['progressPercent'] = $totalLessons > 0 ? round(($lessonOrder / $totalLessons) * 100) : 0;
+            }
             $data['totalLessons'] = $totalLessons;
         }
 
