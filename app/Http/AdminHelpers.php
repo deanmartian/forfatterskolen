@@ -325,9 +325,7 @@ class AdminHelpers
                 $user = User::find($course->user_id);
 
                 $params = [
-                    'api_key' => 'ee9f1cb27fe33c7197d722f434493d4440cf5da6be8114933fd0fdae40fc03a197388b99',
-
-                    // this is the action that adds a contact
+                    'api_key' => config('services.activecampaign.key'),
                     'api_action' => 'automation_contact_add',
                     'api_output' => 'serialize',
                 ];
@@ -532,12 +530,10 @@ class AdminHelpers
 
     public static function addToAutomation($email, $automation_id, $name)
     {
-        $url = 'https://forfatterskolen.api-us1.com';
+        $url = config('services.activecampaign.url');
 
         $params = [
-            'api_key' => 'ee9f1cb27fe33c7197d722f434493d4440cf5da6be8114933fd0fdae40fc03a197388b99',
-
-            // this is the action that adds a contact
+            'api_key' => config('services.activecampaign.key'),
             'api_action' => 'automation_contact_add',
             'api_output' => 'serialize',
         ];
@@ -608,10 +604,10 @@ class AdminHelpers
      */
     public static function addToActiveCampaignList($list_id, $data): bool
     {
-        $url = 'https://forfatterskolen.api-us1.com';
+        $url = config('services.activecampaign.url');
 
         $params = [
-            'api_key' => 'ee9f1cb27fe33c7197d722f434493d4440cf5da6be8114933fd0fdae40fc03a197388b99',
+            'api_key' => config('services.activecampaign.key'),
             'api_output' => 'serialize',
         ];
 
@@ -717,10 +713,10 @@ class AdminHelpers
 
     public static function addToActiveCampaignListTest($list_id, $data)
     {
-        $url = 'https://forfatterskolen.api-us1.com';
+        $url = config('services.activecampaign.url');
 
         $params = [
-            'api_key' => 'ee9f1cb27fe33c7197d722f434493d4440cf5da6be8114933fd0fdae40fc03a197388b99',
+            'api_key' => config('services.activecampaign.key'),
             'api_output' => 'serialize',
         ];
 
@@ -794,14 +790,10 @@ class AdminHelpers
      */
     public static function getActiveCampaignDataByEmail($email)
     {
-        // By default, this sample code is designed to get the result from your ActiveCampaign installation and print out the result
-        $url = 'https://forfatterskolen.api-us1.com';
+        $url = config('services.activecampaign.url');
 
         $params = [
-
-            // the API Key can be found on the "Your Settings" page under the "API" tab.
-            // replace this with your API Key
-            'api_key' => 'ee9f1cb27fe33c7197d722f434493d4440cf5da6be8114933fd0fdae40fc03a197388b99',
+            'api_key' => config('services.activecampaign.key'),
 
             // this is the action that fetches a contact info based on the ID you provide
             'api_action' => 'contact_view_email',
@@ -878,14 +870,10 @@ class AdminHelpers
      */
     public static function updateActiveCampaignContactEmailForList($user_id, $email, $list_id)
     {
-        // By default, this sample code is designed to get the result from your ActiveCampaign installation and print out the result
-        $url = 'https://forfatterskolen.api-us1.com';
+        $url = config('services.activecampaign.url');
 
         $params = [
-
-            // the API Key can be found on the "Your Settings" page under the "API" tab.
-            // replace this with your API Key
-            'api_key' => 'ee9f1cb27fe33c7197d722f434493d4440cf5da6be8114933fd0fdae40fc03a197388b99',
+            'api_key' => config('services.activecampaign.key'),
 
             // this is the action that modifies contact info based on the ID you provide
             'api_action' => 'contact_edit',

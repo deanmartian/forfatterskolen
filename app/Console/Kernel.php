@@ -39,6 +39,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('checkfikenpaymentdate:command')->dailyAt('00:30');
         $schedule->command('emails:weekly-digest')->weeklyOn(1, '07:00');
         $schedule->command('emails:inactive-nudge')->dailyAt('11:00');
+        $schedule->command('ads:auto-stop')->hourly();
+        $schedule->command('ads:update-stats')->dailyAt('08:00');
     }
 
     /**

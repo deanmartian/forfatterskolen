@@ -173,3 +173,13 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
         ->middleware('signed')
         ->name('api.v1.files.download');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Facebook Lead Ads Webhook
+|--------------------------------------------------------------------------
+| GET  = verifisering fra Facebook ved oppsett
+| POST = mottak av nye leads
+*/
+Route::get('/webhooks/facebook/leads', [\App\Http\Controllers\FacebookLeadWebhookController::class, 'verify']);
+Route::post('/webhooks/facebook/leads', [\App\Http\Controllers\FacebookLeadWebhookController::class, 'handle']);

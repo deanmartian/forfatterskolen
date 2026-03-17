@@ -214,8 +214,82 @@ class FreeCourseController extends Controller
             ]
         );
 
-        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Free Webinar created successfully.'),
-            'alert_type' => 'success']);
+        $messages = ['Free Webinar created successfully.'];
+
+        // BigMarker auto-oppretting
+        if ($request->boolean('create_bigmarker')) {
+            try {
+                $bigmarker = app(\App\Services\BigMarkerService::class);
+                $result = $bigmarker->createConference([
+                    'title' => $webinar->title,
+                    'starts_at' => \Carbon\Carbon::parse($webinar->start_date),
+                    'description' => strip_tags($webinar->description),
+                    'duration_hours' => 1,
+                ]);
+
+                $conferenceId = $result['id'] ?? $result['conference_id'] ?? null;
+                if ($conferenceId) {
+                    $webinar->update([
+                        'bigmarker_conference_id' => $conferenceId,
+                        'bigmarker_status' => 'active',
+                    ]);
+
+                    // Deaktiver BigMarkers egne e-poster
+                    $bigmarker->disableEmails($conferenceId);
+                    $messages[] = 'BigMarker webinar opprettet.';
+                }
+            } catch (\Exception $e) {
+                \Log::error("BigMarker auto-oppretting feilet: {$e->getMessage()}");
+                $messages[] = "BigMarker feilet: {$e->getMessage()}";
+            }
+        }
+
+        // Facebook Lead Ad
+        if ($request->boolean('create_facebook_ad')) {
+            try {
+                $fb = app(\App\Services\FacebookAdsService::class);
+                $fbResult = $fb->createWebinarLeadCampaign([
+                    'webinar_title' => $webinar->title,
+                    'webinar_starts_at' => \Carbon\Carbon::parse($webinar->start_date),
+                    'ad_text' => $request->ad_text ?: "Gratis webinar: {$webinar->title}",
+                    'ad_headline' => $request->ad_headline ?: 'Meld deg på gratis webinar',
+                    'daily_budget' => $request->facebook_daily_budget ?? 200,
+                    'landing_page' => route('front.free-webinar', $webinar->id),
+                    'image_url' => $webinar->image ? url($webinar->image) : null,
+                ]);
+
+                $webinar->update([
+                    'facebook_campaign_id' => $fbResult['campaign_id'] ?? null,
+                    'facebook_adset_id' => $fbResult['adset_id'] ?? null,
+                    'facebook_ad_id' => $fbResult['ad_id'] ?? null,
+                    'facebook_lead_form_id' => $fbResult['lead_form_id'] ?? null,
+                    'facebook_ad_status' => 'paused',
+                    'facebook_daily_budget' => $request->facebook_daily_budget ?? 200,
+                    'ad_headline' => $request->ad_headline,
+                    'ad_text' => $request->ad_text,
+                ]);
+
+                $messages[] = 'Facebook Lead Ad opprettet (PAUSET).';
+            } catch (\Exception $e) {
+                \Log::error("Facebook Ads feilet: {$e->getMessage()}");
+                $messages[] = "Facebook Ads feilet: {$e->getMessage()}";
+            }
+        }
+
+        // Google Ads (lagre søkeord for manuell oppfølging)
+        if ($request->boolean('create_google_search')) {
+            $webinar->update([
+                'google_keywords' => $request->google_keywords,
+                'google_daily_budget' => $request->google_daily_budget ?? 100,
+                'google_ad_status' => 'draft',
+            ]);
+            $messages[] = 'Google Ads-data lagret (opprett manuelt i Google Ads).';
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag(implode(' ', $messages)),
+            'alert_type' => 'success',
+        ]);
     }
 
     /**
