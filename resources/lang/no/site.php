@@ -27,6 +27,7 @@ return [
         'projects' => 'Prosjekt',
         'editors-note' => 'Redaktørinnstruks',
         'community' => 'Fellesskap',
+        'emails' => 'E-poster',
     ],
     'all-manuscripts' => 'All Manuscripts',
     'manuscripts' => '[0,1] Manus |[2,*] Manus',

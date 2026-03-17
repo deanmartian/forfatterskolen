@@ -10,9 +10,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AddWebinarRequest;
 use App\Http\Requests\FreeCourseCreateRequest;
 use App\Http\Requests\FreeCourseUpdateRequest;
+use App\PageMeta;
 use File;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 
@@ -113,6 +115,9 @@ class FreeCourseController extends Controller
         $webinar = new FreeWebinar;
         $webinar->title = $request->title;
         $webinar->description = $request->description;
+        $webinar->learning_points = $request->learning_points;
+        $webinar->target_audience = $request->target_audience;
+        $webinar->replay_url = $request->replay_url;
         $webinar->start_date = $request->start_date;
         $webinar->gtwebinar_id = $request->gtwebinar_id;
 
@@ -199,6 +204,16 @@ class FreeCourseController extends Controller
 
         $webinar->save();
 
+        // Auto-generate PageMeta for SEO
+        PageMeta::updateOrCreate(
+            ['url' => url('/gratis-webinar/' . $webinar->id)],
+            [
+                'meta_title' => Str::limit('Gratiswebinar: ' . $webinar->title . ' – Forfatterskolen', 70, ''),
+                'meta_description' => Str::limit(strip_tags($webinar->description), 155, '...'),
+                'meta_image' => $webinar->image,
+            ]
+        );
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Free Webinar created successfully.'),
             'alert_type' => 'success']);
     }
@@ -213,6 +228,9 @@ class FreeCourseController extends Controller
         $webinar = FreeWebinar::findOrFail($id);
         $webinar->title = $request->title;
         $webinar->description = $request->description;
+        $webinar->learning_points = $request->learning_points;
+        $webinar->target_audience = $request->target_audience;
+        $webinar->replay_url = $request->replay_url;
         $webinar->start_date = $request->start_date;
         $webinar->gtwebinar_id = $request->gtwebinar_id;
 
@@ -296,6 +314,16 @@ class FreeCourseController extends Controller
         }
 
         $webinar->save();
+
+        // Auto-generate PageMeta for SEO
+        PageMeta::updateOrCreate(
+            ['url' => url('/gratis-webinar/' . $webinar->id)],
+            [
+                'meta_title' => Str::limit('Gratiswebinar: ' . $webinar->title . ' – Forfatterskolen', 70, ''),
+                'meta_description' => Str::limit(strip_tags($webinar->description), 155, '...'),
+                'meta_image' => $webinar->image,
+            ]
+        );
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Free Webinar updated successfully.'),
             'alert_type' => 'success']);

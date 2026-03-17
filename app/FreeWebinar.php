@@ -19,7 +19,7 @@ class FreeWebinar extends Model
      *
      * @var array
      */
-    protected $fillable = ['title', 'description', 'start_date', 'image', 'gtwebinar_id'];
+    protected $fillable = ['title', 'description', 'learning_points', 'target_audience', 'replay_url', 'start_date', 'image', 'gtwebinar_id'];
 
     /**
      * Get the webinar presenters

@@ -108,6 +108,9 @@
                                                data-start_date="{{ strftime('%Y-%m-%dT%H:%M:%S', strtotime($webinar->start_date)) }}"
                                                data-image="{{ $webinar->image }}"
                                                data-gtwebinar_id="{{ $webinar->gtwebinar_id }}"
+                                               data-learning_points="{{ $webinar->learning_points }}"
+                                               data-target_audience="{{ $webinar->target_audience }}"
+                                               data-replay_url="{{ $webinar->replay_url }}"
                                             >
                                                 <i class="fa fa-pencil"></i></a>
 
@@ -323,6 +326,18 @@
                         <label>GoToWebinar ID</label>
                         <input type="text" name="gtwebinar_id" class="form-control webinar-id" required>
                     </div>
+                    <div class="form-group">
+                        <label>Læringspunkter <small class="text-muted">(ett punkt per linje)</small></label>
+                        <textarea class="form-control" name="learning_points" rows="4" placeholder="En enkel forklaring på hva romanens motor er&#10;Hjelp til å finne ut hva boken din handler om"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Målgruppe <small class="text-muted">(ett punkt per linje)</small></label>
+                        <textarea class="form-control" name="target_audience" rows="3" placeholder="Vil skrive en roman, men opplever at det stopper opp&#10;Har begynt på flere manus, og ikke klarer å fullføre"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Reprise-URL <small class="text-muted">(valgfritt)</small></label>
+                        <input type="url" name="replay_url" class="form-control" placeholder="https://...">
+                    </div>
 
                     <div class="form-group">
                         {{--<label id="course-image">Image</label>
@@ -380,6 +395,18 @@
                     <div class="form-group">
                         <label>GoToWebinar ID</label>
                         <input type="text" name="gtwebinar_id" class="form-control webinar-id" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Læringspunkter <small class="text-muted">(ett punkt per linje)</small></label>
+                        <textarea class="form-control" name="learning_points" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Målgruppe <small class="text-muted">(ett punkt per linje)</small></label>
+                        <textarea class="form-control" name="target_audience" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Reprise-URL <small class="text-muted">(valgfritt)</small></label>
+                        <input type="url" name="replay_url" class="form-control">
                     </div>
 
                     <div class="form-group">
@@ -645,6 +672,9 @@
         var start_date = $(this).data('start_date');
         var image = $(this).data('image');
         var gtwebinar_id = $(this).data('gtwebinar_id');
+        var learning_points = $(this).data('learning_points');
+        var target_audience = $(this).data('target_audience');
+        var replay_url = $(this).data('replay_url');
 
         $('#editWebinarModal').find('em').text(title);
         form.attr('action', action);
@@ -652,6 +682,9 @@
         form.find('textarea[name=description]').val(description);
         form.find('input[name=start_date]').val(start_date);
         form.find('input[name=gtwebinar_id]').val(gtwebinar_id);
+        form.find('textarea[name=learning_points]').val(learning_points);
+        form.find('textarea[name=target_audience]').val(target_audience);
+        form.find('input[name=replay_url]').val(replay_url);
         form.find('.image-preview').css('background-image', 'url('+image+')');
     });
 
