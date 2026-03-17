@@ -992,6 +992,14 @@ Route::domain($admin)->group(function () {
         // Email Out Route
         Route::post('/course/{course_id}/email-out/{email_out}/send-email', [Backend\EmailOutController::class, 'sendEmailToLearners'])
             ->name('admin.email-out.send-email');
+        Route::post('/course/{course_id}/email-out/auto-generate', [Backend\EmailOutController::class, 'autoGenerate'])
+            ->name('admin.email-out.auto-generate');
+        Route::get('/course/{course_id}/email-out/{email_out}/preview-branded', [Backend\EmailOutController::class, 'previewBranded'])
+            ->name('admin.email-out.preview-branded');
+        Route::get('/email-preview/{template}', [Backend\EmailOutController::class, 'previewSystemMail'])
+            ->name('admin.email-preview');
+        Route::get('/emails/weekly-preview/{user_id?}', [Backend\EmailOutController::class, 'previewWeeklyDigest'])
+            ->name('admin.weekly-digest-preview');
         Route::resource('/course/{course_id}/email-out', Backend\EmailOutController::class, [
             'names' => [
                 'create' => 'admin.email-out.create',
@@ -1190,6 +1198,16 @@ Route::domain($admin)->group(function () {
         Route::get('email/delete/{id}', [Backend\EmailController::class, 'delete'])->name('admin.email.delete');
         Route::post('email/forward/{id}', [Backend\EmailController::class, 'forward'])->name('admin.email.forward');
         Route::post('email/reply', [Backend\EmailController::class, 'reply'])->name('admin.email.reply');
+
+        // Admin E-postoversikt
+        Route::prefix('emails')->group(function () {
+            Route::get('/', [Backend\AdminEmailController::class, 'index'])->name('admin.emails.index');
+            Route::get('/log', [Backend\AdminEmailController::class, 'log'])->name('admin.emails.log');
+            Route::get('/{type}/preview', [Backend\AdminEmailController::class, 'preview'])->name('admin.emails.preview');
+            Route::post('/{type}/send-test', [Backend\AdminEmailController::class, 'sendTest'])->name('admin.emails.send-test');
+            Route::get('/{type}/edit', [Backend\AdminEmailController::class, 'edit'])->name('admin.emails.edit');
+            Route::put('/{type}', [Backend\AdminEmailController::class, 'update'])->name('admin.emails.update');
+        });
 
         // Videos Route
         Route::resource('video', Backend\VideoController::class, [
