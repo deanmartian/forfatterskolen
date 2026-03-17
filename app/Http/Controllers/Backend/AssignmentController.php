@@ -28,6 +28,7 @@ use App\Mail\SubjectBodyEmail;
 use App\Package;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -1326,8 +1327,7 @@ class AssignmentController extends Controller
                     'parent_id' => $assignmentManuscript->id,
                 ]);
             } else {
-                $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
-                    $request->from_email, $assignmentManuscript->id);
+                $this->sendBrandedFeedbackMail($assignmentManuscript, $assignmentFeedbackNoGroup, $request);
             }
         }
 
@@ -1594,6 +1594,37 @@ class AssignmentController extends Controller
         dispatch(new AddMailToQueueJob($to, $subject, $formattedMailContent, $from_email, null, null,
             'assignment-manuscripts', $manuscript_id));
         // AdminHelpers::queue_mail($to, $subject, $formattedMailContent, $from_email);
+    }
+
+    private function sendBrandedFeedbackMail($assignmentManuscript, $feedback, $request)
+    {
+        $user = $assignmentManuscript->user;
+        $assignment = $assignmentManuscript->assignment;
+        $course = $assignment ? $assignment->course : null;
+
+        if (!$course || !$user) {
+            $this->sendAssignmentFeedbackMail(
+                $request->message, $user->email ?? '', $user->first_name ?? '',
+                $request->subject, $request->from_email, $assignmentManuscript->id
+            );
+            return;
+        }
+
+        $emailOut = new \App\EmailOut([
+            'course_id' => $course->id,
+            'subject' => $request->subject ?: 'Tilbakemelding på oppgaven din er klar!',
+            'message' => $request->message ?? '',
+            'from_name' => 'Forfatterskolen',
+            'from_email' => $request->from_email ?: 'post@forfatterskolen.no',
+            'template_type' => 'feedback_ready',
+            'template_data' => [
+                'assignmentTitle' => $assignment->title,
+                'feedbackPreview' => \Illuminate\Support\Str::limit(strip_tags($request->message ?? ''), 200),
+            ],
+        ]);
+        $emailOut->setRelation('course', $course);
+
+        Mail::to($user->email)->queue(new \App\Mail\BrandedCourseMail($emailOut, $user, $course));
     }
 
     /**

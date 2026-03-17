@@ -38,6 +38,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('coachingtimer:finalize')->dailyAt('01:00');
         $schedule->command('checkfikenpaymentdate:command')->dailyAt('00:30');
         $schedule->command('emails:weekly-digest')->weeklyOn(1, '07:00');
+        $schedule->command('emails:inactive-nudge')->dailyAt('11:00');
     }
 
     /**

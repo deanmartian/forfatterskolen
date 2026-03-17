@@ -29,10 +29,12 @@ class BrandedCourseMail extends Mailable
     public function build()
     {
         $viewMap = [
+            'welcome' => 'emails.branded.welcome',
             'module_available' => 'emails.branded.module-available',
             'assignment_available' => 'emails.branded.assignment-available',
             'assignment_reminder' => 'emails.branded.assignment-reminder',
             'assignment_deadline' => 'emails.branded.assignment-deadline',
+            'feedback_ready' => 'emails.branded.feedback-ready',
         ];
 
         $templateType = $this->emailOut->template_type;

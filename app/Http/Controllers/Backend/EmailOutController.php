@@ -552,6 +552,29 @@ class EmailOutController extends Controller
         }
 
         $created = 0;
+
+        // Velkomst-e-post (send umiddelbart ved kjøp)
+        $welcomeEmail = EmailOut::firstOrCreate(
+            [
+                'course_id' => $course_id,
+                'template_type' => 'welcome',
+            ],
+            [
+                'subject' => 'Velkommen til ' . $course->title . '!',
+                'message' => '',
+                'delay' => 0,
+                'from_name' => 'Forfatterskolen',
+                'from_email' => 'post@forfatterskolen.no',
+                'send_immediately' => 1,
+                'auto_generated' => true,
+                'status' => 'active',
+                'template_data' => [
+                    'courseName' => $course->title,
+                ],
+            ]
+        );
+        if ($welcomeEmail->wasRecentlyCreated) $created++;
+
         $excludeTitles = ['Kursplan', 'Repriser'];
         $lessons = $course->lessons()->orderBy('order', 'asc')
             ->whereNotIn('title', $excludeTitles)
@@ -605,6 +628,7 @@ class EmailOutController extends Controller
         foreach ($assignments as $assignment) {
             $availableDate = $assignment->getRawOriginal('available_date');
             $submissionDate = $assignment->getRawOriginal('submission_date');
+            $allowedPackage = $assignment->getRawOriginal('allowed_package');
 
             // Oppgave tilgjengelig
             if ($availableDate) {
@@ -622,6 +646,7 @@ class EmailOutController extends Controller
                         'from_email' => 'post@forfatterskolen.no',
                         'auto_generated' => true,
                         'status' => 'active',
+                        'allowed_package' => $allowedPackage,
                         'template_data' => [
                             'assignmentId' => $assignment->id,
                             'assignmentTitle' => $assignment->title,
@@ -651,6 +676,7 @@ class EmailOutController extends Controller
                         'from_email' => 'post@forfatterskolen.no',
                         'auto_generated' => true,
                         'status' => 'active',
+                        'allowed_package' => $allowedPackage,
                         'template_data' => [
                             'assignmentId' => $assignment->id,
                             'assignmentTitle' => $assignment->title,
@@ -677,6 +703,7 @@ class EmailOutController extends Controller
                         'from_email' => 'post@forfatterskolen.no',
                         'auto_generated' => true,
                         'status' => 'active',
+                        'allowed_package' => $allowedPackage,
                         'template_data' => [
                             'assignmentId' => $assignment->id,
                             'assignmentTitle' => $assignment->title,
@@ -801,6 +828,25 @@ class EmailOutController extends Controller
         }
 
         return view('emails.branded.weekly-digest', $data);
+    }
+
+    public function bulkAction($course_id, Request $request): RedirectResponse
+    {
+        $emailIds = $request->input('email_ids', []);
+        $action = $request->input('action');
+
+        if (empty($emailIds) || !$action) {
+            return redirect()->back();
+        }
+
+        $count = EmailOut::where('course_id', $course_id)
+            ->whereIn('id', $emailIds)
+            ->delete();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag($count . ' e-poster ble slettet.'),
+            'alert_type' => 'success',
+        ]);
     }
 
 }

@@ -994,6 +994,8 @@ Route::domain($admin)->group(function () {
             ->name('admin.email-out.send-email');
         Route::post('/course/{course_id}/email-out/auto-generate', [Backend\EmailOutController::class, 'autoGenerate'])
             ->name('admin.email-out.auto-generate');
+        Route::post('/course/{course_id}/email-out/bulk', [Backend\EmailOutController::class, 'bulkAction'])
+            ->name('admin.email-out.bulk');
         Route::get('/course/{course_id}/email-out/{email_out}/preview-branded', [Backend\EmailOutController::class, 'previewBranded'])
             ->name('admin.email-out.preview-branded');
         Route::get('/email-preview/{template}', [Backend\EmailOutController::class, 'previewSystemMail'])
