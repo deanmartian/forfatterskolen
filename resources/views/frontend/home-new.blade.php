@@ -1262,7 +1262,7 @@
 
                                 {{-- Kort beskrivelse (description inneholder HTML) --}}
                                 <p class="font-montserrat-regular text-muted" style="font-size: 0.9rem;">
-                                    {{ \Illuminate\Support\Str::limit(strip_tags($book->description), 120) }}
+                                    {{ \Illuminate\Support\Str::limit(strip_tags(html_entity_decode($book->description)), 120) }}
                                 </p>
                             </div>
                         </div>
