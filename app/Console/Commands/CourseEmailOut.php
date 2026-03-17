@@ -10,11 +10,13 @@ use App\EmailOut;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
+use App\Mail\BrandedCourseMail;
 use App\Order;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class CourseEmailOut extends Command
 {
@@ -157,8 +159,7 @@ class CourseEmailOut extends Command
                         }
 
                         $message = $this->replaceMessagePlaceholders($emailOut->message, $user);
-                        dispatch(new AddMailToQueueJob($user->email, $emailOut->subject, $message.$attachmentText,
-                            $emailOut->from_email, $emailOut->from_name, null, 'learner', $user->id));
+                        $this->sendBrandedOrLegacy($emailOut, $user, $message, $attachmentText, 'learner', $user->id);
 
                         $emailOut->recipients()->updateOrCreate([
                             'user_id' => $user->id,
@@ -202,8 +203,7 @@ class CourseEmailOut extends Command
                         }
 
                         $message = $this->replaceMessagePlaceholders($emailOut->message, $user);
-                        dispatch(new AddMailToQueueJob($user->email, $emailOut->subject, $message.$attachmentText,
-                            $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
+                        $this->sendBrandedOrLegacy($emailOut, $user, $message, $attachmentText, 'courses-taken', $courseTaken->id);
 
                         $emailOut->recipients()->updateOrCreate([
                             'user_id' => $user->id,
@@ -332,8 +332,7 @@ class CourseEmailOut extends Command
                         }
 
                         $message = $this->replaceMessagePlaceholders($emailOut->message, $user);
-                        dispatch(new AddMailToQueueJob($user->email, $emailOut->subject, $message.$attachmentText,
-                            $emailOut->from_email, $emailOut->from_name, null, 'learner', $user->id));
+                        $this->sendBrandedOrLegacy($emailOut, $user, $message, $attachmentText, 'learner', $user->id);
 
                         $emailOut->recipients()->updateOrCreate([
                             'user_id' => $user->id,
@@ -381,8 +380,7 @@ class CourseEmailOut extends Command
                         }
 
                         $message = $this->replaceMessagePlaceholders($emailOut->message, $user);
-                        dispatch(new AddMailToQueueJob($user->email, $emailOut->subject, $message.$attachmentText,
-                            $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
+                        $this->sendBrandedOrLegacy($emailOut, $user, $message, $attachmentText, 'courses-taken', $courseTaken->id);
 
                         $emailOut->recipients()->updateOrCreate([
                             'user_id' => $user->id,
@@ -434,6 +432,24 @@ class CourseEmailOut extends Command
         ];
 
         return str_replace($search_string, $replace_string, $messageTemplate);
+    }
+
+    /**
+     * Send email via branded template or legacy AddMailToQueueJob
+     */
+    private function sendBrandedOrLegacy(EmailOut $emailOut, User $user, string $message, string $attachmentText, ?string $trackType = null, $trackId = null): void
+    {
+        if ($emailOut->template_type) {
+            $course = $emailOut->course;
+            if ($course) {
+                Mail::to($user->email)->queue(new BrandedCourseMail($emailOut, $user, $course));
+            }
+        } else {
+            dispatch(new AddMailToQueueJob(
+                $user->email, $emailOut->subject, $message . $attachmentText,
+                $emailOut->from_email, $emailOut->from_name, null, $trackType, $trackId
+            ));
+        }
     }
 
     /**

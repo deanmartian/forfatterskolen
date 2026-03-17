@@ -28,11 +28,18 @@
 
                 <div class="tab-content">
                     <div class="tab-pane fade in active margin-top" id="current" role="tabpanel">
-                        <button class="btn btn-primary margin-bottom addEmailBtn loadScriptButton" 
+                        <button class="btn btn-primary margin-bottom addEmailBtn loadScriptButton"
                         data-target="#emailModal" data-toggle="modal"
                         data-action="{{ route('admin.email-out.store', $course->id) }}">
                             + {{ trans('site.add-email') }}
                         </button>
+
+                        <form method="POST" action="{{ route('admin.email-out.auto-generate', $course->id) }}" style="display:inline-block;" onsubmit="disableSubmit(this)">
+                            {{ csrf_field() }}
+                            <button type="submit" class="btn btn-warning margin-bottom" onclick="return confirm('Auto-generer branded e-poster for alle moduler og oppgaver?')">
+                                &#129302; Auto-generer alle
+                            </button>
+                        </form>
                         
                         @include('backend.course.partials.email-out-table', with(['emails' => $currentEmails]))
                     </div> <!-- end tab-pane -->

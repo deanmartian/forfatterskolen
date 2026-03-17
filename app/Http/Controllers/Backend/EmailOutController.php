@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Assignment;
 use App\Course;
 use App\CoursesTaken;
 use App\EmailAttachment;
@@ -10,9 +11,11 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
+use App\Lesson;
 use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
@@ -382,6 +385,342 @@ class EmailOutController extends Controller
         ]);
     }
 
+    /**
+     * Preview en branded e-post i nettleseren
+     */
+    public function previewBranded($course_id, $id)
+    {
+        $emailOut = EmailOut::find($id);
+        if (!$emailOut || !$emailOut->template_type) {
+            return 'Ingen branded mal for denne e-posten.';
+        }
+
+        $course = Course::find($course_id);
+        $user = new User([
+            'first_name' => 'Ola',
+            'last_name' => 'Nordmann',
+            'email' => 'ola@eksempel.no',
+        ]);
+
+        $mail = new \App\Mail\BrandedCourseMail($emailOut, $user, $course);
+        return $mail->render();
+    }
+
+    /**
+     * Preview alle 8 branded system-maler (ikke Email Out)
+     */
+    public function previewSystemMail($template)
+    {
+        $demoData = [
+            'order-confirmation' => [
+                'view' => 'emails.branded.order-confirmation',
+                'data' => [
+                    'orderNumber' => 'FS-2026-001',
+                    'firstName' => 'Ola',
+                    'courseName' => 'Romankurset',
+                    'packageName' => 'Premium',
+                    'courseStartDate' => '20. april 2026',
+                    'totalAmount' => '8 900',
+                    'portalUrl' => config('app.url') . '/learner/dashboard',
+                ],
+            ],
+            'invoice' => [
+                'view' => 'emails.branded.invoice',
+                'data' => [
+                    'rateNumber' => 2,
+                    'totalRates' => 3,
+                    'dueDate' => '15. mai 2026',
+                    'amount' => '2 967',
+                    'firstName' => 'Ola',
+                    'courseName' => 'Romankurset',
+                    'orderNumber' => 'FS-2026-001',
+                    'remaining' => '2 967',
+                    'payUrl' => config('app.url') . '/learner/invoices',
+                ],
+            ],
+            'magic-link' => [
+                'view' => 'emails.branded.magic-link',
+                'data' => [
+                    'loginUrl' => config('app.url') . '/login/demo',
+                ],
+            ],
+            'welcome' => [
+                'view' => 'emails.branded.welcome',
+                'data' => [
+                    'firstName' => 'Ola',
+                ],
+            ],
+            'manuscript-received' => [
+                'view' => 'emails.branded.manuscript-received',
+                'data' => [
+                    'filename' => 'mitt-manus.docx',
+                    'wordCount' => '45 000',
+                    'genre' => 'Roman',
+                    'expectedDelivery' => '15. juni 2026',
+                ],
+            ],
+            'feedback-ready' => [
+                'view' => 'emails.branded.feedback-ready',
+                'data' => [
+                    'firstName' => 'Ola',
+                    'feedbackUrl' => config('app.url') . '/learner/manuscripts',
+                ],
+            ],
+            'webinar-registration' => [
+                'view' => 'emails.branded.webinar-registration',
+                'data' => [
+                    'webinarTitle' => 'Skriv din første roman',
+                    'webinarDay' => '25',
+                    'webinarMonth' => 'Januar',
+                    'webinarTime' => '20:00',
+                    'webinarDayName' => 'Søndag',
+                    'webinarDescription' => 'Lær hvordan du kommer i gang med din første roman.',
+                    'calendarUrl' => '#',
+                ],
+            ],
+            'course-start-reminder' => [
+                'view' => 'emails.branded.course-start-reminder',
+                'data' => [
+                    'courseName' => 'Romankurset',
+                    'courseStartDate' => '20. april 2026',
+                    'firstName' => 'Ola',
+                ],
+            ],
+            'module-available' => [
+                'view' => 'emails.branded.module-available',
+                'data' => [
+                    'lessonOrder' => 3,
+                    'lessonTitle' => 'Plott og struktur',
+                    'courseName' => 'Romankurset',
+                    'firstName' => 'Ola',
+                    'lessonDescription' => 'I denne modulen lærer du om plottstruktur, spenningskurve og hvordan du holder leseren engasjert.',
+                    'hasAssignment' => true,
+                    'progressPercent' => 37,
+                    'totalLessons' => 8,
+                    'portalUrl' => config('app.url') . '/learner/dashboard',
+                ],
+            ],
+            'assignment-available' => [
+                'view' => 'emails.branded.assignment-available',
+                'data' => [
+                    'assignmentTitle' => 'Første innlevering',
+                    'courseName' => 'Romankurset',
+                    'firstName' => 'Ola',
+                    'submissionDate' => '05.05.2026',
+                    'assignmentDescription' => 'Lever de første 10 sidene av manuset ditt.',
+                    'portalUrl' => config('app.url') . '/learner/dashboard',
+                ],
+            ],
+            'assignment-reminder' => [
+                'view' => 'emails.branded.assignment-reminder',
+                'data' => [
+                    'assignmentTitle' => 'Første innlevering',
+                    'courseName' => 'Romankurset',
+                    'firstName' => 'Ola',
+                    'submissionDate' => '05.05.2026',
+                    'portalUrl' => config('app.url') . '/learner/dashboard',
+                ],
+            ],
+            'assignment-deadline' => [
+                'view' => 'emails.branded.assignment-deadline',
+                'data' => [
+                    'assignmentTitle' => 'Første innlevering',
+                    'courseName' => 'Romankurset',
+                    'firstName' => 'Ola',
+                    'submissionDate' => '05.05.2026',
+                    'portalUrl' => config('app.url') . '/learner/dashboard',
+                ],
+            ],
+        ];
+
+        if (!isset($demoData[$template])) {
+            return 'Ukjent mal: ' . $template . '. Tilgjengelige: ' . implode(', ', array_keys($demoData));
+        }
+
+        $config = $demoData[$template];
+        return view($config['view'], $config['data']);
+    }
+
+    /**
+     * Auto-generer branded e-poster for alle moduler og oppgaver i kurset
+     */
+    public function autoGenerate($course_id): RedirectResponse
+    {
+        $course = Course::find($course_id);
+        if (!$course) {
+            return redirect()->back();
+        }
+
+        $created = 0;
+        $excludeTitles = ['Kursplan', 'Repriser'];
+        $lessons = $course->lessons()->orderBy('order', 'asc')
+            ->whereNotIn('title', $excludeTitles)
+            ->get();
+        $startDate = $course->start_date ? Carbon::parse($course->start_date) : null;
+
+        // Generer modul-e-poster per leksjon
+        $lessonOrder = 0;
+        foreach ($lessons as $lesson) {
+            $lessonOrder++;
+
+            // Beregn delay-dato fra lesson delay/period + course start_date
+            $delayValue = $this->calculateLessonDelay($lesson, $startDate);
+
+            $emailOut = EmailOut::firstOrCreate(
+                [
+                    'course_id' => $course_id,
+                    'template_type' => 'module_available',
+                    'lesson_id' => $lesson->id,
+                ],
+                [
+                    'subject' => 'Modul ' . $lessonOrder . ' er klar: ' . $lesson->title,
+                    'message' => '',
+                    'delay' => $delayValue,
+                    'from_name' => 'Forfatterskolen',
+                    'from_email' => 'post@forfatterskolen.no',
+                    'auto_generated' => true,
+                    'status' => 'active',
+                    'template_data' => [
+                        'lessonOrder' => $lessonOrder,
+                        'lessonTitle' => $lesson->title,
+                        'lessonDescription' => $lesson->description_simplemde ?? '',
+                        'hasAssignment' => false,
+                    ],
+                ]
+            );
+
+            if ($emailOut->wasRecentlyCreated) {
+                $created++;
+            }
+        }
+
+        // Generer oppgave-e-poster
+        $assignments = Assignment::where('course_id', $course_id)
+            ->where(function ($q) {
+                $q->whereNull('parent')->orWhere('parent', 'course');
+            })
+            ->orderBy('available_date', 'asc')
+            ->get();
+
+        foreach ($assignments as $assignment) {
+            $availableDate = $assignment->getRawOriginal('available_date');
+            $submissionDate = $assignment->getRawOriginal('submission_date');
+
+            // Oppgave tilgjengelig
+            if ($availableDate) {
+                $emailOut = EmailOut::firstOrCreate(
+                    [
+                        'course_id' => $course_id,
+                        'template_type' => 'assignment_available',
+                        'template_data->assignmentId' => $assignment->id,
+                    ],
+                    [
+                        'subject' => 'Ny oppgave: ' . $assignment->title,
+                        'message' => '',
+                        'delay' => $availableDate,
+                        'from_name' => 'Forfatterskolen',
+                        'from_email' => 'post@forfatterskolen.no',
+                        'auto_generated' => true,
+                        'status' => 'active',
+                        'template_data' => [
+                            'assignmentId' => $assignment->id,
+                            'assignmentTitle' => $assignment->title,
+                            'assignmentDescription' => $assignment->description ?? '',
+                            'submissionDate' => $submissionDate ? Carbon::parse($submissionDate)->format('d.m.Y') : '',
+                        ],
+                    ]
+                );
+                if ($emailOut->wasRecentlyCreated) $created++;
+            }
+
+            // Påminnelse 3 dager før frist
+            if ($submissionDate && !is_numeric($submissionDate)) {
+                $reminderDate = Carbon::parse($submissionDate)->subDays(3)->format('Y-m-d');
+
+                $emailOut = EmailOut::firstOrCreate(
+                    [
+                        'course_id' => $course_id,
+                        'template_type' => 'assignment_reminder',
+                        'template_data->assignmentId' => $assignment->id,
+                    ],
+                    [
+                        'subject' => 'Påminnelse: ' . $assignment->title . ' — frist om 3 dager',
+                        'message' => '',
+                        'delay' => $reminderDate,
+                        'from_name' => 'Forfatterskolen',
+                        'from_email' => 'post@forfatterskolen.no',
+                        'auto_generated' => true,
+                        'status' => 'active',
+                        'template_data' => [
+                            'assignmentId' => $assignment->id,
+                            'assignmentTitle' => $assignment->title,
+                            'submissionDate' => Carbon::parse($submissionDate)->format('d.m.Y'),
+                        ],
+                    ]
+                );
+                if ($emailOut->wasRecentlyCreated) $created++;
+
+                // Frist-dag e-post
+                $deadlineDate = Carbon::parse($submissionDate)->format('Y-m-d');
+
+                $emailOut = EmailOut::firstOrCreate(
+                    [
+                        'course_id' => $course_id,
+                        'template_type' => 'assignment_deadline',
+                        'template_data->assignmentId' => $assignment->id,
+                    ],
+                    [
+                        'subject' => 'Siste frist i dag: ' . $assignment->title,
+                        'message' => '',
+                        'delay' => $deadlineDate,
+                        'from_name' => 'Forfatterskolen',
+                        'from_email' => 'post@forfatterskolen.no',
+                        'auto_generated' => true,
+                        'status' => 'active',
+                        'template_data' => [
+                            'assignmentId' => $assignment->id,
+                            'assignmentTitle' => $assignment->title,
+                            'submissionDate' => Carbon::parse($submissionDate)->format('d.m.Y'),
+                        ],
+                    ]
+                );
+                if ($emailOut->wasRecentlyCreated) $created++;
+            }
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag($created . ' e-poster ble auto-generert.'),
+            'alert_type' => 'success',
+        ]);
+    }
+
+    /**
+     * Beregn delay-verdi for en leksjon basert på delay/period og kurs start_date
+     */
+    protected function calculateLessonDelay(Lesson $lesson, ?Carbon $startDate): string
+    {
+        // Hvis lesson har en numerisk delay (antall dager), bruk det direkte
+        if (is_numeric($lesson->delay)) {
+            if ($startDate) {
+                return $startDate->copy()->addDays((int) $lesson->delay)->format('Y-m-d');
+            }
+            return (string) $lesson->delay;
+        }
+
+        // Hvis lesson delay er en dato-string
+        if ($lesson->delay && strpos($lesson->delay, '-') !== false) {
+            return $lesson->delay;
+        }
+
+        // Fallback: bruk period som dager
+        if (is_numeric($lesson->period) && $startDate) {
+            return $startDate->copy()->addDays((int) $lesson->period)->format('Y-m-d');
+        }
+
+        // Standard fallback
+        return $startDate ? $startDate->format('Y-m-d') : '0';
+    }
+
     public function getNonPayingLearners($excludeFreeManuscriptLearners = false)
     {
         $users = User::doesntHave('coursesTakenNotOld')
@@ -449,6 +788,19 @@ class EmailOutController extends Controller
         ];
 
         return str_replace($search_string, $replace_string, $message);
+    }
+
+    public function previewWeeklyDigest($user_id = null)
+    {
+        $user = $user_id ? User::findOrFail($user_id) : auth()->user();
+        $mailable = new \App\Mail\WeeklyDigestMail($user);
+        $data = $mailable->buildDigestData();
+
+        if (empty($data)) {
+            return 'Ingen innhold å vise for denne brukeren denne uken. (Ingen aktive kurs, webinarer, moduler eller frister.)';
+        }
+
+        return view('emails.branded.weekly-digest', $data);
     }
 
 }
