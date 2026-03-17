@@ -61,8 +61,44 @@ return [
 
     'big_marker' => [
         'api_key' => env('BIGMARKER_API_KEY'),
+        'channel_id' => env('BIGMARKER_CHANNEL_ID'),
         'register_link' => env('BIGMARKER_REGISTER_LINK'),
         'show_conference_link' => env('BIGMARKER_SHOW_CONFERENCE_LINK'),
+        'base_url' => 'https://www.bigmarker.com/api/v1',
+    ],
+
+    'activecampaign' => [
+        'url' => env('ACTIVECAMPAIGN_URL'),
+        'key' => env('ACTIVECAMPAIGN_KEY'),
+    ],
+
+    'facebook_ads' => [
+        'app_id' => env('FACEBOOK_APP_ID'),
+        'app_secret' => env('FACEBOOK_APP_SECRET'),
+        'access_token' => env('FACEBOOK_ACCESS_TOKEN'),
+        'ad_account_id' => env('FACEBOOK_AD_ACCOUNT_ID'),
+        'page_id' => env('FACEBOOK_PAGE_ID'),
+        'webhook_verify_token' => env('FACEBOOK_WEBHOOK_VERIFY_TOKEN'),
+    ],
+
+    'google_ads' => [
+        'id' => env('GOOGLE_ADS_ID'),
+        'conversion_purchase' => env('GOOGLE_ADS_CONVERSION_PURCHASE'),
+        'conversion_checkout' => env('GOOGLE_ADS_CONVERSION_CHECKOUT'),
+        'conversion_lead' => env('GOOGLE_ADS_CONVERSION_LEAD'),
+    ],
+
+    'meta_pixel' => [
+        'id' => env('META_PIXEL_ID'),
+    ],
+
+    'wistia' => [
+        'api_token' => env('WISTIA_API_TOKEN'),
+        'base_url' => 'https://api.wistia.com/v1',
+    ],
+
+    'tracking' => [
+        'enabled' => env('TRACKING_ENABLED', false),
     ],
 
     'cross-domain' => [

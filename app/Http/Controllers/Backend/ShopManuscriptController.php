@@ -570,18 +570,8 @@ class ShopManuscriptController extends Controller
         // $from               = $editor->email;
 
         $params = [
-            'api_key' => 'ee9f1cb27fe33c7197d722f434493d4440cf5da6be8114933fd0fdae40fc03a197388b99',
-
-            // this is the action that adds a contact
+            'api_key' => config('services.activecampaign.key'),
             'api_action' => 'contact_add',
-
-            // define the type of output you wish to get back
-            // possible values:
-            // - 'xml'  :      you have to write your own XML parser
-            // - 'json' :      data is returned in JSON format and can be decoded with
-            //                 json_decode() function (included in PHP since 5.2.0)
-            // - 'serialize' : data is returned in a serialized format and can be decoded with
-            //                 a native unserialize() function
             'api_output' => 'serialize',
         ];
 

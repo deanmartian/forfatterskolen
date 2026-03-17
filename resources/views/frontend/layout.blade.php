@@ -85,13 +85,14 @@
         </script>
         <script async src="https://cdn.gumlet.com/gumlet.js/2.0/gumlet.min.js"></script>
 
+        @if(config('services.tracking.enabled'))
         <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18021112843"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.google_ads.id') }}"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'AW-18021112843');
+            gtag('config', '{{ config('services.google_ads.id') }}');
         </script>
 
         <!-- Meta Pixel Code -->
@@ -104,13 +105,14 @@
         t.src=v;s=b.getElementsByTagName(e)[0];
         s.parentNode.insertBefore(t,s)}(window, document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '1633039911165653');
+        fbq('init', '{{ config('services.meta_pixel.id') }}');
         fbq('track', 'PageView');
         </script>
         <noscript><img height="1" width="1" style="display:none"
-        src="https://www.facebook.com/tr?id=1633039911165653&ev=PageView&noscript=1"
+        src="https://www.facebook.com/tr?id={{ config('services.meta_pixel.id') }}&ev=PageView&noscript=1"
         /></noscript>
         <!-- End Meta Pixel Code -->
+        @endif
     </head>
     <body>{{-- class="dark-mode"--}}
     {{--<img src="https://www.sociamonials.com/tracking.php?t=l&tid=6502" width="1" height="1">--}}

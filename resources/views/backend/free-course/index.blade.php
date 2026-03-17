@@ -128,7 +128,36 @@
                                         <p style="line-height: 1.8em; margin-top: 7px; word-break: break-all">
                                             <i class="fa fa-desktop"></i>&nbsp;&nbsp;{{ $webinar->gtwebinar_id }} <br />
                                             <i class="fa fa-calendar-o"></i>&nbsp;&nbsp;{{ $webinar->start_date }} <br />
+                                            @if($webinar->bigmarker_conference_id)
+                                                <i class="fa fa-video-camera"></i>&nbsp;&nbsp;BigMarker: {{ $webinar->bigmarker_conference_id }} <br />
+                                            @endif
                                         </p>
+
+                                        @if($webinar->facebook_campaign_id || $webinar->google_search_campaign_id)
+                                        <div style="background: #f5f5f5; padding: 8px; border-radius: 4px; margin: 8px 0; font-size: 12px;">
+                                            <strong><i class="fa fa-bullhorn"></i> Annonser</strong><br>
+                                            @if($webinar->facebook_campaign_id)
+                                                <span class="label label-{{ $webinar->facebook_ad_status === 'active' ? 'success' : ($webinar->facebook_ad_status === 'paused' ? 'warning' : 'default') }}">
+                                                    FB: {{ ucfirst($webinar->facebook_ad_status ?? 'ukjent') }}
+                                                </span>
+                                                @if($webinar->facebook_leads_count > 0)
+                                                    <span class="text-muted">{{ $webinar->facebook_leads_count }} leads · kr {{ number_format($webinar->facebook_spend, 0) }}</span>
+                                                @endif
+                                                <br>
+                                            @endif
+                                            @if($webinar->google_search_campaign_id)
+                                                <span class="label label-{{ $webinar->google_ad_status === 'active' ? 'success' : ($webinar->google_ad_status === 'paused' ? 'warning' : 'default') }}">
+                                                    Google: {{ ucfirst($webinar->google_ad_status ?? 'ukjent') }}
+                                                </span>
+                                                @if($webinar->google_clicks > 0)
+                                                    <span class="text-muted">{{ $webinar->google_clicks }} klikk · kr {{ number_format($webinar->google_spend, 0) }}</span>
+                                                @endif
+                                            @endif
+                                            @if($webinar->ad_stats_updated_at)
+                                                <br><small class="text-muted">Oppdatert: {{ $webinar->ad_stats_updated_at->format('d.m H:i') }}</small>
+                                            @endif
+                                        </div>
+                                        @endif
 
                                         <hr>
 
@@ -340,11 +369,6 @@
                     </div>
 
                     <div class="form-group">
-                        {{--<label id="course-image">Image</label>
-                        <div class="course-form-image image-file margin-bottom">
-                          <div class="image-preview" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
-                          <input type="file" accept="image/*" name="image" accept="image/jpg, image/jpeg, image/png">
-                        </div>--}}
                         <label for="image">{{ trans('site.image') }}</label>
                         <input type="file" accept="image/*" name="image" id="webinarImage" accept="image/jpg, image/jpeg, image/png"
                                onchange="readURL(this)">
@@ -359,7 +383,63 @@
                         <img id="webinarImagePreview" src="#" alt="your image" />
                     </div>
 
-                    <div class="text-right">
+                    <hr>
+                    <h4><i class="fa fa-bullhorn"></i> Annonser (valgfritt)</h4>
+
+                    {{-- BigMarker auto-oppretting --}}
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="create_bigmarker" value="1">
+                            Opprett automatisk i BigMarker
+                        </label>
+                        <p class="help-block">Oppretter webinar i BigMarker og deaktiverer BigMarkers egne e-poster.</p>
+                    </div>
+
+                    {{-- Facebook Lead Ad --}}
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="create_facebook_ad" value="1" id="toggleFacebookAd">
+                            Opprett Facebook Lead Ad
+                        </label>
+                    </div>
+                    <div id="facebookAdFields" style="display:none; padding-left: 20px; border-left: 3px solid #3b5998;">
+                        <div class="form-group">
+                            <label>Annonsetekst</label>
+                            <textarea class="form-control" name="ad_text" rows="3" placeholder="Gratis webinar: Lær å skrive bok!"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Overskrift</label>
+                            <input type="text" name="ad_headline" class="form-control" placeholder="Meld deg på gratis webinar">
+                        </div>
+                        <div class="form-group">
+                            <label>Daglig budsjett (kr)</label>
+                            <input type="number" name="facebook_daily_budget" class="form-control" value="200" min="50">
+                        </div>
+                    </div>
+
+                    {{-- Google Ads --}}
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="create_google_search" value="1" id="toggleGoogleAd">
+                            Opprett Google søkekampanje
+                        </label>
+                    </div>
+                    <div id="googleAdFields" style="display:none; padding-left: 20px; border-left: 3px solid #4285f4;">
+                        <div class="form-group">
+                            <label>Søkeord <small class="text-muted">(kommaseparert)</small></label>
+                            <textarea class="form-control" name="google_keywords" rows="3">skrivekurs, romankurs, forfatterkurs, skrivekurs på nett, lær å skrive bok, kreativ skriving kurs, gratis skrivekurs, webinar skriving, hvordan skrive roman, forfatterskolen, skriveskole</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Annonse-overskrift <small class="text-muted">(maks 30 tegn)</small></label>
+                            <input type="text" name="google_headline" class="form-control" maxlength="30" placeholder="Skriv bok!">
+                        </div>
+                        <div class="form-group">
+                            <label>Daglig budsjett (kr)</label>
+                            <input type="number" name="google_daily_budget" class="form-control" value="100" min="50">
+                        </div>
+                    </div>
+
+                    <div class="text-right margin-top">
                         <button type="submit" class="btn btn-primary">{{ trans('site.add-webinar') }}</button>
                     </div>
                 </form>
@@ -736,6 +816,14 @@
             //display error message
             return false;
         }
+    });
+
+    // Toggle annonsefelt
+    $('#toggleFacebookAd').change(function() {
+        $('#facebookAdFields').toggle(this.checked);
+    });
+    $('#toggleGoogleAd').change(function() {
+        $('#googleAdFields').toggle(this.checked);
     });
 
     $(".copyToClipboard").click(function(){

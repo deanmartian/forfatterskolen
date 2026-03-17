@@ -137,4 +137,24 @@
 @stop
 
 @section('scripts')
+@if(config('services.tracking.enabled'))
+<script>
+    // Facebook Pixel — Lead-konvertering
+    if (typeof fbq !== 'undefined') {
+        fbq('track', 'Lead', {
+            content_name: '{{ $freeWebinar->title }}',
+            content_category: 'webinar'
+        });
+    }
+
+    // Google Ads — Lead-konvertering
+    if (typeof gtag !== 'undefined') {
+        @if(config('services.google_ads.conversion_lead'))
+        gtag('event', 'conversion', {
+            'send_to': '{{ config('services.google_ads.conversion_lead') }}'
+        });
+        @endif
+    }
+</script>
+@endif
 @stop
