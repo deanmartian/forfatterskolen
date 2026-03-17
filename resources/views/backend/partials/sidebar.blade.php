@@ -85,6 +85,9 @@
                                 @case('emails')
                                     <i class="fa fa-envelope"></i>
                                     @break
+                                @case('anthology')
+                                    <i class="fa fa-snowflake-o"></i>
+                                    @break
                                 @default
                                     <i class="fa fa-circle-o"></i>
                             @endswitch

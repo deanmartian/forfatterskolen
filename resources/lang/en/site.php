@@ -27,6 +27,8 @@ return [
         'projects' => 'Projects',
         'community' => 'Community',
         'emails' => 'E-poster',
+        'anthology' => 'Juleantologi',
+        'anthologys' => 'Juleantologi',
     ],
     'total-learners' => 'Total Learners',
     'my-assigned-manuscripts' => 'My assigned manuscripts',

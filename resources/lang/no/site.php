@@ -28,6 +28,8 @@ return [
         'editors-note' => 'Redaktørinnstruks',
         'community' => 'Fellesskap',
         'emails' => 'E-poster',
+        'anthology' => 'Juleantologi',
+        'anthologys' => 'Juleantologi',
     ],
     'all-manuscripts' => 'All Manuscripts',
     'manuscripts' => '[0,1] Manus |[2,*] Manus',
