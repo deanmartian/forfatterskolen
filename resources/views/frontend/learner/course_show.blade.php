@@ -354,6 +354,32 @@
 
     <div class="cv-inner">
 
+        {{-- ═══ NEW FEEDBACK NOTIFICATION ═══ --}}
+        @php
+            $newFeedbacks = \App\AssignmentSubmission::where('user_id', Auth::id())
+                ->where('status', 'approved')
+                ->where('approved_at', '>', now()->subDays(7))
+                ->whereHas('assignment', function($q) use ($course) {
+                    $q->whereHas('lesson', function($q2) use ($course) {
+                        $q2->where('course_id', $course->id);
+                    });
+                })
+                ->with('assignment.lesson')
+                ->get();
+        @endphp
+        @if($newFeedbacks->count() > 0)
+            <div style="background:#e8f5e9;border:1px solid rgba(46,125,50,0.2);border-radius:14px;padding:1rem 1.5rem;margin-bottom:1rem;">
+                <div style="font-size:0.85rem;font-weight:600;color:#2e7d32;margin-bottom:0.25rem;">
+                    Du har {{ $newFeedbacks->count() }} {{ $newFeedbacks->count() == 1 ? 'ny tilbakemelding' : 'nye tilbakemeldinger' }}!
+                </div>
+                @foreach($newFeedbacks as $nf)
+                    <a href="{{ route('learner.course.lesson', ['course_id' => $course->id, 'id' => $nf->assignment->lesson_id]) }}" style="font-size:0.8rem;color:#2e7d32;text-decoration:underline;">
+                        {{ $nf->assignment->lesson->title ?? 'Leksjon' }}
+                    </a>{{ !$loop->last ? ', ' : '' }}
+                @endforeach
+            </div>
+        @endif
+
         {{-- ═══ COURSE HEADER ═══ --}}
         <div class="cv-header">
             <a href="{{ route('learner.course') }}" class="cv-header__back">

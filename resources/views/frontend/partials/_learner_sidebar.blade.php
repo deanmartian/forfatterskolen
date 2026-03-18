@@ -238,6 +238,15 @@
         <a href="{{ route('learner.course') }}" class="sb-link {{ !Request::is('account/course-webinar') && Request::is('account/course*') ? 'sb-active' : '' }}">
             <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             Mine kurs
+            @php
+                $newFeedbackCount = \App\AssignmentSubmission::where('user_id', Auth::id())
+                    ->where('status', 'approved')
+                    ->where('approved_at', '>', now()->subDays(7))
+                    ->count();
+            @endphp
+            @if($newFeedbackCount > 0)
+                <span class="sb-badge" title="Nye tilbakemeldinger">{{ $newFeedbackCount }}</span>
+            @endif
         </a>
         <a href="{{ route('learner.assignment') }}" class="sb-link {{ Request::is('account/assignment*') ? 'sb-active' : '' }}">
             <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
