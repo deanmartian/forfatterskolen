@@ -17,15 +17,15 @@
 
                 <div class="form-group" style="margin-top: 15px;">
                     <label class="d-block">
-                        <input type="radio" name="method" value="api" checked onchange="toggleMethod()">
-                        <strong>Via ActiveCampaign API</strong> <span class="badge badge-success">Anbefalt</span>
+                        <input type="radio" name="method" value="api" onchange="toggleMethod()">
+                        <strong>Via ActiveCampaign API</strong>
                         <div class="text-muted" style="margin-left: 20px;">Henter alle kontakter direkte fra AC med tags</div>
                     </label>
                 </div>
                 <div class="form-group">
                     <label class="d-block">
-                        <input type="radio" name="method" value="csv" onchange="toggleMethod()">
-                        <strong>Last opp CSV-fil</strong>
+                        <input type="radio" name="method" value="csv" checked onchange="toggleMethod()">
+                        <strong>Last opp CSV-fil</strong> <span class="badge badge-success">Anbefalt</span>
                         <div class="text-muted" style="margin-left: 20px;">Eksporter CSV fra ActiveCampaign og last opp her</div>
                     </label>
                 </div>
@@ -123,9 +123,9 @@
 let pollInterval = null;
 let totalEstimate = 0;
 
-// Sjekk API-tilkobling ved innlasting
+// Ved innlasting — IKKE sjekk API automatisk, vent til bruker velger metode
 $(document).ready(function() {
-    checkApi();
+    toggleMethod();
 });
 
 function toggleMethod() {
@@ -143,10 +143,12 @@ function toggleMethod() {
     }
 }
 
+let apiCheckXhr = null;
 function checkApi() {
+    if (apiCheckXhr) apiCheckXhr.abort();
     $('#apiStatusText').html('<i class="fa fa-spinner fa-spin"></i> Sjekker API-tilkobling...');
 
-    $.get('{{ route("admin.contacts.import.test-api") }}', function(data) {
+    apiCheckXhr = $.get('{{ route("admin.contacts.import.test-api") }}', function(data) {
         if (data.connected) {
             totalEstimate = data.total;
             $('#apiStatus').css('background', '#d4edda');
@@ -154,12 +156,13 @@ function checkApi() {
             $('#startBtn').prop('disabled', false);
         } else {
             $('#apiStatus').css('background', '#f8d7da');
-            $('#apiStatusText').html('❌ Kunne ikke koble til: ' + (data.error || 'Ukjent feil'));
+            $('#apiStatusText').html('❌ Kunne ikke koble til — bruk CSV i stedet');
             $('#startBtn').prop('disabled', true);
         }
-    }).fail(function() {
+    }).fail(function(jqXHR, textStatus) {
+        if (textStatus === 'abort') return;
         $('#apiStatus').css('background', '#f8d7da');
-        $('#apiStatusText').html('❌ Nettverksfeil — sjekk .env');
+        $('#apiStatusText').html('❌ Nettverksfeil — bruk CSV i stedet');
         $('#startBtn').prop('disabled', true);
     });
 }
