@@ -396,6 +396,8 @@ class LessonController extends Controller
 
     public function aiReview($id): JsonResponse
     {
+        set_time_limit(120); // AI API can take 30-60 seconds
+
         $lesson = Lesson::findOrFail($id);
         $content = strip_tags(html_entity_decode($lesson->content ?? ''));
 
@@ -503,6 +505,8 @@ class LessonController extends Controller
 
     public function aiGenerate($id, Request $request): JsonResponse
     {
+        set_time_limit(120);
+
         $lesson = Lesson::findOrFail($id);
         $content = strip_tags(html_entity_decode($lesson->content ?? ''));
 
