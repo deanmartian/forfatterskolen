@@ -26,6 +26,8 @@ use App\Helpers\ApiResponse;
 use App\Helpers\FileToText;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
+use App\Services\ContactService;
+use App\Services\EmailAutomationService;
 use App\Http\FikenInvoice;
 use App\Http\FrontendHelpers;
 use App\Http\PowerOffice;
@@ -1310,6 +1312,32 @@ class HomeController extends Controller
                     } catch (\Exception $e) {
                         \Log::error("Webinar bekreftelsesmail feilet for {$request->email}: {$e->getMessage()}");
                     }
+                }
+
+                // Opprett/oppdater kontakt i CRM
+                try {
+                    $contactService = app(ContactService::class);
+                    $contact = $contactService->findOrCreateByEmail($request->email, [
+                        'first_name' => $request->first_name,
+                        'last_name' => $request->last_name,
+                        'source' => 'webinar',
+                    ]);
+                    $contactService->tagContact($contact, 'gratis-webinar-' . $freeWebinar->id);
+                    $contactService->tagContact($contact, 'nyhetsbrev');
+
+                    // Start e-postsekvens
+                    $startDate = \Carbon\Carbon::parse($freeWebinar->start_date);
+                    app(EmailAutomationService::class)->startSequence($contact, 'webinar_registration', [
+                        'webinar_id' => $freeWebinar->id,
+                        'webinar_title' => $freeWebinar->title,
+                        'webinar_start_date' => $freeWebinar->start_date,
+                        'webinar_date' => $startDate->format('d.m.Y'),
+                        'webinar_time' => $startDate->format('H:i'),
+                        'join_url' => $joinUrl,
+                        'replay_url' => $freeWebinar->replay_url ?? '',
+                    ]);
+                } catch (\Exception $e) {
+                    \Log::error("CRM kontakt-opprettelse feilet for {$request->email}: {$e->getMessage()}");
                 }
 
                 return view('frontend.free-webinar-success', compact('freeWebinar'));

@@ -71,6 +71,7 @@ Route::domain($front)->group(function () {
             return redirect()->route('front.free-webinar-thanks', ['id' => $id], 301);
         });
         Route::get('/webinartakk', [Frontend\HomeController::class, 'webinarThanks'])->name('front.webinar-thanks'); // Support Article
+        Route::get('/avmeld/{token}', [Frontend\UnsubscribeController::class, 'unsubscribe'])->name('front.unsubscribe');
         Route::get('/children', [Frontend\HomeController::class, 'children'])->name('front.children');
         Route::view('/subscribe-success', 'frontend.subscribe-success')->name('front.subscribe-success'); // Homepage
         Route::get('/manusutvikling', [Frontend\ShopManuscriptController::class, 'index'])->name('front.shop-manuscript.index'); // Shop Manuscript Listing
@@ -1227,6 +1228,42 @@ Route::domain($admin)->group(function () {
         Route::get('email/delete/{id}', [Backend\EmailController::class, 'delete'])->name('admin.email.delete');
         Route::post('email/forward/{id}', [Backend\EmailController::class, 'forward'])->name('admin.email.forward');
         Route::post('email/reply', [Backend\EmailController::class, 'reply'])->name('admin.email.reply');
+
+        // CRM & E-postautomatisering
+        Route::prefix('crm')->group(function () {
+            Route::get('/', [Backend\CrmController::class, 'index'])->name('admin.crm.index');
+            Route::get('/contacts', [Backend\CrmController::class, 'contacts'])->name('admin.crm.contacts.index');
+            Route::get('/contacts/{id}', [Backend\CrmController::class, 'contactShow'])->name('admin.crm.contacts.show');
+            Route::post('/contacts/{id}/tag', [Backend\CrmController::class, 'addTag'])->name('admin.crm.contacts.tag');
+            Route::delete('/contacts/{id}/tag/{tag}', [Backend\CrmController::class, 'removeTag'])->name('admin.crm.contacts.untag');
+            Route::post('/contacts/{id}/unsubscribe', [Backend\CrmController::class, 'unsubscribeContact'])->name('admin.crm.contacts.unsubscribe');
+            Route::get('/sequences', [Backend\EmailSequenceController::class, 'index'])->name('admin.crm.sequences.index');
+            Route::get('/sequences/{id}', [Backend\EmailSequenceController::class, 'show'])->name('admin.crm.sequences.show');
+            Route::post('/sequences/{id}/toggle', [Backend\EmailSequenceController::class, 'toggleActive'])->name('admin.crm.sequences.toggle');
+            Route::get('/sequences/{id}/steps/{stepId}/edit', [Backend\EmailSequenceController::class, 'editStep'])->name('admin.crm.sequences.steps.edit');
+            Route::put('/sequences/{id}/steps/{stepId}', [Backend\EmailSequenceController::class, 'updateStep'])->name('admin.crm.sequences.steps.update');
+            Route::post('/sequences/{id}/steps', [Backend\EmailSequenceController::class, 'createStep'])->name('admin.crm.sequences.steps.create');
+            Route::delete('/sequences/{id}/steps/{stepId}', [Backend\EmailSequenceController::class, 'deleteStep'])->name('admin.crm.sequences.steps.delete');
+            Route::get('/planned', [Backend\CrmController::class, 'planned'])->name('admin.crm.planned');
+            Route::post('/planned/{id}/cancel', [Backend\CrmController::class, 'cancelPlanned'])->name('admin.crm.planned.cancel');
+            Route::get('/history', [Backend\CrmController::class, 'history'])->name('admin.crm.history');
+            Route::get('/statistics', [Backend\CrmController::class, 'statistics'])->name('admin.crm.statistics');
+        });
+
+        // Nyhetsbrev
+        Route::prefix('newsletters')->group(function () {
+            Route::get('/', [Backend\NewsletterController::class, 'index'])->name('admin.newsletter.index');
+            Route::get('/create', [Backend\NewsletterController::class, 'create'])->name('admin.newsletter.create');
+            Route::post('/', [Backend\NewsletterController::class, 'store'])->name('admin.newsletter.store');
+            Route::get('/{id}/edit', [Backend\NewsletterController::class, 'edit'])->name('admin.newsletter.edit');
+            Route::put('/{id}', [Backend\NewsletterController::class, 'update'])->name('admin.newsletter.update');
+            Route::post('/{id}/send', [Backend\NewsletterController::class, 'send'])->name('admin.newsletter.send');
+            Route::get('/{id}/preview', [Backend\NewsletterController::class, 'preview'])->name('admin.newsletter.preview');
+            Route::post('/{id}/duplicate', [Backend\NewsletterController::class, 'duplicate'])->name('admin.newsletter.duplicate');
+            Route::post('/{id}/test', [Backend\NewsletterController::class, 'sendTest'])->name('admin.newsletter.test');
+            Route::get('/{id}/stats', [Backend\NewsletterController::class, 'stats'])->name('admin.newsletter.stats');
+            Route::delete('/{id}', [Backend\NewsletterController::class, 'destroy'])->name('admin.newsletter.destroy');
+        });
 
         // Admin E-postoversikt
         Route::prefix('emails')->group(function () {

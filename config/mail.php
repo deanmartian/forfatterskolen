@@ -101,6 +101,11 @@ return [
         'name' => env('MAIL_REPLY_TO_NAME', env('MAIL_FROM_NAME', 'Forfatterskolen')),
     ],
 
+    'newsletter_from' => [
+        'address' => env('NEWSLETTER_MAIL_FROM', 'post@nyhetsbrev.forfatterskolen.no'),
+        'name' => env('NEWSLETTER_MAIL_FROM_NAME', 'Forfatterskolen'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Markdown Mail Settings
