@@ -151,10 +151,10 @@ class BigMarkerService
     public function disableEmails(string $conferenceId): array
     {
         return $this->updateConference($conferenceId, [
+            'enable_registration_email' => false,
             'send_reminder_emails_to_presenters' => false,
-            'send_reminder_emails_to_attendees' => false,
             'send_cancellation_email' => false,
-            'send_follow_up_email' => false,
+            'enable_review_emails' => false,
         ]);
     }
 }
