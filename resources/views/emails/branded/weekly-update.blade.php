@@ -51,6 +51,37 @@
 </td></tr>
 @endif
 
+{{-- Webinarer denne uken --}}
+@if(!empty($weekWebinars) && count($weekWebinars) > 0)
+<tr><td style="background:#fff;padding:24px 40px 0;">
+    <p style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#862736;margin:0 0 16px;font-family:-apple-system,sans-serif;">&#127909; WEBINAR DENNE UKEN</p>
+    @foreach($weekWebinars as $webinar)
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4ff;border-radius:10px;margin-bottom:10px;">
+        <tr><td style="padding:14px 20px;">
+            <p style="font-size:14px;font-weight:600;color:#1a1a1a;margin:0 0 4px;font-family:-apple-system,sans-serif;">{{ $webinar['title'] }}</p>
+            @if(!empty($webinar['host']))
+            <p style="font-size:12px;color:#5a5550;margin:0 0 4px;font-family:-apple-system,sans-serif;">Med {{ $webinar['host'] }}</p>
+            @endif
+            <p style="font-size:12px;color:#862736;font-weight:600;margin:0;font-family:-apple-system,sans-serif;">&#128197; {{ $webinar['startTime'] }}</p>
+        </td></tr>
+    </table>
+    @endforeach
+</td></tr>
+@endif
+
+{{-- Mentormøte-påminnelse --}}
+@if(!empty($hasMentorInfo) && $hasMentorInfo)
+<tr><td style="background:#fff;padding:24px 40px 0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f0ff;border-radius:10px;">
+        <tr><td style="padding:16px 20px;">
+            <p style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#862736;margin:0 0 8px;font-family:-apple-system,sans-serif;">&#128101; MENTORMØTE</p>
+            <p style="font-size:14px;color:#1a1a1a;margin:0 0 8px;font-family:-apple-system,sans-serif;">Husk at du kan booke en mentortime med din redaktør! Få personlig veiledning og tilbakemelding på manuset ditt.</p>
+            <a href="{{ config('app.url') . '/learner/dashboard' }}" style="display:inline-block;padding:8px 20px;background:#862736;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;font-family:-apple-system,sans-serif;">Book mentortime &rarr;</a>
+        </td></tr>
+    </table>
+</td></tr>
+@endif
+
 {{-- Personlig melding fra admin (customMessage) --}}
 @include('emails.partials.custom-message')
 

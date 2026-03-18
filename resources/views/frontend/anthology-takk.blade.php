@@ -73,7 +73,7 @@
 <div class="snow-container" id="snow"></div>
 
 <nav class="nav">
-    <a href="/"><img src="/images-new/forfatterskolen-logo.png" alt="Forfatterskolen" class="nav__logo"></a>
+    <a href="/"><img src="/images-new/logo.png" alt="Forfatterskolen" class="nav__logo"></a>
 </nav>
 
 <main class="takk-page">
