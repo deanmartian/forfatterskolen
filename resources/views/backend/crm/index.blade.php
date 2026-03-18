@@ -84,6 +84,8 @@
     <div class="tab-content" style="margin-top: 20px;">
         @if($tab === 'contacts')
             @include('backend.crm.tabs.contacts', ['contacts' => $contacts ?? collect()])
+        @elseif($tab === 'sequences')
+            @include('backend.crm.tabs.sequences', ['sequences' => $sequences ?? collect()])
         @elseif($tab === 'planned')
             @include('backend.crm.tabs.planned', ['planned' => $planned ?? collect()])
         @elseif($tab === 'history')
