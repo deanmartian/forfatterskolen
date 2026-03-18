@@ -451,9 +451,11 @@ class LessonController extends Controller
             . "  ]\n"
             . "}\n\n"
             . "Regler:\n"
-            . "- Maks 8 endringsforslag, prioriter de viktigste\n"
-            . "- «original»-feltet MÅ være eksakt tekst fra leksjonen (slik at vi kan finne og erstatte)\n"
-            . "- Fokuser på: skrivefeil, uklare formuleringer, bedre pedagogisk flyt, manglende overganger, engasjement\n"
+            . "- Gi MINST 4-6 konkrete endringsforslag — du MÅ finne noe å forbedre\n"
+            . "- «original»-feltet MÅ være eksakt tekst fra leksjonen (kopier ordrett 1-3 setninger)\n"
+            . "- «suggested»-feltet MÅ være den forbedrede versjonen av HELE den kopierte teksten\n"
+            . "- Fokuser på: skrivefeil, uklare formuleringer, bedre pedagogisk flyt, manglende overganger, engasjement, bedre eksempler\n"
+            . "- Foreslå også nye avsnitt der det mangler (type: add)\n"
             . "- Ikke endre faglig innhold eller meninger, bare språk og struktur\n"
             . "- Alt på norsk. Vær konkret og konstruktiv.\n\n"
             . "I tillegg: sjekk om det finnes oppgaver i leksjonsteksten (ofte markert med «Oppgaver:» eller nummerert liste). "
@@ -473,7 +475,7 @@ class LessonController extends Controller
                 'content-type' => 'application/json',
             ])->timeout(45)->post('https://api.anthropic.com/v1/messages', [
                 'model' => 'claude-sonnet-4-20250514',
-                'max_tokens' => 1500,
+                'max_tokens' => 3000,
                 'system' => $systemPrompt,
                 'messages' => [
                     ['role' => 'user', 'content' => "Leksjonstekst ({$wordCount} ord):\n\n{$excerpt}\n\n---\n\n{$assignmentInfo}\n\n{$quizInfo}"],
