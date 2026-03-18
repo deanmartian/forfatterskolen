@@ -78,6 +78,9 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.ads.index') }}">
 		Annonser
 	</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.email-admin.index') }}">
+		E-postmaler
+	</a>
 
 	<ul class="nav nav-tabs margin-top">
 		<li @if(Request::input('tab') == 'publishing' || Request::input('tab') == '') class="active" @endif>
