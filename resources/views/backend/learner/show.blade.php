@@ -133,7 +133,7 @@
 					</div>
 
 					{{-- <div>
-						<b>Self Publishing Learner:</b>
+						<b>Selvutgivelseselev:</b>
 						<input type="checkbox" data-toggle="toggle" data-on="Yes"
 							   class="is-publishing-learner-toggle" data-off="No" data-id="{{ $learner->id }}"
 							   name="is_self_publishing_learner" data-size="mini" @if($learner->is_self_publishing_learner) {{ 'checked' }} @endif>
@@ -609,7 +609,7 @@
 						<tr>
 							<th>Project</th>
 							<th>Date</th>
-							<th>Number of hours</th>
+							<th>Antall timer</th>
 							<th>Invoice</th>
 							<th width="150"></th>
 						</tr>
@@ -2121,7 +2121,7 @@
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<h4>
-						Registered to Webinars
+						Registrert på webinarer
 					</h4>
 				</div>
 				<div class="table-responsive" style="padding: 10px">
@@ -2806,7 +2806,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Add To Self Publishing</h4>
+				<h4 class="modal-title">Legg til selvutgivelse</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" enctype="multipart/form-data"
@@ -2839,7 +2839,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Delete Self Publishing</h4>
+				<h4 class="modal-title">Slett selvutgivelse</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action=""
@@ -3278,7 +3278,7 @@
 					</div>
 
 					<div class="form-group">
-						<label>Number of hours</label>
+						<label>Antall timer</label>
 						<input type="text" name="time" class="form-control" required>
 
 						<button type="button" class="btn btn-xs adjustTime" data-time="1">+1</button>

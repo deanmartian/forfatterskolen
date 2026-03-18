@@ -58,7 +58,7 @@
 											@if($manuscript->grade)
 												{{$manuscript->grade}}
 											@else
-												<em>Not set</em>
+												<em>Ikke satt</em>
 											@endif
 										</td>
 										<td>{{count($manuscript->feedbacks)}}</td>
@@ -66,18 +66,18 @@
 										<td>{{$manuscript->created_at}}</td>
 										<td>
 											@if( $manuscript->status == 'Finished' )
-												<span class="label label-success">Finished</span>
+												<span class="label label-success">Ferdig</span>
 											@elseif( $manuscript->status == 'Started' )
-												<span class="label label-primary">Started</span>
+												<span class="label label-primary">Påbegynt</span>
 											@elseif( $manuscript->status == 'Not started' )
-												<span class="label label-warning">Not started</span>
+												<span class="label label-warning">Ikke startet</span>
 											@endif
 										</td>
 										<td>
 											@if( $manuscript->admin )
 												{{ $manuscript->admin->full_name }}
 											@else
-												<em>Not set</em>
+												<em>Ikke satt</em>
 											@endif
 										</td>
 									</tr>
@@ -138,18 +138,18 @@
 									<td>{{ $shopManuscript->created_at }}</td>
 									<td>
 										@if( $shopManuscript->status == 'Finished' )
-										<span class="label label-success">Finished</span>
+										<span class="label label-success">Ferdig</span>
 										@elseif( $shopManuscript->status == 'Started' )
-										<span class="label label-primary">Started</span>
+										<span class="label label-primary">Påbegynt</span>
 										@elseif( $shopManuscript->status == 'Not started' )
-										<span class="label label-warning">Not started</span>
+										<span class="label label-warning">Ikke startet</span>
 										@endif
 									</td>
 									<td>
 										@if( $shopManuscript->admin )
 										{{ $shopManuscript->admin->full_name }}
 										@else
-										<em>Not set</em>
+										<em>Ikke satt</em>
 										@endif
 									</td>
 									<td class="text-right">

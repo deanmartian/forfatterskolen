@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-file-text-o"></i> Shareable Courses</h3>
+        <h3><i class="fa fa-file-text-o"></i> Delbare kurs</h3>
         <div class="clearfix"></div>
     </div>
 
@@ -140,7 +140,7 @@
 
         $(".createShareableBtn").click(function(){
             let action = $(this).data('action');
-            modal.find('.modal-title').text('Create Shareable Course');
+            modal.find('.modal-title').text('Opprett delbart kurs');
             modal.find('form').attr('action', action);
             modal.find('form').find('[name=_method]').remove();
             $("[name=course_id]").val('').trigger('change');

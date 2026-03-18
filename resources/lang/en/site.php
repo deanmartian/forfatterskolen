@@ -5,7 +5,7 @@ return [
         'manuscript' => 'Manus',
         'dashboard' => 'Kontrollpanel',
         'courses' => 'Courses',
-        'free-courses' => 'Free Courses',
+        'free-courses' => 'Gratis webinar',
         'workshops' => 'Workshops',
         'learners' => 'Learners',
         'assignments' => 'Oppgaver',

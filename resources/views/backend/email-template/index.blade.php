@@ -14,14 +14,14 @@
         <button class="btn btn-success loadScriptButton addTemplateBtn" data-toggle="modal" data-target="#templateModal" 
         data-courses = "{{ json_encode($courses) }}"
                 data-action="{{ route('admin.manuscript.add_email_template') }}">
-            Add Template
+            Legg til mal
         </button>
 
         <div class="table-users table-responsive margin-top">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Identifier</th>
+                        <th>Identifikator</th>
                         <th>{{ trans('site.subject') }}</th>
                         <th></th>
                     </tr>
@@ -59,7 +59,7 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">
-                        Email Template
+                        E-postmal
                     </h4>
                 </div>
                 <div class="modal-body">
@@ -68,7 +68,7 @@
 
                         <div class="form-group">
                             <label>
-                                Identifier
+                                Identifikator
                             </label>
                             <input type="text" name="page_name" class="form-control">
                         </div>

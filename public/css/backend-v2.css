@@ -144,6 +144,16 @@
 
 .ed-nav-item__label { flex: 1; }
 
+.ed-nav-item--child {
+    padding-left: 32px;
+    font-size: 13px;
+}
+
+.ed-nav-item--child .ed-nav-item__icon {
+    width: 18px;
+    font-size: 12px;
+}
+
 .ed-nav-item__badge {
     background: var(--wine);
     color: white;

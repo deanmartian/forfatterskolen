@@ -67,7 +67,7 @@
           </td>
           <td>{{ AdminHelpers::currencyFormat($workshop->price) }}</td>
           <td>{{ date_format(date_create($workshop->date), 'h:i A, dS M Y') }}</td>
-          <td>{{ $workshop->duration }} hours</td>
+          <td>{{ $workshop->duration }} timer</td>
           <td>{{ $workshop->seats }}</td>
           <td>{{ $workshop->location }}</td>
           <td>{{ $workshop->attendees->count() }}</td>
@@ -122,8 +122,8 @@
                 <input type="datetime-local" name="date" placeholder="{{ trans('site.date') }}" min="0" required class="form-control">
               </div>
                 <div class="form-group">
-                    <label>Faktura Due Date</label>
-                    <input type="date" name="faktura_date" placeholder="Faktura Due Date" class="form-control">
+                    <label>Faktura forfallsdato</label>
+                    <input type="date" name="faktura_date" placeholder="Faktura forfallsdato" class="form-control">
                 </div>
               <div class="form-group">
                 <label id="course-image">{{ trans('site.image') }}</label>

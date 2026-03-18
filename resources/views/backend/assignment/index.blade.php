@@ -30,19 +30,19 @@
 	<ul class="nav nav-tabs margin-top">
 		<li @if( !in_array(Request::input('tab'), ['learner', 'template'])) class="active" @endif>
 			<a href="?tab=course">
-				Course Assignments
+				Kursoppgaver
 			</a>
 		</li>
 
 		<li @if( Request::input('tab') == 'learner' ) class="active" @endif>
 			<a href="?tab=learner">
-				Learner Assignments
+				Elevoppgaver
 			</a>
 		</li>
 
 		<li @if( Request::input('tab') == 'template' ) class="active" @endif>
 			<a href="?tab=template">
-				Assignment Templates
+				Oppgavemaler
 			</a>
 		</li>
 	</ul>
@@ -65,7 +65,7 @@
 								data-target="#bulkLearnerAssignmentModal"
 								data-action="{{ route('assignment.multiple-learner-assignment.save') }}"
 						>
-							Add Multiple Assignment
+							Legg til flere oppgaver
 						</button>
 
 						<div class="table-users table-responsive">

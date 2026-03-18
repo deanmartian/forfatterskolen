@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-file"></i> Self Publishing</h3>
+        <h3><i class="fa fa-file"></i> Selvutgivelse</h3>
         <div class="clearfix"></div>
     </div>
 
@@ -14,7 +14,7 @@
 
         <button type="button" class="btn btn-success addSelfPublishingBtn" data-toggle="modal"
                 data-target="#selfPublishingModal" data-action="{{ route('admin.self-publishing.store') }}">
-            Add Self Publishing
+            Legg til selvutgivelse
         </button>
 
         <div class="table-users table-responsive">
@@ -326,7 +326,7 @@
 
             $("#add-files").addClass('hide');
 
-            modal.find('.modal-title').text('Add Self Publishing');
+            modal.find('.modal-title').text('Legg til selvutgivelse');
             form.find('[name=_method]').remove();
             $("#learner-list").show();
 
@@ -353,7 +353,7 @@
             var fields = $(this).data('fields');
             $("#add-files").removeClass('hide');
 
-            modal.find('.modal-title').text('Edit Self Publishing');
+            modal.find('.modal-title').text('Rediger selvutgivelse');
             form.find('[name=_method]').remove();
             form.prepend("<input type='hidden' name='_method' value='PUT'>");
             $("#learner-list").hide();

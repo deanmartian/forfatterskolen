@@ -20,7 +20,7 @@
 @section('content')
 <div class="col-md-12">
     <ul class="nav nav-tabs margin-top">
-        <li @if( Request::input('tab') == 'howManyManuscriptEditorCanTake' || Request::input('tab') == '') class="active" @endif><a href="?tab=howManyManuscriptEditorCanTake">How Many Manuscript You Can Take</a></li>
+        <li @if( Request::input('tab') == 'howManyManuscriptEditorCanTake' || Request::input('tab') == '') class="active" @endif><a href="?tab=howManyManuscriptEditorCanTake">Hvor mange manus du kan ta</a></li>
         {{-- <li @if( Request::input('tab') == 'yearlyCalendar' ) class="active" @endif><a href="?tab=yearlyCalendar">Yearly Calendar</a></li> --}}
         <li @if( Request::input('tab') == 'howManyAssignmentsEditorCanTake' ) class="active" @endif><a href="?tab=howManyAssignmentsEditorCanTake">{{ trans('site.how-many-manuscript-assignments-editor-can-take') }}</a></li>
         <li @if( Request::input('tab') == 'editorsAvailability' ) class="active" @endif><a href="?tab=editorsAvailability">{{ trans('site.editors-availability') }}</a></li>
@@ -31,7 +31,7 @@
         @if( Request::input('tab') == 'yearlyCalendar')
 
             <div class="container">
-                <h3><i class="fa fa-file-text-o"></i> Yearly Calendar</h3>
+                <h3><i class="fa fa-file-text-o"></i> Årskalender</h3>
                 <div class="clearfix"></div>
                 <div style="max-width:1000px;width:100%;"><div style="position: relative;padding-bottom: 117%;padding-top: 35px;height: 0;overflow: hidden;"><iframe src="https://create.plandisc.com/wheel/embed/pB6HbNe" scrolling="no" frameborder="0" style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe></div></div><a style="font-size:10px;" href="https://create.plandisc.com/pB6HbNe">Problemer med å se Plandiscen? Trykk her</a>
             </div>

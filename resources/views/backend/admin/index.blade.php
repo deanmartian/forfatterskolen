@@ -21,12 +21,12 @@
 
 @section('content')
 <div class="page-toolbar">
-	<h3><i class="fa fa-users"></i> All Admins</h3>
+	<h3><i class="fa fa-users"></i> Alle administratorer</h3>
 	<div class="navbar-form navbar-right">
 	  	<div class="form-group">
 		  	<form role="search" method="get" action="">
 				<div class="input-group">
-				  	<input type="text" class="form-control" placeholder="Search assignment..">
+				  	<input type="text" class="form-control" placeholder="Søk oppgave..">
 				    <span class="input-group-btn">
 				    	<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
 				    </span>
@@ -195,7 +195,7 @@
 				<div class="table-users table-responsive">
 					<button class="btn btn-success margin-top btn-sm pull-right" style="margin-right: 10px;"
 					data-toggle="modal" data-target="#staffModal" id="createStaffBtn"
-							data-action="{{ route('admin.staff.save') }}">Add Staff</button>
+							data-action="{{ route('admin.staff.save') }}">Legg til ansatt</button>
 					<div class="clearfix"></div>
 					<table class="table margin-top">
 						<thead>
@@ -287,7 +287,7 @@
 						<tr>
 							<th>Name</th>
 							<th>Email</th>
-							<th>Total Worked</th>
+							<th>Totalt arbeidet</th>
 							<th>Ghostwriter</th>
 							<th>Språkvask</th>
 							<th>Korrektur</th>
@@ -311,7 +311,7 @@
 								<td>{{ $admin->email }}</td>
 								<td>
 									@if($admin->role == 3 || $admin ->admin_with_editor_access == 1)
-										<a href="{{ route('admin.total_editor_worked', $admin->id) }}" class="btn btn-primary btn-xs">Preview Editor Total Worked</a>
+										<a href="{{ route('admin.total_editor_worked', $admin->id) }}" class="btn btn-primary btn-xs">Se redaktørens totale arbeid</a>
 									@endif
 								</td>
 								<td>
@@ -419,7 +419,7 @@
 						<tr>
 							<th>Name</th>
 							<th>Email</th>
-							<th>Total Worked</th>
+							<th>Totalt arbeidet</th>
 							<th>Ghostwriter</th>
 							<th>Språkvask</th>
 							<th>Korrektur</th>
@@ -444,7 +444,7 @@
 								<td>{{ $admin->email }}</td>
 								<td>
 									@if($admin->role == 3 || $admin ->admin_with_editor_access == 1)
-									<a href="{{ route('admin.total_editor_worked', $admin->id) }}" class="btn btn-primary btn-xs">Preview Editor Total Worked</a>
+									<a href="{{ route('admin.total_editor_worked', $admin->id) }}" class="btn btn-primary btn-xs">Se redaktørens totale arbeid</a>
 									@endif
 								</td>
 								<td>

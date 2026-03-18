@@ -132,7 +132,7 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="panel panel-default">
-							<div class="panel-heading"><h4>Self Publishing</h4></div>
+							<div class="panel-heading"><h4>Selvutgivelse</h4></div>
 							<table class="table">
 								<thead>
 								<tr>
@@ -748,7 +748,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Pending Self Publishing Portal Request</h4></div>
+						<div class="panel-heading"><h4>Ventende selvutgivelsesforespørsler</h4></div>
 						<table class="table">
 						    <thead>
 								<tr>
@@ -829,7 +829,7 @@
 				<div class="col-sm-12">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h4>Pending Assignment</h4>
+							<h4>Ventende oppgaver</h4>
 						</div>
 						<table class="table">
 							<thead>
@@ -1622,7 +1622,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Edit Task</h4>
+				<h4 class="modal-title">Rediger oppgave</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" enctype="multipart/form-data" action=""
@@ -1745,7 +1745,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Edit Expected Finish</h4>
+				<h4 class="modal-title">Rediger forventet ferdig</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -1789,7 +1789,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Edit Expected Finish</h4>
+				<h4 class="modal-title">Rediger forventet ferdig</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
