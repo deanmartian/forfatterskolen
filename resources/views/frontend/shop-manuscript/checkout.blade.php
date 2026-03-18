@@ -322,8 +322,13 @@
                 }
             });
 
-            $("#place_order_form").on('submit',function(){
-                $("#proceed_checkout").attr('disabled','disabled').find('.fa').removeClass('d-none');
+            $("#place_order_form").on('submit',function(e){
+                if ($(this).data('submitted')) {
+                    e.preventDefault();
+                    return false;
+                }
+                $(this).data('submitted', true);
+                $("#proceed_checkout").attr('disabled','disabled').text('Behandler bestilling...').find('.fa').removeClass('d-none');
 			});
 
             let full_payment_price = '{{ App\Http\FrontendHelpers::currencyFormat($hasPaidCourse ? $shopManuscript->full_payment_price - ($shopManuscript->full_payment_price * 0.05) : $shopManuscript->full_payment_price) }}';

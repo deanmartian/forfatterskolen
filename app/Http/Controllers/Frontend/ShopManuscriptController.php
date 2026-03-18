@@ -298,6 +298,12 @@ class ShopManuscriptController extends Controller
      */
     public function createOrderAndRedirect($id, Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
     {
+        // Forhindre dobbeltbestillinger med cache-basert lock (10 sekunder)
+        $lockKey = 'create_order_lock:' . Auth::id() . ':' . $id;
+        if (!\Illuminate\Support\Facades\Cache::add($lockKey, true, 10)) {
+            return redirect()->back()->with('info', 'Bestillingen din er allerede under behandling. Vennligst vent.');
+        }
+
         $request->validate([
             'street' => 'required',
             'zip' => 'required',
@@ -594,8 +600,15 @@ class ShopManuscriptController extends Controller
 
     public function place_order($id, Request $request, ShopManuscriptService $shopManuscriptService)
     {
+        // Forhindre dobbeltbestillinger med cache-basert lock (10 sekunder)
+        $lockKey = 'place_order_lock:' . ($request->ip() ?? '') . ':' . $id . ':' . (Auth::id() ?? $request->email);
+        if (!\Illuminate\Support\Facades\Cache::add($lockKey, true, 10)) {
+            return redirect()->back()->with('info', 'Bestillingen din er allerede under behandling. Vennligst vent.');
+        }
+
         $validator = $this->validator($request->all());
         if ($validator->fails()) {
+            \Illuminate\Support\Facades\Cache::forget($lockKey);
             return redirect()->back()->withInput()->withErrors($validator);
         }
 

@@ -1396,12 +1396,16 @@
             });
         });
 
-        // Bestill-knapper (order confirm)
+        // Bestill-knapper (order confirm) — forhindrer dobbelt-klikk
         document.querySelectorAll('.order-confirm').forEach(function(btn) {
             if (btn.disabled) return;
             btn.addEventListener('click', function() {
                 var form = btn.closest('form');
                 if (form && form.checkValidity()) {
+                    if (form.dataset.submitted) return;
+                    form.dataset.submitted = 'true';
+                    btn.disabled = true;
+                    btn.textContent = 'Behandler bestilling...';
                     showLoading();
                 }
             });
