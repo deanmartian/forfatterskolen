@@ -494,7 +494,7 @@
                         </svg>
                         Oppgaver
                     </div>
-                    <div class="lv-assignments__subtitle">Skriv ditt svar og få tilbakemelding</div>
+                    <div class="lv-assignments__subtitle">Oppgavene er helt frivillige og kan tas når du måtte ønske det, så lenge du har et aktivt abonnement hos Forfatterskolen.</div>
 
                     @foreach($lessonAssignments as $la)
                         @php $sub = isset($assignmentSubmissions[$la->id]) ? $assignmentSubmissions[$la->id] : null; @endphp
