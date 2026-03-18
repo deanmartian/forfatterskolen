@@ -41,8 +41,11 @@ use App\Jobs\AddMailToQueueJob;
 use App\Jobs\CourseOrderJob;
 use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Jobs\UpdateFikenContactDetailsJob;
+use App\AssignmentSubmission;
 use App\CourseGoal;
+use App\Jobs\GenerateAiFeedbackJob;
 use App\Lesson;
+use App\LessonAssignment;
 use App\LessonCompletion;
 use App\LessonContent;
 use App\LessonDocuments;
@@ -3636,9 +3639,16 @@ class LearnerController extends Controller
                 ->pluck('lesson_id')
                 ->toArray();
 
+            $lessonAssignments = $lesson->lessonAssignments()->get();
+            $assignmentSubmissions = AssignmentSubmission::where('user_id', Auth::id())
+                ->whereIn('lesson_assignment_id', $lessonAssignments->pluck('id'))
+                ->get()
+                ->keyBy('lesson_assignment_id');
+
             return view('frontend.learner.lesson_show', compact(
                 'lesson', 'course', 'courseTaken', 'lesson_content', 'lessons',
-                'quizzes', 'quizAnswers', 'isCompleted', 'completedLessonIds'
+                'quizzes', 'quizAnswers', 'isCompleted', 'completedLessonIds',
+                'lessonAssignments', 'assignmentSubmissions'
             ));
         }
 
@@ -3747,6 +3757,32 @@ class LearnerController extends Controller
         }
 
         return redirect()->back()->with('success', true);
+    }
+
+    public function submitAssignment($course_id, $id, $assignment_id, Request $request)
+    {
+        $lesson = Lesson::findOrFail($id);
+        $assignment = LessonAssignment::where('id', $assignment_id)->where('lesson_id', $lesson->id)->firstOrFail();
+
+        if (!FrontendHelpers::checkIfLearnerHasAccessToLesson(Auth::id(), $course_id, $id)) {
+            abort(403);
+        }
+
+        $request->validate(['answer_text' => 'required|string|max:10000']);
+
+        $submission = AssignmentSubmission::updateOrCreate(
+            ['lesson_assignment_id' => $assignment->id, 'user_id' => Auth::id()],
+            ['answer_text' => $request->answer_text, 'status' => 'pending']
+        );
+
+        // Dispatch AI feedback job
+        GenerateAiFeedbackJob::dispatch($submission->id);
+
+        return response()->json([
+            'success' => true,
+            'status' => 'pending',
+            'message' => 'Svaret ditt er sendt inn! AI-tilbakemelding genereres...',
+        ]);
     }
 
     public function saveGoal($id, Request $request)

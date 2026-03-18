@@ -56,6 +56,11 @@ class Lesson extends Model
         return $this->hasMany(\App\LessonQuiz::class)->orderBy('order');
     }
 
+    public function lessonAssignments(): HasMany
+    {
+        return $this->hasMany(\App\LessonAssignment::class)->orderBy('order');
+    }
+
     public function completions(): HasMany
     {
         return $this->hasMany(\App\LessonCompletion::class);

@@ -162,6 +162,62 @@
 .lv-quiz__result--good { background: #e8f5e9; color: #2e7d32; }
 .lv-quiz__result--ok { background: #fff3e0; color: #e65100; }
 
+/* ── ASSIGNMENT SECTION ── */
+.lv-assignments {
+    background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px;
+    padding: 1.75rem 2rem; margin-bottom: 1.5rem;
+}
+.lv-assignments__title {
+    font-size: 1rem; font-weight: 700; color: #1a1a1a; margin-bottom: 0.25rem;
+    display: flex; align-items: center; gap: 0.5rem;
+}
+.lv-assignments__title svg { width: 20px; height: 20px; stroke: #862736; }
+.lv-assignments__subtitle { font-size: 0.8rem; color: #8a8580; margin-bottom: 1.25rem; }
+
+.lv-assignment { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.lv-assignment:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.lv-assignment__question { font-size: 0.9rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.75rem; }
+
+.lv-assignment__textarea {
+    width: 100%; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px;
+    padding: 0.75rem 1rem; font-size: 0.875rem; font-family: inherit;
+    resize: vertical; min-height: 120px; color: #1a1a1a; background: #faf8f5;
+    transition: border-color 0.15s; line-height: 1.6;
+}
+.lv-assignment__textarea:focus { outline: none; border-color: #862736; }
+
+.lv-assignment__submit {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 1.25rem; background: #862736; color: #fff; border: none;
+    border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    transition: background 0.15s; margin-top: 0.75rem;
+}
+.lv-assignment__submit:hover { background: #9c2e40; }
+.lv-assignment__submit:disabled { opacity: 0.5; cursor: default; }
+
+.lv-assignment__status {
+    margin-top: 0.75rem; padding: 0.75rem 1rem; border-radius: 8px;
+    font-size: 0.85rem;
+}
+.lv-assignment__status--pending { background: #fff3e0; color: #e65100; border: 1px solid rgba(230,81,0,0.15); }
+.lv-assignment__status--ai { background: #e3f2fd; color: #1565c0; border: 1px solid rgba(21,101,192,0.15); }
+.lv-assignment__status--approved { background: #e8f5e9; color: #2e7d32; border: 1px solid rgba(46,125,50,0.15); }
+
+.lv-assignment__feedback {
+    margin-top: 0.75rem; padding: 1rem 1.25rem; border-radius: 8px;
+    background: #faf8f5; border-left: 3px solid #862736;
+    font-size: 0.875rem; line-height: 1.6; color: #333;
+}
+.lv-assignment__feedback-label {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    color: #862736; margin-bottom: 0.4rem;
+}
+.lv-assignment__submitted {
+    margin-top: 0.5rem; padding: 0.75rem 1rem; border-radius: 8px;
+    background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.06);
+    font-size: 0.85rem; color: #5a5550; line-height: 1.5;
+}
+
 /* ── COMPLETE BUTTON ── */
 .lv-complete {
     background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px;
@@ -394,6 +450,56 @@
                 </div>
             @endif
 
+            {{-- ═══ ASSIGNMENTS ═══ --}}
+            @if(isset($lessonAssignments) && $lessonAssignments->count() > 0)
+                <div class="lv-assignments">
+                    <div class="lv-assignments__title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>
+                            <line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/>
+                        </svg>
+                        Oppgaver
+                    </div>
+                    <div class="lv-assignments__subtitle">Skriv ditt svar og få tilbakemelding</div>
+
+                    @foreach($lessonAssignments as $la)
+                        @php $sub = isset($assignmentSubmissions[$la->id]) ? $assignmentSubmissions[$la->id] : null; @endphp
+                        <div class="lv-assignment" data-assignment-id="{{ $la->id }}">
+                            <div class="lv-assignment__question">{{ $la->question_text }}</div>
+
+                            @if($sub && $sub->status === 'approved')
+                                {{-- Approved feedback --}}
+                                <div class="lv-assignment__submitted">
+                                    <strong>Ditt svar:</strong><br>{{ $sub->answer_text }}
+                                </div>
+                                <div class="lv-assignment__feedback">
+                                    <div class="lv-assignment__feedback-label">Tilbakemelding</div>
+                                    {{ $sub->approved_feedback }}
+                                </div>
+                            @elseif($sub)
+                                {{-- Submitted, waiting --}}
+                                <div class="lv-assignment__submitted">
+                                    <strong>Ditt svar:</strong><br>{{ $sub->answer_text }}
+                                </div>
+                                <div class="lv-assignment__status lv-assignment__status--{{ $sub->status === 'ai_generated' ? 'ai' : 'pending' }}">
+                                    @if($sub->status === 'ai_generated')
+                                        Tilbakemelding er generert — venter på godkjenning av lærer
+                                    @else
+                                        Svaret ditt er sendt inn — tilbakemelding genereres...
+                                    @endif
+                                </div>
+                            @else
+                                {{-- Not submitted yet --}}
+                                <textarea class="lv-assignment__textarea" id="lvAssignment{{ $la->id }}" placeholder="Skriv ditt svar her..."></textarea>
+                                <button class="lv-assignment__submit" onclick="lvSubmitAssignment({{ $la->id }})">
+                                    Send inn svar
+                                </button>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
             {{-- ═══ COMPLETE BUTTON ═══ --}}
             <div class="lv-complete" id="lvComplete">
                 @if(isset($isCompleted) && $isCompleted)
@@ -607,6 +713,43 @@
         .catch(function() {
             btn.disabled = false;
             btn.textContent = 'Sjekk svar';
+        });
+    }
+
+    /* ── Submit assignment ── */
+    function lvSubmitAssignment(assignmentId) {
+        var textarea = document.getElementById('lvAssignment' + assignmentId);
+        if (!textarea || !textarea.value.trim()) {
+            alert('Skriv inn svaret ditt først');
+            return;
+        }
+
+        var btn = textarea.nextElementSibling;
+        btn.disabled = true;
+        btn.textContent = 'Sender...';
+
+        fetch('{{ route("learner.course.lesson.assignment.submit", ["course_id" => $course->id, "id" => $lesson->id, "assignment_id" => "__AID__"]) }}'.replace('__AID__', assignmentId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ answer_text: textarea.value.trim() })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                var container = textarea.closest('.lv-assignment');
+                container.innerHTML =
+                    '<div class="lv-assignment__question">' + container.querySelector('.lv-assignment__question').textContent + '</div>' +
+                    '<div class="lv-assignment__submitted"><strong>Ditt svar:</strong><br>' + textarea.value.replace(/</g, '&lt;') + '</div>' +
+                    '<div class="lv-assignment__status lv-assignment__status--pending">' + data.message + '</div>';
+            }
+        })
+        .catch(function() {
+            btn.disabled = false;
+            btn.textContent = 'Send inn svar';
         });
     }
 

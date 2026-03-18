@@ -176,6 +176,83 @@
 
 
 
+{{-- ═══ ASSIGNMENT ADMIN ═══ --}}
+@if(!Request::is('course/*/lesson/create'))
+<div class="container" style="margin-top:30px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-pencil"></i> Oppgaver (AI-tilbakemelding)</h3>
+        </div>
+        <div class="panel-body">
+            <div id="assignmentList">
+                @if(isset($lessonAssignments))
+                    @foreach($lessonAssignments as $la)
+                        <div class="assignment-item" data-assignment-id="{{ $la->id }}" style="border:1px solid #e8e4de;border-radius:8px;padding:1rem;margin-bottom:0.75rem;background:#faf8f5;">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                                <div style="flex:1;">
+                                    <strong>{{ $la->question_text }}</strong>
+                                    <div style="margin-top:0.25rem;font-size:0.8rem;color:#8a8580;">
+                                        {{ $la->submissions()->count() }} innsendte svar
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteAssignment({{ $la->id }}, this)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+
+            <hr>
+            <h4 style="font-size:0.9rem;font-weight:600;">Legg til ny oppgave</h4>
+            <div class="form-group">
+                <label>Oppgavetekst</label>
+                <textarea class="form-control" id="assignmentQuestion" rows="3" placeholder="Skriv oppgaven eleven skal besvare..."></textarea>
+            </div>
+            <button type="button" class="btn btn-success" onclick="addAssignment()">
+                <i class="fa fa-plus"></i> Legg til oppgave
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function addAssignment() {
+    var question = document.getElementById('assignmentQuestion').value.trim();
+    if (!question) { alert('Skriv inn en oppgavetekst'); return; }
+
+    fetch('{{ route("admin.lesson.save_assignment", $lesson["id"]) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ question_text: question })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) { location.reload(); }
+        else { alert('Feil ved lagring'); }
+    });
+}
+
+function deleteAssignment(id, btn) {
+    if (!confirm('Slett denne oppgaven?')) return;
+
+    fetch('/course/lesson/lesson-assignment/' + id, {
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) { btn.closest('.assignment-item').remove(); }
+    });
+}
+</script>
+@endif
+
 {{-- ═══ QUIZ ADMIN ═══ --}}
 @if(!Request::is('course/*/lesson/create'))
 <div class="container" style="margin-top:30px;">

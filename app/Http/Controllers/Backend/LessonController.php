@@ -7,6 +7,7 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Lesson;
 use App\LessonContent;
+use App\LessonAssignment;
 use App\LessonQuiz;
 use App\LessonDocuments;
 use Illuminate\Http\JsonResponse;
@@ -34,9 +35,10 @@ class LessonController extends Controller
         $videos = $lessonModel->videos;
         $documents = $lessonModel->documents;
         $quizzes = $lessonModel->quizzes()->get();
+        $lessonAssignments = $lessonModel->lessonAssignments()->get();
         $section = null;
 
-        return view('backend.lesson.edit', compact('course', 'lesson', 'videos', 'section', 'documents', 'quizzes'));
+        return view('backend.lesson.edit', compact('course', 'lesson', 'videos', 'section', 'documents', 'quizzes', 'lessonAssignments'));
     }
 
     public function create($id): View
@@ -388,6 +390,32 @@ class LessonController extends Controller
         $quiz = LessonQuiz::findOrFail($id);
         $quiz->answers()->delete();
         $quiz->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function saveLessonAssignment($id, Request $request): JsonResponse
+    {
+        $lesson = Lesson::findOrFail($id);
+
+        $request->validate([
+            'question_text' => 'required|string|max:2000',
+        ]);
+
+        $assignment = LessonAssignment::create([
+            'lesson_id' => $lesson->id,
+            'question_text' => $request->question_text,
+            'order' => LessonAssignment::where('lesson_id', $lesson->id)->count(),
+        ]);
+
+        return response()->json(['success' => true, 'assignment' => $assignment]);
+    }
+
+    public function deleteLessonAssignment($id): JsonResponse
+    {
+        $assignment = LessonAssignment::findOrFail($id);
+        $assignment->submissions()->delete();
+        $assignment->delete();
 
         return response()->json(['success' => true]);
     }

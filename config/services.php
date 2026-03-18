@@ -151,6 +151,10 @@ return [
         'key' => env('OPENAI_API_KEY_NEW'),
     ],
 
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+    ],
+
     'dropbox' => [
         'token' => env('DROPBOX_TOKEN'),
         'key' => env('DROPBOX_APP_KEY'),
