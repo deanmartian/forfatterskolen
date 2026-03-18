@@ -14,10 +14,20 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="row">
-					<div class="col-sm-6">
+					<div class="col-sm-4">
 						<div class="form-group">
 							<label for="title">{{ trans('site.lesson-title') }}</label>
 							<input type="text" class="form-control" name="title" id="title" required value="{{$lesson['title']}}">
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label>Leksjonstype</label>
+							<select class="form-control" name="type">
+								<option value="module" {{ ($lesson['type'] ?? 'module') === 'module' ? 'selected' : '' }}>Modul</option>
+								<option value="resource" {{ ($lesson['type'] ?? '') === 'resource' ? 'selected' : '' }}>Ressurs</option>
+								<option value="reprise" {{ ($lesson['type'] ?? '') === 'reprise' ? 'selected' : '' }}>Reprise</option>
+							</select>
 						</div>
 					</div>
 					<div class="col-sm-3">

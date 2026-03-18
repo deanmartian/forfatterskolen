@@ -319,14 +319,23 @@
         }
     }
 
-    // Progress based on completed lessons (not just available)
+    // Separate modules from resources/reprises
     $completedCount = 0;
+    $moduleData = [];
+    $resourceData = [];
     foreach ($lessonData as &$ld) {
         $ld['completed'] = in_array($ld['lesson']->id, $completedLessonIds ?? []);
-        if ($ld['completed']) $completedCount++;
+        $lessonType = $ld['lesson']->type ?? 'module';
+        if ($lessonType === 'module') {
+            $moduleData[] = $ld;
+            if ($ld['completed']) $completedCount++;
+        } else {
+            $resourceData[] = $ld;
+        }
     }
     unset($ld);
-    $progressPct = $totalLessons > 0 ? round(($completedCount / $totalLessons) * 100) : 0;
+    $totalModules = count($moduleData);
+    $progressPct = $totalModules > 0 ? round(($completedCount / $totalModules) * 100) : 0;
 
     // Norwegian months
     $monthsNo = ['Jan','Feb','Mar','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Des'];
@@ -356,15 +365,15 @@
                 @if($courseTaken->started_at)
                     Oppstart {{ \Carbon\Carbon::parse($courseTaken->started_at)->format('d.m.Y') }}
                 @endif
-                · {{ $totalLessons }} {{ $totalLessons == 1 ? 'modul' : 'moduler' }}
+                · {{ $totalModules }} {{ $totalModules == 1 ? 'modul' : 'moduler' }}
             </p>
 
-            @if($totalLessons > 0)
+            @if($totalModules > 0)
                 <div class="cv-progress">
                     <div class="cv-progress__bar">
                         <div class="cv-progress__fill" style="width: {{ $progressPct }}%;"></div>
                     </div>
-                    <span class="cv-progress__text">{{ $completedCount }} av {{ $totalLessons }} fullført</span>
+                    <span class="cv-progress__text">{{ $completedCount }} av {{ $totalModules }} moduler fullført</span>
                 </div>
             @endif
         </div>
@@ -416,14 +425,31 @@
         {{-- ═══ TAB 1: LEKSJONER ═══ --}}
         <div class="cv-panel active" id="cv-panel-leksjoner">
 
-            {{-- Quick resources --}}
+            {{-- Quick resources (from lessons marked as resource/reprise) --}}
+            @if(count($resourceData) > 0 || true)
             <div class="cv-quick">
+                @foreach($resourceData as $rd)
+                    @if($rd['available'])
+                        @php $rdLesson = $rd['lesson']; @endphp
+                        <a href="{{ route('learner.course.lesson', ['course_id' => $course->id, 'id' => $rdLesson->id]) }}" class="cv-quick-link">
+                            <div class="cv-quick-link__icon {{ ($rdLesson->type ?? '') === 'reprise' ? 'cv-quick-link__icon--reprise' : 'cv-quick-link__icon--plan' }}">
+                                @if(($rdLesson->type ?? '') === 'reprise')
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                @else
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+                                @endif
+                            </div>
+                            <div>
+                                <div>{{ $rdLesson->title }}</div>
+                                <div class="cv-quick-link__label">{{ ($rdLesson->type ?? '') === 'reprise' ? 'Se opptak' : 'Åpne' }}</div>
+                            </div>
+                        </a>
+                    @endif
+                @endforeach
+                {{-- Always show kursplan tab link and reprise link --}}
                 <a href="javascript:void(0)" class="cv-quick-link" onclick="cvSwitchTab('kursplan', document.querySelectorAll('.cv-tab')[1])">
                     <div class="cv-quick-link__icon cv-quick-link__icon--plan">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>
-                            <line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/>
-                        </svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
                     </div>
                     <div>
                         <div>Kursplan</div>
@@ -432,9 +458,7 @@
                 </a>
                 <a href="{{ route('learner.course-webinar') }}" class="cv-quick-link">
                     <div class="cv-quick-link__icon cv-quick-link__icon--reprise">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="1.5" stroke-linecap="round">
-                            <polygon points="5 3 19 12 5 21 5 3"/>
-                        </svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                     </div>
                     <div>
                         <div>Repriser</div>
@@ -442,10 +466,11 @@
                     </div>
                 </a>
             </div>
+            @endif
 
-            {{-- Module list --}}
+            {{-- Module list (only type=module) --}}
             <div class="cv-modules">
-                @foreach($lessonData as $ld)
+                @foreach($moduleData as $ld)
                     @php
                         $lesson = $ld['lesson'];
                         $avail = $ld['available'];
@@ -462,9 +487,9 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
                                 </div>
                             @elseif($isCurrent)
-                                <div class="cv-module__circle cv-module__circle--current">{{ $ld['index'] + 1 }}</div>
+                                <div class="cv-module__circle cv-module__circle--current">{{ $loop->iteration }}</div>
                             @else
-                                <div class="cv-module__circle cv-module__circle--number" style="background:rgba(0,0,0,0.05);color:#5a5550;">{{ $ld['index'] + 1 }}</div>
+                                <div class="cv-module__circle cv-module__circle--number" style="background:rgba(0,0,0,0.05);color:#5a5550;">{{ $loop->iteration }}</div>
                             @endif
                             <div class="cv-module__info">
                                 <div class="cv-module__title">{{ $lesson->title }}</div>
@@ -486,7 +511,7 @@
                     @else
                         {{-- Locked lesson --}}
                         <div class="cv-module cv-module--locked">
-                            <div class="cv-module__circle cv-module__circle--locked">{{ $ld['index'] + 1 }}</div>
+                            <div class="cv-module__circle cv-module__circle--locked">{{ $loop->iteration }}</div>
                             <div class="cv-module__info">
                                 <div class="cv-module__title">{{ $lesson->title }}</div>
                                 <div class="cv-module__meta">
