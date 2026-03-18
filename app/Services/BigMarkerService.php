@@ -48,15 +48,11 @@ class BigMarkerService
             'title' => $data['title'],
             'start_time' => $data['starts_at']->format('Y-m-d H:i:s'),
             'end_time' => $data['starts_at']->copy()->addHours($data['duration_hours'] ?? 1)->format('Y-m-d H:i:s'),
-            'time_zone' => 'Europe/Oslo',
+            'time_zone' => 'Stockholm',
             'description' => $data['description'] ?? '',
             'privacy' => 'private',
             'enable_knock_to_enter' => false,
             'send_reminder_emails_to_presenters' => false,
-            'send_reminder_emails_to_attendees' => false,
-            'send_cancellation_email' => false,
-            'send_follow_up_email' => false,
-            'purpose' => 'webinar',
         ]);
     }
 
