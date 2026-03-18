@@ -1164,6 +1164,7 @@ Route::domain($admin)->group(function () {
         Route::delete('/lesson/lesson-assignment/{id}', [Backend\LessonController::class, 'deleteLessonAssignment'])->name('admin.lesson.delete_assignment');
         Route::get('/assignment-review', [Backend\AssignmentReviewController::class, 'index'])->name('admin.assignment-review.index');
         Route::post('/assignment-review/{id}/approve', [Backend\AssignmentReviewController::class, 'approve'])->name('admin.assignment-review.approve');
+        Route::post('/assignment-review/{id}/generate-ai', [Backend\AssignmentReviewController::class, 'generateAi'])->name('admin.assignment-review.generate-ai');
 
         // Lessons Route
         Route::get('/admin/export_nearly_expired_courses', [Backend\AdminController::class, 'exportNearlyExpiredCourses'])->name('admin.admin.export_nearly_expired_courses');

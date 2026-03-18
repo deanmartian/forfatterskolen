@@ -49,13 +49,21 @@
                                 <div style="font-size:0.75rem;font-weight:600;color:#1565c0;text-transform:uppercase;margin-bottom:0.25rem;">AI-forslag</div>
                                 {{ $sub->ai_feedback }}
                             </div>
+                        @else
+                            <div style="margin-bottom:0.75rem;">
+                                <button class="btn btn-info btn-sm" id="aiBtn{{ $sub->id }}" onclick="generateAiFeedback({{ $sub->id }})">
+                                    <i class="fa fa-magic"></i> Generer AI-tilbakemelding
+                                </button>
+                            </div>
                         @endif
 
                         <div style="display:flex;gap:0.5rem;align-items:flex-start;">
                             <textarea class="form-control" id="feedback-{{ $sub->id }}" rows="3" placeholder="Rediger tilbakemeldingen eller skriv din egen..." style="flex:1;">{{ $sub->ai_feedback }}</textarea>
-                            <button class="btn btn-success" onclick="approveSubmission({{ $sub->id }})" style="white-space:nowrap;">
-                                <i class="fa fa-check"></i> Godkjenn
-                            </button>
+                            <div style="display:flex;flex-direction:column;gap:0.25rem;">
+                                <button class="btn btn-success" onclick="approveSubmission({{ $sub->id }})" style="white-space:nowrap;">
+                                    <i class="fa fa-check"></i> Godkjenn
+                                </button>
+                            </div>
                         </div>
                     </div>
                 @endforeach
@@ -105,6 +113,36 @@
 
 @section('scripts')
 <script>
+function generateAiFeedback(id) {
+    var btn = document.getElementById('aiBtn' + id);
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i> Genererer (10-30 sek)...';
+
+    fetch('{{ url("/course/assignment-review") }}/' + id + '/generate-ai', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success && data.feedback) {
+            document.getElementById('feedback-' + id).value = data.feedback;
+            btn.outerHTML = '<div style="background:#e3f2fd;padding:0.75rem 1rem;border-radius:6px;margin-bottom:0.5rem;"><div style="font-size:0.75rem;font-weight:600;color:#1565c0;text-transform:uppercase;margin-bottom:0.25rem;">AI-forslag</div>' + data.feedback.replace(/</g,'&lt;') + '</div>';
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-magic"></i> Generer AI-tilbakemelding';
+            alert(data.error || 'Feil ved generering');
+        }
+    })
+    .catch(function() {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-magic"></i> Generer AI-tilbakemelding';
+    });
+}
+
 function approveSubmission(id) {
     var feedback = document.getElementById('feedback-' + id).value.trim();
     if (!feedback) { alert('Tilbakemeldingen kan ikke være tom'); return; }

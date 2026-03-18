@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\AssignmentSubmission;
 use App\Http\Controllers\Controller;
+use App\Services\AiFeedbackService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +26,29 @@ class AssignmentReviewController extends Controller
             ->get();
 
         return view('backend.assignment-review.index', compact('submissions', 'approvedSubmissions'));
+    }
+
+    public function generateAi($id, AiFeedbackService $service): JsonResponse
+    {
+        $submission = AssignmentSubmission::with('assignment.lesson')->findOrFail($id);
+
+        $lesson = $submission->assignment->lesson;
+        $lessonContent = $lesson->content ?? '';
+        $questionText = $submission->assignment->question_text;
+        $answerText = $submission->answer_text;
+
+        $feedback = $service->generateFeedback($lessonContent, $questionText, $answerText);
+
+        if ($feedback) {
+            $submission->update([
+                'ai_feedback' => $feedback,
+                'status' => 'ai_generated',
+            ]);
+
+            return response()->json(['success' => true, 'feedback' => $feedback]);
+        }
+
+        return response()->json(['error' => 'AI-generering feilet. Sjekk at ANTHROPIC_API_KEY er konfigurert.'], 500);
     }
 
     public function approve($id, Request $request): JsonResponse
