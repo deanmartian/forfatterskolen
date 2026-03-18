@@ -13,33 +13,43 @@
     -webkit-font-smoothing: antialiased;
     background: #f5f3f0;
     min-height: 100vh;
+    padding: 1.5rem 2rem;
 }
 
 #topbar { display: none !important; }
-#main-content { padding-top: 0 !important; margin-top: 0 !important; }
+#main-content { padding-top: 0 !important; margin-top: 0 !important; overflow-x: hidden !important; }
 
-/* ── LAYOUT: content + sidebar ── */
-.lv-layout { display: flex; min-height: 100vh; }
-
+/* ── LAYOUT: main content centered, lesson list in collapsible panel ── */
 .lv-main {
-    flex: 1; min-width: 0;
-    padding: 2rem 2.5rem;
-    max-width: 880px;
+    max-width: 820px;
+    margin: 0 auto;
 }
 
-.lv-sidebar {
-    width: 280px; flex-shrink: 0;
-    background: #fff; border-left: 1px solid rgba(0,0,0,0.08);
-    padding: 1.5rem 0; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+/* Lesson list panel (collapsible, inside main flow) */
+.lv-lesson-panel {
+    background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 14px;
+    margin-bottom: 1.5rem; overflow: hidden;
 }
+.lv-lesson-panel__toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.85rem 1.25rem; cursor: pointer; background: none; border: none;
+    width: 100%; font-family: inherit; font-size: 0.85rem; font-weight: 700;
+    color: #1a1a1a; text-align: left;
+}
+.lv-lesson-panel__toggle:hover { background: rgba(0,0,0,0.02); }
+.lv-lesson-panel__toggle svg { width: 16px; height: 16px; stroke: #8a8580; transition: transform 0.2s; }
+.lv-lesson-panel.open .lv-lesson-panel__toggle svg { transform: rotate(180deg); }
+.lv-lesson-panel__list { display: none; border-top: 1px solid rgba(0,0,0,0.06); }
+.lv-lesson-panel.open .lv-lesson-panel__list { display: block; }
 
-/* ── MOBILE TOGGLE ── */
+/* ── MOBILE SIDEBAR TOGGLE (for portal sidebar) ── */
 .lv-sidebar-toggle {
     display: none;
 }
-@media (max-width: 991px) {
+@media (max-width: 1026px) {
+    .lv-redesign { padding: 1rem; padding-top: 70px; }
     .lv-sidebar-toggle {
-        display: flex !important; position: fixed; top: 16px; right: 16px; z-index: 1050;
+        display: flex !important; position: fixed; top: 16px; left: 16px; z-index: 1050;
         width: 44px; height: 44px; border-radius: 12px; border: none;
         background: #862736; align-items: center; justify-content: center; cursor: pointer;
         box-shadow: 0 4px 12px rgba(134,39,54,0.35); padding: 0;
@@ -265,15 +275,11 @@
 .lv-download i { font-size: 0.9rem; }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 991px) {
-    .lv-sidebar { display: none; position: fixed; top: 0; right: 0; z-index: 1040; height: 100vh; box-shadow: -4px 0 24px rgba(0,0,0,0.15); }
-    .lv-sidebar.open { display: block; }
-    .lv-main { max-width: 100%; padding: 1.5rem 1rem; padding-top: 70px; }
-    .lv-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 1035; }
-    .lv-overlay.open { display: block; }
+@media (max-width: 1026px) {
+    .lv-main { max-width: 100%; }
 }
 @media (max-width: 576px) {
-    .lv-main { padding: 1rem 0.75rem; padding-top: 65px; }
+    .lv-redesign { padding: 0.75rem; padding-top: 65px; }
     .lv-header { padding: 1.25rem 1rem; }
     .lv-content { padding: 1.25rem 1rem; }
     .lv-nav { flex-wrap: wrap; }
@@ -289,16 +295,15 @@
 @endphp
 
 <div class="lv-redesign">
-    <div class="lv-layout">
-        {{-- ═══ MAIN CONTENT ═══ --}}
-        <div class="lv-main">
 
-            {{-- Mobile sidebar toggle --}}
-            <button class="lv-sidebar-toggle" id="lvSidebarToggle" aria-label="Leksjoner">
-                <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round">
-                    <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
-                </svg>
-            </button>
+    {{-- Mobile sidebar toggle (for portal sidebar) --}}
+    <button class="lv-sidebar-toggle" data-sidebar-toggle aria-label="Meny">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round">
+            <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
+        </svg>
+    </button>
+
+    <div class="lv-main">
 
             {{-- Navigation --}}
             <div class="lv-nav">
@@ -333,6 +338,35 @@
                             </span>
                         @endif
                     @endif
+                </div>
+            </div>
+
+            {{-- Collapsible lesson list --}}
+            <div class="lv-lesson-panel" id="lvLessonPanel">
+                <button class="lv-lesson-panel__toggle" onclick="document.getElementById('lvLessonPanel').classList.toggle('open')">
+                    <span>Alle leksjoner ({{ $lessons->count() }})</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="lv-lesson-panel__list">
+                    @foreach($lessons->sortBy('order')->values() as $i => $lessonLoop)
+                        @php
+                            $status = 'locked';
+                            if (\App\Http\FrontendHelpers::isLessonAvailable($courseTaken->started_at, $lessonLoop->delay, $lessonLoop->period)
+                                || \App\Http\FrontendHelpers::hasLessonAccess($courseTaken, $lessonLoop)) {
+                                $status = 'active';
+                            }
+                            if ($lessonLoop->id === $lesson->id) $status = 'current';
+                            $isLessonCompleted = in_array($lessonLoop->id, $completedLessonIds ?? []);
+                            if ($isLessonCompleted && $status !== 'current') $status = 'completed';
+                        @endphp
+                        <a href="{{ $status !== 'locked' ? route('learner.course.lesson', ['course_id' => $course->id, 'id' => $lessonLoop->id]) : 'javascript:void(0)' }}"
+                           class="lv-lesson-item lv-lesson-item--{{ $status }}">
+                            <span class="lv-lesson-item__num">
+                                @if($isLessonCompleted || $status === 'completed') ✓ @else {{ $i + 1 }} @endif
+                            </span>
+                            <span class="lv-lesson-item__title">{{ $lessonLoop->title }}</span>
+                        </a>
+                    @endforeach
                 </div>
             </div>
 
@@ -516,38 +550,7 @@
             </div>
 
         </div>
-
-        {{-- ═══ SIDEBAR ═══ --}}
-        <div class="lv-sidebar" id="lvSidebar">
-            <div class="lv-sidebar__title">Leksjoner</div>
-            @foreach($lessons->sortBy('order')->values() as $i => $lessonLoop)
-                @php
-                    $status = 'locked';
-                    if (\App\Http\FrontendHelpers::isLessonAvailable($courseTaken->started_at, $lessonLoop->delay, $lessonLoop->period)
-                        || \App\Http\FrontendHelpers::hasLessonAccess($courseTaken, $lessonLoop)) {
-                        $status = 'active';
-                    }
-                    if ($lessonLoop->id === $lesson->id) $status = 'current';
-                    $isLessonCompleted = in_array($lessonLoop->id, $completedLessonIds ?? []);
-                    if ($isLessonCompleted && $status !== 'current') $status = 'completed';
-                @endphp
-
-                <a href="{{ $status !== 'locked' ? route('learner.course.lesson', ['course_id' => $course->id, 'id' => $lessonLoop->id]) : 'javascript:void(0)' }}"
-                   class="lv-lesson-item lv-lesson-item--{{ $status }}">
-                    <span class="lv-lesson-item__num">
-                        @if($isLessonCompleted || $status === 'completed')
-                            ✓
-                        @else
-                            {{ $i + 1 }}
-                        @endif
-                    </span>
-                    <span class="lv-lesson-item__title">{{ $lessonLoop->title }}</span>
-                </a>
-            @endforeach
-        </div>
     </div>
-
-    <div class="lv-overlay" id="lvOverlay"></div>
 </div>
 
 {{-- Manuscript upload modal (preserved) --}}
@@ -585,23 +588,7 @@
 <script src="https://fast.wistia.com/embed/medias/68ni4qzcad.jsonp" async></script>
 <script src="https://fast.wistia.com/assets/external/E-v1.js" async></script>
 <script>
-    /* ── Sidebar toggle ── */
-    (function() {
-        var toggle = document.getElementById('lvSidebarToggle');
-        var sidebar = document.getElementById('lvSidebar');
-        var overlay = document.getElementById('lvOverlay');
-        if (!toggle || !sidebar) return;
-        toggle.addEventListener('click', function() {
-            sidebar.classList.toggle('open');
-            if (overlay) overlay.classList.toggle('open');
-        });
-        if (overlay) overlay.addEventListener('click', function() {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('open');
-        });
-    })();
-
-    /* ── Auto-collapse sidebar on mobile ── */
+    /* ── Auto-collapse portal sidebar on mobile ── */
     setTimeout(function() {
         var sidebar = document.getElementById('sidebar');
         var mainContainer = document.getElementById('main-container');
