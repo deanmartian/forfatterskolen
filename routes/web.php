@@ -1293,6 +1293,7 @@ Route::domain($admin)->group(function () {
             Route::post('/{id}', [Backend\EmailTemplateController::class, 'adminUpdate'])->name('admin.email-admin.update');
             Route::get('/{id}/preview', [Backend\EmailTemplateController::class, 'adminPreview'])->name('admin.email-admin.preview');
             Route::post('/{id}/send-test', [Backend\EmailTemplateController::class, 'adminSendTest'])->name('admin.email-admin.send-test');
+            Route::delete('/{id}', [Backend\EmailTemplateController::class, 'adminDestroy'])->name('admin.email-admin.destroy');
         });
 
         // Admin E-postoversikt

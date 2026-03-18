@@ -221,6 +221,16 @@ class EmailTemplateController extends Controller
             ->with('success', "Test-e-post sendt til {$request->email}!");
     }
 
+    public function adminDestroy($id): RedirectResponse
+    {
+        $template = EmailTemplate::findOrFail($id);
+        $name = $template->page_name;
+        $template->delete();
+
+        return redirect()->route('admin.email-admin.index')
+            ->with('success', "Malen «{$name}» er slettet.");
+    }
+
     private function replaceDummyVariables(string $content): string
     {
         $replacements = [
