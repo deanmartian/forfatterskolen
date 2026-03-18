@@ -224,14 +224,17 @@ function aiReviewContent() {
             'Accept': 'application/json'
         }
     })
-    .then(function(r) { return r.json(); })
+    .then(function(r) {
+        if (!r.ok) return r.text().then(function(t) { throw new Error('Server feil (' + r.status + '): ' + t.substring(0, 100)); });
+        return r.json();
+    })
     .then(function(data) {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa fa-search"></i> Analyser innhold';
 
-        if (data.error) {
+        if (!data || data.error) {
             result.style.display = 'block';
-            result.innerHTML = '<div style="background:#fce8e8;border:1px solid rgba(198,40,40,0.2);border-radius:8px;padding:1rem;color:#c62828;"><i class="fa fa-exclamation-triangle"></i> ' + data.error + '</div>';
+            result.innerHTML = '<div style="background:#fce8e8;border:1px solid rgba(198,40,40,0.2);border-radius:8px;padding:1rem;color:#c62828;"><i class="fa fa-exclamation-triangle"></i> ' + (data && data.error ? data.error : 'Ukjent feil') + '</div>';
             return;
         }
 
@@ -326,9 +329,11 @@ function aiReviewContent() {
             result.innerHTML = html;
         }
     })
-    .catch(function() {
+    .catch(function(err) {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa fa-search"></i> Analyser innhold';
+        result.style.display = 'block';
+        result.innerHTML = '<div style="background:#fce8e8;border:1px solid rgba(198,40,40,0.2);border-radius:8px;padding:1rem;color:#c62828;"><i class="fa fa-exclamation-triangle"></i> ' + (err.message || 'Noe gikk galt. Prøv igjen.') + '</div>';
     });
 }
 
