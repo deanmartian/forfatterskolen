@@ -64,3 +64,20 @@ Schedule::command('freecoursedelayedemail:command')
 /*Schedule::command('webinarregistranttolearner:command')
     ->yearly();*/
 /* Schedule::command('queue:work --tries=5')->everyMinute()->withoutOverlapping(); */
+
+// CRM E-postautomatisering
+Schedule::job(new \App\Jobs\ProcessEmailAutomationQueueJob)->everyFiveMinutes()->withoutOverlapping();
+Schedule::command('crm:refresh-exclusions')->dailyAt('02:00');
+Schedule::command('crm:sync-users')->dailyAt('03:00');
+
+// Nyhetsbrev — sjekk planlagte nyhetsbrev
+Schedule::call(function () {
+    $newsletters = \App\Models\Newsletter::where('status', 'scheduled')
+        ->where('scheduled_at', '<=', now())
+        ->get();
+    foreach ($newsletters as $newsletter) {
+        $service = app(\App\Services\NewsletterService::class);
+        $service->sendNow($newsletter);
+        \App\Jobs\SendNewsletterJob::dispatch($newsletter->id);
+    }
+})->everyMinute()->withoutOverlapping();

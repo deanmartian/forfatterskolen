@@ -1259,6 +1259,7 @@ class AdminHelpers
             ['id' => 12, 'option' => 'Head Editor', 'route' => 'admin.head-editor-dashboard', 'request_name' => 'head-editor'],
             ['id' => 15, 'option' => 'Fellesskap', 'route' => 'admin.community.index', 'request_name' => 'community'],
             ['id' => 16, 'option' => 'E-poster', 'route' => 'admin.emails.index', 'request_name' => 'emails'],
+            ['id' => 17, 'option' => 'CRM', 'route' => 'admin.crm.index', 'request_name' => 'crm'],
             ['id' => 2, 'option' => 'Juleantologi', 'route' => 'admin.anthology.index', 'request_name' => 'anthology'],
         ];
 
