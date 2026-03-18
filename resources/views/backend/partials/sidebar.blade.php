@@ -34,7 +34,7 @@
                 @endphp
                 <li>
                     <a href="{{ route($page['route']) }}"
-                       class="ed-nav-item {{ Request::is(strtolower($page['request_name']).'*') ? 'active' : '' }}{{ $page['request_name'] === 'workshop' ? ' ed-nav-item--child' : '' }}">
+                       class="ed-nav-item {{ Request::is(strtolower($page['request_name']).'*') ? 'active' : '' }}{{ in_array($page['request_name'], ['workshop', 'webinar-list']) ? ' ed-nav-item--child' : '' }}">
                         <span class="ed-nav-item__icon">
                             @switch($page['request_name'])
                                 @case('course')
@@ -87,6 +87,9 @@
                                     @break
                                 @case('anthology')
                                     <i class="fa fa-snowflake-o"></i>
+                                    @break
+                                @case('crm')
+                                    <i class="fa fa-address-book"></i>
                                     @break
                                 @default
                                     <i class="fa fa-circle-o"></i>
