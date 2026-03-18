@@ -400,7 +400,7 @@ class LessonController extends Controller
         $lessons = $course->lessons;
         $updated = 0;
 
-        $resourceKeywords = ['kursplan', 'leseliste', 'pensumliste', 'oversikt', 'velkommen', 'introduksjon', 'info'];
+        $resourceKeywords = ['kursplan', 'leseliste', 'pensumliste', 'filer', 'vedlegg', 'ressurser', 'lenker', 'linker'];
         $repriseKeywords = ['reprise', 'opptak', 'arkiv', 'webinar-arkiv', 'replay'];
 
         foreach ($lessons as $lesson) {
