@@ -12,11 +12,12 @@ class AssignmentSubmission extends Model
     protected $fillable = [
         'lesson_assignment_id', 'user_id', 'answer_text',
         'ai_feedback', 'approved_feedback', 'status',
-        'approved_by', 'approved_at',
+        'approved_by', 'approved_at', 'seen_at',
     ];
 
     protected $casts = [
         'approved_at' => 'datetime',
+        'seen_at' => 'datetime',
     ];
 
     public function assignment(): BelongsTo

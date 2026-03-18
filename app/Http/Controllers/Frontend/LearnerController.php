@@ -3645,6 +3645,13 @@ class LearnerController extends Controller
                 ->get()
                 ->keyBy('lesson_assignment_id');
 
+            // Mark approved feedbacks as seen
+            AssignmentSubmission::where('user_id', Auth::id())
+                ->whereIn('lesson_assignment_id', $lessonAssignments->pluck('id'))
+                ->where('status', 'approved')
+                ->whereNull('seen_at')
+                ->update(['seen_at' => now()]);
+
             return view('frontend.learner.lesson_show', compact(
                 'lesson', 'course', 'courseTaken', 'lesson_content', 'lessons',
                 'quizzes', 'quizAnswers', 'isCompleted', 'completedLessonIds',

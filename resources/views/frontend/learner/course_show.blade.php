@@ -358,7 +358,7 @@
         @php
             $newFeedbacks = \App\AssignmentSubmission::where('user_id', Auth::id())
                 ->where('status', 'approved')
-                ->where('approved_at', '>', now()->subDays(7))
+                ->whereNull('seen_at')
                 ->whereHas('assignment', function($q) use ($course) {
                     $q->whereHas('lesson', function($q2) use ($course) {
                         $q2->where('course_id', $course->id);

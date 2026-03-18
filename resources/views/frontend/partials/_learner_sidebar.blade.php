@@ -241,7 +241,7 @@
             @php
                 $newFeedbackCount = \App\AssignmentSubmission::where('user_id', Auth::id())
                     ->where('status', 'approved')
-                    ->where('approved_at', '>', now()->subDays(7))
+                    ->whereNull('seen_at')
                     ->count();
             @endphp
             @if($newFeedbackCount > 0)
