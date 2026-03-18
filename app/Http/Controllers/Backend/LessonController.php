@@ -411,18 +411,38 @@ class LessonController extends Controller
         $excerpt = mb_substr($content, 0, 5000);
         $wordCount = str_word_count($content);
 
-        $systemPrompt = "Du er en erfaren pedagogisk konsulent som evaluerer kursinnhold for en norsk skrivelærer-portal (Forfatterskolen). "
-            . "Analyser leksjonsteksten og gi en strukturert vurdering.\n\n"
+        $systemPrompt = "Du er en erfaren redaktør og pedagogisk konsulent for Forfatterskolen (norsk skrivelærer-portal). "
+            . "Analyser leksjonsteksten og gi KONKRETE endringsforslag.\n\n"
             . "Returner KUN JSON (ingen annen tekst) med dette formatet:\n"
             . "{\n"
             . "  \"score\": 7,\n"
-            . "  \"summary\": \"Kort oppsummering av innholdet og kvaliteten (2-3 setninger)\",\n"
-            . "  \"strengths\": [\"Styrke 1\", \"Styrke 2\", \"Styrke 3\"],\n"
-            . "  \"improvements\": [\"Forbedringsforslag 1\", \"Forbedringsforslag 2\", \"Forbedringsforslag 3\"],\n"
-            . "  \"structure\": \"Vurdering av struktur, lesbarhet og pedagogisk flyt\"\n"
+            . "  \"summary\": \"Kort vurdering av kvaliteten (2-3 setninger)\",\n"
+            . "  \"changes\": [\n"
+            . "    {\n"
+            . "      \"type\": \"replace\",\n"
+            . "      \"original\": \"Den eksakte originalteksten som bør endres (kopier ordrett fra teksten)\",\n"
+            . "      \"suggested\": \"Foreslått ny tekst\",\n"
+            . "      \"reason\": \"Kort forklaring på hvorfor\"\n"
+            . "    },\n"
+            . "    {\n"
+            . "      \"type\": \"add\",\n"
+            . "      \"after\": \"Teksten dette skal legges til etter\",\n"
+            . "      \"suggested\": \"Ny tekst som bør legges til\",\n"
+            . "      \"reason\": \"Kort forklaring\"\n"
+            . "    },\n"
+            . "    {\n"
+            . "      \"type\": \"delete\",\n"
+            . "      \"original\": \"Tekst som bør fjernes\",\n"
+            . "      \"reason\": \"Kort forklaring\"\n"
+            . "    }\n"
+            . "  ]\n"
             . "}\n\n"
-            . "Score: 1-10 (10=perfekt). Vurder: pedagogisk kvalitet, engasjement, struktur, eksempler, oppgaver, lesbarhet.\n"
-            . "Alt på norsk. Vær ærlig og konkret.";
+            . "Regler:\n"
+            . "- Maks 8 endringsforslag, prioriter de viktigste\n"
+            . "- «original»-feltet MÅ være eksakt tekst fra leksjonen (slik at vi kan finne og erstatte)\n"
+            . "- Fokuser på: skrivefeil, uklare formuleringer, bedre pedagogisk flyt, manglende overganger, engasjement\n"
+            . "- Ikke endre faglig innhold eller meninger, bare språk og struktur\n"
+            . "- Alt på norsk. Vær konkret og konstruktiv.";
 
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([

@@ -238,47 +238,51 @@ function aiReviewContent() {
         if (data.success && data.review) {
             result.style.display = 'block';
             var r = data.review;
+            window._aiChanges = r.changes || [];
+
             var html = '<div style="background:#fff;border:1px solid #e8e4de;border-radius:10px;overflow:hidden;">';
 
-            // Score
+            // Score + Summary
             var scoreColor = r.score >= 8 ? '#2e7d32' : (r.score >= 5 ? '#e65100' : '#c62828');
             html += '<div style="padding:1rem 1.25rem;background:linear-gradient(135deg,#faf8f5,#fff);border-bottom:1px solid #e8e4de;display:flex;align-items:center;justify-content:space-between;">';
-            html += '<div style="font-weight:700;font-size:1rem;">Innholdsanalyse</div>';
-            html += '<div style="background:' + scoreColor + ';color:#fff;padding:0.3rem 0.75rem;border-radius:20px;font-weight:700;font-size:0.9rem;">' + r.score + '/10</div>';
+            html += '<div><div style="font-weight:700;font-size:1rem;">Innholdsanalyse</div><div style="font-size:0.85rem;color:#5a5550;margin-top:0.25rem;">' + (r.summary || '').replace(/</g,'&lt;') + '</div></div>';
+            html += '<div style="background:' + scoreColor + ';color:#fff;padding:0.3rem 0.75rem;border-radius:20px;font-weight:700;font-size:0.9rem;flex-shrink:0;margin-left:1rem;">' + r.score + '/10</div>';
             html += '</div>';
 
-            // Summary
-            html += '<div style="padding:1rem 1.25rem;border-bottom:1px solid #e8e4de;">';
-            html += '<div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#862736;margin-bottom:0.25rem;">Oppsummering</div>';
-            html += '<div style="font-size:0.9rem;color:#333;line-height:1.6;">' + (r.summary || '').replace(/</g,'&lt;') + '</div>';
-            html += '</div>';
+            // Changes
+            if (window._aiChanges.length) {
+                html += '<div style="padding:0.75rem 1.25rem;border-bottom:1px solid #e8e4de;font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#862736;">' + window._aiChanges.length + ' endringsforslag</div>';
 
-            // Strengths
-            if (r.strengths && r.strengths.length) {
-                html += '<div style="padding:1rem 1.25rem;border-bottom:1px solid #e8e4de;">';
-                html += '<div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#2e7d32;margin-bottom:0.5rem;">Styrker</div>';
-                r.strengths.forEach(function(s) {
-                    html += '<div style="font-size:0.85rem;color:#333;padding:0.2rem 0;padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:#2e7d32;">✓</span> ' + s.replace(/</g,'&lt;') + '</div>';
+                window._aiChanges.forEach(function(c, i) {
+                    var typeLabel = c.type === 'replace' ? 'Erstatt' : (c.type === 'add' ? 'Legg til' : 'Fjern');
+                    var typeBg = c.type === 'replace' ? '#fff3e0' : (c.type === 'add' ? '#e8f5e9' : '#fce8e8');
+                    var typeColor = c.type === 'replace' ? '#e65100' : (c.type === 'add' ? '#2e7d32' : '#c62828');
+
+                    html += '<div id="ai-change-' + i + '" style="padding:1rem 1.25rem;border-bottom:1px solid #e8e4de;">';
+                    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem;">';
+                    html += '<span style="background:' + typeBg + ';color:' + typeColor + ';padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600;">' + typeLabel + '</span>';
+                    html += '<div style="display:flex;gap:0.25rem;">';
+                    html += '<button class="btn btn-sm btn-success" onclick="acceptChange(' + i + ', this)"><i class="fa fa-check"></i> Godta</button>';
+                    html += '<button class="btn btn-sm btn-default" onclick="rejectChange(' + i + ', this)"><i class="fa fa-times"></i></button>';
+                    html += '</div></div>';
+
+                    // Reason
+                    html += '<div style="font-size:0.8rem;color:#5a5550;margin-bottom:0.5rem;font-style:italic;">' + (c.reason || '').replace(/</g,'&lt;') + '</div>';
+
+                    if (c.type === 'replace') {
+                        html += '<div style="background:#fce8e8;padding:0.5rem 0.75rem;border-radius:6px;font-size:0.85rem;margin-bottom:0.35rem;text-decoration:line-through;color:#999;">' + (c.original || '').replace(/</g,'&lt;') + '</div>';
+                        html += '<div style="background:#e8f5e9;padding:0.5rem 0.75rem;border-radius:6px;font-size:0.85rem;">' + (c.suggested || '').replace(/</g,'&lt;') + '</div>';
+                    } else if (c.type === 'add') {
+                        html += '<div style="font-size:0.8rem;color:#8a8580;margin-bottom:0.25rem;">Etter: «' + (c.after || '').replace(/</g,'&lt;').substring(0, 80) + '...»</div>';
+                        html += '<div style="background:#e8f5e9;padding:0.5rem 0.75rem;border-radius:6px;font-size:0.85rem;">' + (c.suggested || '').replace(/</g,'&lt;') + '</div>';
+                    } else {
+                        html += '<div style="background:#fce8e8;padding:0.5rem 0.75rem;border-radius:6px;font-size:0.85rem;text-decoration:line-through;color:#999;">' + (c.original || '').replace(/</g,'&lt;') + '</div>';
+                    }
+
+                    html += '</div>';
                 });
-                html += '</div>';
-            }
-
-            // Improvements
-            if (r.improvements && r.improvements.length) {
-                html += '<div style="padding:1rem 1.25rem;border-bottom:1px solid #e8e4de;">';
-                html += '<div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#e65100;margin-bottom:0.5rem;">Forbedringsforslag</div>';
-                r.improvements.forEach(function(s) {
-                    html += '<div style="font-size:0.85rem;color:#333;padding:0.2rem 0;padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:#e65100;">→</span> ' + s.replace(/</g,'&lt;') + '</div>';
-                });
-                html += '</div>';
-            }
-
-            // Structure
-            if (r.structure) {
-                html += '<div style="padding:1rem 1.25rem;">';
-                html += '<div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#1565c0;margin-bottom:0.25rem;">Struktur</div>';
-                html += '<div style="font-size:0.85rem;color:#333;line-height:1.6;">' + (r.structure || '').replace(/</g,'&lt;') + '</div>';
-                html += '</div>';
+            } else {
+                html += '<div style="padding:1.5rem;text-align:center;color:#2e7d32;font-weight:600;">Ingen endringsforslag — innholdet ser bra ut!</div>';
             }
 
             html += '</div>';
@@ -289,6 +293,67 @@ function aiReviewContent() {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa fa-search"></i> Analyser innhold';
     });
+}
+
+function acceptChange(idx, btn) {
+    var c = window._aiChanges[idx];
+    if (!c) return;
+
+    // Get TinyMCE content
+    var editor = tinymce.get('lesson-content-ct') || tinymce.get('lesson-content');
+    if (!editor) { alert('Kunne ikke finne editoren'); return; }
+
+    var content = editor.getContent();
+    var changed = false;
+
+    if (c.type === 'replace' && c.original && c.suggested) {
+        // Try to find and replace the original text
+        var origText = c.original;
+        if (content.indexOf(origText) !== -1) {
+            content = content.replace(origText, c.suggested);
+            changed = true;
+        } else {
+            // Try stripped version
+            var stripped = content.replace(/<[^>]+>/g, '');
+            if (stripped.indexOf(origText) === -1) {
+                alert('Kunne ikke finne originalteksten i editoren. Du kan kopiere forslaget manuelt.');
+                return;
+            }
+            // Try a more flexible match
+            var escapedOrig = origText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            var regex = new RegExp(escapedOrig.replace(/\s+/g, '\\s*(?:<[^>]*>\\s*)*'));
+            if (regex.test(content)) {
+                content = content.replace(regex, c.suggested);
+                changed = true;
+            }
+        }
+    } else if (c.type === 'add' && c.after && c.suggested) {
+        if (content.indexOf(c.after) !== -1) {
+            content = content.replace(c.after, c.after + '\n' + c.suggested);
+            changed = true;
+        }
+    } else if (c.type === 'delete' && c.original) {
+        if (content.indexOf(c.original) !== -1) {
+            content = content.replace(c.original, '');
+            changed = true;
+        }
+    }
+
+    if (changed) {
+        editor.setContent(content);
+        var el = document.getElementById('ai-change-' + idx);
+        el.style.background = '#e8f5e9';
+        el.style.opacity = '0.6';
+        btn.parentElement.innerHTML = '<span style="color:#2e7d32;font-weight:600;"><i class="fa fa-check"></i> Godtatt</span>';
+    } else {
+        alert('Kunne ikke finne teksten automatisk. Kopier forslaget og lim inn manuelt i editoren.');
+    }
+}
+
+function rejectChange(idx, btn) {
+    var el = document.getElementById('ai-change-' + idx);
+    el.style.opacity = '0.3';
+    btn.parentElement.innerHTML = '<span style="color:#999;font-size:0.8rem;">Forkastet</span>';
 }
 
 function aiGenerate() {
