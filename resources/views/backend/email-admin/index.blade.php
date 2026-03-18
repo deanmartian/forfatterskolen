@@ -52,6 +52,10 @@
                         <a href="{{ route('admin.email-admin.preview', $template->id) }}" class="btn btn-xs btn-info" title="Forhåndsvis" target="_blank">
                             <i class="fa fa-eye"></i>
                         </a>
+                        <form method="POST" action="{{ route('admin.email-admin.destroy', $template->id) }}" style="display:inline;" onsubmit="return confirm('Slett malen «{{ $template->page_name }}»?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-xs btn-danger" title="Slett"><i class="fa fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
             @endforeach
