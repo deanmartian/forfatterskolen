@@ -22,6 +22,9 @@
 				<input type="hidden" name="page" value="{{ isset($_REQUEST['page']) ? $_REQUEST['page'] : 1 }}">
 			</form>
 			<a class="btn btn-primary margin-bottom" href="{{route('admin.lesson.create', $course->id)}}">+ {{ trans('site.add-lesson') }}</a>
+			<button type="button" class="btn btn-info margin-bottom" id="autoCategorizeBtn" onclick="autoCategorize()">
+				<i class="fa fa-magic"></i> Auto-kategoriser leksjoner
+			</button>
 			<div class="table-responsive">
 				<table class="table table-side-bordered table-white" id="lessonsTable" style="table-layout: fixed">
 					<thead>
@@ -100,5 +103,35 @@ $( function() {
 	    }
 	});
 } );
+
+function autoCategorize() {
+    var btn = document.getElementById('autoCategorizeBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i> Kategoriserer...';
+
+    fetch('/course/{{ $course->id }}/auto-categorize-lessons', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            alert('Kategorisert ' + data.updated + ' leksjoner. Siden lastes på nytt.');
+            location.reload();
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-magic"></i> Auto-kategoriser leksjoner';
+            alert(data.error || 'Feil ved kategorisering');
+        }
+    })
+    .catch(function() {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-magic"></i> Auto-kategoriser leksjoner';
+    });
+}
 </script>
 @stop
