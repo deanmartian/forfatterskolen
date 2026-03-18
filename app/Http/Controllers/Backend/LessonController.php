@@ -411,6 +411,19 @@ class LessonController extends Controller
         $excerpt = mb_substr($content, 0, 5000);
         $wordCount = str_word_count($content);
 
+        // Check existing assignments and quizzes
+        $lessonModel = Lesson::find($id);
+        $existingAssignments = $lessonModel->lessonAssignments()->pluck('question_text')->toArray();
+        $existingQuizzes = $lessonModel->quizzes()->pluck('question')->toArray();
+
+        $assignmentInfo = count($existingAssignments) > 0
+            ? "Eksisterende oppgaver i systemet:\n" . implode("\n", array_map(fn($a) => "- {$a}", $existingAssignments))
+            : "Ingen oppgaver er lagt inn i systemet ennå.";
+
+        $quizInfo = count($existingQuizzes) > 0
+            ? "Eksisterende quiz-spørsmål i systemet:\n" . implode("\n", array_map(fn($q) => "- {$q}", $existingQuizzes))
+            : "Ingen quiz-spørsmål er lagt inn i systemet ennå.";
+
         $systemPrompt = "Du er en erfaren redaktør og pedagogisk konsulent for Forfatterskolen (norsk skrivelærer-portal). "
             . "Analyser leksjonsteksten og gi KONKRETE endringsforslag.\n\n"
             . "Returner KUN JSON (ingen annen tekst) med dette formatet:\n"
@@ -442,7 +455,16 @@ class LessonController extends Controller
             . "- «original»-feltet MÅ være eksakt tekst fra leksjonen (slik at vi kan finne og erstatte)\n"
             . "- Fokuser på: skrivefeil, uklare formuleringer, bedre pedagogisk flyt, manglende overganger, engasjement\n"
             . "- Ikke endre faglig innhold eller meninger, bare språk og struktur\n"
-            . "- Alt på norsk. Vær konkret og konstruktiv.";
+            . "- Alt på norsk. Vær konkret og konstruktiv.\n\n"
+            . "I tillegg: sjekk om det finnes oppgaver i leksjonsteksten (ofte markert med «Oppgaver:» eller nummerert liste). "
+            . "Sammenlign med oppgavene og quizene som allerede er lagt inn i systemet (listet under). "
+            . "Rapporter dette i et eget «tasks»-felt i JSON:\n"
+            . "\"tasks\": {\n"
+            . "  \"found_in_text\": [\"Oppgave funnet i teksten\", ...],\n"
+            . "  \"missing_in_system\": [\"Oppgave som finnes i teksten men IKKE i systemet\", ...],\n"
+            . "  \"has_quiz\": true/false,\n"
+            . "  \"suggestion\": \"Anbefaling om oppgaver/quiz\"\n"
+            . "}";
 
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
@@ -454,7 +476,7 @@ class LessonController extends Controller
                 'max_tokens' => 1500,
                 'system' => $systemPrompt,
                 'messages' => [
-                    ['role' => 'user', 'content' => "Leksjonstekst ({$wordCount} ord):\n\n{$excerpt}"],
+                    ['role' => 'user', 'content' => "Leksjonstekst ({$wordCount} ord):\n\n{$excerpt}\n\n---\n\n{$assignmentInfo}\n\n{$quizInfo}"],
                 ],
             ]);
 

@@ -285,6 +285,43 @@ function aiReviewContent() {
                 html += '<div style="padding:1.5rem;text-align:center;color:#2e7d32;font-weight:600;">Ingen endringsforslag — innholdet ser bra ut!</div>';
             }
 
+            // Tasks/assignments check
+            if (r.tasks) {
+                var t = r.tasks;
+                html += '<div style="margin-top:1rem;background:#fff;border:1px solid #e8e4de;border-radius:10px;overflow:hidden;">';
+                html += '<div style="padding:0.75rem 1.25rem;background:#f0f7ff;border-bottom:1px solid #e8e4de;font-size:0.85rem;font-weight:700;color:#1565c0;"><i class="fa fa-tasks"></i> Oppgaver og quiz</div>';
+
+                if (t.found_in_text && t.found_in_text.length) {
+                    html += '<div style="padding:0.75rem 1.25rem;border-bottom:1px solid #e8e4de;">';
+                    html += '<div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#5a5550;margin-bottom:0.35rem;">Funnet i teksten</div>';
+                    t.found_in_text.forEach(function(f) {
+                        html += '<div style="font-size:0.85rem;padding:0.15rem 0;color:#333;">• ' + f.replace(/</g,'&lt;') + '</div>';
+                    });
+                    html += '</div>';
+                }
+
+                if (t.missing_in_system && t.missing_in_system.length) {
+                    html += '<div style="padding:0.75rem 1.25rem;border-bottom:1px solid #e8e4de;background:#fff3e0;">';
+                    html += '<div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#e65100;margin-bottom:0.35rem;">Mangler i systemet</div>';
+                    t.missing_in_system.forEach(function(m) {
+                        html += '<div style="font-size:0.85rem;padding:0.15rem 0;color:#e65100;">⚠ ' + m.replace(/</g,'&lt;') + '</div>';
+                    });
+                    html += '</div>';
+                }
+
+                if (t.suggestion) {
+                    html += '<div style="padding:0.75rem 1.25rem;">';
+                    html += '<div style="font-size:0.85rem;color:#333;line-height:1.5;">' + t.suggestion.replace(/</g,'&lt;') + '</div>';
+                    html += '</div>';
+                }
+
+                if (!t.has_quiz) {
+                    html += '<div style="padding:0.5rem 1.25rem;background:#fff3e0;font-size:0.85rem;color:#e65100;">⚠ Ingen quiz-spørsmål lagt inn — bruk «Generer oppgaver og quiz» for å lage noen.</div>';
+                }
+
+                html += '</div>';
+            }
+
             html += '</div>';
             result.innerHTML = html;
         }
