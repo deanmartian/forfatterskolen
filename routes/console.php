@@ -80,4 +80,4 @@ Schedule::call(function () {
         $service->sendNow($newsletter);
         \App\Jobs\SendNewsletterJob::dispatch($newsletter->id);
     }
-})->everyMinute()->withoutOverlapping();
+})->name('newsletter:process-scheduled')->everyMinute()->withoutOverlapping();
