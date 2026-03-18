@@ -27,7 +27,7 @@
                     }
                     if (!$hasAccess) continue;
 
-                    $single = ['support', 'faq', 'admin', 'community', 'emails'];
+                    $single = ['support', 'faq', 'admin', 'community', 'emails', 'crm'];
                     $request_name = in_array($page['request_name'], $single)
                         ? $page['request_name']
                         : ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
