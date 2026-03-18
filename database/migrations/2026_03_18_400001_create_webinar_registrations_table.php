@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('webinar_registrations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('free_webinar_id');
+            $table->integer('free_webinar_id');
             $table->string('email');
             $table->string('first_name');
             $table->string('last_name');
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['free_webinar_id', 'email']);
-            $table->foreign('free_webinar_id')->references('id')->on('free_webinars')->onDelete('cascade');
+            $table->index('free_webinar_id');
         });
     }
 
