@@ -41,6 +41,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('emails:inactive-nudge')->dailyAt('11:00');
         $schedule->command('ads:auto-stop')->hourly();
         $schedule->command('ads:update-stats')->dailyAt('08:00');
+        $schedule->command('webinar:send-reminders')->everyFifteenMinutes();
     }
 
     /**

@@ -1276,6 +1276,42 @@ class HomeController extends Controller
             $decoded_response = json_decode($response);
 
             if (property_exists($decoded_response, 'conference_url')) {
+                $joinUrl = $decoded_response->conference_url;
+
+                // Lagre registrering
+                $registration = \App\WebinarRegistration::updateOrCreate(
+                    ['free_webinar_id' => $freeWebinar->id, 'email' => $request->email],
+                    [
+                        'first_name' => $request->first_name,
+                        'last_name' => $request->last_name,
+                        'join_url' => $joinUrl,
+                    ]
+                );
+
+                // Send bekreftelsesmail
+                if (!$registration->confirmation_sent) {
+                    try {
+                        $startDate = \Carbon\Carbon::parse($freeWebinar->start_date);
+                        $monthsNo = ['januar','februar','mars','april','mai','juni','juli','august','september','oktober','november','desember'];
+                        $daysNo = ['søndag','mandag','tirsdag','onsdag','torsdag','fredag','lørdag'];
+
+                        $emailData = [
+                            'webinarTitle' => $freeWebinar->title,
+                            'webinarDay' => $startDate->format('d'),
+                            'webinarMonth' => $monthsNo[$startDate->month - 1],
+                            'webinarTime' => $startDate->format('H:i'),
+                            'webinarDayName' => $daysNo[$startDate->dayOfWeek],
+                            'webinarDescription' => strip_tags($freeWebinar->description),
+                            'joinUrl' => $joinUrl,
+                        ];
+
+                        \Mail::to($request->email)->queue(new \App\Mail\WebinarConfirmationEmail($emailData));
+                        $registration->update(['confirmation_sent' => true]);
+                    } catch (\Exception $e) {
+                        \Log::error("Webinar bekreftelsesmail feilet for {$request->email}: {$e->getMessage()}");
+                    }
+                }
+
                 return view('frontend.free-webinar-success', compact('freeWebinar'));
             } else {
                 $message = $decoded_response->error;
