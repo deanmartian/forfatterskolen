@@ -188,10 +188,16 @@
                 La AI lese igjennom leksjonsteksten og foreslå oppgaver og quiz-spørsmål automatisk.
                 Du kan godkjenne, redigere eller forkaste forslagene.
             </p>
-            <button type="button" class="btn btn-primary" id="aiGenerateBtn" onclick="aiGenerate()" style="background:#862736;border-color:#862736;">
-                <i class="fa fa-magic"></i> Generer oppgaver og quiz med AI
-            </button>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                <button type="button" class="btn btn-primary" id="aiGenerateBtn" onclick="aiGenerate()" style="background:#862736;border-color:#862736;">
+                    <i class="fa fa-magic"></i> Generer oppgaver og quiz
+                </button>
+                <button type="button" class="btn btn-info" id="aiReviewBtn" onclick="aiReviewContent()">
+                    <i class="fa fa-search"></i> Analyser innhold
+                </button>
+            </div>
             <div id="aiGenerateStatus" style="margin-top:0.75rem;display:none;"></div>
+            <div id="aiReviewResult" style="margin-top:1rem;display:none;"></div>
             <div id="aiGenerateResults" style="margin-top:1rem;display:none;">
                 <h4 style="font-size:0.9rem;font-weight:600;">AI-forslag:</h4>
                 <div id="aiAssignmentSuggestions"></div>
@@ -202,6 +208,89 @@
 </div>
 
 <script>
+function aiReviewContent() {
+    var btn = document.getElementById('aiReviewBtn');
+    var result = document.getElementById('aiReviewResult');
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i> AI analyserer innholdet (10-30 sek)...';
+    result.style.display = 'none';
+
+    fetch('{{ route("admin.lesson.ai_review", $lesson["id"]) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-search"></i> Analyser innhold';
+
+        if (data.error) {
+            result.style.display = 'block';
+            result.innerHTML = '<div style="background:#fce8e8;border:1px solid rgba(198,40,40,0.2);border-radius:8px;padding:1rem;color:#c62828;"><i class="fa fa-exclamation-triangle"></i> ' + data.error + '</div>';
+            return;
+        }
+
+        if (data.success && data.review) {
+            result.style.display = 'block';
+            var r = data.review;
+            var html = '<div style="background:#fff;border:1px solid #e8e4de;border-radius:10px;overflow:hidden;">';
+
+            // Score
+            var scoreColor = r.score >= 8 ? '#2e7d32' : (r.score >= 5 ? '#e65100' : '#c62828');
+            html += '<div style="padding:1rem 1.25rem;background:linear-gradient(135deg,#faf8f5,#fff);border-bottom:1px solid #e8e4de;display:flex;align-items:center;justify-content:space-between;">';
+            html += '<div style="font-weight:700;font-size:1rem;">Innholdsanalyse</div>';
+            html += '<div style="background:' + scoreColor + ';color:#fff;padding:0.3rem 0.75rem;border-radius:20px;font-weight:700;font-size:0.9rem;">' + r.score + '/10</div>';
+            html += '</div>';
+
+            // Summary
+            html += '<div style="padding:1rem 1.25rem;border-bottom:1px solid #e8e4de;">';
+            html += '<div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#862736;margin-bottom:0.25rem;">Oppsummering</div>';
+            html += '<div style="font-size:0.9rem;color:#333;line-height:1.6;">' + (r.summary || '').replace(/</g,'&lt;') + '</div>';
+            html += '</div>';
+
+            // Strengths
+            if (r.strengths && r.strengths.length) {
+                html += '<div style="padding:1rem 1.25rem;border-bottom:1px solid #e8e4de;">';
+                html += '<div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#2e7d32;margin-bottom:0.5rem;">Styrker</div>';
+                r.strengths.forEach(function(s) {
+                    html += '<div style="font-size:0.85rem;color:#333;padding:0.2rem 0;padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:#2e7d32;">✓</span> ' + s.replace(/</g,'&lt;') + '</div>';
+                });
+                html += '</div>';
+            }
+
+            // Improvements
+            if (r.improvements && r.improvements.length) {
+                html += '<div style="padding:1rem 1.25rem;border-bottom:1px solid #e8e4de;">';
+                html += '<div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#e65100;margin-bottom:0.5rem;">Forbedringsforslag</div>';
+                r.improvements.forEach(function(s) {
+                    html += '<div style="font-size:0.85rem;color:#333;padding:0.2rem 0;padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:#e65100;">→</span> ' + s.replace(/</g,'&lt;') + '</div>';
+                });
+                html += '</div>';
+            }
+
+            // Structure
+            if (r.structure) {
+                html += '<div style="padding:1rem 1.25rem;">';
+                html += '<div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#1565c0;margin-bottom:0.25rem;">Struktur</div>';
+                html += '<div style="font-size:0.85rem;color:#333;line-height:1.6;">' + (r.structure || '').replace(/</g,'&lt;') + '</div>';
+                html += '</div>';
+            }
+
+            html += '</div>';
+            result.innerHTML = html;
+        }
+    })
+    .catch(function() {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-search"></i> Analyser innhold';
+    });
+}
+
 function aiGenerate() {
     var btn = document.getElementById('aiGenerateBtn');
     var status = document.getElementById('aiGenerateStatus');

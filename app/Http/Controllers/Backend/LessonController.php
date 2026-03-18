@@ -394,6 +394,69 @@ class LessonController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function aiReview($id): JsonResponse
+    {
+        $lesson = Lesson::findOrFail($id);
+        $content = strip_tags(html_entity_decode($lesson->content ?? ''));
+
+        if (mb_strlen($content) < 50) {
+            return response()->json(['error' => 'Leksjonen har for lite innhold til å analysere'], 422);
+        }
+
+        $apiKey = config('services.anthropic.key');
+        if (!$apiKey) {
+            return response()->json(['error' => 'ANTHROPIC_API_KEY er ikke konfigurert'], 500);
+        }
+
+        $excerpt = mb_substr($content, 0, 5000);
+        $wordCount = str_word_count($content);
+
+        $systemPrompt = "Du er en erfaren pedagogisk konsulent som evaluerer kursinnhold for en norsk skrivelærer-portal (Forfatterskolen). "
+            . "Analyser leksjonsteksten og gi en strukturert vurdering.\n\n"
+            . "Returner KUN JSON (ingen annen tekst) med dette formatet:\n"
+            . "{\n"
+            . "  \"score\": 7,\n"
+            . "  \"summary\": \"Kort oppsummering av innholdet og kvaliteten (2-3 setninger)\",\n"
+            . "  \"strengths\": [\"Styrke 1\", \"Styrke 2\", \"Styrke 3\"],\n"
+            . "  \"improvements\": [\"Forbedringsforslag 1\", \"Forbedringsforslag 2\", \"Forbedringsforslag 3\"],\n"
+            . "  \"structure\": \"Vurdering av struktur, lesbarhet og pedagogisk flyt\"\n"
+            . "}\n\n"
+            . "Score: 1-10 (10=perfekt). Vurder: pedagogisk kvalitet, engasjement, struktur, eksempler, oppgaver, lesbarhet.\n"
+            . "Alt på norsk. Vær ærlig og konkret.";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'x-api-key' => $apiKey,
+                'anthropic-version' => '2023-06-01',
+                'content-type' => 'application/json',
+            ])->timeout(45)->post('https://api.anthropic.com/v1/messages', [
+                'model' => 'claude-sonnet-4-20250514',
+                'max_tokens' => 1500,
+                'system' => $systemPrompt,
+                'messages' => [
+                    ['role' => 'user', 'content' => "Leksjonstekst ({$wordCount} ord):\n\n{$excerpt}"],
+                ],
+            ]);
+
+            if (!$response->successful()) {
+                return response()->json(['error' => 'AI API feilet: ' . $response->status()], 500);
+            }
+
+            $aiText = $response->json('content.0.text', '');
+
+            if (preg_match('/\{[\s\S]*\}/m', $aiText, $matches)) {
+                $parsed = json_decode($matches[0], true);
+                if ($parsed) {
+                    return response()->json(['success' => true, 'review' => $parsed]);
+                }
+            }
+
+            return response()->json(['error' => 'Kunne ikke parse AI-respons'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Feil: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function aiGenerate($id, Request $request): JsonResponse
     {
         $lesson = Lesson::findOrFail($id);
