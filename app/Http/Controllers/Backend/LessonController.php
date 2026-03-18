@@ -394,6 +394,44 @@ class LessonController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function autoCategorize($courseId): JsonResponse
+    {
+        $course = Course::findOrFail($courseId);
+        $lessons = $course->lessons;
+        $updated = 0;
+
+        $resourceKeywords = ['kursplan', 'leseliste', 'pensumliste', 'oversikt', 'velkommen', 'introduksjon', 'info'];
+        $repriseKeywords = ['reprise', 'opptak', 'arkiv', 'webinar-arkiv', 'replay'];
+
+        foreach ($lessons as $lesson) {
+            $title = mb_strtolower($lesson->title);
+            $newType = 'module';
+
+            foreach ($resourceKeywords as $kw) {
+                if (str_contains($title, $kw)) {
+                    $newType = 'resource';
+                    break;
+                }
+            }
+            if ($newType === 'module') {
+                foreach ($repriseKeywords as $kw) {
+                    if (str_contains($title, $kw)) {
+                        $newType = 'reprise';
+                        break;
+                    }
+                }
+            }
+
+            if ($lesson->type !== $newType) {
+                $lesson->type = $newType;
+                $lesson->save();
+                $updated++;
+            }
+        }
+
+        return response()->json(['success' => true, 'updated' => $updated, 'total' => $lessons->count()]);
+    }
+
     public function aiReview($id): JsonResponse
     {
         set_time_limit(120); // AI API can take 30-60 seconds
