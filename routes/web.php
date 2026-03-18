@@ -1250,6 +1250,18 @@ Route::domain($admin)->group(function () {
             Route::get('/statistics', [Backend\CrmController::class, 'statistics'])->name('admin.crm.statistics');
         });
 
+        // Annonsepanel
+        Route::prefix('annonser')->group(function () {
+            Route::get('/', [Backend\AdCampaignController::class, 'index'])->name('admin.ads.index');
+            Route::post('/', [Backend\AdCampaignController::class, 'store'])->name('admin.ads.store');
+            Route::post('/{campaign}/activate', [Backend\AdCampaignController::class, 'activate'])->name('admin.ads.activate');
+            Route::post('/{campaign}/pause', [Backend\AdCampaignController::class, 'pause'])->name('admin.ads.pause');
+            Route::post('/{campaign}/sync-stats', [Backend\AdCampaignController::class, 'syncStats'])->name('admin.ads.sync-stats');
+            Route::delete('/{campaign}', [Backend\AdCampaignController::class, 'destroy'])->name('admin.ads.destroy');
+            Route::post('/launch-fb-lead', [Backend\AdCampaignController::class, 'launchFacebookLead'])->name('admin.ads.launch-fb-lead');
+            Route::get('/generate-text', [Backend\AdCampaignController::class, 'generateAdText'])->name('admin.ads.generate-text');
+        });
+
         // Kontakt-import
         Route::prefix('contacts/import')->group(function () {
             Route::get('/', [Backend\ContactImportController::class, 'index'])->name('admin.contacts.import');
