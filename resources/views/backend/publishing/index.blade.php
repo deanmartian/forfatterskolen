@@ -69,6 +69,9 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.tinymce.images') }}">
 		Tinymce Images
 	</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.crm.index') }}">
+		CRM
+	</a>
 
 	<ul class="nav nav-tabs margin-top">
 		<li @if(Request::input('tab') == 'publishing' || Request::input('tab') == '') class="active" @endif>
