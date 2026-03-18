@@ -29,7 +29,7 @@
 
         <div class="form-group">
             <label><strong>Innhold</strong></label>
-            <textarea name="body_html" id="body_html" class="form-control" rows="20">{{ old('body_html', $newsletter->body_html) }}</textarea>
+            <textarea name="body_html" id="body_html" class="form-control tinymce" rows="20">{{ old('body_html', $newsletter->body_html) }}</textarea>
         </div>
 
         <div class="row">
@@ -115,16 +115,3 @@
 </div>
 @endsection
 
-@section('scripts')
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
-<script>
-tinymce.init({
-    selector: '#body_html',
-    height: 500,
-    menubar: true,
-    plugins: 'link image code lists table',
-    toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter | link image | bullist numlist | table | code',
-    content_style: 'body { font-family: Georgia, serif; font-size: 16px; }'
-});
-</script>
-@stop
