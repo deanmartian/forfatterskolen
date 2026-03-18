@@ -1250,6 +1250,15 @@ Route::domain($admin)->group(function () {
             Route::get('/statistics', [Backend\CrmController::class, 'statistics'])->name('admin.crm.statistics');
         });
 
+        // Kontakt-import
+        Route::prefix('contacts/import')->group(function () {
+            Route::get('/', [Backend\ContactImportController::class, 'index'])->name('admin.contacts.import');
+            Route::get('/test-api', [Backend\ContactImportController::class, 'testApi'])->name('admin.contacts.import.test-api');
+            Route::post('/start', [Backend\ContactImportController::class, 'start'])->name('admin.contacts.import.start');
+            Route::get('/progress', [Backend\ContactImportController::class, 'progress'])->name('admin.contacts.import.progress');
+            Route::post('/reset', [Backend\ContactImportController::class, 'reset'])->name('admin.contacts.import.reset');
+        });
+
         // Nyhetsbrev
         Route::prefix('newsletters')->group(function () {
             Route::get('/', [Backend\NewsletterController::class, 'index'])->name('admin.newsletter.index');
