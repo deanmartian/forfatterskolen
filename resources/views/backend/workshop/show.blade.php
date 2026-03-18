@@ -51,8 +51,8 @@
 					<div class="workshop-meta">
 						<div><strong>{{ trans('site.price') }}<span class="pull-right">:</span></strong>{{ AdminHelpers::currencyFormat($workshop->price) }}</div>
 						<div><strong>{{ trans('site.when') }}<span class="pull-right">:</span></strong>{{ date_format(date_create($workshop->date), 'h:i A, dS M Y') }}</div>
-						<div><strong>Faktura Due Date <span class="pull-right">:</span></strong>{{ $workshop->faktura_date ? date_format(date_create($workshop->faktura_date), 'dS M Y') : '' }}</div>
-						<div><strong>{{ trans('site.duration') }}<span class="pull-right">:</span></strong>{{ $workshop->duration }} hours</div>
+						<div><strong>Faktura forfallsdato <span class="pull-right">:</span></strong>{{ $workshop->faktura_date ? date_format(date_create($workshop->faktura_date), 'dS M Y') : '' }}</div>
+						<div><strong>{{ trans('site.duration') }}<span class="pull-right">:</span></strong>{{ $workshop->duration }} timer</div>
 						<div><strong>Fiken product<span class="pull-right">:</span></strong>{{ $workshop->fiken_product }}</div>
 						<div><strong>{{ trans('site.total-seats') }}<span class="pull-right">:</span></strong>{{ $workshop->seats }}</div>
 					</div>
@@ -240,7 +240,7 @@
 										@if($log->learners)
 											<a href="#viewAttendeesModal" data-toggle="modal" class="viewAttendeeBtn"
 											   data-action="{{ route('admin.workshop.send_email_log', $log->id) }}">
-												View Attendees
+												Se deltakere
 											</a>
 										@else
 											All
@@ -290,7 +290,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="no-margin">Attendees</h4>
+				<h4 class="no-margin">Deltakere</h4>
 			</div>
 			<div class="modal-body">
 				<div class="attendee-container" style="height: 300px">
@@ -435,8 +435,8 @@
 	                <input type="datetime-local" name="date" placeholder="{{ trans('site.date') }}" value="{{ strftime('%Y-%m-%dT%H:%M:%S', strtotime($workshop->date)) }}" min="0" required class="form-control">
 	              </div>
 					<div class="form-group">
-						<label>Faktura Due Date</label>
-						<input type="date" name="faktura_date" placeholder="Faktura Due Date" value="{{ $workshop->faktura_date ? strftime('%Y-%m-%d', strtotime($workshop->faktura_date)) : '' }}" class="form-control">
+						<label>Faktura forfallsdato</label>
+						<input type="date" name="faktura_date" placeholder="Faktura forfallsdato" value="{{ $workshop->faktura_date ? strftime('%Y-%m-%d', strtotime($workshop->faktura_date)) : '' }}" class="form-control">
 					</div>
 	              <div class="form-group">
 	                <label id="course-image">{{ trans('site.image') }}</label>
@@ -457,7 +457,7 @@
 	            <div class="col-sm-6">
 	              <div class="form-group">
 	                <label>{{ trans('site.duration-in-hours') }}</label>
-	                <input type="number" name="duration" placeholder="Duration" value="{{ $workshop->duration }}" min="0" required class="form-control">
+	                <input type="number" name="duration" placeholder="Varighet" value="{{ $workshop->duration }}" min="0" required class="form-control">
 	              </div>
 	              <div class="form-group">
 	                <label>Fiken product</label>
@@ -638,9 +638,9 @@
 
 					<div class="form-group">
 						<label style="display: block">From</label>
-						<input type="text" class="form-control" placeholder="Name" style="width: 49%; display: inline;"
+						<input type="text" class="form-control" placeholder="Navn" style="width: 49%; display: inline;"
 							   name="from_name">
-						<input type="email" class="form-control" placeholder="Email" style="width: 49%; display: inline;"
+						<input type="email" class="form-control" placeholder="E-post" style="width: 49%; display: inline;"
 							   name="from_email">
 					</div>
 

@@ -1,7 +1,7 @@
 @extends('backend.layout')
 
 @section('title')
-<title>Free Courses &rsaquo; Forfatterskolen Admin</title>
+<title>Gratis webinar &rsaquo; Forfatterskolen Admin</title>
 @stop
 
 @section('styles')

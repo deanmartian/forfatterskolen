@@ -1,7 +1,7 @@
 @extends('backend.layout')
 
 @section('title')
-<title>Edit Note &rsaquo; Forfatterskolen Admin</title>
+<title>Rediger notat &rsaquo; Forfatterskolen Admin</title>
 @stop
 
 

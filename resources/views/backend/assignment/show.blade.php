@@ -42,7 +42,7 @@
 			<div class="table-responsive">
 				<button type="button" class="pull-right btn btn-success btn-sm margin-bottom assignMultipleManuscriptsBtn"
 				data-toggle="modal" data-target="#assignMultipleManuscriptsModal">
-					Assign Multiple Manuscripts
+					Tildel flere manus
 				</button>
 				<button type="button" class="pull-right btn btn-primary btn-sm margin-bottom margin-right-5" data-toggle="modal"
 				 data-target="#addManuscriptModal">{{ trans('site.add-manuscript') }}</button>
@@ -82,7 +82,7 @@
 							<th>{{ trans_choice('site.words', 2) }}</th>
 							<th>{{ trans('site.text-nr') }}</th>
 							<th>{{ trans_choice('site.groups', 1) }}</th>
-							<th>Join Group</th>
+							<th>Bli med i gruppe</th>
 							<th>Editor Expected Finish</th>
 							<th>{{ trans('site.feedback-out') }}</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
@@ -109,7 +109,7 @@
 
 								@if ($manuscript->letter_to_editor)
 									<br>
-									<a href="{{ route('assignment.manuscript.download_letter', $manuscript->id) }}">Download Letter</a>
+									<a href="{{ route('assignment.manuscript.download_letter', $manuscript->id) }}">Last ned brev</a>
 								@endif
 							</td>
 							<td><a href="{{route('admin.learner.show', $manuscript->user->id)}}">{{ $manuscript->user->full_name }}</a></td>
@@ -317,7 +317,7 @@
 							</a>
 
 							<a href="{{ route('assignment.group.export_email_list', $assignment->id) }}" class="btn btn-success btn-xs">
-								Export Email List
+								Eksporter e-postliste
 							</a>
 						</div>
 					@endif
@@ -334,7 +334,7 @@
 							<div class="form-group">
 								<label>{{ trans_choice('site.editors', 1) }}</label>
 								<select class="form-control" name="editor_id" required>
-									<option value="" disabled selected>- Select Editor -</option>
+									<option value="" disabled selected>- Velg redaktør -</option>
 									@foreach( $editors as $editor )
 										<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 									@endforeach
@@ -453,7 +453,7 @@
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
 		    <h4 class="modal-title">
-				Assign Multiple Manuscripts
+				Tildel flere manus
 			</h4>
 		  </div>
 		  <div class="modal-body">
@@ -464,7 +464,7 @@
 				<div class="form-group">
 					<label>{{ trans_choice('site.editors', 1) }}</label>
 					<select class="form-control select2" name="editor_id" required>
-						<option value="" disabled selected>- Select Editor -</option>
+						<option value="" disabled selected>- Velg redaktør -</option>
 						@foreach( $editors as $editor )
 							<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 						@endforeach
@@ -511,7 +511,7 @@
 		      	<div class="form-group">
 			      	<label>{{ trans_choice('site.learners', 1) }}</label>
 			      	<select class="form-control select2" name="learner_id" required>
-			      		<option value="" disabled selected>- Search learner -</option>
+			      		<option value="" disabled selected>- Søk elev -</option>
 			      		@foreach( $course->learners->whereNotIn('user_id', $assignmentManuscriptLearners)->get() as $learner )
 			      		<option value="{{ $learner->user->id }}">{{ $learner->user->full_name }}</option>
 			      		@endforeach
@@ -524,7 +524,7 @@
       			</div>
 
                 <div class="form-group">
-                    <label>Join Group</label>
+                    <label>Bli med i gruppe</label>
                     <select name="join_group" class="form-control" required>
                         <option value="0">No</option>
                         <option value="1">Yes</option>
@@ -562,7 +562,7 @@
 					<div class="form-group">
 						<label>{{ trans_choice('site.learners', 1) }}</label>
 						<select class="form-control select2" name="learner_id" required>
-							<option value="" disabled selected>- Search learner -</option>
+							<option value="" disabled selected>- Søk elev -</option>
 							@foreach( $course->learners->whereNotIn('user_id', $assignmentManuscriptLearners)->get() as $learner )
 								<option value="{{ $learner->user->id }}">{{ $learner->user->full_name }}</option>
 							@endforeach
@@ -590,7 +590,7 @@
 					<div class="form-group">
 						<label>{{ trans_choice('site.editors', 1) }}</label>
 						<select class="form-control select2" name="editor_id" required>
-							<option value="" disabled selected>- Select Editor -</option>
+							<option value="" disabled selected>- Velg redaktør -</option>
 						</select>
 
 						<div class="hidden-container">
@@ -903,7 +903,7 @@
 				<div class="form-group" id="assigned-editor-container">
 					<label>Assigned Editor</label> <br>
 					<select name="assigned_editor" id="" class="form-control">
-						<option value="" disabled selected="">- Select Editor -</option>
+						<option value="" disabled selected="">- Velg redaktør -</option>
 						@foreach(AdminHelpers::editorList() as $editor)
 							<option value="{{ $editor->id }}" 
 								@if($editor->id == $assignment->assigned_editor) selected @endif>
@@ -1255,7 +1255,7 @@
 					<div class="form-group">
 						<label>{{ trans_choice('site.editors', 1) }}</label>
 						<select class="form-control select2" name="editor_id">
-							<option value="" selected disabled>- Select Editor -</option>
+							<option value="" selected disabled>- Velg redaktør -</option>
 							@foreach(\App\Http\AdminHelpers::editorList() as $editor)
 								<option value="{{ $editor->id }}">
 									{{ $editor->first_name . " " . $editor->last_name }}
@@ -1285,7 +1285,7 @@
 					{{csrf_field()}}
 
 					<div class="form-group">
-						<label>Join Group</label>
+						<label>Bli med i gruppe</label>
 						<select name="join_group" class="form-control" required>
 							<option value="0">No</option>
 							<option value="1">Yes</option>
@@ -1459,7 +1459,7 @@
         let preferred_editor_name = $(this).data('preferred-editor-name');
 		let genreEditors = $(this).data('genre_editors');
 		let genreEditorsCount = $(this).data('genre_editors_count');
-		modal.find('select[name=editor_id]').html('<option value="" disabled selected>- Select Editor -</option>');
+		modal.find('select[name=editor_id]').html('<option value="" disabled selected>- Velg redaktør -</option>');
 
 		for(var i = 0; i<genreEditorsCount; i++){
 			modal.find('select[name=editor_id]').append('<option value="'+genreEditors[i]['id']+'">'+genreEditors[i]['first_name']+' '+genreEditors[i]['last_name']+'</option>');

@@ -30,8 +30,8 @@
 	<a class="btn btn-success margin-top" href="{{route('admin.course.create')}}">{{ trans('site.add-course') }}</a>
 	<a class="btn btn-primary margin-top" href="{{route('admin.course-testimonial.index')}}">{{ trans_choice('site.testimonials',2) }}</a>
 	<a class="btn btn-primary margin-top" href="{{route('admin.survey.index')}}">{{ trans('site.surveys') }}</a>
-	<a class="btn btn-primary margin-top" href="{{route('admin.shareable-course.index')}}">Shareable Course</a>
-	<a class="btn btn-primary margin-top" href="{{route('admin.course.all-upcoming-webinars')}}">Webinars</a>
+	<a class="btn btn-primary margin-top" href="{{route('admin.shareable-course.index')}}">Delbare kurs</a>
+	<a class="btn btn-primary margin-top" href="{{route('admin.course.all-upcoming-webinars')}}">Webinarer</a>
 	<div class="table-users table-responsive">
 		<table class="table">
 			<thead>

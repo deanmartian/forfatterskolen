@@ -26,7 +26,7 @@
 		<div class="form-check form-inline">
 			<input class="form-check-input" type="checkbox" name="free-course" value="1"
 				   @if (Request::has('free-course')) checked @endif>
-			<label class="form-check-label" for="free-course">Free Course</label>
+			<label class="form-check-label" for="free-course">Gratis kurs</label>
 		</div>
 
 		{{-- <div class="form-check form-inline">
@@ -38,25 +38,25 @@
 		<div class="form-check form-inline">
 			<input class="form-check-input" type="checkbox" name="shop-manuscript" value="1"
 				   @if (Request::has('shop-manuscript')) checked @endif>
-			<label class="form-check-label" for="workshop">Shop-manuscript</label>
+			<label class="form-check-label" for="workshop">Manusutvikling</label>
 		</div>
 
 		<div class="form-check form-inline">
 			<input class="form-check-input" type="checkbox" name="course" value="1"
 				   @if (Request::has('course')) checked @endif>
-			<label class="form-check-label" for="workshop">Courses</label>
+			<label class="form-check-label" for="workshop">Kurs</label>
 		</div>
 
-		<button class="btn btn-default form-inline" type="submit">Filter</button>
+		<button class="btn btn-default form-inline" type="submit">Filtrer</button>
 	</form>
 	<div class="navbar-form navbar-right">
 	  	<div class="form-group">
 		  	<form role="search" method="GET">
-				<input type="text" class="form-control" name="sid" value="{{Request::input('sid')}}" placeholder="Search ID..">
-				<input type="text" class="form-control" name="sfname" value="{{Request::input('sfname')}}" placeholder="Search First Name..">
-				<input type="text" class="form-control" name="slname" value="{{Request::input('slname')}}" placeholder="Search Last Name..">
+				<input type="text" class="form-control" name="sid" value="{{Request::input('sid')}}" placeholder="Søk ID..">
+				<input type="text" class="form-control" name="sfname" value="{{Request::input('sfname')}}" placeholder="Søk fornavn..">
+				<input type="text" class="form-control" name="slname" value="{{Request::input('slname')}}" placeholder="Søk etternavn..">
 				<div class="input-group">
-					<input type="text" class="form-control" name="semail" value="{{Request::input('semail')}}" placeholder="Search Email..">
+					<input type="text" class="form-control" name="semail" value="{{Request::input('semail')}}" placeholder="Søk e-post..">
 				    <span class="input-group-btn">
 				    	<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
 				    </span>
@@ -75,7 +75,7 @@
 
 		<button type="button" class="btn btn-success addLearnerBtn margin-top" data-toggle="modal"
 				data-target="#addLearnerModal">
-			Add Learner
+			Legg til elev
 		</button>
 
 		<table class="table">
@@ -85,12 +85,12 @@
 			        <th>{{ trans('site.first-name') }}</th>
 			        <th>{{ trans('site.last-name') }}</th>
 			        <th>{{ trans_choice('site.emails', 1) }}</th>
-					<th>Free Courses</th>
+					<th>Gratis kurs</th>
 					<th>{{ trans_choice('site.workshops',1) }}</th>
 					<th>{{ trans_choice('site.shop-manuscripts', 1) }}</th>
 			        <th>{{ trans_choice('site.courses', 2) }}</th>
 			        <th>{{ trans('site.date-joined') }}</th>
-					<th>Self Publishing</th>
+					<th>Selvutgivelse</th>
 					<th>{{ trans('site.admin') }}</th>
 					<th>{{ trans('site.auto-renew') }}</th>
 			        <th></th>
@@ -135,7 +135,7 @@
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">
-					Add Learner
+					Legg til elev
 				</h4>
 			</div>
 

@@ -70,7 +70,7 @@
 
                             @if ($manuscript->letter_to_editor)
                                 <br>
-                                <a href="{{ route('assignment.manuscript.download_letter', $manuscript->id) }}">Download Letter</a>
+                                <a href="{{ route('assignment.manuscript.download_letter', $manuscript->id) }}">Last ned brev</a>
                             @endif
                         </td>
                         <td>

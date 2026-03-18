@@ -391,7 +391,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Self Publishing</h4></div>
+						<div class="panel-heading"><h4>Selvutgivelse</h4></div>
 						<table class="table">
 							<thead>
 							<tr>

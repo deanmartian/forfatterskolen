@@ -142,7 +142,7 @@
 								<th>Preferred Editor</th>
 								<th>Include in email list</th>
 								<th>Exclude in Scheduled Registration</th>
-								<th>Facebook Group</th>
+								<th>Facebook-gruppe</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -536,7 +536,7 @@
 					<label>Learners</label> <br>
 					<input type="checkbox" name="check_all"> <label for="">Check/Uncheck All</label> <br>
 					<input type="checkbox" name="not_facebook_group" value="not-fb-group"> 
-					<label for="not_facebook">Not In Facebook Group</label>
+					<label for="not_facebook">Ikke i Facebook-gruppe</label>
 
 					<div class="form-group">
 						@if(count($course->packages) > 0)

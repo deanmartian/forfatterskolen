@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="page-toolbar">
-	<h3><i class="fa fa-file-text-o"></i> All Manuscripts</h3>
+	<h3><i class="fa fa-file-text-o"></i> Alle manus</h3>
 	<a href="javascript:void(0)" data-toggle="modal" data-target="#manuscriptEmailTemplate"> Email Template</a>
 </div>
 

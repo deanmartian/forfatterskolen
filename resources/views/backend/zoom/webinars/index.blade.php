@@ -2,12 +2,12 @@
 
 
 @section('title')
-    <title>Zoom Webinars</title>
+    <title>Zoom-webinarer</title>
 @stop
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-file-text-o"></i> All Webinars</h3>
+        <h3><i class="fa fa-file-text-o"></i> Alle webinarer</h3>
         <div class="clearfix"></div>
     </div>
 
