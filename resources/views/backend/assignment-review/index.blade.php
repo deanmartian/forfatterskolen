@@ -118,7 +118,7 @@ function generateAiFeedback(id) {
     btn.disabled = true;
     btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i> Genererer (10-30 sek)...';
 
-    fetch('{{ url("/course/assignment-review") }}/' + id + '/generate-ai', {
+    fetch('/assignment-review/' + id + '/generate-ai', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ function approveSubmission(id) {
     var feedback = document.getElementById('feedback-' + id).value.trim();
     if (!feedback) { alert('Tilbakemeldingen kan ikke være tom'); return; }
 
-    fetch('{{ url("/course/assignment-review") }}/' + id + '/approve', {
+    fetch('/assignment-review/' + id + '/approve', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
