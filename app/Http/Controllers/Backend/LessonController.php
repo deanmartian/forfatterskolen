@@ -86,6 +86,7 @@ class LessonController extends Controller
         $lesson->course_id = $course->id;
         $lesson->title = $request->title;
         $lesson->content = $request->content;
+        $lesson->type = $request->input('type', 'module');
         $lesson->whole_lesson_file = $wholeLessonFile;
         $lesson->delay = $request->delay;
         $lesson->allow_lesson_download = $request->has('allow_lesson_download') && $request->allow_lesson_download ? 1 : 0;
@@ -151,6 +152,7 @@ class LessonController extends Controller
         $lesson->course_id = $course->id;
         $lesson->title = $request->title;
         $lesson->content = $request->content;
+        $lesson->type = $request->input('type', 'module');
 
         if ($request->has('whole_lesson_file')) {
             $lesson->whole_lesson_file = $wholeLessonFile;
@@ -400,7 +402,7 @@ class LessonController extends Controller
         $lessons = $course->lessons;
         $updated = 0;
 
-        $resourceKeywords = ['kursplan', 'leseliste', 'pensumliste', 'oversikt', 'velkommen', 'introduksjon', 'info'];
+        $resourceKeywords = ['kursplan', 'leseliste', 'pensumliste', 'filer', 'vedlegg', 'ressurser', 'lenker', 'linker'];
         $repriseKeywords = ['reprise', 'opptak', 'arkiv', 'webinar-arkiv', 'replay'];
 
         foreach ($lessons as $lesson) {
