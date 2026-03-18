@@ -3781,7 +3781,7 @@ class LearnerController extends Controller
         return response()->json([
             'success' => true,
             'status' => 'pending',
-            'message' => 'Svaret ditt er sendt inn! AI-tilbakemelding genereres...',
+            'message' => 'Svaret ditt er sendt inn — du får tilbakemelding fra læreren din snart',
         ]);
     }
 

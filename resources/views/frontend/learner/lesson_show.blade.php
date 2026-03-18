@@ -511,16 +511,22 @@
                                     {{ $sub->approved_feedback }}
                                 </div>
                             @elseif($sub)
-                                {{-- Submitted, waiting --}}
-                                <div class="lv-assignment__submitted">
+                                {{-- Submitted, waiting — can edit --}}
+                                <div class="lv-assignment__submitted" id="lvSubDisplay{{ $la->id }}">
                                     <strong>Ditt svar:</strong><br>{{ $sub->answer_text }}
                                 </div>
-                                <div class="lv-assignment__status lv-assignment__status--{{ $sub->status === 'ai_generated' ? 'ai' : 'pending' }}">
-                                    @if($sub->status === 'ai_generated')
-                                        Tilbakemelding er generert — venter på godkjenning av lærer
-                                    @else
-                                        Svaret ditt er sendt inn — tilbakemelding genereres...
-                                    @endif
+                                <div class="lv-assignment__status lv-assignment__status--pending">
+                                    Svaret ditt er sendt inn — du får tilbakemelding fra læreren din snart
+                                </div>
+                                <button class="lv-assignment__edit-btn" onclick="lvEditSubmission({{ $la->id }}, this)" style="margin-top:0.5rem;background:none;border:1px solid rgba(0,0,0,0.15);border-radius:6px;padding:0.4rem 0.85rem;font-size:0.8rem;color:#5a5550;cursor:pointer;">
+                                    Rediger svar
+                                </button>
+                                <div id="lvEditForm{{ $la->id }}" style="display:none;margin-top:0.5rem;">
+                                    <textarea class="lv-assignment__textarea" id="lvAssignment{{ $la->id }}">{{ $sub->answer_text }}</textarea>
+                                    <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                                        <button class="lv-assignment__submit" onclick="lvSubmitAssignment({{ $la->id }})">Oppdater svar</button>
+                                        <button onclick="document.getElementById('lvEditForm{{ $la->id }}').style.display='none'" style="background:none;border:1px solid rgba(0,0,0,0.15);border-radius:8px;padding:0.6rem 1rem;font-size:0.85rem;color:#5a5550;cursor:pointer;">Avbryt</button>
+                                    </div>
                                 </div>
                             @else
                                 {{-- Not submitted yet --}}
@@ -701,6 +707,13 @@
             btn.disabled = false;
             btn.textContent = 'Sjekk svar';
         });
+    }
+
+    /* ── Edit submission ── */
+    function lvEditSubmission(assignmentId, btn) {
+        btn.style.display = 'none';
+        document.getElementById('lvEditForm' + assignmentId).style.display = 'block';
+        document.getElementById('lvAssignment' + assignmentId).focus();
     }
 
     /* ── Submit assignment ── */
