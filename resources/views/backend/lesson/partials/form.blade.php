@@ -235,14 +235,18 @@ function aiGenerate() {
             status.style.display = 'none';
             results.style.display = 'block';
 
+            // Store data in global arrays for safe onclick access
+            window._aiAssignments = data.data.assignments || [];
+            window._aiQuizzes = data.data.quizzes || [];
+
             var assHtml = '';
-            if (data.data.assignments && data.data.assignments.length) {
+            if (window._aiAssignments.length) {
                 assHtml = '<div style="margin-bottom:1rem;"><strong>Oppgaver:</strong></div>';
-                data.data.assignments.forEach(function(a, i) {
-                    assHtml += '<div style="border:1px solid #d4edda;border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;background:#f8fff8;">' +
+                window._aiAssignments.forEach(function(a, i) {
+                    assHtml += '<div id="ai-ass-' + i + '" style="border:1px solid #d4edda;border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;background:#f8fff8;">' +
                         '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
-                        '<div style="flex:1;font-size:0.9rem;">' + a.question_text.replace(/</g,'&lt;') + '</div>' +
-                        '<button class="btn btn-sm btn-success" onclick="acceptAssignment(this, \'' + a.question_text.replace(/'/g, "\\'").replace(/"/g, '&quot;') + '\')" style="margin-left:0.5rem;white-space:nowrap;">' +
+                        '<div style="flex:1;font-size:0.9rem;">' + (a.question_text || '').replace(/</g,'&lt;') + '</div>' +
+                        '<button class="btn btn-sm btn-success" onclick="acceptAssignmentByIdx(' + i + ', this)" style="margin-left:0.5rem;white-space:nowrap;">' +
                         '<i class="fa fa-check"></i> Godta</button>' +
                         '</div></div>';
                 });
@@ -250,21 +254,21 @@ function aiGenerate() {
             document.getElementById('aiAssignmentSuggestions').innerHTML = assHtml;
 
             var quizHtml = '';
-            if (data.data.quizzes && data.data.quizzes.length) {
+            if (window._aiQuizzes.length) {
                 quizHtml = '<div style="margin-bottom:1rem;margin-top:1rem;"><strong>Quiz-spørsmål:</strong></div>';
-                data.data.quizzes.forEach(function(q, i) {
+                window._aiQuizzes.forEach(function(q, i) {
                     var optLabels = ['A', 'B', 'C', 'D'];
-                    var optHtml = q.options.map(function(o, oi) {
+                    var optHtml = (q.options || []).map(function(o, oi) {
                         return '<span style="display:inline-block;padding:2px 8px;margin:2px;border-radius:4px;font-size:0.85rem;' +
                             (oi === q.correct_option ? 'background:#e8f5e9;color:#2e7d32;font-weight:600;' : 'background:#f0f0f0;') + '">' +
-                            optLabels[oi] + ': ' + o + (oi === q.correct_option ? ' ✓' : '') + '</span>';
+                            optLabels[oi] + ': ' + (o || '').replace(/</g,'&lt;') + (oi === q.correct_option ? ' ✓' : '') + '</span>';
                     }).join(' ');
 
-                    quizHtml += '<div style="border:1px solid #bbdefb;border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;background:#f0f7ff;">' +
+                    quizHtml += '<div id="ai-quiz-' + i + '" style="border:1px solid #bbdefb;border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;background:#f0f7ff;">' +
                         '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
-                        '<div style="flex:1;"><div style="font-size:0.9rem;font-weight:600;margin-bottom:0.25rem;">' + q.question.replace(/</g,'&lt;') + '</div>' +
+                        '<div style="flex:1;"><div style="font-size:0.9rem;font-weight:600;margin-bottom:0.25rem;">' + (q.question || '').replace(/</g,'&lt;') + '</div>' +
                         '<div>' + optHtml + '</div></div>' +
-                        '<button class="btn btn-sm btn-success" onclick=\'acceptQuiz(this, ' + JSON.stringify(q) + ')\' style="margin-left:0.5rem;white-space:nowrap;">' +
+                        '<button class="btn btn-sm btn-success" onclick="acceptQuizByIdx(' + i + ', this)" style="margin-left:0.5rem;white-space:nowrap;">' +
                         '<i class="fa fa-check"></i> Godta</button>' +
                         '</div></div>';
                 });
@@ -279,34 +283,48 @@ function aiGenerate() {
     });
 }
 
-function acceptAssignment(btn, questionText) {
+function acceptAssignmentByIdx(idx, btn) {
+    var a = window._aiAssignments[idx];
+    if (!a) return;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i>';
+
     fetch('{{ route("admin.lesson.save_assignment", $lesson["id"]) }}', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-        body: JSON.stringify({ question_text: questionText })
+        body: JSON.stringify({ question_text: a.question_text })
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {
         if (data.success) {
-            btn.closest('div[style*="border"]').style.background = '#e8f5e9';
+            var el = document.getElementById('ai-ass-' + idx);
+            if (el) el.style.background = '#e8f5e9';
             btn.outerHTML = '<span style="color:#2e7d32;font-weight:600;margin-left:0.5rem;"><i class="fa fa-check"></i> Lagt til!</span>';
         }
-    });
+    })
+    .catch(function() { btn.disabled = false; btn.innerHTML = '<i class="fa fa-check"></i> Godta'; });
 }
 
-function acceptQuiz(btn, quizData) {
+function acceptQuizByIdx(idx, btn) {
+    var q = window._aiQuizzes[idx];
+    if (!q) return;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i>';
+
     fetch('{{ route("admin.lesson.save_quiz", $lesson["id"]) }}', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-        body: JSON.stringify({ question: quizData.question, options: quizData.options, correct_option: quizData.correct_option })
+        body: JSON.stringify({ question: q.question, options: q.options, correct_option: q.correct_option })
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {
         if (data.success) {
-            btn.closest('div[style*="border"]').style.background = '#e8f5e9';
+            var el = document.getElementById('ai-quiz-' + idx);
+            if (el) el.style.background = '#e8f5e9';
             btn.outerHTML = '<span style="color:#2e7d32;font-weight:600;margin-left:0.5rem;"><i class="fa fa-check"></i> Lagt til!</span>';
         }
-    });
+    })
+    .catch(function() { btn.disabled = false; btn.innerHTML = '<i class="fa fa-check"></i> Godta'; });
 }
 </script>
 @endif
