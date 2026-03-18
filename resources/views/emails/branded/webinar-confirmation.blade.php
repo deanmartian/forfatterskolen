@@ -22,9 +22,9 @@
     </table>
 
     @if($webinarDescription)
-    <p style="font-size:14px;color:#5a5550;line-height:1.6;margin:0 0 24px;text-align:left;font-family:-apple-system,sans-serif;">
-        {{ $webinarDescription }}
-    </p>
+    <div style="font-size:14px;color:#5a5550;line-height:1.6;margin:0 0 24px;text-align:left;font-family:-apple-system,sans-serif;">
+        {!! nl2br(e($webinarDescription)) !!}
+    </div>
     @endif
 
     <a href="{{ $joinUrl }}" style="display:inline-block;padding:14px 32px;background:#862736;color:#fff;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;font-family:-apple-system,sans-serif;">Delta på webinaret &rarr;</a>

@@ -231,6 +231,7 @@ class FreeCourseController extends Controller
                 if ($conferenceId) {
                     $webinar->update([
                         'bigmarker_conference_id' => $conferenceId,
+                        'gtwebinar_id' => $conferenceId,
                         'bigmarker_status' => 'active',
                     ]);
 
