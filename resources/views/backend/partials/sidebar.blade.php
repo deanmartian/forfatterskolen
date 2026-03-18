@@ -41,7 +41,7 @@
                                     <i class="fa fa-graduation-cap"></i>
                                     @break
                                 @case('free-course')
-                                    <i class="fa fa-gift"></i>
+                                    <i class="fa fa-play-circle"></i>
                                     @break
                                 @case('workshop')
                                     <i class="fa fa-users"></i>
@@ -59,16 +59,16 @@
                                     <i class="fa fa-book"></i>
                                     @break
                                 @case('free-manuscript')
-                                    <i class="fa fa-file-text-o"></i>
+                                    <i class="fa fa-pencil"></i>
                                     @break
                                 @case('other-service')
-                                    <i class="fa fa-wrench"></i>
+                                    <i class="fa fa-briefcase"></i>
                                     @break
                                 @case('yearly_calendar')
-                                    <i class="fa fa-calendar"></i>
+                                    <i class="fa fa-calendar-o"></i>
                                     @break
                                 @case('shop-manuscript')
-                                    <i class="fa fa-shopping-cart"></i>
+                                    <i class="fa fa-edit"></i>
                                     @break
                                 @case('faq')
                                     <i class="fa fa-question-circle"></i>

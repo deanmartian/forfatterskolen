@@ -170,7 +170,7 @@
 
 <!-- Nav -->
 <nav class="nav">
-    <a href="/"><img src="/images-new/forfatterskolen-logo.png" alt="Forfatterskolen" class="nav__logo"></a>
+    <a href="/"><img src="/images-new/logo.png" alt="Forfatterskolen" class="nav__logo"></a>
     @if($isOpen)
         <a href="#send-inn" class="nav__cta">Send inn tekst</a>
     @endif

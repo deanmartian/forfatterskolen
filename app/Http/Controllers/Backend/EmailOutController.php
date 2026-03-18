@@ -609,76 +609,7 @@ class EmailOutController extends Controller
             ];
         }
 
-        // Generer modul-e-poster (én per unik dato)
-        foreach ($lessonsByDate as $delayValue => $dateLessons) {
-            if (count($dateLessons) === 1) {
-                // Enkel modul — som før
-                $item = $dateLessons[0];
-                $emailOut = EmailOut::firstOrCreate(
-                    [
-                        'course_id' => $course_id,
-                        'template_type' => 'module_available',
-                        'lesson_id' => $item['lesson']->id,
-                    ],
-                    [
-                        'subject' => 'Modul ' . $item['order'] . ' er klar: ' . $item['lesson']->title,
-                        'message' => '',
-                        'delay' => $delayValue,
-                        'from_name' => 'Forfatterskolen',
-                        'from_email' => 'post@forfatterskolen.no',
-                        'auto_generated' => true,
-                        'status' => 'active',
-                        'template_data' => [
-                            'lessonOrder' => $item['order'],
-                            'lessonTitle' => $item['lesson']->title,
-                            'lessonDescription' => $item['lesson']->description_simplemde ?? '',
-                            'hasAssignment' => false,
-                        ],
-                    ]
-                );
-                if ($emailOut->wasRecentlyCreated) $created++;
-            } else {
-                // Flere moduler på samme dato — kombinert e-post
-                $firstLesson = $dateLessons[0]['lesson'];
-                $orders = array_column($dateLessons, 'order');
-                $titles = array_map(fn($i) => $i['lesson']->title, $dateLessons);
-                $subject = 'Modul ' . implode(' og ', $orders) . ' er klare: ' . implode(' og ', $titles);
-
-                $modules = [];
-                foreach ($dateLessons as $item) {
-                    $modules[] = [
-                        'order' => $item['order'],
-                        'title' => $item['lesson']->title,
-                        'description' => $item['lesson']->description_simplemde ?? '',
-                    ];
-                }
-
-                $emailOut = EmailOut::firstOrCreate(
-                    [
-                        'course_id' => $course_id,
-                        'template_type' => 'module_available',
-                        'delay' => $delayValue,
-                    ],
-                    [
-                        'subject' => $subject,
-                        'message' => '',
-                        'lesson_id' => $firstLesson->id,
-                        'from_name' => 'Forfatterskolen',
-                        'from_email' => 'post@forfatterskolen.no',
-                        'auto_generated' => true,
-                        'status' => 'active',
-                        'template_data' => [
-                            'delayDate' => $delayValue,
-                            'modules' => $modules,
-                            'hasAssignment' => false,
-                        ],
-                    ]
-                );
-                if ($emailOut->wasRecentlyCreated) $created++;
-            }
-        }
-
-        // Generer oppgave-e-poster
+        // Hent oppgaver for kurset
         $assignments = Assignment::where('course_id', $course_id)
             ->where(function ($q) {
                 $q->whereNull('parent')->orWhere('parent', 'course');
@@ -686,45 +617,27 @@ class EmailOutController extends Controller
             ->orderBy('available_date', 'asc')
             ->get();
 
-        // Pre-hent eksisterende oppgave-e-poster for å unngå trege JSON-spørringer
+        // Hent webinarer for kurset
+        $webinars = \App\Webinar::where('course_id', $course_id)
+            ->where('status', 1)
+            ->orderBy('start_date', 'asc')
+            ->get();
+
+        // Generer ukentlige oppdateringer (én samlet e-post per uke med alt innhold)
+        if ($startDate) {
+            $created += $this->generateWeeklyUpdates($course, $lessons, $assignments, $lessonsByDate, $startDate, $webinars);
+        }
+
+        // Generer påminnelser og frister (separate e-poster)
         $existingAssignmentEmails = EmailOut::where('course_id', $course_id)
-            ->whereIn('template_type', ['assignment_available', 'assignment_reminder', 'assignment_deadline'])
+            ->whereIn('template_type', ['assignment_reminder', 'assignment_deadline'])
             ->where('auto_generated', true)
             ->get()
             ->groupBy('template_type');
 
         foreach ($assignments as $assignment) {
-            $availableDate = $assignment->getRawOriginal('available_date');
             $submissionDate = $assignment->getRawOriginal('submission_date');
             $allowedPackage = $assignment->getRawOriginal('allowed_package');
-
-            // Oppgave tilgjengelig
-            if ($availableDate) {
-                $exists = ($existingAssignmentEmails->get('assignment_available') ?? collect())
-                    ->contains(fn($e) => ($e->template_data['assignmentId'] ?? null) == $assignment->id);
-
-                if (!$exists) {
-                    EmailOut::create([
-                        'course_id' => $course_id,
-                        'template_type' => 'assignment_available',
-                        'subject' => 'Ny oppgave: ' . $assignment->title,
-                        'message' => '',
-                        'delay' => $availableDate,
-                        'from_name' => 'Forfatterskolen',
-                        'from_email' => 'post@forfatterskolen.no',
-                        'auto_generated' => true,
-                        'status' => 'active',
-                        'allowed_package' => $allowedPackage,
-                        'template_data' => [
-                            'assignmentId' => $assignment->id,
-                            'assignmentTitle' => $assignment->title,
-                            'assignmentDescription' => $assignment->description ?? '',
-                            'submissionDate' => $submissionDate ? Carbon::parse($submissionDate)->format('d.m.Y') : '',
-                        ],
-                    ]);
-                    $created++;
-                }
-            }
 
             // Påminnelse 3 dager før frist
             if ($submissionDate && !is_numeric($submissionDate)) {
@@ -783,11 +696,6 @@ class EmailOutController extends Controller
             }
         }
 
-        // Generer ukentlige oppdateringer fra Kristine (én per mandag)
-        if ($startDate) {
-            $created += $this->generateWeeklyUpdates($course, $lessons, $assignments, $lessonsByDate, $startDate);
-        }
-
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag($created . ' e-poster ble auto-generert.'),
             'alert_type' => 'success',
@@ -824,7 +732,7 @@ class EmailOutController extends Controller
     /**
      * Generer ukentlige oppdateringer fra Kristine (én per mandag fra kursstart)
      */
-    protected function generateWeeklyUpdates(Course $course, $lessons, $assignments, array $lessonsByDate, Carbon $startDate): int
+    protected function generateWeeklyUpdates(Course $course, $lessons, $assignments, array $lessonsByDate, Carbon $startDate, $webinars = null): int
     {
         $created = 0;
 
@@ -872,6 +780,20 @@ class EmailOutController extends Controller
             }
         }
 
+        // Bygg oppslag: webinarer etter dato
+        $webinarsByDate = [];
+        if ($webinars) {
+            foreach ($webinars as $webinar) {
+                $wDate = Carbon::parse($webinar->start_date)->format('Y-m-d');
+                $webinarsByDate[$wDate][] = [
+                    'title' => $webinar->title,
+                    'host' => $webinar->host ?? '',
+                    'startTime' => Carbon::parse($webinar->start_date)->format('d.m.Y H:i'),
+                    'link' => $webinar->link ?? '',
+                ];
+            }
+        }
+
         // Sitater for ukebrev
         $quotes = [
             ['text' => 'Skriv det du vil lese.', 'author' => 'Toni Morrison'],
@@ -895,9 +817,10 @@ class EmailOutController extends Controller
             $weekStart = $monday->copy();
             $weekEnd = $monday->copy()->endOfWeek(Carbon::SUNDAY);
 
-            // Finn moduler og oppgaver som faller i denne uken
+            // Finn moduler, oppgaver og webinarer som faller i denne uken
             $weekModules = [];
             $weekAssignments = [];
+            $weekWebinars = [];
 
             foreach ($modulesByDate as $dateStr => $mods) {
                 try {
@@ -917,6 +840,15 @@ class EmailOutController extends Controller
                 } catch (\Exception $e) {}
             }
 
+            foreach ($webinarsByDate as $dateStr => $webs) {
+                try {
+                    $d = Carbon::parse($dateStr);
+                    if ($d->gte($weekStart) && $d->lte($weekEnd)) {
+                        $weekWebinars = array_merge($weekWebinars, $webs);
+                    }
+                } catch (\Exception $e) {}
+            }
+
             $quote = $quotes[$weekNumber % count($quotes)];
 
             $subject = 'Uke ' . $weekNumber . ': ' . $course->title;
@@ -925,6 +857,9 @@ class EmailOutController extends Controller
                 $subject = 'Uke ' . $weekNumber . ': ' . implode(' og ', array_slice($modTitles, 0, 2));
                 if (count($modTitles) > 2) $subject .= ' m.fl.';
             }
+
+            // Mentormøte-tips: inkluder i ukebrev at elever kan booke mentortime
+            $hasMentorInfo = ($weekNumber >= 2); // Fra uke 2 og utover
 
             $emailOut = EmailOut::firstOrCreate(
                 [
@@ -944,6 +879,8 @@ class EmailOutController extends Controller
                         'weekNumber' => $weekNumber,
                         'weekModules' => $weekModules,
                         'weekAssignments' => $weekAssignments,
+                        'weekWebinars' => $weekWebinars,
+                        'hasMentorInfo' => $hasMentorInfo,
                         'quote' => $quote,
                     ],
                 ]
