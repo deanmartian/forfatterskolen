@@ -18,7 +18,13 @@ class EmailSequenceController extends Controller
     {
         $sequences = EmailSequence::withCount('steps')->get();
 
-        return view('backend.crm.sequences-index', compact('sequences'));
+        return view('backend.crm.index', [
+            'tab' => 'sequences',
+            'sequences' => $sequences,
+            'totalContacts' => \App\Models\Contact::count(),
+            'activeContacts' => \App\Models\Contact::subscribed()->count(),
+            'pendingEmails' => \App\Models\EmailAutomationQueue::pending()->count(),
+        ]);
     }
 
     public function show($id)
