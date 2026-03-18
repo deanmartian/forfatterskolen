@@ -7,6 +7,7 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Lesson;
 use App\LessonContent;
+use App\LessonQuiz;
 use App\LessonDocuments;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -28,12 +29,14 @@ class LessonController extends Controller
     public function edit($course_id, $id): View
     {
         $course = Course::findOrFail($course_id);
-        $lesson = Lesson::findOrFail($id)->toArray();
-        $videos = Lesson::findOrFail($id)->videos;
-        $documents = Lesson::findOrFail($id)->documents;
+        $lessonModel = Lesson::findOrFail($id);
+        $lesson = $lessonModel->toArray();
+        $videos = $lessonModel->videos;
+        $documents = $lessonModel->documents;
+        $quizzes = $lessonModel->quizzes()->get();
         $section = null;
 
-        return view('backend.lesson.edit', compact('course', 'lesson', 'videos', 'section', 'documents'));
+        return view('backend.lesson.edit', compact('course', 'lesson', 'videos', 'section', 'documents', 'quizzes'));
     }
 
     public function create($id): View
@@ -356,5 +359,36 @@ class LessonController extends Controller
         }
 
         return $wholeLessonFile;
+    }
+
+    public function saveQuiz($id, Request $request): JsonResponse
+    {
+        $lesson = Lesson::findOrFail($id);
+
+        $request->validate([
+            'question' => 'required|string|max:1000',
+            'options' => 'required|array|min:2|max:4',
+            'options.*' => 'required|string|max:500',
+            'correct_option' => 'required|integer|min:0|max:3',
+        ]);
+
+        $quiz = LessonQuiz::create([
+            'lesson_id' => $lesson->id,
+            'question' => $request->question,
+            'options' => $request->options,
+            'correct_option' => $request->correct_option,
+            'order' => LessonQuiz::where('lesson_id', $lesson->id)->count(),
+        ]);
+
+        return response()->json(['success' => true, 'quiz' => $quiz]);
+    }
+
+    public function deleteQuiz($id): JsonResponse
+    {
+        $quiz = LessonQuiz::findOrFail($id);
+        $quiz->answers()->delete();
+        $quiz->delete();
+
+        return response()->json(['success' => true]);
     }
 }

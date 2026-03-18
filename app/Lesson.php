@@ -51,6 +51,16 @@ class Lesson extends Model
         return $this->hasMany(\App\LessonContent::class)->orderBy('created_at', 'desc');
     }
 
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(\App\LessonQuiz::class)->orderBy('order');
+    }
+
+    public function completions(): HasMany
+    {
+        return $this->hasMany(\App\LessonCompletion::class);
+    }
+
     /**
      * Delete related table/model
      */

@@ -166,6 +166,137 @@
 
 
 
+{{-- ═══ QUIZ ADMIN ═══ --}}
+@if(!Request::is('course/*/lesson/create'))
+<div class="container" style="margin-top:30px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-question-circle"></i> Quiz-spørsmål</h3>
+        </div>
+        <div class="panel-body">
+            <div id="quizList">
+                @if(isset($quizzes))
+                    @foreach($quizzes as $quiz)
+                        <div class="quiz-item" data-quiz-id="{{ $quiz->id }}" style="border:1px solid #e8e4de;border-radius:8px;padding:1rem;margin-bottom:0.75rem;background:#faf8f5;">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                                <div>
+                                    <strong>{{ $quiz->question }}</strong>
+                                    <div style="margin-top:0.5rem;">
+                                        @foreach($quiz->options as $oi => $opt)
+                                            <span style="display:inline-block;padding:2px 8px;margin:2px;border-radius:4px;font-size:0.85rem;{{ $oi === $quiz->correct_option ? 'background:#e8f5e9;color:#2e7d32;font-weight:600;' : 'background:#f0f0f0;' }}">
+                                                {{ $opt }} {{ $oi === $quiz->correct_option ? '✓' : '' }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteQuiz({{ $quiz->id }}, this)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+
+            <hr>
+            <h4 style="font-size:0.9rem;font-weight:600;">Legg til nytt spørsmål</h4>
+            <div class="form-group">
+                <label>Spørsmål</label>
+                <input type="text" class="form-control" id="quizQuestion" placeholder="Skriv spørsmålet her...">
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Alternativ A</label>
+                        <input type="text" class="form-control quiz-option" data-idx="0" placeholder="Alternativ A">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Alternativ B</label>
+                        <input type="text" class="form-control quiz-option" data-idx="1" placeholder="Alternativ B">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Alternativ C</label>
+                        <input type="text" class="form-control quiz-option" data-idx="2" placeholder="Alternativ C (valgfritt)">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Alternativ D</label>
+                        <input type="text" class="form-control quiz-option" data-idx="3" placeholder="Alternativ D (valgfritt)">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Riktig svar</label>
+                <select class="form-control" id="quizCorrect" style="max-width:200px;">
+                    <option value="0">Alternativ A</option>
+                    <option value="1">Alternativ B</option>
+                    <option value="2">Alternativ C</option>
+                    <option value="3">Alternativ D</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-success" onclick="addQuiz()">
+                <i class="fa fa-plus"></i> Legg til spørsmål
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function addQuiz() {
+    var question = document.getElementById('quizQuestion').value.trim();
+    var options = [];
+    document.querySelectorAll('.quiz-option').forEach(function(el) {
+        if (el.value.trim()) options.push(el.value.trim());
+    });
+    var correct = parseInt(document.getElementById('quizCorrect').value);
+
+    if (!question) { alert('Skriv inn et spørsmål'); return; }
+    if (options.length < 2) { alert('Minst 2 alternativer er påkrevd'); return; }
+
+    fetch('{{ route("admin.lesson.save_quiz", $lesson["id"]) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ question: question, options: options, correct_option: correct })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Feil ved lagring');
+        }
+    });
+}
+
+function deleteQuiz(id, btn) {
+    if (!confirm('Slett dette quiz-spørsmålet?')) return;
+
+    fetch('/course/lesson/quiz/' + id, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            btn.closest('.quiz-item').remove();
+        }
+    });
+}
+</script>
+@endif
+
 <span class="title-text hidden">{{ trans('site.title') }}</span>
 <span class="video-text hidden">{{ trans('site.video') }}</span>
 @section('scripts')

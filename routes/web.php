@@ -469,6 +469,9 @@ Route::domain($front)->group(function () {
         Route::get('/terms', [Frontend\LearnerController::class, 'terms'])->name('learner.terms'); // Terms Page
         Route::get('/course/{course_id}/lesson/{id}', [Frontend\LearnerController::class, 'lesson'])->name('learner.course.lesson'); // Lesson Page
         Route::get('/course/{course_id}/lesson/{id}/download', [Frontend\LearnerController::class, 'downloadLesson'])->name('learner.course.download-lesson'); // Download Lesson Page
+        Route::post('/course/{id}/goal', [Frontend\LearnerController::class, 'saveGoal'])->name('learner.course.goal');
+        Route::post('/course/{course_id}/lesson/{id}/complete', [Frontend\LearnerController::class, 'completeLesson'])->name('learner.course.lesson.complete');
+        Route::post('/course/{course_id}/lesson/{id}/quiz', [Frontend\LearnerController::class, 'submitQuiz'])->name('learner.course.lesson.quiz');
         Route::get('/manuscript/{id}', [Frontend\LearnerController::class, 'manuscriptShow'])->name('learner.manuscript.show'); // Manuscript Single Page
         Route::get('/manus', [Frontend\LearnerController::class, 'shopManuscript'])->name('learner.shop-manuscript'); // Manusutviklinger
         Route::get('/manus/{id}', [Frontend\LearnerController::class, 'shopManuscriptShow'])->name('learner.shop-manuscript.show'); // Manusutvikling detalj
@@ -1153,6 +1156,8 @@ Route::domain($admin)->group(function () {
         Route::post('/lesson/{id}/add-content', [Backend\LessonController::class, 'addContent'])->name('admin.lesson.add_content'); // Save lesson order
         Route::get('/lesson/{id}/get-lesson-content', [Backend\LessonController::class, 'getLessonContent'])->name('admin.lesson.get_lesson_content'); // Save lesson order
         Route::post('/lesson-content/{id}/delete-lesson-content', [Backend\LessonController::class, 'deleteLessonContent'])->name('admin.lesson.delete_lesson_content'); // Save lesson order
+        Route::post('/lesson/{id}/quiz', [Backend\LessonController::class, 'saveQuiz'])->name('admin.lesson.save_quiz');
+        Route::delete('/lesson/quiz/{id}', [Backend\LessonController::class, 'deleteQuiz'])->name('admin.lesson.delete_quiz');
 
         // Lessons Route
         Route::get('/admin/export_nearly_expired_courses', [Backend\AdminController::class, 'exportNearlyExpiredCourses'])->name('admin.admin.export_nearly_expired_courses');
