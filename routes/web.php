@@ -1159,6 +1159,7 @@ Route::domain($admin)->group(function () {
         Route::post('/lesson-content/{id}/delete-lesson-content', [Backend\LessonController::class, 'deleteLessonContent'])->name('admin.lesson.delete_lesson_content'); // Save lesson order
         Route::post('/lesson/{id}/quiz', [Backend\LessonController::class, 'saveQuiz'])->name('admin.lesson.save_quiz');
         Route::delete('/lesson/quiz/{id}', [Backend\LessonController::class, 'deleteQuiz'])->name('admin.lesson.delete_quiz');
+        Route::post('/lesson/{id}/ai-generate', [Backend\LessonController::class, 'aiGenerate'])->name('admin.lesson.ai_generate');
         Route::post('/lesson/{id}/lesson-assignment', [Backend\LessonController::class, 'saveLessonAssignment'])->name('admin.lesson.save_assignment');
         Route::delete('/lesson/lesson-assignment/{id}', [Backend\LessonController::class, 'deleteLessonAssignment'])->name('admin.lesson.delete_assignment');
         Route::get('/assignment-review', [Backend\AssignmentReviewController::class, 'index'])->name('admin.assignment-review.index');

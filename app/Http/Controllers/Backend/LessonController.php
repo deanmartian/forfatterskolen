@@ -394,6 +394,74 @@ class LessonController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function aiGenerate($id, Request $request): JsonResponse
+    {
+        $lesson = Lesson::findOrFail($id);
+        $content = strip_tags(html_entity_decode($lesson->content ?? ''));
+
+        if (mb_strlen($content) < 50) {
+            return response()->json(['error' => 'Leksjonen har for lite innhold til å generere oppgaver'], 422);
+        }
+
+        $apiKey = config('services.anthropic.key');
+        if (!$apiKey) {
+            return response()->json(['error' => 'ANTHROPIC_API_KEY er ikke konfigurert'], 500);
+        }
+
+        $excerpt = mb_substr($content, 0, 4000);
+
+        $systemPrompt = "Du er en erfaren skrivelærer ved Forfatterskolen. "
+            . "Analyser leksjonsteksten og generer oppgaver og quiz-spørsmål.\n\n"
+            . "Returner JSON med følgende format (kun JSON, ingen annen tekst):\n"
+            . "{\n"
+            . "  \"assignments\": [\n"
+            . "    {\"question_text\": \"Oppgavetekst her (kreativ skriveoppgave)\"}\n"
+            . "  ],\n"
+            . "  \"quizzes\": [\n"
+            . "    {\"question\": \"Spørsmål?\", \"options\": [\"Alt A\", \"Alt B\", \"Alt C\", \"Alt D\"], \"correct_option\": 0}\n"
+            . "  ]\n"
+            . "}\n\n"
+            . "Regler:\n"
+            . "- Finn eksisterende oppgaver i teksten (ofte markert med 'Oppgaver:' eller nummerert liste)\n"
+            . "- Lag 2-3 kreative skriveoppgaver basert på leksjonsinnholdet\n"
+            . "- Lag 2-3 quiz-spørsmål (flervalg) som tester forståelse av stoffet\n"
+            . "- Alt på norsk\n"
+            . "- correct_option er 0-indeksert (0=A, 1=B, 2=C, 3=D)";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'x-api-key' => $apiKey,
+                'anthropic-version' => '2023-06-01',
+                'content-type' => 'application/json',
+            ])->timeout(45)->post('https://api.anthropic.com/v1/messages', [
+                'model' => 'claude-sonnet-4-20250514',
+                'max_tokens' => 2000,
+                'system' => $systemPrompt,
+                'messages' => [
+                    ['role' => 'user', 'content' => "Leksjonstekst:\n\n{$excerpt}"],
+                ],
+            ]);
+
+            if (!$response->successful()) {
+                return response()->json(['error' => 'AI API feilet: ' . $response->status()], 500);
+            }
+
+            $aiText = $response->json('content.0.text', '');
+
+            // Extract JSON from response (might be wrapped in ```json...```)
+            if (preg_match('/\{[\s\S]*\}/m', $aiText, $matches)) {
+                $parsed = json_decode($matches[0], true);
+                if ($parsed) {
+                    return response()->json(['success' => true, 'data' => $parsed]);
+                }
+            }
+
+            return response()->json(['error' => 'Kunne ikke parse AI-respons'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Feil: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function saveLessonAssignment($id, Request $request): JsonResponse
     {
         $lesson = Lesson::findOrFail($id);

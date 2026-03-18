@@ -176,6 +176,141 @@
 
 
 
+{{-- ═══ AI AUTO-GENERATE ═══ --}}
+@if(!Request::is('course/*/lesson/create'))
+<div class="container" style="margin-top:30px;">
+    <div class="panel panel-default" style="border-left:3px solid #862736;">
+        <div class="panel-heading" style="background:#faf8f5;">
+            <h3 class="panel-title"><i class="fa fa-magic" style="color:#862736;"></i> AI-assistent</h3>
+        </div>
+        <div class="panel-body">
+            <p style="color:#5a5550;font-size:0.9rem;margin-bottom:1rem;">
+                La AI lese igjennom leksjonsteksten og foreslå oppgaver og quiz-spørsmål automatisk.
+                Du kan godkjenne, redigere eller forkaste forslagene.
+            </p>
+            <button type="button" class="btn btn-primary" id="aiGenerateBtn" onclick="aiGenerate()" style="background:#862736;border-color:#862736;">
+                <i class="fa fa-magic"></i> Generer oppgaver og quiz med AI
+            </button>
+            <div id="aiGenerateStatus" style="margin-top:0.75rem;display:none;"></div>
+            <div id="aiGenerateResults" style="margin-top:1rem;display:none;">
+                <h4 style="font-size:0.9rem;font-weight:600;">AI-forslag:</h4>
+                <div id="aiAssignmentSuggestions"></div>
+                <div id="aiQuizSuggestions"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function aiGenerate() {
+    var btn = document.getElementById('aiGenerateBtn');
+    var status = document.getElementById('aiGenerateStatus');
+    var results = document.getElementById('aiGenerateResults');
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i> AI analyserer leksjonen...';
+    status.style.display = 'block';
+    status.innerHTML = '<span style="color:#8a8580;">Dette kan ta 10-30 sekunder...</span>';
+    results.style.display = 'none';
+
+    fetch('{{ route("admin.lesson.ai_generate", $lesson["id"]) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-magic"></i> Generer oppgaver og quiz med AI';
+
+        if (data.error) {
+            status.innerHTML = '<span style="color:#c62828;"><i class="fa fa-exclamation-triangle"></i> ' + data.error + '</span>';
+            return;
+        }
+
+        if (data.success && data.data) {
+            status.style.display = 'none';
+            results.style.display = 'block';
+
+            var assHtml = '';
+            if (data.data.assignments && data.data.assignments.length) {
+                assHtml = '<div style="margin-bottom:1rem;"><strong>Oppgaver:</strong></div>';
+                data.data.assignments.forEach(function(a, i) {
+                    assHtml += '<div style="border:1px solid #d4edda;border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;background:#f8fff8;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+                        '<div style="flex:1;font-size:0.9rem;">' + a.question_text.replace(/</g,'&lt;') + '</div>' +
+                        '<button class="btn btn-sm btn-success" onclick="acceptAssignment(this, \'' + a.question_text.replace(/'/g, "\\'").replace(/"/g, '&quot;') + '\')" style="margin-left:0.5rem;white-space:nowrap;">' +
+                        '<i class="fa fa-check"></i> Godta</button>' +
+                        '</div></div>';
+                });
+            }
+            document.getElementById('aiAssignmentSuggestions').innerHTML = assHtml;
+
+            var quizHtml = '';
+            if (data.data.quizzes && data.data.quizzes.length) {
+                quizHtml = '<div style="margin-bottom:1rem;margin-top:1rem;"><strong>Quiz-spørsmål:</strong></div>';
+                data.data.quizzes.forEach(function(q, i) {
+                    var optLabels = ['A', 'B', 'C', 'D'];
+                    var optHtml = q.options.map(function(o, oi) {
+                        return '<span style="display:inline-block;padding:2px 8px;margin:2px;border-radius:4px;font-size:0.85rem;' +
+                            (oi === q.correct_option ? 'background:#e8f5e9;color:#2e7d32;font-weight:600;' : 'background:#f0f0f0;') + '">' +
+                            optLabels[oi] + ': ' + o + (oi === q.correct_option ? ' ✓' : '') + '</span>';
+                    }).join(' ');
+
+                    quizHtml += '<div style="border:1px solid #bbdefb;border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;background:#f0f7ff;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+                        '<div style="flex:1;"><div style="font-size:0.9rem;font-weight:600;margin-bottom:0.25rem;">' + q.question.replace(/</g,'&lt;') + '</div>' +
+                        '<div>' + optHtml + '</div></div>' +
+                        '<button class="btn btn-sm btn-success" onclick=\'acceptQuiz(this, ' + JSON.stringify(q) + ')\' style="margin-left:0.5rem;white-space:nowrap;">' +
+                        '<i class="fa fa-check"></i> Godta</button>' +
+                        '</div></div>';
+                });
+            }
+            document.getElementById('aiQuizSuggestions').innerHTML = quizHtml;
+        }
+    })
+    .catch(function(err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-magic"></i> Generer oppgaver og quiz med AI';
+        status.innerHTML = '<span style="color:#c62828;">Noe gikk galt. Prøv igjen.</span>';
+    });
+}
+
+function acceptAssignment(btn, questionText) {
+    fetch('{{ route("admin.lesson.save_assignment", $lesson["id"]) }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+        body: JSON.stringify({ question_text: questionText })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            btn.closest('div[style*="border"]').style.background = '#e8f5e9';
+            btn.outerHTML = '<span style="color:#2e7d32;font-weight:600;margin-left:0.5rem;"><i class="fa fa-check"></i> Lagt til!</span>';
+        }
+    });
+}
+
+function acceptQuiz(btn, quizData) {
+    fetch('{{ route("admin.lesson.save_quiz", $lesson["id"]) }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+        body: JSON.stringify({ question: quizData.question, options: quizData.options, correct_option: quizData.correct_option })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            btn.closest('div[style*="border"]').style.background = '#e8f5e9';
+            btn.outerHTML = '<span style="color:#2e7d32;font-weight:600;margin-left:0.5rem;"><i class="fa fa-check"></i> Lagt til!</span>';
+        }
+    });
+}
+</script>
+@endif
+
 {{-- ═══ ASSIGNMENT ADMIN ═══ --}}
 @if(!Request::is('course/*/lesson/create'))
 <div class="container" style="margin-top:30px;">
