@@ -7,6 +7,8 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Lesson;
 use App\LessonContent;
+use App\LessonAssignment;
+use App\LessonQuiz;
 use App\LessonDocuments;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -28,12 +30,15 @@ class LessonController extends Controller
     public function edit($course_id, $id): View
     {
         $course = Course::findOrFail($course_id);
-        $lesson = Lesson::findOrFail($id)->toArray();
-        $videos = Lesson::findOrFail($id)->videos;
-        $documents = Lesson::findOrFail($id)->documents;
+        $lessonModel = Lesson::findOrFail($id);
+        $lesson = $lessonModel->toArray();
+        $videos = $lessonModel->videos;
+        $documents = $lessonModel->documents;
+        $quizzes = $lessonModel->quizzes()->get();
+        $lessonAssignments = $lessonModel->lessonAssignments()->get();
         $section = null;
 
-        return view('backend.lesson.edit', compact('course', 'lesson', 'videos', 'section', 'documents'));
+        return view('backend.lesson.edit', compact('course', 'lesson', 'videos', 'section', 'documents', 'quizzes', 'lessonAssignments'));
     }
 
     public function create($id): View
@@ -356,5 +361,241 @@ class LessonController extends Controller
         }
 
         return $wholeLessonFile;
+    }
+
+    public function saveQuiz($id, Request $request): JsonResponse
+    {
+        $lesson = Lesson::findOrFail($id);
+
+        $request->validate([
+            'question' => 'required|string|max:1000',
+            'options' => 'required|array|min:2|max:4',
+            'options.*' => 'required|string|max:500',
+            'correct_option' => 'required|integer|min:0|max:3',
+        ]);
+
+        $quiz = LessonQuiz::create([
+            'lesson_id' => $lesson->id,
+            'question' => $request->question,
+            'options' => $request->options,
+            'correct_option' => $request->correct_option,
+            'order' => LessonQuiz::where('lesson_id', $lesson->id)->count(),
+        ]);
+
+        return response()->json(['success' => true, 'quiz' => $quiz]);
+    }
+
+    public function deleteQuiz($id): JsonResponse
+    {
+        $quiz = LessonQuiz::findOrFail($id);
+        $quiz->answers()->delete();
+        $quiz->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function aiReview($id): JsonResponse
+    {
+        set_time_limit(120); // AI API can take 30-60 seconds
+
+        $lesson = Lesson::findOrFail($id);
+        $content = strip_tags(html_entity_decode($lesson->content ?? ''));
+
+        if (mb_strlen($content) < 50) {
+            return response()->json(['error' => 'Leksjonen har for lite innhold til å analysere'], 422);
+        }
+
+        $apiKey = config('services.anthropic.key');
+        if (!$apiKey) {
+            return response()->json(['error' => 'ANTHROPIC_API_KEY er ikke konfigurert'], 500);
+        }
+
+        $excerpt = mb_substr($content, 0, 5000);
+        $wordCount = str_word_count($content);
+
+        // Check existing assignments and quizzes
+        $lessonModel = Lesson::find($id);
+        $existingAssignments = $lessonModel->lessonAssignments()->pluck('question_text')->toArray();
+        $existingQuizzes = $lessonModel->quizzes()->pluck('question')->toArray();
+
+        $assignmentInfo = count($existingAssignments) > 0
+            ? "Eksisterende oppgaver i systemet:\n" . implode("\n", array_map(fn($a) => "- {$a}", $existingAssignments))
+            : "Ingen oppgaver er lagt inn i systemet ennå.";
+
+        $quizInfo = count($existingQuizzes) > 0
+            ? "Eksisterende quiz-spørsmål i systemet:\n" . implode("\n", array_map(fn($q) => "- {$q}", $existingQuizzes))
+            : "Ingen quiz-spørsmål er lagt inn i systemet ennå.";
+
+        $systemPrompt = "Du er en erfaren redaktør og pedagogisk konsulent for Forfatterskolen (norsk skrivelærer-portal). "
+            . "Analyser leksjonsteksten og gi KONKRETE endringsforslag.\n\n"
+            . "Returner KUN JSON (ingen annen tekst) med dette formatet:\n"
+            . "{\n"
+            . "  \"score\": 7,\n"
+            . "  \"summary\": \"Kort vurdering av kvaliteten (2-3 setninger)\",\n"
+            . "  \"changes\": [\n"
+            . "    {\n"
+            . "      \"type\": \"replace\",\n"
+            . "      \"original\": \"Den eksakte originalteksten som bør endres (kopier ordrett fra teksten)\",\n"
+            . "      \"suggested\": \"Foreslått ny tekst\",\n"
+            . "      \"reason\": \"Kort forklaring på hvorfor\"\n"
+            . "    },\n"
+            . "    {\n"
+            . "      \"type\": \"add\",\n"
+            . "      \"after\": \"Teksten dette skal legges til etter\",\n"
+            . "      \"suggested\": \"Ny tekst som bør legges til\",\n"
+            . "      \"reason\": \"Kort forklaring\"\n"
+            . "    },\n"
+            . "    {\n"
+            . "      \"type\": \"delete\",\n"
+            . "      \"original\": \"Tekst som bør fjernes\",\n"
+            . "      \"reason\": \"Kort forklaring\"\n"
+            . "    }\n"
+            . "  ]\n"
+            . "}\n\n"
+            . "Regler:\n"
+            . "- Gi MINST 4-6 konkrete endringsforslag — du MÅ finne noe å forbedre\n"
+            . "- «original»-feltet MÅ være eksakt tekst fra leksjonen (kopier ordrett 1-3 setninger)\n"
+            . "- «suggested»-feltet MÅ være den forbedrede versjonen av HELE den kopierte teksten\n"
+            . "- Fokuser på: skrivefeil, uklare formuleringer, bedre pedagogisk flyt, manglende overganger, engasjement, bedre eksempler\n"
+            . "- Foreslå også nye avsnitt der det mangler (type: add)\n"
+            . "- Ikke endre faglig innhold eller meninger, bare språk og struktur\n"
+            . "- Alt på norsk. Vær konkret og konstruktiv.\n\n"
+            . "I tillegg: sjekk om det finnes oppgaver i leksjonsteksten (ofte markert med «Oppgaver:» eller nummerert liste). "
+            . "Sammenlign med oppgavene og quizene som allerede er lagt inn i systemet (listet under). "
+            . "Rapporter dette i et eget «tasks»-felt i JSON:\n"
+            . "\"tasks\": {\n"
+            . "  \"found_in_text\": [\"Oppgave funnet i teksten\", ...],\n"
+            . "  \"missing_in_system\": [\"Oppgave som finnes i teksten men IKKE i systemet\", ...],\n"
+            . "  \"has_quiz\": true/false,\n"
+            . "  \"suggestion\": \"Anbefaling om oppgaver/quiz\"\n"
+            . "}";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'x-api-key' => $apiKey,
+                'anthropic-version' => '2023-06-01',
+                'content-type' => 'application/json',
+            ])->timeout(45)->post('https://api.anthropic.com/v1/messages', [
+                'model' => 'claude-sonnet-4-20250514',
+                'max_tokens' => 3000,
+                'system' => $systemPrompt,
+                'messages' => [
+                    ['role' => 'user', 'content' => "Leksjonstekst ({$wordCount} ord):\n\n{$excerpt}\n\n---\n\n{$assignmentInfo}\n\n{$quizInfo}"],
+                ],
+            ]);
+
+            if (!$response->successful()) {
+                return response()->json(['error' => 'AI API feilet: ' . $response->status()], 500);
+            }
+
+            $aiText = $response->json('content.0.text', '');
+
+            if (preg_match('/\{[\s\S]*\}/m', $aiText, $matches)) {
+                $parsed = json_decode($matches[0], true);
+                if ($parsed) {
+                    return response()->json(['success' => true, 'review' => $parsed]);
+                }
+            }
+
+            return response()->json(['error' => 'Kunne ikke parse AI-respons'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Feil: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function aiGenerate($id, Request $request): JsonResponse
+    {
+        set_time_limit(120);
+
+        $lesson = Lesson::findOrFail($id);
+        $content = strip_tags(html_entity_decode($lesson->content ?? ''));
+
+        if (mb_strlen($content) < 50) {
+            return response()->json(['error' => 'Leksjonen har for lite innhold til å generere oppgaver'], 422);
+        }
+
+        $apiKey = config('services.anthropic.key');
+        if (!$apiKey) {
+            return response()->json(['error' => 'ANTHROPIC_API_KEY er ikke konfigurert'], 500);
+        }
+
+        $excerpt = mb_substr($content, 0, 4000);
+
+        $systemPrompt = "Du er en erfaren skrivelærer ved Forfatterskolen. "
+            . "Analyser leksjonsteksten og generer oppgaver og quiz-spørsmål.\n\n"
+            . "Returner JSON med følgende format (kun JSON, ingen annen tekst):\n"
+            . "{\n"
+            . "  \"assignments\": [\n"
+            . "    {\"question_text\": \"Oppgavetekst her (kreativ skriveoppgave)\"}\n"
+            . "  ],\n"
+            . "  \"quizzes\": [\n"
+            . "    {\"question\": \"Spørsmål?\", \"options\": [\"Alt A\", \"Alt B\", \"Alt C\", \"Alt D\"], \"correct_option\": 0}\n"
+            . "  ]\n"
+            . "}\n\n"
+            . "Regler:\n"
+            . "- Finn eksisterende oppgaver i teksten (ofte markert med 'Oppgaver:' eller nummerert liste)\n"
+            . "- Lag 2-3 kreative skriveoppgaver basert på leksjonsinnholdet\n"
+            . "- Lag 2-3 quiz-spørsmål (flervalg) som tester forståelse av stoffet\n"
+            . "- Alt på norsk\n"
+            . "- correct_option er 0-indeksert (0=A, 1=B, 2=C, 3=D)";
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'x-api-key' => $apiKey,
+                'anthropic-version' => '2023-06-01',
+                'content-type' => 'application/json',
+            ])->timeout(45)->post('https://api.anthropic.com/v1/messages', [
+                'model' => 'claude-sonnet-4-20250514',
+                'max_tokens' => 2000,
+                'system' => $systemPrompt,
+                'messages' => [
+                    ['role' => 'user', 'content' => "Leksjonstekst:\n\n{$excerpt}"],
+                ],
+            ]);
+
+            if (!$response->successful()) {
+                return response()->json(['error' => 'AI API feilet: ' . $response->status()], 500);
+            }
+
+            $aiText = $response->json('content.0.text', '');
+
+            // Extract JSON from response (might be wrapped in ```json...```)
+            if (preg_match('/\{[\s\S]*\}/m', $aiText, $matches)) {
+                $parsed = json_decode($matches[0], true);
+                if ($parsed) {
+                    return response()->json(['success' => true, 'data' => $parsed]);
+                }
+            }
+
+            return response()->json(['error' => 'Kunne ikke parse AI-respons'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Feil: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function saveLessonAssignment($id, Request $request): JsonResponse
+    {
+        $lesson = Lesson::findOrFail($id);
+
+        $request->validate([
+            'question_text' => 'required|string|max:2000',
+        ]);
+
+        $assignment = LessonAssignment::create([
+            'lesson_id' => $lesson->id,
+            'question_text' => $request->question_text,
+            'order' => LessonAssignment::where('lesson_id', $lesson->id)->count(),
+        ]);
+
+        return response()->json(['success' => true, 'assignment' => $assignment]);
+    }
+
+    public function deleteLessonAssignment($id): JsonResponse
+    {
+        $assignment = LessonAssignment::findOrFail($id);
+        $assignment->submissions()->delete();
+        $assignment->delete();
+
+        return response()->json(['success' => true]);
     }
 }

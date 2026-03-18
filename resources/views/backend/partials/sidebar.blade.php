@@ -98,6 +98,21 @@
             @endforeach
         @endif
         <li>
+            <a href="{{ route('admin.assignment-review.index') }}"
+               class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.assignment-review') ? 'active' : '' }}">
+                <span class="ed-nav-item__icon"><i class="fa fa-magic"></i></span>
+                <span class="ed-nav-item__label">
+                    AI-tilbakemeldinger
+                    @php
+                        $pendingReviewCount = \App\AssignmentSubmission::whereIn('status', ['pending', 'ai_generated'])->count();
+                    @endphp
+                    @if($pendingReviewCount > 0)
+                        <span class="badge" style="background: #e74c3c; color: #fff; border-radius: 10px; font-size: 10px; padding: 2px 6px; margin-left: 4px;">{{ $pendingReviewCount }}</span>
+                    @endif
+                </span>
+            </a>
+        </li>
+        <li>
             <a href="{{ route('admin.messages.index') }}"
                class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.messages') ? 'active' : '' }}">
                 <span class="ed-nav-item__icon"><i class="fa fa-envelope-o"></i></span>

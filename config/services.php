@@ -151,6 +151,18 @@ return [
         'key' => env('OPENAI_API_KEY_NEW'),
     ],
 
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY') ?: (file_exists(base_path('.env')) ? (function() {
+            $lines = file(base_path('.env'), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                if (str_starts_with($line, 'ANTHROPIC_API_KEY=')) {
+                    return trim(str_replace(['ANTHROPIC_API_KEY=', '"'], '', $line));
+                }
+            }
+            return null;
+        })() : null),
+    ],
+
     'dropbox' => [
         'token' => env('DROPBOX_TOKEN'),
         'key' => env('DROPBOX_APP_KEY'),

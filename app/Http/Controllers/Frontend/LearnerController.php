@@ -41,9 +41,16 @@ use App\Jobs\AddMailToQueueJob;
 use App\Jobs\CourseOrderJob;
 use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Jobs\UpdateFikenContactDetailsJob;
+use App\AssignmentSubmission;
+use App\CourseGoal;
+use App\Jobs\GenerateAiFeedbackJob;
 use App\Lesson;
+use App\LessonAssignment;
+use App\LessonCompletion;
 use App\LessonContent;
 use App\LessonDocuments;
+use App\LessonQuiz;
+use App\LessonQuizAnswer;
 use App\Log;
 use App\Mail\AssignmentSubmittedEmail;
 use App\Mail\CoachingSuggestionDateEmail;
@@ -892,7 +899,16 @@ class LearnerController extends Controller
                 return redirect()->route('learner.course');
             }
 
-            return view('frontend.learner.course_show', compact('courseTaken'));
+            $completedLessonIds = LessonCompletion::where('user_id', Auth::id())
+                ->where('course_id', $courseTaken->package->course_id)
+                ->pluck('lesson_id')
+                ->toArray();
+
+            $courseGoal = CourseGoal::where('user_id', Auth::id())
+                ->where('courses_taken_id', $courseTaken->id)
+                ->first();
+
+            return view('frontend.learner.course_show', compact('courseTaken', 'completedLessonIds', 'courseGoal'));
         }
 
         return abort('450', 'testing here');
@@ -3608,11 +3624,42 @@ class LearnerController extends Controller
 
         $lessons = $courseTaken->package->course->lessons;
         if ($courseTaken || FrontendHelpers::hasLessonAccess($courseTaken, $lesson)) {
-            return view('frontend.learner.lesson_show', compact('lesson', 'course', 'courseTaken', 'lesson_content', 'lessons'));
+            $quizzes = $lesson->quizzes()->get();
+            $quizAnswers = LessonQuizAnswer::where('user_id', Auth::id())
+                ->whereIn('lesson_quiz_id', $quizzes->pluck('id'))
+                ->get()
+                ->keyBy('lesson_quiz_id');
+
+            $isCompleted = LessonCompletion::where('user_id', Auth::id())
+                ->where('lesson_id', $lesson->id)
+                ->exists();
+
+            $completedLessonIds = LessonCompletion::where('user_id', Auth::id())
+                ->where('course_id', $course->id)
+                ->pluck('lesson_id')
+                ->toArray();
+
+            $lessonAssignments = $lesson->lessonAssignments()->get();
+            $assignmentSubmissions = AssignmentSubmission::where('user_id', Auth::id())
+                ->whereIn('lesson_assignment_id', $lessonAssignments->pluck('id'))
+                ->get()
+                ->keyBy('lesson_assignment_id');
+
+            // Mark approved feedbacks as seen
+            AssignmentSubmission::where('user_id', Auth::id())
+                ->whereIn('lesson_assignment_id', $lessonAssignments->pluck('id'))
+                ->where('status', 'approved')
+                ->whereNull('seen_at')
+                ->update(['seen_at' => now()]);
+
+            return view('frontend.learner.lesson_show', compact(
+                'lesson', 'course', 'courseTaken', 'lesson_content', 'lessons',
+                'quizzes', 'quizAnswers', 'isCompleted', 'completedLessonIds',
+                'lessonAssignments', 'assignmentSubmissions'
+            ));
         }
 
         return redirect()->route('learner.dashboard');
-        // return abort('503');
     }
 
     /**
@@ -3717,6 +3764,117 @@ class LearnerController extends Controller
         }
 
         return redirect()->back()->with('success', true);
+    }
+
+    public function submitAssignment($course_id, $id, $assignment_id, Request $request)
+    {
+        $lesson = Lesson::findOrFail($id);
+        $assignment = LessonAssignment::where('id', $assignment_id)->where('lesson_id', $lesson->id)->firstOrFail();
+
+        if (!FrontendHelpers::checkIfLearnerHasAccessToLesson(Auth::id(), $course_id, $id)) {
+            abort(403);
+        }
+
+        $request->validate(['answer_text' => 'required|string|max:10000']);
+
+        $submission = AssignmentSubmission::updateOrCreate(
+            ['lesson_assignment_id' => $assignment->id, 'user_id' => Auth::id()],
+            ['answer_text' => $request->answer_text, 'status' => 'pending']
+        );
+
+        // Dispatch AI feedback job
+        GenerateAiFeedbackJob::dispatch($submission->id);
+
+        return response()->json([
+            'success' => true,
+            'status' => 'pending',
+            'message' => 'Svaret ditt er sendt inn — du får tilbakemelding fra læreren din snart',
+        ]);
+    }
+
+    public function saveGoal($id, Request $request)
+    {
+        $courseTaken = CoursesTaken::findOrFail($id);
+        if (!Auth::user()->can('participateCourse', $courseTaken)) {
+            abort(403);
+        }
+
+        $request->validate(['goal' => 'required|string|max:1000']);
+
+        CourseGoal::updateOrCreate(
+            ['user_id' => Auth::id(), 'courses_taken_id' => $courseTaken->id],
+            ['goal' => $request->goal]
+        );
+
+        return response()->json(['success' => true]);
+    }
+
+    public function completeLesson($course_id, $id)
+    {
+        $course = Course::findOrFail($course_id);
+        $lesson = Lesson::findOrFail($id);
+
+        if (!FrontendHelpers::checkIfLearnerHasAccessToLesson(Auth::id(), $course_id, $id)) {
+            abort(403);
+        }
+
+        LessonCompletion::firstOrCreate(
+            ['user_id' => Auth::id(), 'lesson_id' => $lesson->id],
+            ['course_id' => $course->id, 'completed_at' => now()]
+        );
+
+        $totalLessons = $course->lessons->count();
+        $completedCount = LessonCompletion::where('user_id', Auth::id())
+            ->where('course_id', $course->id)
+            ->count();
+
+        return response()->json([
+            'success' => true,
+            'completed' => $completedCount,
+            'total' => $totalLessons,
+            'percent' => $totalLessons > 0 ? round(($completedCount / $totalLessons) * 100) : 0,
+        ]);
+    }
+
+    public function submitQuiz($course_id, $id, Request $request)
+    {
+        $lesson = Lesson::findOrFail($id);
+
+        if (!FrontendHelpers::checkIfLearnerHasAccessToLesson(Auth::id(), $course_id, $id)) {
+            abort(403);
+        }
+
+        $request->validate(['answers' => 'required|array']);
+
+        $results = [];
+        $correct = 0;
+        $total = 0;
+
+        foreach ($request->answers as $quizId => $selectedOption) {
+            $quiz = LessonQuiz::where('id', $quizId)->where('lesson_id', $lesson->id)->first();
+            if (!$quiz) continue;
+
+            $isCorrect = (int)$selectedOption === $quiz->correct_option;
+            if ($isCorrect) $correct++;
+            $total++;
+
+            LessonQuizAnswer::updateOrCreate(
+                ['user_id' => Auth::id(), 'lesson_quiz_id' => $quiz->id],
+                ['selected_option' => (int)$selectedOption, 'is_correct' => $isCorrect]
+            );
+
+            $results[$quizId] = [
+                'correct' => $isCorrect,
+                'correct_option' => $quiz->correct_option,
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'results' => $results,
+            'score' => $correct,
+            'total' => $total,
+        ]);
     }
 
     public function manuscriptShow($id)

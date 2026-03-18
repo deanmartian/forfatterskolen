@@ -23,7 +23,7 @@ class Lesson extends Model
      *
      * @var array
      */
-    protected $fillable = ['course_id', 'title', 'whole_lesson_file', 'description', 'description_simplemde', 'delay', 'period',
+    protected $fillable = ['course_id', 'type', 'title', 'whole_lesson_file', 'description', 'description_simplemde', 'delay', 'period',
         'allow_lesson_download'];
 
     public function course(): BelongsTo
@@ -49,6 +49,21 @@ class Lesson extends Model
     public function lessonContent(): HasMany
     {
         return $this->hasMany(\App\LessonContent::class)->orderBy('created_at', 'desc');
+    }
+
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(\App\LessonQuiz::class)->orderBy('order');
+    }
+
+    public function lessonAssignments(): HasMany
+    {
+        return $this->hasMany(\App\LessonAssignment::class)->orderBy('order');
+    }
+
+    public function completions(): HasMany
+    {
+        return $this->hasMany(\App\LessonCompletion::class);
     }
 
     /**

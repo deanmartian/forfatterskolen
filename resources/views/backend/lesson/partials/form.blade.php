@@ -14,10 +14,20 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="row">
-					<div class="col-sm-6">
+					<div class="col-sm-4">
 						<div class="form-group">
 							<label for="title">{{ trans('site.lesson-title') }}</label>
 							<input type="text" class="form-control" name="title" id="title" required value="{{$lesson['title']}}">
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="form-group">
+							<label>Leksjonstype</label>
+							<select class="form-control" name="type">
+								<option value="module" {{ ($lesson['type'] ?? 'module') === 'module' ? 'selected' : '' }}>Modul</option>
+								<option value="resource" {{ ($lesson['type'] ?? '') === 'resource' ? 'selected' : '' }}>Ressurs</option>
+								<option value="reprise" {{ ($lesson['type'] ?? '') === 'reprise' ? 'selected' : '' }}>Reprise</option>
+							</select>
 						</div>
 					</div>
 					<div class="col-sm-3">
@@ -165,6 +175,563 @@
 
 
 
+
+{{-- ═══ AI AUTO-GENERATE ═══ --}}
+@if(!Request::is('course/*/lesson/create'))
+<div class="container" style="margin-top:30px;">
+    <div class="panel panel-default" style="border-left:3px solid #862736;">
+        <div class="panel-heading" style="background:#faf8f5;">
+            <h3 class="panel-title"><i class="fa fa-magic" style="color:#862736;"></i> AI-assistent</h3>
+        </div>
+        <div class="panel-body">
+            <p style="color:#5a5550;font-size:0.9rem;margin-bottom:1rem;">
+                La AI lese igjennom leksjonsteksten og foreslå oppgaver og quiz-spørsmål automatisk.
+                Du kan godkjenne, redigere eller forkaste forslagene.
+            </p>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                <button type="button" class="btn btn-primary" id="aiGenerateBtn" onclick="aiGenerate()" style="background:#862736;border-color:#862736;">
+                    <i class="fa fa-magic"></i> Generer oppgaver og quiz
+                </button>
+                <button type="button" class="btn btn-info" id="aiReviewBtn" onclick="aiReviewContent()">
+                    <i class="fa fa-search"></i> Analyser innhold
+                </button>
+            </div>
+            <div id="aiGenerateStatus" style="margin-top:0.75rem;display:none;"></div>
+            <div id="aiReviewResult" style="margin-top:1rem;display:none;"></div>
+            <div id="aiGenerateResults" style="margin-top:1rem;display:none;">
+                <h4 style="font-size:0.9rem;font-weight:600;">AI-forslag:</h4>
+                <div id="aiAssignmentSuggestions"></div>
+                <div id="aiQuizSuggestions"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function aiReviewContent() {
+    var btn = document.getElementById('aiReviewBtn');
+    var result = document.getElementById('aiReviewResult');
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i> AI analyserer innholdet (10-30 sek)...';
+    result.style.display = 'none';
+
+    fetch('{{ route("admin.lesson.ai_review", $lesson["id"]) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(function(r) {
+        if (!r.ok) return r.text().then(function(t) { throw new Error('Server feil (' + r.status + '): ' + t.substring(0, 100)); });
+        return r.json();
+    })
+    .then(function(data) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-search"></i> Analyser innhold';
+
+        if (!data || data.error) {
+            result.style.display = 'block';
+            result.innerHTML = '<div style="background:#fce8e8;border:1px solid rgba(198,40,40,0.2);border-radius:8px;padding:1rem;color:#c62828;"><i class="fa fa-exclamation-triangle"></i> ' + (data && data.error ? data.error : 'Ukjent feil') + '</div>';
+            return;
+        }
+
+        if (data.success && data.review) {
+            result.style.display = 'block';
+            var r = data.review;
+            window._aiChanges = r.changes || [];
+
+            var html = '<div style="background:#fff;border:1px solid #e8e4de;border-radius:10px;overflow:hidden;">';
+
+            // Score + Summary
+            var scoreColor = r.score >= 8 ? '#2e7d32' : (r.score >= 5 ? '#e65100' : '#c62828');
+            html += '<div style="padding:1rem 1.25rem;background:linear-gradient(135deg,#faf8f5,#fff);border-bottom:1px solid #e8e4de;display:flex;align-items:center;justify-content:space-between;">';
+            html += '<div><div style="font-weight:700;font-size:1rem;">Innholdsanalyse</div><div style="font-size:0.85rem;color:#5a5550;margin-top:0.25rem;">' + (r.summary || '').replace(/</g,'&lt;') + '</div></div>';
+            html += '<div style="background:' + scoreColor + ';color:#fff;padding:0.3rem 0.75rem;border-radius:20px;font-weight:700;font-size:0.9rem;flex-shrink:0;margin-left:1rem;">' + r.score + '/10</div>';
+            html += '</div>';
+
+            // Changes
+            if (window._aiChanges.length) {
+                html += '<div style="padding:0.75rem 1.25rem;border-bottom:1px solid #e8e4de;font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#862736;">' + window._aiChanges.length + ' endringsforslag</div>';
+
+                window._aiChanges.forEach(function(c, i) {
+                    var typeLabel = c.type === 'replace' ? 'Erstatt' : (c.type === 'add' ? 'Legg til' : 'Fjern');
+                    var typeBg = c.type === 'replace' ? '#fff3e0' : (c.type === 'add' ? '#e8f5e9' : '#fce8e8');
+                    var typeColor = c.type === 'replace' ? '#e65100' : (c.type === 'add' ? '#2e7d32' : '#c62828');
+
+                    html += '<div id="ai-change-' + i + '" style="padding:1rem 1.25rem;border-bottom:1px solid #e8e4de;">';
+                    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem;">';
+                    html += '<span style="background:' + typeBg + ';color:' + typeColor + ';padding:2px 8px;border-radius:4px;font-size:0.75rem;font-weight:600;">' + typeLabel + '</span>';
+                    html += '<div style="display:flex;gap:0.25rem;">';
+                    html += '<button class="btn btn-sm btn-success" onclick="acceptChange(' + i + ', this)"><i class="fa fa-check"></i> Godta</button>';
+                    html += '<button class="btn btn-sm btn-default" onclick="rejectChange(' + i + ', this)"><i class="fa fa-times"></i></button>';
+                    html += '</div></div>';
+
+                    // Reason
+                    html += '<div style="font-size:0.8rem;color:#5a5550;margin-bottom:0.5rem;font-style:italic;">' + (c.reason || '').replace(/</g,'&lt;') + '</div>';
+
+                    if (c.type === 'replace') {
+                        html += '<div style="background:#fce8e8;padding:0.5rem 0.75rem;border-radius:6px;font-size:0.85rem;margin-bottom:0.35rem;text-decoration:line-through;color:#999;">' + (c.original || '').replace(/</g,'&lt;') + '</div>';
+                        html += '<div style="background:#e8f5e9;padding:0.5rem 0.75rem;border-radius:6px;font-size:0.85rem;">' + (c.suggested || '').replace(/</g,'&lt;') + '</div>';
+                    } else if (c.type === 'add') {
+                        html += '<div style="font-size:0.8rem;color:#8a8580;margin-bottom:0.25rem;">Etter: «' + (c.after || '').replace(/</g,'&lt;').substring(0, 80) + '...»</div>';
+                        html += '<div style="background:#e8f5e9;padding:0.5rem 0.75rem;border-radius:6px;font-size:0.85rem;">' + (c.suggested || '').replace(/</g,'&lt;') + '</div>';
+                    } else {
+                        html += '<div style="background:#fce8e8;padding:0.5rem 0.75rem;border-radius:6px;font-size:0.85rem;text-decoration:line-through;color:#999;">' + (c.original || '').replace(/</g,'&lt;') + '</div>';
+                    }
+
+                    html += '</div>';
+                });
+            } else {
+                html += '<div style="padding:1.5rem;text-align:center;color:#2e7d32;font-weight:600;">Ingen endringsforslag — innholdet ser bra ut!</div>';
+            }
+
+            // Tasks/assignments check
+            if (r.tasks) {
+                var t = r.tasks;
+                html += '<div style="margin-top:1rem;background:#fff;border:1px solid #e8e4de;border-radius:10px;overflow:hidden;">';
+                html += '<div style="padding:0.75rem 1.25rem;background:#f0f7ff;border-bottom:1px solid #e8e4de;font-size:0.85rem;font-weight:700;color:#1565c0;"><i class="fa fa-tasks"></i> Oppgaver og quiz</div>';
+
+                if (t.found_in_text && t.found_in_text.length) {
+                    html += '<div style="padding:0.75rem 1.25rem;border-bottom:1px solid #e8e4de;">';
+                    html += '<div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#5a5550;margin-bottom:0.35rem;">Funnet i teksten</div>';
+                    t.found_in_text.forEach(function(f) {
+                        html += '<div style="font-size:0.85rem;padding:0.15rem 0;color:#333;">• ' + f.replace(/</g,'&lt;') + '</div>';
+                    });
+                    html += '</div>';
+                }
+
+                if (t.missing_in_system && t.missing_in_system.length) {
+                    html += '<div style="padding:0.75rem 1.25rem;border-bottom:1px solid #e8e4de;background:#fff3e0;">';
+                    html += '<div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:#e65100;margin-bottom:0.35rem;">Mangler i systemet</div>';
+                    t.missing_in_system.forEach(function(m) {
+                        html += '<div style="font-size:0.85rem;padding:0.15rem 0;color:#e65100;">⚠ ' + m.replace(/</g,'&lt;') + '</div>';
+                    });
+                    html += '</div>';
+                }
+
+                if (t.suggestion) {
+                    html += '<div style="padding:0.75rem 1.25rem;">';
+                    html += '<div style="font-size:0.85rem;color:#333;line-height:1.5;">' + t.suggestion.replace(/</g,'&lt;') + '</div>';
+                    html += '</div>';
+                }
+
+                if (!t.has_quiz) {
+                    html += '<div style="padding:0.5rem 1.25rem;background:#fff3e0;font-size:0.85rem;color:#e65100;">⚠ Ingen quiz-spørsmål lagt inn — bruk «Generer oppgaver og quiz» for å lage noen.</div>';
+                }
+
+                html += '</div>';
+            }
+
+            html += '</div>';
+            result.innerHTML = html;
+        }
+    })
+    .catch(function(err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-search"></i> Analyser innhold';
+        result.style.display = 'block';
+        result.innerHTML = '<div style="background:#fce8e8;border:1px solid rgba(198,40,40,0.2);border-radius:8px;padding:1rem;color:#c62828;"><i class="fa fa-exclamation-triangle"></i> ' + (err.message || 'Noe gikk galt. Prøv igjen.') + '</div>';
+    });
+}
+
+function acceptChange(idx, btn) {
+    var c = window._aiChanges[idx];
+    if (!c) return;
+
+    // Get TinyMCE content
+    var editor = tinymce.get('lesson-content-ct') || tinymce.get('lesson-content');
+    if (!editor) { alert('Kunne ikke finne editoren'); return; }
+
+    var content = editor.getContent();
+    var changed = false;
+
+    if (c.type === 'replace' && c.original && c.suggested) {
+        // Try to find and replace the original text
+        var origText = c.original;
+        if (content.indexOf(origText) !== -1) {
+            content = content.replace(origText, c.suggested);
+            changed = true;
+        } else {
+            // Try stripped version
+            var stripped = content.replace(/<[^>]+>/g, '');
+            if (stripped.indexOf(origText) === -1) {
+                alert('Kunne ikke finne originalteksten i editoren. Du kan kopiere forslaget manuelt.');
+                return;
+            }
+            // Try a more flexible match
+            var escapedOrig = origText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            var regex = new RegExp(escapedOrig.replace(/\s+/g, '\\s*(?:<[^>]*>\\s*)*'));
+            if (regex.test(content)) {
+                content = content.replace(regex, c.suggested);
+                changed = true;
+            }
+        }
+    } else if (c.type === 'add' && c.after && c.suggested) {
+        if (content.indexOf(c.after) !== -1) {
+            content = content.replace(c.after, c.after + '\n' + c.suggested);
+            changed = true;
+        }
+    } else if (c.type === 'delete' && c.original) {
+        if (content.indexOf(c.original) !== -1) {
+            content = content.replace(c.original, '');
+            changed = true;
+        }
+    }
+
+    if (changed) {
+        editor.setContent(content);
+        var el = document.getElementById('ai-change-' + idx);
+        el.style.background = '#e8f5e9';
+        el.style.opacity = '0.6';
+        btn.parentElement.innerHTML = '<span style="color:#2e7d32;font-weight:600;"><i class="fa fa-check"></i> Godtatt</span>';
+    } else {
+        alert('Kunne ikke finne teksten automatisk. Kopier forslaget og lim inn manuelt i editoren.');
+    }
+}
+
+function rejectChange(idx, btn) {
+    var el = document.getElementById('ai-change-' + idx);
+    el.style.opacity = '0.3';
+    btn.parentElement.innerHTML = '<span style="color:#999;font-size:0.8rem;">Forkastet</span>';
+}
+
+function aiGenerate() {
+    var btn = document.getElementById('aiGenerateBtn');
+    var status = document.getElementById('aiGenerateStatus');
+    var results = document.getElementById('aiGenerateResults');
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i> AI analyserer leksjonen...';
+    status.style.display = 'block';
+    status.innerHTML = '<span style="color:#8a8580;">Dette kan ta 10-30 sekunder...</span>';
+    results.style.display = 'none';
+
+    fetch('{{ route("admin.lesson.ai_generate", $lesson["id"]) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-magic"></i> Generer oppgaver og quiz med AI';
+
+        if (data.error) {
+            status.innerHTML = '<span style="color:#c62828;"><i class="fa fa-exclamation-triangle"></i> ' + data.error + '</span>';
+            return;
+        }
+
+        if (data.success && data.data) {
+            status.style.display = 'none';
+            results.style.display = 'block';
+
+            // Store data in global arrays for safe onclick access
+            window._aiAssignments = data.data.assignments || [];
+            window._aiQuizzes = data.data.quizzes || [];
+
+            var assHtml = '';
+            if (window._aiAssignments.length) {
+                assHtml = '<div style="margin-bottom:1rem;"><strong>Oppgaver:</strong></div>';
+                window._aiAssignments.forEach(function(a, i) {
+                    assHtml += '<div id="ai-ass-' + i + '" style="border:1px solid #d4edda;border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;background:#f8fff8;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+                        '<div style="flex:1;font-size:0.9rem;">' + (a.question_text || '').replace(/</g,'&lt;') + '</div>' +
+                        '<button class="btn btn-sm btn-success" onclick="acceptAssignmentByIdx(' + i + ', this)" style="margin-left:0.5rem;white-space:nowrap;">' +
+                        '<i class="fa fa-check"></i> Godta</button>' +
+                        '</div></div>';
+                });
+            }
+            document.getElementById('aiAssignmentSuggestions').innerHTML = assHtml;
+
+            var quizHtml = '';
+            if (window._aiQuizzes.length) {
+                quizHtml = '<div style="margin-bottom:1rem;margin-top:1rem;"><strong>Quiz-spørsmål:</strong></div>';
+                window._aiQuizzes.forEach(function(q, i) {
+                    var optLabels = ['A', 'B', 'C', 'D'];
+                    var optHtml = (q.options || []).map(function(o, oi) {
+                        return '<span style="display:inline-block;padding:2px 8px;margin:2px;border-radius:4px;font-size:0.85rem;' +
+                            (oi === q.correct_option ? 'background:#e8f5e9;color:#2e7d32;font-weight:600;' : 'background:#f0f0f0;') + '">' +
+                            optLabels[oi] + ': ' + (o || '').replace(/</g,'&lt;') + (oi === q.correct_option ? ' ✓' : '') + '</span>';
+                    }).join(' ');
+
+                    quizHtml += '<div id="ai-quiz-' + i + '" style="border:1px solid #bbdefb;border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;background:#f0f7ff;">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+                        '<div style="flex:1;"><div style="font-size:0.9rem;font-weight:600;margin-bottom:0.25rem;">' + (q.question || '').replace(/</g,'&lt;') + '</div>' +
+                        '<div>' + optHtml + '</div></div>' +
+                        '<button class="btn btn-sm btn-success" onclick="acceptQuizByIdx(' + i + ', this)" style="margin-left:0.5rem;white-space:nowrap;">' +
+                        '<i class="fa fa-check"></i> Godta</button>' +
+                        '</div></div>';
+                });
+            }
+            document.getElementById('aiQuizSuggestions').innerHTML = quizHtml;
+        }
+    })
+    .catch(function(err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-magic"></i> Generer oppgaver og quiz med AI';
+        status.innerHTML = '<span style="color:#c62828;">Noe gikk galt. Prøv igjen.</span>';
+    });
+}
+
+function acceptAssignmentByIdx(idx, btn) {
+    var a = window._aiAssignments[idx];
+    if (!a) return;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i>';
+
+    fetch('{{ route("admin.lesson.save_assignment", $lesson["id"]) }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+        body: JSON.stringify({ question_text: a.question_text })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            var el = document.getElementById('ai-ass-' + idx);
+            if (el) el.style.background = '#e8f5e9';
+            btn.outerHTML = '<span style="color:#2e7d32;font-weight:600;margin-left:0.5rem;"><i class="fa fa-check"></i> Lagt til!</span>';
+        }
+    })
+    .catch(function() { btn.disabled = false; btn.innerHTML = '<i class="fa fa-check"></i> Godta'; });
+}
+
+function acceptQuizByIdx(idx, btn) {
+    var q = window._aiQuizzes[idx];
+    if (!q) return;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i>';
+
+    fetch('{{ route("admin.lesson.save_quiz", $lesson["id"]) }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+        body: JSON.stringify({ question: q.question, options: q.options, correct_option: q.correct_option })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            var el = document.getElementById('ai-quiz-' + idx);
+            if (el) el.style.background = '#e8f5e9';
+            btn.outerHTML = '<span style="color:#2e7d32;font-weight:600;margin-left:0.5rem;"><i class="fa fa-check"></i> Lagt til!</span>';
+        }
+    })
+    .catch(function() { btn.disabled = false; btn.innerHTML = '<i class="fa fa-check"></i> Godta'; });
+}
+</script>
+@endif
+
+{{-- ═══ ASSIGNMENT ADMIN ═══ --}}
+@if(!Request::is('course/*/lesson/create'))
+<div class="container" style="margin-top:30px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-pencil"></i> Oppgaver (AI-tilbakemelding)</h3>
+        </div>
+        <div class="panel-body">
+            <div id="assignmentList">
+                @if(isset($lessonAssignments))
+                    @foreach($lessonAssignments as $la)
+                        <div class="assignment-item" data-assignment-id="{{ $la->id }}" style="border:1px solid #e8e4de;border-radius:8px;padding:1rem;margin-bottom:0.75rem;background:#faf8f5;">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                                <div style="flex:1;">
+                                    <strong>{{ $la->question_text }}</strong>
+                                    <div style="margin-top:0.25rem;font-size:0.8rem;color:#8a8580;">
+                                        {{ $la->submissions()->count() }} innsendte svar
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteAssignment({{ $la->id }}, this)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+
+            <hr>
+            <h4 style="font-size:0.9rem;font-weight:600;">Legg til ny oppgave</h4>
+            <div class="form-group">
+                <label>Oppgavetekst</label>
+                <textarea class="form-control" id="assignmentQuestion" rows="3" placeholder="Skriv oppgaven eleven skal besvare..."></textarea>
+            </div>
+            <button type="button" class="btn btn-success" onclick="addAssignment()">
+                <i class="fa fa-plus"></i> Legg til oppgave
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function addAssignment() {
+    var question = document.getElementById('assignmentQuestion').value.trim();
+    if (!question) { alert('Skriv inn en oppgavetekst'); return; }
+
+    fetch('{{ route("admin.lesson.save_assignment", $lesson["id"]) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ question_text: question })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) { location.reload(); }
+        else { alert('Feil ved lagring'); }
+    });
+}
+
+function deleteAssignment(id, btn) {
+    if (!confirm('Slett denne oppgaven?')) return;
+
+    fetch('/course/lesson/lesson-assignment/' + id, {
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) { btn.closest('.assignment-item').remove(); }
+    });
+}
+</script>
+@endif
+
+{{-- ═══ QUIZ ADMIN ═══ --}}
+@if(!Request::is('course/*/lesson/create'))
+<div class="container" style="margin-top:30px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-question-circle"></i> Quiz-spørsmål</h3>
+        </div>
+        <div class="panel-body">
+            <div id="quizList">
+                @if(isset($quizzes))
+                    @foreach($quizzes as $quiz)
+                        <div class="quiz-item" data-quiz-id="{{ $quiz->id }}" style="border:1px solid #e8e4de;border-radius:8px;padding:1rem;margin-bottom:0.75rem;background:#faf8f5;">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                                <div>
+                                    <strong>{{ $quiz->question }}</strong>
+                                    <div style="margin-top:0.5rem;">
+                                        @foreach($quiz->options as $oi => $opt)
+                                            <span style="display:inline-block;padding:2px 8px;margin:2px;border-radius:4px;font-size:0.85rem;{{ $oi === $quiz->correct_option ? 'background:#e8f5e9;color:#2e7d32;font-weight:600;' : 'background:#f0f0f0;' }}">
+                                                {{ $opt }} {{ $oi === $quiz->correct_option ? '✓' : '' }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteQuiz({{ $quiz->id }}, this)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+
+            <hr>
+            <h4 style="font-size:0.9rem;font-weight:600;">Legg til nytt spørsmål</h4>
+            <div class="form-group">
+                <label>Spørsmål</label>
+                <input type="text" class="form-control" id="quizQuestion" placeholder="Skriv spørsmålet her...">
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Alternativ A</label>
+                        <input type="text" class="form-control quiz-option" data-idx="0" placeholder="Alternativ A">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Alternativ B</label>
+                        <input type="text" class="form-control quiz-option" data-idx="1" placeholder="Alternativ B">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Alternativ C</label>
+                        <input type="text" class="form-control quiz-option" data-idx="2" placeholder="Alternativ C (valgfritt)">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Alternativ D</label>
+                        <input type="text" class="form-control quiz-option" data-idx="3" placeholder="Alternativ D (valgfritt)">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Riktig svar</label>
+                <select class="form-control" id="quizCorrect" style="max-width:200px;">
+                    <option value="0">Alternativ A</option>
+                    <option value="1">Alternativ B</option>
+                    <option value="2">Alternativ C</option>
+                    <option value="3">Alternativ D</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-success" onclick="addQuiz()">
+                <i class="fa fa-plus"></i> Legg til spørsmål
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function addQuiz() {
+    var question = document.getElementById('quizQuestion').value.trim();
+    var options = [];
+    document.querySelectorAll('.quiz-option').forEach(function(el) {
+        if (el.value.trim()) options.push(el.value.trim());
+    });
+    var correct = parseInt(document.getElementById('quizCorrect').value);
+
+    if (!question) { alert('Skriv inn et spørsmål'); return; }
+    if (options.length < 2) { alert('Minst 2 alternativer er påkrevd'); return; }
+
+    fetch('{{ route("admin.lesson.save_quiz", $lesson["id"]) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ question: question, options: options, correct_option: correct })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Feil ved lagring');
+        }
+    });
+}
+
+function deleteQuiz(id, btn) {
+    if (!confirm('Slett dette quiz-spørsmålet?')) return;
+
+    fetch('/course/lesson/quiz/' + id, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.success) {
+            btn.closest('.quiz-item').remove();
+        }
+    });
+}
+</script>
+@endif
 
 <span class="title-text hidden">{{ trans('site.title') }}</span>
 <span class="video-text hidden">{{ trans('site.video') }}</span>

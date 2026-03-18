@@ -27,6 +27,7 @@
 					<thead>
 						<tr>
 							<th>{{ trans('site.title') }}</th>
+							<th>Type</th>
 							<th>{{ trans('site.availability') }}</th>
 							<th>{{ trans('site.created-at') }}</th>
 						</tr>
@@ -39,6 +40,21 @@
 								<i class="fa fa-reorder" style="margin-right: 10px; font-size: 18px"></i>
 								<a href="{{route('admin.lesson.edit', ['course_id' => $course->id, 'lesson' => $lesson->id ])}}">{{$lesson->title}}</a>
 								</div>
+							</td>
+							<td>
+								@switch($lesson->type ?? 'module')
+									@case('module')
+										<span class="label label-primary">Modul</span>
+										@break
+									@case('resource')
+										<span class="label label-info">Ressurs</span>
+										@break
+									@case('reprise')
+										<span class="label label-warning">Reprise</span>
+										@break
+									@default
+										<span class="label label-default">{{ $lesson->type }}</span>
+								@endswitch
 							</td>
 							<td>
 							@if(AdminHelpers::isDate($lesson['delay']))
