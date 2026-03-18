@@ -1286,6 +1286,15 @@ Route::domain($admin)->group(function () {
             Route::delete('/{id}', [Backend\NewsletterController::class, 'destroy'])->name('admin.newsletter.destroy');
         });
 
+        // E-postmaler admin-panel
+        Route::prefix('email-admin')->group(function () {
+            Route::get('/', [Backend\EmailTemplateController::class, 'adminIndex'])->name('admin.email-admin.index');
+            Route::get('/{id}/edit', [Backend\EmailTemplateController::class, 'adminEdit'])->name('admin.email-admin.edit');
+            Route::post('/{id}', [Backend\EmailTemplateController::class, 'adminUpdate'])->name('admin.email-admin.update');
+            Route::get('/{id}/preview', [Backend\EmailTemplateController::class, 'adminPreview'])->name('admin.email-admin.preview');
+            Route::post('/{id}/send-test', [Backend\EmailTemplateController::class, 'adminSendTest'])->name('admin.email-admin.send-test');
+        });
+
         // Admin E-postoversikt
         Route::prefix('emails')->group(function () {
             Route::get('/', [Backend\AdminEmailController::class, 'index'])->name('admin.emails.index');
