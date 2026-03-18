@@ -75,6 +75,9 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.contacts.import') }}">
 		AC Import
 	</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.ads.index') }}">
+		Annonser
+	</a>
 
 	<ul class="nav nav-tabs margin-top">
 		<li @if(Request::input('tab') == 'publishing' || Request::input('tab') == '') class="active" @endif>
