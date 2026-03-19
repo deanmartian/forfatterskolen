@@ -1296,6 +1296,12 @@ Route::domain($admin)->group(function () {
             return view('backend.email-admin.overview');
         })->name('admin.email-overview');
 
+        // Recording nedlastingslogg
+        Route::get('recording-logs', function () {
+            $logs = \DB::table('webinar_recording_logs')->orderByDesc('created_at')->limit(100)->get();
+            return view('backend.email-admin.recording-logs', compact('logs'));
+        })->name('admin.recording-logs');
+
         // E-postmaler admin-panel
         Route::prefix('email-admin')->group(function () {
             Route::get('/', [Backend\EmailTemplateController::class, 'adminIndex'])->name('admin.email-admin.index');

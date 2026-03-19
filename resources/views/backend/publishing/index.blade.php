@@ -84,6 +84,9 @@
 	<a class="btn btn-info margin-top" href="{{ route('admin.email-overview') }}">
 		E-postoversikt
 	</a>
+	<a class="btn btn-default margin-top" href="{{ route('admin.recording-logs') }}">
+		<i class="fa fa-video"></i> Recording-logg
+	</a>
 
 	<ul class="nav nav-tabs margin-top">
 		<li @if(Request::input('tab') == 'publishing' || Request::input('tab') == '') class="active" @endif>
