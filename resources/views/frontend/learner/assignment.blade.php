@@ -356,7 +356,8 @@
 			}
 		}
 
-		$activeTab = request('tab', 'kommende');
+		$tabMap = ['feedback-from-editor' => 'tilbakemelding', 'waiting' => 'innsendt', 'groups' => 'grupper'];
+		$activeTab = $tabMap[request('tab')] ?? request('tab', 'kommende');
 	@endphp
 
 	{{-- ── TABS ──────────────────────────────────────────────────── --}}
