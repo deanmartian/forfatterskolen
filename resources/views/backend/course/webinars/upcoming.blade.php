@@ -95,6 +95,14 @@
                                     View Registrants
                                 </button>
 
+                                @if($webinar->start_date < now())
+                                <a href="{{ route('admin.webinar.download-recording', $webinar->id) }}"
+                                   class="btn btn-info btn-xs"
+                                   onclick="return confirm('Last ned opptak og opprett leksjon?')">
+                                    <i class="fa fa-download"></i> Last ned opptak
+                                </a>
+                                @endif
+
                                 <button class="btn btn-info btn-xs scheduleWebinarBtn" data-toggle="modal"
                                     data-target="#scheduleWebinarModal" 
                                     data-action="{{ route('admin.webinar.schedule', $webinar->id) }}"

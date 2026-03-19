@@ -1328,6 +1328,7 @@ Route::domain($admin)->group(function () {
         ])->except('create', 'edit', 'show', 'index');
         Route::post('webinar/{id}/delete', [Backend\WebinarController::class, 'destroy'])->name('admin.webinar.delete');
         Route::put('webinar/{id}/make-replay', [Backend\WebinarController::class, 'makeReplay'])->name('admin.webinar.make-replay');
+        Route::get('webinar/{id}/download-recording', [Backend\WebinarController::class, 'downloadRecording'])->name('admin.webinar.download-recording');
         Route::post('webinar/{id}/set-schedule', [Backend\WebinarController::class, 'setSchedule'])->name('admin.webinar.schedule');
         Route::post('webinar/{id}/update-field', [Backend\WebinarController::class, 'updateField'])->name('admin.webinar.update-field');
         Route::post('webinar/{id}/course/{course_id}/email-out', [Backend\WebinarController::class, 'webinarEmailOut'])->name('admin.webinar.email-out');
