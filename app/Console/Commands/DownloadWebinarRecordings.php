@@ -132,11 +132,14 @@ class DownloadWebinarRecordings extends Command
                     $this->line("    📁 Ny månedsleksjon: {$lessonTitle}");
                 }
 
-                // Legg til som LessonContent
+                // Legg til som LessonContent med [video] shortcode (matcher reprise-visningen)
+                $wistiaIframeUrl = "https://fast.wistia.net/embed/iframe/{$wistiaHashedId}?seo=true&videoFoam=true";
+                $contentHtml = "{$webinar->title} {$webinarDate->format('d.m.Y')}\n[video src=\"{$wistiaIframeUrl}\"]";
+
                 LessonContent::create([
                     'lesson_id' => $lesson->id,
                     'title' => "{$webinar->title} {$webinarDate->format('d.m.Y')}",
-                    'lesson_content' => $embedCode,
+                    'lesson_content' => $contentHtml,
                     'date' => $webinarDate->format('Y-m-d'),
                 ]);
 

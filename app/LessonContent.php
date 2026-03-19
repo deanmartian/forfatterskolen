@@ -23,6 +23,6 @@ class LessonContent extends Model
 
     public function lesson(): BelongsTo
     {
-        return $this->belongsTo('App\lesson');
+        return $this->belongsTo(\App\Lesson::class);
     }
 }
