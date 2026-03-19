@@ -38,13 +38,13 @@ body:not(.modal-open) {
     overflow-x: auto;
     padding: 30px;
     padding-bottom: 0;
-    transition: all 0.3s ease;
+    /* transition removed — caused layout shifting */
     z-index: 9;
     display: flex;
     flex-direction: column;
 }
 
-@media only screen and (max-width: 1026px) {
+@media only screen and (max-width: 992px) {
     #sidebar {
         display: none;
     }
@@ -61,7 +61,7 @@ body:not(.modal-open) {
     display: none !important;
 }
 
-@media only screen and (max-width: 1026px) {
+@media only screen and (max-width: 992px) {
     #sidebarCollapse {
         display: inline-flex !important;
     }
@@ -1985,7 +1985,7 @@ body.sidebar-open::after {
     text-decoration: none;
 }
 
-@media only screen and (max-width: 1026px) {
+@media only screen and (max-width: 992px) {
     #topbar .auto-renew-wrapper {
         display: none;
     }
