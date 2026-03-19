@@ -64,6 +64,7 @@ Route::domain($front)->group(function () {
         Route::get('/gratis-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar'); // Support Article
         Route::post('/gratis-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar.submit'); // Support Article
         Route::get('/gratis-webinar/{id}/thank-you', [Frontend\HomeController::class, 'freeWebinarThanks'])->name('front.free-webinar-thanks'); // Support Article
+        Route::get('/gratis-webinar/{id}/reprise', [Frontend\HomeController::class, 'freeWebinarReprise'])->name('front.free-webinar-reprise');
         Route::get('/free-webinar/{id}/', function ($id) {
             return redirect()->route('front.free-webinar', ['id' => $id], 301);
         });
