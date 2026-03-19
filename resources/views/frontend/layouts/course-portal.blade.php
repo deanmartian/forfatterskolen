@@ -159,46 +159,39 @@
 
     var sidebar = $("#sidebar");
     var mainContainer = $("#main-container");
+    var BREAKPOINT = 992;
 
     checkWindowWidth();
 
-    // Add an event listener for the window resize event
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', checkWindowWidth);
 
-    // Toggle sidebar — attributt-selector matcher ALLE elementer med id="sidebarCollapse"
-    // (jQuery #id matcher bare det første, men [id=...] matcher alle duplikater)
+    // Toggle sidebar
     $("[id='sidebarCollapse'], [data-sidebar-toggle]").click(function (e) {
-        e.stopPropagation(); // Hindrer #main-content click fra å lukke med en gang
+        e.stopPropagation();
         sidebar.toggleClass("sidebar-visible");
         mainContainer.toggleClass("enlarge");
         $("body").toggleClass("sidebar-open");
     });
 
-    // Lukk sidebar ved klikk utenfor — fanger klikk på #main-content OG body::after overlay
+    // Lukk sidebar ved klikk utenfor (kun på mobil)
     $(document).on("click", function(e) {
+        if (window.innerWidth > BREAKPOINT) return;
         if (!sidebar.hasClass("sidebar-visible")) return;
-        // Ikke lukk hvis klikket var på sidebar eller en toggle-knapp
         if ($(e.target).closest("#sidebar, [id='sidebarCollapse'], [data-sidebar-toggle]").length) return;
         sidebar.removeClass("sidebar-visible");
         mainContainer.removeClass("enlarge");
         $("body").removeClass("sidebar-open");
     });
 
-    function handleResize() {
-        // Code to execute when the window is resized
-        checkWindowWidth();
-    }
-
     function checkWindowWidth() {
-        var windowWidth = window.innerWidth;
-
-        if (windowWidth <= 1026) {
+        if (window.innerWidth <= BREAKPOINT) {
             sidebar.removeClass("sidebar-visible");
             mainContainer.removeClass("enlarge");
             $("body").removeClass("sidebar-open");
         } else {
             sidebar.addClass("sidebar-visible");
             mainContainer.addClass("enlarge");
+            $("body").removeClass("sidebar-open");
         }
     }
 

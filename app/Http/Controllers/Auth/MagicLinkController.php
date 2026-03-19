@@ -70,6 +70,6 @@ class MagicLinkController extends Controller
 
         Auth::login($link->user, remember: true);
 
-        return redirect()->intended('/account/dashboard');
+        return redirect()->intended(route('learner.dashboard'));
     }
 }
