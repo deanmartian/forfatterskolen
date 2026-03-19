@@ -847,6 +847,12 @@
 											<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
 											Last ned
 										</a>
+										@php $fbExt = pathinfo($feedback->filename ?? '', PATHINFO_EXTENSION); @endphp
+										@if($fbExt == 'docx')
+											<a href="{{ route('learner.assignment.manuscript.pdf', $feedback->manuscript_id ?? $feedback->id) }}" class="op-fb-table__dl" style="margin-left:8px; color:#862736;" title="Last ned med kommentarer som PDF">
+												<i class="fa fa-file-pdf"></i> PDF
+											</a>
+										@endif
 									</td>
 								</tr>
 							@endif
