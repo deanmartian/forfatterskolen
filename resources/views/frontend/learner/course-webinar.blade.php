@@ -237,17 +237,18 @@
             </div>
 
             {{-- ═══ TABS ═══ --}}
+            @php $activeTab = request('page') || request('search_replay') || request('course_filter') ? 'reprise' : 'kommende'; @endphp
             <div class="cw-tabs">
-                <button class="cw-tab active" onclick="cwSwitchTab('kommende', this)">
+                <button class="cw-tab {{ $activeTab === 'kommende' ? 'active' : '' }}" onclick="cwSwitchTab('kommende', this)">
                     Kommende <span class="cw-tab__count">{{ $upcoming->count() }}</span>
                 </button>
-                <button class="cw-tab" onclick="cwSwitchTab('reprise', this)">
+                <button class="cw-tab {{ $activeTab === 'reprise' ? 'active' : '' }}" onclick="cwSwitchTab('reprise', this)">
                     Repriser <span class="cw-tab__count">{{ $replays->total() }}</span>
                 </button>
             </div>
 
             {{-- ═══════════ TAB 1: KOMMENDE ═══════════ --}}
-            <div class="cw-panel active" id="cw-panel-kommende">
+            <div class="cw-panel {{ $activeTab === 'kommende' ? 'active' : '' }}" id="cw-panel-kommende">
 
                 {{-- Info banner --}}
                 <div class="cw-info-banner">
@@ -346,7 +347,7 @@
             </div>
 
             {{-- ═══════════ TAB 2: REPRISER ═══════════ --}}
-            <div class="cw-panel" id="cw-panel-reprise">
+            <div class="cw-panel {{ $activeTab === 'reprise' ? 'active' : '' }}" id="cw-panel-reprise">
                 <div class="cw-filter-bar">
                     <select class="cw-filter-bar__select" id="cwRepriseFilter" onchange="cwFilterReprise()">
                         <option value="">Alle kurs</option>
