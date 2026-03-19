@@ -343,7 +343,12 @@ class LoginController extends Controller
 
     public function showFrontend(): View
     {
-        return view('frontend.auth.login');
+        // Hvis ?t= parameter brukes (register, passwordreset etc), vis gammel side
+        if (request()->has('t')) {
+            return view('frontend.auth.login');
+        }
+
+        return view('frontend.auth.login-new');
     }
 
     public function showSelfPublishing(): View
