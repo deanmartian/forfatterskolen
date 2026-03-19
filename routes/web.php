@@ -705,6 +705,9 @@ Route::domain($front)->group(function () {
         Route::post('login', [Auth\LoginController::class, 'login'])->name('frontend.login.store');
         Route::post('login/self-publishing', [Auth\LoginController::class, 'selfPublishingLogin'])->name('frontend.login.self-publishing-store');
         Route::post('checkout/login', [Auth\LoginController::class, 'checkoutLogin'])->name('frontend.login.checkout.store');
+        Route::post('magic-link/send', [Auth\MagicLinkController::class, 'send'])->name('magic-link.send');
+        Route::get('magic-link/verify/{token}', [Auth\MagicLinkController::class, 'verify'])->name('magic-link.verify');
+
         Route::post('register', [Auth\RegisterController::class, 'store'])->name('frontend.register.store');
         Route::post('passwordreset', [Auth\ResetPasswordController::class, 'store'])->name('frontend.passwordreset.store');
         Route::get('passwordreset/{token}', [Auth\ResetPasswordController::class, 'resetForm'])->name('frontend.passwordreset.form');
