@@ -9,6 +9,7 @@ use App\Webinar;
 use App\Services\BigMarkerService;
 use App\Services\WistiaService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -138,12 +139,29 @@ class DownloadWebinarRecordings extends Command
 
                 LessonContent::create([
                     'lesson_id' => $lesson->id,
-                    'title' => "{$webinar->title} {$webinarDate->format('d.m.Y')}",
+                    'title' => preg_match('/\d{2}\.\d{2}\.\d{4}/', $webinar->title) ? $webinar->title : "{$webinar->title} {$webinarDate->format('d.m.Y')}",
                     'lesson_content' => $contentHtml,
                     'date' => $webinarDate->format('Y-m-d'),
                 ]);
 
                 $this->info("  ✅ Lagt til i {$lessonTitle}: {$webinar->title} (Wistia: {$wistiaHashedId})");
+
+                // Logg til database
+                DB::table('webinar_recording_logs')->insert([
+                    'webinar_title' => $webinar->title,
+                    'webinar_id' => $webinar->id,
+                    'course_id' => $webinar->course_id,
+                    'course_name' => $courseName,
+                    'bigmarker_id' => $conferenceId,
+                    'wistia_id' => $wistiaHashedId,
+                    'wistia_project' => $courseName,
+                    'recording_url' => $recordingUrl,
+                    'lesson_title' => $lessonTitle,
+                    'lesson_id' => $lesson->id,
+                    'status' => 'success',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
                 // Merk webinar som replay
                 $webinar->update([
@@ -157,6 +175,20 @@ class DownloadWebinarRecordings extends Command
                     'webinar_id' => $webinar->id,
                     'error' => $e->getMessage(),
                 ]);
+
+                // Logg feil til database
+                DB::table('webinar_recording_logs')->insert([
+                    'webinar_title' => $webinar->title,
+                    'webinar_id' => $webinar->id,
+                    'course_id' => $webinar->course_id,
+                    'course_name' => $webinar->course->title ?? 'Ukjent',
+                    'bigmarker_id' => $conferenceId ?? null,
+                    'status' => 'failed',
+                    'error_message' => $e->getMessage(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
                 $failed++;
             }
         }
