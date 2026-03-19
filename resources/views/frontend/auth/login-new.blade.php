@@ -14,7 +14,6 @@
         margin: 0 auto;
         min-height: 600px;
     }
-    /* Venstre side — rød bakgrunn med sitat */
     .login-left {
         background-color: #862736;
         padding: 64px 48px;
@@ -51,7 +50,6 @@
         color: rgba(255,255,255,0.4);
         letter-spacing: 0.1em;
     }
-    /* Høyre side — innloggingskort */
     .login-right {
         background: #fff;
         padding: 64px 56px;
@@ -208,30 +206,27 @@
 @section('content')
 <div class="login-page">
     <div class="login-wrapper">
-        {{-- Venstre side — rød bakgrunn med sitat --}}
         <div class="login-left">
             <div class="login-left-logo">FORFATTERSKOLEN</div>
-            <div class="login-left-quote">«Alle har en historie å fortelle.»</div>
-            <div class="login-left-attribution">– Kristine, grunnlegger</div>
+            <div class="login-left-quote">&laquo;Alle har en historie &aring; fortelle.&raquo;</div>
+            <div class="login-left-attribution">&ndash; Kristine, grunnlegger</div>
             <div class="login-left-since">Siden 2015</div>
         </div>
 
-        {{-- Høyre side — innloggingskort --}}
         <div class="login-right">
 
             @if($errors->any())
                 <div class="alert alert-danger">{{ $errors->first() }}</div>
             @endif
             @if(session('magic_sent'))
-                <div class="alert alert-success">Vi har sendt deg en innloggingslenke på e-post. Sjekk innboksen din!</div>
+                <div class="alert alert-success">Vi har sendt deg en innloggingslenke p&aring; e-post. Sjekk innboksen din!</div>
             @endif
             @if(session('passwordreset_success'))
                 <div class="alert alert-success">{{ session('passwordreset_success') }}</div>
             @endif
 
-            {{-- SEKSJON 1: Logg inn --}}
             <div id="section-login" class="login-section active">
-                <h1 class="login-title">Logg inn på Forfatterskolen</h1>
+                <h1 class="login-title">Logg inn p&aring; Forfatterskolen</h1>
 
                 <form method="POST" action="{{ route('frontend.login.store') }}">
                     @csrf
@@ -241,19 +236,17 @@
                     <label class="login-label">Passord</label>
                     <div class="password-wrapper">
                         <input type="password" name="password" id="loginPassword" class="login-input" required placeholder="Ditt passord">
-                        <button type="button" class="password-toggle" onclick="togglePw('loginPassword')">👁</button>
+                        <button type="button" class="password-toggle" onclick="document.getElementById('loginPassword').type = document.getElementById('loginPassword').type === 'password' ? 'text' : 'password'">&#128065;</button>
                     </div>
 
                     <button type="submit" class="login-btn-primary">Logg inn</button>
                 </form>
 
-                <a href="#" class="login-link" onclick="showSection('forgot-password'); return false;">Glemt passordet? →</a>
+                <a href="javascript:void(0)" class="login-link" id="forgotLink">Glemt passordet? &rarr;</a>
 
                 <div class="login-divider"><span>eller</span></div>
 
-                <a href="#" class="login-btn-magic" onclick="showSection('magic-link'); return false;">
-                    ✉️ Send meg en innloggingslenke
-                </a>
+                <a href="javascript:void(0)" class="login-btn-magic" id="magicLink">&#9993;&#65039; Send meg en innloggingslenke</a>
 
                 <a href="{{ route('auth.login.google') }}" class="login-btn-oauth">
                     <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
@@ -265,13 +258,12 @@
                 </a>
 
                 <div class="login-bottom">
-                    Ny bruker? <a href="#" class="login-link" onclick="showSection('register'); return false;">Registrer deg gratis →</a>
+                    Ny bruker? <a href="javascript:void(0)" class="login-link" id="registerLink">Registrer deg gratis &rarr;</a>
                 </div>
             </div>
 
-            {{-- SEKSJON 2: Registrering --}}
             <div id="section-register" class="login-section">
-                <a href="#" class="login-link back-link" onclick="showSection('login'); return false;">← Tilbake til innlogging</a>
+                <a href="javascript:void(0)" class="login-link back-link" id="backFromRegister">&larr; Tilbake til innlogging</a>
                 <h1 class="login-title">Opprett en konto</h1>
 
                 <form method="POST" action="{{ route('frontend.register.store') }}">
@@ -288,7 +280,7 @@
                     <label class="login-label">Passord</label>
                     <div class="password-wrapper">
                         <input type="password" name="password" id="regPassword" class="login-input" required placeholder="Velg et passord">
-                        <button type="button" class="password-toggle" onclick="togglePw('regPassword')">👁</button>
+                        <button type="button" class="password-toggle" onclick="document.getElementById('regPassword').type = document.getElementById('regPassword').type === 'password' ? 'text' : 'password'">&#128065;</button>
                     </div>
 
                     <button type="submit" class="login-btn-primary">Registrer deg</button>
@@ -306,29 +298,27 @@
                 </a>
 
                 <div class="login-bottom">
-                    Har du allerede konto? <a href="#" class="login-link" onclick="showSection('login'); return false;">Logg inn →</a>
+                    Har du allerede konto? <a href="javascript:void(0)" class="login-link" id="loginFromRegister">Logg inn &rarr;</a>
                 </div>
             </div>
 
-            {{-- SEKSJON 3: Magic Link --}}
             <div id="section-magic-link" class="login-section">
-                <a href="#" class="login-link back-link" onclick="showSection('login'); return false;">← Tilbake til innlogging</a>
+                <a href="javascript:void(0)" class="login-link back-link" id="backFromMagic">&larr; Tilbake til innlogging</a>
                 <h1 class="login-title">Send innloggingslenke</h1>
-                <p style="font-size:14px;color:#666;margin-bottom:20px;">Skriv inn e-postadressen din, så sender vi deg en lenke du kan logge inn med — uten passord.</p>
+                <p style="font-size:14px;color:#666;margin-bottom:20px;">Skriv inn e-postadressen din, s&aring; sender vi deg en lenke du kan logge inn med &mdash; uten passord.</p>
 
                 <form method="POST" action="{{ route('magic-link.send') }}">
                     @csrf
                     <label class="login-label">E-postadresse</label>
-                    <input type="email" name="email" class="login-input" required placeholder="din@epost.no" autofocus>
+                    <input type="email" name="email" class="login-input" required placeholder="din@epost.no">
                     <button type="submit" class="login-btn-primary">Send innloggingslenke</button>
                 </form>
             </div>
 
-            {{-- SEKSJON 4: Glemt passord --}}
             <div id="section-forgot-password" class="login-section">
-                <a href="#" class="login-link back-link" onclick="showSection('login'); return false;">← Tilbake til innlogging</a>
+                <a href="javascript:void(0)" class="login-link back-link" id="backFromForgot">&larr; Tilbake til innlogging</a>
                 <h1 class="login-title">Tilbakestill passordet</h1>
-                <p style="font-size:14px;color:#666;margin-bottom:20px;">Skriv inn e-postadressen din, så sender vi deg en lenke for å sette nytt passord.</p>
+                <p style="font-size:14px;color:#666;margin-bottom:20px;">Skriv inn e-postadressen din, s&aring; sender vi deg en lenke for &aring; sette nytt passord.</p>
 
                 <form method="POST" action="{{ route('frontend.passwordreset.store') }}">
                     @csrf
@@ -341,15 +331,27 @@
         </div>
     </div>
 </div>
+@stop
 
+@section('metas')
 <script>
-function showSection(section) {
-    document.querySelectorAll('.login-section').forEach(function(el) { el.classList.remove('active'); });
-    document.getElementById('section-' + section).classList.add('active');
-}
-function togglePw(id) {
-    var el = document.getElementById(id);
-    el.type = el.type === 'password' ? 'text' : 'password';
-}
+document.addEventListener('DOMContentLoaded', function() {
+    var sections = ['login', 'register', 'magic-link', 'forgot-password'];
+
+    function show(name) {
+        sections.forEach(function(s) {
+            var el = document.getElementById('section-' + s);
+            if (el) el.style.display = (s === name) ? 'block' : 'none';
+        });
+    }
+
+    document.getElementById('magicLink').addEventListener('click', function() { show('magic-link'); });
+    document.getElementById('forgotLink').addEventListener('click', function() { show('forgot-password'); });
+    document.getElementById('registerLink').addEventListener('click', function() { show('register'); });
+    document.getElementById('backFromRegister').addEventListener('click', function() { show('login'); });
+    document.getElementById('backFromMagic').addEventListener('click', function() { show('login'); });
+    document.getElementById('backFromForgot').addEventListener('click', function() { show('login'); });
+    document.getElementById('loginFromRegister').addEventListener('click', function() { show('login'); });
+});
 </script>
 @stop
