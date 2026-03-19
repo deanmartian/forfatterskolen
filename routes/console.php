@@ -86,6 +86,9 @@ Schedule::call(function () {
 Schedule::job(new \App\Jobs\SyncAdStatsJob)->hourly()->name('ads:sync-stats')->withoutOverlapping();
 Schedule::command('ads:auto-stop')->everyThirtyMinutes()->name('ads:auto-stop');
 
+// Facebook Token — forny automatisk før utløp
+Schedule::command('facebook:refresh-token')->weekly()->name('facebook:refresh-token');
+
 // Facebook Leads — hent nye leads hvert 5. minutt
 Schedule::command('facebook:fetch-leads')->everyFiveMinutes()->name('facebook:fetch-leads')->withoutOverlapping();
 
