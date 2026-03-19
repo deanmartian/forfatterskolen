@@ -10,6 +10,21 @@
 		.d-none {
 			display: none;
 		}
+		/* Fix: forhindre horisontal overflow på assignment-siden */
+		.sub-right-content {
+			overflow-x: auto;
+			max-width: 100%;
+		}
+		.table-responsive {
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+		}
+		/* Komprimere knapper */
+		.table .btn-sm, .table .btn-xs {
+			padding: 3px 8px;
+			font-size: 11px;
+			white-space: nowrap;
+		}
 	</style>
 @stop
 
