@@ -484,6 +484,30 @@
 				</div>
 			</div>
 
+			{{-- Webinar-repriser --}}
+			<div class="pf-card">
+				<div class="pf-card__header">
+					<div>
+						<div class="pf-card__title">Webinar-repriser</div>
+						<div class="pf-card__desc">F&aring; tilsendt repriser for webinarer du ikke deltok p&aring;.</div>
+					</div>
+				</div>
+				<div class="pf-card__body">
+					<div class="pf-toggle-list">
+						<div class="pf-toggle-item">
+							<div class="pf-toggle-item__info">
+								<div class="pf-toggle-item__title">Motta reprise-e-poster</div>
+								<div class="pf-toggle-item__desc">F&aring; tilsendt lenke til reprise hvis du ikke deltok p&aring; webinaret.</div>
+							</div>
+							<label class="pf-toggle-switch">
+								<input type="checkbox" name="receive_replay_emails" value="1" {{ Auth::user()->receive_replay_emails ? 'checked' : '' }}>
+								<span class="pf-toggle-slider"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			{{-- Nyhetsbrev --}}
 			<div class="pf-card">
 				<div class="pf-card__header">
