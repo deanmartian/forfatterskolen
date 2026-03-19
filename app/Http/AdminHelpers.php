@@ -1163,7 +1163,7 @@ class AdminHelpers
         $genre = Genre::all();
 
         if ($id >= 0 && ! is_null($id)) {
-            $genre = 'None';
+            $genre = '—';
             $findGenre = Genre::find($id);
 
             if ($id > 0 && $findGenre) {
@@ -1232,7 +1232,7 @@ class AdminHelpers
                 }
             }
 
-            return 'None';
+            return '—';
         }
 
         return $types;
