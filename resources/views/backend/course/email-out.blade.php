@@ -237,6 +237,16 @@
         let emailModal = $("#emailModal");
         let emailModalForm = emailModal.find('form');
 
+        // Re-initialisere TinyMCE når modalen åpnes (fikser flash/forsvinn-problemet)
+        emailModal.on('shown.bs.modal', function () {
+            if (typeof tinymce !== 'undefined') {
+                tinymce.remove('#message');
+                setTimeout(function() {
+                    triggerLoadTinymce('#emailModal');
+                }, 100);
+            }
+        });
+
         $(".addEmailBtn").click(function(){
             let action = $(this).data('action');
             emailModal.find('.modal-title').text(translations.add_email);
