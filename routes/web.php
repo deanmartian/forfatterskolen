@@ -1302,6 +1302,10 @@ Route::domain($admin)->group(function () {
             return view('backend.email-admin.recording-logs', compact('logs'));
         })->name('admin.recording-logs');
 
+        // AI Assistent
+        Route::get('ai', [Backend\AdminAiController::class, 'index'])->name('admin.ai.index');
+        Route::post('ai/execute', [Backend\AdminAiController::class, 'execute'])->name('admin.ai.execute');
+
         // E-postmaler admin-panel
         Route::prefix('email-admin')->group(function () {
             Route::get('/', [Backend\EmailTemplateController::class, 'adminIndex'])->name('admin.email-admin.index');
