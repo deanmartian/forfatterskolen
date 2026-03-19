@@ -1361,6 +1361,31 @@ class HomeController extends Controller
         return view('frontend.free-webinar-success', compact('freeWebinar'));
     }
 
+    public function freeWebinarReprise($id): View
+    {
+        $freeWebinar = FreeWebinar::findOrFail($id);
+
+        // Hent Wistia embed eller BigMarker recording
+        $replayEmbed = null;
+        if ($freeWebinar->replay_url) {
+            // Sjekk om det er en Wistia-URL
+            if (str_contains($freeWebinar->replay_url, 'wistia')) {
+                // Hent hashed_id fra URL
+                if (preg_match('/\/iframe\/([a-z0-9]+)/', $freeWebinar->replay_url, $m)) {
+                    $wistia = app(\App\Services\WistiaService::class);
+                    $replayEmbed = $wistia->getEmbedCode($m[1]);
+                } else {
+                    $replayEmbed = '<iframe src="' . $freeWebinar->replay_url . '" style="width:100%;aspect-ratio:16/9;" frameborder="0" allowfullscreen></iframe>';
+                }
+            } else {
+                // BigMarker eller annen URL — bruk iframe
+                $replayEmbed = '<iframe src="' . $freeWebinar->replay_url . '" style="width:100%;aspect-ratio:16/9;" frameborder="0" allowfullscreen></iframe>';
+            }
+        }
+
+        return view('frontend.free-webinar-reprise', compact('freeWebinar', 'replayEmbed'));
+    }
+
     public function webinarThanks(): View
     {
         return view('frontend.webinar-thanks');

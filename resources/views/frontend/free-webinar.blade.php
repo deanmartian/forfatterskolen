@@ -686,7 +686,7 @@
                         </div>
                     </div>
                     @if($freeWebinar->replay_url)
-                        <a href="{{ $freeWebinar->replay_url }}" class="reg-btn" style="display:block;text-align:center;text-decoration:none;">Se reprisen gratis &rarr;</a>
+                        <a href="{{ route('front.free-webinar-reprise', $freeWebinar->id) }}" class="reg-btn" style="display:block;text-align:center;text-decoration:none;">Se reprisen gratis &rarr;</a>
                     @else
                         <button type="submit" class="reg-btn">Se reprisen gratis &rarr;</button>
                     @endif
