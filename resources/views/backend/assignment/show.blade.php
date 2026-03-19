@@ -100,7 +100,7 @@
 						<tr>
 							<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 							<th>{{ trans_choice('site.learners', 1) }}</th>
-							<th>{{ trans('site.grade') }}</th>
+							{{-- <th>{{ trans('site.grade') }}</th> --}}
 							<th>{{ trans('site.type') }}</th>
 							<th>{{ trans('site.where') }}</th>
 							<th>{{ trans_choice('site.words', 2) }}</th>
@@ -137,7 +137,7 @@
 								@endif
 							</td>
 							<td><a href="{{route('admin.learner.show', $manuscript->user->id)}}">{{ $manuscript->user->full_name }}</a></td>
-							<td>{{ $manuscript->grade }}</td>
+							{{-- <td>{{ $manuscript->grade }}</td> --}}
 							<td>
 								<a href="javascript:void(0)" data-ass-type="{{ $manuscript->type }}" class="updateTypeBtn" data-toggle="modal" data-target="#updateTypeModal"
 								   data-action="{{ route('assignment.group.update_manu_types', $manuscript->id) }}">
