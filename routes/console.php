@@ -86,5 +86,8 @@ Schedule::call(function () {
 Schedule::job(new \App\Jobs\SyncAdStatsJob)->hourly()->name('ads:sync-stats')->withoutOverlapping();
 Schedule::command('ads:auto-stop')->everyThirtyMinutes()->name('ads:auto-stop');
 
+// Facebook Leads — hent nye leads hvert 5. minutt
+Schedule::command('facebook:fetch-leads')->everyFiveMinutes()->name('facebook:fetch-leads')->withoutOverlapping();
+
 // Webinar-opptak — sjekk og last ned nye opptak
 Schedule::command('webinar:download-recordings')->everyThirtyMinutes()->name('webinar:download-recordings')->withoutOverlapping();
