@@ -102,8 +102,28 @@ class DownloadWebinarRecordings extends Command
                 // Finn eller opprett Wistia-prosjekt for kurset
                 $projectId = $this->getOrCreateWistiaProject($wistia, $courseName);
 
+                // Last ned fra BigMarker til temp-fil
+                $tempPath = storage_path("app/webinar-temp-{$conferenceId}.mp4");
+                $this->line("    Laster ned fra BigMarker...");
+
+                $downloadResponse = Http::timeout(600)->withOptions(['sink' => $tempPath])->get($recordingUrl);
+
+                if (!file_exists($tempPath) || filesize($tempPath) < 1000) {
+                    $this->error("  ❌ Nedlasting fra BigMarker feilet for: {$webinar->title}");
+                    @unlink($tempPath);
+                    $failed++;
+                    continue;
+                }
+
+                $fileSizeMb = round(filesize($tempPath) / 1024 / 1024, 1);
+                $this->line("    Lastet ned: {$fileSizeMb} MB");
+
+                // Last opp til Wistia fra lokal fil
                 $this->line("    Laster opp til Wistia (prosjekt: {$courseName})...");
-                $wistiaResult = $wistia->uploadFromUrl($recordingUrl, $videoName, $projectId);
+                $wistiaResult = $wistia->uploadFromFile($tempPath, $videoName, $projectId);
+
+                // Slett temp-fil
+                @unlink($tempPath);
 
                 $wistiaHashedId = $wistiaResult['hashed_id'] ?? null;
 

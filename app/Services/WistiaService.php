@@ -97,6 +97,27 @@ class WistiaService
     }
 
     /**
+     * Last opp video fra lokal fil via Wistia Upload API
+     */
+    public function uploadFromFile(string $filePath, string $name = '', string $projectId = ''): array
+    {
+        $response = Http::timeout(600)
+            ->attach('file', file_get_contents($filePath), basename($filePath))
+            ->post('https://upload.wistia.com/api', [
+                'access_token' => $this->apiToken,
+                'name' => $name,
+                'project_id' => $projectId,
+            ]);
+
+        if (!$response->successful()) {
+            Log::error("Wistia upload feil", ['status' => $response->status(), 'body' => $response->body()]);
+            throw new \Exception("Wistia upload feil: {$response->status()}");
+        }
+
+        return $response->json();
+    }
+
+    /**
      * Oppdater video-metadata (navn, beskrivelse)
      */
     public function updateMedia(string $hashedId, array $data): array
