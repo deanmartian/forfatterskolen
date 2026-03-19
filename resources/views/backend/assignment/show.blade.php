@@ -104,8 +104,7 @@
 							<th>{{ trans('site.type') }}</th>
 							<th>{{ trans('site.where') }}</th>
 							<th>{{ trans_choice('site.words', 2) }}</th>
-							<th>Editor Expected Finish</th>
-							<th>{{ trans('site.feedback-out') }}</th>
+							<th>Datoer</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
 							<th width="250"></th>
 						</tr>
@@ -149,48 +148,45 @@
 							</td>
 							<td> {{ $manuscript->words }} </td>
 							{{-- Tekst nr, Gruppe, Bli med i gruppe — skjult for å spare plass --}}
-							<td>
-								{{ $manuscript->editor_expected_finish 
+							<td style="font-size:11px;line-height:1.6;">
+								<strong>Frist:</strong> {{ $manuscript->editor_expected_finish
 								? \App\Http\FrontendHelpers::formatDate($manuscript->editor_expected_finish)
-								: ($assignment->editor_expected_finish ? $assignment->editor_expected_finish : '') }} <br>
-								<button class="btn btn-xs btn-primary editEditorExpectedFinishBtn" data-toggle="modal" 
-								data-target="#editEditorExpectedFinishModal" 
+								: ($assignment->editor_expected_finish ? $assignment->editor_expected_finish : '—') }}
+								<button class="btn btn-xs btn-primary editEditorExpectedFinishBtn" data-toggle="modal"
+								data-target="#editEditorExpectedFinishModal"
 								data-action="{{ route('backend.assignment.edit-dates', $manuscript->id) }}"
 								data-editor_expected_finish="{{ $manuscript->editor_expected_finish
-									? strftime('%Y-%m-%d', strtotime($manuscript->editor_expected_finish)) : NULL }}">
+									? strftime('%Y-%m-%d', strtotime($manuscript->editor_expected_finish)) : NULL }}" style="padding:1px 5px;font-size:10px;">
 									Edit
 								</button>
-							</td>
-							<td>
-
-                                <?php
-                                $learner_list = [];
-                                foreach($assignment->groups as $group) {
-                                    foreach($group->learners as $learner) {
-                                        $learner_list[] = $learner['user_id'];
-                                    }
-                                }
-                                $noGroupHaveFeedback = \App\AssignmentFeedbackNoGroup::where([
-                                    'assignment_manuscript_id' => $manuscript->id,
-                                    'learner_id' => $manuscript->user->id
-                                ])->get();
-                                ?>
-									@if(!in_array($manuscript->user_id,$learner_list))
-										@if($noGroupHaveFeedback->count())
-											{{ \App\Http\FrontendHelpers::formatDate($noGroupHaveFeedback[0]->availability) }}
-										@endif
+								<br>
+								<?php
+								$learner_list = [];
+								foreach($assignment->groups as $group) {
+									foreach($group->learners as $learner) {
+										$learner_list[] = $learner['user_id'];
+									}
+								}
+								$noGroupHaveFeedback = \App\AssignmentFeedbackNoGroup::where([
+									'assignment_manuscript_id' => $manuscript->id,
+									'learner_id' => $manuscript->user->id
+								])->get();
+								?>
+								<strong>Sendt:</strong>
+								@if(!in_array($manuscript->user_id,$learner_list))
+									@if($noGroupHaveFeedback->count())
+										{{ \App\Http\FrontendHelpers::formatDate($noGroupHaveFeedback[0]->availability) }}
 									@endif
-
-									@if (isset(\App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id']))
-										@php
-											$groupLearnerId = \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['group_learner_id'];
-											$editorFeedback = \App\Http\AdminHelpers::getAssignmentFeedbackByGroupLearnerIdAndEditorId($groupLearnerId, $manuscript->editor_id);
-										@endphp
-
-										@if($editorFeedback)
-											{{ \App\Http\FrontendHelpers::formatDate($editorFeedback->availability) }}
-										@endif
+								@endif
+								@if (isset(\App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id']))
+									@php
+										$groupLearnerId = \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['group_learner_id'];
+										$editorFeedback = \App\Http\AdminHelpers::getAssignmentFeedbackByGroupLearnerIdAndEditorId($groupLearnerId, $manuscript->editor_id);
+									@endphp
+									@if($editorFeedback)
+										{{ \App\Http\FrontendHelpers::formatDate($editorFeedback->availability) }}
 									@endif
+								@endif
 							</td>
 							<td>
 								<?php 
