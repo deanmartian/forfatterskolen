@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 
 class DownloadWebinarRecordings extends Command
 {
-    protected $signature = 'webinar:download-recordings {--webinar-id= : Spesifikt webinar-ID} {--dry-run : Vis hva som ville blitt lastet ned}';
+    protected $signature = 'webinar:download-recordings {--webinar-id= : Spesifikt webinar-ID} {--days=30 : Antall dager tilbake å sjekke} {--dry-run : Vis hva som ville blitt lastet ned}';
 
     protected $description = 'Last ned BigMarker-opptak og legg som leksjoner i tilhørende kurs';
 
@@ -24,8 +24,10 @@ class DownloadWebinarRecordings extends Command
         $bigmarker = app(BigMarkerService::class);
 
         // Hent webinarer som har passert og har BigMarker-link, men ikke er satt som replay ennå
+        $days = (int) $this->option('days');
         $query = Webinar::where('status', 1)
             ->where('start_date', '<', now())
+            ->where('start_date', '>', now()->subDays($days))
             ->whereNotNull('link')
             ->where('link', '!=', '');
 
