@@ -3585,6 +3585,10 @@ class LearnerController extends Controller
             );
         }
 
+        // Webinar reprise-preferanse (direkte på users-tabellen)
+        Auth::user()->receive_replay_emails = $request->boolean('receive_replay_emails');
+        Auth::user()->save();
+
         return redirect()->back()->with('profile_success', 'Innstillinger lagret.');
     }
 

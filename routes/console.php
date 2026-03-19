@@ -92,5 +92,8 @@ Schedule::command('facebook:refresh-token')->weekly()->name('facebook:refresh-to
 // Facebook Leads — hent nye leads hvert 5. minutt
 Schedule::command('facebook:fetch-leads')->everyFiveMinutes()->name('facebook:fetch-leads')->withoutOverlapping();
 
+// Webinar-reprise — send reprise-e-post til no-shows
+Schedule::command('webinar:send-replay-to-noshows')->dailyAt('07:00')->name('webinar:send-replay-to-noshows');
+
 // Webinar-opptak — sjekk og last ned nye opptak
 Schedule::command('webinar:download-recordings')->everyThirtyMinutes()->name('webinar:download-recordings')->withoutOverlapping();
