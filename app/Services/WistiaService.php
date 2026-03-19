@@ -89,11 +89,33 @@ class WistiaService
      */
     public function uploadFromUrl(string $url, string $name = '', string $projectId = ''): array
     {
-        $data = ['url' => $url];
-        if ($name) $data['name'] = $name;
-        if ($projectId) $data['project_id'] = $projectId;
+        $ch = curl_init();
+        $postData = [
+            'access_token' => $this->apiToken,
+            'url' => $url,
+        ];
+        if ($name) $postData['name'] = $name;
+        if ($projectId) $postData['project_id'] = $projectId;
 
-        return $this->request('post', 'medias.json', $data);
+        curl_setopt_array($ch, [
+            CURLOPT_URL => 'https://upload.wistia.com/',
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $postData,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 600,
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error || $httpCode >= 400) {
+            Log::error("Wistia URL upload feil", ['status' => $httpCode, 'error' => $error, 'body' => $response]);
+            throw new \Exception("Wistia upload feil: " . ($error ?: $httpCode));
+        }
+
+        return json_decode($response, true) ?? [];
     }
 
     /**
@@ -111,7 +133,7 @@ class WistiaService
         if ($projectId) $postData['project_id'] = $projectId;
 
         curl_setopt_array($ch, [
-            CURLOPT_URL => 'https://upload.wistia.com/api',
+            CURLOPT_URL => 'https://upload.wistia.com/',
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $postData,
             CURLOPT_RETURNTRANSFER => true,
