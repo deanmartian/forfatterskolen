@@ -104,9 +104,6 @@
 							<th>{{ trans('site.type') }}</th>
 							<th>{{ trans('site.where') }}</th>
 							<th>{{ trans_choice('site.words', 2) }}</th>
-							<th>{{ trans('site.text-nr') }}</th>
-							<th>{{ trans_choice('site.groups', 1) }}</th>
-							<th>Bli med i gruppe</th>
 							<th>Editor Expected Finish</th>
 							<th>{{ trans('site.feedback-out') }}</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
@@ -151,26 +148,7 @@
 								</a>
 							</td>
 							<td> {{ $manuscript->words }} </td>
-							<td> {{ $manuscript->text_number }} </td>
-							<td>
-								@if (isset(\App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id']))
-									<a href="{{ route('admin.assignment-group.show',
-									['course_id' => $course->id,
-									'assignment_id' => $assignment->id,
-									'group' => \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id']]
-									) }}">
-										{{ \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['title'] }}
-									</a>
-								@endif
-							</td>
-							<td>
-								<a href="#" data-toggle="modal" data-target="#updateJoinGroupModal"
-								data-action="{{ route('assignment.update-join-group', $manuscript->id) }}"
-								   class="upateJoinGroupBtn"
-								   data-answer="{{ $manuscript->join_group }}">
-									{{ $manuscript->join_group ? 'Yes' : 'No' }}
-								</a>
-							</td>
+							{{-- Tekst nr, Gruppe, Bli med i gruppe — skjult for å spare plass --}}
 							<td>
 								{{ $manuscript->editor_expected_finish 
 								? \App\Http\FrontendHelpers::formatDate($manuscript->editor_expected_finish)
