@@ -183,3 +183,11 @@ Route::prefix('v1')->middleware(['cors', 'apiRequestId'])->group(function () {
 */
 Route::get('/webhooks/facebook/leads', [\App\Http\Controllers\FacebookLeadWebhookController::class, 'verify']);
 Route::post('/webhooks/facebook/leads', [\App\Http\Controllers\FacebookLeadWebhookController::class, 'handle']);
+
+/*
+|--------------------------------------------------------------------------
+| Helpwise Webhook
+|--------------------------------------------------------------------------
+| POST = mottak av webhook-events fra Helpwise
+*/
+Route::post('/helpwise/webhook', [\App\Http\Controllers\Api\HelpwiseWebhookController::class, 'handle']);

@@ -1306,6 +1306,12 @@ Route::domain($admin)->group(function () {
         Route::get('ai', [Backend\AdminAiController::class, 'index'])->name('admin.ai.index');
         Route::post('ai/execute', [Backend\AdminAiController::class, 'execute'])->name('admin.ai.execute');
 
+        // Helpwise webhook-logg
+        Route::get('helpwise-logs', function () {
+            $logs = \App\Models\HelpwiseWebhookLog::orderByDesc('created_at')->paginate(50);
+            return view('backend.helpwise.index', compact('logs'));
+        })->name('admin.helpwise-logs');
+
         // E-postmaler admin-panel
         Route::prefix('email-admin')->group(function () {
             Route::get('/', [Backend\EmailTemplateController::class, 'adminIndex'])->name('admin.email-admin.index');
