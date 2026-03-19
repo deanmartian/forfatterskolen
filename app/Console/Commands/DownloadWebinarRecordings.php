@@ -139,7 +139,7 @@ class DownloadWebinarRecordings extends Command
 
                 LessonContent::create([
                     'lesson_id' => $lesson->id,
-                    'title' => "{$webinar->title} {$webinarDate->format('d.m.Y')}",
+                    'title' => preg_match('/\d{2}\.\d{2}\.\d{4}/', $webinar->title) ? $webinar->title : "{$webinar->title} {$webinarDate->format('d.m.Y')}",
                     'lesson_content' => $contentHtml,
                     'date' => $webinarDate->format('Y-m-d'),
                 ]);
