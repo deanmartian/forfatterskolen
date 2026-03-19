@@ -775,8 +775,19 @@ class ShopManuscriptController extends Controller
             'payment_mode' => $paymentMode->mode,
         ];
 
+        // MVA: aktive elever med kurs 17 er mvafri, andre betaler 25% MVA
+        $hasVat = !Auth::user()->activePaidCoursesTakenNotExpired()
+            ->whereHas('package', fn($q) => $q->where('course_id', 17))
+            ->exists();
+
+        if ($hasVat) {
+            $vatAmount = round($price * 0.25);
+            $invoice_fields['vat'] = $vatAmount;
+            $invoice_fields['productID'] = 5686476118;
+        }
+
         $invoice = new FikenInvoice;
-        $invoice->create_invoice($invoice_fields);
+        $invoice->create_invoice($invoice_fields, $hasVat);
 
         // wait for the invoice to be saved first before saving the shop manuscript taken
         $shopManuscriptTaken->is_active = false;
@@ -1598,8 +1609,19 @@ class ShopManuscriptController extends Controller
             'payment_mode' => $paymentMode->mode,
         ];
 
+        // MVA: aktive elever med kurs 17 er mvafri, andre betaler 25% MVA
+        $hasVat = !Auth::user()->activePaidCoursesTakenNotExpired()
+            ->whereHas('package', fn($q) => $q->where('course_id', 17))
+            ->exists();
+
+        if ($hasVat) {
+            $vatAmount = round($price * 0.25);
+            $invoice_fields['vat'] = $vatAmount;
+            $invoice_fields['productID'] = 5686476118;
+        }
+
         $invoice = new FikenInvoice;
-        $invoice->create_invoice($invoice_fields);
+        $invoice->create_invoice($invoice_fields, $hasVat);
 
         // if( $request->update_address ) :
         $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
