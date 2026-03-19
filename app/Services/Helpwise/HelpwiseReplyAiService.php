@@ -121,34 +121,24 @@ PROMPT;
             'Rolle' => $this->getRoleName($user->role),
         ];
 
-        // Check active courses
-        $courses = $user->coursesTaken()
-            ->where('is_active', 1)
-            ->with('package')
-            ->get();
+        try {
+            $courses = $user->coursesTaken()->where('is_active', 1)->with('package')->get();
+            if ($courses->isNotEmpty()) {
+                $context['Aktive kurs'] = $courses->map(fn($ct) => $ct->package?->name ?? 'Ukjent kurs')->implode(', ');
+            }
+        } catch (\Exception $e) {}
 
-        if ($courses->isNotEmpty()) {
-            $courseNames = $courses->map(fn($ct) => $ct->package?->name ?? 'Ukjent kurs')->implode(', ');
-            $context['Aktive kurs'] = $courseNames;
-        }
+        try {
+            $pendingAssignments = \App\AssignmentSubmission::where('user_id', $user->id)
+                ->whereIn('status', ['pending', 'in_progress'])->count();
+            if ($pendingAssignments > 0) $context['Ventende oppgaver'] = $pendingAssignments;
+        } catch (\Exception $e) {}
 
-        // Check if they have pending assignments
-        $pendingAssignments = \App\AssignmentLearner::where('user_id', $user->id)
-            ->whereIn('status', ['pending', 'in_progress'])
-            ->count();
-
-        if ($pendingAssignments > 0) {
-            $context['Ventende oppgaver'] = $pendingAssignments;
-        }
-
-        // Check shop manuscripts
-        $manuscripts = \App\ShopManuscriptsTaken::where('user_id', $user->id)
-            ->where('is_active', 1)
-            ->count();
-
-        if ($manuscripts > 0) {
-            $context['Aktive manustjenester'] = $manuscripts;
-        }
+        try {
+            $manuscripts = \App\ShopManuscriptsTaken::where('user_id', $user->id)
+                ->where('is_active', 1)->count();
+            if ($manuscripts > 0) $context['Aktive manustjenester'] = $manuscripts;
+        } catch (\Exception $e) {}
 
         return $context;
     }
