@@ -511,6 +511,10 @@
 												title="Slett"><i class="fa fa-trash-alt"></i></button>
 											<a href="{{ end($extension) == 'pdf' || end($extension) == 'odt' ? '/js/ViewerJS/#../..' . $manuscript->filename : 'https://view.officeapps.live.com/op/embed.aspx?src=' . url('') . $manuscript->filename }}"
 												title="Forhåndsvis"><i class="fa fa-eye"></i></a>
+											@if(end($extension) == 'docx')
+												<a href="{{ route('learner.assignment.manuscript.pdf', $manuscript->id) }}"
+													title="Last ned som PDF"><i class="fa fa-file-pdf"></i></a>
+											@endif
 										</span>
 									@endif
 								</div>
@@ -625,6 +629,10 @@
 											title="Slett"><i class="fa fa-trash-alt"></i></button>
 										<a href="{{ end($extension) == 'pdf' || end($extension) == 'odt' ? '/js/ViewerJS/#../..' . $manuscript->filename : 'https://view.officeapps.live.com/op/embed.aspx?src=' . url('') . $manuscript->filename }}"
 											title="Forhåndsvis"><i class="fa fa-eye"></i></a>
+										@if(end($extension) == 'docx')
+											<a href="{{ route('learner.assignment.manuscript.pdf', $manuscript->id) }}"
+												title="Last ned som PDF"><i class="fa fa-file-pdf"></i></a>
+										@endif
 									</span>
 								@endif
 							</div>
@@ -738,6 +746,12 @@
 								<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
 								Ditt manus
 							</a>
+							@if(end($extension) == 'docx')
+								<a href="{{ route('learner.assignment.manuscript.pdf', $manuscript->id) }}" class="op-sub-item__file" title="Last ned som PDF">
+									<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+									Last ned som PDF
+								</a>
+							@endif
 						@endif
 						<span class="op-badge op-badge--waiting">Venter</span>
 					</div>
@@ -763,6 +777,12 @@
 								<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
 								Ditt manus
 							</a>
+							@if(end($extension) == 'docx')
+								<a href="{{ route('learner.assignment.manuscript.pdf', $manuscript->id) }}" class="op-sub-item__file" title="Last ned som PDF">
+									<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+									Last ned som PDF
+								</a>
+							@endif
 							<span class="op-badge op-badge--submitted">Levert</span>
 						</div>
 					@endif
