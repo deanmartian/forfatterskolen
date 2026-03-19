@@ -5433,13 +5433,20 @@ class LearnerController extends Controller
      */
     public function downloadAssignmentManuscriptPdf($id, DocxToPdfService $service)
     {
-        $manuscript = AssignmentManuscript::find($id);
-
-        if (! $manuscript) {
-            return redirect()->back()->with('error', 'Manuskriptet ble ikke funnet.');
+        // Support both manuscript and feedback files
+        if (request('type') === 'feedback') {
+            $feedback = \DB::table('assignment_feedbacks_no_group')->find($id);
+            if (! $feedback) {
+                return redirect()->back()->with('error', 'Tilbakemeldingen ble ikke funnet.');
+            }
+            $filename = $feedback->filename;
+        } else {
+            $manuscript = AssignmentManuscript::find($id);
+            if (! $manuscript) {
+                return redirect()->back()->with('error', 'Manuskriptet ble ikke funnet.');
+            }
+            $filename = $manuscript->filename;
         }
-
-        $filename = $manuscript->filename;
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
         if ($extension !== 'docx') {

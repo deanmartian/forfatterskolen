@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Barryvdh\DomPDF\Facade as PDF;
+use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Log;
 use ZipArchive;
 
@@ -34,18 +34,21 @@ class DocxToPdfService
             $parsed = $this->parseDocx($docxPath);
             $html = $this->buildHtml($parsed['blocks'], $downloadName);
 
-            $pdf = PDF::loadHTML($html);
-            $pdf->setPaper('a4');
-            $pdf->setOption('defaultFont', 'DejaVu Sans');
-            $pdf->setOption('isRemoteEnabled', false);
-            $pdf->setOption('isHtml5ParserEnabled', true);
+            $dompdf = new Dompdf();
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('a4');
+            $dompdf->getOptions()->set('defaultFont', 'DejaVu Sans');
+            $dompdf->render();
 
             $safeName = preg_replace('/[^a-zA-Z0-9_\-æøåÆØÅ ]/', '', $downloadName);
             if (empty($safeName)) {
                 $safeName = 'manuscript';
             }
 
-            return $pdf->download($safeName.'.pdf');
+            return response($dompdf->output(), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $safeName . '.pdf"',
+            ]);
         } catch (\Throwable $e) {
             Log::error('DocxToPdfService: conversion failed', [
                 'path' => $docxPath,
