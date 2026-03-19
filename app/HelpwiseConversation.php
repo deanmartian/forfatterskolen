@@ -60,8 +60,8 @@ class HelpwiseConversation extends Model
                 'customer_email' => $email,
                 'customer_name' => self::extractName($data),
                 'user_id' => $user?->id,
-                'status' => self::mapStatus($data['status'] ?? $data['state'] ?? 'open'),
-                'assigned_to' => $data['assigned_to'] ?? $data['assignee'] ?? $data['assignee_name'] ?? null,
+                'status' => self::mapStatus($data['status'] ?? $data['state'] ?? (($data['is_resolved'] ?? false) ? 'closed' : 'open')),
+                'assigned_to' => isset($data['assigned_to']['assigned_to']['id']) ? (string) $data['assigned_to']['assigned_to']['id'] : ($data['assigned_to'] ?? $data['assignee'] ?? null),
                 'tags' => $data['tags'] ?? $data['labels'] ?? null,
                 'raw_payload' => $data,
                 'helpwise_created_at' => isset($data['created_at']) ? \Carbon\Carbon::parse($data['created_at']) : now(),
@@ -71,22 +71,48 @@ class HelpwiseConversation extends Model
 
     private static function extractEmail(array $data): ?string
     {
-        return $data['customer_email']
-            ?? $data['email']
-            ?? $data['from_email']
-            ?? $data['contact_email']
-            ?? $data['customer']['email'] ?? null
-            ?? $data['contact']['email'] ?? null;
+        // Direct fields
+        if (!empty($data['customer_email'])) return $data['customer_email'];
+        if (!empty($data['email'])) return $data['email'];
+        if (!empty($data['from_email'])) return $data['from_email'];
+        if (!empty($data['contact_email'])) return $data['contact_email'];
+
+        // Nested objects
+        if (!empty($data['customer']['email'])) return $data['customer']['email'];
+        if (!empty($data['contact']['email'])) return $data['contact']['email'];
+
+        // Helpwise format: emails object with nested from array
+        if (!empty($data['emails']) && is_array($data['emails'])) {
+            $firstEmail = reset($data['emails']);
+            if (!empty($firstEmail['from']) && is_array($firstEmail['from'])) {
+                $from = reset($firstEmail['from']);
+                if (!empty($from['email'])) return $from['email'];
+            }
+        }
+
+        return null;
     }
 
     private static function extractName(array $data): ?string
     {
-        return $data['customer_name']
-            ?? $data['name']
-            ?? $data['from_name']
-            ?? $data['contact_name']
-            ?? $data['customer']['name'] ?? null
-            ?? $data['contact']['name'] ?? null;
+        if (!empty($data['customer_name'])) return $data['customer_name'];
+        if (!empty($data['name'])) return $data['name'];
+        if (!empty($data['from_name'])) return $data['from_name'];
+        if (!empty($data['contact_name'])) return $data['contact_name'];
+
+        if (!empty($data['customer']['name'])) return $data['customer']['name'];
+        if (!empty($data['contact']['name'])) return $data['contact']['name'];
+
+        // Helpwise format
+        if (!empty($data['emails']) && is_array($data['emails'])) {
+            $firstEmail = reset($data['emails']);
+            if (!empty($firstEmail['from']) && is_array($firstEmail['from'])) {
+                $from = reset($firstEmail['from']);
+                if (!empty($from['name'])) return $from['name'];
+            }
+        }
+
+        return null;
     }
 
     private static function mapStatus(string $status): string
