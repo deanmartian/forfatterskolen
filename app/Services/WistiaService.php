@@ -101,20 +101,39 @@ class WistiaService
      */
     public function uploadFromFile(string $filePath, string $name = '', string $projectId = ''): array
     {
-        $response = Http::timeout(600)
-            ->attach('file', file_get_contents($filePath), basename($filePath))
-            ->post('https://upload.wistia.com/api', [
-                'access_token' => $this->apiToken,
-                'name' => $name,
-                'project_id' => $projectId,
-            ]);
+        // Bruk curl direkte for å streame store filer uten memory-problemer
+        $ch = curl_init();
+        $postData = [
+            'access_token' => $this->apiToken,
+            'file' => new \CURLFile($filePath, 'video/mp4', basename($filePath)),
+        ];
+        if ($name) $postData['name'] = $name;
+        if ($projectId) $postData['project_id'] = $projectId;
 
-        if (!$response->successful()) {
-            Log::error("Wistia upload feil", ['status' => $response->status(), 'body' => $response->body()]);
-            throw new \Exception("Wistia upload feil: {$response->status()}");
+        curl_setopt_array($ch, [
+            CURLOPT_URL => 'https://upload.wistia.com/api',
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $postData,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 1800, // 30 min for store filer
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            Log::error("Wistia upload curl feil", ['error' => $error]);
+            throw new \Exception("Wistia upload feil: {$error}");
         }
 
-        return $response->json();
+        if ($httpCode >= 400) {
+            Log::error("Wistia upload feil", ['status' => $httpCode, 'body' => $response]);
+            throw new \Exception("Wistia upload feil: {$httpCode}");
+        }
+
+        return json_decode($response, true) ?? [];
     }
 
     /**
