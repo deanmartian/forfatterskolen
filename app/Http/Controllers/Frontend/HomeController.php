@@ -1589,8 +1589,13 @@ class HomeController extends Controller
 
     public function terms($slug = null)
     {
-        $terms = $slug == 'all' ? Settings::getAllTerms() : Settings::getByName($slug ?: 'terms');
-        if ($terms || $slug == 'all') {
+        // Ny vilkårsside for /terms/all
+        if ($slug === 'all') {
+            return view('frontend.terms-new');
+        }
+
+        $terms = Settings::getByName($slug ?: 'terms');
+        if ($terms) {
             if (\request()->ajax()) {
                 return $terms;
             }
