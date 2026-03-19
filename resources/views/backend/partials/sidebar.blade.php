@@ -34,7 +34,7 @@
                 @endphp
                 <li>
                     <a href="{{ route($page['route']) }}"
-                       class="ed-nav-item {{ Request::is(strtolower($page['request_name']).'*') ? 'active' : '' }}{{ in_array($page['request_name'], ['workshop', 'webinar-list']) ? ' ed-nav-item--child' : '' }}">
+                       class="ed-nav-item {{ Request::is(strtolower($page['request_name']).'*') ? 'active' : '' }}{{ $page['request_name'] === 'workshop' ? ' ed-nav-item--child' : '' }}">
                         <span class="ed-nav-item__icon">
                             @switch($page['request_name'])
                                 @case('course')
@@ -85,11 +85,11 @@
                                 @case('emails')
                                     <i class="fa fa-envelope"></i>
                                     @break
-                                @case('anthology')
-                                    <i class="fa fa-snowflake-o"></i>
-                                    @break
                                 @case('crm')
                                     <i class="fa fa-address-book"></i>
+                                    @break
+                                @case('anthology')
+                                    <i class="fa fa-snowflake-o"></i>
                                     @break
                                 @default
                                     <i class="fa fa-circle-o"></i>
@@ -116,6 +116,36 @@
             </a>
         </li>
         <li>
+            <a href="{{ route('admin.helpwise.index') }}"
+               class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.helpwise') ? 'active' : '' }}">
+                <span class="ed-nav-item__icon"><i class="fa fa-comments"></i></span>
+                <span class="ed-nav-item__label">
+                    Helpwise CRM
+                    @php
+                        $openHelpwiseCount = \App\HelpwiseConversation::where('status', 'open')->count();
+                    @endphp
+                    @if($openHelpwiseCount > 0)
+                        <span class="badge" style="background: #f39c12; color: #fff; border-radius: 10px; font-size: 10px; padding: 2px 6px; margin-left: 4px;">{{ $openHelpwiseCount }}</span>
+                    @endif
+                </span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('admin.ads.dashboard') }}"
+               class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.ads') ? 'active' : '' }}">
+                <span class="ed-nav-item__icon"><i class="fa fa-bullhorn"></i></span>
+                <span class="ed-nav-item__label">
+                    Ad OS
+                    @php
+                        $pendingAdApprovals = \App\Models\AdOs\AdApprovalRequest::where('status', 'pending')->count();
+                    @endphp
+                    @if($pendingAdApprovals > 0)
+                        <span class="badge" style="background: #e74c3c; color: #fff; border-radius: 10px; font-size: 10px; padding: 2px 6px; margin-left: 4px;">{{ $pendingAdApprovals }}</span>
+                    @endif
+                </span>
+            </a>
+        </li>
+        <li>
             <a href="{{ route('admin.messages.index') }}"
                class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.messages') ? 'active' : '' }}">
                 <span class="ed-nav-item__icon"><i class="fa fa-envelope-o"></i></span>
@@ -132,13 +162,6 @@
                         <span class="badge" style="background: #e74c3c; color: #fff; border-radius: 10px; font-size: 10px; padding: 2px 6px; margin-left: 4px;">{{ $unreadAdminMsgCount }}</span>
                     @endif
                 </span>
-            </a>
-        </li>
-        <li>
-            <a href="{{ route('admin.ai.index') }}"
-               class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.ai') ? 'active' : '' }}">
-                <span class="ed-nav-item__icon"><i class="fa fa-rocket"></i></span>
-                <span class="ed-nav-item__label">AI Assistent</span>
             </a>
         </li>
     </ul>

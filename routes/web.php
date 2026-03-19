@@ -64,7 +64,6 @@ Route::domain($front)->group(function () {
         Route::get('/gratis-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar'); // Support Article
         Route::post('/gratis-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar.submit'); // Support Article
         Route::get('/gratis-webinar/{id}/thank-you', [Frontend\HomeController::class, 'freeWebinarThanks'])->name('front.free-webinar-thanks'); // Support Article
-        Route::get('/gratis-webinar/{id}/reprise', [Frontend\HomeController::class, 'freeWebinarReprise'])->name('front.free-webinar-reprise');
         Route::get('/free-webinar/{id}/', function ($id) {
             return redirect()->route('front.free-webinar', ['id' => $id], 301);
         });
@@ -72,7 +71,6 @@ Route::domain($front)->group(function () {
             return redirect()->route('front.free-webinar-thanks', ['id' => $id], 301);
         });
         Route::get('/webinartakk', [Frontend\HomeController::class, 'webinarThanks'])->name('front.webinar-thanks'); // Support Article
-        Route::get('/avmeld/{token}', [Frontend\UnsubscribeController::class, 'unsubscribe'])->name('front.unsubscribe');
         Route::get('/children', [Frontend\HomeController::class, 'children'])->name('front.children');
         Route::view('/subscribe-success', 'frontend.subscribe-success')->name('front.subscribe-success'); // Homepage
         Route::get('/manusutvikling', [Frontend\ShopManuscriptController::class, 'index'])->name('front.shop-manuscript.index'); // Shop Manuscript Listing
@@ -498,7 +496,6 @@ Route::domain($front)->group(function () {
         Route::get('/assignment/group/{id}', [Frontend\LearnerController::class, 'group_show'])->name('learner.assignment.group.show'); // Assignment show Page
         Route::get('/assignment/group/{id}/learner-details', [Frontend\LearnerController::class, 'groupLearnerDetails']);
         Route::get('/assignment/group/{id}/show-details', [Frontend\LearnerController::class, 'groupShowDetails']);
-        Route::get('/assignment/manuscript/{id}/pdf', [Frontend\LearnerController::class, 'downloadAssignmentManuscriptPdf'])->name('learner.assignment.manuscript.pdf'); // Download manuscript as PDF with comments
         Route::get('/assignment/manuscript/{id}', [Frontend\LearnerController::class, 'downloadAssignmentGroupManuscript'])->name('learner.assignment.manuscript.download'); // Assignment show Page
         Route::get('/assignment/feedback/{id}/download', [Frontend\LearnerController::class, 'downloadAssignmentGroupFeedback'])->name('learner.assignment.feedback.download'); // Download assignment feedback
         Route::get('/assignment/feedback-no-group/{id}/download', [Frontend\LearnerController::class, 'downloadAssignmentNoGroupFeedback'])->name('learner.assignment.no-group-feedback.download'); // Download assignment feedback
@@ -707,9 +704,6 @@ Route::domain($front)->group(function () {
         Route::post('login', [Auth\LoginController::class, 'login'])->name('frontend.login.store');
         Route::post('login/self-publishing', [Auth\LoginController::class, 'selfPublishingLogin'])->name('frontend.login.self-publishing-store');
         Route::post('checkout/login', [Auth\LoginController::class, 'checkoutLogin'])->name('frontend.login.checkout.store');
-        Route::post('magic-link/send', [Auth\MagicLinkController::class, 'send'])->name('magic-link.send');
-        Route::get('magic-link/verify/{token}', [Auth\MagicLinkController::class, 'verify'])->name('magic-link.verify');
-
         Route::post('register', [Auth\RegisterController::class, 'store'])->name('frontend.register.store');
         Route::post('passwordreset', [Auth\ResetPasswordController::class, 'store'])->name('frontend.passwordreset.store');
         Route::get('passwordreset/{token}', [Auth\ResetPasswordController::class, 'resetForm'])->name('frontend.passwordreset.form');
@@ -1165,7 +1159,6 @@ Route::domain($admin)->group(function () {
         Route::post('/lesson-content/{id}/delete-lesson-content', [Backend\LessonController::class, 'deleteLessonContent'])->name('admin.lesson.delete_lesson_content'); // Save lesson order
         Route::post('/lesson/{id}/quiz', [Backend\LessonController::class, 'saveQuiz'])->name('admin.lesson.save_quiz');
         Route::delete('/lesson/quiz/{id}', [Backend\LessonController::class, 'deleteQuiz'])->name('admin.lesson.delete_quiz');
-        Route::post('/course/{id}/auto-categorize-lessons', [Backend\LessonController::class, 'autoCategorize'])->name('admin.course.auto_categorize');
         Route::post('/lesson/{id}/ai-generate', [Backend\LessonController::class, 'aiGenerate'])->name('admin.lesson.ai_generate');
         Route::post('/lesson/{id}/ai-review', [Backend\LessonController::class, 'aiReview'])->name('admin.lesson.ai_review');
         Route::post('/lesson/{id}/lesson-assignment', [Backend\LessonController::class, 'saveLessonAssignment'])->name('admin.lesson.save_assignment');
@@ -1234,88 +1227,6 @@ Route::domain($admin)->group(function () {
         Route::post('email/forward/{id}', [Backend\EmailController::class, 'forward'])->name('admin.email.forward');
         Route::post('email/reply', [Backend\EmailController::class, 'reply'])->name('admin.email.reply');
 
-        // CRM & E-postautomatisering
-        Route::prefix('crm')->group(function () {
-            Route::get('/', [Backend\CrmController::class, 'index'])->name('admin.crm.index');
-            Route::get('/contacts', [Backend\CrmController::class, 'contacts'])->name('admin.crm.contacts.index');
-            Route::get('/contacts/{id}', [Backend\CrmController::class, 'contactShow'])->name('admin.crm.contacts.show');
-            Route::post('/contacts/{id}/tag', [Backend\CrmController::class, 'addTag'])->name('admin.crm.contacts.tag');
-            Route::delete('/contacts/{id}/tag/{tag}', [Backend\CrmController::class, 'removeTag'])->name('admin.crm.contacts.untag');
-            Route::post('/contacts/{id}/unsubscribe', [Backend\CrmController::class, 'unsubscribeContact'])->name('admin.crm.contacts.unsubscribe');
-            Route::get('/sequences', [Backend\EmailSequenceController::class, 'index'])->name('admin.crm.sequences.index');
-            Route::get('/sequences/{id}', [Backend\EmailSequenceController::class, 'show'])->name('admin.crm.sequences.show');
-            Route::post('/sequences/{id}/toggle', [Backend\EmailSequenceController::class, 'toggleActive'])->name('admin.crm.sequences.toggle');
-            Route::get('/sequences/{id}/steps/{stepId}/edit', [Backend\EmailSequenceController::class, 'editStep'])->name('admin.crm.sequences.steps.edit');
-            Route::put('/sequences/{id}/steps/{stepId}', [Backend\EmailSequenceController::class, 'updateStep'])->name('admin.crm.sequences.steps.update');
-            Route::post('/sequences/{id}/steps', [Backend\EmailSequenceController::class, 'createStep'])->name('admin.crm.sequences.steps.create');
-            Route::delete('/sequences/{id}/steps/{stepId}', [Backend\EmailSequenceController::class, 'deleteStep'])->name('admin.crm.sequences.steps.delete');
-            Route::get('/planned', [Backend\CrmController::class, 'planned'])->name('admin.crm.planned');
-            Route::post('/planned/{id}/cancel', [Backend\CrmController::class, 'cancelPlanned'])->name('admin.crm.planned.cancel');
-            Route::get('/history', [Backend\CrmController::class, 'history'])->name('admin.crm.history');
-            Route::get('/statistics', [Backend\CrmController::class, 'statistics'])->name('admin.crm.statistics');
-        });
-
-        // Annonsepanel
-        Route::prefix('annonser')->group(function () {
-            Route::get('/', [Backend\AdCampaignController::class, 'index'])->name('admin.ads.index');
-            Route::post('/', [Backend\AdCampaignController::class, 'store'])->name('admin.ads.store');
-            Route::post('/{campaign}/activate', [Backend\AdCampaignController::class, 'activate'])->name('admin.ads.activate');
-            Route::post('/{campaign}/pause', [Backend\AdCampaignController::class, 'pause'])->name('admin.ads.pause');
-            Route::post('/{campaign}/sync-stats', [Backend\AdCampaignController::class, 'syncStats'])->name('admin.ads.sync-stats');
-            Route::delete('/{campaign}', [Backend\AdCampaignController::class, 'destroy'])->name('admin.ads.destroy');
-            Route::post('/launch-fb-lead', [Backend\AdCampaignController::class, 'launchFacebookLead'])->name('admin.ads.launch-fb-lead');
-            Route::get('/generate-text', [Backend\AdCampaignController::class, 'generateAdText'])->name('admin.ads.generate-text');
-        });
-
-        // Kontakt-import
-        Route::prefix('contacts/import')->group(function () {
-            Route::get('/', [Backend\ContactImportController::class, 'index'])->name('admin.contacts.import');
-            Route::get('/test-api', [Backend\ContactImportController::class, 'testApi'])->name('admin.contacts.import.test-api');
-            Route::post('/start', [Backend\ContactImportController::class, 'start'])->name('admin.contacts.import.start');
-            Route::get('/progress', [Backend\ContactImportController::class, 'progress'])->name('admin.contacts.import.progress');
-            Route::post('/reset', [Backend\ContactImportController::class, 'reset'])->name('admin.contacts.import.reset');
-        });
-
-        // Nyhetsbrev
-        Route::prefix('newsletters')->group(function () {
-            Route::get('/', [Backend\NewsletterController::class, 'index'])->name('admin.newsletter.index');
-            Route::get('/create', [Backend\NewsletterController::class, 'create'])->name('admin.newsletter.create');
-            Route::post('/', [Backend\NewsletterController::class, 'store'])->name('admin.newsletter.store');
-            Route::get('/{id}/edit', [Backend\NewsletterController::class, 'edit'])->name('admin.newsletter.edit');
-            Route::put('/{id}', [Backend\NewsletterController::class, 'update'])->name('admin.newsletter.update');
-            Route::post('/{id}/send', [Backend\NewsletterController::class, 'send'])->name('admin.newsletter.send');
-            Route::get('/{id}/preview', [Backend\NewsletterController::class, 'preview'])->name('admin.newsletter.preview');
-            Route::post('/{id}/duplicate', [Backend\NewsletterController::class, 'duplicate'])->name('admin.newsletter.duplicate');
-            Route::post('/{id}/test', [Backend\NewsletterController::class, 'sendTest'])->name('admin.newsletter.test');
-            Route::get('/{id}/stats', [Backend\NewsletterController::class, 'stats'])->name('admin.newsletter.stats');
-            Route::delete('/{id}', [Backend\NewsletterController::class, 'destroy'])->name('admin.newsletter.destroy');
-        });
-
-        // E-postoversikt
-        Route::get('email-overview', function () {
-            return view('backend.email-admin.overview');
-        })->name('admin.email-overview');
-
-        // Recording nedlastingslogg
-        Route::get('recording-logs', function () {
-            $logs = \DB::table('webinar_recording_logs')->orderByDesc('created_at')->limit(100)->get();
-            return view('backend.email-admin.recording-logs', compact('logs'));
-        })->name('admin.recording-logs');
-
-        // AI Assistent
-        Route::get('ai', [Backend\AdminAiController::class, 'index'])->name('admin.ai.index');
-        Route::post('ai/execute', [Backend\AdminAiController::class, 'execute'])->name('admin.ai.execute');
-
-        // E-postmaler admin-panel
-        Route::prefix('email-admin')->group(function () {
-            Route::get('/', [Backend\EmailTemplateController::class, 'adminIndex'])->name('admin.email-admin.index');
-            Route::get('/{id}/edit', [Backend\EmailTemplateController::class, 'adminEdit'])->name('admin.email-admin.edit');
-            Route::post('/{id}', [Backend\EmailTemplateController::class, 'adminUpdate'])->name('admin.email-admin.update');
-            Route::get('/{id}/preview', [Backend\EmailTemplateController::class, 'adminPreview'])->name('admin.email-admin.preview');
-            Route::post('/{id}/send-test', [Backend\EmailTemplateController::class, 'adminSendTest'])->name('admin.email-admin.send-test');
-            Route::delete('/{id}', [Backend\EmailTemplateController::class, 'adminDestroy'])->name('admin.email-admin.destroy');
-        });
-
         // Admin E-postoversikt
         Route::prefix('emails')->group(function () {
             Route::get('/', [Backend\AdminEmailController::class, 'index'])->name('admin.emails.index');
@@ -1345,7 +1256,6 @@ Route::domain($admin)->group(function () {
         ])->except('create', 'edit', 'show', 'index');
         Route::post('webinar/{id}/delete', [Backend\WebinarController::class, 'destroy'])->name('admin.webinar.delete');
         Route::put('webinar/{id}/make-replay', [Backend\WebinarController::class, 'makeReplay'])->name('admin.webinar.make-replay');
-        Route::get('webinar/{id}/download-recording', [Backend\WebinarController::class, 'downloadRecording'])->name('admin.webinar.download-recording');
         Route::post('webinar/{id}/set-schedule', [Backend\WebinarController::class, 'setSchedule'])->name('admin.webinar.schedule');
         Route::post('webinar/{id}/update-field', [Backend\WebinarController::class, 'updateField'])->name('admin.webinar.update-field');
         Route::post('webinar/{id}/course/{course_id}/email-out', [Backend\WebinarController::class, 'webinarEmailOut'])->name('admin.webinar.email-out');
@@ -2187,6 +2097,38 @@ Route::domain($admin)->group(function () {
     Route::get('/dropbox/download/{path}', [Frontend\DropboxController::class, 'downloadFile'])
         ->where('path', '.*')
         ->name('admin.dropbox.download_file');
+
+    // Ad OS Routes
+    Route::prefix('ads')->group(function () {
+        Route::get('/', [Backend\AdOsController::class, 'dashboard'])->name('admin.ads.dashboard');
+        Route::get('/strategy', [Backend\AdOsController::class, 'strategy'])->name('admin.ads.strategy');
+        Route::post('/strategy', [Backend\AdOsController::class, 'updateStrategy'])->name('admin.ads.strategy.update');
+        Route::get('/campaigns', [Backend\AdOsController::class, 'campaigns'])->name('admin.ads.campaigns');
+        Route::get('/campaigns/{id}', [Backend\AdOsController::class, 'showCampaign'])->name('admin.ads.campaigns.show');
+        Route::get('/creatives', [Backend\AdOsController::class, 'creatives'])->name('admin.ads.creatives');
+        Route::post('/creatives/generate', [Backend\AdOsController::class, 'generateCreatives'])->name('admin.ads.creatives.generate');
+        Route::get('/recommendations', [Backend\AdOsController::class, 'recommendations'])->name('admin.ads.recommendations');
+        Route::post('/recommendations/{id}', [Backend\AdOsController::class, 'handleRecommendation'])->name('admin.ads.recommendations.handle');
+        Route::get('/approvals', [Backend\AdOsController::class, 'approvals'])->name('admin.ads.approvals');
+        Route::post('/approvals/{id}/approve', [Backend\AdOsController::class, 'approve'])->name('admin.ads.approvals.approve');
+        Route::post('/approvals/{id}/reject', [Backend\AdOsController::class, 'reject'])->name('admin.ads.approvals.reject');
+        Route::get('/experiments', [Backend\AdOsController::class, 'experiments'])->name('admin.ads.experiments');
+        Route::get('/logs', [Backend\AdOsController::class, 'logs'])->name('admin.ads.logs');
+        Route::get('/rules', [Backend\AdOsController::class, 'rules'])->name('admin.ads.rules');
+        Route::post('/rules', [Backend\AdOsController::class, 'storeRule'])->name('admin.ads.rules.store');
+        Route::put('/rules/{id}', [Backend\AdOsController::class, 'updateRule'])->name('admin.ads.rules.update');
+        Route::delete('/rules/{id}', [Backend\AdOsController::class, 'deleteRule'])->name('admin.ads.rules.delete');
+        Route::post('/kill-switch', [Backend\AdOsController::class, 'toggleKillSwitch'])->name('admin.ads.kill-switch');
+    });
+
+    // Helpwise CRM Routes
+    Route::prefix('helpwise')->group(function () {
+        Route::get('/', [Backend\HelpwiseController::class, 'index'])->name('admin.helpwise.index');
+        Route::get('/conversation/{id}', [Backend\HelpwiseController::class, 'show'])->name('admin.helpwise.show');
+        Route::get('/student/{userId}', [Backend\HelpwiseController::class, 'studentProfile'])->name('admin.helpwise.student');
+        Route::post('/link-users', [Backend\HelpwiseController::class, 'linkUsers'])->name('admin.helpwise.link-users');
+        Route::get('/webhook-logs', [Backend\HelpwiseController::class, 'webhookLogs'])->name('admin.helpwise.webhook-logs');
+    });
 });
 
 /**

@@ -2,199 +2,225 @@
 
 namespace App\Services\Helpwise;
 
+use App\User;
+use App\HelpwiseConversation;
+use App\HelpwiseMessage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class HelpwiseReplyAiService
 {
-    protected string $model;
-    protected int $timeout;
-
-    public function __construct()
+    /**
+     * Generate an AI draft reply for a customer message.
+     * Returns the draft text in Norwegian, never auto-sends.
+     */
+    public function generateDraftReply(HelpwiseConversation $conversation, ?HelpwiseMessage $latestMessage = null): ?string
     {
-        $this->model = config('admin_ai.model', 'claude-sonnet-4-20250514');
-        $this->timeout = 45;
+        $studentContext = $this->getStudentContext($conversation);
+        $messageHistory = $this->getMessageHistory($conversation);
+        $customerMessage = $latestMessage?->body_plain ?? $latestMessage?->body ?? '';
+
+        $prompt = $this->buildPrompt($conversation, $customerMessage, $studentContext, $messageHistory);
+
+        try {
+            $reply = $this->callAi($prompt);
+
+            if ($reply) {
+                Log::info('Helpwise AI: draft reply generated', [
+                    'conversation_id' => $conversation->id,
+                    'helpwise_id' => $conversation->helpwise_id,
+                    'length' => strlen($reply),
+                ]);
+            }
+
+            return $reply;
+        } catch (\Exception $e) {
+            Log::error('Helpwise AI: draft generation failed', ['error' => $e->getMessage()]);
+            return null;
+        }
     }
 
     /**
-     * Generate an AI reply suggestion for a support conversation.
-     *
-     * @param array $threadMessages  Array of message objects with 'from', 'body', 'created_at'
-     * @param array|null $studentData  Enrichment data about the student (courses, status, etc.)
-     * @param array $historicalExamples  Past reply examples for style matching (V2)
-     * @return array|null  Parsed JSON response or null on failure
+     * Build the AI prompt with full context about the student and conversation.
      */
-    public function generateReply(array $threadMessages, ?array $studentData = null, array $historicalExamples = []): ?array
-    {
-        $apiKey = config('services.anthropic.key');
+    private function buildPrompt(
+        HelpwiseConversation $conversation,
+        string $customerMessage,
+        array $studentContext,
+        string $messageHistory
+    ): string {
+        $inbox = $conversation->inbox ?? 'Ukjent';
+        $customerName = $conversation->customer_name ?? 'kunde';
 
-        if (!$apiKey) {
-            Log::error('HelpwiseReplyAiService: ANTHROPIC_API_KEY not configured');
-            return null;
+        $studentInfo = '';
+        if (!empty($studentContext)) {
+            $studentInfo = "\n\nELEVINFORMASJON FRA DATABASEN:\n";
+            foreach ($studentContext as $key => $value) {
+                if ($value) $studentInfo .= "- {$key}: {$value}\n";
+            }
         }
 
-        $systemPrompt = $this->buildSystemPrompt($historicalExamples);
-        $userPrompt = $this->buildUserPrompt($threadMessages, $studentData, $historicalExamples);
+        $historySection = '';
+        if ($messageHistory) {
+            $historySection = "\n\nTIDLIGERE MELDINGER I SAMTALEN:\n{$messageHistory}";
+        }
 
-        try {
+        return <<<PROMPT
+Du er en vennlig og profesjonell kundebehandler for Forfatterskolen, Norges ledende nettbaserte skriveskole.
+
+Du skriver ALLTID på norsk (bokmål).
+Du er hjelpsom, varm og profesjonell.
+Du skal ALDRI finne på informasjon - bruk kun det du vet fra konteksten.
+Hvis du er usikker, si at du skal sjekke og komme tilbake.
+Svar kort og presist. Ikke skriv romaner.
+
+INBOX: {$inbox}
+KUNDENS NAVN: {$customerName}
+KUNDENS E-POST: {$conversation->customer_email}
+{$studentInfo}
+{$historySection}
+
+KUNDENS SISTE MELDING:
+{$customerMessage}
+
+Skriv et passende svarkutkast. Husk:
+- Start med å hilse på kunden ved navn hvis mulig
+- Svar direkte på spørsmålet
+- Vær hjelpsom og positiv
+- Avslutt med en hyggelig avslutning
+- Signer med "Vennlig hilsen, Forfatterskolen"
+- IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
+PROMPT;
+    }
+
+    /**
+     * Get student context from the database if the conversation is linked to a user.
+     */
+    private function getStudentContext(HelpwiseConversation $conversation): array
+    {
+        if (!$conversation->user_id) {
+            // Try to find by email
+            $user = $conversation->customer_email
+                ? User::where('email', $conversation->customer_email)->first()
+                : null;
+
+            if ($user) {
+                $conversation->update(['user_id' => $user->id]);
+            } else {
+                return [];
+            }
+        } else {
+            $user = User::find($conversation->user_id);
+        }
+
+        if (!$user) return [];
+
+        $context = [
+            'Navn' => $user->first_name . ' ' . $user->last_name,
+            'E-post' => $user->email,
+            'Rolle' => $this->getRoleName($user->role),
+        ];
+
+        // Check active courses
+        $courses = $user->coursesTaken()
+            ->where('is_active', 1)
+            ->with('package')
+            ->get();
+
+        if ($courses->isNotEmpty()) {
+            $courseNames = $courses->map(fn($ct) => $ct->package?->name ?? 'Ukjent kurs')->implode(', ');
+            $context['Aktive kurs'] = $courseNames;
+        }
+
+        // Check if they have pending assignments
+        $pendingAssignments = \App\AssignmentLearner::where('user_id', $user->id)
+            ->whereIn('status', ['pending', 'in_progress'])
+            ->count();
+
+        if ($pendingAssignments > 0) {
+            $context['Ventende oppgaver'] = $pendingAssignments;
+        }
+
+        // Check shop manuscripts
+        $manuscripts = \App\ShopManuscriptsTaken::where('user_id', $user->id)
+            ->where('is_active', 1)
+            ->count();
+
+        if ($manuscripts > 0) {
+            $context['Aktive manustjenester'] = $manuscripts;
+        }
+
+        return $context;
+    }
+
+    /**
+     * Get recent message history for the conversation.
+     */
+    private function getMessageHistory(HelpwiseConversation $conversation): string
+    {
+        $messages = $conversation->messages()
+            ->orderBy('message_at')
+            ->limit(10)
+            ->get();
+
+        if ($messages->isEmpty()) return '';
+
+        $history = '';
+        foreach ($messages as $msg) {
+            $direction = $msg->direction === 'outbound' ? 'AGENT' : 'KUNDE';
+            $time = $msg->message_at?->format('d.m H:i') ?? '';
+            $body = \Illuminate\Support\Str::limit(strip_tags($msg->body_plain ?? $msg->body ?? ''), 300);
+            $history .= "[{$time}] {$direction}: {$body}\n\n";
+        }
+
+        return $history;
+    }
+
+    private function callAi(string $prompt): ?string
+    {
+        $provider = config('ad_os.ai_provider', 'openai');
+
+        if ($provider === 'anthropic') {
             $response = Http::withHeaders([
-                'x-api-key' => $apiKey,
+                'x-api-key' => config('services.anthropic.api_key'),
+                'Content-Type' => 'application/json',
                 'anthropic-version' => '2023-06-01',
-                'content-type' => 'application/json',
-            ])->timeout($this->timeout)->post('https://api.anthropic.com/v1/messages', [
-                'model' => $this->model,
-                'max_tokens' => 2048,
-                'system' => $systemPrompt,
+            ])->post('https://api.anthropic.com/v1/messages', [
+                'model' => 'claude-sonnet-4-20250514',
+                'max_tokens' => 1024,
                 'messages' => [
-                    ['role' => 'user', 'content' => $userPrompt],
+                    ['role' => 'user', 'content' => $prompt],
                 ],
             ]);
 
-            if (!$response->successful()) {
-                Log::error('HelpwiseReplyAiService API error', [
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                ]);
-                return null;
-            }
-
-            $body = $response->json();
-            $text = $body['content'][0]['text'] ?? '';
-
-            return $this->parseResponse($text);
-        } catch (\Exception $e) {
-            Log::error('HelpwiseReplyAiService exception', ['message' => $e->getMessage()]);
-            return null;
+            return $response->json('content.0.text');
         }
+
+        // Default: OpenAI
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . config('services.openai.api_key'),
+            'Content-Type' => 'application/json',
+        ])->post('https://api.openai.com/v1/chat/completions', [
+            'model' => 'gpt-4o',
+            'messages' => [
+                ['role' => 'system', 'content' => 'Du er en kundebehandler for Forfatterskolen. Skriv alltid på norsk bokmål.'],
+                ['role' => 'user', 'content' => $prompt],
+            ],
+            'temperature' => 0.7,
+            'max_tokens' => 1024,
+        ]);
+
+        return $response->json('choices.0.message.content');
     }
 
-    protected function buildSystemPrompt(array $historicalExamples = []): string
+    private function getRoleName(int $role): string
     {
-        $prompt = <<<'PROMPT'
-Du er en vennlig og profesjonell kundeservice-assistent for Forfatterskolen.no, Norges ledende nettbaserte skriveskole.
-
-REGLER:
-- Svar ALLTID på norsk (bokmål) med mindre kunden skriver på et annet språk.
-- Vær varm, hjelpsom og menneskelig i tonen.
-- ALDRI dikt opp priser, kursdetaljer, datoer eller retningslinjer. Hvis du er usikker, si at du vil sjekke og komme tilbake.
-- ALDRI send svaret automatisk. Du lager KUN utkast.
-- Hvis henvendelsen handler om tekniske problemer, passordbytte, eller kontoendringer, foreslå å videresende til riktig avdeling.
-- Hvis henvendelsen er spam, reklame, eller irrelevant, sett should_reply til false.
-- Hold svarene konsise men hjelpsomme.
-PROMPT;
-
-        if (!empty($historicalExamples)) {
-            $prompt .= "\n\nSTILREFERANSE:\nDu har fått tidligere svar fra teamet som stilreferanse. Bruk disse som inspirasjon for tone og format, men IKKE kopier dem ordrett. Tilpass svaret til den aktuelle henvendelsen.";
-        }
-
-        $prompt .= <<<'PROMPT'
-
-
-Du MÅ svare med gyldig JSON i følgende format (ingen tekst utenfor JSON):
-{
-    "language": "no",
-    "should_reply": true,
-    "reply_type": "support|info|escalate|spam",
-    "confidence": 0.85,
-    "reasoning_summary": "Kort forklaring på hvorfor du valgte dette svaret",
-    "style_notes": "Kort notat om hvilken stil/tone du brukte fra eksemplene",
-    "subject": "Re: Emne",
-    "body": "Selve svarteksten i HTML-format"
-}
-
-reply_type verdier:
-- "support": Vanlig kundeservice-svar
-- "info": Informasjonsforespørsel
-- "escalate": Bør eskaleres til en menneskelig medarbeider
-- "spam": Spam/irrelevant melding
-PROMPT;
-
-        return $prompt;
-    }
-
-    protected function buildUserPrompt(array $threadMessages, ?array $studentData, array $historicalExamples = []): string
-    {
-        $prompt = "Her er e-posttråden (nyeste melding først):\n\n";
-
-        foreach ($threadMessages as $i => $msg) {
-            $from = $msg['from'] ?? 'Ukjent';
-            $date = $msg['created_at'] ?? '';
-            $body = $msg['body'] ?? $msg['text'] ?? '';
-            // Strip HTML tags for cleaner context
-            $body = strip_tags($body);
-            $prompt .= "--- Melding " . ($i + 1) . " ---\n";
-            $prompt .= "Fra: {$from}\n";
-            if ($date) {
-                $prompt .= "Dato: {$date}\n";
-            }
-            $prompt .= "Innhold:\n{$body}\n\n";
-        }
-
-        if ($studentData) {
-            $prompt .= "\n--- Studentinformasjon ---\n";
-            if (!empty($studentData['name'])) {
-                $prompt .= "Navn: {$studentData['name']}\n";
-            }
-            if (!empty($studentData['email'])) {
-                $prompt .= "E-post: {$studentData['email']}\n";
-            }
-            if (!empty($studentData['courses'])) {
-                $prompt .= "Kurs: " . implode(', ', $studentData['courses']) . "\n";
-            }
-            if (!empty($studentData['status'])) {
-                $prompt .= "Status: {$studentData['status']}\n";
-            }
-            if (!empty($studentData['created_at'])) {
-                $prompt .= "Registrert: {$studentData['created_at']}\n";
-            }
-        }
-
-        // V2: Include historical reply examples for style matching
-        if (!empty($historicalExamples)) {
-            $prompt .= "\n--- Tidligere svar fra teamet (stilreferanse) ---\n";
-            foreach (array_slice($historicalExamples, 0, 5) as $i => $example) {
-                $exSubject = $example['subject'] ?? 'Ukjent emne';
-                $exBody = strip_tags($example['reply_body'] ?? $example['body'] ?? '');
-                $exBody = mb_substr($exBody, 0, 500);
-                $prompt .= "Eksempel " . ($i + 1) . " (emne: {$exSubject}):\n{$exBody}\n\n";
-            }
-            $prompt .= "Bruk disse eksemplene som stilreferanse. Ikke kopier ordrett.\n";
-        }
-
-        $prompt .= "\nGenerer et utkast til svar basert på denne tråden. Husk å svare med gyldig JSON.";
-
-        return $prompt;
-    }
-
-    protected function parseResponse(string $text): ?array
-    {
-        // Try to extract JSON from the response
-        $text = trim($text);
-
-        // Remove markdown code fences if present
-        if (preg_match('/```(?:json)?\s*([\s\S]*?)\s*```/', $text, $matches)) {
-            $text = $matches[1];
-        }
-
-        $decoded = json_decode($text, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            Log::warning('HelpwiseReplyAiService: failed to parse JSON', [
-                'error' => json_last_error_msg(),
-                'raw' => substr($text, 0, 500),
-            ]);
-            return null;
-        }
-
-        // Validate required fields
-        $required = ['should_reply', 'confidence'];
-        foreach ($required as $field) {
-            if (!isset($decoded[$field])) {
-                Log::warning('HelpwiseReplyAiService: missing required field', ['field' => $field]);
-                return null;
-            }
-        }
-
-        return $decoded;
+        return match ($role) {
+            1 => 'Admin',
+            2 => 'Elev',
+            3 => 'Redaktør',
+            4 => 'Giutbok-admin',
+            default => 'Ukjent',
+        };
     }
 }

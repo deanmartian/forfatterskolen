@@ -79,15 +79,10 @@ return [
         'ad_account_id' => env('FACEBOOK_AD_ACCOUNT_ID'),
         'page_id' => env('FACEBOOK_PAGE_ID'),
         'webhook_verify_token' => env('FACEBOOK_WEBHOOK_VERIFY_TOKEN'),
-        'pixel_id' => env('META_PIXEL_ID'),
-        'capi_access_token' => env('FACEBOOK_CAPI_ACCESS_TOKEN'),
-        'test_event_code' => env('FACEBOOK_TEST_EVENT_CODE', ''),
     ],
 
     'google_ads' => [
         'id' => env('GOOGLE_ADS_ID'),
-        'customer_id' => env('GOOGLE_ADS_CUSTOMER_ID'),
-        'access_token' => env('GOOGLE_ADS_ACCESS_TOKEN'),
         'conversion_purchase' => env('GOOGLE_ADS_CONVERSION_PURCHASE'),
         'conversion_checkout' => env('GOOGLE_ADS_CONVERSION_CHECKOUT'),
         'conversion_lead' => env('GOOGLE_ADS_CONVERSION_LEAD'),
@@ -95,6 +90,14 @@ return [
 
     'meta_pixel' => [
         'id' => env('META_PIXEL_ID'),
+    ],
+
+    'helpwise' => [
+        'api_key' => env('HELPWISE_API_KEY'),
+        'api_secret' => env('HELPWISE_API_SECRET'),
+        'base_url' => env('HELPWISE_BASE_URL', 'https://app.helpwise.io/api/v1'),
+        'webhook_secret' => env('HELPWISE_WEBHOOK_SECRET'),
+        'widget_id' => env('HELPWISE_WIDGET_ID', '60b54b2873539'),
     ],
 
     'wistia' => [
