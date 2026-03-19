@@ -6,6 +6,8 @@ use App\HelpwiseConversation;
 use App\HelpwiseMessage;
 use App\HelpwiseWebhookLog;
 use App\Jobs\ProcessHelpwiseWebhookJob;
+use App\Models\Inbox\InboxConversation;
+use App\Models\Inbox\InboxMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -126,6 +128,9 @@ class HelpwiseWebhookController extends Controller
             HelpwiseMessage::createFromWebhook($conversation->id, $messageData ?? $data);
         }
 
+        // Also create in Inbox system
+        $this->syncToInbox($conversation, $data);
+
         Log::info('Helpwise: conversation created', [
             'helpwise_id' => $conversation->helpwise_id,
             'email' => $conversation->customer_email,
@@ -133,6 +138,54 @@ class HelpwiseWebhookController extends Controller
         ]);
 
         return $conversation;
+    }
+
+    private function syncToInbox(HelpwiseConversation $hwConv, array $data): void
+    {
+        try {
+            if (!class_exists(InboxConversation::class)) return;
+
+            $inboxConv = InboxConversation::firstOrCreate(
+                ['helpwise_id' => $hwConv->helpwise_id],
+                [
+                    'subject' => $hwConv->subject,
+                    'customer_email' => $hwConv->customer_email,
+                    'customer_name' => $hwConv->customer_name,
+                    'user_id' => $hwConv->user_id,
+                    'status' => 'open',
+                    'inbox' => $hwConv->inbox,
+                    'source' => 'helpwise',
+                ]
+            );
+
+            // Extract first message from Helpwise payload
+            $emails = $data['emails'] ?? [];
+            if (!empty($emails)) {
+                $firstEmail = reset($emails);
+                $bodyPlain = $firstEmail['text'] ?? '';
+                $bodyHtml = $firstEmail['html'] ?? '';
+                $fromEmail = $firstEmail['from'][0]['email'] ?? $hwConv->customer_email;
+                $fromName = $firstEmail['from'][0]['name'] ?? $hwConv->customer_name;
+
+                // Only add if no messages exist yet
+                if ($inboxConv->messages()->count() === 0 && ($bodyPlain || $bodyHtml)) {
+                    InboxMessage::create([
+                        'conversation_id' => $inboxConv->id,
+                        'type' => 'reply',
+                        'direction' => 'inbound',
+                        'from_email' => $fromEmail,
+                        'from_name' => $fromName,
+                        'to_email' => $firstEmail['to'][0]['email'] ?? $hwConv->inbox,
+                        'subject' => $hwConv->subject,
+                        'body' => $bodyPlain ?: strip_tags($bodyHtml),
+                        'body_plain' => $bodyPlain ?: strip_tags($bodyHtml),
+                        'body_html' => $bodyHtml,
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning('Helpwise: failed to sync to inbox', ['error' => $e->getMessage()]);
+        }
     }
 
     private function handleConversationClosed(array $data): HelpwiseConversation
