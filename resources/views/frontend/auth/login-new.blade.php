@@ -14,72 +14,105 @@
         margin: 0 auto;
         min-height: 600px;
     }
-    .login-image {
-        background-image: url('{{ asset("images-new/login/left-image.png") }}');
-        background-size: cover;
-        background-position: center;
-        min-height: 500px;
+    /* Venstre side — rød bakgrunn med sitat */
+    .login-left {
+        background-color: #862736;
+        padding: 64px 48px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 100%;
     }
-    .login-card {
+    .login-left-logo {
+        color: rgba(255,255,255,0.6);
+        font-size: 13px;
+        letter-spacing: 0.15em;
+        font-weight: 500;
+        text-transform: uppercase;
+        margin-bottom: 48px;
+    }
+    .login-left-quote {
+        font-family: Georgia, serif;
+        font-size: 32px;
+        color: #fff;
+        font-weight: normal;
+        line-height: 1.4;
+        margin-bottom: 24px;
+    }
+    .login-left-attribution {
+        font-size: 14px;
+        color: rgba(255,255,255,0.7);
+        font-style: italic;
+    }
+    .login-left-since {
+        margin-top: auto;
+        padding-top: 48px;
+        font-size: 12px;
+        color: rgba(255,255,255,0.4);
+        letter-spacing: 0.1em;
+    }
+    /* Høyre side — innloggingskort */
+    .login-right {
         background: #fff;
-        padding: 48px 40px;
+        padding: 64px 56px;
         display: flex;
         flex-direction: column;
         justify-content: center;
     }
     .login-title {
         font-family: Georgia, serif;
-        font-size: 26px;
-        color: #1a1a1a;
-        margin-bottom: 28px;
+        font-size: 28px;
         font-weight: normal;
+        color: #1a1a1a;
+        margin-bottom: 32px;
+    }
+    .login-label {
+        display: block;
+        font-size: 13px;
+        color: #555;
+        font-weight: 500;
+        margin-bottom: 6px;
     }
     .login-input {
         width: 100%;
-        padding: 13px 16px;
-        border: 1.5px solid #e5e7eb;
-        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 12px 16px;
         font-size: 15px;
         margin-bottom: 14px;
         box-sizing: border-box;
+        background: #fafafa;
         transition: border-color 0.2s;
         font-family: inherit;
     }
     .login-input:focus {
         border-color: #862736;
+        background: #fff;
         outline: none;
-        box-shadow: 0 0 0 3px rgba(134,39,54,0.1);
-    }
-    .login-label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 6px;
     }
     .login-btn-primary {
         width: 100%;
         background: #862736;
         color: #fff;
         border: none;
-        border-radius: 8px;
-        padding: 13px;
+        border-radius: 6px;
+        padding: 14px 24px;
         font-size: 15px;
-        font-weight: 600;
+        font-weight: 500;
+        letter-spacing: 0.02em;
         cursor: pointer;
         margin-bottom: 12px;
         transition: background 0.2s;
     }
-    .login-btn-primary:hover { background: #5f1a25; }
-    .login-btn-secondary {
+    .login-btn-primary:hover { background: #6b1e2b; }
+    .login-btn-magic {
         width: 100%;
         background: #fff;
+        border: 1px solid #862736;
         color: #862736;
-        border: 1.5px solid #862736;
-        border-radius: 8px;
-        padding: 12px;
-        font-size: 15px;
-        font-weight: 600;
+        border-radius: 6px;
+        padding: 12px 24px;
+        font-size: 14px;
         cursor: pointer;
         margin-bottom: 10px;
         text-align: center;
@@ -89,15 +122,15 @@
         justify-content: center;
         gap: 8px;
     }
-    .login-btn-secondary:hover { background: #f9edef; color: #862736; }
+    .login-btn-magic:hover { background: #f9edef; color: #862736; }
     .login-btn-oauth {
         width: 100%;
         background: #fff;
-        color: #1a1a1a;
-        border: 1.5px solid #e5e7eb;
-        border-radius: 8px;
-        padding: 12px;
-        font-size: 15px;
+        color: #333;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 12px 24px;
+        font-size: 14px;
         cursor: pointer;
         margin-bottom: 10px;
         display: flex;
@@ -105,9 +138,9 @@
         justify-content: center;
         gap: 10px;
         text-decoration: none;
-        font-weight: 500;
+        transition: border-color 0.2s;
     }
-    .login-btn-oauth:hover { border-color: #999; color: #1a1a1a; }
+    .login-btn-oauth:hover { border-color: #999; color: #333; }
     .login-btn-vipps {
         background: #FF5B24;
         color: #fff;
@@ -118,7 +151,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        margin: 18px 0;
+        margin: 20px 0;
         color: #999;
         font-size: 13px;
     }
@@ -135,8 +168,8 @@
     .login-link:hover { text-decoration: underline; }
     .login-bottom {
         text-align: center;
-        margin-top: 20px;
-        padding-top: 20px;
+        margin-top: 24px;
+        padding-top: 24px;
         border-top: 1px solid #e5e7eb;
         font-size: 14px;
         color: #666;
@@ -157,7 +190,7 @@
     }
     .alert {
         padding: 12px 16px;
-        border-radius: 8px;
+        border-radius: 6px;
         font-size: 14px;
         margin-bottom: 16px;
     }
@@ -166,8 +199,8 @@
     .back-link { display: inline-block; margin-bottom: 16px; font-size: 14px; }
     @media (max-width: 768px) {
         .login-wrapper { grid-template-columns: 1fr; }
-        .login-image { display: none; }
-        .login-card { padding: 32px 24px; }
+        .login-left { display: none; }
+        .login-right { padding: 32px 24px; }
     }
 </style>
 @stop
@@ -175,8 +208,16 @@
 @section('content')
 <div class="login-page">
     <div class="login-wrapper">
-        <div class="login-image"></div>
-        <div class="login-card">
+        {{-- Venstre side — rød bakgrunn med sitat --}}
+        <div class="login-left">
+            <div class="login-left-logo">FORFATTERSKOLEN</div>
+            <div class="login-left-quote">«Alle har en historie å fortelle.»</div>
+            <div class="login-left-attribution">– Kristine, grunnlegger</div>
+            <div class="login-left-since">Siden 2015</div>
+        </div>
+
+        {{-- Høyre side — innloggingskort --}}
+        <div class="login-right">
 
             @if($errors->any())
                 <div class="alert alert-danger">{{ $errors->first() }}</div>
@@ -210,7 +251,7 @@
 
                 <div class="login-divider"><span>eller</span></div>
 
-                <a href="#" class="login-btn-secondary" onclick="showSection('magic-link'); return false;">
+                <a href="#" class="login-btn-magic" onclick="showSection('magic-link'); return false;">
                     ✉️ Send meg en innloggingslenke
                 </a>
 
@@ -305,19 +346,12 @@
 @section('js')
 <script>
 function showSection(section) {
-    document.querySelectorAll('.login-section').forEach(function(el) {
-        el.classList.remove('active');
-    });
+    document.querySelectorAll('.login-section').forEach(function(el) { el.classList.remove('active'); });
     document.getElementById('section-' + section).classList.add('active');
 }
-
 function togglePw(id) {
     var el = document.getElementById(id);
     el.type = el.type === 'password' ? 'text' : 'password';
 }
-
-@if(session('magic_sent'))
-    // Vis magic link bekreftelse
-@endif
 </script>
 @stop
