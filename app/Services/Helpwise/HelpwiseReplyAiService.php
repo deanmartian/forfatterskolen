@@ -178,11 +178,13 @@ PROMPT;
 
     private function callAi(string $prompt): ?string
     {
-        $provider = config('ad_os.ai_provider', 'openai');
+        // Try Anthropic first, then GPT/OpenAI
+        $anthropicKey = config('services.anthropic.key') ?? config('services.anthropic.api_key');
+        $gptKey = config('services.gpt.api_key') ?? config('services.openai.key') ?? config('services.openai.api_key');
 
-        if ($provider === 'anthropic') {
+        if ($anthropicKey) {
             $response = Http::withHeaders([
-                'x-api-key' => config('services.anthropic.api_key'),
+                'x-api-key' => $anthropicKey,
                 'Content-Type' => 'application/json',
                 'anthropic-version' => '2023-06-01',
             ])->post('https://api.anthropic.com/v1/messages', [
@@ -196,9 +198,14 @@ PROMPT;
             return $response->json('content.0.text');
         }
 
-        // Default: OpenAI
+        if (!$gptKey) {
+            Log::error('Helpwise AI: No AI API key configured');
+            return null;
+        }
+
+        // Fallback: OpenAI/GPT
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . config('services.openai.api_key'),
+            'Authorization' => 'Bearer ' . $gptKey,
             'Content-Type' => 'application/json',
         ])->post('https://api.openai.com/v1/chat/completions', [
             'model' => 'gpt-4o',
