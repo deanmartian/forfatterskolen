@@ -6,6 +6,7 @@ use App\Lesson;
 use App\Video;
 use App\Webinar;
 use App\Services\BigMarkerService;
+use App\Services\WistiaService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -80,35 +81,29 @@ class DownloadWebinarRecordings extends Command
             $this->info("  ⬇ Laster ned: {$webinar->title}");
 
             try {
-                // Last ned filen
-                $filename = "webinar-recordings/{$conferenceId}.mp4";
-                $tempPath = storage_path("app/{$filename}");
+                // Last opp til Wistia — organisert per kurs
+                $wistia = app(WistiaService::class);
+                $videoName = "Opptak: {$webinar->title} ({$webinar->start_date})";
+                $courseName = $webinar->course->title ?? 'Ukjent kurs';
 
-                // Opprett mappe
-                Storage::makeDirectory('webinar-recordings');
+                // Finn eller opprett Wistia-prosjekt for kurset
+                $projectId = $this->getOrCreateWistiaProject($wistia, $courseName);
 
-                // Last ned med streaming
-                $response = Http::timeout(600)->withOptions(['sink' => $tempPath])->get($recordingUrl);
+                $this->line("    Laster opp til Wistia (prosjekt: {$courseName})...");
+                $wistiaResult = $wistia->uploadFromUrl($recordingUrl, $videoName, $projectId);
 
-                if (!file_exists($tempPath) || filesize($tempPath) < 1000) {
-                    $this->error("  ❌ Nedlasting feilet for: {$webinar->title}");
+                $wistiaHashedId = $wistiaResult['hashed_id'] ?? null;
+
+                if (!$wistiaHashedId) {
+                    $this->error("  ❌ Wistia-opplasting feilet for: {$webinar->title}");
                     $failed++;
                     continue;
                 }
 
-                $fileSizeMb = round(filesize($tempPath) / 1024 / 1024, 1);
-                $this->line("    Lastet ned: {$fileSizeMb} MB");
+                $this->line("    Wistia ID: {$wistiaHashedId}");
 
-                // Flytt til public storage
-                $publicPath = "webinar-recordings/{$conferenceId}.mp4";
-                $storagePath = public_path("storage/{$publicPath}");
-
-                // Opprett mappe i public
-                if (!is_dir(dirname($storagePath))) {
-                    mkdir(dirname($storagePath), 0755, true);
-                }
-
-                rename($tempPath, $storagePath);
+                // Hent embed-kode
+                $embedCode = $wistia->getEmbedCode($wistiaHashedId);
 
                 // Opprett leksjon i kurset
                 $lesson = Lesson::create([
@@ -116,14 +111,13 @@ class DownloadWebinarRecordings extends Command
                     'title' => "Opptak: {$webinar->title}",
                     'type' => 'module',
                     'description' => "Opptak fra webinaret \"{$webinar->title}\" holdt {$webinar->start_date}.",
-                    'allow_lesson_download' => 1,
-                    'whole_lesson_file' => "/storage/{$publicPath}",
+                    'allow_lesson_download' => 0,
                 ]);
 
-                // Legg til video embed
+                // Legg til Wistia video embed
                 Video::create([
                     'lesson_id' => $lesson->id,
-                    'embed_code' => '<video controls style="width:100%;max-width:800px;"><source src="' . asset("storage/{$publicPath}") . '" type="video/mp4"></video>',
+                    'embed_code' => $embedCode,
                 ]);
 
                 // Merk webinar som replay
@@ -131,7 +125,7 @@ class DownloadWebinarRecordings extends Command
                     'set_as_replay' => 1,
                 ]);
 
-                $this->info("  ✅ Leksjon opprettet: {$lesson->title} (Kurs: {$webinar->course->title})");
+                $this->info("  ✅ Leksjon opprettet: {$lesson->title} (Wistia: {$wistiaHashedId})");
                 $downloaded++;
 
             } catch (\Exception $e) {
@@ -151,6 +145,46 @@ class DownloadWebinarRecordings extends Command
         );
 
         return 0;
+    }
+
+    /**
+     * Finn eller opprett Wistia-prosjekt for et kurs
+     */
+    private function getOrCreateWistiaProject(WistiaService $wistia, string $courseName): string
+    {
+        // Cache prosjekt-IDer per kjøring
+        static $projectCache = [];
+
+        if (isset($projectCache[$courseName])) {
+            return $projectCache[$courseName];
+        }
+
+        // Søk etter eksisterende prosjekt
+        try {
+            $projects = $wistia->listProjects(1, 100);
+            foreach ($projects as $project) {
+                if (($project['name'] ?? '') === $courseName) {
+                    $projectCache[$courseName] = $project['hashedId'] ?? $project['hashed_id'] ?? '';
+                    return $projectCache[$courseName];
+                }
+            }
+
+            // Opprett nytt prosjekt
+            $newProject = Http::withHeaders([
+                'Authorization' => 'Bearer ' . config('services.wistia.api_token'),
+            ])->post('https://api.wistia.com/v1/projects.json', [
+                'name' => $courseName,
+            ])->json();
+
+            $projectId = $newProject['hashedId'] ?? $newProject['hashed_id'] ?? '';
+            $projectCache[$courseName] = $projectId;
+            $this->info("    📁 Nytt Wistia-prosjekt opprettet: {$courseName}");
+
+            return $projectId;
+        } catch (\Exception $e) {
+            Log::warning("Kunne ikke opprette Wistia-prosjekt: {$e->getMessage()}");
+            return '';
+        }
     }
 
     /**
