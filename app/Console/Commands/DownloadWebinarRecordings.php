@@ -45,20 +45,9 @@ class DownloadWebinarRecordings extends Command
 
         foreach ($webinars as $webinar) {
             // Sjekk om det allerede finnes opptak for dette webinaret
-            $webinarDate = \Carbon\Carbon::parse($webinar->start_date);
-
-            if ($webinar->course_id == 17) {
-                // Mentormøter: sjekk LessonContent
-                $existing = LessonContent::whereHas('lesson', fn($q) => $q->where('course_id', 17))
-                    ->where('title', 'like', '%' . substr($webinar->title, 0, 40) . '%')
-                    ->first();
-            } else {
-                // Vanlige kurs: sjekk Lesson
-                $existing = Lesson::where('course_id', $webinar->course_id)
-                    ->where('title', 'like', '%' . substr($webinar->title, 0, 40) . '%')
-                    ->where('title', 'like', '%Opptak%')
-                    ->first();
-            }
+            $existing = LessonContent::whereHas('lesson', fn($q) => $q->where('course_id', $webinar->course_id))
+                ->where('title', 'like', '%' . substr($webinar->title, 0, 40) . '%')
+                ->first();
 
             if ($existing) {
                 $this->line("  ⏭ Allerede lastet ned: {$webinar->title}");
@@ -122,55 +111,36 @@ class DownloadWebinarRecordings extends Command
                 // Hent embed-kode
                 $embedCode = $wistia->getEmbedCode($wistiaHashedId);
 
-                $isMentorCourse = ($webinar->course_id == 17);
                 $webinarDate = \Carbon\Carbon::parse($webinar->start_date);
 
-                if ($isMentorCourse) {
-                    // MENTORMØTER: Legg til som LessonContent i månedens leksjon
-                    $monthName = $webinarDate->translatedFormat('F Y');
-                    $lessonTitle = "Reprise {$monthName}";
+                // ALLE kurs: Legg til som LessonContent i månedens Reprise-leksjon
+                $monthName = $webinarDate->translatedFormat('F Y');
+                $lessonTitle = "Reprise {$monthName}";
 
-                    // Finn eller opprett månedens leksjon
-                    $lesson = Lesson::where('course_id', $webinar->course_id)
-                        ->where('title', $lessonTitle)
-                        ->first();
+                // Finn eller opprett månedens leksjon
+                $lesson = Lesson::where('course_id', $webinar->course_id)
+                    ->where('title', $lessonTitle)
+                    ->first();
 
-                    if (!$lesson) {
-                        $lesson = Lesson::create([
-                            'course_id' => $webinar->course_id,
-                            'title' => $lessonTitle,
-                            'type' => 'module',
-                            'allow_lesson_download' => 0,
-                        ]);
-                        $this->line("    📁 Ny månedsleksjon: {$lessonTitle}");
-                    }
-
-                    // Legg til som LessonContent
-                    LessonContent::create([
-                        'lesson_id' => $lesson->id,
-                        'title' => "{$webinar->title} {$webinarDate->format('d.m.Y')}",
-                        'lesson_content' => $embedCode,
-                        'date' => $webinarDate->format('Y-m-d'),
-                    ]);
-
-                    $this->info("  ✅ Mentormøte lagt til i {$lessonTitle}: {$webinar->title} (Wistia: {$wistiaHashedId})");
-                } else {
-                    // VANLIGE KURS: Opprett egen leksjon
+                if (!$lesson) {
                     $lesson = Lesson::create([
                         'course_id' => $webinar->course_id,
-                        'title' => "Opptak: {$webinar->title}",
+                        'title' => $lessonTitle,
                         'type' => 'module',
                         'allow_lesson_download' => 0,
                     ]);
-
-                    // Legg til Wistia video embed
-                    Video::create([
-                        'lesson_id' => $lesson->id,
-                        'embed_code' => $embedCode,
-                    ]);
-
-                    $this->info("  ✅ Leksjon opprettet: {$lesson->title} (Wistia: {$wistiaHashedId})");
+                    $this->line("    📁 Ny månedsleksjon: {$lessonTitle}");
                 }
+
+                // Legg til som LessonContent
+                LessonContent::create([
+                    'lesson_id' => $lesson->id,
+                    'title' => "{$webinar->title} {$webinarDate->format('d.m.Y')}",
+                    'lesson_content' => $embedCode,
+                    'date' => $webinarDate->format('Y-m-d'),
+                ]);
+
+                $this->info("  ✅ Lagt til i {$lessonTitle}: {$webinar->title} (Wistia: {$wistiaHashedId})");
 
                 // Merk webinar som replay
                 $webinar->update([
