@@ -289,9 +289,9 @@
 @media (max-width: 1026px) {
 	.op-redesign .op-page { padding: 1.5rem 1rem; padding-top: 3.5rem; }
 	.op-redesign .op-header h1 { font-size: 1.35rem; }
-	/* Tabs: wrap i stedet for horisontal scroll */
-	.op-redesign .op-tabs { flex-wrap: wrap; overflow-x: visible; }
-	.op-redesign .op-tab { white-space: normal; text-align: center; padding: 0.55rem 0.85rem; font-size: 0.8rem; }
+	/* Tabs: horisontal scroll på trange skjermer */
+	.op-redesign .op-tabs { overflow-x: auto; scrollbar-width: none; }
+	.op-redesign .op-tab { white-space: nowrap; flex-shrink: 0; padding: 0.55rem 0.85rem; font-size: 0.8rem; }
 }
 
 /* Small tablet / large phone */
@@ -383,7 +383,7 @@
 			Grupper
 		</button>
 		<button class="op-tab {{ $activeTab == 'webinar' ? 'active' : '' }}" onclick="opSwitchTab('webinar', this)">
-			Redigeringswebinar (årskurs)
+			Redigeringswebinarer
 		</button>
 	</div>
 
