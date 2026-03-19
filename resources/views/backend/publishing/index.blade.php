@@ -81,6 +81,9 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.email-admin.index') }}">
 		E-postmaler
 	</a>
+	<a class="btn btn-info margin-top" href="{{ route('admin.email-overview') }}">
+		E-postoversikt
+	</a>
 
 	<ul class="nav nav-tabs margin-top">
 		<li @if(Request::input('tab') == 'publishing' || Request::input('tab') == '') class="active" @endif>

@@ -1291,6 +1291,11 @@ Route::domain($admin)->group(function () {
             Route::delete('/{id}', [Backend\NewsletterController::class, 'destroy'])->name('admin.newsletter.destroy');
         });
 
+        // E-postoversikt
+        Route::get('email-overview', function () {
+            return view('backend.email-admin.overview');
+        })->name('admin.email-overview');
+
         // E-postmaler admin-panel
         Route::prefix('email-admin')->group(function () {
             Route::get('/', [Backend\EmailTemplateController::class, 'adminIndex'])->name('admin.email-admin.index');
