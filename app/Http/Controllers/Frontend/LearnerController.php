@@ -85,6 +85,7 @@ use App\SelfPublishingLearner;
 use App\SelfPublishingPortalRequest;
 use App\Services\AssignmentService;
 use App\Services\CourseService;
+use App\Services\DocxToPdfService;
 use App\Services\DocumentConversionService;
 use App\Services\FileIntegrityService;
 use App\Services\LearnerCalendarService;
@@ -5423,6 +5424,37 @@ class LearnerController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Download assignment manuscript as PDF with Word comments rendered inline.
+     *
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     */
+    public function downloadAssignmentManuscriptPdf($id, DocxToPdfService $service)
+    {
+        $manuscript = AssignmentManuscript::find($id);
+
+        if (! $manuscript) {
+            return redirect()->back()->with('error', 'Manuskriptet ble ikke funnet.');
+        }
+
+        $filename = $manuscript->filename;
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+        if ($extension !== 'docx') {
+            return redirect()->back()->with('error', 'PDF-konvertering med kommentarer er kun tilgjengelig for .docx-filer.');
+        }
+
+        $fullPath = public_path($filename);
+        $downloadName = pathinfo(basename($filename), PATHINFO_FILENAME);
+        $response = $service->convertWithComments($fullPath, $downloadName);
+
+        if (! $response) {
+            return redirect()->back()->with('error', 'Kunne ikke konvertere dokumentet til PDF.');
+        }
+
+        return $response;
     }
 
     /**

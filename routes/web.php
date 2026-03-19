@@ -499,6 +499,7 @@ Route::domain($front)->group(function () {
         Route::get('/assignment/group/{id}/learner-details', [Frontend\LearnerController::class, 'groupLearnerDetails']);
         Route::get('/assignment/group/{id}/show-details', [Frontend\LearnerController::class, 'groupShowDetails']);
         Route::get('/assignment/manuscript/{id}', [Frontend\LearnerController::class, 'downloadAssignmentGroupManuscript'])->name('learner.assignment.manuscript.download'); // Assignment show Page
+        Route::get('/assignment/manuscript/{id}/pdf', [Frontend\LearnerController::class, 'downloadAssignmentManuscriptPdf'])->name('learner.assignment.manuscript.pdf'); // Download manuscript as PDF with comments
         Route::get('/assignment/feedback/{id}/download', [Frontend\LearnerController::class, 'downloadAssignmentGroupFeedback'])->name('learner.assignment.feedback.download'); // Download assignment feedback
         Route::get('/assignment/feedback-no-group/{id}/download', [Frontend\LearnerController::class, 'downloadAssignmentNoGroupFeedback'])->name('learner.assignment.no-group-feedback.download'); // Download assignment feedback
         Route::get('/assignment/group/{id}/download-all-feedback', [Frontend\LearnerController::class, 'downloadAssignmentGroupAllFeedback'])->name('learner.assignment.group.feedback.download-all'); // Download all assignment group feedback
