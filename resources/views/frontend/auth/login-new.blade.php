@@ -341,9 +341,7 @@
         </div>
     </div>
 </div>
-@stop
 
-@section('js')
 <script>
 function showSection(section) {
     document.querySelectorAll('.login-section').forEach(function(el) { el.classList.remove('active'); });
