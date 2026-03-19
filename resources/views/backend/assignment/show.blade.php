@@ -101,8 +101,7 @@
 							<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 							<th>{{ trans_choice('site.learners', 1) }}</th>
 							{{-- <th>{{ trans('site.grade') }}</th> --}}
-							<th>{{ trans('site.type') }}</th>
-							<th>{{ trans('site.where') }}</th>
+							<th>Type/Hvor</th>
 							<th>{{ trans_choice('site.words', 2) }}</th>
 							<th>Datoer</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
@@ -134,15 +133,13 @@
 							</td>
 							<td><a href="{{route('admin.learner.show', $manuscript->user->id)}}">{{ $manuscript->user->full_name }}</a></td>
 							{{-- <td>{{ $manuscript->grade }}</td> --}}
-							<td>
+							<td style="font-size:12px;line-height:1.6;">
 								<a href="javascript:void(0)" data-ass-type="{{ $manuscript->type }}" class="updateTypeBtn" data-toggle="modal" data-target="#updateTypeModal"
 								   data-action="{{ route('assignment.group.update_manu_types', $manuscript->id) }}">
 									{{ \App\Http\AdminHelpers::assignmentType($manuscript->type) }}
-								</a>
-							</td>
-							<td>
+								</a><br>
 								<a href="javascript:void(0)" data-manu-type="{{ $manuscript->manu_type }}" class="updateManuTypeBtn" data-toggle="modal" data-target="#updateManuTypeModal"
-								   data-action="{{ route('assignment.group.update_manu_types', $manuscript->id) }}">
+								   data-action="{{ route('assignment.group.update_manu_types', $manuscript->id) }}" style="color:#888;">
 										{{ \App\Http\AdminHelpers::manuscriptType($manuscript->manu_type) }}
 								</a>
 							</td>
