@@ -85,3 +85,6 @@ Schedule::call(function () {
 // Annonser — synkroniser stats fra Facebook/Google
 Schedule::job(new \App\Jobs\SyncAdStatsJob)->hourly()->name('ads:sync-stats')->withoutOverlapping();
 Schedule::command('ads:auto-stop')->everyThirtyMinutes()->name('ads:auto-stop');
+
+// Webinar-opptak — sjekk og last ned nye opptak
+Schedule::command('webinar:download-recordings')->everyThirtyMinutes()->name('webinar:download-recordings')->withoutOverlapping();

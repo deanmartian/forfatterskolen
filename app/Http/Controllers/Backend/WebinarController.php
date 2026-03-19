@@ -287,6 +287,29 @@ class WebinarController extends Controller
         return redirect()->route('admin.course.index');
     }
 
+    public function downloadRecording($webinar_id): RedirectResponse
+    {
+        $webinar = Webinar::findOrFail($webinar_id);
+
+        try {
+            \Artisan::call('webinar:download-recordings', [
+                '--webinar-id' => $webinar->id,
+            ]);
+
+            $output = \Artisan::output();
+
+            return redirect()->back()->with([
+                'errors' => \App\Http\AdminHelpers::createMessageBag('Opptak lastet ned: ' . $output),
+                'alert_type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'errors' => \App\Http\AdminHelpers::createMessageBag('Feil: ' . $e->getMessage()),
+                'alert_type' => 'warning',
+            ]);
+        }
+    }
+
     public function setSchedule($webinar_id, Request $request): RedirectResponse
     {
 

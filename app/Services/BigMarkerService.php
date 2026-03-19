@@ -146,6 +146,26 @@ class BigMarkerService
     }
 
     /**
+     * Hent recording URL for et webinar
+     */
+    public function getRecordingUrl(string $conferenceId): ?string
+    {
+        try {
+            $data = $this->getConference($conferenceId);
+            $url = $data['recording_url'] ?? null;
+
+            if ($url && $url !== 'not available') {
+                return $url;
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            Log::warning("Kunne ikke hente recording for {$conferenceId}: {$e->getMessage()}");
+            return null;
+        }
+    }
+
+    /**
      * Deaktiver BigMarkers egne e-poster for et webinar
      */
     public function disableEmails(string $conferenceId): array
