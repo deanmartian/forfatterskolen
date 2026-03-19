@@ -11,18 +11,27 @@
 			display: none;
 		}
 		/* Fix: forhindre horisontal overflow på assignment-siden */
+		.course-container {
+			overflow-x: hidden;
+		}
 		.sub-right-content {
 			overflow-x: auto;
-			max-width: 100%;
+			max-width: calc(100vw - 420px); /* sidebar + course submenu */
 		}
 		.table-responsive {
-			overflow-x: auto;
+			overflow-x: auto !important;
 			-webkit-overflow-scrolling: touch;
+			max-width: 100%;
 		}
-		/* Komprimere knapper */
+		/* Komprimere tabell */
+		.table td, .table th {
+			font-size: 12px;
+			padding: 6px 8px;
+			white-space: nowrap;
+		}
 		.table .btn-sm, .table .btn-xs {
-			padding: 3px 8px;
-			font-size: 11px;
+			padding: 2px 6px;
+			font-size: 10px;
 			white-space: nowrap;
 		}
 	</style>
