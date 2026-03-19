@@ -160,7 +160,6 @@ class DownloadWebinarRecordings extends Command
                         'course_id' => $webinar->course_id,
                         'title' => "Opptak: {$webinar->title}",
                         'type' => 'module',
-                        'description' => "Opptak fra webinaret \"{$webinar->title}\" holdt {$webinarDate->format('d.m.Y')}.",
                         'allow_lesson_download' => 0,
                     ]);
 
