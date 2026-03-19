@@ -134,6 +134,13 @@
                 </span>
             </a>
         </li>
+        <li>
+            <a href="{{ route('admin.ai.index') }}"
+               class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.ai') ? 'active' : '' }}">
+                <span class="ed-nav-item__icon"><i class="fa fa-rocket"></i></span>
+                <span class="ed-nav-item__label">AI Assistent</span>
+            </a>
+        </li>
     </ul>
 
     <div class="ed-sidebar__user">

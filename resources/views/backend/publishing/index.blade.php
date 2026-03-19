@@ -87,6 +87,9 @@
 	<a class="btn btn-default margin-top" href="{{ route('admin.recording-logs') }}">
 		<i class="fa fa-video"></i> Recording-logg
 	</a>
+	<a class="btn btn-warning margin-top" href="{{ route('admin.ai.index') }}">
+		<i class="fa fa-magic"></i> AI Assistent
+	</a>
 
 	<ul class="nav nav-tabs margin-top">
 		<li @if(Request::input('tab') == 'publishing' || Request::input('tab') == '') class="active" @endif>
