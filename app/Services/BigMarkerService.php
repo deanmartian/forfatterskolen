@@ -166,6 +166,27 @@ class BigMarkerService
     }
 
     /**
+     * Hent deltakere som faktisk var til stede på webinaret
+     */
+    public function getAttendees(string $conferenceId): array
+    {
+        $allAttendees = [];
+        $page = 1;
+
+        do {
+            $result = $this->request('get', "conferences/{$conferenceId}/attendees", [
+                'page' => $page,
+            ]);
+
+            $attendees = $result['attendees'] ?? [];
+            $allAttendees = array_merge($allAttendees, $attendees);
+            $page++;
+        } while (count($attendees) >= 25); // BigMarker paginerer med 25 per side
+
+        return $allAttendees;
+    }
+
+    /**
      * Deaktiver BigMarkers egne e-poster for et webinar
      */
     public function disableEmails(string $conferenceId): array
