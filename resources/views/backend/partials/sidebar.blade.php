@@ -122,7 +122,7 @@
                 <span class="ed-nav-item__label">
                     Helpwise CRM
                     @php
-                        $openHelpwiseCount = \App\HelpwiseConversation::where('status', 'open')->count();
+                        try { $openHelpwiseCount = \App\HelpwiseConversation::where('status', 'open')->count(); } catch(\Exception $e) { $openHelpwiseCount = 0; }
                     @endphp
                     @if($openHelpwiseCount > 0)
                         <span class="badge" style="background: #f39c12; color: #fff; border-radius: 10px; font-size: 10px; padding: 2px 6px; margin-left: 4px;">{{ $openHelpwiseCount }}</span>
@@ -137,7 +137,7 @@
                 <span class="ed-nav-item__label">
                     Ad OS
                     @php
-                        $pendingAdApprovals = \App\Models\AdOs\AdApprovalRequest::where('status', 'pending')->count();
+                        try { $pendingAdApprovals = \App\Models\AdOs\AdApprovalRequest::where('status', 'pending')->count(); } catch(\Exception $e) { $pendingAdApprovals = 0; }
                     @endphp
                     @if($pendingAdApprovals > 0)
                         <span class="badge" style="background: #e74c3c; color: #fff; border-radius: 10px; font-size: 10px; padding: 2px 6px; margin-left: 4px;">{{ $pendingAdApprovals }}</span>
