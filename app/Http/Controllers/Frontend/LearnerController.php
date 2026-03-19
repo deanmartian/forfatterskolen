@@ -802,11 +802,18 @@ class LearnerController extends Controller
             ->select('lessons.id', 'lessons.title as lesson_title', 'lessons.content', 'courses.title as course_title', 'courses.id as course_id')
             ->get();
 
-        // Parse individuelle videoer fra leksjonsinnholdet
-        // Robust tilnærming: strip HTML, split på [video] shortcodes
+        // Parse individuelle videoer fra leksjonsinnholdet OG lesson_contents
         $replayItems = collect();
         foreach ($replayLessons as $lesson) {
-            $content = html_entity_decode($lesson->content);
+            // Kombiner lessons.content + alle lesson_contents for denne leksjonen
+            $allContent = html_entity_decode($lesson->content ?? '');
+            $lessonContents = DB::table('lesson_contents')
+                ->where('lesson_id', $lesson->id)
+                ->pluck('lesson_content');
+            foreach ($lessonContents as $lc) {
+                $allContent .= "\n" . $lc;
+            }
+            $content = $allContent;
 
             // Finn alle [video src="URL"] shortcodes med tilhørende tittel-tekst
             // Steg 1: Erstatt <br>, </p>, </div>, </h2> etc. med newlines for å bevare struktur
