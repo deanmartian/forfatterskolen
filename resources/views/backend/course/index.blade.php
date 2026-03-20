@@ -32,6 +32,7 @@
 	<a class="btn btn-primary margin-top" href="{{route('admin.survey.index')}}">{{ trans('site.surveys') }}</a>
 	<a class="btn btn-primary margin-top" href="{{route('admin.shareable-course.index')}}">Delbare kurs</a>
 	<a class="btn btn-primary margin-top" href="{{route('admin.course.all-upcoming-webinars')}}">Webinarer</a>
+	<a class="btn btn-primary margin-top" href="{{route('admin.course.builder')}}"><i class="fa fa-magic"></i> Kursbygger</a>
 	<div class="table-users table-responsive">
 		<table class="table">
 			<thead>

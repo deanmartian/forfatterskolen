@@ -928,6 +928,8 @@ Route::domain($admin)->group(function () {
         ]);
 
         // Courses Route
+        Route::get('/course-builder', [Backend\CourseController::class, 'courseBuilder'])->name('admin.course.builder');
+        Route::post('/course-builder/chat', [Backend\CourseController::class, 'courseBuilderChat'])->name('admin.course.builder.chat');
         Route::get('course/get-all-learners', [Backend\CourseController::class, 'getAllPaidLearners']); // get all learners that avail a paid course
         Route::get('course/webinars', [Backend\CourseController::class, 'allUpcomingWebinars'])->name('admin.course.all-upcoming-webinars');
         Route::get('course/export-no-certificate', [Backend\CourseController::class, 'exportCoursesWithNoCertificate']);

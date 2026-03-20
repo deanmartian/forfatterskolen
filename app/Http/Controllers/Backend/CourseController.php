@@ -1488,10 +1488,48 @@ class CourseController extends Controller
         }
 
         return redirect()->back()->with([
-            'errors' => AdminHelpers::createMessageBag('Package and Learners copied to ' 
+            'errors' => AdminHelpers::createMessageBag('Package and Learners copied to '
                 . $course->title . ' - ' . $newPackage->variation . '.'),
             'alert_type' => 'success',
             'not-former-courses' => true,
         ]);
+    }
+
+    public function courseBuilder(): View
+    {
+        return view('backend.course.course-builder');
+    }
+
+    public function courseBuilderChat(Request $request): JsonResponse
+    {
+        $messages = $request->input('messages', []);
+
+        try {
+            $client = new \GuzzleHttp\Client();
+            $response = $client->post('https://api.anthropic.com/v1/messages', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'x-api-key' => config('services.anthropic.key', env('ANTHROPIC_API_KEY')),
+                    'anthropic-version' => '2023-06-01',
+                ],
+                'json' => [
+                    'model' => 'claude-sonnet-4-20250514',
+                    'max_tokens' => 8192,
+                    'system' => $request->input('system_prompt', ''),
+                    'messages' => $messages,
+                ],
+                'timeout' => 120,
+            ]);
+
+            $data = json_decode($response->getBody(), true);
+
+            return response()->json([
+                'content' => $data['content'][0]['text'] ?? 'Ingen respons.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Feil ved kommunikasjon med AI: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }
