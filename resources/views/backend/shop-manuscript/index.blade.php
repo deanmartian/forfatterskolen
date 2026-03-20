@@ -6,15 +6,16 @@
 
 @section('content')
 <div class="page-toolbar">
-	<h3><i class="fa fa-file-text-o"></i> {{ trans('site.all-shop-manuscripts') }}</h3>
+	<h3><i class="fa fa-edit"></i> Manus/Oppgaver</h3>
 	<a href="javascript:void(0)" data-toggle="modal" data-target="#manuscriptEmailTemplate"> {{ trans('site.email-template') }}</a>
 </div>
 
 <div class="col-md-12">
  	<ul class="nav nav-tabs margin-top">
-	    <li @if( Request::input('tab') != 'sold' && Request::input('tab') != 'manuscripts') class="active" @endif><a href="?tab=all">{{ trans_choice('site.shop-manuscripts', 2) }}</a></li>
+	    <li @if( !in_array(Request::input('tab'), ['sold','manuscripts','assignments','other-services']) ) class="active" @endif><a href="?tab=all">{{ trans_choice('site.shop-manuscripts', 2) }}</a></li>
 	    <li @if( Request::input('tab') == 'sold' ) class="active" @endif><a href="?tab=sold">{{ trans('site.sold-shop-manuscripts') }}</a></li>
-		{{--<li @if( Request::input('tab') == 'manuscripts' ) class="active" @endif><a href="?tab=manuscripts">{{ trans_choice('site.manuscripts', 2) }}</a></li>--}}
+		<li @if( Request::input('tab') == 'assignments' ) class="active" @endif><a href="?tab=assignments">Oppgaver</a></li>
+		<li @if( Request::input('tab') == 'other-services' ) class="active" @endif><a href="?tab=other-services">Andre tjenester</a></li>
   	</ul>
 	<div class="tab-content">
 	  	<div class="tab-pane fade in active">
@@ -176,6 +177,74 @@
 					</div>
 				</div>
 			</div>
+			@elseif( Request::input('tab') == 'assignments' )
+				<div class="panel panel-default no-padding-bottom" style="border-top: 0">
+					<div class="panel-body">
+						<a href="{{ route('admin.assignment.index') }}" class="btn btn-primary margin-bottom">Gå til oppgaveoversikt</a>
+						<div class="table-responsive">
+							<table class="table no-margin-bottom">
+								<thead>
+									<tr>
+										<th>Oppgave</th>
+										<th>Kurs</th>
+										<th>Type</th>
+										<th>Frist</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach($assignments as $assignment)
+										<tr>
+											<td><a href="{{ route('admin.assignment.show', $assignment->id) }}">{{ $assignment->title }}</a></td>
+											<td>{{ $assignment->course->title ?? '-' }}</td>
+											<td>{{ $assignment->type ?? '-' }}</td>
+											<td>{{ $assignment->deadline ? \Carbon\Carbon::parse($assignment->deadline)->format('d.m.Y') : '-' }}</td>
+											<td>
+												<a href="{{ route('admin.assignment.show', $assignment->id) }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
+											</td>
+										</tr>
+									@endforeach
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			@elseif( Request::input('tab') == 'other-services' )
+				<div class="panel panel-default no-padding-bottom" style="border-top: 0">
+					<div class="panel-body">
+						<a href="{{ route('admin.other-service.index') }}" class="btn btn-primary margin-bottom">Gå til andre tjenester</a>
+						<div class="table-responsive">
+							<table class="table no-margin-bottom">
+								<thead>
+									<tr>
+										<th>Tittel</th>
+										<th>Pris</th>
+										<th>Status</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach($otherServices as $service)
+										<tr>
+											<td>{{ $service->title }}</td>
+											<td>kr {{ number_format($service->price ?? 0, 0, ',', ' ') }}</td>
+											<td>
+												@if($service->active ?? false)
+													<span class="label label-success">Aktiv</span>
+												@else
+													<span class="label label-default">Inaktiv</span>
+												@endif
+											</td>
+											<td>
+												<a href="{{ route('admin.other-service.show', $service->id) }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
+											</td>
+										</tr>
+									@endforeach
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
 			@else
 				<div class="panel panel-default no-padding-bottom" style="border-top: 0">
 					<div class="panel-body">

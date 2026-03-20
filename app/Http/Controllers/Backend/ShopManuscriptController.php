@@ -94,8 +94,11 @@ class ShopManuscriptController extends Controller
             $isUpdate = 1;
         }
 
+        $assignments = \App\Assignment::orderBy('created_at', 'desc')->get();
+        $otherServices = \App\OtherService::orderBy('created_at', 'desc')->get();
+
         return view('backend.shop-manuscript.index', compact('shopManuscripts', 'emailTemplate', 'emailTemplateRoute', 'isUpdate',
-            'excessPerWordAmount'));
+            'excessPerWordAmount', 'assignments', 'otherServices'));
     }
 
     public function store(Request $request): RedirectResponse
