@@ -1035,7 +1035,7 @@ kvittering.',
             'description' => 'Vil du fornye alle kursene dine for ett år ekstra for kroner 1490,?',
         ],
         'manuscript' => [
-            'doc-format-text' => 'Godkjente filformater er DOC, DOCX, PDF og ODT.',
+            'doc-format-text' => 'Godkjente filformater er DOC, DOCX, PDF, ODT og Pages.',
             'where-in-manuscript' => 'Hvor i manuset',
             'doc-pdf-odt-text' => 'Godkjente fil formater er DOC, DOCX, og ODT.',
             'replace-manuscript' => 'Bytt manus',
