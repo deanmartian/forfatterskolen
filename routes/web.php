@@ -2177,6 +2177,10 @@ Route::domain($admin)->group(function () {
         Route::get('/webhook-logs', [Backend\HelpwiseController::class, 'webhookLogs'])->name('admin.helpwise.webhook-logs');
     });
 
+    // AI Assistent
+    Route::get('ai', [Backend\AdminAiController::class, 'index'])->name('admin.ai.index');
+    Route::post('ai/execute', [Backend\AdminAiController::class, 'execute'])->name('admin.ai.execute');
+
     // Inbox routes
     require __DIR__.'/ad_os_routes.php';
 });
