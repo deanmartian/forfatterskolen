@@ -212,7 +212,6 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
-								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans_choice('site.learners', 1) }}</th>
 								<th>Status</th>
 								<th>{{ trans('site.assigned-to') }}</th>
@@ -225,16 +224,14 @@
 								<tr>
 									<td>@if($shopManuscript->is_active)
 											<a href="{{ route('shop_manuscript_taken', [
-												'id' => $shopManuscript->user->id, 
+												'id' => $shopManuscript->user->id,
 												'shop_manuscript_taken_id' => $shopManuscript->id]) }}">
 												{{$shopManuscript->shop_manuscript->title}}</a>
 										@else
 											{{$shopManuscript->shop_manuscript->title}}
 										@endif
-									</td>
-									<td>
 										@if($shopManuscript->genre > 0)
-											{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
+											<br><small class="text-muted">{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}</small>
 										@endif
 									</td>
 									<td><a href="{{ route('admin.learner.show', $shopManuscript->user->id) }}">
