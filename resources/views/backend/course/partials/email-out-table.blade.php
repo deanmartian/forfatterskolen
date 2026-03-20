@@ -85,8 +85,8 @@
                                     }}">
                                 <i class="fa fa-paper-plane"></i>
                             </button>
-                            <button class="btn btn-info btn-xs editEmailBtn loadScriptButton" data-toggle="modal"
-                            data-target="#emailModal" data-fields="{{ json_encode($email) }}"
+                            <button class="btn btn-info btn-xs editEmailBtn loadScriptButton" data-toggle="modal" data-bs-toggle="modal"
+                            data-target="#emailModal" data-bs-target="#emailModal" data-fields="{{ json_encode($email) }}"
                             data-action="{{ route('admin.email-out.update', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
                             data-filename="{{ \App\Http\AdminHelpers::extractFileName($email->attachment) }}"
                             data-fileloc="{{ asset($email->attachment) }}">
