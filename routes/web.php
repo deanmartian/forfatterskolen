@@ -2121,6 +2121,37 @@ Route::domain($admin)->group(function () {
         Route::post('/kill-switch', [Backend\AdOsController::class, 'toggleKillSwitch'])->name('admin.ads.kill-switch');
     });
 
+    // CRM & E-postsekvenser
+    Route::prefix('crm')->group(function () {
+        Route::get('/', [Backend\CrmController::class, 'index'])->name('admin.crm.index');
+        Route::get('/contacts', [Backend\CrmController::class, 'contacts'])->name('admin.crm.contacts.index');
+        Route::get('/contacts/{id}', [Backend\CrmController::class, 'contactShow'])->name('admin.crm.contacts.show');
+        Route::post('/contacts/{id}/tag', [Backend\CrmController::class, 'addTag'])->name('admin.crm.contacts.tag');
+        Route::delete('/contacts/{id}/tag/{tag}', [Backend\CrmController::class, 'removeTag'])->name('admin.crm.contacts.untag');
+        Route::post('/contacts/{id}/unsubscribe', [Backend\CrmController::class, 'unsubscribeContact'])->name('admin.crm.contacts.unsubscribe');
+        Route::get('/sequences', [Backend\EmailSequenceController::class, 'index'])->name('admin.crm.sequences.index');
+        Route::get('/sequences/{id}', [Backend\EmailSequenceController::class, 'show'])->name('admin.crm.sequences.show');
+        Route::post('/sequences/{id}/toggle', [Backend\EmailSequenceController::class, 'toggleActive'])->name('admin.crm.sequences.toggle');
+        Route::get('/sequences/{id}/steps/{stepId}/edit', [Backend\EmailSequenceController::class, 'editStep'])->name('admin.crm.sequences.steps.edit');
+        Route::put('/sequences/{id}/steps/{stepId}', [Backend\EmailSequenceController::class, 'updateStep'])->name('admin.crm.sequences.steps.update');
+        Route::post('/sequences/{id}/steps', [Backend\EmailSequenceController::class, 'createStep'])->name('admin.crm.sequences.steps.create');
+        Route::delete('/sequences/{id}/steps/{stepId}', [Backend\EmailSequenceController::class, 'deleteStep'])->name('admin.crm.sequences.steps.delete');
+        Route::get('/planned', [Backend\CrmController::class, 'planned'])->name('admin.crm.planned');
+        Route::post('/planned/{id}/cancel', [Backend\CrmController::class, 'cancelPlanned'])->name('admin.crm.planned.cancel');
+        Route::get('/history', [Backend\CrmController::class, 'history'])->name('admin.crm.history');
+        Route::get('/statistics', [Backend\CrmController::class, 'statistics'])->name('admin.crm.statistics');
+    });
+
+    // Nyhetsbrev
+    Route::prefix('newsletters')->group(function () {
+        Route::get('/', [Backend\NewsletterController::class, 'index'])->name('admin.newsletter.index');
+        Route::get('/create', [Backend\NewsletterController::class, 'create'])->name('admin.newsletter.create');
+        Route::post('/', [Backend\NewsletterController::class, 'store'])->name('admin.newsletter.store');
+        Route::get('/{id}/edit', [Backend\NewsletterController::class, 'edit'])->name('admin.newsletter.edit');
+        Route::put('/{id}', [Backend\NewsletterController::class, 'update'])->name('admin.newsletter.update');
+        Route::post('/{id}/send', [Backend\NewsletterController::class, 'send'])->name('admin.newsletter.send');
+    });
+
     // Helpwise CRM Routes
     Route::prefix('helpwise')->group(function () {
         Route::get('/', [Backend\HelpwiseController::class, 'index'])->name('admin.helpwise.index');
