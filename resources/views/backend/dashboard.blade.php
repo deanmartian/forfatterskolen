@@ -247,7 +247,7 @@
 											@php
 												$lastRequest = $shopManuscript->requests->last();
 												$lastAnswer = $lastRequest->answer ?? null;
-												$btnClass = $lastAnswer === 'Nei' ? 'btn-dark' : ($lastAnswer ? 'btn-success' : 'btn-warning');
+												$btnClass = (strtolower($lastAnswer ?? '') === 'no' || strtolower($lastAnswer ?? '') === 'nei') ? 'btn-danger' : ($lastAnswer ? 'btn-success' : 'btn-warning');
 											@endphp
 											<button class="btn btn-xs {{ $btnClass }} previewRequestsSentBtn"
 													data-toggle="modal"
