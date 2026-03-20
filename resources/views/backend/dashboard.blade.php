@@ -244,7 +244,12 @@
 											@if($shopManuscript->is_manuscript_locked) {{ 'checked' }} @endif>
 										@endif
 										@if ($shopManuscript->requests->count())
-											<button class="btn btn-xs btn-success previewRequestsSentBtn"
+											@php
+												$lastRequest = $shopManuscript->requests->last();
+												$lastAnswer = $lastRequest->answer ?? null;
+												$btnClass = $lastAnswer === 'Nei' ? 'btn-dark' : ($lastAnswer ? 'btn-success' : 'btn-warning');
+											@endphp
+											<button class="btn btn-xs {{ $btnClass }} previewRequestsSentBtn"
 													data-toggle="modal"
 													data-target="#previewRequestsSent"
 													data-requests="{{ $shopManuscript->requests }}"
