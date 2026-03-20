@@ -286,7 +286,7 @@
 							],
 							[
 									'name' => 'pay-later',
-									'label' => 'Betal senere'
+									'label' => 'Opprett delbetaling'
 							],
 						]
 					@endphp
