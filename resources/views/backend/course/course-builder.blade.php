@@ -585,6 +585,48 @@
             .replace(/\n/g, '<br>');
     }
 
+    var createCourseUrl = '{{ route("admin.course.builder.create") }}';
+
+    function detectModules(text) {
+        // Detect course structure: look for "## Modul X:" or "### Modul X:" patterns
+        var modulePattern = /##?\s*Modul\s+(\d+)\s*[:–—-]\s*(.+)/gi;
+        var matches = [];
+        var match;
+        while ((match = modulePattern.exec(text)) !== null) {
+            matches.push({ num: parseInt(match[1]), title: match[2].trim() });
+        }
+        return matches;
+    }
+
+    function detectCourseTitle(text) {
+        // Look for "# Title" at start or "Kurstittel:" pattern
+        var titleMatch = text.match(/^#\s+(.+)/m) || text.match(/kurstittel[:\s]+(.+)/i);
+        return titleMatch ? titleMatch[1].replace(/\*+/g, '').trim() : null;
+    }
+
+    function extractModuleContent(text, modules) {
+        var result = [];
+        for (var i = 0; i < modules.length; i++) {
+            var startPattern = new RegExp('##?\\s*Modul\\s+' + modules[i].num + '\\s*[:–—-]', 'i');
+            var startIdx = text.search(startPattern);
+            if (startIdx === -1) continue;
+
+            var endIdx;
+            if (i < modules.length - 1) {
+                var nextPattern = new RegExp('##?\\s*Modul\\s+' + modules[i+1].num + '\\s*[:–—-]', 'i');
+                endIdx = text.search(nextPattern);
+            } else {
+                endIdx = text.length;
+            }
+
+            result.push({
+                title: 'Modul ' + modules[i].num + ': ' + modules[i].title,
+                content: text.substring(startIdx, endIdx > startIdx ? endIdx : text.length).trim()
+            });
+        }
+        return result;
+    }
+
     function appendMessage(role, content, save) {
         var welcome = document.getElementById('cbWelcome');
         if (welcome) welcome.style.display = 'none';
@@ -603,6 +645,24 @@
             bubble.textContent = content;
         } else {
             bubble.innerHTML = renderMarkdown(content);
+
+            // Check if response contains course modules - show create button
+            var modules = detectModules(content);
+            if (modules.length >= 3) {
+                var title = detectCourseTitle(content) || 'Nytt kurs';
+                var createBar = document.createElement('div');
+                createBar.style.cssText = 'margin-top:16px; padding:16px; background:#f0f7f0; border:1px solid #c3e6c3; border-radius:8px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;';
+                createBar.innerHTML = '<div style="flex:1;min-width:200px;">' +
+                    '<strong style="color:#2c6e2c;"><i class="fa fa-check-circle"></i> Klar til å opprette kurs</strong><br>' +
+                    '<span style="font-size:13px;color:#555;">«' + title + '» med ' + modules.length + ' moduler (opprettes som inaktivt)</span>' +
+                    '</div>' +
+                    '<button class="btn btn-success" onclick="cbCreateCourse(this)" ' +
+                    'data-content="' + btoa(unescape(encodeURIComponent(content))) + '" ' +
+                    'data-title="' + title.replace(/"/g, '&quot;') + '">' +
+                    '<i class="fa fa-plus"></i> Opprett kurs' +
+                    '</button>';
+                bubble.appendChild(createBar);
+            }
         }
 
         div.appendChild(avatar);
@@ -616,6 +676,59 @@
             saveMessages(msgs);
         }
     }
+
+    window.cbCreateCourse = function(btn) {
+        var content = decodeURIComponent(escape(atob(btn.getAttribute('data-content'))));
+        var title = btn.getAttribute('data-title');
+        var modules = detectModules(content);
+        var moduleData = extractModuleContent(content, modules);
+
+        if (moduleData.length === 0) {
+            alert('Kunne ikke parse modulene. Prøv å be AI-en skrive modulene med tydelig "## Modul X: Tittel" format.');
+            return;
+        }
+
+        // Extract description from first part of content (before first module)
+        var firstModuleIdx = content.search(/##?\s*Modul\s+1\s*[:–—-]/i);
+        var description = firstModuleIdx > 0 ? content.substring(0, firstModuleIdx).replace(/^#.+\n/, '').trim() : title;
+        description = description.substring(0, 2000); // Limit length
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Oppretter...';
+
+        $.ajax({
+            url: createCourseUrl,
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': csrfToken },
+            contentType: 'application/json',
+            data: JSON.stringify({
+                title: title,
+                description: description,
+                modules: moduleData
+            }),
+            success: function(data) {
+                btn.innerHTML = '<i class="fa fa-check"></i> Opprettet!';
+                btn.className = 'btn btn-default';
+                btn.style.color = '#2c6e2c';
+
+                var link = document.createElement('a');
+                link.href = data.url;
+                link.className = 'btn btn-primary';
+                link.style.marginLeft = '8px';
+                link.innerHTML = '<i class="fa fa-external-link"></i> Gå til kurset';
+                btn.parentNode.appendChild(link);
+
+                appendMessage('assistant', '✅ ' + data.message + ' Du finner det under [Kurs](/course) i menyen.');
+            },
+            error: function(xhr) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa fa-plus"></i> Opprett kurs';
+                var msg = 'Kunne ikke opprette kurset.';
+                if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON.message;
+                alert(msg);
+            }
+        });
+    };
 
     function showLoading() {
         var container = document.getElementById('cbMessages');
