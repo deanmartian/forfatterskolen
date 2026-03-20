@@ -747,7 +747,7 @@
 																	data-plan-id="{{ optional($order->paymentPlan)->id }}"
 																	data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'
 																	data-total="{{ $order->price - $order->discount }}">
-																	+ Opprett faktura
+																	+ Opprett betalingsløsning
 																</button>
 															@endif
 														</td>
@@ -795,7 +795,7 @@
 														data-plan-id="{{ optional($order->paymentPlan)->id }}"
 														data-payment-plan-ids='@json(optional(optional($order->package)->course)->payment_plan_ids)'
 														data-total="{{ $order->price - $order->discount }}">
-														+ Opprett faktura
+														+ Opprett betalingsløsning
 													</button>
 												@endif
 											</div>

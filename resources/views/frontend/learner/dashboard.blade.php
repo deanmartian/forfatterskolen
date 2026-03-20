@@ -346,6 +346,10 @@
         }
     }
 
+    // Pay later reminder
+    $hasPayLater = Auth::user()->coursesTaken()->where('is_pay_later', 1)->exists();
+    $payLaterAlert = $hasPayLater && !$invoiceAlert;
+
     // Calendar entries
     $uniqueStart = array_unique(array_map(function ($i) {
         if (\Carbon\Carbon::parse($i['start'])->gte(\Carbon\Carbon::today())) {
@@ -395,6 +399,16 @@
             </div>
             <div class="db-alert__text"><strong>{{ $invoiceAlert['text'] }}</strong></div>
             <a href="{{ route('learner.invoice') }}" class="db-alert__action">Se faktura</a>
+        </div>
+    @endif
+
+    @if($payLaterAlert)
+        <div class="db-alert db-alert--warning" style="margin-bottom: 1rem;">
+            <div class="db-alert__icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e65100" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="db-alert__text">Husk å velge betalingsløsning (for deg som har valgt «bestill nå, betal senere»).</div>
+            <a href="{{ route('learner.invoice', ['tab' => 'pay-later']) }}" class="db-alert__action">Opprett betalingsløsning</a>
         </div>
     @endif
 
