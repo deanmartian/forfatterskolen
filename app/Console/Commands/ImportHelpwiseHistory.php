@@ -43,7 +43,7 @@ class ImportHelpwiseHistory extends Command
             $this->apiCalls++;
             $this->throttle();
 
-            $conversations = $response['data'] ?? $response['conversations'] ?? [];
+            $conversations = $response['threads'] ?? $response['data'] ?? $response['conversations'] ?? [];
             $pageToken = $response['nextPageToken'] ?? null;
 
             if (empty($conversations)) {
@@ -98,10 +98,24 @@ class ImportHelpwiseHistory extends Command
             return;
         }
 
-        // Parse the customer email from displayContact
-        $displayContact = $conv['displayContact'] ?? [];
-        $customerEmail = $displayContact['email'] ?? 'unknown@unknown.com';
-        $customerName = $displayContact['name'] ?? null;
+        // Parse customer info - displayContact is a string name
+        // We get the actual email from the conversation messages later
+        $customerName = $conv['displayContact'] ?? null;
+        $customerEmail = null;
+
+        // Try to get email from contacts if available
+        $contacts = $conv['contacts'] ?? [];
+        if (!empty($contacts)) {
+            $firstContact = reset($contacts);
+            $emails = $firstContact['emails'] ?? [];
+            $customerEmail = $emails[0] ?? null;
+            $customerName = $firstContact['displayName'] ?? $customerName;
+        }
+
+        // Use snippet to extract email if still missing
+        if (!$customerEmail) {
+            $customerEmail = $customerName; // displayContact might be an email
+        }
 
         // Create conversation
         $conversation = InboxConversation::create([
@@ -182,7 +196,7 @@ class ImportHelpwiseHistory extends Command
         // Tag outbound messages for AI learning
         if ($isOutbound) {
             $metadata['ai_training'] = true;
-            $metadata['agent_name'] = $data['sentBy']['name'] ?? null;
+            $metadata['agent_name'] = $data['sentBy']['displayName'] ?? $data['sentBy']['firstname'] ?? null;
         }
 
         InboxMessage::create([
