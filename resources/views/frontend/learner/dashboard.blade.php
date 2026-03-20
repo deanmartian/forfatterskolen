@@ -47,9 +47,9 @@
 #main-content { padding-top: 0 !important; margin-top: 0 !important; overflow-x: hidden !important; max-width: 100vw; }
 #main-container { overflow-x: hidden !important; }
 
-/* Sidebar toggle — alltid synlig (topbar er skjult på dashboard) */
+/* Sidebar toggle — kun synlig på mobil/tablet */
 .db-redesign .db-sidebar-toggle {
-    display: flex !important; position: fixed; top: 16px; left: 16px; z-index: 1050;
+    display: none !important; position: fixed; top: 16px; left: 16px; z-index: 1050;
     width: 50px; height: 50px; border-radius: 14px; border: 2px solid rgba(255,255,255,0.3);
     background: var(--db-wine); align-items: center; justify-content: center; cursor: pointer;
     box-shadow: 0 4px 16px rgba(134, 39, 54, 0.4), 0 0 0 3px rgba(134, 39, 54, 0.15);
@@ -62,6 +62,9 @@
 }
 .db-redesign .db-sidebar-toggle:active { transform: scale(0.95); }
 .db-redesign .db-sidebar-toggle svg { width: 24px; height: 24px; stroke: #fff; stroke-width: 2.5; }
+@media (max-width: 991px) {
+    .db-redesign .db-sidebar-toggle { display: flex !important; }
+}
 
 /* Welcome */
 .db-welcome { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem; }
