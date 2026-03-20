@@ -36,13 +36,14 @@
 <div class="margin-top">
 
     <ul class="nav nav-tabs margin-top">
-        <li @if( Request::input('tab') != 'webinar' ) class="active" @endif><a href="?tab=course">{{ trans_choice('site.courses', 1) }}</a></li>
-        <li @if( Request::input('tab') == 'webinar' ) class="active" @endif><a href="?tab=webinar">Workshop</a></li>
+        <li @if( !Request::input('tab') || Request::input('tab') == 'course' ) class="active" @endif><a href="?tab=course">{{ trans_choice('site.courses', 1) }}</a></li>
+        <li @if( Request::input('tab') == 'webinar' ) class="active" @endif><a href="?tab=webinar">{{ trans('site.webinars') }}</a></li>
+        <li @if( Request::input('tab') == 'workshop' ) class="active" @endif><a href="?tab=workshop">Workshop</a></li>
     </ul>
 
     <div class="tab-content">
         <div class="tab-pane fade in active">
-            @if( Request::input('tab') != 'webinar' )
+            @if( !Request::input('tab') || Request::input('tab') == 'course' )
                 <div class="col-md-12 margin-bottom margin-top">
                     <button class="btn btn-success" data-toggle="modal" data-target="#addFreeCourseModal">{{ trans('site.add-free-course') }}</button>
                 </div>
@@ -75,7 +76,7 @@
                         </div>
                     </div>
                 @endforeach
-            @else
+            @elseif( Request::input('tab') == 'webinar' )
                 <div class="col-sm-12 margin-top">
                     <button class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addWebinarModal"
                             data-backdrop="static">{{ trans('site.add-webinar') }}</button>
@@ -209,6 +210,43 @@
                     </div>
                 @endforeach
 
+            @elseif( Request::input('tab') == 'workshop' )
+                <div class="col-sm-12 margin-top">
+                    <a href="{{ route('admin.workshop.create') }}" class="btn btn-primary margin-bottom">+ {{ trans('site.add-workshop') }}</a>
+
+                    <div class="table-responsive">
+                        <table class="table table-side-bordered table-white">
+                            <thead>
+                                <tr>
+                                    <th>{{ trans('site.title') }}</th>
+                                    <th>{{ trans('site.price') }}</th>
+                                    <th>{{ trans('site.status') }}</th>
+                                    <th>{{ trans('site.date') }}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($workshops as $workshop)
+                                    <tr>
+                                        <td><a href="{{ route('admin.workshop.show', $workshop->id) }}">{{ $workshop->title }}</a></td>
+                                        <td>kr {{ number_format($workshop->price, 0, ',', ' ') }}</td>
+                                        <td>
+                                            @if($workshop->active)
+                                                <span class="label label-success">Aktiv</span>
+                                            @else
+                                                <span class="label label-default">Inaktiv</span>
+                                            @endif
+                                        </td>
+                                        <td>{{ $workshop->created_at ? $workshop->created_at->format('d.m.Y') : '' }}</td>
+                                        <td>
+                                            <a href="{{ route('admin.workshop.show', $workshop->id) }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             @endif
         </div>
     </div>

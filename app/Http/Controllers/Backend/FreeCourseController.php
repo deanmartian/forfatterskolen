@@ -30,8 +30,9 @@ class FreeCourseController extends Controller
     {
         $freeCourses = FreeCourse::orderBy('created_at', 'desc')->get();
         $freeWebinars = FreeWebinar::orderBy('created_at', 'desc')->get();
+        $workshops = \App\Workshop::orderBy('created_at', 'desc')->get();
 
-        return view('backend.free-course.index', compact('freeCourses', 'freeWebinars'));
+        return view('backend.free-course.index', compact('freeCourses', 'freeWebinars', 'workshops'));
     }
 
     public function store(FreeCourseCreateRequest $request): RedirectResponse
@@ -231,7 +232,6 @@ class FreeCourseController extends Controller
                 if ($conferenceId) {
                     $webinar->update([
                         'bigmarker_conference_id' => $conferenceId,
-                        'gtwebinar_id' => $conferenceId,
                         'bigmarker_status' => 'active',
                     ]);
 
