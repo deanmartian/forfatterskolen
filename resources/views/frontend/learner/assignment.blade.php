@@ -739,10 +739,25 @@
 							<div class="op-sub-item__meta">
 								@if($assignment->course) {{ $assignment->course->title }} · @endif
 								Innsendt{{ $manuscript && $manuscript->uploaded_at ? ' ' . \App\Http\FrontendHelpers::formatDate($manuscript->uploaded_at) : '' }}
-								@if($expected_finish)
-									· Forventet ferdig: {{ \App\Http\FrontendHelpers::formatDate($expected_finish) }}
-								@endif
 							</div>
+							@if($expected_finish)
+								@php
+									$expectedCarbon = \Carbon\Carbon::parse($expected_finish);
+									$daysUntil = (int) now()->diffInDays($expectedCarbon, false);
+								@endphp
+								<div style="margin-top: 4px; font-size: 13px;">
+									<span style="color: {{ $daysUntil < 0 ? '#dc3545' : ($daysUntil <= 3 ? '#fd7e14' : '#28a745') }};">
+										⏱ Forventet tilbakemelding: <strong>{{ $expectedCarbon->format('d.m.Y') }}</strong>
+										@if($daysUntil > 0)
+											(om {{ $daysUntil }} {{ $daysUntil == 1 ? 'dag' : 'dager' }})
+										@elseif($daysUntil == 0)
+											(i dag!)
+										@else
+											({{ abs($daysUntil) }} {{ abs($daysUntil) == 1 ? 'dag' : 'dager' }} forsinket)
+										@endif
+									</span>
+								</div>
+							@endif
 						</div>
 						@if($manuscript)
 							<a href="{{ end($extension) == 'pdf' || end($extension) == 'odt' ? '/js/ViewerJS/#../..' . $manuscript->filename : 'https://view.officeapps.live.com/op/embed.aspx?src=' . url('') . $manuscript->filename }}" class="op-sub-item__file">
