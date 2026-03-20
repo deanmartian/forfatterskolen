@@ -326,7 +326,8 @@
     foreach ($lessonData as &$ld) {
         $ld['completed'] = in_array($ld['lesson']->id, $completedLessonIds ?? []);
         $lessonType = $ld['lesson']->type ?? 'module';
-        if ($lessonType === 'module') {
+        $isReplay = stripos($ld['lesson']->title, 'reprise') !== false;
+        if ($lessonType === 'module' && !$isReplay) {
             $moduleData[] = $ld;
             if ($ld['completed']) $completedCount++;
         } else {
@@ -576,7 +577,7 @@
                         @endif
                     </div>
                     <div>
-                        <strong>Moduler:</strong> {{ $totalLessons }}
+                        <strong>Moduler:</strong> {{ $totalModules }}
                     </div>
                 </div>
 

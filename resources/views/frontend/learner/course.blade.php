@@ -328,7 +328,13 @@
                     @php
                         if (!$ct->package || !$ct->package->course) continue;
                         $course = $ct->package->course;
-                        $lessons = $course->lessons ? $course->lessons->sortBy('order')->values() : collect();
+                        $allLessons = $course->lessons ? $course->lessons->sortBy('order')->values() : collect();
+                        // Filter: only count actual modules (not replays, resources, etc.)
+                        $lessons = $allLessons->filter(function($l) {
+                            if ($l->type === 'reprise' || $l->type === 'resource') return false;
+                            if (stripos($l->title, 'reprise') !== false) return false;
+                            return true;
+                        })->values();
                         $totalLessons = $lessons->count();
 
                         // ── Calculate lesson availability ──
