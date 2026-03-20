@@ -82,7 +82,14 @@ class LearnerCalendarService
                 $allowedPackage = json_decode($assignment->allowed_package, true);
 
                 if (is_null($allowedPackage) || in_array($courseTaken->package_id, (array) $allowedPackage)) {
-                    $submissionDate = Carbon::parse((int) $assignment->submission_date, $timezone)->startOfDay();
+                    // submission_date can be a date string or days-offset integer
+                    if (is_numeric($assignment->submission_date) && (int) $assignment->submission_date < 10000) {
+                        // Days offset from course start
+                        $submissionDate = Carbon::parse($courseTaken->started_at, $timezone)->addDays((int) $assignment->submission_date)->startOfDay();
+                    } else {
+                        // Actual date string
+                        $submissionDate = Carbon::parse($assignment->submission_date, $timezone)->startOfDay();
+                    }
 
                     $events->push([
                         'id' => $assignment->course->id,
