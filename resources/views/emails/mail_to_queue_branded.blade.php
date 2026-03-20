@@ -2,7 +2,7 @@
 
 @section('content')
 <tr><td style="background:#fff;padding:40px 40px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.7;color:#1a1a1a;">
-    {!! str_contains($email_message, '<p') || str_contains($email_message, '<br') || str_contains($email_message, '<div') ? $email_message : nl2br($email_message) !!}
+    {!! $email_message !!}
 </td></tr>
 @if(isset($unsubscribe_url))
 <tr><td style="background:#fff;padding:0 40px 20px;text-align:center;">

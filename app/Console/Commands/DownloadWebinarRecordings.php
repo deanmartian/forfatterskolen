@@ -3,20 +3,17 @@
 namespace App\Console\Commands;
 
 use App\Lesson;
-use App\LessonContent;
 use App\Video;
 use App\Webinar;
 use App\Services\BigMarkerService;
-use App\Services\WistiaService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class DownloadWebinarRecordings extends Command
 {
-    protected $signature = 'webinar:download-recordings {--webinar-id= : Spesifikt webinar-ID} {--days=30 : Antall dager tilbake å sjekke} {--dry-run : Vis hva som ville blitt lastet ned}';
+    protected $signature = 'webinar:download-recordings {--webinar-id= : Spesifikt webinar-ID} {--dry-run : Vis hva som ville blitt lastet ned}';
 
     protected $description = 'Last ned BigMarker-opptak og legg som leksjoner i tilhørende kurs';
 
@@ -25,10 +22,8 @@ class DownloadWebinarRecordings extends Command
         $bigmarker = app(BigMarkerService::class);
 
         // Hent webinarer som har passert og har BigMarker-link, men ikke er satt som replay ennå
-        $days = (int) $this->option('days');
         $query = Webinar::where('status', 1)
             ->where('start_date', '<', now())
-            ->where('start_date', '>', now()->subDays($days))
             ->whereNotNull('link')
             ->where('link', '!=', '');
 
@@ -45,12 +40,13 @@ class DownloadWebinarRecordings extends Command
         $failed = 0;
 
         foreach ($webinars as $webinar) {
-            // Sjekk om det allerede finnes opptak for dette webinaret
-            $existing = LessonContent::whereHas('lesson', fn($q) => $q->where('course_id', $webinar->course_id))
-                ->where('title', 'like', '%' . substr($webinar->title, 0, 40) . '%')
+            // Sjekk om det allerede finnes en leksjon for dette webinaret
+            $existingLesson = Lesson::where('course_id', $webinar->course_id)
+                ->where('title', 'like', '%' . substr($webinar->title, 0, 50) . '%')
+                ->where('title', 'like', '%Opptak%')
                 ->first();
 
-            if ($existing) {
+            if ($existingLesson) {
                 $this->line("  ⏭ Allerede lastet ned: {$webinar->title}");
                 $skipped++;
                 continue;
@@ -84,89 +80,58 @@ class DownloadWebinarRecordings extends Command
             $this->info("  ⬇ Laster ned: {$webinar->title}");
 
             try {
-                // Last opp til Wistia — organisert per kurs
-                $wistia = app(WistiaService::class);
-                $videoName = "Opptak: {$webinar->title} ({$webinar->start_date})";
-                $courseName = $webinar->course->title ?? 'Ukjent kurs';
+                // Last ned filen
+                $filename = "webinar-recordings/{$conferenceId}.mp4";
+                $tempPath = storage_path("app/{$filename}");
 
-                // Finn eller opprett Wistia-prosjekt for kurset
-                $projectId = $this->getOrCreateWistiaProject($wistia, $courseName);
+                // Opprett mappe
+                Storage::makeDirectory('webinar-recordings');
 
-                // Last opp til Wistia direkte fra URL (ingen temp-fil)
-                $this->line("    Laster opp til Wistia (prosjekt: {$courseName})...");
-                $wistiaResult = $wistia->uploadFromUrl($recordingUrl, $videoName, $projectId);
+                // Last ned med streaming
+                $response = Http::timeout(600)->withOptions(['sink' => $tempPath])->get($recordingUrl);
 
-                // Slett temp-fil
-                @unlink($tempPath);
-
-                $wistiaHashedId = $wistiaResult['hashed_id'] ?? null;
-
-                if (!$wistiaHashedId) {
-                    $this->error("  ❌ Wistia-opplasting feilet for: {$webinar->title}");
+                if (!file_exists($tempPath) || filesize($tempPath) < 1000) {
+                    $this->error("  ❌ Nedlasting feilet for: {$webinar->title}");
                     $failed++;
                     continue;
                 }
 
-                $this->line("    Wistia ID: {$wistiaHashedId}");
+                $fileSizeMb = round(filesize($tempPath) / 1024 / 1024, 1);
+                $this->line("    Lastet ned: {$fileSizeMb} MB");
 
-                // Hent embed-kode
-                $embedCode = $wistia->getEmbedCode($wistiaHashedId);
+                // Flytt til public storage
+                $publicPath = "webinar-recordings/{$conferenceId}.mp4";
+                $storagePath = public_path("storage/{$publicPath}");
 
-                $webinarDate = \Carbon\Carbon::parse($webinar->start_date);
-
-                // ALLE kurs: Legg til som LessonContent i månedens Reprise-leksjon
-                $monthName = $webinarDate->translatedFormat('F Y');
-                $lessonTitle = "Reprise {$monthName}";
-
-                // Finn eller opprett månedens leksjon
-                $lesson = Lesson::where('course_id', $webinar->course_id)
-                    ->where('title', $lessonTitle)
-                    ->first();
-
-                if (!$lesson) {
-                    $lesson = Lesson::create([
-                        'course_id' => $webinar->course_id,
-                        'title' => $lessonTitle,
-                        'type' => 'module',
-                        'allow_lesson_download' => 0,
-                    ]);
-                    $this->line("    📁 Ny månedsleksjon: {$lessonTitle}");
+                // Opprett mappe i public
+                if (!is_dir(dirname($storagePath))) {
+                    mkdir(dirname($storagePath), 0755, true);
                 }
 
-                // Legg til som LessonContent med [video] shortcode (matcher reprise-visningen)
-                $wistiaIframeUrl = "https://fast.wistia.net/embed/iframe/{$wistiaHashedId}?seo=true&videoFoam=true";
-                $contentHtml = "{$webinar->title} {$webinarDate->format('d.m.Y')}\n[video src=\"{$wistiaIframeUrl}\"]";
+                rename($tempPath, $storagePath);
 
-                LessonContent::create([
-                    'lesson_id' => $lesson->id,
-                    'title' => preg_match('/\d{2}\.\d{2}\.\d{4}/', $webinar->title) ? $webinar->title : "{$webinar->title} {$webinarDate->format('d.m.Y')}",
-                    'lesson_content' => $contentHtml,
-                    'date' => $webinarDate->format('Y-m-d'),
+                // Opprett leksjon i kurset
+                $lesson = Lesson::create([
+                    'course_id' => $webinar->course_id,
+                    'title' => "Opptak: {$webinar->title}",
+                    'type' => 'module',
+                    'description' => "Opptak fra webinaret \"{$webinar->title}\" holdt {$webinar->start_date}.",
+                    'allow_lesson_download' => 1,
+                    'whole_lesson_file' => "/storage/{$publicPath}",
                 ]);
 
-                $this->info("  ✅ Lagt til i {$lessonTitle}: {$webinar->title} (Wistia: {$wistiaHashedId})");
-
-                // Logg til database
-                DB::table('webinar_recording_logs')->insert([
-                    'webinar_title' => $webinar->title,
-                    'webinar_id' => $webinar->id,
-                    'course_id' => $webinar->course_id,
-                    'course_name' => $courseName,
-                    'bigmarker_id' => $conferenceId,
-                    'wistia_id' => $wistiaHashedId,
-                    'wistia_project' => $courseName,
-                    'recording_url' => $recordingUrl,
-                    'lesson_title' => $lessonTitle,
+                // Legg til video embed
+                Video::create([
                     'lesson_id' => $lesson->id,
-                    'status' => 'success',
-                    'created_at' => now(),
-                    'updated_at' => now(),
+                    'embed_code' => '<video controls style="width:100%;max-width:800px;"><source src="' . asset("storage/{$publicPath}") . '" type="video/mp4"></video>',
                 ]);
 
                 // Merk webinar som replay
                 $webinar->update([
                     'set_as_replay' => 1,
                 ]);
+
+                $this->info("  ✅ Leksjon opprettet: {$lesson->title} (Kurs: {$webinar->course->title})");
                 $downloaded++;
 
             } catch (\Exception $e) {
@@ -175,20 +140,6 @@ class DownloadWebinarRecordings extends Command
                     'webinar_id' => $webinar->id,
                     'error' => $e->getMessage(),
                 ]);
-
-                // Logg feil til database
-                DB::table('webinar_recording_logs')->insert([
-                    'webinar_title' => $webinar->title,
-                    'webinar_id' => $webinar->id,
-                    'course_id' => $webinar->course_id,
-                    'course_name' => $webinar->course->title ?? 'Ukjent',
-                    'bigmarker_id' => $conferenceId ?? null,
-                    'status' => 'failed',
-                    'error_message' => $e->getMessage(),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-
                 $failed++;
             }
         }
@@ -200,46 +151,6 @@ class DownloadWebinarRecordings extends Command
         );
 
         return 0;
-    }
-
-    /**
-     * Finn eller opprett Wistia-prosjekt for et kurs
-     */
-    private function getOrCreateWistiaProject(WistiaService $wistia, string $courseName): string
-    {
-        // Cache prosjekt-IDer per kjøring
-        static $projectCache = [];
-
-        if (isset($projectCache[$courseName])) {
-            return $projectCache[$courseName];
-        }
-
-        // Søk etter eksisterende prosjekt
-        try {
-            $projects = $wistia->listProjects(1, 100);
-            foreach ($projects as $project) {
-                if (($project['name'] ?? '') === $courseName) {
-                    $projectCache[$courseName] = $project['hashedId'] ?? $project['hashed_id'] ?? '';
-                    return $projectCache[$courseName];
-                }
-            }
-
-            // Opprett nytt prosjekt
-            $newProject = Http::withHeaders([
-                'Authorization' => 'Bearer ' . config('services.wistia.api_token'),
-            ])->post('https://api.wistia.com/v1/projects.json', [
-                'name' => $courseName,
-            ])->json();
-
-            $projectId = $newProject['hashedId'] ?? $newProject['hashed_id'] ?? '';
-            $projectCache[$courseName] = $projectId;
-            $this->info("    📁 Nytt Wistia-prosjekt opprettet: {$courseName}");
-
-            return $projectId;
-        } catch (\Exception $e) {
-            Log::warning("Kunne ikke opprette Wistia-prosjekt: {$e->getMessage()}");
-            return '';
-        }
     }
 
     /**

@@ -43,7 +43,7 @@ class AddMailToQueueJob implements ShouldQueue
      * @return void
      */
     public function __construct($recipient, $subject, $message, $from_email, $from_name,
-        $attachment, $parent, $parent_id, $email_view = 'emails.mail_to_queue_branded')
+        $attachment, $parent, $parent_id, $email_view = 'emails.mail_to_queue')
     {
         $this->recipient = $recipient;
         $this->email_subject = $subject;
