@@ -63,7 +63,7 @@ class LessonController extends Controller
 
         $otherCourseReqFields = [
             'title' => 'required',
-            'content' => 'required',
+            'content' => 'nullable',
             'delay' => 'required|string|max:50',
         ];
 
@@ -86,7 +86,6 @@ class LessonController extends Controller
         $lesson->course_id = $course->id;
         $lesson->title = $request->title;
         $lesson->content = $request->content;
-        $lesson->type = $request->input('type', 'module');
         $lesson->whole_lesson_file = $wholeLessonFile;
         $lesson->delay = $request->delay;
         $lesson->allow_lesson_download = $request->has('allow_lesson_download') && $request->allow_lesson_download ? 1 : 0;
@@ -126,7 +125,7 @@ class LessonController extends Controller
 
         $otherCourseReqFields = [
             'title' => 'required',
-            'content' => 'required',
+            'content' => 'nullable',
             'delay' => 'required|string|max:50',
         ];
 
@@ -152,7 +151,6 @@ class LessonController extends Controller
         $lesson->course_id = $course->id;
         $lesson->title = $request->title;
         $lesson->content = $request->content;
-        $lesson->type = $request->input('type', 'module');
 
         if ($request->has('whole_lesson_file')) {
             $lesson->whole_lesson_file = $wholeLessonFile;
@@ -394,44 +392,6 @@ class LessonController extends Controller
         $quiz->delete();
 
         return response()->json(['success' => true]);
-    }
-
-    public function autoCategorize($courseId): JsonResponse
-    {
-        $course = Course::findOrFail($courseId);
-        $lessons = $course->lessons;
-        $updated = 0;
-
-        $resourceKeywords = ['kursplan', 'leseliste', 'pensumliste', 'filer', 'vedlegg', 'ressurser', 'lenker', 'linker'];
-        $repriseKeywords = ['reprise', 'opptak', 'arkiv', 'webinar-arkiv', 'replay'];
-
-        foreach ($lessons as $lesson) {
-            $title = mb_strtolower($lesson->title);
-            $newType = 'module';
-
-            foreach ($resourceKeywords as $kw) {
-                if (str_contains($title, $kw)) {
-                    $newType = 'resource';
-                    break;
-                }
-            }
-            if ($newType === 'module') {
-                foreach ($repriseKeywords as $kw) {
-                    if (str_contains($title, $kw)) {
-                        $newType = 'reprise';
-                        break;
-                    }
-                }
-            }
-
-            if ($lesson->type !== $newType) {
-                $lesson->type = $newType;
-                $lesson->save();
-                $updated++;
-            }
-        }
-
-        return response()->json(['success' => true, 'updated' => $updated, 'total' => $lessons->count()]);
     }
 
     public function aiReview($id): JsonResponse
