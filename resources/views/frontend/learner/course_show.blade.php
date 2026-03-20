@@ -452,28 +452,8 @@
         {{-- ═══ TAB 1: LEKSJONER ═══ --}}
         <div class="cv-panel active" id="cv-panel-leksjoner">
 
-            {{-- Quick resources (from lessons marked as resource/reprise) --}}
-            @if(count($resourceData) > 0 || true)
+            {{-- Quick links: only Kursplan and Repriser --}}
             <div class="cv-quick">
-                @foreach($resourceData as $rd)
-                    @if($rd['available'])
-                        @php $rdLesson = $rd['lesson']; @endphp
-                        <a href="{{ route('learner.course.lesson', ['course_id' => $course->id, 'id' => $rdLesson->id]) }}" class="cv-quick-link">
-                            <div class="cv-quick-link__icon {{ ($rdLesson->type ?? '') === 'reprise' ? 'cv-quick-link__icon--reprise' : 'cv-quick-link__icon--plan' }}">
-                                @if(($rdLesson->type ?? '') === 'reprise')
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="1.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                                @else
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-                                @endif
-                            </div>
-                            <div>
-                                <div>{{ $rdLesson->title }}</div>
-                                <div class="cv-quick-link__label">{{ ($rdLesson->type ?? '') === 'reprise' ? 'Se opptak' : 'Åpne' }}</div>
-                            </div>
-                        </a>
-                    @endif
-                @endforeach
-                {{-- Always show kursplan tab link and reprise link --}}
                 <a href="javascript:void(0)" class="cv-quick-link" onclick="cvSwitchTab('kursplan', document.querySelectorAll('.cv-tab')[1])">
                     <div class="cv-quick-link__icon cv-quick-link__icon--plan">
                         <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
@@ -493,7 +473,6 @@
                     </div>
                 </a>
             </div>
-            @endif
 
             {{-- Module list (only type=module) --}}
             <div class="cv-modules">
