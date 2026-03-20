@@ -89,73 +89,11 @@ class WistiaService
      */
     public function uploadFromUrl(string $url, string $name = '', string $projectId = ''): array
     {
-        $ch = curl_init();
-        $postData = [
-            'access_token' => $this->apiToken,
-            'url' => $url,
-        ];
-        if ($name) $postData['name'] = $name;
-        if ($projectId) $postData['project_id'] = $projectId;
+        $data = ['url' => $url];
+        if ($name) $data['name'] = $name;
+        if ($projectId) $data['project_id'] = $projectId;
 
-        curl_setopt_array($ch, [
-            CURLOPT_URL => 'https://upload.wistia.com/',
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => $postData,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 600,
-        ]);
-
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $error = curl_error($ch);
-        curl_close($ch);
-
-        if ($error || $httpCode >= 400) {
-            Log::error("Wistia URL upload feil", ['status' => $httpCode, 'error' => $error, 'body' => $response]);
-            throw new \Exception("Wistia upload feil: " . ($error ?: $httpCode));
-        }
-
-        return json_decode($response, true) ?? [];
-    }
-
-    /**
-     * Last opp video fra lokal fil via Wistia Upload API
-     */
-    public function uploadFromFile(string $filePath, string $name = '', string $projectId = ''): array
-    {
-        // Bruk curl direkte for å streame store filer uten memory-problemer
-        $ch = curl_init();
-        $postData = [
-            'access_token' => $this->apiToken,
-            'file' => new \CURLFile($filePath, 'video/mp4', basename($filePath)),
-        ];
-        if ($name) $postData['name'] = $name;
-        if ($projectId) $postData['project_id'] = $projectId;
-
-        curl_setopt_array($ch, [
-            CURLOPT_URL => 'https://upload.wistia.com/',
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => $postData,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 1800, // 30 min for store filer
-        ]);
-
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $error = curl_error($ch);
-        curl_close($ch);
-
-        if ($error) {
-            Log::error("Wistia upload curl feil", ['error' => $error]);
-            throw new \Exception("Wistia upload feil: {$error}");
-        }
-
-        if ($httpCode >= 400) {
-            Log::error("Wistia upload feil", ['status' => $httpCode, 'body' => $response]);
-            throw new \Exception("Wistia upload feil: {$httpCode}");
-        }
-
-        return json_decode($response, true) ?? [];
+        return $this->request('post', 'medias.json', $data);
     }
 
     /**

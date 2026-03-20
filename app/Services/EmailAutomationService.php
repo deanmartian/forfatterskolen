@@ -264,7 +264,7 @@ class EmailAutomationService
             '[webinar_dato]' => $metadata['webinar_date'] ?? '',
             '[webinar_tid]' => $metadata['webinar_time'] ?? '',
             '[join_lenke]' => $metadata['join_url'] ?? '',
-            '[reprise_url]' => $metadata['replay_url'] ?? (isset($metadata['webinar_id']) ? url('/gratis-webinar/' . $metadata['webinar_id'] . '/reprise') : ''),
+            '[reprise_url]' => $metadata['replay_url'] ?? '',
             '[kurs_tilbud_url]' => $metadata['course_offer_url'] ?? url('/'),
             '[avmeld_url]' => url('/avmeld/' . base64_encode($contact->email)),
         ];

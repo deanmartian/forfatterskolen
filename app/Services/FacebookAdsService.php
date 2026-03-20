@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Log;
 
 class FacebookAdsService
 {
-    private string|null $accessToken = null;
-    private string|null $adAccountId = null;
-    private string|null $pageId = null;
+    private string $accessToken;
+    private string $adAccountId;
+    private string $pageId;
     private string $baseUrl = 'https://graph.facebook.com/v19.0';
 
     public function __construct()
@@ -51,15 +51,14 @@ class FacebookAdsService
             'objective' => 'OUTCOME_LEADS',
             'status' => 'PAUSED',
             'special_ad_categories' => '[]',
-            'is_adset_budget_sharing_enabled' => 'false',
         ]);
         $campaignId = $campaign['id'];
 
         // 2. Opprett Lead Form
         $leadForm = $this->createLeadForm([
             'name' => "Webinar: {$data['webinar_title']}",
-            'privacy_policy_url' => $data['privacy_url'] ?? 'https://www.forfatterskolen.no/terms/all',
-            'thank_you_page_url' => $data['thank_you_url'] ?? $data['landing_page'] ?? 'https://www.forfatterskolen.no',
+            'privacy_policy_url' => $data['privacy_url'] ?? 'https://forfatterskolen.no/personvern',
+            'thank_you_page_url' => $data['thank_you_url'] ?? null,
         ]);
         $leadFormId = $leadForm['id'];
 
@@ -75,10 +74,7 @@ class FacebookAdsService
         ]);
         $adSetId = $adSet['id'];
 
-        // 4. Sett destination_type til ON_AD for lead forms
-        $this->request('post', $adSetId, ['destination_type' => 'ON_AD']);
-
-        // 5. Opprett annonse
+        // 4. Opprett annonse
         $ad = $this->createLeadAd([
             'adset_id' => $adSetId,
             'name' => "Webinar Ad: {$data['webinar_title']}",
@@ -88,7 +84,7 @@ class FacebookAdsService
             'message' => $data['ad_text'] ?? "Gratis webinar: {$data['webinar_title']}",
             'headline' => $data['ad_headline'] ?? 'Meld deg på gratis webinar',
             'description' => $data['ad_description'] ?? 'Forfatterskolen — Norges største nettbaserte skriveskole',
-            'link' => $data['landing_page'] ?? 'https://www.forfatterskolen.no',
+            'link' => $data['landing_page'] ?? 'https://forfatterskolen.no',
             'call_to_action' => 'SIGN_UP',
         ]);
 
@@ -119,8 +115,6 @@ class FacebookAdsService
             'daily_budget' => $data['daily_budget'],
             'billing_event' => 'IMPRESSIONS',
             'optimization_goal' => 'LEAD_GENERATION',
-            'bid_strategy' => 'LOWEST_COST_WITHOUT_CAP',
-            'promoted_object' => json_encode(['page_id' => $this->pageId]),
             'start_time' => $data['start_time'],
             'end_time' => $data['end_time'],
             'targeting' => json_encode($data['targeting']),
@@ -144,10 +138,13 @@ class FacebookAdsService
         $thankYou = [
             'title' => 'Takk for påmeldingen!',
             'body' => 'Vi gleder oss til å se deg på webinaret. Du vil motta en bekreftelse på e-post.',
-            'button_type' => 'VIEW_WEBSITE',
-            'button_text' => 'Gå til Forfatterskolen',
-            'website_url' => $data['thank_you_page_url'] ?? 'https://www.forfatterskolen.no',
         ];
+
+        if (!empty($data['thank_you_page_url'])) {
+            $thankYou['button_type'] = 'VIEW_WEBSITE';
+            $thankYou['button_text'] = 'Gå til Forfatterskolen';
+            $thankYou['website_url'] = $data['thank_you_page_url'];
+        }
 
         return $this->request('post', "{$this->pageId}/leadgen_forms", [
             'name' => $data['name'],
@@ -157,7 +154,7 @@ class FacebookAdsService
                 'link_text' => 'Personvernpolicy',
             ]),
             'thank_you_page' => json_encode($thankYou),
-            'follow_up_action_url' => $data['thank_you_page_url'] ?? 'https://www.forfatterskolen.no',
+            'follow_up_action_url' => $data['thank_you_page_url'] ?? 'https://forfatterskolen.no',
         ]);
     }
 
@@ -207,6 +204,15 @@ class FacebookAdsService
             ],
             'age_min' => $data['age_min'] ?? 25,
             'age_max' => $data['age_max'] ?? 65,
+            'publisher_platforms' => ['facebook', 'instagram'],
+            'facebook_positions' => ['feed', 'instant_article', 'marketplace'],
+            'instagram_positions' => ['stream', 'explore'],
+            'interests' => $data['interests'] ?? [
+                ['id' => '6003139266461', 'name' => 'Writing'],
+                ['id' => '6003384829667', 'name' => 'Books'],
+                ['id' => '6003020834572', 'name' => 'Reading'],
+                ['id' => '6003252462357', 'name' => 'Creative writing'],
+            ],
         ];
     }
 
@@ -277,6 +283,7 @@ class FacebookAdsService
 
     /**
      * Prosesser webhook-data fra Facebook Lead Ads
+     * Returnerer array med lead-data [email, first_name, last_name]
      */
     public static function parseLeadWebhook(array $payload): array
     {
@@ -293,6 +300,7 @@ class FacebookAdsService
                     continue;
                 }
 
+                // Hent lead-detaljer fra Graph API
                 try {
                     $service = app(self::class);
                     $leadData = $service->request('get', $leadgenId, [

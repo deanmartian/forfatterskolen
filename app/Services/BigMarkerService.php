@@ -48,11 +48,15 @@ class BigMarkerService
             'title' => $data['title'],
             'start_time' => $data['starts_at']->format('Y-m-d H:i:s'),
             'end_time' => $data['starts_at']->copy()->addHours($data['duration_hours'] ?? 1)->format('Y-m-d H:i:s'),
-            'time_zone' => 'Stockholm',
+            'time_zone' => 'Europe/Oslo',
             'description' => $data['description'] ?? '',
             'privacy' => 'private',
             'enable_knock_to_enter' => false,
             'send_reminder_emails_to_presenters' => false,
+            'send_reminder_emails_to_attendees' => false,
+            'send_cancellation_email' => false,
+            'send_follow_up_email' => false,
+            'purpose' => 'webinar',
         ]);
     }
 
@@ -146,56 +150,15 @@ class BigMarkerService
     }
 
     /**
-     * Hent recording URL for et webinar
-     */
-    public function getRecordingUrl(string $conferenceId): ?string
-    {
-        try {
-            $data = $this->getConference($conferenceId);
-            $url = $data['recording_url'] ?? null;
-
-            if ($url && $url !== 'not available') {
-                return $url;
-            }
-
-            return null;
-        } catch (\Exception $e) {
-            Log::warning("Kunne ikke hente recording for {$conferenceId}: {$e->getMessage()}");
-            return null;
-        }
-    }
-
-    /**
-     * Hent deltakere som faktisk var til stede på webinaret
-     */
-    public function getAttendees(string $conferenceId): array
-    {
-        $allAttendees = [];
-        $page = 1;
-
-        do {
-            $result = $this->request('get', "conferences/{$conferenceId}/attendees", [
-                'page' => $page,
-            ]);
-
-            $attendees = $result['attendees'] ?? [];
-            $allAttendees = array_merge($allAttendees, $attendees);
-            $page++;
-        } while (count($attendees) >= 25); // BigMarker paginerer med 25 per side
-
-        return $allAttendees;
-    }
-
-    /**
      * Deaktiver BigMarkers egne e-poster for et webinar
      */
     public function disableEmails(string $conferenceId): array
     {
         return $this->updateConference($conferenceId, [
-            'enable_registration_email' => false,
             'send_reminder_emails_to_presenters' => false,
+            'send_reminder_emails_to_attendees' => false,
             'send_cancellation_email' => false,
-            'enable_review_emails' => false,
+            'send_follow_up_email' => false,
         ]);
     }
 }
