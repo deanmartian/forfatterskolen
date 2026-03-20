@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'export-calendar' => 'Eksporter kalender',
     'admin-menu' => [
         'manuscript' => 'Manusutvikling',
         'dashboard' => 'Dashboard',
