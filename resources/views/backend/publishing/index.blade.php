@@ -72,6 +72,15 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.crm.index') }}">
 		CRM
 	</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.contacts.import') }}">
+		AC Import
+	</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.ads.dashboard') }}">
+		Annonser
+	</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.email-admin.index') }}">
+		E-postmaler
+	</a>
 
 	<ul class="nav nav-tabs margin-top">
 		<li @if(Request::input('tab') == 'publishing' || Request::input('tab') == '') class="active" @endif>

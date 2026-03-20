@@ -2152,6 +2152,22 @@ Route::domain($admin)->group(function () {
         Route::post('/{id}/send', [Backend\NewsletterController::class, 'send'])->name('admin.newsletter.send');
     });
 
+    // Kontakt-import
+    Route::prefix('contacts/import')->group(function () {
+        Route::get('/', [Backend\ContactImportController::class, 'index'])->name('admin.contacts.import');
+        Route::get('/test-api', [Backend\ContactImportController::class, 'testApi'])->name('admin.contacts.import.test-api');
+        Route::post('/start', [Backend\ContactImportController::class, 'start'])->name('admin.contacts.import.start');
+        Route::get('/progress', [Backend\ContactImportController::class, 'progress'])->name('admin.contacts.import.progress');
+        Route::post('/reset', [Backend\ContactImportController::class, 'reset'])->name('admin.contacts.import.reset');
+    });
+
+    // E-postmaler admin-panel
+    Route::prefix('email-admin')->group(function () {
+        Route::get('/', [Backend\EmailTemplateController::class, 'adminIndex'])->name('admin.email-admin.index');
+        Route::get('/{id}/edit', [Backend\EmailTemplateController::class, 'adminEdit'])->name('admin.email-admin.edit');
+        Route::put('/{id}', [Backend\EmailTemplateController::class, 'adminUpdate'])->name('admin.email-admin.update');
+    });
+
     // Helpwise CRM Routes
     Route::prefix('helpwise')->group(function () {
         Route::get('/', [Backend\HelpwiseController::class, 'index'])->name('admin.helpwise.index');
