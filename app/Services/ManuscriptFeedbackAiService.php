@@ -12,10 +12,11 @@ class ManuscriptFeedbackAiService
     /**
      * Generate AI feedback draft for a free manuscript.
      */
-    public function generateFeedback(string $manuscriptContent, string $name, ?string $genre = null): string
+    public function generateFeedback(string $manuscriptContent, string $name, ?string $genre = null, ?string $email = null): string
     {
         $genreText = $genre ? "Sjangeren er: {$genre}." : '';
         $examples = $this->getTrainingExamples();
+        $studentContext = $email ? $this->getStudentContext($email) : '';
 
         $systemPrompt = <<<PROMPT
 Du er en erfaren og varm redaktør ved Forfatterskolen, Norges ledende skriveskole.
@@ -55,6 +56,8 @@ Her er eksempler på tidligere tilbakemeldinger som viser stilen og tonen vi bru
 {$examples}
 
 Bruk samme tone, struktur og varme som eksemplene over. Tilpass tilbakemeldingen til den konkrete teksten du får.
+
+{$studentContext}
 PROMPT;
 
         $userMessage = "Skriv en tilbakemelding på denne teksten.\n\nForfatterens fornavn: {$name}\n{$genreText}\n\nTeksten:\n\n{$manuscriptContent}";
@@ -89,6 +92,44 @@ PROMPT;
         $data = $response->json();
 
         return $data['content'][0]['text'] ?? '';
+    }
+
+    /**
+     * Check if person is already a student and what courses they have.
+     */
+    private function getStudentContext(string $email): string
+    {
+        $user = \App\User::where('email', $email)->first();
+        if (!$user) {
+            return 'Personen er IKKE registrert som elev. Du kan anbefale alle aktive kurs og manusutvikling.';
+        }
+
+        $coursesTaken = $user->coursesTaken()->with('package')->get();
+        $courseNames = [];
+        foreach ($coursesTaken as $ct) {
+            if ($ct->package && $ct->package->course) {
+                foreach ($ct->package->course as $courseId) {
+                    $course = \DB::table('courses')->where('id', $courseId)->first();
+                    if ($course) $courseNames[] = $course->title;
+                }
+            }
+        }
+
+        $manuscripts = \DB::table('shop_manuscripts_taken')
+            ->where('user_id', $user->id)
+            ->count();
+
+        $info = "VIKTIG ELEVINFO: Personen ({$email}) er allerede registrert som elev.\n";
+        if (!empty($courseNames)) {
+            $info .= "Kurs eleven allerede har: " . implode(', ', array_unique($courseNames)) . "\n";
+            $info .= "IKKE anbefal kurs eleven allerede har! Anbefal andre relevante kurs i stedet.\n";
+        }
+        if ($manuscripts > 0) {
+            $info .= "Eleven har allerede brukt manusutvikling ({$manuscripts} gang(er)).\n";
+            $info .= "Du kan gjerne anbefale manusutvikling igjen, men referer til at de kjenner tjenesten.\n";
+        }
+
+        return $info;
     }
 
     /**

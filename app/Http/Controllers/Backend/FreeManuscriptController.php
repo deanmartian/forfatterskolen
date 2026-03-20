@@ -340,7 +340,8 @@ class FreeManuscriptController extends Controller
             $feedback = $aiService->generateFeedback(
                 strip_tags($manuscript->content),
                 $manuscript->name,
-                $manuscript->genre ? AdminHelpers::assignmentType($manuscript->genre) : null
+                $manuscript->genre ? AdminHelpers::assignmentType($manuscript->genre) : null,
+                $manuscript->email
             );
 
             return response()->json(['success' => true, 'feedback' => $feedback]);
