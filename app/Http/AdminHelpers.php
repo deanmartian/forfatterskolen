@@ -1163,7 +1163,7 @@ class AdminHelpers
         $genre = Genre::all();
 
         if ($id >= 0 && ! is_null($id)) {
-            $genre = '—';
+            $genre = 'None';
             $findGenre = Genre::find($id);
 
             if ($id > 0 && $findGenre) {
@@ -1232,7 +1232,7 @@ class AdminHelpers
                 }
             }
 
-            return '—';
+            return 'None';
         }
 
         return $types;
@@ -1241,9 +1241,9 @@ class AdminHelpers
     public static function pageList($id = null)
     {
         $pages = [
-            ['id' => 1, 'option' => 'Courses', 'route' => 'admin.course.index', 'request_name' => 'course'],
             ['id' => 2, 'option' => 'Free Courses', 'route' => 'admin.free-course.index', 'request_name' => 'free-course'],
-            ['id' => 3, 'option' => 'Webinarer', 'route' => 'admin.workshop.index', 'request_name' => 'workshop'],
+            ['id' => 1, 'option' => 'Courses', 'route' => 'admin.course.index', 'request_name' => 'course'],
+            ['id' => 3, 'option' => 'Workshop', 'route' => 'admin.workshop.index', 'request_name' => 'workshop'],
             ['id' => 4, 'option' => 'Learners', 'route' => 'admin.learner.index', 'request_name' => 'learner'],
             ['id' => 5, 'option' => 'Assignments', 'route' => 'admin.assignment.index', 'request_name' => 'assignment'],
             ['id' => 14, 'option' => 'Project', 'route' => 'admin.project.index', 'request_name' => 'project'],

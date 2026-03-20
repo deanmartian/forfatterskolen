@@ -8,7 +8,7 @@ return [
         'courses' => 'Kurs',
         'free-courses' => 'Gratis webinar',
         'learners' => 'Elever',
-        'workshops' => 'Webinarer',
+        'workshops' => 'Workshop',
         'assignments' => 'Oppgaver',
         'support' => 'Support',
         'free-manuscripts' => 'Gratis manus',

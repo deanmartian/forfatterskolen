@@ -34,7 +34,7 @@
                 @endphp
                 <li>
                     <a href="{{ route($page['route']) }}"
-                       class="ed-nav-item {{ Request::is(strtolower($page['request_name']).'*') ? 'active' : '' }}{{ $page['request_name'] === 'workshop' ? ' ed-nav-item--child' : '' }}">
+                       class="ed-nav-item {{ Request::is(strtolower($page['request_name']).'*') ? 'active' : '' }}{{ '' }}">
                         <span class="ed-nav-item__icon">
                             @switch($page['request_name'])
                                 @case('course')
