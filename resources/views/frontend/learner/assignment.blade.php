@@ -925,20 +925,11 @@
 						$deadlineCarbon = \Carbon\Carbon::parse($submission_date_formatted);
 						$isAvailable = $deadlineCarbon->gte(now());
 					@endphp
-					<div class="op-sub-item" @if(!$isAvailable) style="opacity: 0.6;" @endif>
-						<div style="text-align: center; min-width: 42px; flex-shrink: 0;">
-							<div style="font-size: 1.25rem; font-weight: 700; color: {{ $isAvailable ? '#862736' : '#8a8580' }}; line-height: 1;">
-								{{ $deadlineCarbon->format('j') }}
-							</div>
-							<div style="font-size: 0.6rem; font-weight: 600; text-transform: uppercase; color: {{ $isAvailable ? '#862736' : '#8a8580' }}; margin-top: 2px;">
-								{{ $deadlineCarbon->locale('nb')->isoFormat('MMM') }}
-							</div>
-						</div>
+					<div class="op-sub-item">
 						<div class="op-sub-item__info">
 							<div class="op-sub-item__name">{{ $assignment->title }}</div>
 							<div class="op-sub-item__meta">
-								@if($assignment->course) {{ $assignment->course->title }} · @endif
-								Frist: {{ \App\Http\FrontendHelpers::formatDateTimeNor($submission_date_formatted) }}
+								@if($assignment->course) {{ $assignment->course->title }} @endif
 							</div>
 						</div>
 						@if($isAvailable && !$manuscript)
