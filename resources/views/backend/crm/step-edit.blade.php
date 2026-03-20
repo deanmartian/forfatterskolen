@@ -65,7 +65,7 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
+<script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script>
 tinymce.init({
     selector: '#body_html',
