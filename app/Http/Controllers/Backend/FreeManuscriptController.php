@@ -9,6 +9,7 @@ use App\FreeManuscriptFeedbackHistory;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Jobs\AddMailToQueueJob;
+use App\Services\ManuscriptFeedbackAiService;
 use App\Mail\SubjectBodyEmail;
 use App\Manuscript;
 use App\User;
@@ -325,5 +326,26 @@ class FreeManuscriptController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Generate AI feedback draft for a free manuscript
+     */
+    public function generateAiFeedback($id): JsonResponse
+    {
+        $manuscript = FreeManuscript::findOrFail($id);
+
+        try {
+            $aiService = new ManuscriptFeedbackAiService();
+            $feedback = $aiService->generateFeedback(
+                strip_tags($manuscript->content),
+                $manuscript->name,
+                $manuscript->genre ? AdminHelpers::assignmentType($manuscript->genre) : null
+            );
+
+            return response()->json(['success' => true, 'feedback' => $feedback]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 }

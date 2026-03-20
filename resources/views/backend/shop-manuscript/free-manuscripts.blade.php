@@ -253,6 +253,10 @@
                     {{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans('site.body') }}</label>
+						<button type="button" class="btn btn-sm btn-info pull-right" id="generateAiFeedbackBtn" style="margin-bottom:8px;">
+							<i class="fa fa-magic"></i> Generer AI-utkast
+						</button>
+						<div class="clearfix"></div>
 						<textarea name="email_content" cols="30" rows="10" class="form-control tinymce" id="FMEmailContentEditor" required></textarea>
 					</div>
                     <div class="clearfix"></div>
@@ -427,18 +431,46 @@
         //tinymce.get('editContentEditor').setContent(content);
 	});
 
+	var currentManuscriptId = null;
+
 	$(".sendFeedbackBtn").click(function(){
         var action = $(this).data('action');
         var modal = $('#feedbackModal');
         modal.find('form').attr('action', action);
         let email_template = $(this).data('email_template');
         let fields = $(this).data('fields');
+        currentManuscriptId = fields.id;
         let content = fields.feedback_content ? fields.feedback_content : email_template;
-        //tinymce.get('FMEmailContentEditor').setContent(content);
 		setTimeout(() => {
 			setEditorContent('FMEmailContentEditor', content);
 		}, 500);
     });
+
+	$('#generateAiFeedbackBtn').click(function() {
+		if (!currentManuscriptId) return;
+		var btn = $(this);
+		btn.prop('disabled', true).html('<i class="fa fa-spinner fa-pulse"></i> Genererer...');
+
+		$.ajax({
+			url: '/free-manuscript/' + currentManuscriptId + '/ai-feedback',
+			type: 'POST',
+			data: { _token: '{{ csrf_token() }}' },
+			success: function(response) {
+				if (response.success) {
+					setEditorContent('FMEmailContentEditor', response.feedback);
+				} else {
+					alert('Feil: ' + (response.message || 'Ukjent feil'));
+				}
+			},
+			error: function(xhr) {
+				var msg = xhr.responseJSON ? xhr.responseJSON.message : 'Noe gikk galt. Prøv igjen.';
+				alert('Feil: ' + msg);
+			},
+			complete: function() {
+				btn.prop('disabled', false).html('<i class="fa fa-magic"></i> Generer AI-utkast');
+			}
+		});
+	});
 
 	$(".freeManuscriptEmailTemplateBtn").click(function() {
 	    let modal = $("#freeManuscriptEmailTemplate");
