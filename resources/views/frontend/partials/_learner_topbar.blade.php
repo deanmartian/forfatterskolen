@@ -3,7 +3,7 @@
         @if (Route::currentRouteName() === 'learner.dashboard')
             <div class="auto-renew-wrapper">
                 <label>
-                    Automatisk registert for felleswebinarer
+                    Automatisk registrert for mentormøter
                 </label>
                 <input type="checkbox" data-bs-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
                         class="webinar-auto-register-toggle" data-off="{{ trans('site.front.no') }}"

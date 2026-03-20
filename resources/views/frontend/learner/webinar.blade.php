@@ -1,7 +1,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('title')
-<title>Felleswebinarer &rsaquo; Forfatterskolen</title>
+<title>Mentormøter &rsaquo; Forfatterskolen</title>
 @stop
 
 @section('styles')
@@ -363,7 +363,7 @@
 
     {{-- Header --}}
     <div class="fw-header">
-        <h1>Felleswebinarer</h1>
+        <h1>Mentormøter</h1>
         <p>Hver mandag kl. 20:00 med kjente forfattere og redaktører.</p>
     </div>
 
