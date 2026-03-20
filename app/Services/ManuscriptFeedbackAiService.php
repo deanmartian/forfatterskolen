@@ -25,6 +25,7 @@ Forfatterskolen tilbyr følgende aktive kurs som du KAN nevne (bruk kun disse, i
 {$this->getActiveCourses()}
 I tillegg tilbyr Forfatterskolen manusutvikling (profesjonell tilbakemelding på manus).
 VIKTIG: Nevn BARE kurs fra listen over. Ikke nevn "Skriveverksted", "Novellekurs" eller andre kurs som ikke finnes i listen.
+Når du anbefaler et kurs, lag en klikkbar HTML-lenke med kursets URL, f.eks: <a href="https://www.forfatterskolen.no/kurs/119">Årskurs 2026</a>
 
 Tilbakemeldingen skal følge denne strukturen:
 1. Takk personen for at de har sendt inn teksten sin.
@@ -92,13 +93,13 @@ PROMPT;
     private function getActiveCourses(): string
     {
         $courses = \DB::table('courses')
-            ->select('title')
+            ->select('id', 'title')
             ->where('status', 1)
             ->where('for_sale', 1)
             ->whereNotIn('id', [43, 108, 113]) // skip free courses
             ->get();
 
-        return $courses->pluck('title')->implode("\n- ");
+        return $courses->map(fn($c) => "- {$c->title} (https://www.forfatterskolen.no/kurs/{$c->id})")->implode("\n");
     }
 
     /**
