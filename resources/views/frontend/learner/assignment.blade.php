@@ -965,7 +965,7 @@
 					<h5 style="margin-bottom: 12px;"><i class="fa fa-info-circle" style="color: #17a2b8;"></i> Hva skjer nå?</h5>
 					<ul style="list-style: none; padding: 0; margin: 0;">
 						<li style="padding: 6px 0;"><i class="fa fa-user-edit" style="color: #6c757d; width: 20px;"></i> Manuset ditt blir tildelt en redaktør</li>
-						<li style="padding: 6px 0;"><i class="fa fa-clock" style="color: #6c757d; width: 20px;"></i> Du får tilbakemelding innen <strong>{{ isset($assignments) && $assignments->first() && $assignments->first()->editor_expected_finish ? \Carbon\Carbon::parse($assignments->first()->editor_expected_finish)->format('d.m.Y') : 'ca. 3 uker' }}</strong></li>
+						<li style="padding: 6px 0;"><i class="fa fa-clock" style="color: #6c757d; width: 20px;"></i> Du får tilbakemelding innen <strong>{{ isset($assignments) && $assignments->first() && $assignments->first()->expected_finish ? \Carbon\Carbon::parse($assignments->first()->expected_finish)->format('d.m.Y') : 'ca. 3 uker' }}</strong></li>
 						<li style="padding: 6px 0;"><i class="fa fa-book" style="color: #6c757d; width: 20px;"></i> Tilbakemeldingen finner du under «Mine oppgaver»</li>
 					</ul>
 				</div>
