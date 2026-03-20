@@ -317,10 +317,15 @@
                 document.querySelectorAll('.loadScriptButton').forEach(button => {
                     button.addEventListener('click', function() {
                         let currentBtn = $(this);
-                        currentTarget = currentBtn.data('target');
+                        currentTarget = currentBtn.data('target') || currentBtn.data('bs-target');
+                        // Re-init TinyMCE when modal opens
+                        setTimeout(function() { initTinyMCE(); }, 300);
                     });
                 });
-                initTinyMCE();
+                // Only init TinyMCE on page load if there's a visible .tinymce element (not inside a modal)
+                if (document.querySelector('.tinymce:not(.modal .tinymce)')) {
+                    initTinyMCE();
+                }
             } else {
                 document.querySelectorAll('.loadScriptButton').forEach(button => {
                     button.addEventListener('click', function() {
