@@ -323,6 +323,256 @@ class AdFacebookPlatformService implements AdPlatformInterface
         };
     }
 
+    /**
+     * Create a full campaign with ad set, creative, and ad in one call.
+     * All campaigns start PAUSED for safety.
+     */
+    public function createFullCampaign(array $config): array
+    {
+        $pageId = config('services.facebook_ads.page_id', env('FACEBOOK_PAGE_ID'));
+        $results = ['steps' => []];
+
+        try {
+            // 1. Create Campaign (always PAUSED)
+            $objective = $config['objective'] ?? 'OUTCOME_LEADS';
+            // If short form like 'leads', map it
+            if (!str_starts_with($objective, 'OUTCOME_')) {
+                $objective = $this->mapObjective($objective);
+            }
+
+            $campaignParams = [
+                'access_token' => $this->accessToken,
+                'name' => $config['name'] ?? 'Ny kampanje',
+                'objective' => $objective,
+                'status' => 'PAUSED',
+                'special_ad_categories' => json_encode([]),
+            ];
+
+            Log::info('AdOS creating Facebook campaign', $campaignParams);
+            $campaignResponse = Http::asForm()->post(
+                "{$this->baseUrl}/{$this->apiVersion}/{$this->adAccountId}/campaigns",
+                $campaignParams
+            );
+
+            if (!$campaignResponse->successful()) {
+                throw new \Exception('Campaign creation failed: ' . $campaignResponse->body());
+            }
+
+            $campaignId = $campaignResponse->json('id');
+            $results['campaign_id'] = $campaignId;
+            $results['steps'][] = ['step' => 'campaign', 'id' => $campaignId, 'status' => 'ok'];
+
+            // 2. Create Ad Set
+            $dailyBudgetOre = (int) (($config['daily_budget'] ?? 150) * 100);
+            $targeting = $this->buildTargeting($config['targeting'] ?? []);
+
+            $adSetParams = [
+                'access_token' => $this->accessToken,
+                'campaign_id' => $campaignId,
+                'name' => ($config['name'] ?? 'Ny kampanje') . ' - Ad Set',
+                'status' => 'PAUSED',
+                'daily_budget' => $dailyBudgetOre,
+                'billing_event' => 'IMPRESSIONS',
+                'optimization_goal' => $this->mapOptimizationGoal($objective),
+                'bid_strategy' => 'LOWEST_COST_WITHOUT_CAP',
+                'targeting' => json_encode($targeting),
+                'start_time' => now()->addHour()->toIso8601String(),
+            ];
+
+            // promoted_object for leads objective
+            if (in_array($objective, ['OUTCOME_LEADS', 'OUTCOME_SALES'])) {
+                $adSetParams['promoted_object'] = json_encode(['page_id' => $pageId]);
+            }
+
+            Log::info('AdOS creating Facebook ad set', ['campaign_id' => $campaignId]);
+            $adSetResponse = Http::asForm()->post(
+                "{$this->baseUrl}/{$this->apiVersion}/{$this->adAccountId}/adsets",
+                $adSetParams
+            );
+
+            if (!$adSetResponse->successful()) {
+                throw new \Exception('Ad set creation failed: ' . $adSetResponse->body());
+            }
+
+            $adSetId = $adSetResponse->json('id');
+            $results['adset_id'] = $adSetId;
+            $results['steps'][] = ['step' => 'adset', 'id' => $adSetId, 'status' => 'ok'];
+
+            // 3. Create Ad Creative
+            $creative = $config['creative'] ?? [];
+            $linkData = [
+                'message' => $creative['message'] ?? 'Lær å skrive med Forfatterskolen',
+                'link' => $creative['link'] ?? 'https://forfratterskolen.no',
+                'name' => $creative['headline'] ?? 'Forfatterskolen',
+                'description' => $creative['description'] ?? '',
+                'call_to_action' => [
+                    'type' => $creative['call_to_action'] ?? 'SIGN_UP',
+                    'value' => ['link' => $creative['link'] ?? 'https://forfatterskolen.no'],
+                ],
+            ];
+
+            if (!empty($creative['image_url'])) {
+                $linkData['picture'] = $creative['image_url'];
+            }
+
+            $creativeParams = [
+                'access_token' => $this->accessToken,
+                'name' => ($config['name'] ?? 'Ny kampanje') . ' - Creative',
+                'object_story_spec' => json_encode([
+                    'page_id' => $pageId,
+                    'link_data' => $linkData,
+                ]),
+            ];
+
+            Log::info('AdOS creating Facebook ad creative', ['campaign_id' => $campaignId]);
+            $creativeResponse = Http::asForm()->post(
+                "{$this->baseUrl}/{$this->apiVersion}/{$this->adAccountId}/adcreatives",
+                $creativeParams
+            );
+
+            if (!$creativeResponse->successful()) {
+                throw new \Exception('Creative creation failed: ' . $creativeResponse->body());
+            }
+
+            $creativeId = $creativeResponse->json('id');
+            $results['creative_id'] = $creativeId;
+            $results['steps'][] = ['step' => 'creative', 'id' => $creativeId, 'status' => 'ok'];
+
+            // 4. Create Ad
+            $adParams = [
+                'access_token' => $this->accessToken,
+                'name' => ($config['name'] ?? 'Ny kampanje') . ' - Ad',
+                'adset_id' => $adSetId,
+                'creative' => json_encode(['creative_id' => $creativeId]),
+                'status' => 'PAUSED',
+            ];
+
+            Log::info('AdOS creating Facebook ad', ['adset_id' => $adSetId]);
+            $adResponse = Http::asForm()->post(
+                "{$this->baseUrl}/{$this->apiVersion}/{$this->adAccountId}/ads",
+                $adParams
+            );
+
+            if (!$adResponse->successful()) {
+                throw new \Exception('Ad creation failed: ' . $adResponse->body());
+            }
+
+            $adId = $adResponse->json('id');
+            $results['ad_id'] = $adId;
+            $results['steps'][] = ['step' => 'ad', 'id' => $adId, 'status' => 'ok'];
+            $results['success'] = true;
+
+            Log::info('AdOS full campaign created successfully', [
+                'campaign_id' => $campaignId,
+                'adset_id' => $adSetId,
+                'creative_id' => $creativeId,
+                'ad_id' => $adId,
+            ]);
+
+            return $results;
+
+        } catch (\Exception $e) {
+            Log::error('AdOS createFullCampaign failed', [
+                'error' => $e->getMessage(),
+                'steps_completed' => $results['steps'],
+            ]);
+            $results['success'] = false;
+            $results['error'] = $e->getMessage();
+            return $results;
+        }
+    }
+
+    /**
+     * Pause a campaign by external ID.
+     */
+    public function pauseCampaign(string $campaignId): bool
+    {
+        return $this->updateCampaignStatus($campaignId, 'paused');
+    }
+
+    /**
+     * Resume/activate a campaign by external ID.
+     */
+    public function resumeCampaign(string $campaignId): bool
+    {
+        return $this->updateCampaignStatus($campaignId, 'active');
+    }
+
+    /**
+     * Get campaign performance insights for a given number of days.
+     */
+    public function getCampaignInsights(string $campaignId, int $days = 7): array
+    {
+        try {
+            $since = now()->subDays($days)->format('Y-m-d');
+            $until = now()->format('Y-m-d');
+
+            $response = Http::get("{$this->baseUrl}/{$this->apiVersion}/{$campaignId}/insights", [
+                'access_token' => $this->accessToken,
+                'fields' => 'impressions,clicks,spend,actions,cost_per_action_type,ctr,cpc,cpm,reach,frequency',
+                'time_range' => json_encode(['since' => $since, 'until' => $until]),
+                'time_increment' => 1,
+            ]);
+
+            if (!$response->successful()) {
+                throw new \Exception('Insights fetch failed: ' . $response->body());
+            }
+
+            return $response->json('data', []);
+        } catch (\Exception $e) {
+            Log::error('AdOS getCampaignInsights failed', ['campaign_id' => $campaignId, 'error' => $e->getMessage()]);
+            return [];
+        }
+    }
+
+    /**
+     * Build Meta targeting spec from config.
+     */
+    private function buildTargeting(array $config): array
+    {
+        $targeting = [
+            'geo_locations' => [
+                'countries' => $config['countries'] ?? ['NO'],
+            ],
+            'age_min' => $config['age_min'] ?? 25,
+            'age_max' => $config['age_max'] ?? 65,
+            'targeting_automation' => [
+                'advantage_audience' => 0,
+            ],
+        ];
+
+        if (!empty($config['genders']) && $config['genders'] !== [0]) {
+            $targeting['genders'] = $config['genders'];
+        }
+
+        if (!empty($config['interests'])) {
+            $targeting['flexible_spec'] = [
+                ['interests' => $config['interests']],
+            ];
+        }
+
+        if (!empty($config['custom_audiences'])) {
+            $targeting['custom_audiences'] = array_map(fn($id) => ['id' => $id], $config['custom_audiences']);
+        }
+
+        return $targeting;
+    }
+
+    /**
+     * Map campaign objective to ad set optimization goal.
+     */
+    private function mapOptimizationGoal(string $objective): string
+    {
+        return match ($objective) {
+            'OUTCOME_LEADS' => 'LEAD_GENERATION',
+            'OUTCOME_SALES' => 'OFFSITE_CONVERSIONS',
+            'OUTCOME_TRAFFIC' => 'LINK_CLICKS',
+            'OUTCOME_AWARENESS' => 'REACH',
+            'OUTCOME_ENGAGEMENT' => 'POST_ENGAGEMENT',
+            default => 'LEAD_GENERATION',
+        };
+    }
+
     private function mapFbObjective(string $fbObjective): string
     {
         return match (strtoupper($fbObjective)) {

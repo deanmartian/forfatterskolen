@@ -233,7 +233,30 @@ Du SKAL svare med gyldig JSON i følgende format:
         // reduce_budget: {"new_daily_budget": 200, "decrease_percent": 30}
         // pause_campaign: {}
         // resume_campaign: {}
-        // create_campaign: {"name": "...", "objective": "...", "suggested_budget": 300, "targeting_notes": "..."}
+        // create_campaign: VIKTIG - denne oppretter en EKTE kampanje på Meta! Inkluder full config:
+        //   {
+        //     "name": "Kampanjenavn",
+        //     "objective": "OUTCOME_LEADS", // eller OUTCOME_TRAFFIC, OUTCOME_AWARENESS, OUTCOME_SALES
+        //     "daily_budget": 150, // i NOK
+        //     "suggested_budget": 150, // alias for daily_budget
+        //     "targeting": {
+        //       "countries": ["NO"],
+        //       "age_min": 25,
+        //       "age_max": 65,
+        //       "genders": [0], // 0=alle, 1=menn, 2=kvinner
+        //       "interests": [], // valgfritt
+        //       "custom_audiences": [] // for retargeting
+        //     },
+        //     "creative": {
+        //       "message": "Primærtekst for annonsen",
+        //       "headline": "Overskrift",
+        //       "description": "Beskrivelse under overskrift",
+        //       "link": "https://forfatterskolen.no/...",
+        //       "call_to_action": "SIGN_UP", // eller LEARN_MORE, BOOK_TRAVEL
+        //       "image_url": null // valgfritt, bruker side-bilde som standard
+        //     }
+        //   }
+        //   Kampanjen blir ALLTID opprettet som PAUSED for sikkerhet.
         // reallocate_budget: {"from_campaign_id": 1, "to_campaign_id": 2, "amount": 100}
         // create_creatives: {"product": "...", "audience": "...", "angles": ["...", "..."]}
       },
@@ -253,6 +276,9 @@ Viktige retningslinjer:
 - Ikke foreslå handlinger som ikke er støttet av dataene
 - Ta hensyn til budsjettgrenser
 - Returner KUN gyldig JSON, ingen annen tekst
+- Du kan nå opprette EKTE kampanjer på Meta! Når du foreslår create_campaign, inkluder FULL config med kreativ tekst, målretting og budsjett. Kampanjer opprettes alltid som PAUSED.
+- For create_campaign: Skriv god, engasjerende annonsetekst tilpasset Forfatterskolens merkevare. Bruk norsk i all kreativ tekst.
+- Sett alltid fornuftig link URL basert på produktet (f.eks. /skriveverksted for webinar-leads, /kurs/arskurs for årskurs osv.)
 PROMPT;
     }
 
@@ -380,6 +406,12 @@ PROMPT;
 
         $campaign = $this->campaignService->updateBudget($campaignId, (float) $newBudget, 'ai');
 
+        // Sync to Facebook if campaign has external ID
+        if ($campaign->external_id) {
+            $fbService = app(AdFacebookPlatformService::class);
+            $fbService->updateCampaignBudget($campaign->external_id, (float) $newBudget);
+        }
+
         return [
             'action' => 'budget_scaled',
             'campaign_id' => $campaignId,
@@ -398,6 +430,12 @@ PROMPT;
 
         $campaign = $this->campaignService->updateBudget($campaignId, (float) $newBudget, 'ai');
 
+        // Sync to Facebook if campaign has external ID
+        if ($campaign->external_id) {
+            $fbService = app(AdFacebookPlatformService::class);
+            $fbService->updateCampaignBudget($campaign->external_id, (float) $newBudget);
+        }
+
         return [
             'action' => 'budget_reduced',
             'campaign_id' => $campaignId,
@@ -414,6 +452,12 @@ PROMPT;
 
         $campaign = $this->campaignService->updateStatus($campaignId, 'paused', 'ai');
 
+        // Sync to Facebook if campaign has external ID
+        if ($campaign->external_id) {
+            $fbService = app(AdFacebookPlatformService::class);
+            $fbService->pauseCampaign($campaign->external_id);
+        }
+
         return [
             'action' => 'campaign_paused',
             'campaign_id' => $campaignId,
@@ -429,6 +473,12 @@ PROMPT;
 
         $campaign = $this->campaignService->updateStatus($campaignId, 'active', 'ai');
 
+        // Sync to Facebook if campaign has external ID
+        if ($campaign->external_id) {
+            $fbService = app(AdFacebookPlatformService::class);
+            $fbService->resumeCampaign($campaign->external_id);
+        }
+
         return [
             'action' => 'campaign_resumed',
             'campaign_id' => $campaignId,
@@ -439,20 +489,63 @@ PROMPT;
     {
         $details = $action['details'];
 
-        $campaign = $this->campaignService->createDraft([
+        // Build full campaign config for the Facebook API
+        $config = [
             'name' => $details['name'] ?? 'AI-foreslått kampanje',
+            'objective' => $details['objective'] ?? 'OUTCOME_LEADS',
+            'daily_budget' => $details['suggested_budget'] ?? $details['daily_budget'] ?? 150,
+            'targeting' => $details['targeting'] ?? [
+                'countries' => ['NO'],
+                'age_min' => 25,
+                'age_max' => 65,
+            ],
+            'creative' => $details['creative'] ?? [],
+            'start_paused' => true,
+        ];
+
+        // Create the full campaign on Facebook
+        $fbService = app(AdFacebookPlatformService::class);
+        $fbResult = $fbService->createFullCampaign($config);
+
+        if (!($fbResult['success'] ?? false)) {
+            throw new \RuntimeException('Facebook kampanjeopprettelse feilet: ' . ($fbResult['error'] ?? 'ukjent feil'));
+        }
+
+        // Save locally with external IDs
+        $fbAccount = $fbService->ensureAdAccount();
+        $campaign = $this->campaignService->createDraft([
+            'name' => $config['name'],
             'platform' => 'facebook',
-            'objective' => $details['objective'] ?? 'conversions',
-            'daily_budget' => $details['suggested_budget'] ?? 0,
-            'targeting' => ['notes' => $details['targeting_notes'] ?? ''],
+            'account_id' => $fbAccount->id,
+            'objective' => $this->mapObjectiveToLocal($config['objective']),
+            'daily_budget' => $config['daily_budget'],
+            'targeting' => $config['targeting'],
+            'external_id' => $fbResult['campaign_id'],
+            'platform_meta' => $fbResult,
             'ai_brief' => true,
         ]);
 
         return [
-            'action' => 'campaign_draft_created',
+            'action' => 'campaign_created',
             'campaign_id' => $campaign->id,
-            'name' => $campaign->name,
+            'external_campaign_id' => $fbResult['campaign_id'],
+            'external_adset_id' => $fbResult['adset_id'] ?? null,
+            'external_ad_id' => $fbResult['ad_id'] ?? null,
+            'name' => $config['name'],
+            'status' => 'PAUSED',
         ];
+    }
+
+    private function mapObjectiveToLocal(string $objective): string
+    {
+        return match ($objective) {
+            'OUTCOME_LEADS' => 'leads',
+            'OUTCOME_SALES' => 'conversions',
+            'OUTCOME_TRAFFIC' => 'traffic',
+            'OUTCOME_AWARENESS' => 'awareness',
+            'OUTCOME_ENGAGEMENT' => 'engagement',
+            default => 'leads',
+        };
     }
 
     private function executeReallocateBudget(array $action): array
