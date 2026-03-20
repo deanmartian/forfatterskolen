@@ -13,6 +13,7 @@ use App\Services\AdOs\AdBudgetService;
 use App\Services\AdOs\AdOptimizationService;
 use App\Services\AdOs\AdActionLogService;
 use App\Services\AdOs\AdReportService;
+use App\Services\AdOs\AdStrategistService;
 use App\Models\AdOs\AdExperiment;
 use App\Jobs\AdOs\GenerateAdCreativesJob;
 use Illuminate\Http\Request;
@@ -29,6 +30,7 @@ class AdOsController extends Controller
         private readonly AdBudgetService $budgetService,
         private readonly AdActionLogService $logService,
         private readonly AdReportService $reportService,
+        private readonly AdStrategistService $strategistService,
     ) {}
 
     public function dashboard()
@@ -251,5 +253,44 @@ class AdOsController extends Controller
         return redirect()->route('admin.ads.dashboard')
             ->with('alert_type', 'success')
             ->with('message', 'Kill switch ' . (!$current ? 'aktivert' : 'deaktivert'));
+    }
+
+    // ─── AI Strategist ───────────────────────────────────────
+
+    public function strategist()
+    {
+        $history = $this->strategistService->getHistory(20);
+
+        return view('backend.ads.strategist', compact('history'));
+    }
+
+    public function strategistAsk(Request $request)
+    {
+        $request->validate([
+            'instruction' => 'required|string|min:5|max:2000',
+        ]);
+
+        $result = $this->strategistService->processInstruction($request->input('instruction'));
+
+        return response()->json($result);
+    }
+
+    public function strategistExecute(Request $request)
+    {
+        $request->validate([
+            'conversation_id' => 'required|integer|exists:ad_strategist_conversations,id',
+            'approved_actions' => 'required|array|min:1',
+            'approved_actions.*' => 'integer|min:0',
+        ]);
+
+        $results = $this->strategistService->executeActions(
+            $request->input('conversation_id'),
+            $request->input('approved_actions')
+        );
+
+        return response()->json([
+            'success' => true,
+            'results' => $results,
+        ]);
     }
 }

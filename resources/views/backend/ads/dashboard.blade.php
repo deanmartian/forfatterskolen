@@ -207,6 +207,7 @@
     {{-- Quick Navigation --}}
     <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-12">
+            <a href="{{ route('admin.ads.strategist') }}" class="btn btn-primary"><i class="fa fa-magic"></i> AI Strategist</a>
             <a href="{{ route('admin.ads.strategy') }}" class="btn btn-default"><i class="fa fa-cogs"></i> Strategi</a>
             <a href="{{ route('admin.ads.campaigns') }}" class="btn btn-default"><i class="fa fa-flag"></i> Kampanjer</a>
             <a href="{{ route('admin.ads.creatives') }}" class="btn btn-default"><i class="fa fa-paint-brush"></i> Kreative</a>
