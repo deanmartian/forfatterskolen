@@ -237,16 +237,6 @@
         let emailModal = $("#emailModal");
         let emailModalForm = emailModal.find('form');
 
-        // Re-initialisere TinyMCE når modalen åpnes (fikser flash/forsvinn-problemet)
-        emailModal.on('shown.bs.modal', function () {
-            if (typeof tinymce !== 'undefined') {
-                tinymce.remove('#message');
-                setTimeout(function() {
-                    triggerLoadTinymce('#emailModal');
-                }, 100);
-            }
-        });
-
         $(".addEmailBtn").click(function(){
             let action = $(this).data('action');
             emailModal.find('.modal-title').text(translations.add_email);
@@ -261,10 +251,9 @@
                    prependDelayInput(input_group, 'number', 'days');
                } else {
                    $(v).val('');
-                   $(tinymce.get('message').getBody()).html('');
-                   /* setTimeout(() => {
-                        setEditorContent('message', '');
-                   }, 500); */
+                   if (tinymce.get('message')) {
+                       $(tinymce.get('message').getBody()).html('');
+                   }
                }
             });
 
@@ -316,10 +305,15 @@
                }
 
                if (field === 'message') {
-                   $(tinymce.get('message').getBody()).html(value);
-                   /* setTimeout(() => {
-                        setEditorContent('message', value);
-                   }, 500); */
+                   if (tinymce.get('message')) {
+                       $(tinymce.get('message').getBody()).html(value);
+                   } else {
+                       // TinyMCE not ready yet, set value after init
+                       emailModalForm.find('[name=message]').val(value);
+                       $(document).one('tinymce:init', function() {
+                           if (tinymce.get('message')) $(tinymce.get('message').getBody()).html(value);
+                       });
+                   }
                }
 
                if (field === 'for_free_course') {

@@ -77,25 +77,19 @@
                                 <i class="fa fa-eye"></i>
                             </a>
                             @endif
-                            <button class="btn btn-success btn-xs sendEmailBtn" data-toggle="modal" data-bs-toggle="modal"
-                                    data-target="#sendEmailModal" data-bs-target="#sendEmailModal"
-                                    data-action="{{ route('admin.email-out.send-email', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
+                            <button class="btn btn-success btn-xs sendEmailBtn" data-toggle="modal"                                    data-target="#sendEmailModal"                                    data-action="{{ route('admin.email-out.send-email', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
                                     style="margin-bottom:3px;">
                                 <i class="fa fa-paper-plane"></i>
                             </button>
                             <br>
-                            <button class="btn btn-info btn-xs editEmailBtn loadScriptButton" data-toggle="modal" data-bs-toggle="modal"
-                            data-target="#emailModal" data-bs-target="#emailModal"
-                            data-fields='@json($email)'
+                            <button class="btn btn-info btn-xs editEmailBtn loadScriptButton" data-toggle="modal"                            data-target="#emailModal"                            data-fields='@json($email)'
                             data-action="{{ route('admin.email-out.update', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
                             data-filename="{{ \App\Http\AdminHelpers::extractFileName($email->attachment) }}"
                             data-fileloc="{{ asset($email->attachment) }}"
                             style="margin-bottom:3px; position:relative; z-index:10;">
                                 <i class="fa fa-pencil"></i> Rediger
                             </button>
-                            <button class="btn btn-danger btn-xs deleteEmailBtn" data-toggle="modal" data-bs-toggle="modal"
-                            data-target="#deleteEmailModal" data-bs-target="#deleteEmailModal"
-                            data-action="{{ route('admin.email-out.destroy', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
+                            <button class="btn btn-danger btn-xs deleteEmailBtn" data-toggle="modal"                            data-target="#deleteEmailModal"                            data-action="{{ route('admin.email-out.destroy', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
                             style="margin-bottom:3px;">
                                 <i class="fa fa-trash"></i>
                             </button>
