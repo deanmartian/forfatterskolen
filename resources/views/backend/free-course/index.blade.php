@@ -37,7 +37,7 @@
 
     <ul class="nav nav-tabs margin-top">
         <li @if( Request::input('tab') != 'webinar' ) class="active" @endif><a href="?tab=course">{{ trans_choice('site.courses', 1) }}</a></li>
-        <li @if( Request::input('tab') == 'webinar' ) class="active" @endif><a href="?tab=webinar">{{ trans('site.webinars') }}</a></li>
+        <li @if( Request::input('tab') == 'webinar' ) class="active" @endif><a href="?tab=webinar">Workshop</a></li>
     </ul>
 
     <div class="tab-content">
@@ -107,6 +107,7 @@
                                                data-description="{{ $webinar->description }}"
                                                data-start_date="{{ strftime('%Y-%m-%dT%H:%M:%S', strtotime($webinar->start_date)) }}"
                                                data-image="{{ $webinar->image }}"
+                                               data-gtwebinar_id="{{ $webinar->gtwebinar_id }}"
                                                data-learning_points="{{ $webinar->learning_points }}"
                                                data-target_audience="{{ $webinar->target_audience }}"
                                                data-replay_url="{{ $webinar->replay_url }}"
@@ -125,6 +126,7 @@
                                         {!! nl2br($webinar->description) !!}
                                         <br />
                                         <p style="line-height: 1.8em; margin-top: 7px; word-break: break-all">
+                                            <i class="fa fa-desktop"></i>&nbsp;&nbsp;{{ $webinar->gtwebinar_id }} <br />
                                             <i class="fa fa-calendar-o"></i>&nbsp;&nbsp;{{ $webinar->start_date }} <br />
                                             @if($webinar->bigmarker_conference_id)
                                                 <i class="fa fa-video-camera"></i>&nbsp;&nbsp;BigMarker: {{ $webinar->bigmarker_conference_id }} <br />
@@ -350,6 +352,10 @@
                         <input type="datetime-local" name="start_date" class="form-control" required>
                     </div>
                     <div class="form-group">
+                        <label>GoToWebinar ID</label>
+                        <input type="text" name="gtwebinar_id" class="form-control webinar-id">
+                    </div>
+                    <div class="form-group">
                         <label>Læringspunkter <small class="text-muted">(ett punkt per linje)</small></label>
                         <textarea class="form-control" name="learning_points" rows="4" placeholder="En enkel forklaring på hva romanens motor er&#10;Hjelp til å finne ut hva boken din handler om"></textarea>
                     </div>
@@ -465,6 +471,10 @@
                     <div class="form-group">
                         <label>{{ trans('site.start-date') }}</label>
                         <input type="datetime-local" name="start_date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>GoToWebinar ID</label>
+                        <input type="text" name="gtwebinar_id" class="form-control webinar-id">
                     </div>
                     <div class="form-group">
                         <label>Læringspunkter <small class="text-muted">(ett punkt per linje)</small></label>
@@ -741,6 +751,7 @@
         var description = $(this).data('description');
         var start_date = $(this).data('start_date');
         var image = $(this).data('image');
+        var gtwebinar_id = $(this).data('gtwebinar_id');
         var learning_points = $(this).data('learning_points');
         var target_audience = $(this).data('target_audience');
         var replay_url = $(this).data('replay_url');
@@ -750,6 +761,7 @@
         form.find('input[name=title]').val(title);
         form.find('textarea[name=description]').val(description);
         form.find('input[name=start_date]').val(start_date);
+        form.find('input[name=gtwebinar_id]').val(gtwebinar_id);
         form.find('textarea[name=learning_points]').val(learning_points);
         form.find('textarea[name=target_audience]').val(target_audience);
         form.find('input[name=replay_url]').val(replay_url);
@@ -796,6 +808,14 @@
         modal.find('input[name=first_name]').val(first_name);
         modal.find('input[name=last_name]').val(last_name);
         modal.find('input[name=email]').val(email);
+    });
+
+    $(".webinar-id").keypress(function (e) {
+        //if the letter is not digit then display error and don't type anything
+        if (e.which !== 8 && e.which !== 0 && (e.which < 48 || e.which > 57)) {
+            //display error message
+            return false;
+        }
     });
 
     // Toggle annonsefelt
