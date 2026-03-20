@@ -1250,7 +1250,6 @@ class AdminHelpers
             ['id' => 7, 'option' => 'Free Manuscripts', 'route' => 'admin.free-manuscript.index', 'request_name' => 'free-manuscript'],
             ['id' => 8, 'option' => 'Årshjul', 'route' => 'admin.yearly-calendar.index', 'request_name' => 'yearly_calendar'],
             // array( 'id' => 8, 'option' => 'Invoices', 'route' => 'admin.invoice.index', 'request_name' => 'invoice'),
-            ['id' => 10, 'option' => 'FAQs', 'route' => 'admin.faq.index', 'request_name' => 'faq'],
             ['id' => 11, 'option' => 'Admins', 'route' => 'admin.admin.index', 'request_name' => 'admin'],
             /* array( 'id' => 12, 'option' => 'Email', 'route' => 'admin.email.index', 'request_name' => 'email'), */
             ['id' => 12, 'option' => 'Head Editor', 'route' => 'admin.head-editor-dashboard', 'request_name' => 'head-editor'],
