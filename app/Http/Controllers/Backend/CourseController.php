@@ -1497,7 +1497,29 @@ class CourseController extends Controller
 
     public function courseBuilder(): View
     {
-        return view('backend.course.course-builder');
+        $courses = \App\Course::with(['lessons' => function($q) {
+            $q->orderBy('order', 'asc');
+        }])->orderBy('display_order', 'asc')->get();
+
+        $courseContext = $courses->map(function($course) {
+            return [
+                'id' => $course->id,
+                'title' => $course->title,
+                'type' => $course->type,
+                'status' => $course->status ? 'Aktiv' : 'Inaktiv',
+                'for_sale' => $course->for_sale ? 'Ja' : 'Nei',
+                'learners_count' => $course->learners->get()->count(),
+                'lessons' => $course->lessons->map(function($lesson) {
+                    return [
+                        'order' => $lesson->order,
+                        'title' => $lesson->title,
+                        'description' => \Str::limit(strip_tags($lesson->description), 200),
+                    ];
+                }),
+            ];
+        });
+
+        return view('backend.course.course-builder', compact('courses', 'courseContext'));
     }
 
     public function courseBuilderChat(Request $request): JsonResponse
