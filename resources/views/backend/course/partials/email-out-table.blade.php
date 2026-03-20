@@ -71,29 +71,31 @@
                         <td>
                             {{ $email->send_immediately_text }}
                         </td>
-                        <td>
+                        <td style="white-space: nowrap; min-width: 120px;">
                             @if($email->template_type)
-                            <a href="{{ route('admin.email-out.preview-branded', ['course_id' => $course->id, 'email_out' => $email->id]) }}" target="_blank" class="btn btn-default btn-xs" title="Preview">
+                            <a href="{{ route('admin.email-out.preview-branded', ['course_id' => $course->id, 'email_out' => $email->id]) }}" target="_blank" class="btn btn-default btn-xs" title="Preview" style="margin-bottom:3px;">
                                 <i class="fa fa-eye"></i>
                             </a>
                             @endif
-                            <button class="btn btn-success btn-xs sendEmailBtn" data-toggle="modal"
-                                    data-target="#sendEmailModal"
-                                    data-action="{{
-                                    route('admin.email-out.send-email',
-                                    ['course_id' => $course->id, 'email_out' => $email->id])
-                                    }}">
+                            <button class="btn btn-success btn-xs sendEmailBtn" data-toggle="modal" data-bs-toggle="modal"
+                                    data-target="#sendEmailModal" data-bs-target="#sendEmailModal"
+                                    data-action="{{ route('admin.email-out.send-email', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
+                                    style="margin-bottom:3px;">
                                 <i class="fa fa-paper-plane"></i>
                             </button>
+                            <br>
                             <button class="btn btn-info btn-xs editEmailBtn loadScriptButton" data-toggle="modal" data-bs-toggle="modal"
                             data-target="#emailModal" data-bs-target="#emailModal" data-fields="{{ json_encode($email) }}"
                             data-action="{{ route('admin.email-out.update', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
                             data-filename="{{ \App\Http\AdminHelpers::extractFileName($email->attachment) }}"
-                            data-fileloc="{{ asset($email->attachment) }}">
+                            data-fileloc="{{ asset($email->attachment) }}"
+                            style="margin-bottom:3px;">
                                 <i class="fa fa-pencil"></i>
                             </button>
-                            <button class="btn btn-danger btn-xs deleteEmailBtn" data-toggle="modal" data-target="#deleteEmailModal"
-                            data-action="{{ route('admin.email-out.destroy', ['course_id' => $course->id, 'email_out' => $email->id]) }}">
+                            <button class="btn btn-danger btn-xs deleteEmailBtn" data-toggle="modal" data-bs-toggle="modal"
+                            data-target="#deleteEmailModal" data-bs-target="#deleteEmailModal"
+                            data-action="{{ route('admin.email-out.destroy', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
+                            style="margin-bottom:3px;">
                                 <i class="fa fa-trash"></i>
                             </button>
                         </td>
