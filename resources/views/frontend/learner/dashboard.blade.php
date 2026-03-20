@@ -376,15 +376,6 @@
         <span class="db-welcome__date">{{ $todayFormatted }}</span>
     </div>
 
-    {{-- Auto-renew toggle --}}
-    <div class="db-auto-renew">
-        <label>Automatisk registrert for mentormøter</label>
-        <input type="checkbox" data-bs-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
-               class="webinar-auto-register-toggle" data-off="{{ trans('site.front.no') }}"
-               data-size="mini"
-               @if(Auth::user()->userAutoRegisterToCourseWebinar) {{ 'checked' }} @endif>
-    </div>
-
     {{-- Daily quote --}}
     <div class="db-quote">
         <p class="db-quote__text">"{{ $dailyQuote['text'] }}"</p>
