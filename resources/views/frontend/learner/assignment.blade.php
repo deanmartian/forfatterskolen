@@ -953,12 +953,25 @@
      ══════════════════════════════════════════════════════════════════ --}}
 
 <div id="submitSuccessModal" class="modal fade" role="dialog">
-	<div class="modal-dialog modal-sm">
+	<div class="modal-dialog modal-md">
 		<div class="modal-content">
-			<div class="modal-body text-center">
-				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
-				<div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
-				<p>{{ trans('site.learner.submit-success-text') }}</p>
+			<div class="modal-body text-center" style="padding: 30px;">
+				<button type="button" class="close" data-bs-dismiss="modal" style="position:absolute;top:10px;right:15px;">&times;</button>
+				<div style="color: #28a745; font-size: 48px; margin-bottom: 15px;"><i class="fa fa-check-circle"></i></div>
+				<h3 style="margin-bottom: 10px;">Takk! Din oppgave er levert 🎉</h3>
+				<p style="color: #666; margin-bottom: 20px;">Vi har mottatt manuset ditt og det er nå klart for gjennomgang.</p>
+
+				<div style="background: #f8f9fa; border-radius: 8px; padding: 20px; text-align: left; margin-bottom: 20px;">
+					<h5 style="margin-bottom: 12px;"><i class="fa fa-info-circle" style="color: #17a2b8;"></i> Hva skjer nå?</h5>
+					<ul style="list-style: none; padding: 0; margin: 0;">
+						<li style="padding: 6px 0;"><i class="fa fa-user-edit" style="color: #6c757d; width: 20px;"></i> Manuset ditt blir tildelt en redaktør</li>
+						<li style="padding: 6px 0;"><i class="fa fa-clock" style="color: #6c757d; width: 20px;"></i> Du får tilbakemelding innen <strong>{{ isset($assignments) && $assignments->first() && $assignments->first()->editor_expected_finish ? \Carbon\Carbon::parse($assignments->first()->editor_expected_finish)->format('d.m.Y') : 'ca. 3 uker' }}</strong></li>
+						<li style="padding: 6px 0;"><i class="fa fa-book" style="color: #6c757d; width: 20px;"></i> Tilbakemeldingen finner du under «Mine oppgaver»</li>
+					</ul>
+				</div>
+
+				<p style="color: #888; font-size: 13px;">Du vil også motta en bekreftelse på e-post.</p>
+				<button type="button" class="btn btn-primary" data-bs-dismiss="modal" style="margin-top: 10px;">Flott, lukk denne</button>
 			</div>
 		</div>
 	</div>
