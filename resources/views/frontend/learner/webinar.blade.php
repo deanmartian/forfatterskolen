@@ -38,9 +38,9 @@
     box-sizing: border-box;
 }
 
-/* Sidebar toggle */
+/* Sidebar toggle — kun synlig på mobil/tablet */
 .fw-redesign .fw-sidebar-toggle {
-    display: flex !important; position: fixed; top: 16px; left: 16px; z-index: 1050;
+    display: none !important; position: fixed; top: 16px; left: 16px; z-index: 1050;
     width: 50px; height: 50px; border-radius: 14px; border: 2px solid rgba(255,255,255,0.3);
     background: var(--fw-wine); align-items: center; justify-content: center; cursor: pointer;
     box-shadow: 0 4px 16px rgba(134, 39, 54, 0.4), 0 0 0 3px rgba(134, 39, 54, 0.15);
@@ -53,6 +53,9 @@
 }
 .fw-redesign .fw-sidebar-toggle:active { transform: scale(0.95); }
 .fw-redesign .fw-sidebar-toggle svg { width: 24px; height: 24px; stroke: #fff; stroke-width: 2.5; }
+@media (max-width: 991px) {
+    .fw-redesign .fw-sidebar-toggle { display: flex !important; }
+}
 
 /* ── PAGE HEADER ── */
 .fw-header { margin-bottom: 1.5rem; }
@@ -392,7 +395,7 @@
         <div class="fw-info-banner">
             <div class="fw-info-banner__left">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                <span>Mandager kl. 20:00 (unntatt helligdager og ferier).</span>
+                <span>Mandager kl. 20:00 (unntatt helligdager og ferier). Trykker du på «automatisk påmelding», vil du få en e-post kvelden før med lenke til webinaret.</span>
             </div>
             <label class="fw-auto-reg">
                 <input type="checkbox" id="autoRegisterCheckbox" @if(Auth::user()->userAutoRegisterToCourseWebinar) checked @endif>
