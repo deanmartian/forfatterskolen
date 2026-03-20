@@ -390,11 +390,11 @@ class ShopManuscriptController extends ApiController
         $shopManuscriptTaken->save();
 
         Log::create([
-            'activity' => '<strong>'.$user->full_name.'</strong> submitted a manuscript for shop manuscript  '
+            'activity' => '<strong>'.$user->full_name.'</strong> leverte manus for manusutvikling  '
                 .$shopManuscriptTaken->shop_manuscript->title,
         ]);
 
-        $message = $user->full_name.' submitted a manuscript for shop manuscript '
+        $message = $user->full_name.' leverte manus for manusutvikling '
             .$shopManuscriptTaken->shop_manuscript->title;
         $toMail = 'post@forfatterskolen.no';
         $emailData = [
@@ -605,11 +605,11 @@ class ShopManuscriptController extends ApiController
         }
 
         Log::create([
-            'activity' => '<strong>'.$user->full_name.'</strong> submitted a manuscript for shop manuscript  '
+            'activity' => '<strong>'.$user->full_name.'</strong> leverte manus for manusutvikling  '
                 .$shopManuscriptTaken->shop_manuscript->title,
         ]);
 
-        $message = $user->full_name.' submitted a manuscript for shop manuscript '
+        $message = $user->full_name.' leverte manus for manusutvikling '
             .$shopManuscriptTaken->shop_manuscript->title;
         $toMail = 'post@forfatterskolen.no';
         $emailData = [

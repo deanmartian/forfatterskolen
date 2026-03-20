@@ -1241,7 +1241,7 @@
 	@foreach( $logs as $log )
 	<div class="dashboard-activity" style="color: green">
 		<p>
-			<span class="activ-time">{{ Carbon\Carbon::parse($log->created_at)->diffForHumans() }}</span>
+			<span class="activ-time">{{ Carbon\Carbon::parse($log->created_at)->locale('nb')->diffForHumans() }}</span>
 			{!! $log->activity !!}
 		</p>
 	</div>

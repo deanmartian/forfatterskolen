@@ -298,12 +298,6 @@ class ShopManuscriptController extends Controller
      */
     public function createOrderAndRedirect($id, Request $request, ShopManuscriptService $shopManuscriptService): RedirectResponse
     {
-        // Forhindre dobbeltbestillinger med cache-basert lock (10 sekunder)
-        $lockKey = 'create_order_lock:' . Auth::id() . ':' . $id;
-        if (!\Illuminate\Support\Facades\Cache::add($lockKey, true, 10)) {
-            return redirect()->back()->with('info', 'Bestillingen din er allerede under behandling. Vennligst vent.');
-        }
-
         $request->validate([
             'street' => 'required',
             'zip' => 'required',
@@ -600,15 +594,8 @@ class ShopManuscriptController extends Controller
 
     public function place_order($id, Request $request, ShopManuscriptService $shopManuscriptService)
     {
-        // Forhindre dobbeltbestillinger med cache-basert lock (10 sekunder)
-        $lockKey = 'place_order_lock:' . ($request->ip() ?? '') . ':' . $id . ':' . (Auth::id() ?? $request->email);
-        if (!\Illuminate\Support\Facades\Cache::add($lockKey, true, 10)) {
-            return redirect()->back()->with('info', 'Bestillingen din er allerede under behandling. Vennligst vent.');
-        }
-
         $validator = $this->validator($request->all());
         if ($validator->fails()) {
-            \Illuminate\Support\Facades\Cache::forget($lockKey);
             return redirect()->back()->withInput()->withErrors($validator);
         }
 
@@ -690,7 +677,7 @@ class ShopManuscriptController extends Controller
             $shopManuscriptTaken->words = $word_count;
 
             // Admin notification
-            $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
+            $message = Auth::user()->full_name.' leverte manus for manusutvikling '.$shopManuscriptTaken->shop_manuscript->title;
             $toMail = 'post@forfatterskolen.no'; // post@forfatterskolen.no
             /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
                 'post@forfatterskolen.no',$toMail, $message);*/
@@ -775,19 +762,8 @@ class ShopManuscriptController extends Controller
             'payment_mode' => $paymentMode->mode,
         ];
 
-        // MVA: aktive elever med kurs 17 er mvafri, andre betaler 25% MVA
-        $hasVat = !Auth::user()->activePaidCoursesTakenNotExpired()
-            ->whereHas('package', fn($q) => $q->where('course_id', 17))
-            ->exists();
-
-        if ($hasVat) {
-            $vatAmount = round($price * 0.25);
-            $invoice_fields['vat'] = $vatAmount;
-            $invoice_fields['productID'] = 5686476118;
-        }
-
         $invoice = new FikenInvoice;
-        $invoice->create_invoice($invoice_fields, $hasVat);
+        $invoice->create_invoice($invoice_fields);
 
         // wait for the invoice to be saved first before saving the shop manuscript taken
         $shopManuscriptTaken->is_active = false;
@@ -981,10 +957,10 @@ class ShopManuscriptController extends Controller
             $shopManuscriptTaken->save();
 
             Log::create([
-                'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for shop manuscript  '.$shopManuscriptTaken->shop_manuscript->title,
+                'activity' => '<strong>'.Auth::user()->full_name.'</strong> leverte manus for manusutvikling  '.$shopManuscriptTaken->shop_manuscript->title,
             ]);
             // Admin notification
-            $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
+            $message = Auth::user()->full_name.' leverte manus for manusutvikling '.$shopManuscriptTaken->shop_manuscript->title;
             $toMail = 'post@forfatterskolen.no'; // post@forfatterskolen.no
             // mail($toMail, 'New manuscript submitted for shop manuscript', $message);
             /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
@@ -1157,10 +1133,10 @@ class ShopManuscriptController extends Controller
             }
 
             Log::create([
-                'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for shop manuscript  '.$shopManuscriptTaken->shop_manuscript->title,
+                'activity' => '<strong>'.Auth::user()->full_name.'</strong> leverte manus for manusutvikling  '.$shopManuscriptTaken->shop_manuscript->title,
             ]);
             // Admin notification
-            $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
+            $message = Auth::user()->full_name.' leverte manus for manusutvikling '.$shopManuscriptTaken->shop_manuscript->title;
             // mail('post@forfatterskolen.no', 'New manuscript submitted for shop manuscript', $message);
             $toMail = 'post@forfatterskolen.no'; // post@forfatterskolen.no
             /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
@@ -1609,19 +1585,8 @@ class ShopManuscriptController extends Controller
             'payment_mode' => $paymentMode->mode,
         ];
 
-        // MVA: aktive elever med kurs 17 er mvafri, andre betaler 25% MVA
-        $hasVat = !Auth::user()->activePaidCoursesTakenNotExpired()
-            ->whereHas('package', fn($q) => $q->where('course_id', 17))
-            ->exists();
-
-        if ($hasVat) {
-            $vatAmount = round($price * 0.25);
-            $invoice_fields['vat'] = $vatAmount;
-            $invoice_fields['productID'] = 5686476118;
-        }
-
         $invoice = new FikenInvoice;
-        $invoice->create_invoice($invoice_fields, $hasVat);
+        $invoice->create_invoice($invoice_fields);
 
         // if( $request->update_address ) :
         $address = Address::firstOrNew(['user_id' => Auth::user()->id]);

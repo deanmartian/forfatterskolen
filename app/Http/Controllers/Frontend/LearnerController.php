@@ -85,7 +85,6 @@ use App\SelfPublishingLearner;
 use App\SelfPublishingPortalRequest;
 use App\Services\AssignmentService;
 use App\Services\CourseService;
-use App\Services\DocxToPdfService;
 use App\Services\DocumentConversionService;
 use App\Services\FileIntegrityService;
 use App\Services\LearnerCalendarService;
@@ -803,18 +802,11 @@ class LearnerController extends Controller
             ->select('lessons.id', 'lessons.title as lesson_title', 'lessons.content', 'courses.title as course_title', 'courses.id as course_id')
             ->get();
 
-        // Parse individuelle videoer fra leksjonsinnholdet OG lesson_contents
+        // Parse individuelle videoer fra leksjonsinnholdet
+        // Robust tilnærming: strip HTML, split på [video] shortcodes
         $replayItems = collect();
         foreach ($replayLessons as $lesson) {
-            // Kombiner lessons.content + alle lesson_contents for denne leksjonen
-            $allContent = html_entity_decode($lesson->content ?? '');
-            $lessonContents = DB::table('lesson_contents')
-                ->where('lesson_id', $lesson->id)
-                ->pluck('lesson_content');
-            foreach ($lessonContents as $lc) {
-                $allContent .= "\n" . $lc;
-            }
-            $content = $allContent;
+            $content = html_entity_decode($lesson->content);
 
             // Finn alle [video src="URL"] shortcodes med tilhørende tittel-tekst
             // Steg 1: Erstatt <br>, </p>, </div>, </h2> etc. med newlines for å bevare struktur
@@ -1492,12 +1484,12 @@ class LearnerController extends Controller
                 'uploaded_at' => now(),
             ]);
             Log::create([
-                'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for assignment '.$assignment->title,
+                'activity' => '<a href="'.route('admin.learner.show', Auth::id()).'"><strong>'.Auth::user()->full_name.'</strong></a> leverte manus for oppgave '.$assignment->title,
             ]);
 
             // Admin notification
             if (($assignment->course && $assignment->course->type === 'Single') || $assignment->parent === 'users') {
-                $message = Auth::user()->full_name.' submitted a manuscript for assignment '.$assignment->title;
+                $message = Auth::user()->full_name.' leverte manus for oppgave '.$assignment->title;
                 $toMail = 'post@forfatterskolen.no'; // post@forfatterskolen.no
 
                 $email_data['email_message'] = $message;
@@ -3585,10 +3577,6 @@ class LearnerController extends Controller
             );
         }
 
-        // Webinar reprise-preferanse (direkte på users-tabellen)
-        Auth::user()->receive_replay_emails = $request->boolean('receive_replay_emails');
-        Auth::user()->save();
-
         return redirect()->back()->with('profile_success', 'Innstillinger lagret.');
     }
 
@@ -3753,10 +3741,10 @@ class LearnerController extends Controller
                         'word_count' => $word_count,
                     ]);
                     Log::create([
-                        'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for course '.$courseTaken->package->course->title,
+                        'activity' => '<strong>'.Auth::user()->full_name.'</strong> leverte manus for kurs '.$courseTaken->package->course->title,
                     ]);
                     // Admin notification
-                    $message = Auth::user()->full_name.' submitted a manuscript for course '.$courseTaken->package->course->title;
+                    $message = Auth::user()->full_name.' leverte manus for kurs '.$courseTaken->package->course->title;
                     // mail('post@forfatterskolen.no', 'New manuscript submitted for course', $message);
                     /*AdminHelpers::send_email('New manuscript submitted for course',
                         'post@forfatterskolen.no','post@forfatterskolen.no', $message);*/
@@ -5428,44 +5416,6 @@ class LearnerController extends Controller
         }
 
         return redirect()->back();
-    }
-
-    /**
-     * Download assignment manuscript as PDF with Word comments rendered inline.
-     *
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
-     */
-    public function downloadAssignmentManuscriptPdf($id, DocxToPdfService $service)
-    {
-        // Support both manuscript and feedback files
-        if (request('type') === 'feedback') {
-            $feedback = \DB::table('assignment_feedbacks_no_group')->find($id);
-            if (! $feedback) {
-                return redirect()->back()->with('error', 'Tilbakemeldingen ble ikke funnet.');
-            }
-            $filename = $feedback->filename;
-        } else {
-            $manuscript = AssignmentManuscript::find($id);
-            if (! $manuscript) {
-                return redirect()->back()->with('error', 'Manuskriptet ble ikke funnet.');
-            }
-            $filename = $manuscript->filename;
-        }
-        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-
-        if ($extension !== 'docx') {
-            return redirect()->back()->with('error', 'PDF-konvertering med kommentarer er kun tilgjengelig for .docx-filer.');
-        }
-
-        $fullPath = public_path($filename);
-        $downloadName = pathinfo(basename($filename), PATHINFO_FILENAME);
-        $response = $service->convertWithComments($fullPath, $downloadName);
-
-        if (! $response) {
-            return redirect()->back()->with('error', 'Kunne ikke konvertere dokumentet til PDF.');
-        }
-
-        return $response;
     }
 
     /**
