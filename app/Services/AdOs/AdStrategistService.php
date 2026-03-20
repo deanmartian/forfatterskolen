@@ -172,6 +172,44 @@ class AdStrategistService
             ] : null,
             'date' => now()->format('Y-m-d'),
             'day_of_week' => now()->locale('nb')->dayName,
+            'products' => $this->gatherProductContext(),
+        ];
+    }
+
+    /**
+     * Gather available products: webinars, courses, landing pages.
+     */
+    private function gatherProductContext(): array
+    {
+        $freeWebinars = \DB::table('free_webinars')
+            ->select('id', 'title', 'start_date', 'description', 'target_audience', 'facebook_campaign_id')
+            ->where('start_date', '>=', now()->subDays(7))
+            ->orderBy('start_date')
+            ->get()
+            ->map(fn($w) => [
+                'id' => $w->id,
+                'title' => $w->title,
+                'date' => $w->start_date,
+                'url' => 'https://www.forfatterskolen.no/gratis-webinar/' . $w->id,
+                'description' => \Str::limit($w->description, 200),
+                'target_audience' => $w->target_audience,
+                'has_facebook_campaign' => !empty($w->facebook_campaign_id),
+            ])->toArray();
+
+        $courses = \DB::table('courses')
+            ->select('id', 'title', 'price', 'status')
+            ->where('status', 1)
+            ->get()
+            ->map(fn($c) => [
+                'id' => $c->id,
+                'title' => $c->title,
+                'price' => $c->price,
+                'url' => 'https://www.forfatterskolen.no/kurs/' . $c->id,
+            ])->toArray();
+
+        return [
+            'free_webinars' => $freeWebinars,
+            'courses' => $courses,
         ];
     }
 
@@ -182,6 +220,7 @@ class AdStrategistService
     {
         $campaignsJson = json_encode($context['campaigns'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         $budgetJson = json_encode($context['budget'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $productsJson = json_encode($context['products'] ?? [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         $strategyJson = $context['strategy']
             ? json_encode($context['strategy'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
             : 'Ingen aktiv strategi konfigurert.';
@@ -205,6 +244,13 @@ AKTIV STRATEGI:
 
 BUDSJETTINFORMASJON:
 {$budgetJson}
+
+TILGJENGELIGE PRODUKTER OG LANDINGSSIDER:
+{$productsJson}
+
+VIKTIG: Bruk ALLTID de faktiske URL-ene fra produktdataene over. Gjett ALDRI på URL-er.
+Gratis webinarer: https://www.forfatterskolen.no/gratis-webinar/{id}
+Kurs: https://www.forfatterskolen.no/kurs/{id}
 
 KAMPANJEDATA (alle kampanjer med siste metrics):
 {$campaignsJson}
