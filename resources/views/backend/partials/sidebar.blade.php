@@ -101,13 +101,6 @@
             @endforeach
         @endif
         <li>
-            <a href="{{ route('admin.shop-manuscript.index') }}"
-               class="ed-nav-item {{ Request::is('shop-manuscript*') || Request::is('assignment*') || Request::is('other-service*') ? 'active' : '' }}">
-                <span class="ed-nav-item__icon"><i class="fa fa-edit"></i></span>
-                <span class="ed-nav-item__label">Manus/Oppgaver</span>
-            </a>
-        </li>
-        <li>
             <a href="{{ route('admin.assignment-review.index') }}"
                class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.assignment-review') ? 'active' : '' }}">
                 <span class="ed-nav-item__icon"><i class="fa fa-magic"></i></span>

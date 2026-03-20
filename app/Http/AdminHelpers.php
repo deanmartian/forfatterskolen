@@ -1244,6 +1244,7 @@ class AdminHelpers
             ['id' => 2, 'option' => 'Free Courses', 'route' => 'admin.free-course.index', 'request_name' => 'free-course'],
             ['id' => 1, 'option' => 'Courses', 'route' => 'admin.course.index', 'request_name' => 'course'],
             ['id' => 4, 'option' => 'Learners', 'route' => 'admin.learner.index', 'request_name' => 'learner'],
+            ['id' => 9, 'option' => 'Manus/Oppgaver', 'route' => 'admin.shop-manuscript.index', 'request_name' => 'shop-manuscript'],
             ['id' => 14, 'option' => 'Project', 'route' => 'admin.project.index', 'request_name' => 'project'],
             ['id' => 6, 'option' => 'Support', 'route' => 'admin.publishing.index', 'request_name' => 'publishing'],
             ['id' => 7, 'option' => 'Free Manuscripts', 'route' => 'admin.free-manuscript.index', 'request_name' => 'free-manuscript'],

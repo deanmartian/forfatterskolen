@@ -16,7 +16,7 @@ return [
         'faq' => 'FAQ',
         'invoices' => 'Fakturaer',
         'other-services' => 'Andre tjenester',
-        'shop-manuscripts' => 'Manusutvikling',
+        'shop-manuscripts' => 'Manus/Oppgaver',
         'yearly_calendars' => 'Årshjul',
         'pending-assignments' => 'Ventende oppgaver',
         'assignment-archive' => 'Tidligere oppgaver',

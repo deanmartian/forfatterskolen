@@ -178,71 +178,17 @@
 				</div>
 			</div>
 			@elseif( Request::input('tab') == 'assignments' )
-				<div class="panel panel-default no-padding-bottom" style="border-top: 0">
+				<div class="panel panel-default" style="border-top: 0">
 					<div class="panel-body">
-						<a href="{{ route('admin.assignment.index') }}" class="btn btn-primary margin-bottom">Gå til oppgaveoversikt</a>
-						<div class="table-responsive">
-							<table class="table no-margin-bottom">
-								<thead>
-									<tr>
-										<th>Oppgave</th>
-										<th>Kurs</th>
-										<th>Type</th>
-										<th>Frist</th>
-										<th></th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach($assignments as $assignment)
-										<tr>
-											<td><a href="{{ route('admin.assignment.show', $assignment->id) }}">{{ $assignment->title }}</a></td>
-											<td>{{ $assignment->course->title ?? '-' }}</td>
-											<td>{{ $assignment->type ?? '-' }}</td>
-											<td>{{ $assignment->deadline ? \Carbon\Carbon::parse($assignment->deadline)->format('d.m.Y') : '-' }}</td>
-											<td>
-												<a href="{{ route('admin.assignment.show', $assignment->id) }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
-											</td>
-										</tr>
-									@endforeach
-								</tbody>
-							</table>
-						</div>
+						<script>window.location.href = '{{ route('admin.assignment.index') }}';</script>
+						<p>Omdirigerer til <a href="{{ route('admin.assignment.index') }}">Oppgaver</a>...</p>
 					</div>
 				</div>
 			@elseif( Request::input('tab') == 'other-services' )
-				<div class="panel panel-default no-padding-bottom" style="border-top: 0">
+				<div class="panel panel-default" style="border-top: 0">
 					<div class="panel-body">
-						<a href="{{ route('admin.other-service.index') }}" class="btn btn-primary margin-bottom">Gå til andre tjenester</a>
-						<div class="table-responsive">
-							<table class="table no-margin-bottom">
-								<thead>
-									<tr>
-										<th>Tittel</th>
-										<th>Pris</th>
-										<th>Status</th>
-										<th></th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach($otherServices as $service)
-										<tr>
-											<td>{{ $service->title }}</td>
-											<td>kr {{ number_format($service->price ?? 0, 0, ',', ' ') }}</td>
-											<td>
-												@if($service->active ?? false)
-													<span class="label label-success">Aktiv</span>
-												@else
-													<span class="label label-default">Inaktiv</span>
-												@endif
-											</td>
-											<td>
-												<a href="{{ route('admin.other-service.show', $service->id) }}" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
-											</td>
-										</tr>
-									@endforeach
-								</tbody>
-							</table>
-						</div>
+						<script>window.location.href = '{{ route('admin.other-service.index') }}';</script>
+						<p>Omdirigerer til <a href="{{ route('admin.other-service.index') }}">Andre tjenester</a>...</p>
 					</div>
 				</div>
 			@else
