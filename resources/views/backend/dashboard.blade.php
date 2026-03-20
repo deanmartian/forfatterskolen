@@ -214,8 +214,7 @@
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans_choice('site.learners', 1) }}</th>
-								<th>{{ trans('site.locked') }}</th>
-								<th>{{ trans('site.requests-sent') }}</th>
+								<th>Status</th>
 								<th>{{ trans('site.assigned-to') }}</th>
 								<th>{{ trans('site.learner.deadline') }}</th>
 								<th></th>
@@ -247,14 +246,12 @@
 													data-id="{{$shopManuscript->id}}" data-size="mini"
 											@if($shopManuscript->is_manuscript_locked) {{ 'checked' }} @endif>
 										@endif
-									</td>
-									<td>
 										@if ($shopManuscript->requests->count())
 											<button class="btn btn-xs btn-success previewRequestsSentBtn"
 													data-toggle="modal"
 													data-target="#previewRequestsSent"
 													data-requests="{{ $shopManuscript->requests }}"
-													>
+													style="margin-left: 5px;">
 												{{ trans('site.learner.preview-text') }}
 											</button>
 										@endif
