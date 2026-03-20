@@ -2176,6 +2176,9 @@ Route::domain($admin)->group(function () {
         Route::post('/link-users', [Backend\HelpwiseController::class, 'linkUsers'])->name('admin.helpwise.link-users');
         Route::get('/webhook-logs', [Backend\HelpwiseController::class, 'webhookLogs'])->name('admin.helpwise.webhook-logs');
     });
+
+    // Inbox routes
+    require __DIR__.'/ad_os_routes.php';
 });
 
 /**
