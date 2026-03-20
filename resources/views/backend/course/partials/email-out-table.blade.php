@@ -85,12 +85,13 @@
                             </button>
                             <br>
                             <button class="btn btn-info btn-xs editEmailBtn loadScriptButton" data-toggle="modal" data-bs-toggle="modal"
-                            data-target="#emailModal" data-bs-target="#emailModal" data-fields="{{ json_encode($email) }}"
+                            data-target="#emailModal" data-bs-target="#emailModal"
+                            data-fields='@json($email)'
                             data-action="{{ route('admin.email-out.update', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
                             data-filename="{{ \App\Http\AdminHelpers::extractFileName($email->attachment) }}"
                             data-fileloc="{{ asset($email->attachment) }}"
-                            style="margin-bottom:3px;">
-                                <i class="fa fa-pencil"></i>
+                            style="margin-bottom:3px; position:relative; z-index:10;">
+                                <i class="fa fa-pencil"></i> Rediger
                             </button>
                             <button class="btn btn-danger btn-xs deleteEmailBtn" data-toggle="modal" data-bs-toggle="modal"
                             data-target="#deleteEmailModal" data-bs-target="#deleteEmailModal"
