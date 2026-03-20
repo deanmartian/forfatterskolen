@@ -358,21 +358,6 @@
 						</div>
 					</div>
 
-					<div style="margin-top: 1.25rem;">
-						<div class="pf-card__title" style="margin-bottom: 0.75rem;">Sosiale medier</div>
-						<div class="pf-form-grid">
-							<div class="pf-form-group">
-								<label for="facebook">Facebook</label>
-								<input type="url" id="facebook" name="facebook" value="{{ Auth::user()->social->facebook }}" placeholder="https://facebook.com/dittbrukernavn">
-							</div>
-							<div class="pf-form-group">
-								<label for="instagram">Instagram</label>
-								<input type="url" id="instagram" name="instagram" value="{{ Auth::user()->social->instagram }}" placeholder="https://instagram.com/dittbrukernavn">
-							</div>
-						</div>
-						<span class="pf-form-hint">Valgfritt. Vises kun i gruppearbeid med andre elever.</span>
-					</div>
-
 					<div class="pf-form-actions">
 						<button type="submit" class="pf-btn pf-btn--primary">Lagre endringer</button>
 					</div>
@@ -477,30 +462,6 @@
 							</div>
 							<label class="pf-toggle-switch">
 								<input type="checkbox" name="payment_receipt" value="1" {{ Auth::user()->wantsNotification('payment_receipt') ? 'checked' : '' }}>
-								<span class="pf-toggle-slider"></span>
-							</label>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			{{-- Webinar-repriser --}}
-			<div class="pf-card">
-				<div class="pf-card__header">
-					<div>
-						<div class="pf-card__title">Webinar-repriser</div>
-						<div class="pf-card__desc">F&aring; tilsendt repriser for webinarer du ikke deltok p&aring;.</div>
-					</div>
-				</div>
-				<div class="pf-card__body">
-					<div class="pf-toggle-list">
-						<div class="pf-toggle-item">
-							<div class="pf-toggle-item__info">
-								<div class="pf-toggle-item__title">Motta reprise-e-poster</div>
-								<div class="pf-toggle-item__desc">F&aring; tilsendt lenke til reprise hvis du ikke deltok p&aring; webinaret.</div>
-							</div>
-							<label class="pf-toggle-switch">
-								<input type="checkbox" name="receive_replay_emails" value="1" {{ Auth::user()->receive_replay_emails ? 'checked' : '' }}>
 								<span class="pf-toggle-slider"></span>
 							</label>
 						</div>
