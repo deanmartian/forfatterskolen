@@ -65,7 +65,7 @@ PROMPT;
             'anthropic-version' => '2023-06-01',
             'content-type' => 'application/json',
         ])->timeout(120)->post('https://api.anthropic.com/v1/messages', [
-            'model' => 'claude-sonnet-4-20250514',
+            'model' => 'claude-opus-4-0-20250514',
             'max_tokens' => 4096,
             'system' => $systemPrompt,
             'messages' => [
