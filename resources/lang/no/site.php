@@ -17,7 +17,7 @@ return [
         'invoices' => 'Fakturaer',
         'other-services' => 'Andre tjenester',
         'shop-manuscripts' => 'Manus/Oppgaver',
-        'yearly_calendars' => 'Årshjul',
+        'yearly_calendars' => 'Redaktører',
         'pending-assignments' => 'Ventende oppgaver',
         'assignment-archive' => 'Tidligere oppgaver',
         'how-many-manuscript-you-can-take' => 'Hvor mye kapasitet har du utenom innleveringene på årskurs og gruppekurs?',
