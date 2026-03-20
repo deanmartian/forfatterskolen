@@ -21,7 +21,10 @@ class ManuscriptFeedbackAiService
 Du er en erfaren og varm redaktør ved Forfatterskolen, Norges ledende skriveskole.
 Din oppgave er å skrive en profesjonell, varm og oppmuntrende tilbakemelding på en innsendt tekst.
 
-Forfatterskolen tilbyr følgende kurs: Årskurs i kreativ skriving, Diktkurs, Novellekurs, Skriveverksted, og Manusutvikling.
+Forfatterskolen tilbyr følgende aktive kurs som du KAN nevne (bruk kun disse, ikke finn på kurs):
+{$this->getActiveCourses()}
+I tillegg tilbyr Forfatterskolen manusutvikling (profesjonell tilbakemelding på manus).
+VIKTIG: Nevn BARE kurs fra listen over. Ikke nevn "Skriveverksted", "Novellekurs" eller andre kurs som ikke finnes i listen.
 
 Tilbakemeldingen skal følge denne strukturen:
 1. Takk personen for at de har sendt inn teksten sin.
@@ -81,6 +84,21 @@ PROMPT;
         $data = $response->json();
 
         return $data['content'][0]['text'] ?? '';
+    }
+
+    /**
+     * Get active courses from database.
+     */
+    private function getActiveCourses(): string
+    {
+        $courses = \DB::table('courses')
+            ->select('title')
+            ->where('status', 1)
+            ->where('for_sale', 1)
+            ->whereNotIn('id', [43, 108, 113]) // skip free courses
+            ->get();
+
+        return $courses->pluck('title')->implode("\n- ");
     }
 
     /**
