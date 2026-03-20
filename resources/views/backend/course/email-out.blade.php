@@ -268,12 +268,15 @@
             form.attr('action', action);
         });
 
-        $(".editEmailBtn").click(function(){
+        $(".editEmailBtn").click(function(e){
+            e.preventDefault();
+            e.stopImmediatePropagation();
             let fields = $(this).data('fields');
             let action = $(this).data('action');
             let filename = $(this).data('filename');
             let fileloc = $(this).data('fileloc');
-            let allowed_package = JSON.parse(fields.allowed_package);
+            let allowed_package = fields.allowed_package;
+            try { if (typeof allowed_package === 'string') allowed_package = JSON.parse(allowed_package); } catch(ex) { allowed_package = null; }
             if (!allowed_package) {
                 emailModalForm.find('input[name="allowed_package[]"]').prop('checked', true);
             } else {
@@ -358,6 +361,21 @@
                 }
                }
 
+            });
+
+            // Open modal manually and init TinyMCE after visible
+            emailModal.modal('show');
+            emailModal.off('shown.bs.modal.edit').on('shown.bs.modal.edit', function() {
+                setTimeout(function() {
+                    if (typeof initTinyMCE === 'function') initTinyMCE();
+                    // Set message content after TinyMCE is ready
+                    if (fields && fields.message) {
+                        setTimeout(function() {
+                            var editor = tinymce.get('message');
+                            if (editor) $(editor.getBody()).html(fields.message);
+                        }, 800);
+                    }
+                }, 300);
             });
         });
 
