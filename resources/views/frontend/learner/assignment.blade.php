@@ -530,6 +530,9 @@
 												data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 												data-show-group-question="{{ $assignment->show_join_group_question }}"
 												data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
+												data-expected-finish="{{ $assignment->expected_finish ? \Carbon\Carbon::parse($assignment->expected_finish)->format('d.m.Y') : '' }}"
+												data-max-words="{{ $assignment->max_words }}"
+												data-assignment-title="{{ $assignment->title }}"
 												disabled style="pointer-events: none;"
 												@if($isExpired && $assignment->parent !== 'users') disabled @endif>
 												Last opp manus
@@ -540,6 +543,9 @@
 												data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 												data-show-group-question="{{ $assignment->show_join_group_question }}"
 												data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
+												data-expected-finish="{{ $assignment->expected_finish ? \Carbon\Carbon::parse($assignment->expected_finish)->format('d.m.Y') : '' }}"
+												data-max-words="{{ $assignment->max_words }}"
+												data-assignment-title="{{ $assignment->title }}"
 												@if($isExpired && $assignment->parent !== 'users') disabled @endif>
 												Last opp manus
 											</button>
@@ -644,6 +650,9 @@
 											data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 											data-show-group-question="{{ $assignment->show_join_group_question }}"
 											data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
+											data-expected-finish="{{ $assignment->expected_finish ? \Carbon\Carbon::parse($assignment->expected_finish)->format('d.m.Y') : '' }}"
+											data-max-words="{{ $assignment->max_words }}"
+											data-assignment-title="{{ $assignment->title }}"
 											disabled style="pointer-events: none;"
 											@if($isExpired && $assignment->parent !== 'users') disabled @endif>
 											Last opp manus
@@ -654,6 +663,9 @@
 											data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 											data-show-group-question="{{ $assignment->show_join_group_question }}"
 											data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
+											data-expected-finish="{{ $assignment->expected_finish ? \Carbon\Carbon::parse($assignment->expected_finish)->format('d.m.Y') : '' }}"
+											data-max-words="{{ $assignment->max_words }}"
+											data-assignment-title="{{ $assignment->title }}"
 											@if($isExpired && $assignment->parent !== 'users') disabled @endif>
 											Last opp manus
 										</button>
@@ -921,6 +933,9 @@
 									data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 									data-show-group-question="{{ $assignment->show_join_group_question }}"
 									data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
+									data-expected-finish="{{ $assignment->expected_finish ? \Carbon\Carbon::parse($assignment->expected_finish)->format('d.m.Y') : '' }}"
+									data-max-words="{{ $assignment->max_words }}"
+									data-assignment-title="{{ $assignment->title }}"
 									disabled style="pointer-events: none;">
 									Last opp
 								</button>
@@ -929,7 +944,10 @@
 									data-bs-toggle="modal" data-bs-target="#submitManuscriptModal"
 									data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 									data-show-group-question="{{ $assignment->show_join_group_question }}"
-									data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}">
+									data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
+									data-expected-finish="{{ $assignment->expected_finish ? \Carbon\Carbon::parse($assignment->expected_finish)->format('d.m.Y') : '' }}"
+									data-max-words="{{ $assignment->max_words }}"
+									data-assignment-title="{{ $assignment->title }}">
 									Last opp
 								</button>
 							@endif
@@ -997,13 +1015,24 @@
 				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
+				<div class="assignment-info-box" style="background: #f8f6f3; border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; padding: 1rem 1.15rem; margin-bottom: 1.25rem;">
+					<div class="assignment-info-title" style="font-weight: 700; font-size: 1rem; color: #1a1a1a; margin-bottom: 0.5rem;"></div>
+					<div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+						<span class="assignment-info-words" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; color: #5a5550;">
+							<svg width="14" height="14" fill="none" stroke="#862736" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+						</span>
+						<span class="assignment-info-deadline" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; color: #5a5550;">
+							<svg width="14" height="14" fill="none" stroke="#862736" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+						</span>
+					</div>
+				</div>
 				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this);">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<div class="file-upload" id="file-upload-area">
 							<i class="fa fa-cloud-upload-alt"></i>
 							<div class="file-upload-text" id="file-upload-text-editor-manu">
-								Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
+								Dra og slipp filer eller <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
 							</div>
 							<input type="file" class="form-control hidden input-file-upload" name="filename"
 								id="file-upload" accept=".doc,.docx,.pdf,.odt,.pages,application/msword,
@@ -1065,13 +1094,24 @@
 				<button type="button" class="close" data-bs-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
+				<div class="assignment-info-box" style="background: #f8f6f3; border: 1px solid rgba(0,0,0,0.08); border-radius: 10px; padding: 1rem 1.15rem; margin-bottom: 1.25rem;">
+					<div class="assignment-info-title" style="font-weight: 700; font-size: 1rem; color: #1a1a1a; margin-bottom: 0.5rem;"></div>
+					<div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+						<span class="assignment-info-words" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; color: #5a5550;">
+							<svg width="14" height="14" fill="none" stroke="#862736" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+						</span>
+						<span class="assignment-info-deadline" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; color: #5a5550;">
+							<svg width="14" height="14" fill="none" stroke="#862736" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+						</span>
+					</div>
+				</div>
 				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this);">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<div class="file-upload" id="file-upload-area-submit-manu">
 							<i class="fa fa-cloud-upload-alt"></i>
 							<div class="file-upload-text">
-								Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
+								Dra og slipp filer eller <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
 							</div>
 							<input type="file" class="form-control hidden input-file-upload" name="filename"
 								id="file-upload" accept=".doc,.docx,.pdf,.odt,.pages,application/msword,
@@ -1326,10 +1366,15 @@
 
 	$('.submitManuscriptBtn').click(function(){
 		let form = $('#submitManuscriptModal').find("form");
+		let modal = $('#submitManuscriptModal');
 		let action = $(this).data('action');
 		let show_group_question = parseInt($(this).data('show-group-question'));
 		let send_letter_to_editor = parseInt($(this).data('send-letter-to-editor'));
 		form.attr('action', action);
+
+		modal.find('.assignment-info-title').text($(this).data('assignment-title') || '');
+		modal.find('.assignment-info-words').text($(this).data('max-words') ? 'Maks ' + $(this).data('max-words') + ' ord' : '');
+		modal.find('.assignment-info-deadline').text($(this).data('expected-finish') ? 'Forventet tilbakemelding: ' + $(this).data('expected-finish') : '');
 
 		if (show_group_question === 1) {
 			form.find('.join-question-container').removeClass('hide').removeClass('d-none').show();
@@ -1366,10 +1411,15 @@
 			return false;
 		}
 		let form = $('#submitEditorManuscriptModal').find("form");
+		let modal = $('#submitEditorManuscriptModal');
 		let action = $(this).data('action');
 		let show_group_question = parseInt($(this).data('show-group-question'));
 		let send_letter_to_editor = parseInt($(this).data('send-letter-to-editor'));
 		form.attr('action', action);
+
+		modal.find('.assignment-info-title').text($(this).data('assignment-title') || '');
+		modal.find('.assignment-info-words').text($(this).data('max-words') ? 'Maks ' + $(this).data('max-words') + ' ord' : '');
+		modal.find('.assignment-info-deadline').text($(this).data('expected-finish') ? 'Forventet tilbakemelding: ' + $(this).data('expected-finish') : '');
 
 		if (show_group_question === 1) {
 			form.find('.join-question-container').removeClass('hide').removeClass('d-none').show();
