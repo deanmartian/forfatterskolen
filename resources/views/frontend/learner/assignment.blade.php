@@ -289,9 +289,9 @@
 @media (max-width: 1026px) {
 	.op-redesign .op-page { padding: 1.5rem 1rem; padding-top: 3.5rem; }
 	.op-redesign .op-header h1 { font-size: 1.35rem; }
-	/* Tabs: horisontal scroll på trange skjermer */
-	.op-redesign .op-tabs { overflow-x: auto; scrollbar-width: none; }
-	.op-redesign .op-tab { white-space: nowrap; flex-shrink: 0; padding: 0.55rem 0.85rem; font-size: 0.8rem; }
+	/* Tabs: wrap i stedet for horisontal scroll */
+	.op-redesign .op-tabs { flex-wrap: wrap; overflow-x: visible; }
+	.op-redesign .op-tab { white-space: normal; text-align: center; padding: 0.55rem 0.85rem; font-size: 0.8rem; }
 }
 
 /* Small tablet / large phone */
@@ -356,8 +356,7 @@
 			}
 		}
 
-		$tabMap = ['feedback-from-editor' => 'tilbakemelding', 'waiting' => 'innsendt', 'groups' => 'grupper'];
-		$activeTab = $tabMap[request('tab')] ?? request('tab', 'kommende');
+		$activeTab = request('tab', 'kommende');
 	@endphp
 
 	{{-- ── TABS ──────────────────────────────────────────────────── --}}
@@ -384,7 +383,7 @@
 			Grupper
 		</button>
 		<button class="op-tab {{ $activeTab == 'webinar' ? 'active' : '' }}" onclick="opSwitchTab('webinar', this)">
-			Redigeringswebinarer
+			Redigeringswebinar (årskurs)
 		</button>
 	</div>
 
@@ -511,10 +510,6 @@
 												title="Slett"><i class="fa fa-trash-alt"></i></button>
 											<a href="{{ end($extension) == 'pdf' || end($extension) == 'odt' ? '/js/ViewerJS/#../..' . $manuscript->filename : 'https://view.officeapps.live.com/op/embed.aspx?src=' . url('') . $manuscript->filename }}"
 												title="Forhåndsvis"><i class="fa fa-eye"></i></a>
-											@if(end($extension) == 'docx')
-												<a href="{{ route('learner.assignment.manuscript.pdf', $manuscript->id) }}"
-													title="Last ned som PDF"><i class="fa fa-file-pdf"></i></a>
-											@endif
 										</span>
 									@endif
 								</div>
@@ -629,10 +624,6 @@
 											title="Slett"><i class="fa fa-trash-alt"></i></button>
 										<a href="{{ end($extension) == 'pdf' || end($extension) == 'odt' ? '/js/ViewerJS/#../..' . $manuscript->filename : 'https://view.officeapps.live.com/op/embed.aspx?src=' . url('') . $manuscript->filename }}"
 											title="Forhåndsvis"><i class="fa fa-eye"></i></a>
-										@if(end($extension) == 'docx')
-											<a href="{{ route('learner.assignment.manuscript.pdf', $manuscript->id) }}"
-												title="Last ned som PDF"><i class="fa fa-file-pdf"></i></a>
-										@endif
 									</span>
 								@endif
 							</div>
@@ -746,12 +737,6 @@
 								<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
 								Ditt manus
 							</a>
-							@if(end($extension) == 'docx')
-								<a href="{{ route('learner.assignment.manuscript.pdf', $manuscript->id) }}" class="op-sub-item__file" title="Last ned som PDF">
-									<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
-									Last ned som PDF
-								</a>
-							@endif
 						@endif
 						<span class="op-badge op-badge--waiting">Venter</span>
 					</div>
@@ -777,12 +762,6 @@
 								<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
 								Ditt manus
 							</a>
-							@if(end($extension) == 'docx')
-								<a href="{{ route('learner.assignment.manuscript.pdf', $manuscript->id) }}" class="op-sub-item__file" title="Last ned som PDF">
-									<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
-									Last ned som PDF
-								</a>
-							@endif
 							<span class="op-badge op-badge--submitted">Levert</span>
 						</div>
 					@endif
@@ -847,12 +826,6 @@
 											<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
 											Last ned
 										</a>
-										@php $fbExt = pathinfo($feedback->filename ?? '', PATHINFO_EXTENSION); @endphp
-										@if($fbExt == 'docx')
-											<a href="{{ route('learner.assignment.manuscript.pdf', $feedback->manuscript_id ?? $feedback->id) }}" class="op-fb-table__dl" style="margin-left:8px; color:#862736;" title="Last ned med kommentarer som PDF">
-												<i class="fa fa-file-pdf"></i> PDF
-											</a>
-										@endif
 									</td>
 								</tr>
 							@endif
@@ -1049,14 +1022,14 @@
 						@endforeach
 					</div>
 
-					<div class="join-question-container hide">
+					<div class="join-question-container hide d-none">
 						<div class="form-group">
 							<label>{{ trans('site.learner.join-group-question') }}?</label> <br>
 							<input type="checkbox" data-bs-toggle="toggle" data-on="Ja" data-off="Nei" data-size="small" name="join_group">
 						</div>
 					</div>
 
-					<div class="form-group letter-to-editor hide">
+					<div class="form-group letter-to-editor hide d-none">
 						<label>{{ trans('site.letter-to-editor') }}</label>
 						<input type="file" class="form-control margin-top" name="letter_to_editor" accept=".doc,.docx,.pdf,.odt,.pages,application/msword,
 							application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,
@@ -1117,14 +1090,14 @@
 						@endforeach
 					</div>
 
-					<div class="join-question-container hide">
+					<div class="join-question-container hide d-none">
 						<div class="form-group">
 							<label>{{ trans('site.learner.join-group-question') }}?</label> <br>
 							<input type="checkbox" data-bs-toggle="toggle" data-on="Ja" data-off="Nei" data-size="small" name="join_group">
 						</div>
 					</div>
 
-					<div class="form-group letter-to-editor hide">
+					<div class="form-group letter-to-editor hide d-none">
 						<label>{{ trans('site.letter-to-editor') }}</label>
 						<input type="file" class="form-control margin-top" name="letter_to_editor" accept=".doc,.docx,.pdf,.odt,.pages,application/msword,
 							application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,
@@ -1346,15 +1319,15 @@
 		form.attr('action', action);
 
 		if (show_group_question === 1) {
-			form.find('.join-question-container').removeClass('hide');
+			form.find('.join-question-container').removeClass('hide').removeClass('d-none').show();
 		} else {
-			form.find('.join-question-container').addClass('hide');
+			form.find('.join-question-container').addClass('hide').addClass('d-none').hide();
 		}
 
 		if (send_letter_to_editor === 1) {
-			form.find('.letter-to-editor').removeClass('hide');
+			form.find('.letter-to-editor').removeClass('hide').removeClass('d-none').show();
 		} else {
-			form.find('.letter-to-editor').addClass('hide');
+			form.find('.letter-to-editor').addClass('hide').addClass('d-none').hide();
 		}
 	});
 
@@ -1386,15 +1359,15 @@
 		form.attr('action', action);
 
 		if (show_group_question === 1) {
-			form.find('.join-question-container').removeClass('hide');
+			form.find('.join-question-container').removeClass('hide').removeClass('d-none').show();
 		} else {
-			form.find('.join-question-container').addClass('hide');
+			form.find('.join-question-container').addClass('hide').addClass('d-none').hide();
 		}
 
 		if (send_letter_to_editor === 1) {
-			form.find('.letter-to-editor').removeClass('hide');
+			form.find('.letter-to-editor').removeClass('hide').removeClass('d-none').show();
 		} else {
-			form.find('.letter-to-editor').addClass('hide');
+			form.find('.letter-to-editor').addClass('hide').addClass('d-none').hide();
 		}
 	});
 
