@@ -211,11 +211,10 @@
 						<table class="table">
 							<thead>
 							<tr>
-								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
-								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>Manus</th>
+								<th>Elev</th>
 								<th>Status</th>
-								<th>{{ trans('site.assigned-to') }}</th>
-								<th>{{ trans('site.learner.deadline') }}</th>
+								<th>Redaktør / Frist</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -262,17 +261,17 @@
 										@if( $shopManuscript->admin )
 											{{ $shopManuscript->admin->full_name }}
 										@else
-											<em>Not set</em>
+											<em>Ikke tildelt</em>
 										@endif
-									</td>
-									<td>
-										{{ $shopManuscript->expected_finish }}
+										@if($shopManuscript->expected_finish)
+											<br><small class="text-muted">Frist: {{ $shopManuscript->expected_finish }}</small>
+										@endif
 										<button class="btn btn-primary btn-xs editExpectedFinishBtn loadScriptButton" data-toggle="modal"
 												data-target="#editExpectedFinishModal"
 												data-action="{{ route('backend.update-expected-finish', ['shop-manuscript', $shopManuscript->id]) }}"
 												data-expected_finish="{{ $shopManuscript->expected_finish
 											? strftime('%Y-%m-%d', strtotime($shopManuscript->expected_finish)) : NULL }}">
-											<i class="fa fa-edit"></i> Edit
+											<i class="fa fa-edit"></i>
 										</button>
 									</td>
 									<td>
