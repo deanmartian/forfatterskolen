@@ -31,7 +31,8 @@ class ProcessPublicationJob implements ShouldQueue
         try {
             // Step 1: Parse
             $publication->update(['status' => 'parsing']);
-            $docxPath = storage_path('app/' . ltrim($publication->source_manuscript, '/'));
+            // FrontendHelpers::saveFile stores in public_html/storage/publications/
+            $docxPath = public_path('storage/publications/' . ltrim($publication->source_manuscript, '/'));
             $manuscript = $parser->parse($docxPath);
 
             $publication->update([
