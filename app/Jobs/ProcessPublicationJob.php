@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ProcessPublicationJob implements ShouldQueue
 {
@@ -29,10 +30,16 @@ class ProcessPublicationJob implements ShouldQueue
         $publication = Publication::findOrFail($this->publicationId);
 
         try {
-            // Step 1: Parse
+            // Step 1: Parse - download from Dropbox to temp file
             $publication->update(['status' => 'parsing']);
-            // FrontendHelpers::saveFile stores in public_html/storage/publications/
-            $docxPath = public_path('storage/publications/' . ltrim($publication->source_manuscript, '/'));
+            $dropboxPath = $publication->source_manuscript;
+            $tempDir = storage_path("app/publications/{$publication->id}");
+            if (!is_dir($tempDir)) {
+                mkdir($tempDir, 0755, true);
+            }
+            $docxPath = "{$tempDir}/" . basename($dropboxPath);
+            $content = Storage::disk('dropbox')->get($dropboxPath);
+            file_put_contents($docxPath, $content);
             $manuscript = $parser->parse($docxPath);
 
             $publication->update([
@@ -53,17 +60,24 @@ class ProcessPublicationJob implements ShouldQueue
             file_put_contents($htmlPath, $bookHtml);
             $publication->update(['parsed_html' => "publications/{$publication->id}/book.html"]);
 
-            // Step 3: Generate all formats
+            // Step 3: Generate all formats (locally first, then upload to Dropbox)
             $publication->update(['status' => 'generating']);
+            $dropboxOutputDir = "Forfatterskolen_app/publications/{$publication->user_id}/{$publication->id}";
 
             $generator->generatePdf($bookHtml, $publication);
-            $publication->update(['output_pdf' => "publications/{$publication->id}/book-print.pdf"]);
+            $pdfLocal = "{$tempDir}/book-print.pdf";
+            Storage::disk('dropbox')->put("{$dropboxOutputDir}/book-print.pdf", file_get_contents($pdfLocal));
+            $publication->update(['output_pdf' => "{$dropboxOutputDir}/book-print.pdf"]);
 
             $generator->generateEpub($manuscript, $publication);
-            $publication->update(['output_epub' => "publications/{$publication->id}/book.epub"]);
+            $epubLocal = "{$tempDir}/book.epub";
+            Storage::disk('dropbox')->put("{$dropboxOutputDir}/book.epub", file_get_contents($epubLocal));
+            $publication->update(['output_epub' => "{$dropboxOutputDir}/book.epub"]);
 
             $generator->generateDocx($manuscript, $publication);
-            $publication->update(['output_docx' => "publications/{$publication->id}/book-formatted.docx"]);
+            $docxLocal = "{$tempDir}/book-formatted.docx";
+            Storage::disk('dropbox')->put("{$dropboxOutputDir}/book-formatted.docx", file_get_contents($docxLocal));
+            $publication->update(['output_docx' => "{$dropboxOutputDir}/book-formatted.docx"]);
 
             // Calculate spine width
             $trimSize = \App\Services\Publishing\TrimSize::tryFrom($publication->trim_size) ?? \App\Services\Publishing\TrimSize::FORMAT_140x220;

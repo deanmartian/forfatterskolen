@@ -46,7 +46,13 @@ class PublicationController extends Controller
             'author_name' => 'required|string|max:255',
         ]);
 
-        $filePath = FrontendHelpers::saveFile($request, 'publications', 'manuscript');
+        $file = $request->file('manuscript');
+        $original = $file->getClientOriginalName();
+        $destinationPath = 'Forfatterskolen_app/publications/' . Auth::id();
+        $fileName = \App\Http\AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $original);
+        $dropboxFileName = basename($fileName);
+        $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
+        $filePath = $destinationPath . '/' . $dropboxFileName;
 
         $publication = Publication::create([
             'user_id' => Auth::id(),
@@ -144,13 +150,10 @@ class PublicationController extends Controller
             return back()->with('error', 'PDF er ikke generert ennå.');
         }
 
-        $pdfPath = storage_path('app/' . $publication->output_pdf);
-        if (!file_exists($pdfPath)) {
-            return back()->with('error', 'PDF-filen ble ikke funnet.');
-        }
-
-        return response()->file($pdfPath, [
+        $content = \Illuminate\Support\Facades\Storage::disk('dropbox')->get($publication->output_pdf);
+        return response($content, 200, [
             'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . \Illuminate\Support\Str::slug($publication->title) . '.pdf"',
         ]);
     }
 
@@ -184,10 +187,13 @@ class PublicationController extends Controller
             return back()->with('error', 'Filen er ikke tilgjengelig.');
         }
 
-        $filePath = storage_path('app/' . $publication->$pathField);
+        $content = \Illuminate\Support\Facades\Storage::disk('dropbox')->get($publication->$pathField);
         $filename = \Illuminate\Support\Str::slug($publication->title) . ".{$format}";
 
-        return response()->download($filePath, $filename);
+        return response($content, 200, [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 
     public function generateCover(Request $request, int $id)
