@@ -336,6 +336,7 @@
 		<p>PS: Det finnes nå <strong>ledige manus</strong> i den nye «Ledige manus»-seksjonen nedenfor — første mann til mølla! 🏃‍♂️</p>
 		<p>Jeg trenger også <strong>gode ombrekkere og designere</strong> — spesielt for coverdesign. Jeg bygger nå programmer med samme teknologi som Typefi har, som vil gjøre ombrekking enklere. Den bør være på plass før sommeren, men ombrekkere og coverdesignere vil vi alltid trenge. Kjenner du noen, eller er du interessert selv? Send meg en e-post på <a href="mailto:sven.inge@forfatterskolen.no" style="color: var(--brand-primary); font-weight: 600;">sven.inge@forfatterskolen.no</a>! Jeg programmerer også nye verktøy som jeg håper vil gjøre hverdagen deres enklere. Har du en god idé til et program du trenger, eller forslag til hvordan vi kan gjøre nettsiden enda bedre — hører jeg gjerne fra deg!</p>
 		<p>🎄 <strong>Juleantologi!</strong> Jeg planlegger en juleantologi, og om dere ønsker å bidra som redaktør så gi meg gjerne beskjed! Trenger at rektor godkjenner, men her er litt info på forhånd: <a href="https://www.forfatterskolen.no/juleantologi" target="_blank" style="color: var(--brand-primary); font-weight: 600;">forfatterskolen.no/juleantologi</a></p>
+		<p>⚽ PS: Noen av dere vil kanskje oppleve å måtte svare på en liten quiz før dere får tildelt et manus — ikke ta det personlig, det er bare litt moro! 😉</p>
 		<p style="margin-bottom: 0; color: var(--text-secondary); font-style: italic;">— Sven Inge, {{ \Carbon\Carbon::now()->format('d.m.Y') }}</p>
 	</div>
 
