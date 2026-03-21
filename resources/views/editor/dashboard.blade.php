@@ -271,7 +271,7 @@
 @stop
 
 @section('content')
-@php($cacheBuster = now()->timestamp)
+@php $cacheBuster = now()->timestamp; @endphp
 <div class="col-sm-12 editor-dashboard">
 
 	{{-- ═══════ WELCOME BANNER ═══════ --}}
