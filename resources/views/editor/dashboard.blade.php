@@ -293,6 +293,16 @@
 		</p>
 	</div>
 
+	{{-- ═══════ MELDING FRA SVEN INGE ═══════ --}}
+	<div style="background: #fdf8f4; border-left: 4px solid var(--brand-primary); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+		<h4 style="margin-top: 0; color: var(--brand-primary); font-family: var(--font-display); font-size: 1.1rem;">📢 Melding fra Sven Inge</h4>
+		<p>Hei alle sammen!</p>
+		<p>Nå er jeg et godt stykke på vei med å oppdatere hele systemet. Det gjør at vi får mindre kostnader på admin-siden, som vi har brukt alt for mye tid på nå.</p>
+		<p>Ergo holder jeg på å regne ut <strong>lønnsøkning</strong> på dere fantastiske redaktørene våre! 🎉</p>
+		<p>Jeg kommer i løpet av helgen å oppdatere redaktørportalen. Nå har jeg fått på plass et nytt kontraktsystem for dere. Jeg kommer til å legge inn manus vi har fått inn som dere kan ta om dere ønsker dette.</p>
+		<p style="margin-bottom: 0; color: var(--text-secondary); font-style: italic;">— Sven Inge, {{ \Carbon\Carbon::now()->format('d.m.Y') }}</p>
+	</div>
+
 	{{-- ═══════ STAT CARDS ═══════ --}}
 	<div class="stat-grid">
 		<div class="stat-card">
