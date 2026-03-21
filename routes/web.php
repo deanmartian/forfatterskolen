@@ -433,6 +433,17 @@ Route::domain($front)->group(function () {
         Route::get('/self-publishing/cover/{id}', [Frontend\SelfPublishingController::class, 'coverDetails'])->name('learner.self-publishing.cover-show');
         Route::post('/self-publishing/cover/{project_id}/save', [Frontend\SelfPublishingController::class, 'saveCover'])
             ->name('learner.self-publishing.save-cover');
+        // Publication pipeline (Indiemoon ombrekk)
+        Route::get('/publication', [Frontend\PublicationController::class, 'index'])->name('learner.publication.index');
+        Route::get('/publication/create', [Frontend\PublicationController::class, 'create'])->name('learner.publication.create');
+        Route::post('/publication', [Frontend\PublicationController::class, 'store'])->name('learner.publication.store');
+        Route::get('/publication/{id}', [Frontend\PublicationController::class, 'show'])->name('learner.publication.show');
+        Route::put('/publication/{id}/step/{step}', [Frontend\PublicationController::class, 'updateStep'])->name('learner.publication.update-step');
+        Route::post('/publication/{id}/generate', [Frontend\PublicationController::class, 'generate'])->name('learner.publication.generate');
+        Route::get('/publication/{id}/preview', [Frontend\PublicationController::class, 'preview'])->name('learner.publication.preview');
+        Route::get('/publication/{id}/download/{format}', [Frontend\PublicationController::class, 'download'])->name('learner.publication.download');
+        Route::get('/publication/{id}/status', [Frontend\PublicationController::class, 'status'])->name('learner.publication.status');
+
         Route::get('/self-publishing/page-format', [Frontend\SelfPublishingController::class, 'pageFormat'])->name('learner.self-publishing.page-format');
         Route::get('/self-publishing/page-format/{id}', [Frontend\SelfPublishingController::class, 'pageFormatDetails'])
             ->name('learner.self-publishing.page-format-show');
