@@ -285,8 +285,12 @@ class LoginController extends Controller
 
         Auth::login($user);
         if ($request->has('redirect')) {
-            if ($request->get('redirect') === 'upgrade') {
+            $redirect = $request->get('redirect');
+            if ($redirect === 'upgrade') {
                 return redirect()->route('learner.upgrade');
+            }
+            if ($redirect === 'invoices') {
+                return redirect()->to('/learner/invoices');
             }
         }
 
