@@ -71,7 +71,7 @@ class InvoiceDueReminder extends Command
             $user = User::find($invoice->user_id);
             $redirectLink = route('learner.invoice', ['filter' => $invoice->id]);
 
-            if ($user && ! empty($user)) {
+            if ($user && ! empty($user) && $user->wantsNotification('invoice_due_reminder')) {
                 $to = $user->email;
                 $emailContent = AdminHelpers::formatEmailContent($email_template->email_content, $to, $user->first_name, $redirectLink);
                 $emailContent = str_replace([

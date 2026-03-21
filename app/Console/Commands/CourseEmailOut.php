@@ -445,6 +445,17 @@ class CourseEmailOut extends Command
             return;
         }
 
+        // Respekter brukerens e-postvarsel-preferanser
+        $templateNotificationMap = [
+            'feedback_ready' => 'feedback_ready',
+            'assignment_reminder' => 'task_reminder',
+            'assignment_deadline' => 'task_reminder',
+        ];
+        $notifType = $templateNotificationMap[$emailOut->template_type] ?? null;
+        if ($notifType && !$user->wantsNotification($notifType)) {
+            return;
+        }
+
         if ($emailOut->template_type) {
             $course = $emailOut->course;
             if ($course) {

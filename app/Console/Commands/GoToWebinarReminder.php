@@ -109,6 +109,12 @@ class GoToWebinarReminder extends Command
                     $user_id = end($explodeJoinURL);
                     $user_email = $attendee->email;
 
+                    // Respekter brukerens mentor_reminder preferanse
+                    $mentorUser = \App\User::where('email', $user_email)->first();
+                    if ($mentorUser && !$mentorUser->wantsNotification('mentor_reminder')) {
+                        continue;
+                    }
+
                     $calendar_link = 'https://global.gotowebinar.com/icsCalendar.tmpl?webinar='
                         .$gtWebinar->webinarKey.'&user='.$user_id;
                     $outlook_calendar = "<a href='".$calendar_link."&cal=outlook' style='text-decoration: none'>Outlook<sup>®</sup> Calendar</a>";

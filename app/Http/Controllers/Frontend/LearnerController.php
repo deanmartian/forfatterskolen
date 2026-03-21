@@ -3606,6 +3606,18 @@ class LearnerController extends Controller
             );
         }
 
+        // Reprise-varsler lagres direkte på users-tabellen
+        Auth::user()->receive_replay_emails = $request->boolean('receive_replay_emails');
+        Auth::user()->save();
+
+        // Synk nyhetsbrev/kurstilbud med contacts-tabellen (re-subscribe / unsubscribe)
+        $wantsNewsletter = $request->boolean('newsletter') || $request->boolean('course_offers');
+        $contact = \App\Models\Contact::where('email', Auth::user()->email)->first();
+        if ($contact) {
+            $contact->unsubscribed_at = $wantsNewsletter ? null : now();
+            $contact->save();
+        }
+
         return redirect()->back()->with('profile_success', 'Innstillinger lagret.');
     }
 

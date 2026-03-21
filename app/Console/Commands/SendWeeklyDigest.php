@@ -38,6 +38,11 @@ class SendWeeklyDigest extends Command
                 continue;
             }
 
+            if (!$user->wantsNotification('weekly_course_update')) {
+                $skipped++;
+                continue;
+            }
+
             $mailable = new WeeklyDigestMail($user);
             $data = $mailable->buildDigestData();
 

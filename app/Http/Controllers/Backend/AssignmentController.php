@@ -1602,7 +1602,11 @@ class AssignmentController extends Controller
         $assignment = $assignmentManuscript->assignment;
         $course = $assignment ? $assignment->course : null;
 
-        if (!$course || !$user) {
+        if (!$user || !$user->wantsNotification('feedback_ready')) {
+            return;
+        }
+
+        if (!$course) {
             $this->sendAssignmentFeedbackMail(
                 $request->message, $user->email ?? '', $user->first_name ?? '',
                 $request->subject, $request->from_email, $assignmentManuscript->id
