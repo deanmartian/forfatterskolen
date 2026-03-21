@@ -16,7 +16,7 @@ class ShopManuscriptsTaken extends Model
 
     protected $fillable = ['user_id', 'shop_manuscript_id', 'file', 'is_active', 'words', 'feedback_user_id',
         'expected_finish', 'completed_at', 'manuscript_uploaded_date', 'genre', 'description', 'is_manuscript_locked', 'synopsis',
-        'coaching_time_later', 'is_welcome_email_sent', 'gift_purchase_id'];
+        'coaching_time_later', 'is_welcome_email_sent', 'gift_purchase_id', 'available_for_editors'];
 
     protected $casts = [
         'completed_at' => 'datetime',

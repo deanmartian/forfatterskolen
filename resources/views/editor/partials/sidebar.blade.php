@@ -39,6 +39,9 @@
                             @case('editors-messages')
                                 <i class="fa fa-envelope"></i>
                                 @break
+                            @case('available-manuscripts')
+                                <i class="fa fa-book"></i>
+                                @break
                             @case('editors-calendar')
                                 <i class="fa fa-calendar"></i>
                                 @break
@@ -55,6 +58,12 @@
                             Veiledningssamtaler
                         @elseif($page['request_name'] === 'editors-messages')
                             Meldinger
+                        @elseif($page['request_name'] === 'available-manuscripts')
+                            Ledige manus
+                            @php $availableCount = \App\ShopManuscriptsTaken::where('available_for_editors', 1)->whereNull('feedback_user_id')->count(); @endphp
+                            @if($availableCount > 0)
+                                <span class="ed-nav-item__badge">{{ $availableCount }}</span>
+                            @endif
                         @elseif($page['request_name'] === 'editors-calendar')
                             {{ trans('site.learner.nav.calendar') }}
                         @else

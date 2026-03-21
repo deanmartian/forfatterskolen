@@ -1282,6 +1282,7 @@ class AdminHelpers
             ['id' => 16, 'option' => 'Coaching Time', 'route' => 'editor.coaching-time.index', 'request_name' => 'editors-coaching-time'],
             ['id' => 18, 'option' => 'Veiledningssamtaler', 'route' => 'editor.coaching-sessions.index', 'request_name' => 'editors-coaching-sessions'],
             ['id' => 19, 'option' => 'Meldinger', 'route' => 'editor.messages.index', 'request_name' => 'editors-messages'],
+            ['id' => 20, 'option' => 'Ledige manus', 'route' => 'editor.available-manuscripts', 'request_name' => 'available-manuscripts'],
             ['id' => 17, 'option' => 'Calendar', 'route' => 'editor.calendar', 'request_name' => 'editors-calendar'],
         ];
 

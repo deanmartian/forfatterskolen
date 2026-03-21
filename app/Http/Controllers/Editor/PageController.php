@@ -423,6 +423,32 @@ class PageController extends Controller
         ]);
     }
 
+    public function availableManuscripts()
+    {
+        $manuscripts = ShopManuscriptsTaken::where('available_for_editors', 1)
+            ->whereNull('feedback_user_id')
+            ->with(['shop_manuscript', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('editor.available-manuscripts', compact('manuscripts'));
+    }
+
+    public function claimManuscript($id): RedirectResponse
+    {
+        $manuscript = ShopManuscriptsTaken::where('available_for_editors', 1)
+            ->whereNull('feedback_user_id')
+            ->findOrFail($id);
+
+        $manuscript->feedback_user_id = Auth::user()->id;
+        $manuscript->available_for_editors = 0;
+        $manuscript->is_active = 1;
+        $manuscript->save();
+
+        return redirect()->route('editor.available-manuscripts')
+            ->with(['errors' => AdminHelpers::createMessageBag('Manuset er nå tildelt deg.'), 'alert_type' => 'success']);
+    }
+
     public function calendar()
     {
         $events = $this->getCalendarEvents()->map(function (array $event) {

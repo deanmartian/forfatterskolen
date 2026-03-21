@@ -1719,6 +1719,7 @@ Route::domain($admin)->group(function () {
         Route::post('/shop-manuscript-taken/{id}/update-coaching-time-later', [Backend\ShopManuscriptController::class, 'updateCoachingTimeLater'])
             ->name('admin.shop-manuscript-taken.update-coaching-time-later');
         Route::post('/shop-manuscript-taken/{id}/update-description', [Backend\ShopManuscriptController::class, 'updateDescription'])->name('admin.shop-manuscript-taken.update-description'); // Remove Shop Manuscript Feedback
+        Route::post('/shop-manuscript-taken/{id}/toggle-available-for-editors', [Backend\ShopManuscriptController::class, 'toggleAvailableForEditors'])->name('admin.shop-manuscript-taken.toggle-available-for-editors');
         Route::post('/shop-manuscript-taken/{feedback_id}/approve-feedback', [Backend\ShopManuscriptController::class, 'approveFeedback'])->name('admin.shop-manuscript-taken.approve-feedback');
 
         Route::get('/test', [Backend\ShopManuscriptController::class, 'testEmail']);
@@ -2210,6 +2211,10 @@ Route::domain($editor)->group(function () {
         Route::post('/project/{id}/update-editor-hours', [Editor\PageController::class, 'projectEditorHours'])->name('editor.project.update-editor-hours');
         Route::get('/calendar', [Editor\PageController::class, 'calendar'])->name('editor.calendar');
         Route::get('/calendar/export', [Editor\PageController::class, 'exportCalendar'])->name('editor.calendar.export');
+
+        // Available manuscripts for editors to claim
+        Route::get('/ledige-manus', [Editor\PageController::class, 'availableManuscripts'])->name('editor.available-manuscripts');
+        Route::post('/ledige-manus/{id}/ta', [Editor\PageController::class, 'claimManuscript'])->name('editor.claim-manuscript');
 
         // Editor Messaging
         Route::prefix('messages')->name('editor.messages.')->group(function () {

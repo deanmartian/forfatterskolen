@@ -293,6 +293,38 @@
 		</p>
 	</div>
 
+	{{-- ═══════ DAGENS ORDTAK ═══════ --}}
+	@php
+		$ordtak = [
+			'En god historie starter med mot til å skrive det første ordet.',
+			'Skriving er å tenke med hendene — la fingrene danse.',
+			'Den beste boken du kan lese, er den du selv skriver.',
+			'Hver setning du skriver, bringer noen nærmere sin drøm.',
+			'Talent er vanlig. Disiplin er sjeldent. Kombinasjonen er magisk.',
+			'Bak hver utgitt bok står en redaktør som trodde på den.',
+			'Å redigere er ikke å fjerne — det er å finne gullet.',
+			'En forfatter planter frø. En redaktør får dem til å blomstre.',
+			'Det finnes ingen dårlige førsteutkast — bare uferdig magi.',
+			'Skriv som om ingen leser. Rediger som om alle gjør det.',
+			'Ordene dine kan forandre noens liv. Behandle dem med respekt.',
+			'Kreativitet er mot. Utgivelse er tro. Redigering er kjærlighet.',
+			'Hver dag du skriver, er en dag du investerer i fremtiden.',
+			'En god redaktør ser ikke feil — de ser muligheter.',
+			'Historier binder oss sammen. Du er en del av den tråden.',
+			'Motet til å skrive er det samme motet som trengs for å leve fullt.',
+			'Det er aldri for sent å skrive boken du har i deg.',
+			'Skriving er den eneste superkraften som kan læres.',
+			'Ditt ord i dag kan bli noens trøst i morgen.',
+			'Forfatterskolen er ikke et sted — det er en bevegelse.',
+			'Sammen bygger vi Norges sterkeste skrivemiljø, én tekst om gangen.',
+		];
+		$dagensOrdtak = $ordtak[date('z') % count($ordtak)];
+	@endphp
+	<div style="background: linear-gradient(135deg, #fdf8f4 0%, #f5ede4 100%); border-radius: var(--radius); padding: 1rem 1.5rem; margin-bottom: 1.5rem; text-align: center;">
+		<p style="font-family: var(--font-display); font-size: 1.05rem; color: var(--text); font-style: italic; margin-bottom: 0.3rem;">«{{ $dagensOrdtak }}»</p>
+		<p style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0;">— Sven Inge</p>
+	</div>
+
 	{{-- ═══════ MELDING FRA SVEN INGE ═══════ --}}
 	<div style="background: #fdf8f4; border-left: 4px solid var(--brand-primary); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
 		<h4 style="margin-top: 0; color: var(--brand-primary); font-family: var(--font-display); font-size: 1.1rem;">📢 Melding fra Sven Inge</h4>

@@ -555,6 +555,15 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
+    public function toggleAvailableForEditors($shopManuscriptTakenID): RedirectResponse
+    {
+        $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
+        $shopManuscriptTaken->available_for_editors = !$shopManuscriptTaken->available_for_editors;
+        $shopManuscriptTaken->save();
+
+        return redirect()->back();
+    }
+
     public function sendFeedback($id, Request $requests): RedirectResponse
     {
         $url = 'https://forfatterskolen.api-us1.com';

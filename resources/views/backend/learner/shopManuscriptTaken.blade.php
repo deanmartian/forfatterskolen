@@ -53,6 +53,14 @@
 								@endif
 							<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#updateDocumentModal">{{ trans('site.update-document') }}</button>
 							<button class="btn btn-success btn-sm" data-toggle="modal" data-target="#sendRequestToEditor"><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;&nbsp;{{ trans('site.send-request-to-editor') }}</button>
+							<form method="POST" action="{{ route('admin.shop-manuscript-taken.toggle-available-for-editors', $shopManuscriptTaken->id) }}" style="display:inline;">
+								{{ csrf_field() }}
+								@if($shopManuscriptTaken->available_for_editors)
+									<button type="submit" class="btn btn-warning btn-sm"><i class="fa fa-eye-slash"></i> Fjern fra ledige manus</button>
+								@else
+									<button type="submit" class="btn btn-info btn-sm"><i class="fa fa-eye"></i> Gjør tilgjengelig for redaktører</button>
+								@endif
+							</form>
 							</div>
 				  			@if( $shopManuscriptTaken->status == 'Finished' )
 							<span class="label label-success">Finished</span>
