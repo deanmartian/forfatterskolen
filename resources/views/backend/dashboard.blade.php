@@ -262,6 +262,14 @@
 											{{ $shopManuscript->admin->full_name }}
 										@else
 											<em>Ikke tildelt</em>
+											<form method="POST" action="{{ route('admin.shop-manuscript-taken.toggle-available-for-editors', $shopManuscript->id) }}" style="display:inline;">
+												@csrf
+												@if($shopManuscript->available_for_editors)
+													<button type="submit" class="btn btn-xs btn-success" title="Fjern fra redaktørpool"><i class="fa fa-check"></i> I pool</button>
+												@else
+													<button type="submit" class="btn btn-xs btn-info" title="Gjør tilgjengelig for redaktører"><i class="fa fa-share"></i> Legg i pool</button>
+												@endif
+											</form>
 										@endif
 										@if($shopManuscript->expected_finish)
 											<br><small class="text-muted">Frist: {{ $shopManuscript->expected_finish }}</small>
