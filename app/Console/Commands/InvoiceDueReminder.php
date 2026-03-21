@@ -72,6 +72,7 @@ class InvoiceDueReminder extends Command
                 Mail::to($user->email)->queue(new InvoiceReminderMail([
                     'type' => 'reminder',
                     'subject' => 'Påminnelse: faktura forfaller om 14 dager',
+                    'email' => $user->email,
                     'firstName' => $user->first_name,
                     'amount' => FrontendHelpers::currencyFormat($remaining),
                     'dueDate' => Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y'),

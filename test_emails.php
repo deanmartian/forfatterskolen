@@ -72,6 +72,7 @@ try {
     Illuminate\Support\Facades\Mail::to($to)->send(new App\Mail\InvoiceReminderMail([
         'type' => 'reminder',
         'subject' => 'Påminnelse: faktura forfaller om 14 dager',
+        'email' => $user->email,
         'firstName' => $user->first_name,
         'amount' => '1 990 kr',
         'dueDate' => date('d.m.Y', strtotime('+14 days')),
@@ -86,6 +87,7 @@ try {
     Illuminate\Support\Facades\Mail::to($to)->send(new App\Mail\InvoiceReminderMail([
         'type' => 'overdue',
         'subject' => 'Fakturaen din forfaller i morgen',
+        'email' => $user->email,
         'firstName' => $user->first_name,
         'amount' => '1 990 kr',
         'dueDate' => date('d.m.Y', strtotime('+1 day')),

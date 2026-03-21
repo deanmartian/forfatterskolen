@@ -74,6 +74,7 @@ class DueInvoiceCheck extends Command
                 Mail::to($user->email)->queue(new InvoiceReminderMail([
                     'type' => 'overdue',
                     'subject' => 'Fakturaen din forfaller i morgen',
+                    'email' => $user->email,
                     'firstName' => $user->first_name,
                     'amount' => FrontendHelpers::currencyFormat($remaining),
                     'dueDate' => Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y'),
