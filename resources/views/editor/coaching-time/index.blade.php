@@ -1,7 +1,7 @@
 @extends('editor.layout')
 
 @section('title')
-    <title>Coaching Time &rsaquo; Forfatterskolen Admin</title>
+    <title>Coaching timer &rsaquo; Forfatterskolen Redaktørportal</title>
 @stop
 
 @section('styles')
@@ -195,11 +195,11 @@
                                         <td>
                                             <form method="POST" action="{{ route('editor.coaching-time.request.accept', $req->id) }}" style="display: inline">
                                                 @csrf
-                                                <button type="button" class="btn btn-primary btn-xs confirm-action" data-message="Are you sure you want to accept this request?">Accept</button>
+                                                <button type="button" class="btn btn-primary btn-xs confirm-action" data-message="Er du sikker på at du vil godta denne forespørselen?">Godta</button>
                                             </form>
                                             <form method="POST" action="{{ route('editor.coaching-time.request.decline', $req->id) }}" style="display: inline">
                                                 @csrf
-                                                <button type="button" class="btn btn-danger btn-xs confirm-action" data-message="Are you sure you want to decline this request?">Decline</button>
+                                                <button type="button" class="btn btn-danger btn-xs confirm-action" data-message="Er du sikker på at du vil avslå denne forespørselen?">Avslå</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -218,14 +218,14 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Confirm Action</h4>
+                        <h4 class="modal-title">Bekreft handling</h4>
                     </div>
                     <div class="modal-body">
-                        <p id="actionConfirmMessage">Are you sure?</p>
+                        <p id="actionConfirmMessage">Er du sikker?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="actionConfirmBtn">Yes</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-primary" id="actionConfirmBtn">Ja</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Nei</button>
                     </div>
                 </div>
             </div>

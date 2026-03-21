@@ -1593,7 +1593,7 @@
 					<div class="form-group">
 						<label>{{ trans('site.assign-editor') }}</label>
 						<select name="editor_id" class="form-control select2" required>
-							<option value="" disabled="" selected>-- Select Editor --</option>
+							<option value="" disabled="" selected>-- Velg redaktør --</option>
 							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
@@ -1617,7 +1617,7 @@
 					<div class="form-group">
 						<label>{{ trans('site.assign-editor') }}</label>
 						<select name="editor_id" class="form-control select2" required>
-							<option value="" disabled="" selected>-- Select Editor --</option>
+							<option value="" disabled="" selected>-- Velg redaktør --</option>
 							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
@@ -1628,7 +1628,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label>Expected Finish</label>
+						<label>Forventet sluttdato</label>
 						<input type="date" class="form-control" name="expected_finish">
 					</div>
 					<div class="text-right">
@@ -1748,7 +1748,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Help With</h4>
+				<h4 class="modal-title">Hjelp med</h4>
 			</div>
 			<div class="modal-body">
 				<pre></pre>
@@ -1762,13 +1762,13 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Finish Task</h4>
+				<h4 class="modal-title">Fullfør oppgave</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
-					<p>Are you sure to finish this task?</p>
-					<button type="submit" class="btn btn-success pull-right">Finish</button>
+					<p>Er du sikker på at du vil fullføre denne oppgaven?</p>
+					<button type="submit" class="btn btn-success pull-right">Fullfør</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -1781,7 +1781,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Edit Task</h4>
+				<h4 class="modal-title">Rediger oppgave</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)">
@@ -1789,19 +1789,19 @@
 					{{ method_field('PUT') }}
 					<input type="hidden" name="user_id" value="">
 					<div class="form-group">
-						<label>Task</label>
+						<label>Oppgave</label>
 						<textarea name="task" cols="30" rows="10" class="form-control" required></textarea>
 					</div>
 					<div class="form-group">
 						<label>{{ trans('site.assign-to') }}</label>
 						<select name="assigned_to" class="form-control select2" required>
-							<option value="" disabled="" selected>-- Select Assignee --</option>
+							<option value="" disabled="" selected>-- Velg tilordnet --</option>
 							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
 					</div>
-					<button type="submit" class="btn btn-brand pull-right">Update Task</button>
+					<button type="submit" class="btn btn-brand pull-right">Oppdater oppgave</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -1814,14 +1814,14 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Delete Task</h4>
+				<h4 class="modal-title">Slett oppgave</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					{{ method_field('DELETE') }}
-					<p>Are you sure to delete this task?</p>
-					<button type="submit" class="btn btn-danger pull-right">Delete</button>
+					<p>Er du sikker på at du vil slette denne oppgaven?</p>
+					<button type="submit" class="btn btn-danger pull-right">Slett</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -1834,7 +1834,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Edit Expected Finish</h4>
+				<h4 class="modal-title">Rediger forventet sluttdato</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" onsubmit="disableSubmit(this)">

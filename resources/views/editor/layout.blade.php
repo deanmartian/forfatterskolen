@@ -53,18 +53,18 @@
                         <form id="form-change-password" role="form" method="POST" action="{{ route('editor.change-password') }}" novalidate class="form-horizontal">
                             {{ csrf_field() }}
                             <div class="form-group">
-                                <label for="current-password">Current Password</label>
-                                <input type="password" class="form-control" id="current-password" name="current-password" placeholder="Password">
+                                <label for="current-password">Gjeldende passord</label>
+                                <input type="password" class="form-control" id="current-password" name="current-password" placeholder="Passord">
                             </div>
                             <div class="form-group">
-                                <label for="password">New Password</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                                <label for="password">Nytt passord</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Passord">
                             </div>
                             <div class="form-group">
-                                <label for="password_confirmation">Re-enter Password</label>
-                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Re-enter Password">
+                                <label for="password_confirmation">Gjenta passord</label>
+                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Gjenta passord">
                             </div>
-                            <button type="submit" class="ed-btn ed-btn--primary">Submit</button>
+                            <button type="submit" class="ed-btn ed-btn--primary">Send inn</button>
                         </form>
                     </div>
                 </div>

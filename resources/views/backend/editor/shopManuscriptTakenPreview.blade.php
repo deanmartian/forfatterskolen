@@ -1,7 +1,7 @@
 @extends('editor.layout')
 
 @section('title')
-<title>Shop Manuscript &rsaquo; Forfatterskolen Admin</title>
+<title>Manusutvikling &rsaquo; Forfatterskolen Redaktørportal</title>
 @stop
 
 @section('content')
@@ -34,37 +34,37 @@
 						</div>
 						<div class="col-sm-12 col-md-5">
 				  			@if( $shopManuscriptTaken->status == 'Finished' )
-							<span class="label label-success">Finished</span>
+							<span class="label label-success">Ferdig</span>
 							@elseif( $shopManuscriptTaken->status == 'Started' )
-							<span class="label label-primary">Started</span>
+							<span class="label label-primary">Påbegynt</span>
 							@elseif( $shopManuscriptTaken->status == 'Not started' )
-							<span class="label label-warning">Not started</span>
+							<span class="label label-warning">Ikke startet</span>
 							@endif
 							<h3 class="no-margin-top">{{ $shopManuscriptTaken->shop_manuscript->title }}</h3>
 							{{ trans_choice('site.learners', 1) }}: {{ $shopManuscriptTaken->user->id }}<br />
 							{{ trans('site.filename') }}: {{ basename($shopManuscriptTaken->file) }}<br />
 							{{ trans_choice('site.words', 2) }}: {{ $shopManuscriptTaken->words }}<br />
 							{{ trans('site.date-uploaded') }}: {{ $shopManuscriptTaken->manuscript_uploaded_date ?
-							date_format(date_create($shopManuscriptTaken->manuscript_uploaded_date),'M d, Y H:i a') : '' }}<br />
+							date_format(date_create($shopManuscriptTaken->manuscript_uploaded_date),'d.m.Y H:i') : '' }}<br />
 							{{ trans('site.admin') }}:
 							@if( $shopManuscriptTaken->admin )
 							{{ $shopManuscriptTaken->admin->full_name }}
 							@else
-							<em>Not set</em>
+							<em>Ikke satt</em>
 							@endif<br />
 
 							{{ trans('site.editor-expected-finish') }}:
 				            @if( $shopManuscriptTaken->editor_expected_finish )
-				            {{ date_format(date_create($shopManuscriptTaken->editor_expected_finish), 'M d, Y') }}
+				            {{ date_format(date_create($shopManuscriptTaken->editor_expected_finish), 'd.m.Y') }}
 				            @else
-				            <em>Not set</em>
+				            <em>Ikke satt</em>
 				            @endif
 				            <br />
 
 							<strong>{{ trans('site.grade') }}: @if($shopManuscriptTaken->grade)
 									{{$shopManuscriptTaken->grade}}
 								@else
-									<em>Not set</em>
+									<em>Ikke satt</em>
 								@endif
 							</strong>
 							<br>
@@ -72,7 +72,7 @@
 							
 							<br>
 							{{ trans('site.front.form.coaching-time-later-in-manus') }}
-							<b>{{ $shopManuscriptTaken->coaching_time_later ? 'Yes' : 'No' }}</b>
+							<b>{{ $shopManuscriptTaken->coaching_time_later ? 'Ja' : 'Nei' }}</b>
 							<br>
 							{{ trans('site.description') }}: {{ $shopManuscriptTaken->description }}
 							<br>
@@ -139,7 +139,7 @@
 					
 						@if($editor->count()>0)
 							<option value="" selected disabled>
-								-- Select Editor --
+								-- Velg redaktør --
 							</option>
 						@else
 							<option value="" selected disabled>
@@ -166,7 +166,7 @@
 						<label>
 							{{ $shopManuscriptTaken->user->preferredEditor->editor->full_name }}
 						</label>
-						<a href="javascript:void(0)" onclick="enableSelect('editManuscriptModal')">Edit</a>
+						<a href="javascript:void(0)" onclick="enableSelect('editManuscriptModal')">Endre</a>
 					</div>
 				@endif
       		</div>
@@ -362,7 +362,7 @@
 				<form method="POST" action="{{ route('admin.shop-manuscript-taken.update-genre', $shopManuscriptTaken->id) }}">
 					{{ csrf_field() }}
 					<select class="form-control" name="genre" required>
-						<option value="" disabled="disabled" selected>Select Genre</option>
+						<option value="" disabled="disabled" selected>Velg sjanger</option>
 						@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
 							<option value="{{ $type['id'] }}"
 							@if ($shopManuscriptTaken->genre == $type['id']) selected @endif> {{ $type['option'] }} </option>

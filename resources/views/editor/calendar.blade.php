@@ -1,7 +1,7 @@
 @extends('editor.layout')
 
 @section('title')
-<title>Calendar &rsaquo; Forfatterskolen Admin</title>
+<title>Kalender &rsaquo; Forfatterskolen Redaktørportal</title>
 @stop
 
 @section('styles')

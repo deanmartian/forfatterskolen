@@ -178,7 +178,7 @@
 					<div class="form-group">
 						<label>{{ trans('site.assign-editor') }}</label>
 						<select name="editor_id" class="form-control select2" required>
-							<option value="" disabled="" selected>-- Select Editor --</option>
+							<option value="" disabled="" selected>-- Velg redaktør --</option>
 							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
@@ -202,7 +202,7 @@
 					<div class="form-group">
 						<label>{{ trans('site.assign-editor') }}</label>
 						<select name="editor_id" class="form-control select2" required>
-							<option value="" disabled="" selected>-- Select Editor --</option>
+							<option value="" disabled="" selected>-- Velg redaktør --</option>
 							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
@@ -211,11 +211,11 @@
 						<div class="hidden-container">
 							<label>
 							</label>
-							<a href="javascript:void(0)" onclick="enableSelect('pendingAssignmentEditorModal')">Edit</a>
+							<a href="javascript:void(0)" onclick="enableSelect('pendingAssignmentEditorModal')">Endre</a>
 						</div>
 					</div>
 					<div class="form-group">
-						<label>Expected Finish</label>
+						<label>Forventet sluttdato</label>
 						<input type="date" class="form-control" name="expected_finish">
 					</div>
 					<div class="text-right">
@@ -340,7 +340,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Help With</h4>
+				<h4 class="modal-title">Hjelp med</h4>
 			</div>
 			<div class="modal-body">
 				<pre></pre>

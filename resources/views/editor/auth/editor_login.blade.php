@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
     <head>
-        <title>Forfatterskolen | Sign In</title>
+        <title>Forfatterskolen | Logg inn</title>
         @include('backend.partials.backend-css')
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
     </head>
@@ -14,14 +14,14 @@
                 {{csrf_field()}}
                 <input type="hidden" name="intended" value="{{url()->current()}}">
                 <div class="form-group">
-                    <input type="email" id="email" class="form-control" name="email" value="" placeholder="Email" required>
+                    <input type="email" id="email" class="form-control" name="email" value="" placeholder="E-post" required>
                 </div>
                 <div class="form-group fg-line">
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Passord" required>
                 </div>
-                <button type="submit" name="submit" class="btn btn-block btn-primary m-t-10 waves-effect">Sign in</button>
+                <button type="submit" name="submit" class="btn btn-block btn-primary m-t-10 waves-effect">Logg inn</button>
                 <a href="{{ route('editor.password-reset') }}" class="text-center d-block" style="margin-top: 10px">
-                    Forgot Password
+                    Glemt passord
                 </a>
                 @if ( $errors->any() )
                 <br />
