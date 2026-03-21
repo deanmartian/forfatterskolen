@@ -162,8 +162,23 @@ class PublicationController extends Controller
             'pdf' => 'output_pdf',
             'epub' => 'output_epub',
             'docx' => 'output_docx',
+            'cover' => 'cover_front',
+            'cover-preview' => null,
+            'cover-template' => null,
             default => null,
         };
+
+        if ($format === 'cover-preview') {
+            $filePath = storage_path("app/publications/{$id}/covers/cover-preview.pdf");
+            if (!file_exists($filePath)) return back()->with('error', 'Forhåndsvisning ikke tilgjengelig.');
+            return response()->download($filePath, \Illuminate\Support\Str::slug($publication->title) . '-cover-preview.pdf');
+        }
+
+        if ($format === 'cover-template') {
+            $coverGen = app(\App\Services\Publishing\CoverGenerator::class);
+            $templatePath = $coverGen->generateTemplatePdf($publication);
+            return response()->download($templatePath, \Illuminate\Support\Str::slug($publication->title) . '-cover-template.pdf');
+        }
 
         if (!$pathField || !$publication->$pathField) {
             return back()->with('error', 'Filen er ikke tilgjengelig.');
@@ -173,5 +188,22 @@ class PublicationController extends Controller
         $filename = \Illuminate\Support\Str::slug($publication->title) . ".{$format}";
 
         return response()->download($filePath, $filename);
+    }
+
+    public function generateCover(Request $request, int $id)
+    {
+        $publication = Publication::where('user_id', Auth::id())->findOrFail($id);
+
+        $coverGen = app(\App\Services\Publishing\CoverGenerator::class);
+        $coverGen->generate($publication, [
+            'template' => $request->input('cover_template', 'classic'),
+            'backgroundColor' => $request->input('background_color', '#1a1a2e'),
+            'textColor' => $request->input('text_color', '#ffffff'),
+            'blurb' => $request->input('blurb', ''),
+            'preview' => true,
+        ]);
+
+        return redirect()->route('learner.publication.show', $publication->id)
+            ->with('success', 'Omslaget er generert!');
     }
 }

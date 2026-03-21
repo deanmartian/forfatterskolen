@@ -441,6 +441,7 @@ Route::domain($front)->group(function () {
         Route::put('/publication/{id}/step/{step}', [Frontend\PublicationController::class, 'updateStep'])->name('learner.publication.update-step');
         Route::post('/publication/{id}/generate', [Frontend\PublicationController::class, 'generate'])->name('learner.publication.generate');
         Route::get('/publication/{id}/preview', [Frontend\PublicationController::class, 'preview'])->name('learner.publication.preview');
+        Route::post('/publication/{id}/generate-cover', [Frontend\PublicationController::class, 'generateCover'])->name('learner.publication.generate-cover');
         Route::get('/publication/{id}/download/{format}', [Frontend\PublicationController::class, 'download'])->name('learner.publication.download');
         Route::get('/publication/{id}/status', [Frontend\PublicationController::class, 'status'])->name('learner.publication.status');
 

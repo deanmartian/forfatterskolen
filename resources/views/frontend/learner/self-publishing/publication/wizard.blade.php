@@ -216,15 +216,93 @@
     @if($publication && $step == 4)
     <div class="pub-card">
         <h2>Omslag</h2>
-        <form action="{{ route('learner.publication.update-step', [$publication->id, 4]) }}" method="POST" enctype="multipart/form-data">
-            @csrf @method('PUT')
-            <div class="pub-field">
-                <label>Last opp forside (valgfritt)</label>
-                <input type="file" name="cover_front" accept="image/*,.pdf">
-                <p style="font-size: 0.8rem; color: #888; margin-top: 4px;">Bilde eller PDF. Hvis du ikke laster opp, genereres boken uten omslag.</p>
+        @php
+            $trimSize = \App\Services\Publishing\TrimSize::tryFrom($publication->trim_size);
+            $paperType = \App\Services\Publishing\PaperType::tryFrom($publication->paper_type);
+            $bindingType = \App\Services\Publishing\BindingType::tryFrom($publication->binding_type);
+            $spineWidth = $publication->spine_width_mm ?? 10;
+            $coverCalc = app(\App\Services\Publishing\CoverDimensionCalculator::class);
+            $coverDims = $coverCalc->calculate(
+                $trimSize?->dimensions()['width'] ?? 140,
+                $trimSize?->dimensions()['height'] ?? 220,
+                $spineWidth,
+                $bindingType ?? \App\Services\Publishing\BindingType::PAPERBACK,
+            );
+        @endphp
+
+        <div style="background: #f8f6f3; padding: 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
+            <strong>Omslagsdimensjoner (beregnet):</strong><br>
+            Total: {{ $coverDims->totalWidth }} &times; {{ $coverDims->totalHeight }} mm &middot;
+            Rygg: {{ $coverDims->spineWidth }}mm (&plusmn;{{ $coverDims->spineToleranceMm() }}mm) &middot;
+            Innbinding: {{ $bindingType?->label() ?? 'Paperback' }}
+        </div>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 24px;">
+            <div style="flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
+                <h3 style="font-size: 1rem; margin-bottom: 12px;">Alternativ 1: Design omslaget her</h3>
+                <form action="{{ route('learner.publication.generate-cover', $publication->id) }}" method="POST">
+                    @csrf
+                    <div class="pub-field">
+                        <label>Omslagsmal</label>
+                        <select name="cover_template">
+                            <option value="classic">Klassisk (serif)</option>
+                            <option value="modern">Moderne (sans-serif)</option>
+                            <option value="bold">Bold (stor typografi)</option>
+                            <option value="image-full">Fullbleed bilde</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="pub-field">
+                            <label>Bakgrunnsfarge</label>
+                            <input type="color" name="background_color" value="#1a1a2e" style="height: 40px; width: 100%; cursor: pointer;">
+                        </div>
+                        <div class="pub-field">
+                            <label>Tekstfarge</label>
+                            <input type="color" name="text_color" value="#ffffff" style="height: 40px; width: 100%; cursor: pointer;">
+                        </div>
+                    </div>
+                    <div class="pub-field">
+                        <label>Baksidtekst (blurb)</label>
+                        <textarea name="blurb" rows="4" placeholder="Kort beskrivelse av boken som vises på baksiden..."></textarea>
+                    </div>
+                    <button type="submit" class="pub-btn">Generer omslag</button>
+                </form>
             </div>
-            <button type="submit" class="pub-btn">Fortsett til generering</button>
-            <a href="{{ route('learner.publication.update-step', [$publication->id, 4]) }}" onclick="event.preventDefault(); document.querySelector('form').submit();" class="pub-btn-outline" style="margin-left: 10px;">Hopp over</a>
+
+            <div style="flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
+                <h3 style="font-size: 1rem; margin-bottom: 12px;">Alternativ 2: Last opp eget omslag</h3>
+                <form action="{{ route('learner.publication.update-step', [$publication->id, 4]) }}" method="POST" enctype="multipart/form-data">
+                    @csrf @method('PUT')
+                    <div class="pub-field">
+                        <label>Omslagsfil (PDF eller bilde)</label>
+                        <input type="file" name="cover_front" accept="image/*,.pdf">
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 4px;">
+                            Anbefalt: PDF med riktige dimensjoner ({{ $coverDims->totalWidth }} &times; {{ $coverDims->totalHeight }} mm) inkl. 3mm bleed.
+                        </p>
+                    </div>
+                    <button type="submit" class="pub-btn-outline">Last opp og fortsett</button>
+                </form>
+
+                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee;">
+                    <h4 style="font-size: 0.85rem; margin-bottom: 8px;">Lag selv i Canva/InDesign?</h4>
+                    <a href="{{ route('learner.publication.download', [$publication->id, 'cover-template']) }}" class="pub-btn-outline" style="font-size: 0.85rem; padding: 8px 16px;">
+                        Last ned tom template-PDF med hjelplinjer
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        @if($publication->cover_front)
+            <div style="background: #d4edda; padding: 12px 16px; border-radius: 6px; margin-bottom: 16px;">
+                Omslag er generert!
+                <a href="{{ route('learner.publication.download', [$publication->id, 'cover']) }}" style="color: #155724; font-weight: 600;">Last ned trykkeklar PDF</a> &middot;
+                <a href="{{ route('learner.publication.download', [$publication->id, 'cover-preview']) }}" style="color: #155724;">Forhåndsvisning med hjelplinjer</a>
+            </div>
+        @endif
+
+        <form action="{{ route('learner.publication.update-step', [$publication->id, 4]) }}" method="POST" style="margin-top: 10px;">
+            @csrf @method('PUT')
+            <button type="submit" class="pub-btn">Fortsett til generering av innmat</button>
         </form>
     </div>
     @endif
