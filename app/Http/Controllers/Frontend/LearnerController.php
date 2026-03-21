@@ -1189,10 +1189,16 @@ class LearnerController extends Controller
                             }
                         }
 
-                        if ($assignmentManuscript && $assignmentManuscript->locked && ! $assignmentManuscript->has_feedback
-                            && !$assignment->for_editor) {
-                            $waitingForResponse[] = $assignment;
-                            $waitingForResponseIDs[] = $assignment->id;
+                        if ($assignmentManuscript && $assignmentManuscript->locked && !$assignment->for_editor) {
+                            // Sjekk om feedback finnes OG er tilgjengelig (availability-dato nådd)
+                            $amFeedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $assignmentManuscript->id)
+                                ->where('is_active', 1)->first();
+                            $amFeedbackReady = $amFeedback && (!$amFeedback->availability || date('Y-m-d') >= $amFeedback->availability);
+
+                            if (!$amFeedbackReady) {
+                                $waitingForResponse[] = $assignment;
+                                $waitingForResponseIDs[] = $assignment->id;
+                            }
                         }
                     }
                 }
@@ -1275,7 +1281,10 @@ class LearnerController extends Controller
                     ->where('is_active', 1)->first();
             }
 
-            if (! $feedback) {
+            // Hvis feedback har en fremtidig availability-dato, behandle som "ingen feedback ennå"
+            $feedbackAvailable = $feedback && (!$feedback->availability || date('Y-m-d') >= $feedback->availability);
+
+            if (! $feedbackAvailable) {
                 if ($manuscript && $manuscript->locked) {
                     $waitingForResponse[] = $assignment;
                 } else {
