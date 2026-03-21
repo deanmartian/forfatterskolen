@@ -299,6 +299,13 @@
             $previousList[] = $ct;
         }
     }
+
+    // Sorter aktive kurs med dyreste pakke øverst
+    usort($activeList, function($a, $b) {
+        $priceA = $a->package->price ?? 0;
+        $priceB = $b->package->price ?? 0;
+        return $priceB <=> $priceA;
+    });
 @endphp
 
 <div class="mk-redesign">
