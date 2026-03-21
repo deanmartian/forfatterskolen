@@ -333,12 +333,22 @@
 		<p>Ergo holder jeg på å regne ut <strong>lønnsøkning</strong> på dere fantastiske redaktørene våre! 🎉</p>
 		<p>Men uansett hvor smart teknologien blir: <strong>gode redaktører trenger vi alltid</strong>. Det er dere som gjør den virkelige forskjellen for elevene våre.</p>
 		<p>Jeg kommer i løpet av helgen å oppdatere redaktørportalen. Nå har jeg fått på plass et nytt kontraktsystem for dere, og jeg kommer til å legge inn manus vi har fått inn som dere kan ta om dere ønsker det.</p>
+		<p>PS: Det finnes nå <strong>ledige manus</strong> i den nye «Ledige manus»-seksjonen nedenfor — første mann til mølla! 🏃‍♂️</p>
 		<p>Jeg trenger også <strong>gode ombrekkere og designere</strong> — spesielt for coverdesign. Jeg bygger nå programmer med samme teknologi som Typefi har, som vil gjøre ombrekking enklere. Den bør være på plass før sommeren, men ombrekkere og coverdesignere vil vi alltid trenge. Kjenner du noen, eller er du interessert selv? Send meg en e-post på <a href="mailto:sven.inge@forfatterskolen.no" style="color: var(--brand-primary); font-weight: 600;">sven.inge@forfatterskolen.no</a>! Jeg programmerer også nye verktøy som jeg håper vil gjøre hverdagen deres enklere. Har du en god idé til et program du trenger, eller forslag til hvordan vi kan gjøre nettsiden enda bedre — hører jeg gjerne fra deg!</p>
 		<p style="margin-bottom: 0; color: var(--text-secondary); font-style: italic;">— Sven Inge, {{ \Carbon\Carbon::now()->format('d.m.Y') }}</p>
 	</div>
 
 	{{-- ═══════ STAT CARDS ═══════ --}}
 	<div class="stat-grid">
+		@if($availableManuscripts->count() > 0)
+		<div class="stat-card" style="border-left: 3px solid var(--brand-accent);">
+			<div class="stat-icon" style="background:rgba(212,168,83,0.12);color:var(--brand-accent);"><i class="fa fa-book"></i></div>
+			<div>
+				<div class="stat-value">{{ $availableManuscripts->count() }}</div>
+				<div class="stat-label">Ledige manus</div>
+			</div>
+		</div>
+		@endif
 		@if($assignedAssignmentManuscripts->count() > 0)
 		<div class="stat-card">
 			<div class="stat-icon personal"><i class="fa fa-user-edit"></i></div>
@@ -430,6 +440,60 @@
 		</div>
 		@endif
 	</div>
+
+	{{-- ══════════════════════════════════════════
+		0. LEDIGE MANUS (Available for pickup)
+	══════════════════════════════════════════ --}}
+	@if($availableManuscripts->count() > 0)
+	<div class="dashboard-section" style="border-left: 3px solid var(--brand-accent);">
+		<div class="section-header">
+			<h4>
+				<i class="fa fa-book" style="color:var(--brand-accent);margin-right:8px;"></i>
+				Ledige manus — ta et oppdrag!
+				<span class="section-badge" style="background:var(--brand-accent);color:#fff;">{{ $availableManuscripts->count() }}</span>
+			</h4>
+		</div>
+		<div class="section-body">
+			<div class="table-responsive">
+				<table class="table">
+					<thead>
+					<tr>
+						<th>Manus</th>
+						<th>Sjanger</th>
+						<th>Elev</th>
+						<th>Antall ord</th>
+						<th>Lastet opp</th>
+						<th></th>
+					</tr>
+					</thead>
+					<tbody>
+					@foreach($availableManuscripts as $am)
+						<tr>
+							<td>{{ $am->shopManuscript->title ?? 'Manusutvikling' }}</td>
+							<td>
+								@if($am->genre > 0)
+									{{ \App\Http\FrontendHelpers::assignmentType($am->genre) }}
+								@endif
+							</td>
+							<td>{{ $am->user->first_name ?? '' }} {{ substr($am->user->last_name ?? '', 0, 1) }}.</td>
+							<td>{{ $am->words ? number_format($am->words, 0, ',', ' ') : '—' }}</td>
+							<td>{{ $am->created_at ? $am->created_at->format('d.m.Y') : '' }}</td>
+							<td>
+								<form method="POST" action="{{ route('editor.claim-manuscript', $am->id) }}">
+									@csrf
+									<button type="submit" class="btn btn-sm" style="background:var(--brand-primary);color:#fff;" onclick="return confirm('Er du sikker på at du vil ta dette manuset?')">
+										<i class="fa fa-hand-paper-o"></i> Ta dette manuset
+									</button>
+								</form>
+							</td>
+						</tr>
+					@endforeach
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	@endif
 
 	{{-- ══════════════════════════════════════════
 		1. PERSONLIG OPPGAVER

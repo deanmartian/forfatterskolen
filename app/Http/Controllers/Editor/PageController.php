@@ -74,10 +74,11 @@ class PageController extends Controller
             ->get();
         $editingAssignments = $this->filterAssignmentByCheckMaxWords(0);
         $projects = Project::where('editor_id', Auth::user()->id)->get();
+        $availableManuscripts = ShopManuscriptsTaken::where('available_for_editors', 1)->whereNull('feedback_user_id')->get();
 
         return view('editor.dashboard', compact('assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimers',
             'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests', 'freeManuscripts', 'freeManuscriptEmailTemplate',
-            'freeManuscriptEmailTemplate2', 'selfPublishingList', 'editingAssignments', 'projects'));
+            'freeManuscriptEmailTemplate2', 'selfPublishingList', 'editingAssignments', 'projects', 'availableManuscripts'));
 
     }
 
