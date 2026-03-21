@@ -400,6 +400,7 @@
 	{{-- ══════════════════════════════════════════
 		1. PERSONLIG OPPGAVER
 	══════════════════════════════════════════ --}}
+	@if($assignedAssignmentManuscripts->count() > 0)
 	<div class="dashboard-section">
 		<div class="section-header">
 			<h4>
@@ -515,10 +516,12 @@
 			</div>
 		</div>
 	</div>
+	@endif
 
 	{{-- ══════════════════════════════════════════
 		2. MANUSUTVIKLING (Shop Manuscripts)
 	══════════════════════════════════════════ --}}
+	@if($assigned_shop_manuscripts->filter(fn($m) => in_array($m->status, ['Started','Pending']))->count() + $shopManuscriptRequests->count() > 0)
 	<div class="dashboard-section">
 		<div class="section-header">
 			<h4>
@@ -631,10 +634,12 @@
 			</div>
 		</div>
 	</div>
+	@endif
 
 	{{-- ══════════════════════════════════════════
 		3. MINE OPPGAVER (My Assignments)
 	══════════════════════════════════════════ --}}
+	@if($assignedAssignments->count() > 0)
 	<div class="dashboard-section">
 		<div class="section-header">
 			<h4>
@@ -737,10 +742,12 @@
 			</div>
 		</div>
 	</div>
+	@endif
 
 	{{-- ══════════════════════════════════════════
 		4. FREE MANUSCRIPT
 	══════════════════════════════════════════ --}}
+	@if($freeManuscripts->count() > 0)
 	<div class="dashboard-section">
 		<div class="section-header">
 			<h4>
@@ -817,10 +824,12 @@
 			</div>
 		</div>
 	</div>
+	@endif
 
 	{{-- ══════════════════════════════════════════
 		5. COACHING TIMER
 	══════════════════════════════════════════ --}}
+	@if($coachingTimers->count() > 0)
 	<div class="dashboard-section">
 		<div class="section-header">
 			<h4>
@@ -874,10 +883,12 @@
 			</div>
 		</div>
 	</div>
+	@endif
 
 	{{-- ══════════════════════════════════════════
 		6. SELF PUBLISHING
 	══════════════════════════════════════════ --}}
+	@if($selfPublishingList->count() > 0)
 	<div class="dashboard-section">
 		<div class="section-header">
 			<h4>
@@ -922,10 +933,12 @@
 			</div>
 		</div>
 	</div>
+	@endif
 
 	{{-- ══════════════════════════════════════════
 		7. KORREKTUR (My Corrections)
 	══════════════════════════════════════════ --}}
+	@if($corrections->count() > 0)
 	<div class="dashboard-section">
 		<div class="section-header">
 			<h4>
@@ -1013,10 +1026,12 @@
 			</div>
 		</div>
 	</div>
+	@endif
 
 	{{-- ══════════════════════════════════════════
 		8. SPRÅKVASK (My Copy Editing)
 	══════════════════════════════════════════ --}}
+	@if($copyEditings->count() > 0)
 	<div class="dashboard-section">
 		<div class="section-header">
 			<h4>
@@ -1104,10 +1119,12 @@
 			</div>
 		</div>
 	</div>
+	@endif
 
 	{{-- ══════════════════════════════════════════
 		9. REDIGERING (Assignment Editing)
 	══════════════════════════════════════════ --}}
+	@if($editingAssignments->count() > 0)
 	<div class="dashboard-section">
 		<div class="section-header">
 			<h4>
@@ -1216,10 +1233,12 @@
 			</div>
 		</div>
 	</div>
+	@endif
 
 	{{-- ══════════════════════════════════════════
 		10. PROSJEKTER (Projects)
 	══════════════════════════════════════════ --}}
+	@if($projects->count() > 0)
 	<div class="dashboard-section">
 		<div class="section-header">
 			<h4>
@@ -1257,6 +1276,7 @@
 			</div>
 		</div>
 	</div>
+	@endif
 
 </div>
 
