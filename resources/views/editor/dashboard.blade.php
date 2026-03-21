@@ -462,7 +462,7 @@
 						<th>Sjanger</th>
 						<th>Elev</th>
 						<th>Antall ord</th>
-						<th>Lastet opp</th>
+						<th>Frist</th>
 						<th></th>
 					</tr>
 					</thead>
@@ -477,7 +477,7 @@
 							</td>
 							<td>{{ $am->user->first_name ?? '' }} {{ substr($am->user->last_name ?? '', 0, 1) }}.</td>
 							<td>{{ $am->words ? number_format($am->words, 0, ',', ' ') : '—' }}</td>
-							<td>{{ $am->created_at ? $am->created_at->format('d.m.Y') : '' }}</td>
+							<td>{{ $am->expected_finish ? \Carbon\Carbon::parse($am->expected_finish)->format('d.m.Y') : '—' }}</td>
 							<td>
 								<form method="POST" action="{{ route('editor.claim-manuscript', $am->id) }}">
 									@csrf

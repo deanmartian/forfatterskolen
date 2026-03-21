@@ -555,10 +555,13 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
-    public function toggleAvailableForEditors($shopManuscriptTakenID): RedirectResponse
+    public function toggleAvailableForEditors(Request $request, $shopManuscriptTakenID): RedirectResponse
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
         $shopManuscriptTaken->available_for_editors = !$shopManuscriptTaken->available_for_editors;
+        if ($request->has('expected_finish') && $shopManuscriptTaken->available_for_editors) {
+            $shopManuscriptTaken->expected_finish = $request->expected_finish;
+        }
         $shopManuscriptTaken->save();
 
         return redirect()->back();

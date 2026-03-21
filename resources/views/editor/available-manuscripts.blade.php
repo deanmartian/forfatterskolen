@@ -158,6 +158,7 @@
 						<th>Opplastet</th>
 						<th>Antall ord</th>
 						<th>Elev</th>
+						<th>Frist</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -179,6 +180,7 @@
 						</td>
 						<td>{{ $manuscript->words ?? '-' }}</td>
 						<td>{{ $manuscript->user->full_name ?? '-' }}</td>
+						<td>{{ $manuscript->expected_finish ? date_format(date_create($manuscript->expected_finish), 'd.m.Y') : '-' }}</td>
 						<td>
 							<form method="POST" action="{{ route('editor.claim-manuscript', $manuscript->id) }}"
 								  onsubmit="return confirm('Er du sikker på at du vil ta dette manuset?')">

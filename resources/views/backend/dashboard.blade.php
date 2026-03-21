@@ -267,6 +267,7 @@
 												@if($shopManuscript->available_for_editors)
 													<button type="submit" class="btn btn-xs btn-success" title="Fjern fra redaktørpool"><i class="fa fa-check"></i> I pool</button>
 												@else
+													<input type="date" name="expected_finish" value="{{ now()->addWeeks(3)->format('Y-m-d') }}" style="width:120px;font-size:11px;" class="form-control input-xs" title="Frist for innlevering">
 													<button type="submit" class="btn btn-xs btn-info" title="Gjør tilgjengelig for redaktører"><i class="fa fa-share"></i> Legg i pool</button>
 												@endif
 											</form>
