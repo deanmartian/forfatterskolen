@@ -297,9 +297,11 @@
 	<div style="background: #fdf8f4; border-left: 4px solid var(--brand-primary); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
 		<h4 style="margin-top: 0; color: var(--brand-primary); font-family: var(--font-display); font-size: 1.1rem;">📢 Melding fra Sven Inge</h4>
 		<p>Hei alle sammen!</p>
-		<p>Nå er jeg et godt stykke på vei med å oppdatere hele systemet. Det gjør at vi får mindre kostnader på admin-siden, som vi har brukt alt for mye tid på nå.</p>
+		<p>Markedet er i stor endring nå, og vi følger veldig med. Forfatterskolen ligger langt foran teknologisk, og admin-systemet har fått ekstreme nye automasjoner som sparer oss for hundrevis av admintimer. Det betyr lavere kostnader på admin-siden — og det er penger vi heller vil bruke på dere.</p>
 		<p>Ergo holder jeg på å regne ut <strong>lønnsøkning</strong> på dere fantastiske redaktørene våre! 🎉</p>
-		<p>Jeg kommer i løpet av helgen å oppdatere redaktørportalen. Nå har jeg fått på plass et nytt kontraktsystem for dere. Jeg kommer til å legge inn manus vi har fått inn som dere kan ta om dere ønsker dette.</p>
+		<p>Men uansett hvor smart teknologien blir: <strong>gode redaktører trenger vi alltid</strong>. Det er dere som gjør den virkelige forskjellen for elevene våre.</p>
+		<p>Jeg kommer i løpet av helgen å oppdatere redaktørportalen. Nå har jeg fått på plass et nytt kontraktsystem for dere, og jeg kommer til å legge inn manus vi har fått inn som dere kan ta om dere ønsker det.</p>
+		<p>Jeg trenger også <strong>gode ombrekkere og designere</strong> — spesielt for coverdesign. Jeg bygger nå programmer med samme teknologi som Typefi har, som vil gjøre ombrekking enklere. Den bør være på plass før sommeren, men ombrekkere og coverdesignere vil vi alltid trenge. Kjenner du noen, eller er du interessert selv? Ta kontakt!</p>
 		<p style="margin-bottom: 0; color: var(--text-secondary); font-style: italic;">— Sven Inge, {{ \Carbon\Carbon::now()->format('d.m.Y') }}</p>
 	</div>
 
