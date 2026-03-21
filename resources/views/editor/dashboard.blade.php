@@ -326,7 +326,8 @@
 	</div>
 
 	{{-- ═══════ MELDING FRA SVEN INGE ═══════ --}}
-	<div style="background: #fdf8f4; border-left: 4px solid var(--brand-primary); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+	<div id="svenIngeMelding" style="background: #fdf8f4; border-left: 4px solid var(--brand-primary); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); position:relative; display:none;">
+		<button onclick="document.getElementById('svenIngeMelding').style.display='none'; localStorage.setItem('hideSvenMelding','{{ md5(now()->format('Y-m-d')) }}')" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.3rem;color:var(--text-secondary);cursor:pointer;line-height:1;" title="Lukk melding">&times;</button>
 		<h4 style="margin-top: 0; color: var(--brand-primary); font-family: var(--font-display); font-size: 1.1rem;">📢 Melding fra Sven Inge</h4>
 		<p>Hei alle sammen!</p>
 		<p>Markedet er i stor endring nå — stadig flere ønsker å selvpublisere, og vi følger veldig med. Forfatterskolen ligger langt foran teknologisk, og admin-systemet har fått ekstreme nye automasjoner som sparer oss for hundrevis av admintimer. Det betyr lavere kostnader på admin-siden — og det er penger vi heller vil bruke på dere.</p>
@@ -2115,6 +2116,14 @@
 <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
 	var cacheBuster = '{{ $cacheBuster }}';
+
+	// Vis melding fra Sven Inge (med mulighet for å lukke)
+	(function() {
+		var key = '{{ md5(now()->format('Y-m-d')) }}';
+		if (localStorage.getItem('hideSvenMelding') !== key) {
+			document.getElementById('svenIngeMelding').style.display = 'block';
+		}
+	})();
 
 	// PL Quiz for Espen og Karl Inge
 	var plLeader = null;
