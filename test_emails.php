@@ -67,4 +67,26 @@ try {
     echo "4. Oppgavepåminnelse - SENDT\n";
 } catch (Exception $e) { echo "4. FEIL: {$e->getMessage()}\n"; }
 
+// 5. Faktura - påminnelse før forfall
+try {
+    $tpl = App\Http\AdminHelpers::emailTemplate('Invoice Due Reminder');
+    if ($tpl) {
+        $content = App\Http\AdminHelpers::formatEmailContent($tpl->email_content, $to, $user->first_name, '#');
+        $content = str_replace([':price', ':kid_number'], ['1 990 kr', '12345678'], $content);
+        Illuminate\Support\Facades\Mail::to($to)->send(new App\Mail\AddMailToQueueMail($tpl->subject, $content));
+        echo "5. Faktura påminnelse før forfall - SENDT\n";
+    } else { echo "5. Template 'Invoice Due Reminder' ikke funnet\n"; }
+} catch (Exception $e) { echo "5. FEIL: {$e->getMessage()}\n"; }
+
+// 6. Faktura - purring ved forfall
+try {
+    $tpl2 = App\Http\AdminHelpers::emailTemplate('Due Invoice Check');
+    if ($tpl2) {
+        $content2 = App\Http\AdminHelpers::formatEmailContent($tpl2->email_content, $to, $user->first_name, '#');
+        $content2 = str_replace([':price', ':kid_number'], ['1 990 kr', '12345678'], $content2);
+        Illuminate\Support\Facades\Mail::to($to)->send(new App\Mail\AddMailToQueueMail($tpl2->subject, $content2));
+        echo "6. Faktura purring ved forfall - SENDT\n";
+    } else { echo "6. Template 'Due Invoice Check' ikke funnet\n"; }
+} catch (Exception $e) { echo "6. FEIL: {$e->getMessage()}\n"; }
+
 echo "\nFerdig! Sjekk innboksen din.\n";
