@@ -110,6 +110,8 @@ class CoverGenerator
         $templateCss = $this->getTemplateCss($template, $textColor);
         $coverImageCss = $coverImage ? "background-image: url('{$coverImage}'); background-size: cover; background-position: center;" : '';
 
+        $subtitleHtml = $subtitle ? "<h2 class='cover-subtitle'>{$subtitle}</h2>" : '';
+
         $guidelinesHtml = '';
         if ($showGuidelines) {
             $safe = $dims->frontSafeZone();
@@ -181,7 +183,7 @@ body { width: {$dims->totalWidth}mm; height: {$dims->totalHeight}mm; position: r
 
 <div class="cover-front">
     <h1 class="cover-title">{$title}</h1>
-    {$subtitle && "<h2 class='cover-subtitle'>{$subtitle}</h2>"}
+    {$subtitleHtml}
     <p class="cover-author">{$author}</p>
 </div>
 
