@@ -73,7 +73,7 @@ try {
     if ($tpl) {
         $content = App\Http\AdminHelpers::formatEmailContent($tpl->email_content, $to, $user->first_name, '#');
         $content = str_replace([':price', ':kid_number'], ['1 990 kr', '12345678'], $content);
-        Illuminate\Support\Facades\Mail::to($to)->send(new App\Mail\AddMailToQueueMail($to, $tpl->subject, $content, 'post@forfatterskolen.no', 'Forfatterskolen', null, null));
+        Illuminate\Support\Facades\Mail::to($to)->send(new App\Mail\AddMailToQueueMail($to, $tpl->subject, $content, 'post@forfatterskolen.no', 'Forfatterskolen', null, 'test-token-5'));
         echo "5. Faktura påminnelse før forfall - SENDT\n";
     } else { echo "5. Template 'Invoice Due Reminder' ikke funnet\n"; }
 } catch (Exception $e) { echo "5. FEIL: {$e->getMessage()}\n"; }
@@ -84,7 +84,7 @@ try {
     if ($tpl2) {
         $content2 = App\Http\AdminHelpers::formatEmailContent($tpl2->email_content, $to, $user->first_name, '#');
         $content2 = str_replace([':price', ':kid_number'], ['1 990 kr', '12345678'], $content2);
-        Illuminate\Support\Facades\Mail::to($to)->send(new App\Mail\AddMailToQueueMail($to, $tpl2->subject, $content2, 'post@forfatterskolen.no', 'Forfatterskolen', null, null));
+        Illuminate\Support\Facades\Mail::to($to)->send(new App\Mail\AddMailToQueueMail($to, $tpl2->subject, $content2, 'post@forfatterskolen.no', 'Forfatterskolen', null, 'test-token-6'));
         echo "6. Faktura purring ved forfall - SENDT\n";
     } else { echo "6. Template 'Due Invoice Check' ikke funnet\n"; }
 } catch (Exception $e) { echo "6. FEIL: {$e->getMessage()}\n"; }
