@@ -67,26 +67,32 @@ try {
     echo "4. Oppgavepåminnelse - SENDT\n";
 } catch (Exception $e) { echo "4. FEIL: {$e->getMessage()}\n"; }
 
-// 5. Faktura - påminnelse før forfall
+// 5. Faktura - påminnelse før forfall (14 dager)
 try {
-    $tpl = App\Http\AdminHelpers::emailTemplate('Invoice Due Reminder');
-    if ($tpl) {
-        $content = App\Http\AdminHelpers::formatEmailContent($tpl->email_content, $to, $user->first_name, '#');
-        $content = str_replace([':price', ':kid_number'], ['1 990 kr', '12345678'], $content);
-        Illuminate\Support\Facades\Mail::to($to)->send(new App\Mail\AddMailToQueueMail($to, $tpl->subject, $content, 'post@forfatterskolen.no', 'Forfatterskolen', null, 'test-token-5'));
-        echo "5. Faktura påminnelse før forfall - SENDT\n";
-    } else { echo "5. Template 'Invoice Due Reminder' ikke funnet\n"; }
+    Illuminate\Support\Facades\Mail::to($to)->send(new App\Mail\InvoiceReminderMail([
+        'type' => 'reminder',
+        'subject' => 'Påminnelse: faktura forfaller om 14 dager',
+        'firstName' => $user->first_name,
+        'amount' => '1 990 kr',
+        'dueDate' => date('d.m.Y', strtotime('+14 days')),
+        'kidNumber' => '12345678',
+        'payUrl' => config('app.url') . '/learner/invoices',
+    ]));
+    echo "5. Faktura påminnelse før forfall - SENDT\n";
 } catch (Exception $e) { echo "5. FEIL: {$e->getMessage()}\n"; }
 
-// 6. Faktura - purring ved forfall
+// 6. Faktura - purring (forfaller i morgen)
 try {
-    $tpl2 = App\Http\AdminHelpers::emailTemplate('Due Invoice Check');
-    if ($tpl2) {
-        $content2 = App\Http\AdminHelpers::formatEmailContent($tpl2->email_content, $to, $user->first_name, '#');
-        $content2 = str_replace([':price', ':kid_number'], ['1 990 kr', '12345678'], $content2);
-        Illuminate\Support\Facades\Mail::to($to)->send(new App\Mail\AddMailToQueueMail($to, $tpl2->subject, $content2, 'post@forfatterskolen.no', 'Forfatterskolen', null, 'test-token-6'));
-        echo "6. Faktura purring ved forfall - SENDT\n";
-    } else { echo "6. Template 'Due Invoice Check' ikke funnet\n"; }
+    Illuminate\Support\Facades\Mail::to($to)->send(new App\Mail\InvoiceReminderMail([
+        'type' => 'overdue',
+        'subject' => 'Fakturaen din forfaller i morgen',
+        'firstName' => $user->first_name,
+        'amount' => '1 990 kr',
+        'dueDate' => date('d.m.Y', strtotime('+1 day')),
+        'kidNumber' => '12345678',
+        'payUrl' => config('app.url') . '/learner/invoices',
+    ]));
+    echo "6. Faktura purring - SENDT\n";
 } catch (Exception $e) { echo "6. FEIL: {$e->getMessage()}\n"; }
 
 echo "\nFerdig! Sjekk innboksen din.\n";

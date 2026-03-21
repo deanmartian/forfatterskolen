@@ -6,10 +6,11 @@ use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Invoice;
-use App\Jobs\AddMailToQueueJob;
-use App\Mail\SubjectBodyEmail;
+use App\Mail\InvoiceReminderMail;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 class DueInvoiceCheck extends Command
 {
@@ -61,33 +62,25 @@ class DueInvoiceCheck extends Command
             ->whereNull('vipps_phone_number')
             ->get();
 
-        $email_template = AdminHelpers::emailTemplate('Due Invoice Check');
-        $from = $email_template->from_email;
-        $subject = $email_template->subject;
-
         foreach ($invoices as $invoice) {
             if ($invoice->id) {
                 $balance = $invoice->fiken_balance;
-                $transactions_sum = $invoice->transaction_amount; // $invoice->transactions->sum('amount');
+                $transactions_sum = $invoice->transaction_amount;
                 $remaining = $balance - $transactions_sum;
-                // $user               = $invoice->user;
 
-                $to = $invoice->user_email; // $invoice->user->email;
-                $redirectLink = route('learner.invoice', ['filter' => $invoice->id]);
+                $user = User::find($invoice->user_id);
+                if (!$user) continue;
 
-                $emailContent = AdminHelpers::formatEmailContent($email_template->email_content, $to, $invoice->user_first_name, $redirectLink);
-                $emailContent = str_replace([
-                    ':price',
-                    ':kid_number',
-                ], [
-                    FrontendHelpers::currencyFormat($remaining),
-                    $invoice->kid_number,
-                ], $emailContent);
-
-                // \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-                dispatch(new AddMailToQueueJob($to, $subject, $emailContent, $from, null, null,
-                    'invoice', $invoice->id));
-                CronLog::create(['activity' => 'DueInvoiceCheck CRON sent email to '.$to]);
+                Mail::to($user->email)->queue(new InvoiceReminderMail([
+                    'type' => 'overdue',
+                    'subject' => 'Fakturaen din forfaller i morgen',
+                    'firstName' => $user->first_name,
+                    'amount' => FrontendHelpers::currencyFormat($remaining),
+                    'dueDate' => Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y'),
+                    'kidNumber' => $invoice->kid_number,
+                    'payUrl' => route('learner.invoice', ['filter' => $invoice->id]),
+                ]));
+                CronLog::create(['activity' => 'DueInvoiceCheck CRON sent email to '.$user->email]);
             }
         }
 

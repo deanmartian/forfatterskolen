@@ -6,11 +6,12 @@ use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Invoice;
-use App\Jobs\AddMailToQueueJob;
+use App\Mail\InvoiceReminderMail;
 use App\Transaction;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 class InvoiceDueReminder extends Command
 {
@@ -60,30 +61,24 @@ class InvoiceDueReminder extends Command
             ->whereNull('users.deleted_at')
             ->get();
 
-        $email_template = AdminHelpers::emailTemplate('Invoice Due Reminder');
-        $from = $email_template->from_email;
-
         foreach ($invoices as $invoice) {
 
             $balance = $invoice->fiken_balance;
             $transactions_sum = Transaction::where('invoice_id', $invoice->id)->get()->sum('amount');
             $remaining = $balance - $transactions_sum;
             $user = User::find($invoice->user_id);
-            $redirectLink = route('learner.invoice', ['filter' => $invoice->id]);
 
             if ($user && ! empty($user) && $user->wantsNotification('invoice_due_reminder')) {
-                $to = $user->email;
-                $emailContent = AdminHelpers::formatEmailContent($email_template->email_content, $to, $user->first_name, $redirectLink);
-                $emailContent = str_replace([
-                    ':price',
-                    ':kid_number',
-                ], [
-                    FrontendHelpers::currencyFormat($remaining),
-                    $invoice->kid_number,
-                ], $emailContent);
-                dispatch(new AddMailToQueueJob($to, $email_template->subject, $emailContent, $from, null, null,
-                    'invoice', $invoice->id));
-                CronLog::create(['activity' => 'InvoiceDueReminder CRON sent email to '.$to]);
+                Mail::to($user->email)->queue(new InvoiceReminderMail([
+                    'type' => 'reminder',
+                    'subject' => 'Påminnelse: faktura forfaller om 14 dager',
+                    'firstName' => $user->first_name,
+                    'amount' => FrontendHelpers::currencyFormat($remaining),
+                    'dueDate' => Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y'),
+                    'kidNumber' => $invoice->kid_number,
+                    'payUrl' => route('learner.invoice', ['filter' => $invoice->id]),
+                ]));
+                CronLog::create(['activity' => 'InvoiceDueReminder CRON sent email to '.$user->email]);
             }
         }
 
