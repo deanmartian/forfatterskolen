@@ -1,8 +1,11 @@
 {{-- Sidebar Navigation --}}
 <aside class="ed-sidebar" id="edSidebar">
     <div class="ed-sidebar__logo">
-        <div class="ed-sidebar__logo-title">Forfatterskolen</div>
-        <div class="ed-sidebar__logo-sub">Redaktørportal</div>
+        <img src="{{ asset('images/favicon.png') }}" alt="Forfatterskolen" style="width:28px;height:28px;margin-right:8px;vertical-align:middle;">
+        <div style="display:inline-block;vertical-align:middle;">
+            <div class="ed-sidebar__logo-title">Forfatterskolen</div>
+            <div class="ed-sidebar__logo-sub">Redaktørportal</div>
+        </div>
     </div>
 
     <ul class="ed-sidebar__nav">
