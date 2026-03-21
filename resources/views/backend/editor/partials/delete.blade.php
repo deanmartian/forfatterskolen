@@ -5,7 +5,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Delete <em>{{$editor['name']}}</em></h4>
+        <h4 class="modal-title">Slett <em>{{$editor['name']}}</em></h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="{{route('admin.editor.destroy', $editor['id'])}}"
@@ -13,9 +13,9 @@
           {{csrf_field()}}
           {{ method_field('DELETE') }}
           <p>
-            Are you sure to delete this editor?
+            Er du sikker på at du vil slette denne redaktøren?
           </p>
-          <button type="submit" class="btn btn-danger pull-right">Delete Editor</button>
+          <button type="submit" class="btn btn-danger pull-right">Slett redaktør</button>
           <div class="clearfix"></div>
         </form>
       </div>

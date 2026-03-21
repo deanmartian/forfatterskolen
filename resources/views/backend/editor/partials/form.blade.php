@@ -8,9 +8,9 @@
 
         <div class="col-sm-12">
             @if(Request::is('editor/*/edit'))
-                <h3>Edit <em>{{$editor['name']}}</em></h3>
+                <h3>Rediger <em>{{$editor['name']}}</em></h3>
             @else
-                <h3>Add New Editor</h3>
+                <h3>Legg til ny redaktør</h3>
             @endif
         </div>
 
@@ -18,11 +18,11 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="form-group">
-                        <label>Name</label>
+                        <label>Navn</label>
                         <input type="text" class="form-control" name="name" value="{{ $editor['name'] }}" required>
                     </div>
                     <div class="form-group">
-                        <label>Description</label>
+                        <label>Beskrivelse</label>
                         <textarea name="description" rows="12" id="description-ct" class="form-control" required>{{ $editor['description'] }}</textarea>
                     </div>
                 </div>
@@ -33,18 +33,18 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="form-group">
-                        <label id="course-image">Image</label>
+                        <label id="course-image">Bilde</label>
                         <div class="editor-form-image image-file margin-bottom">
-                            <div class="image-preview" style="background-image: url('{{$editor['editor_image']}}')" data-default="{{Auth::user()->profile_image}}" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
+                            <div class="image-preview" style="background-image: url('{{$editor['editor_image']}}')" data-default="{{Auth::user()->profile_image}}" title="Velg bilde" data-toggle="tooltip" data-placement="bottom"></div>
                             <input type="file" accept="image/*" name="editor_image" accept="image/jpg, image/jpeg, image/png">
                         </div>
                     </div>
 
                     @if(Request::is('editor/*/edit'))
-                        <button type="submit" class="btn btn-primary">Update Editor</button>
-                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteEditorModal">Delete Editor</button>
+                        <button type="submit" class="btn btn-primary">Oppdater redaktør</button>
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteEditorModal">Slett redaktør</button>
                     @else
-                        <button type="submit" class="btn btn-primary btn-block btn-lg">Create Editor</button>
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">Opprett redaktør</button>
                     @endif
                 </div>
             </div>

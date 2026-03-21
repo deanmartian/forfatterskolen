@@ -259,7 +259,7 @@
 					
 					<select class="form-control select2" name="genre_id" required>
 						<option value="" selected disabled>
-							-- Select Genre --
+							-- Velg sjanger --
 						</option>
 						@foreach($genreIHaveNotSelected as $key)
 							<option value="{{ $key->id }}">
@@ -338,7 +338,7 @@
 
 			$('#addForm').trigger('reset');
 			modal.find('#feedbackFileAppend').html('');
-			modal.find('.modal-title').text("Add New");
+			modal.find('.modal-title').text("Legg til ny");
 			modal.find('[name=id]').val('')
 
 			if(is_edit){

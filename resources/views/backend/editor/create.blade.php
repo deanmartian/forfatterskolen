@@ -1,7 +1,7 @@
 @extends('backend.layout')
 
 @section('title')
-<title>Create New Editor &rsaquo; Forfatterskolen Admin</title>
+<title>Opprett ny redaktør &rsaquo; Forfatterskolen Admin</title>
 @stop
 
 

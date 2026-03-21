@@ -1,22 +1,22 @@
 @extends('backend.layout')
 
 @section('title')
-    <title>Admins &rsaquo; Editors</title>
+    <title>Admin &rsaquo; Redaktører</title>
 @stop
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-users"></i> Editors</h3>
+        <h3><i class="fa fa-users"></i> Redaktører</h3>
         <div class="clearfix"></div>
     </div>
     <div class="col-md-12">
-        <a class="btn btn-success margin-top" href="{{ route('admin.editor.create') }}">Add Editor</a>
+        <a class="btn btn-success margin-top" href="{{ route('admin.editor.create') }}">Legg til redaktør</a>
         <div class="table-users table-responsive">
             <table class="table">
                 <thead>
                 <tr>
-                    <th width="20%">Name</th>
-                    <th>Description</th>
+                    <th width="20%">Navn</th>
+                    <th>Beskrivelse</th>
                 </tr>
                 </thead>
                 <tbody>
