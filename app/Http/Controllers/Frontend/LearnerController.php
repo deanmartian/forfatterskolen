@@ -1222,7 +1222,14 @@ class LearnerController extends Controller
                         ->where('assignment_id', $assignment->id)->first();
 
                     if ($waitingForResponseManuscript && ! in_array($assignment->id, $waitingForResponseIDs)) {
-                        $waitingForResponse[] = $assignment;
+                        // Sjekk om feedback allerede finnes og er tilgjengelig
+                        $expFeedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $waitingForResponseManuscript->id)
+                            ->where('is_active', 1)->first();
+                        $expFeedbackReady = $expFeedback && (!$expFeedback->availability || date('Y-m-d') >= $expFeedback->availability);
+
+                        if (!$expFeedbackReady) {
+                            $waitingForResponse[] = $assignment;
+                        }
                     }
 
                     if (! AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
