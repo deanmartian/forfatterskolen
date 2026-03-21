@@ -301,7 +301,7 @@
 		<p>Ergo holder jeg på å regne ut <strong>lønnsøkning</strong> på dere fantastiske redaktørene våre! 🎉</p>
 		<p>Men uansett hvor smart teknologien blir: <strong>gode redaktører trenger vi alltid</strong>. Det er dere som gjør den virkelige forskjellen for elevene våre.</p>
 		<p>Jeg kommer i løpet av helgen å oppdatere redaktørportalen. Nå har jeg fått på plass et nytt kontraktsystem for dere, og jeg kommer til å legge inn manus vi har fått inn som dere kan ta om dere ønsker det.</p>
-		<p>Jeg trenger også <strong>gode ombrekkere og designere</strong> — spesielt for coverdesign. Jeg bygger nå programmer med samme teknologi som Typefi har, som vil gjøre ombrekking enklere. Den bør være på plass før sommeren, men ombrekkere og coverdesignere vil vi alltid trenge. Kjenner du noen, eller er du interessert selv? Send meg en e-post på <a href="mailto:sven.inge@forfatterskolen.no" style="color: var(--brand-primary); font-weight: 600;">sven.inge@forfatterskolen.no</a>!</p>
+		<p>Jeg trenger også <strong>gode ombrekkere og designere</strong> — spesielt for coverdesign. Jeg bygger nå programmer med samme teknologi som Typefi har, som vil gjøre ombrekking enklere. Den bør være på plass før sommeren, men ombrekkere og coverdesignere vil vi alltid trenge. Kjenner du noen, eller er du interessert selv? Send meg en e-post på <a href="mailto:sven.inge@forfatterskolen.no" style="color: var(--brand-primary); font-weight: 600;">sven.inge@forfatterskolen.no</a>! Har du også forslag til hvordan vi kan gjøre nettsiden enda bedre, hører jeg gjerne fra deg.</p>
 		<p style="margin-bottom: 0; color: var(--text-secondary); font-style: italic;">— Sven Inge, {{ \Carbon\Carbon::now()->format('d.m.Y') }}</p>
 	</div>
 
