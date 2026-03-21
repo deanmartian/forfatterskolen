@@ -10,10 +10,13 @@ $user = App\User::where('email', $to)->first();
 if (!$user) { echo "Bruker ikke funnet\n"; exit; }
 
 $ct = App\CoursesTaken::where('user_id', $user->id)->first();
-$course = $ct ? App\Course::find($ct->course_id) : App\Course::first();
+$course = $ct ? App\Course::find($ct->course_id) : null;
+if (!$course) { $course = App\Course::whereNotNull('title')->first(); }
 
 echo "Bruker: {$user->first_name} {$user->last_name}\n";
-echo "Kurs: {$course->title}\n\n";
+echo "Kurs: " . ($course ? $course->title : 'ingen') . "\n\n";
+
+if (!$course) { echo "Ingen kurs funnet, kan ikke sende branded mails\n"; }
 
 // 1. Ukentlig kursoppdatering
 try {
