@@ -52,11 +52,25 @@ class ProcessPublicationJob implements ShouldQueue
             file_put_contents($htmlPath, $bookHtml);
             $publication->update(['parsed_html' => "publications/{$publication->id}/book.html"]);
 
-            // Step 3: Generate PDF
+            // Step 3: Generate all formats
             $publication->update(['status' => 'generating']);
-            $pdfPath = $generator->generatePdf($bookHtml, $publication);
+
+            $generator->generatePdf($bookHtml, $publication);
+            $publication->update(['output_pdf' => "publications/{$publication->id}/book-print.pdf"]);
+
+            $generator->generateEpub($manuscript, $publication);
+            $publication->update(['output_epub' => "publications/{$publication->id}/book.epub"]);
+
+            $generator->generateDocx($manuscript, $publication);
+            $publication->update(['output_docx' => "publications/{$publication->id}/book-formatted.docx"]);
+
+            // Calculate spine width
+            $trimSize = \App\Services\Publishing\TrimSize::tryFrom($publication->trim_size) ?? \App\Services\Publishing\TrimSize::FORMAT_140x220;
+            $paperType = \App\Services\Publishing\PaperType::tryFrom($publication->paper_type) ?? \App\Services\Publishing\PaperType::MUNKEN_CREAM_100;
+            $spineWidth = $trimSize->spineWidth($publication->page_count ?? 0, $paperType);
+
             $publication->update([
-                'output_pdf' => "publications/{$publication->id}/book-print.pdf",
+                'spine_width_mm' => $spineWidth,
                 'status' => 'preview',
             ]);
 
@@ -64,6 +78,7 @@ class ProcessPublicationJob implements ShouldQueue
                 'pages' => $publication->page_count,
                 'words' => $publication->word_count,
                 'chapters' => $publication->chapter_count,
+                'spine_mm' => $spineWidth,
             ]);
 
         } catch (\Throwable $e) {
