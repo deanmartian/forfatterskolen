@@ -1,7 +1,11 @@
-@extends('frontend.layout')
+@extends('frontend.learner.self-publishing.layout')
 
 @section('title')
     <title>Mine bøker | Indiemoon Publishing</title>
+@endsection
+
+@section('breadcrumbs')
+    Ombrekk & bokproduksjon
 @endsection
 
 @section('content')

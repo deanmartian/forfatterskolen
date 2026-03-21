@@ -1,7 +1,13 @@
-@extends('frontend.layout')
+@extends('frontend.learner.self-publishing.layout')
 
 @section('title')
     <title>{{ $publication ? $publication->title : 'Ny bok' }} | Indiemoon Publishing</title>
+@endsection
+
+@section('breadcrumbs')
+    <a href="{{ route('learner.publication.index') }}">Ombrekk</a>
+    <span class="sep">›</span>
+    {{ $publication ? $publication->title : 'Ny bok' }}
 @endsection
 
 @section('content')

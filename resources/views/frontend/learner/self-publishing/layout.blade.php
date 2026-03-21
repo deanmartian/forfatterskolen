@@ -789,9 +789,15 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('learner.self-publishing.cover') }}" 
+                    <a href="{{ route('learner.self-publishing.cover') }}"
                     class="nav-item {{ request()->routeIs('learner.cover.*') ? 'active' : '' }}">
                         <i class="fas fa-palette"></i> {{ trans('site.author-portal.cover-design') ?? 'Omslag & design' }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('learner.publication.index') }}"
+                    class="nav-item {{ request()->routeIs('learner.publication.*') ? 'active' : '' }}">
+                        <i class="fas fa-book-open"></i> Ombrekk & bokproduksjon
                     </a>
                 </li>
             </ul>
