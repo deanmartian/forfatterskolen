@@ -305,6 +305,7 @@
 
 	{{-- ═══════ STAT CARDS ═══════ --}}
 	<div class="stat-grid">
+		@if($assignedAssignmentManuscripts->count() > 0)
 		<div class="stat-card">
 			<div class="stat-icon personal"><i class="fa fa-user-edit"></i></div>
 			<div>
@@ -312,6 +313,8 @@
 				<div class="stat-label">{{ trans('site.personal-assignment') }}</div>
 			</div>
 		</div>
+		@endif
+		@if($assigned_shop_manuscripts->filter(fn($m) => in_array($m->status, ['Started','Pending']))->count() + $shopManuscriptRequests->count() > 0)
 		<div class="stat-card">
 			<div class="stat-icon shop"><i class="fa fa-book"></i></div>
 			<div>
@@ -319,6 +322,8 @@
 				<div class="stat-label">{{ trans_choice('site.shop-manuscripts', 2) }}</div>
 			</div>
 		</div>
+		@endif
+		@if($assignedAssignments->count() > 0)
 		<div class="stat-card">
 			<div class="stat-icon assignment"><i class="fa fa-tasks"></i></div>
 			<div>
@@ -326,6 +331,8 @@
 				<div class="stat-label">{{ trans('site.my-assignments') }}</div>
 			</div>
 		</div>
+		@endif
+		@if($freeManuscripts->count() > 0)
 		<div class="stat-card">
 			<div class="stat-icon free"><i class="fa fa-file-text"></i></div>
 			<div>
@@ -333,6 +340,8 @@
 				<div class="stat-label">Free Manuscript</div>
 			</div>
 		</div>
+		@endif
+		@if($coachingTimers->count() > 0)
 		<div class="stat-card">
 			<div class="stat-icon coaching"><i class="fa fa-headphones"></i></div>
 			<div>
@@ -340,6 +349,8 @@
 				<div class="stat-label">{{ trans('site.my-coaching-timer') }}</div>
 			</div>
 		</div>
+		@endif
+		@if($selfPublishingList->count() > 0)
 		<div class="stat-card">
 			<div class="stat-icon publishing"><i class="fa fa-print"></i></div>
 			<div>
@@ -347,6 +358,8 @@
 				<div class="stat-label">Self Publishing</div>
 			</div>
 		</div>
+		@endif
+		@if($corrections->count() > 0)
 		<div class="stat-card">
 			<div class="stat-icon correction"><i class="fa fa-check-circle"></i></div>
 			<div>
@@ -354,6 +367,8 @@
 				<div class="stat-label">{{ trans('site.my-correction') }}</div>
 			</div>
 		</div>
+		@endif
+		@if($copyEditings->count() > 0)
 		<div class="stat-card">
 			<div class="stat-icon copyedit"><i class="fa fa-spell-check"></i></div>
 			<div>
@@ -361,6 +376,8 @@
 				<div class="stat-label">{{ trans('site.my-copy-editing') }}</div>
 			</div>
 		</div>
+		@endif
+		@if($editingAssignments->count() > 0)
 		<div class="stat-card">
 			<div class="stat-icon editing"><i class="fa fa-pencil"></i></div>
 			<div>
@@ -368,6 +385,8 @@
 				<div class="stat-label">Redigering</div>
 			</div>
 		</div>
+		@endif
+		@if($projects->count() > 0)
 		<div class="stat-card">
 			<div class="stat-icon project"><i class="fa fa-folder-open"></i></div>
 			<div>
