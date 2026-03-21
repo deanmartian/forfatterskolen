@@ -1281,14 +1281,15 @@ class LearnerController extends Controller
         }
 
         foreach ($userAssignments as $assignment) {
-            $manuscript = $assignment->manuscripts->first();
+            $manuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
+                ->where('assignment_id', $assignment->id)->first();
             $feedback = null;
             if ($manuscript) {
-                $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript['id'])
+                $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript->id)
                     ->where('is_active', 1)->first();
             }
 
-            // Hvis feedback har en fremtidig availability-dato, behandle som "ingen feedback ennå"
+            // Sjekk om feedback finnes og er tilgjengelig (availability-dato nådd eller ikke satt)
             $feedbackAvailable = $feedback && (!$feedback->availability || date('Y-m-d') >= $feedback->availability);
 
             if (! $feedbackAvailable) {
