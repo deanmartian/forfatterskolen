@@ -13,7 +13,7 @@
 <tr><td style="background:#fff;padding:0 40px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#1c1917,#2a2520);border-radius:10px;margin-top:24px;">
         <tr><td style="padding:24px;">
-            <p style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#ffd54f;margin:0 0 12px;font-family:-apple-system,sans-serif;">&#127908; MENTORILDEN DENNE UKEN</p>
+            <p style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#ffd54f;margin:0 0 12px;font-family:-apple-system,sans-serif;">&#127908; MENTORM&Oslash;TE DENNE UKEN</p>
             <h2 style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:#fff;margin:0 0 8px;">{{ $mentorMeeting['title'] }}</h2>
             <p style="font-size:14px;color:rgba(255,255,255,0.7);margin:0 0 12px;font-family:-apple-system,sans-serif;">{{ $mentorMeeting['date'] }}</p>
             @if(!empty($mentorMeeting['presenter']))

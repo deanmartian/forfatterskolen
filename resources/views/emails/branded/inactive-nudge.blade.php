@@ -19,7 +19,7 @@
             <p style="font-size:13px;color:#5a5550;line-height:1.6;margin:0;font-family:-apple-system,sans-serif;">
                 &#10003; Sett av 15 minutter i dag til &aring; lese neste modul<br>
                 &#10003; Skriv bare &eacute;n setning &mdash; resten f&oslash;lger<br>
-                &#10003; Bli med p&aring; neste mentorilden for inspirasjon
+                &#10003; Bli med p&aring; neste mentorm&oslash;tet for inspirasjon
             </p>
         </td></tr>
     </table>
