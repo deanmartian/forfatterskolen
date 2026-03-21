@@ -319,6 +319,11 @@ class HomeController extends Controller
         return view('frontend.competition');
     }
 
+    public function ombrekkIndiemoon(): View
+    {
+        return view('frontend.ombrekk-indiemoon');
+    }
+
     /**
      * Display all blog
      *
