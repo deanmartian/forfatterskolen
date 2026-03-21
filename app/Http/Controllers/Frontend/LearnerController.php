@@ -864,6 +864,9 @@ class LearnerController extends Controller
             }
         }
 
+        // Fjern duplikater basert på video-URL
+        $replayItems = $replayItems->unique('video_url')->values();
+
         // Sorter med nyeste først
         $replayItems = $replayItems->sortByDesc('date')->values();
 
