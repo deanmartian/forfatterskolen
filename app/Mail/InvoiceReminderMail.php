@@ -25,11 +25,9 @@ class InvoiceReminderMail extends Mailable
 
         // Generer magic login-link med redirect til faktura
         if (!empty($this->data['email'])) {
-            $token = encrypt($this->data['email']);
-            $redirectPath = $this->data['payUrl'] ?? '/learner/invoices';
             $this->data['payUrl'] = route('auth.login.emailRedirect', [
-                'email' => $token,
-                'redirect_link' => encrypt($redirectPath),
+                'email' => encrypt($this->data['email']),
+                'redirect_link' => encrypt('/learner/invoices'),
             ]);
         }
 
