@@ -339,6 +339,36 @@
 		<p style="margin-bottom: 0; color: var(--text-secondary); font-style: italic;">— Sven Inge, {{ \Carbon\Carbon::now()->format('d.m.Y') }}</p>
 	</div>
 
+	{{-- ═══════ PREMIER LEAGUE (kun når Arsenal leder) ═══════ --}}
+	<div id="pl-table-container" style="display:none;">
+		<div class="dashboard-section">
+			<div class="section-header">
+				<h4>
+					<span style="margin-right:8px;">⚽</span>
+					Premier League
+					<span class="section-badge" style="background:#EF0107;color:#fff;" id="pl-arsenal-pos"></span>
+				</h4>
+			</div>
+			<div class="section-body" style="padding:12px 24px 16px;">
+				<table class="table" style="margin-bottom:0;font-size:.9rem;">
+					<thead>
+						<tr>
+							<th style="width:30px;">#</th>
+							<th>Lag</th>
+							<th style="text-align:center;">K</th>
+							<th style="text-align:center;">S</th>
+							<th style="text-align:center;">U</th>
+							<th style="text-align:center;">T</th>
+							<th style="text-align:center;">MF</th>
+							<th style="text-align:center;font-weight:700;">P</th>
+						</tr>
+					</thead>
+					<tbody id="pl-table-body"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
 	{{-- ═══════ STAT CARDS ═══════ --}}
 	<div class="stat-grid">
 		@if($availableManuscripts->count() > 0)
@@ -2060,6 +2090,72 @@
 <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
 	var cacheBuster = '{{ $cacheBuster }}';
+
+	// Premier League tabell - vis kun når Arsenal er foran Liverpool og Man Utd
+	(function() {
+		fetch('https://site.api.espn.com/apis/v2/sports/soccer/eng.1/standings')
+			.then(r => r.json())
+			.then(data => {
+				try {
+					var entries = data.children[0].standings.entries;
+					entries.sort(function(a, b) {
+						var rankA = a.stats.find(s => s.name === 'rank');
+						var rankB = b.stats.find(s => s.name === 'rank');
+						return (rankA ? rankA.value : 99) - (rankB ? rankB.value : 99);
+					});
+
+					var arsenalPos = -1, liverpoolPos = -1, manUtdPos = -1;
+					entries.forEach(function(entry, i) {
+						var name = entry.team.displayName.toLowerCase();
+						if (name.indexOf('arsenal') !== -1) arsenalPos = i;
+						if (name.indexOf('liverpool') !== -1) liverpoolPos = i;
+						if (name.indexOf('manchester united') !== -1 || name.indexOf('man united') !== -1) manUtdPos = i;
+					});
+
+					if (arsenalPos === -1 || arsenalPos >= liverpoolPos || arsenalPos >= manUtdPos) return;
+
+					var top10 = entries.slice(0, 10);
+					var html = '';
+					top10.forEach(function(entry, i) {
+						var team = entry.team;
+						var stats = {};
+						entry.stats.forEach(function(s) { stats[s.name] = s.value || s.displayValue || 0; });
+
+						var gamesPlayed = parseInt(stats.gamesPlayed) || 0;
+						var wins = parseInt(stats.wins) || 0;
+						var ties = parseInt(stats.ties) || 0;
+						var losses = parseInt(stats.losses) || 0;
+						var goalDiff = stats.pointDifferential || stats.goalDifference || 0;
+						var points = parseInt(stats.points) || 0;
+						var rank = parseInt(stats.rank) || (i + 1);
+
+						var isArsenal = team.displayName.toLowerCase().indexOf('arsenal') !== -1;
+						var rowStyle = isArsenal ? 'background:#FFF1F1;font-weight:700;' : '';
+						var nameStyle = isArsenal ? 'color:#EF0107;font-weight:800;' : '';
+
+						html += '<tr style="' + rowStyle + '">';
+						html += '<td>' + rank + '</td>';
+						html += '<td style="' + nameStyle + '">';
+						if (team.logos && team.logos.length) {
+							html += '<img src="' + team.logos[0].href + '" style="width:20px;height:20px;margin-right:8px;vertical-align:middle;">';
+						}
+						html += team.displayName + '</td>';
+						html += '<td style="text-align:center;">' + gamesPlayed + '</td>';
+						html += '<td style="text-align:center;">' + wins + '</td>';
+						html += '<td style="text-align:center;">' + ties + '</td>';
+						html += '<td style="text-align:center;">' + losses + '</td>';
+						html += '<td style="text-align:center;">' + goalDiff + '</td>';
+						html += '<td style="text-align:center;font-weight:700;">' + points + '</td>';
+						html += '</tr>';
+					});
+
+					document.getElementById('pl-table-body').innerHTML = html;
+					document.getElementById('pl-arsenal-pos').textContent = (arsenalPos + 1) + '.';
+					document.getElementById('pl-table-container').style.display = 'block';
+				} catch(e) { console.log('PL tabell feil:', e); }
+			})
+			.catch(function() {});
+	})();
 
 	$('.viewManuscriptBtn').click(function(){
 		var fields = $(this).data('fields');
