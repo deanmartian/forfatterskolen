@@ -2114,9 +2114,13 @@
 
 					if (arsenalPos === -1 || arsenalPos >= liverpoolPos || arsenalPos >= manUtdPos) return;
 
-					var top10 = entries.slice(0, 10);
+					var showTeams = ['arsenal', 'liverpool', 'manchester united', 'man united', 'tottenham', 'spurs'];
+					var filtered = entries.filter(function(entry) {
+						var name = entry.team.displayName.toLowerCase();
+						return showTeams.some(function(t) { return name.indexOf(t) !== -1; });
+					});
 					var html = '';
-					top10.forEach(function(entry, i) {
+					filtered.forEach(function(entry, i) {
 						var team = entry.team;
 						var stats = {};
 						entry.stats.forEach(function(s) { stats[s.name] = s.value || s.displayValue || 0; });
