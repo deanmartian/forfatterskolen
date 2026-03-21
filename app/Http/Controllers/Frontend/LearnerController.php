@@ -802,16 +802,18 @@ class LearnerController extends Controller
             ->select('lessons.id', 'lessons.title as lesson_title', 'lessons.content', 'courses.title as course_title', 'courses.id as course_id')
             ->get();
 
-        // Parse individuelle videoer fra leksjonsinnholdet OG lesson_contents
+        // Parse individuelle videoer fra leksjonsinnholdet
+        // Bruk lesson_contents hvis det finnes, ellers fall tilbake til lessons.content
         $replayItems = collect();
         foreach ($replayLessons as $lesson) {
-            // Kombiner lessons.content + alle lesson_contents for denne leksjonen
-            $allContent = html_entity_decode($lesson->content ?? '');
             $lessonContents = DB::table('lesson_contents')
                 ->where('lesson_id', $lesson->id)
                 ->pluck('lesson_content');
-            foreach ($lessonContents as $lc) {
-                $allContent .= "\n" . $lc;
+
+            if ($lessonContents->isNotEmpty()) {
+                $allContent = $lessonContents->implode("\n");
+            } else {
+                $allContent = html_entity_decode($lesson->content ?? '');
             }
             $content = $allContent;
 
