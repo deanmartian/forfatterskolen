@@ -335,6 +335,7 @@
 		<p>Jeg kommer i løpet av helgen å oppdatere redaktørportalen. Nå har jeg fått på plass et nytt kontraktsystem for dere, og jeg kommer til å legge inn manus vi har fått inn som dere kan ta om dere ønsker det.</p>
 		<p>PS: Det finnes nå <strong>ledige manus</strong> i den nye «Ledige manus»-seksjonen nedenfor — første mann til mølla! 🏃‍♂️</p>
 		<p>Jeg trenger også <strong>gode ombrekkere og designere</strong> — spesielt for coverdesign. Jeg bygger nå programmer med samme teknologi som Typefi har, som vil gjøre ombrekking enklere. Den bør være på plass før sommeren, men ombrekkere og coverdesignere vil vi alltid trenge. Kjenner du noen, eller er du interessert selv? Send meg en e-post på <a href="mailto:sven.inge@forfatterskolen.no" style="color: var(--brand-primary); font-weight: 600;">sven.inge@forfatterskolen.no</a>! Jeg programmerer også nye verktøy som jeg håper vil gjøre hverdagen deres enklere. Har du en god idé til et program du trenger, eller forslag til hvordan vi kan gjøre nettsiden enda bedre — hører jeg gjerne fra deg!</p>
+		<p>🎄 <strong>Juleantologi!</strong> Jeg planlegger en juleantologi, og om dere ønsker å bidra som redaktør så gi meg gjerne beskjed! Trenger at rektor godkjenner, men her er litt info på forhånd: <a href="https://www.forfatterskolen.no/juleantologi" target="_blank" style="color: var(--brand-primary); font-weight: 600;">forfatterskolen.no/juleantologi</a></p>
 		<p style="margin-bottom: 0; color: var(--text-secondary); font-style: italic;">— Sven Inge, {{ \Carbon\Carbon::now()->format('d.m.Y') }}</p>
 	</div>
 
@@ -469,7 +470,7 @@
 					<tbody>
 					@foreach($availableManuscripts as $am)
 						<tr>
-							<td>{{ $am->shopManuscript->title ?? 'Manusutvikling' }}</td>
+							<td><a href="#" data-toggle="modal" data-target="#manuscriptModal{{ $am->id }}" style="color:var(--brand-primary);font-weight:600;text-decoration:underline;cursor:pointer;">{{ $am->shopManuscript->title ?? 'Manusutvikling' }}</a></td>
 							<td>
 								@if($am->genre > 0)
 									{{ \App\Http\FrontendHelpers::assignmentType($am->genre) }}
@@ -492,6 +493,44 @@
 				</table>
 			</div>
 		</div>
+		@foreach($availableManuscripts as $am)
+		<div class="modal fade" id="manuscriptModal{{ $am->id }}" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content" style="border-radius:var(--radius);border:1px solid var(--border);">
+					<div class="modal-header" style="background:var(--bg);border-bottom:1px solid var(--border);">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title" style="font-family:var(--font-display);font-weight:600;">{{ $am->shopManuscript->title ?? 'Manusutvikling' }}</h4>
+					</div>
+					<div class="modal-body">
+						<table class="table table-condensed" style="margin-bottom:0;">
+							<tr><td style="font-weight:600;width:140px;">Pakke</td><td>{{ $am->shop_manuscript->title ?? '—' }}</td></tr>
+							<tr><td style="font-weight:600;">Maks ord</td><td>{{ $am->shop_manuscript->max_words ?? '—' }}</td></tr>
+							<tr><td style="font-weight:600;">Elev</td><td>{{ $am->user->full_name ?? '—' }}</td></tr>
+							<tr><td style="font-weight:600;">Sjanger</td><td>@if($am->genre > 0){{ \App\Http\FrontendHelpers::assignmentType($am->genre) }}@else — @endif</td></tr>
+							<tr><td style="font-weight:600;">Antall ord</td><td>{{ $am->words ? number_format($am->words, 0, ',', ' ') : '—' }}</td></tr>
+							<tr><td style="font-weight:600;">Opplastet</td><td>{{ $am->manuscript_uploaded_date ? \Carbon\Carbon::parse($am->manuscript_uploaded_date)->format('d.m.Y') : '—' }}</td></tr>
+							<tr><td style="font-weight:600;">Frist</td><td>{{ $am->expected_finish ?? '—' }}</td></tr>
+							@if($am->description)
+							<tr><td style="font-weight:600;">Beskrivelse</td><td>{{ $am->description }}</td></tr>
+							@endif
+							@if($am->synopsis)
+							<tr><td style="font-weight:600;">Synopsis</td><td>{{ $am->synopsis }}</td></tr>
+							@endif
+						</table>
+					</div>
+					<div class="modal-footer">
+						<form method="POST" action="{{ route('editor.claim-manuscript', $am->id) }}" style="display:inline;">
+							@csrf
+							<button type="submit" class="btn" style="background:var(--brand-primary);color:#fff;font-weight:600;" onclick="return confirm('Er du sikker på at du vil ta dette manuset?')">
+								<i class="fa fa-hand-paper-o"></i> Ta dette manuset
+							</button>
+						</form>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		@endforeach
 	</div>
 	@endif
 

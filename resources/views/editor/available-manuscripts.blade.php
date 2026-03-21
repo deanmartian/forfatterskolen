@@ -166,7 +166,7 @@
 					@foreach($manuscripts as $manuscript)
 					<tr>
 						<td>
-							<strong>{{ $manuscript->shop_manuscript->title ?? 'Uten tittel' }}</strong>
+							<a href="#" data-toggle="modal" data-target="#manuscriptModal{{ $manuscript->id }}" style="color:var(--brand-primary);font-weight:600;text-decoration:underline;"><strong>{{ $manuscript->shop_manuscript->title ?? 'Uten tittel' }}</strong></a>
 						</td>
 						<td>
 							@if($manuscript->genre)
@@ -202,5 +202,44 @@
 		</div>
 		@endif
 	</div>
+
+	@foreach($manuscripts as $manuscript)
+	<div class="modal fade" id="manuscriptModal{{ $manuscript->id }}" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content" style="border-radius:var(--radius);border:1px solid var(--border);">
+				<div class="modal-header" style="background:var(--bg);border-bottom:1px solid var(--border);">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title" style="font-family:var(--font-display);font-weight:600;">{{ $manuscript->shop_manuscript->title ?? 'Uten tittel' }}</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table table-condensed" style="margin-bottom:0;">
+						<tr><td style="font-weight:600;width:140px;">Pakke</td><td>{{ $manuscript->shop_manuscript->title ?? '—' }}</td></tr>
+						<tr><td style="font-weight:600;">Maks ord</td><td>{{ $manuscript->shop_manuscript->max_words ?? '—' }}</td></tr>
+						<tr><td style="font-weight:600;">Elev</td><td>{{ $manuscript->user->full_name ?? '—' }}</td></tr>
+						<tr><td style="font-weight:600;">Sjanger</td><td>@if($manuscript->genre){{ \App\Genre::find($manuscript->genre)->name ?? '-' }}@else — @endif</td></tr>
+						<tr><td style="font-weight:600;">Antall ord</td><td>{{ $manuscript->words ? number_format($manuscript->words, 0, ',', ' ') : '—' }}</td></tr>
+						<tr><td style="font-weight:600;">Opplastet</td><td>{{ $manuscript->manuscript_uploaded_date ? date_format(date_create($manuscript->manuscript_uploaded_date), 'd.m.Y') : '—' }}</td></tr>
+						<tr><td style="font-weight:600;">Frist</td><td>{{ $manuscript->expected_finish ?? '—' }}</td></tr>
+						@if($manuscript->description)
+						<tr><td style="font-weight:600;">Beskrivelse</td><td>{{ $manuscript->description }}</td></tr>
+						@endif
+						@if($manuscript->synopsis)
+						<tr><td style="font-weight:600;">Synopsis</td><td>{{ $manuscript->synopsis }}</td></tr>
+						@endif
+					</table>
+				</div>
+				<div class="modal-footer">
+					<form method="POST" action="{{ route('editor.claim-manuscript', $manuscript->id) }}" style="display:inline;">
+						{{ csrf_field() }}
+						<button type="submit" class="btn" style="background:var(--brand-primary);color:#fff;font-weight:600;" onclick="return confirm('Er du sikker på at du vil ta dette manuset?')">
+							<i class="fa fa-hand-paper-o"></i> Ta dette manuset
+						</button>
+					</form>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Lukk</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	@endforeach
 </div>
 @stop
