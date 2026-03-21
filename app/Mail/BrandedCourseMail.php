@@ -61,8 +61,8 @@ class BrandedCourseMail extends Mailable
     protected function buildTemplateData(): array
     {
         $encode_email = encrypt($this->user->email);
-        $portalUrl = config('app.url') . '/learner/dashboard';
         $loginUrl = route('auth.login.email', $encode_email);
+        $portalUrl = $loginUrl;
 
         $tplData = is_array($this->templateData) ? $this->templateData : (json_decode($this->templateData, true) ?? []);
         $customMessage = trim($this->emailOut->message ?? '');

@@ -123,7 +123,7 @@ class WeeklyDigestMail extends Mailable
             'upcomingModules' => $upcomingModules,
             'assignmentDeadlines' => $assignmentDeadlines,
             'quote' => $quote,
-            'portalUrl' => config('app.url') . '/learner/dashboard',
+            'portalUrl' => route('auth.login.email', encrypt($this->user->email)),
         ];
     }
 

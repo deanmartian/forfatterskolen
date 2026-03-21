@@ -286,11 +286,17 @@ class LoginController extends Controller
         Auth::login($user);
         if ($request->has('redirect')) {
             $redirect = $request->get('redirect');
-            if ($redirect === 'upgrade') {
-                return redirect()->route('learner.upgrade');
-            }
-            if ($redirect === 'invoices') {
-                return redirect()->to('/learner/invoices');
+            $allowed = [
+                'upgrade' => '/learner/upgrade',
+                'invoices' => '/learner/invoices',
+                'dashboard' => '/learner/dashboard',
+                'course' => '/learner/course',
+                'assignments' => '/learner/dashboard',
+                'webinars' => '/learner/dashboard',
+                'profile' => '/learner/profile',
+            ];
+            if (isset($allowed[$redirect])) {
+                return redirect()->to($allowed[$redirect]);
             }
         }
 
