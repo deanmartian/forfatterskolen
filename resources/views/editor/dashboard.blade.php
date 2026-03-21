@@ -394,6 +394,7 @@
 				<div class="stat-label">Prosjekter</div>
 			</div>
 		</div>
+		@endif
 	</div>
 
 	{{-- ══════════════════════════════════════════
