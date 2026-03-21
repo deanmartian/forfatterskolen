@@ -10,10 +10,8 @@ return new class extends Migration
     {
         Schema::create('publications', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('project_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('project_id')->references('id')->on('projects')->onDelete('set null');
+            $table->unsignedInteger('user_id')->index();
+            $table->unsignedInteger('project_id')->nullable()->index();
 
             $table->string('title', 500);
             $table->string('subtitle', 500)->nullable();
@@ -56,7 +54,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['user_id', 'status']);
+            $table->index(['user_id', 'status'], 'publications_user_status_idx');
         });
     }
 
