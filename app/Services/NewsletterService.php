@@ -9,6 +9,7 @@ use App\Models\Newsletter;
 use App\Models\NewsletterSend;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class NewsletterService
@@ -133,6 +134,9 @@ class NewsletterService
 
         $sent = 0;
 
+        $resendKey = config('services.resend.key');
+        $useResend = !empty($resendKey);
+
         foreach ($sends as $send) {
             try {
                 $unsubscribeUrl = url('/avmeld/' . base64_encode($send->email));
@@ -142,17 +146,28 @@ class NewsletterService
                         <a href="' . $unsubscribeUrl . '" style="color:#999;">Avmeld nyhetsbrev</a>
                     </p>';
 
-                AddMailToQueueJob::dispatch(
-                    $send->email,
-                    $newsletter->subject,
-                    $bodyWithUnsubscribe,
-                    $newsletter->from_address,
-                    $newsletter->from_name,
-                    null,
-                    'newsletter',
-                    $newsletter->id,
-                    'emails.branded.newsletter'
-                );
+                if ($useResend) {
+                    $this->sendViaResend(
+                        $send->email,
+                        $newsletter->subject,
+                        $bodyWithUnsubscribe,
+                        $newsletter->from_address,
+                        $newsletter->from_name,
+                        $resendKey
+                    );
+                } else {
+                    AddMailToQueueJob::dispatch(
+                        $send->email,
+                        $newsletter->subject,
+                        $bodyWithUnsubscribe,
+                        $newsletter->from_address,
+                        $newsletter->from_name,
+                        null,
+                        'newsletter',
+                        $newsletter->id,
+                        'emails.branded.newsletter'
+                    );
+                }
 
                 $send->markSent();
                 $newsletter->incrementSent();
@@ -166,5 +181,25 @@ class NewsletterService
         }
 
         return $sent;
+    }
+
+    /**
+     * Send e-post via Resend API (HTTP).
+     */
+    private function sendViaResend(string $to, string $subject, string $html, string $fromAddress, string $fromName, string $apiKey): void
+    {
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $apiKey,
+            'Content-Type' => 'application/json',
+        ])->post('https://api.resend.com/emails', [
+            'from' => "{$fromName} <{$fromAddress}>",
+            'to' => [$to],
+            'subject' => $subject,
+            'html' => $html,
+        ]);
+
+        if ($response->failed()) {
+            throw new \Exception('Resend API feil: ' . $response->body());
+        }
     }
 }
