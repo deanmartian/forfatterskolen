@@ -193,6 +193,7 @@ class NewsletterService
             'Content-Type' => 'application/json',
         ])->post('https://api.resend.com/emails', [
             'from' => "{$fromName} <{$fromAddress}>",
+            'reply_to' => 'post@forfatterskolen.no',
             'to' => [$to],
             'subject' => $subject,
             'html' => $html,
