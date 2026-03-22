@@ -88,7 +88,8 @@
             @csrf
             <div class="pub-field">
                 <label>Tittel *</label>
-                <input type="text" name="title" required placeholder="Boktittelen din">
+                <input type="text" name="title" required placeholder="Den faktiske boktittelen (brukes på tittelside, halvtittel og løpende header)">
+                <p style="font-size: 0.8rem; color: #888; margin-top: 4px;">Skriv den endelige tittelen på boken, ikke filnavnet.</p>
             </div>
             <div class="pub-field">
                 <label>Forfatter *</label>

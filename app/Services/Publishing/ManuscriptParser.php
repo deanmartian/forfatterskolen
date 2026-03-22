@@ -130,17 +130,40 @@ class ManuscriptParser
         $currentChapter = null;
         $chapterNumber = 0;
 
-        foreach ($paragraphs as $para) {
-            $isHeading1 = in_array($para['style'], ['Heading1', 'Overskrift1', 'heading1', 'Title']);
+        // Heading-stiler som markerer kapittelstart
+        $headingStyles = ['Heading1', 'Heading2', 'Heading3', 'Overskrift1', 'Overskrift2', 'Overskrift3', 'heading1', 'heading2', 'heading3', 'Title'];
 
-            if ($isHeading1 && trim($para['text']) !== '') {
+        // Tekstmønstre som indikerer kapittelstart (for tekst uten heading-stil)
+        $chapterPatterns = [
+            '/^(Kapittel|Chapter)\s+\d+/iu',
+            '/^(Prolog|Epilog|Etterord|Forord|Innledning|Avslutning)$/iu',
+            '/^\d{4}(\s|$)/',           // Årstall alene (f.eks. "1922")
+            '/^\d+\.\s*(kapittel|$)/iu', // "30. kapittel" eller bare "30."
+        ];
+
+        foreach ($paragraphs as $para) {
+            $text = trim($para['text']);
+            $isHeading = in_array($para['style'], $headingStyles);
+
+            // Sjekk også tekstmønstre for kapittelstart (for avsnitt uten heading-stil)
+            $isChapterPattern = false;
+            if (!$isHeading && $text !== '' && strlen($text) < 100) {
+                foreach ($chapterPatterns as $pattern) {
+                    if (preg_match($pattern, $text)) {
+                        $isChapterPattern = true;
+                        break;
+                    }
+                }
+            }
+
+            if (($isHeading || $isChapterPattern) && $text !== '') {
                 if ($currentChapter !== null) {
                     $chapters[] = $currentChapter;
                 }
                 $chapterNumber++;
                 $currentChapter = [
                     'number' => $chapterNumber,
-                    'title' => trim($para['text']),
+                    'title' => $text,
                     'paragraphs' => [],
                 ];
             } elseif ($currentChapter !== null) {

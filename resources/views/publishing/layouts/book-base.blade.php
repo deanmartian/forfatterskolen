@@ -224,7 +224,7 @@ p + p {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100vh;
+    height: 100%;
 }
 
 .titlepage {
@@ -233,7 +233,7 @@ p + p {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100vh;
+    height: 100%;
 }
 
 /* Feil 5: Kolofon nederst — position absolute fungerer bedre i WeasyPrint */
@@ -261,7 +261,7 @@ p + p {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100%;
 }
 
 .dedication p {
@@ -296,9 +296,14 @@ p + p {
     border-bottom: 0.5pt dotted #ccc;
 }
 
-.chapter {
+/* Første kapittel på høyreside, resten bare ny side (unngår tomme sider) */
+.chapter:first-of-type {
     page: chapter-first;
     break-before: right;
+}
+.chapter {
+    page: chapter-first;
+    break-before: page;
 }
 
 .chapter > p:first-of-type {
