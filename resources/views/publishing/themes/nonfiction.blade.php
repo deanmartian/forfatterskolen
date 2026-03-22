@@ -1,4 +1,5 @@
 {{-- SAKPROSA — Autoritet og klarhet. Merriweather + Source Sans 3 --}}
+@extends('publishing.layouts.book-base')
 @section('theme-styles')
 
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
