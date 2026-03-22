@@ -58,6 +58,19 @@ class NewsletterService
                 break;
         }
 
+        // Ekskluder e-poster fra webinar-registreringer hvis segment inneholder :excl_webinar:ID
+        if (preg_match('/:excl_webinar:(\d+)/', $newsletter->segment, $m)) {
+            $webinarId = $m[1];
+            $registeredEmails = \DB::table('webinar_registrations')
+                ->where('free_webinar_id', $webinarId)
+                ->pluck('email')
+                ->map(fn ($e) => strtolower(trim($e)))
+                ->toArray();
+            if ($registeredEmails) {
+                $query->whereNotIn(\DB::raw('LOWER(email)'), $registeredEmails);
+            }
+        }
+
         return $query->get();
     }
 
