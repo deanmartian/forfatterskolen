@@ -20,7 +20,7 @@ h1,h2,h3 { font-family: 'Oswald',sans-serif; }
 .titlepage .subtitle { font-family:'Libre Baskerville',serif; font-style:italic; font-size:11pt; color:#666; margin-bottom:8mm; }
 .titlepage .rule { width:40mm; height:2pt; background:#c0392b; margin:5mm 0; }
 .titlepage .publisher { font-family:'Oswald',sans-serif; font-weight:300; font-size:8pt; letter-spacing:0.2em; text-transform:uppercase; color:#999; margin-top:auto; padding-bottom:12mm; }
-.titlepage .author { display:none; } /* Forfatter vises øverst via .author-top */
+.titlepage .author { font-family:'Oswald',sans-serif; font-weight:300; font-size:10pt; letter-spacing:0.25em; text-transform:uppercase; color:#666; order:-1; margin-bottom:10mm; }
 
 .colophon { font-family:'Oswald',sans-serif; font-weight:300; font-size:7pt; line-height:1.8; color:#999; }
 
@@ -46,7 +46,7 @@ blockquote { font-style:italic; margin:5mm 5mm; color:#555; font-size:var(--body
 h2 { font-weight:500; font-size:12pt; letter-spacing:0.05em; text-transform:uppercase; margin-top:8mm; margin-bottom:3mm; }
 
 @endsection
-@section('colophon-fonts')Satt i Libre Baskerville / Oswald@endsection
+{{-- fontText settes i BookComposer --}}
 @section('toc-header')<h2>Innhold</h2>@endsection
 @section('chapter-number-prefix')@endsection
 @section('chapter-decoration')@endsection

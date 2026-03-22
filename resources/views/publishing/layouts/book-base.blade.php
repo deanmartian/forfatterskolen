@@ -382,9 +382,7 @@ blockquote {
         @if($book->isbn)<p>ISBN {{ $book->isbn }}</p>@endif
         <p>Sats og layout: Indiemoon</p>
         <p>Trykk: ScandinavianBook</p>
-        @hasSection('colophon-fonts')
-        <p>@yield('colophon-fonts')</p>
-        @endif
+        @if(!empty($fontText))<p>{{ $fontText }}</p>@endif
         @if($book->colophon_extra)<p style="margin-top:4mm;">{{ $book->colophon_extra }}</p>@endif
         <p style="margin-top:4mm;">Alle rettigheter forbeholdt. Ingen del av denne boken
         kan gjengis uten skriftlig tillatelse fra forlaget.</p>

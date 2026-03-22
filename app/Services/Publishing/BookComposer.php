@@ -27,11 +27,21 @@ class BookComposer
         $themeView = "publishing.themes.{$theme}";
         if (View::exists($themeView)) {
             // Use the professional Blade template system
+            $fontText = match($theme) {
+                'crime'      => 'Satt i Libre Baskerville / Oswald',
+                'classic'    => 'Satt i Crimson Text / Cormorant Garamond',
+                'modern'     => 'Satt i Source Serif 4 / Inter',
+                'children'   => 'Satt i Literata / Nunito',
+                'nonfiction' => 'Satt i Merriweather / Source Sans 3',
+                default      => '',
+            };
+
             return view($themeView, [
                 'format' => $format,
                 'book' => $publication,
                 'chapters' => $chapters,
                 'overrides' => [],
+                'fontText' => $fontText,
             ])->render();
         }
 

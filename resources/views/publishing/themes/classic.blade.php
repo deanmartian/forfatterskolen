@@ -261,9 +261,7 @@ h3 {
 
 @endsection
 
-@section('colophon-fonts')
-Satt i Crimson Text / Cormorant Garamond
-@endsection
+{{-- fontText settes i BookComposer --}}
 
 @section('toc-header')
 <h2>Innhold</h2>

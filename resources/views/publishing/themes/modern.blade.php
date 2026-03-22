@@ -51,7 +51,7 @@ blockquote cite { display:block; font-style:normal; font-family:'Inter',sans-ser
 h2 { font-weight:500; font-size:12pt; letter-spacing:0.02em; margin-top:8mm; margin-bottom:3mm; }
 
 @endsection
-@section('colophon-fonts')Satt i Source Serif 4 / Inter@endsection
+{{-- fontText settes i BookComposer --}}
 @section('toc-header')<h2>Innhold</h2>@endsection
 @section('chapter-number-prefix')Kapittel @endsection
 @section('chapter-decoration')<div class="chapter-rule"></div>@endsection

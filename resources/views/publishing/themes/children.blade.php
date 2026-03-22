@@ -47,7 +47,7 @@ figcaption { font-family:'Nunito',sans-serif; font-size:9pt; font-style:italic; 
 h2 { font-weight:700; font-size:14pt; color:#2E86AB; margin-top:8mm; margin-bottom:3mm; }
 
 @endsection
-@section('colophon-fonts')Satt i Literata / Nunito@endsection
+{{-- fontText settes i BookComposer --}}
 @section('toc-header')<h2>Innhold</h2>@endsection
 @section('chapter-number-prefix')@endsection
 @section('chapter-decoration')<div class="chapter-deco">✿</div>@endsection

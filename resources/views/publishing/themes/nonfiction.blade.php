@@ -58,7 +58,7 @@ h2 { font-weight:600; font-size:13pt; color:#2C3E50; margin-top:8mm; margin-bott
 h3 { font-weight:600; font-size:11pt; font-style:italic; color:#444; margin-top:5mm; margin-bottom:2mm; }
 
 @endsection
-@section('colophon-fonts')Satt i Merriweather / Source Sans 3@endsection
+{{-- fontText settes i BookComposer --}}
 @section('toc-header')<h2>Innhold</h2>@endsection
 @section('chapter-number-prefix')Kapittel @endsection
 @section('chapter-decoration')<div class="chapter-rule"></div>@endsection
