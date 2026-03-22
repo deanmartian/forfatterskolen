@@ -25,7 +25,7 @@
 
         <div class="form-group">
             <label><strong>Innhold</strong></label>
-            <textarea name="body_html" id="body_html" class="form-control" rows="20">{{ old('body_html') }}</textarea>
+            <textarea name="body_html" id="body_html" class="form-control tinymce" rows="20">{{ old('body_html') }}</textarea>
         </div>
 
         <div class="row">
