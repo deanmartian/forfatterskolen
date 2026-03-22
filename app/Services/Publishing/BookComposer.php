@@ -3,10 +3,46 @@
 namespace App\Services\Publishing;
 
 use App\Models\Publication;
+use Illuminate\Support\Facades\View;
 
 class BookComposer
 {
     public function compose(ParsedManuscript $manuscript, Publication $publication): string
+    {
+        $theme = $publication->theme ?? 'classic';
+        $format = $publication->trim_size ?? '140x220';
+
+        // Prepare chapter data for Blade templates
+        $chapters = [];
+        foreach ($manuscript->chapters as $chapter) {
+            $chapters[] = [
+                'number' => $chapter['number'],
+                'title' => $chapter['title'],
+                'html' => $chapter['html'],
+                'page' => '', // Page numbers filled by PDF renderer
+            ];
+        }
+
+        // Check if Blade templates exist
+        $themeView = "publishing.themes.{$theme}";
+        if (View::exists($themeView)) {
+            // Use the professional Blade template system
+            return view($themeView, [
+                'format' => $format,
+                'book' => $publication,
+                'chapters' => $chapters,
+                'overrides' => [],
+            ])->render();
+        }
+
+        // Fallback: inline HTML generation (for themes without Blade templates)
+        return $this->composeFallback($manuscript, $publication);
+    }
+
+    /**
+     * Fallback composer for when Blade templates are not available.
+     */
+    private function composeFallback(ParsedManuscript $manuscript, Publication $publication): string
     {
         $trimSize = TrimSize::tryFrom($publication->trim_size) ?? TrimSize::FORMAT_140x220;
         $dims = $trimSize->dimensions();
@@ -49,13 +85,9 @@ body {
     orphans: 3;
     widows: 3;
 }
-h1, h2, h3, h4 {
-    page-break-after: avoid;
-    text-align: left;
-}
+h1, h2, h3, h4 { page-break-after: avoid; text-align: left; }
 h1 { font-size: 20pt; margin: 30mm 0 10mm; }
 h2 { font-size: 16pt; margin: 15mm 0 8mm; }
-h3 { font-size: 13pt; margin: 10mm 0 5mm; }
 p { margin: 0 0 0.4em; }
 p + p { text-indent: 1.5em; margin-top: 0; }
 .chapter { page-break-before: always; }
@@ -83,35 +115,27 @@ HTML;
         $title = htmlspecialchars($publication->title);
         $subtitle = $publication->subtitle ? '<h2>' . htmlspecialchars($publication->subtitle) . '</h2>' : '';
         $author = htmlspecialchars($publication->author_name);
-
-        $html = <<<HTML
-<div class="front-matter title-page">
-    <h1>{$title}</h1>
-    {$subtitle}
-    <p class="author">{$author}</p>
-    <p class="publisher">Indiemoon Publishing</p>
-</div>
-HTML;
-
-        // Copyright page
         $year = date('Y');
         $isbn = $publication->isbn ? '<br>ISBN: ' . htmlspecialchars($publication->isbn) : '';
         $colophon = $publication->colophon_extra ? '<br>' . htmlspecialchars($publication->colophon_extra) : '';
+        $dedicationHtml = '';
+        if ($publication->dedication) {
+            $dedication = htmlspecialchars($publication->dedication);
+            $dedicationHtml = "<div class=\"front-matter dedication\"><p>{$dedication}</p></div>";
+        }
 
-        $html .= <<<HTML
+        return <<<HTML
+<div class="front-matter title-page">
+    <h1>{$title}</h1>{$subtitle}
+    <p class="author">{$author}</p>
+    <p class="publisher">Indiemoon Publishing</p>
+</div>
 <div class="front-matter copyright-page">
     <p>&copy; {$year} {$author}{$isbn}{$colophon}</p>
     <p>Satt med Indiemoon Publishing Pipeline</p>
 </div>
+{$dedicationHtml}
 HTML;
-
-        // Dedication
-        if ($publication->dedication) {
-            $dedication = htmlspecialchars($publication->dedication);
-            $html .= "<div class=\"front-matter dedication\"><p>{$dedication}</p></div>";
-        }
-
-        return $html;
     }
 
     private function getThemeCss(string $theme): string
@@ -121,7 +145,7 @@ HTML;
             'crime' => 'h1 { text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 2pt solid #000; padding-bottom: 8pt; }',
             'children' => 'body { font-size: 13pt; line-height: 1.7; } h1 { color: #862736; font-size: 24pt; }',
             'nonfiction' => 'body { font-size: 10.5pt; } h1 { font-size: 18pt; } h2 { font-size: 14pt; border-bottom: 1px solid #ccc; padding-bottom: 4pt; }',
-            default => '', // classic - uses base styles
+            default => '',
         };
     }
 }
