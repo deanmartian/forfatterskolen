@@ -47,8 +47,13 @@ class CoverGenerator
         $previewPath = "{$outputDir}/cover-preview.pdf";
         $this->renderPdf($previewHtml, $previewPath, $coverDims);
 
+        // Upload to Dropbox
+        $dropboxDir = "Forfatterskolen_app/publications/{$publication->user_id}/{$publication->id}/covers";
+        \Illuminate\Support\Facades\Storage::disk('dropbox')->put("{$dropboxDir}/cover-print.pdf", file_get_contents($pdfPath));
+        \Illuminate\Support\Facades\Storage::disk('dropbox')->put("{$dropboxDir}/cover-preview.pdf", file_get_contents($previewPath));
+
         $publication->update([
-            'cover_front' => "publications/{$publication->id}/covers/cover-print.pdf",
+            'cover_front' => "{$dropboxDir}/cover-print.pdf",
         ]);
 
         return $pdfPath;
