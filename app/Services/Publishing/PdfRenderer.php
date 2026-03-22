@@ -64,8 +64,9 @@ class PdfRenderer
     private function findWeasyPrint(): string
     {
         // Check common locations
+        $home = $_SERVER['HOME'] ?? $_ENV['HOME'] ?? '/home/forfatter';
         $paths = [
-            $_SERVER['HOME'] . '/.local/bin/weasyprint',
+            $home . '/.local/bin/weasyprint',
             '/home/forfatter/.local/bin/weasyprint',
             '/usr/local/bin/weasyprint',
             '/usr/bin/weasyprint',
