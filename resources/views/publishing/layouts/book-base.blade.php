@@ -33,6 +33,9 @@
 <meta charset="UTF-8">
 <title>{{ $book->title }} — {{ $book->author_name }}</title>
 <style>
+/* Font imports must come first */
+@yield('theme-fonts')
+
 /* ═══════════════════════════════════════════════════════════
    FORMAT-VARIABLER — ScandinavianBook/BookBox
    Standardverdier per format. Kan overstyres via $overrides.
@@ -197,7 +200,8 @@ p + p {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100vh;
+    min-height: 100%;
+    page-break-after: always;
 }
 
 .titlepage {
@@ -206,7 +210,8 @@ p + p {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100vh;
+    min-height: 100%;
+    page-break-after: always;
 }
 
 .colophon {
@@ -215,7 +220,8 @@ p + p {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    height: 100vh;
+    min-height: 100%;
+    page-break-after: always;
     padding-bottom: 15mm;
 }
 
@@ -230,7 +236,8 @@ p + p {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100%;
+    page-break-after: always;
 }
 
 .dedication p {

@@ -1,8 +1,11 @@
 {{-- MODERNE — Ren skandinavisk minimalisme. Source Serif 4 + Inter --}}
 @extends('publishing.layouts.book-base')
-@section('theme-styles')
 
+@section('theme-fonts')
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
+@endsection
+
+@section('theme-styles')
 
 body { font-family: 'Source Serif 4', 'Georgia', serif; color: #222; }
 h1,h2,h3 { font-family: 'Inter', sans-serif; }

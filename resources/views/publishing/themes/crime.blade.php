@@ -1,8 +1,11 @@
 {{-- KRIM / NOIR — Skandinavisk noir. Libre Baskerville + Oswald --}}
 @extends('publishing.layouts.book-base')
-@section('theme-styles')
 
+@section('theme-fonts')
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Oswald:wght@300;400;500;600;700&display=swap');
+@endsection
+
+@section('theme-styles')
 
 body { font-family: 'Libre Baskerville','Georgia',serif; color:#1a1a1a; }
 h1,h2,h3 { font-family: 'Oswald',sans-serif; }

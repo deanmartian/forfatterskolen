@@ -1,8 +1,11 @@
 {{-- BARNEBOK — Leken og varm. Literata + Nunito --}}
 @extends('publishing.layouts.book-base')
-@section('theme-styles')
 
+@section('theme-fonts')
 @import url('https://fonts.googleapis.com/css2?family=Literata:ital,wght@0,400;0,500;0,700;1,400&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
+@endsection
+
+@section('theme-styles')
 
 body { font-family:'Literata','Georgia',serif; color:#2d2d2d; text-align:left; /* Venstrejustert for barn */ hyphenate-limit-chars:8 4 4; }
 h1,h2,h3 { font-family:'Nunito',sans-serif; }
