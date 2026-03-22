@@ -1689,6 +1689,7 @@ Route::domain($admin)->group(function () {
         Route::get('/free-manuscript/{id}/download', [Backend\FreeManuscriptController::class, 'downloadContent'])->name('admin.free-manuscript.download');
         Route::post('/free-manuscript/{id}/resend-feedback', [Backend\FreeManuscriptController::class, 'resendFeedback'])->name('admin.free-manuscript.resend-feedback');
         Route::post('/free-manuscript/{id}/approve_feedback', [Backend\FreeManuscriptController::class, 'approveFeedback'])->name('head_editor.free-manuscript.feedback_approve');
+        Route::post('/free-manuscript/{id}/ai-feedback', [Backend\FreeManuscriptController::class, 'generateAiFeedback'])->name('admin.free-manuscript.ai-feedback');
 
         Route::resource('/other-service', Backend\OtherServiceController::class, [
             'names' => [
