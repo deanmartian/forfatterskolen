@@ -56,7 +56,7 @@ h1, h2, h3 {
 .halftitle h1 {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 300;
-    font-size: calc(var(--h1-size) * 0.75);
+    font-size: var(--h1-size-75);
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: #333;
@@ -71,7 +71,7 @@ h1, h2, h3 {
 .titlepage h1 {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 600;
-    font-size: calc(var(--h1-size) * 1.2);
+    font-size: var(--h1-size-120);
     letter-spacing: 0.08em;
     margin-bottom: 6mm;
     color: #1a1a1a;
@@ -142,7 +142,7 @@ h1, h2, h3 {
 }
 
 .toc li {
-    font-size: calc(var(--body-size) * 0.95);
+    font-size: var(--body-size-95);
     padding: 2mm 0;
     border-bottom: 0.3pt dotted #ddd;
     display: flex;
@@ -217,7 +217,7 @@ blockquote {
     padding-left: 4mm;
     border-left: 0.5pt solid #ccc;
     color: #444;
-    font-size: calc(var(--body-size) * 0.91);
+    font-size: var(--body-size-91);
 }
 
 blockquote cite {
@@ -233,7 +233,7 @@ blockquote cite {
     margin: 15mm 12mm 10mm;
     text-align: right;
     font-style: italic;
-    font-size: calc(var(--body-size) * 0.91);
+    font-size: var(--body-size-91);
     color: #666;
     text-indent: 0;
 }

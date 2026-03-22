@@ -14,11 +14,11 @@ h1,h2,h3 { font-family:'Nunito',sans-serif; }
 @page chapter-first { @bottom-center { content:"★ " counter(page) " ★"; } }
 
 .halftitle { text-align:center; }
-.halftitle h1 { font-family:'Nunito',sans-serif; font-weight:700; font-size:calc(var(--h1-size)*0.7); color:#2E86AB; }
+.halftitle h1 { font-family:'Nunito',sans-serif; font-weight:700; font-size:var(--h1-size-70); color:#2E86AB; }
 
 .titlepage { text-align:center; align-items:center; }
 .titlepage .stars { font-size:18pt; color:#E77728; letter-spacing:0.5em; margin-bottom:8mm; }
-.titlepage h1 { font-family:'Nunito',sans-serif; font-weight:800; font-size:calc(var(--h1-size)*1.25); line-height:1.15; color:#2E86AB; margin-bottom:5mm; }
+.titlepage h1 { font-family:'Nunito',sans-serif; font-weight:800; font-size:var(--h1-size-125); line-height:1.15; color:#2E86AB; margin-bottom:5mm; }
 .titlepage .subtitle { font-family:'Literata',serif; font-style:italic; font-size:14pt; color:#777; margin-bottom:10mm; }
 .titlepage .author { font-family:'Nunito',sans-serif; font-weight:600; font-size:14pt; color:#E77728; }
 .titlepage .illustrator { font-family:'Nunito',sans-serif; font-weight:400; font-size:11pt; color:#999; margin-top:2mm; }
@@ -29,11 +29,11 @@ h1,h2,h3 { font-family:'Nunito',sans-serif; }
 .dedication p { font-style:italic; font-size:14pt; color:#2E86AB; text-align:center; max-width:80%; }
 
 .toc h2 { font-family:'Nunito',sans-serif; font-weight:700; font-size:16pt; color:#2E86AB; text-align:center; margin-top:var(--sink); margin-bottom:8mm; }
-.toc li { font-size:calc(var(--body-size)*0.95); padding:2.5mm 0; display:flex; justify-content:space-between; color:#333; }
-.toc li .page-num { font-family:'Nunito',sans-serif; font-weight:600; color:#2E86AB; font-size:calc(var(--body-size)*0.85); }
+.toc li { font-size:var(--body-size-95); padding:2.5mm 0; display:flex; justify-content:space-between; color:#333; }
+.toc li .page-num { font-family:'Nunito',sans-serif; font-weight:600; color:#2E86AB; font-size:var(--body-size-85); }
 
-.chapter .chapter-number { font-family:'Nunito',sans-serif; font-weight:800; font-size:calc(var(--h1-size)*2.5); color:rgba(231,119,40,0.12); text-align:center; margin-top:calc(var(--sink)*0.5); line-height:1; display:block; }
-.chapter h1 { string-set:chapter-title content(); font-weight:700; font-size:calc(var(--h1-size)*0.92); text-align:center; color:#2E86AB; margin-top:-8mm; margin-bottom:3mm; }
+.chapter .chapter-number { font-family:'Nunito',sans-serif; font-weight:800; font-size:var(--h1-size-250); color:rgba(231,119,40,0.12); text-align:center; margin-top:var(--sink-50); line-height:1; display:block; }
+.chapter h1 { string-set:chapter-title content(); font-weight:700; font-size:var(--h1-size-92); text-align:center; color:#2E86AB; margin-top:-8mm; margin-bottom:3mm; }
 .chapter .chapter-deco { text-align:center; font-size:14pt; color:#E77728; margin-bottom:var(--chapter-ornament-margin); }
 
 /* Drop cap — leken og rund */
@@ -42,7 +42,7 @@ h1,h2,h3 { font-family:'Nunito',sans-serif; }
 .scene-break { text-align:center; margin:var(--scene-break-margin) 0; font-size:12pt; color:#2E86AB; }
 .scene-break::before { content:"✦ ✦ ✦"; letter-spacing:0.3em; }
 
-blockquote { font-style:normal; margin:4mm 6mm; padding:3mm 5mm; background:#F0F7FA; border-radius:3mm; border-left:2pt solid #2E86AB; font-size:calc(var(--body-size)*0.97); color:#333; }
+blockquote { font-style:normal; margin:4mm 6mm; padding:3mm 5mm; background:#F0F7FA; border-radius:3mm; border-left:2pt solid #2E86AB; font-size:var(--body-size-97); color:#333; }
 
 figure { text-align:center; margin:8mm 0; break-inside:avoid; }
 figcaption { font-family:'Nunito',sans-serif; font-size:9pt; font-style:italic; color:#999; margin-top:2mm; }

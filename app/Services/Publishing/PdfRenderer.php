@@ -31,9 +31,14 @@ class PdfRenderer
         // Clean up temp HTML
         @unlink($htmlPath);
 
-        if (!$result->successful()) {
-            Log::error('WeasyPrint failed', ['error' => $result->errorOutput()]);
-            // Fallback to DomPDF
+        // WeasyPrint returns exit code 1 for warnings (not errors)
+        // Check if PDF was actually generated and has content
+        if (!file_exists($outputPath) || filesize($outputPath) < 1000) {
+            Log::warning('WeasyPrint did not produce valid PDF, falling back to DomPDF', [
+                'exit_code' => $result->exitCode(),
+                'output' => substr($result->output(), 0, 500),
+                'error' => substr($result->errorOutput(), 0, 500),
+            ]);
             $this->renderWithDomPdf($html, $outputPath, $trimSize);
         }
     }
