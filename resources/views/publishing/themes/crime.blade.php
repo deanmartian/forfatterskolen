@@ -15,12 +15,12 @@ h1,h2,h3 { font-family: 'Oswald',sans-serif; }
 .halftitle h1 { font-family:'Oswald',sans-serif; font-weight:600; font-size:var(--h1-size-70); letter-spacing:0.15em; text-transform:uppercase; color:#333; }
 
 .titlepage { text-align:center; align-items:center; }
-.titlepage .author-top { font-family:'Oswald',sans-serif; font-weight:300; font-size:10pt; letter-spacing:0.25em; text-transform:uppercase; color:#666; margin-bottom:10mm; }
+.titlepage { justify-content: flex-start; padding-top: 35mm; }
+.titlepage .author { font-family:'Oswald',sans-serif; font-weight:300; font-size:10pt; letter-spacing:0.15em; text-transform:uppercase; color:#666; margin-bottom:12mm; white-space:nowrap; }
 .titlepage h1 { font-family:'Oswald',sans-serif; font-weight:700; font-size:var(--h1-size-135); letter-spacing:0.02em; text-transform:uppercase; line-height:1.1; color:#000; margin-bottom:4mm; }
 .titlepage .subtitle { font-family:'Libre Baskerville',serif; font-style:italic; font-size:11pt; color:#666; margin-bottom:8mm; }
-.titlepage .rule { width:40mm; height:2pt; background:#c0392b; margin:5mm 0; }
+.titlepage .rule { width:40mm; height:2pt; background:#c0392b; margin:5mm auto; }
 .titlepage .publisher { font-family:'Oswald',sans-serif; font-weight:300; font-size:8pt; letter-spacing:0.2em; text-transform:uppercase; color:#999; margin-top:auto; padding-bottom:12mm; }
-.titlepage .author { font-family:'Oswald',sans-serif; font-weight:300; font-size:10pt; letter-spacing:0.25em; text-transform:uppercase; color:#666; margin-top:8mm; }
 
 .colophon { font-family:'Oswald',sans-serif; font-weight:300; font-size:7pt; line-height:1.8; color:#999; }
 
@@ -30,8 +30,8 @@ h1,h2,h3 { font-family: 'Oswald',sans-serif; }
 .toc li { font-size:var(--body-size-95); padding:2mm 0; display:flex; justify-content:space-between; }
 .toc li .page-num { font-family:'Oswald',sans-serif; font-weight:300; color:#999; font-size:8.5pt; }
 
-.chapter .chapter-number { font-family:'Oswald',sans-serif; font-weight:300; font-size:var(--h1-size-200); color:#e8e8e8; text-align:center; margin-top:var(--sink-70); line-height:1; display:block; }
-.chapter h1 { string-set:chapter-title content(); font-weight:600; font-size:var(--h1-size-70); letter-spacing:0.08em; text-transform:uppercase; text-align:center; margin-top:2mm; margin-bottom:3mm; padding-bottom:4mm; border-bottom:1.5pt solid #1a1a1a; color:#1a1a1a; }
+.chapter .chapter-number { font-family:'Oswald',sans-serif; font-weight:300; font-size:var(--h1-size-200); color:#e8e8e8; text-align:center; margin-top:15mm; line-height:1; display:block; }
+.chapter h1 { string-set:chapter-title content(); font-weight:600; font-size:var(--h1-size-70); letter-spacing:0.08em; text-transform:uppercase; text-align:center; margin-top:2mm; margin-bottom:3mm; padding-bottom:3mm; border-bottom:1.5pt solid #1a1a1a; color:#1a1a1a; }
 
 .chapter .timestamp { font-family:'Oswald',sans-serif; font-weight:300; font-size:8pt; letter-spacing:0.15em; text-transform:uppercase; text-align:center; color:#999; margin-bottom:var(--chapter-ornament-margin); display:block; }
 

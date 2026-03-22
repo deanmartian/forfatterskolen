@@ -244,9 +244,9 @@ p + p {
 /* Feil 5: Kolofon nederst — position absolute fungerer bedre i WeasyPrint */
 .colophon {
     page: frontmatter;
-    break-before: left;
+    break-before: page;
     position: relative;
-    min-height: 100%;
+    height: 100%;
 }
 .colophon-content {
     position: absolute;
@@ -386,10 +386,11 @@ blockquote {
     @hasSection('titlepage-content')
         @yield('titlepage-content')
     @else
+        <div class="author">{{ $book->author_name }}</div>
         <h1>{{ $book->title }}</h1>
-        @if($book->subtitle)<p class="subtitle">{{ $book->subtitle }}</p>@endif
-        <p class="author">{{ $book->author_name }}</p>
-        <p class="publisher">{{ $book->publisher ?? 'Indiemoon' }}</p>
+        @if($book->subtitle)<div class="subtitle">{{ $book->subtitle }}</div>@endif
+        <div class="rule"></div>
+        <div class="publisher">{{ $book->publisher ?? 'Indiemoon' }}</div>
     @endif
 </div>
 
