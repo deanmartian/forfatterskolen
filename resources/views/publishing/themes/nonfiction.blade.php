@@ -1,11 +1,7 @@
 {{-- SAKPROSA — Autoritet og klarhet. Merriweather + Source Sans 3 --}}
-@extends('publishing.layouts.book-base')
-
-@section('theme-fonts')
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
-@endsection
-
 @section('theme-styles')
+
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
 
 body { font-family:'Merriweather','Georgia',serif; color:#222; }
 h1,h2,h3 { font-family:'Source Sans 3',sans-serif; }

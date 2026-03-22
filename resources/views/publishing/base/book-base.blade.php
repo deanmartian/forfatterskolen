@@ -114,33 +114,6 @@ foreach (['bodySize','lineHeight','h1Size','chNumSize','headerSize','pageNumSize
     --scene-break-margin: {{ $ov['sceneBreakMargin'] ?? ($f['h'] >= 240 ? '7mm' : '5mm') }};
     --chapter-ornament-margin: {{ $ov['chapterOrnamentMargin'] ?? ($f['h'] >= 230 ? '10mm' : '7mm') }};
     --sink: {{ $ov['sink'] ?? $f['sink'] }}mm;
-
-    /* ── Pre-calculated sizes for WeasyPrint 52 compatibility (no calc+var) ── */
-    @php
-        $bodyNum = (float) $f['bodySize'];
-        $h1Num = (float) $f['h1Size'];
-        $headerNum = (float) $f['headerSize'];
-        $sinkNum = (float) ($ov['sink'] ?? $f['sink']);
-    @endphp
-    --body-size-95: {{ round($bodyNum * 0.95, 1) }}pt;
-    --body-size-91: {{ round($bodyNum * 0.91, 1) }}pt;
-    --body-size-90: {{ round($bodyNum * 0.90, 1) }}pt;
-    --body-size-85: {{ round($bodyNum * 0.85, 1) }}pt;
-    --body-size-97: {{ round($bodyNum * 0.97, 1) }}pt;
-    --h1-size-75: {{ round($h1Num * 0.75, 1) }}pt;
-    --h1-size-70: {{ round($h1Num * 0.70, 1) }}pt;
-    --h1-size-92: {{ round($h1Num * 0.92, 1) }}pt;
-    --h1-size-110: {{ round($h1Num * 1.1, 1) }}pt;
-    --h1-size-120: {{ round($h1Num * 1.2, 1) }}pt;
-    --h1-size-125: {{ round($h1Num * 1.25, 1) }}pt;
-    --h1-size-135: {{ round($h1Num * 1.35, 1) }}pt;
-    --h1-size-200: {{ round($h1Num * 2.0, 1) }}pt;
-    --h1-size-250: {{ round($h1Num * 2.5, 1) }}pt;
-    --header-size-85: {{ round($headerNum * 0.85, 1) }}pt;
-    --header-size-88: {{ round($headerNum * 0.88, 1) }}pt;
-    --sink-50: {{ round($sinkNum * 0.5, 1) }}mm;
-    --sink-70: {{ round($sinkNum * 0.7, 1) }}mm;
-    --sink-115: {{ round($sinkNum * 1.15, 1) }}mm;
 }
 
 /* ═══════════════════════════════════════════
