@@ -20,8 +20,13 @@ class OutputGenerator
 
         $this->pdfRenderer->render($bookHtml, $pdfPath, $trimSize);
 
-        $pageCount = $this->pdfRenderer->getPageCount($bookHtml, $trimSize);
-        $publication->update(['page_count' => $pageCount]);
+        // Count pages from generated PDF instead of rendering again
+        $pageCount = 0;
+        if (file_exists($pdfPath) && filesize($pdfPath) > 1000) {
+            $content = file_get_contents($pdfPath);
+            $pageCount = preg_match_all('/\/Type\s*\/Page[^s]/i', $content);
+        }
+        $publication->update(['page_count' => max($pageCount, 1)]);
 
         return $pdfPath;
     }

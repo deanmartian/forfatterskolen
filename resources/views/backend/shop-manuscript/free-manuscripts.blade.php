@@ -452,7 +452,7 @@
 		btn.prop('disabled', true).html('<i class="fa fa-spinner fa-pulse"></i> Genererer...');
 
 		$.ajax({
-			url: '/free-manuscript/' + currentManuscriptId + '/ai-feedback',
+			url: '{{ url("/free-manuscript") }}/' + currentManuscriptId + '/ai-feedback',
 			type: 'POST',
 			data: { _token: '{{ csrf_token() }}' },
 			success: function(response) {

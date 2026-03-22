@@ -21,7 +21,7 @@ class PdfRenderer
         // Use WeasyPrint for full CSS Paged Media support
         $weasyprint = $this->findWeasyPrint();
 
-        $result = Process::timeout(120)->run([
+        $result = Process::timeout(600)->run([
             $weasyprint,
             $htmlPath,
             $outputPath,
