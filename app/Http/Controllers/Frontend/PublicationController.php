@@ -200,12 +200,26 @@ class PublicationController extends Controller
     {
         $publication = Publication::where('user_id', Auth::id())->findOrFail($id);
 
+        // Handle cover image upload
+        $coverImagePath = null;
+        if ($request->hasFile('cover_image')) {
+            $imageFile = $request->file('cover_image');
+            $imageName = 'cover-image-' . time() . '.' . $imageFile->getClientOriginalExtension();
+            $localDir = storage_path("app/publications/{$publication->id}/covers");
+            if (!is_dir($localDir)) {
+                mkdir($localDir, 0755, true);
+            }
+            $imageFile->move($localDir, $imageName);
+            $coverImagePath = $localDir . '/' . $imageName;
+        }
+
         $coverGen = app(\App\Services\Publishing\CoverGenerator::class);
         $coverGen->generate($publication, [
             'template' => $request->input('cover_template', 'classic'),
             'backgroundColor' => $request->input('background_color', '#1a1a2e'),
             'textColor' => $request->input('text_color', '#ffffff'),
             'blurb' => $request->input('blurb', ''),
+            'coverImage' => $coverImagePath,
             'preview' => true,
         ]);
 

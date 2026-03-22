@@ -246,16 +246,21 @@
         <div style="display: flex; gap: 20px; margin-bottom: 24px;">
             <div style="flex: 1; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
                 <h3 style="font-size: 1rem; margin-bottom: 12px;">Alternativ 1: Design omslaget her</h3>
-                <form action="{{ route('learner.publication.generate-cover', $publication->id) }}" method="POST">
+                <form action="{{ route('learner.publication.generate-cover', $publication->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="pub-field">
                         <label>Omslagsmal</label>
-                        <select name="cover_template">
+                        <select name="cover_template" id="coverTemplate" onchange="document.getElementById('coverImageField').style.display = this.value === 'image-full' ? 'block' : 'none';">
                             <option value="classic">Klassisk (serif)</option>
                             <option value="modern">Moderne (sans-serif)</option>
                             <option value="bold">Bold (stor typografi)</option>
-                            <option value="image-full">Fullbleed bilde</option>
+                            <option value="image-full">Forsidebilde (fullbleed)</option>
                         </select>
+                    </div>
+                    <div class="pub-field" id="coverImageField" style="display: none;">
+                        <label>Forsidebilde</label>
+                        <input type="file" name="cover_image" accept="image/*">
+                        <p style="font-size: 0.8rem; color: #888; margin-top: 4px;">Bildet dekker hele forsiden. Anbefalt: høyoppløst JPG/PNG (min 300 DPI).</p>
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                         <div class="pub-field">
