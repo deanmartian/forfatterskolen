@@ -233,8 +233,13 @@ p + p {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     height: 100%;
+    padding-top: 15mm;
+    text-align: center;
 }
+.titlepage .author { margin-top: 8mm; }
+.titlepage .subtitle { margin-top: 4mm; font-style: italic; }
 
 /* Feil 5: Kolofon nederst — position absolute fungerer bedre i WeasyPrint */
 .colophon {
@@ -248,6 +253,9 @@ p + p {
     bottom: 15mm;
     left: 0;
     right: 0;
+    font-size: 8pt;
+    color: #888;
+    line-height: 1.7;
 }
 
 .colophon p {
@@ -306,6 +314,17 @@ p + p {
     break-before: page;
 }
 
+/* Kapittelmeta (dato, sted) — vises mellom tittel og brødtekst */
+.chapter-meta {
+    text-align: center;
+    font-weight: 600;
+    font-size: 10pt;
+    margin-bottom: 5mm;
+    color: #333;
+    text-indent: 0;
+}
+
+/* Drop cap gjelder kun første <p>, ikke .chapter-meta */
 .chapter > p:first-of-type {
     text-indent: 0;
 }

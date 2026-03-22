@@ -20,7 +20,7 @@ h1,h2,h3 { font-family: 'Oswald',sans-serif; }
 .titlepage .subtitle { font-family:'Libre Baskerville',serif; font-style:italic; font-size:11pt; color:#666; margin-bottom:8mm; }
 .titlepage .rule { width:40mm; height:2pt; background:#c0392b; margin:5mm 0; }
 .titlepage .publisher { font-family:'Oswald',sans-serif; font-weight:300; font-size:8pt; letter-spacing:0.2em; text-transform:uppercase; color:#999; margin-top:auto; padding-bottom:12mm; }
-.titlepage .author { font-family:'Oswald',sans-serif; font-weight:300; font-size:10pt; letter-spacing:0.25em; text-transform:uppercase; color:#666; order:-1; margin-bottom:10mm; }
+.titlepage .author { font-family:'Oswald',sans-serif; font-weight:300; font-size:10pt; letter-spacing:0.25em; text-transform:uppercase; color:#666; margin-top:8mm; }
 
 .colophon { font-family:'Oswald',sans-serif; font-weight:300; font-size:7pt; line-height:1.8; color:#999; }
 

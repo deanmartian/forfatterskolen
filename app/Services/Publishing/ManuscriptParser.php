@@ -195,15 +195,62 @@ class ManuscriptParser
     private function buildChapterHtml(array $paragraphs): string
     {
         $html = '';
-        foreach ($paragraphs as $para) {
+        $metaLines = [];
+        $foundBodyText = false;
+
+        // Kapittelmeta-mønstre (dato, sted, tid som ofte kommer rett etter kapitteltittel)
+        $metaPatterns = [
+            '/^(januar|februar|mars|april|mai|juni|juli|august|september|oktober|november|desember)\s+\d{4}/iu',
+            '/^(en\s+)?(mandag|tirsdag|onsdag|torsdag|fredag|lørdag|søndag)/iu',
+            '/^\d{1,2}\.\s*(januar|februar|mars|april|mai|juni|juli|august|september|oktober|november|desember)/iu',
+        ];
+
+        foreach ($paragraphs as $i => $para) {
             if (empty($para['runs'])) {
                 continue;
             }
 
-            $tag = $this->getHtmlTag($para['style']);
+            $text = trim($para['text']);
             $content = $this->runsToHtml($para['runs']);
+            $tag = $this->getHtmlTag($para['style']);
+
+            // Før første brødtekst: sjekk om dette er kapittelmeta (kort linje med dato/sted)
+            if (!$foundBodyText && strlen($text) < 80 && $text !== '') {
+                $isMeta = false;
+                foreach ($metaPatterns as $pattern) {
+                    if (preg_match($pattern, $text)) {
+                        $isMeta = true;
+                        break;
+                    }
+                }
+                // Korte linjer (< 40 tegn) rett etter kapittelstart er ofte sted/dato
+                if (!$isMeta && strlen($text) < 40 && $i < 3 && !str_contains($text, '.') && !str_contains($text, ',')) {
+                    $isMeta = true;
+                }
+
+                if ($isMeta) {
+                    $metaLines[] = $content;
+                    continue;
+                }
+            }
+
+            // Første ekte brødtekst — dump meta først
+            if (!$foundBodyText && $tag === 'p' && strlen($text) > 40) {
+                $foundBodyText = true;
+                if (!empty($metaLines)) {
+                    $html .= '<div class="chapter-meta">' . implode('<br>', $metaLines) . '</div>' . "\n";
+                    $metaLines = [];
+                }
+            }
+
             $html .= "<{$tag}>{$content}</{$tag}>\n";
         }
+
+        // Dump remaining meta if no body text found
+        if (!empty($metaLines)) {
+            $html = '<div class="chapter-meta">' . implode('<br>', $metaLines) . '</div>' . "\n" . $html;
+        }
+
         return NorwegianTypography::apply($html);
     }
 
