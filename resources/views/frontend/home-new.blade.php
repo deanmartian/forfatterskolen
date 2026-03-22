@@ -1277,19 +1277,31 @@
 
         {{-- ── Nyhetskort ── --}}
         @php
-            // Vis Gro Dahle-webinar frem til det er ferdig (25. mars 2026 kl. 21:00)
-            $groWebinarEnd = \Carbon\Carbon::parse('2026-03-25 21:00:00');
-            $showGroWebinar = now()->isBefore($groWebinarEnd);
+            $groWebinarStart = \Carbon\Carbon::parse('2026-03-24 19:00:00');
+            $groWebinarEnd = \Carbon\Carbon::parse('2026-03-24 21:00:00');
+            $groReplayEnd = \Carbon\Carbon::parse('2026-04-07 23:59:00');
+            $isBeforeWebinar = now()->isBefore($groWebinarStart);
+            $isReplayPeriod = now()->isAfter($groWebinarEnd) && now()->isBefore($groReplayEnd);
         @endphp
 
-        @if($showGroWebinar)
-        {{-- Gro Dahle gratiswebinar — fjernes automatisk etter 25. mars kl. 21:00 --}}
+        @if($isBeforeWebinar)
+        {{-- Før webinaret: påmelding --}}
         <div style="max-width: 700px; margin: 0 auto;">
             <a href="{{ url('/gratis-webinar/94') }}" class="news-card" style="display:block; text-align:center; padding: 30px 24px;">
-                <span class="news-card__badge news-card__badge--webinar">Gratis webinar &middot; Tirsdag 25. mars kl. 19:00</span>
+                <span class="news-card__badge news-card__badge--webinar">Gratis webinar &middot; Tirsdag 24. mars kl. 19:00</span>
                 <h3 class="news-card__title" style="font-size: 1.5rem; margin: 12px 0 8px;">Slik skaper du karakterer som lever</h3>
                 <p style="color: #666; font-size: 1.05rem; margin: 0 0 16px;">med <strong>Gro Dahle</strong> &mdash; en av Norges mest elskede forfattere</p>
                 <span style="display:inline-block; padding: 12px 28px; background-color: #862736; color: #fff; border-radius: 6px; font-weight: 600; font-size: 15px; text-decoration: none;">Meld deg p&aring; gratis &rarr;</span>
+            </a>
+        </div>
+        @elseif($isReplayPeriod)
+        {{-- Etter webinaret: reprise (vises i 2 uker) --}}
+        <div style="max-width: 700px; margin: 0 auto;">
+            <a href="{{ url('/gratis-webinar/94') }}" class="news-card" style="display:block; text-align:center; padding: 30px 24px;">
+                <span class="news-card__badge news-card__badge--reprise">Reprise tilgjengelig</span>
+                <h3 class="news-card__title" style="font-size: 1.5rem; margin: 12px 0 8px;">Slik skaper du karakterer som lever</h3>
+                <p style="color: #666; font-size: 1.05rem; margin: 0 0 16px;">med <strong>Gro Dahle</strong> &mdash; se webinaret i reprise</p>
+                <span style="display:inline-block; padding: 12px 28px; background-color: #862736; color: #fff; border-radius: 6px; font-weight: 600; font-size: 15px; text-decoration: none;">Se reprisen &rarr;</span>
             </a>
         </div>
         @else
