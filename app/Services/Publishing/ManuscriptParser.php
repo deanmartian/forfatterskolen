@@ -6,7 +6,7 @@ use ZipArchive;
 
 class ManuscriptParser
 {
-    public function parse(string $docxPath): ParsedManuscript
+    public function parse(string $docxPath, ?string $contentStartMarker = null): ParsedManuscript
     {
         if (!file_exists($docxPath)) {
             throw new \RuntimeException("File not found: {$docxPath}");
@@ -25,6 +25,30 @@ class ManuscriptParser
         }
 
         $paragraphs = $this->parseParagraphs($documentXml);
+
+        // Feil 3: Filtrer ut redaktørvurdering / innhold før bokens start
+        if ($contentStartMarker) {
+            $startIndex = null;
+            foreach ($paragraphs as $i => $para) {
+                if (str_contains($para['text'], $contentStartMarker)) {
+                    // Gå tilbake til forrige Heading1 hvis det finnes
+                    for ($j = $i; $j >= 0; $j--) {
+                        if (in_array($paragraphs[$j]['style'], ['Heading1', 'Overskrift1', 'heading1', 'Title'])) {
+                            $startIndex = $j;
+                            break;
+                        }
+                    }
+                    if ($startIndex === null) {
+                        $startIndex = $i;
+                    }
+                    break;
+                }
+            }
+            if ($startIndex !== null) {
+                $paragraphs = array_slice($paragraphs, $startIndex);
+            }
+        }
+
         $chapters = $this->extractChapters($paragraphs);
         $fullHtml = $this->buildFullHtml($paragraphs);
         $cleanHtml = NorwegianTypography::apply($fullHtml);

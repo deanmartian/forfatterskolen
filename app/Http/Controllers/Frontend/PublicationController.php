@@ -94,6 +94,7 @@ class PublicationController extends Controller
             $data += $request->only([
                 'title', 'subtitle', 'author_name', 'isbn',
                 'language', 'genre', 'description', 'dedication', 'colophon_extra',
+                'content_start_marker',
             ]);
         }
 

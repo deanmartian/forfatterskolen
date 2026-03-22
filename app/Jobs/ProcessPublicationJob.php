@@ -40,7 +40,7 @@ class ProcessPublicationJob implements ShouldQueue
             $docxPath = "{$tempDir}/" . basename($dropboxPath);
             $content = Storage::disk('dropbox')->get($dropboxPath);
             file_put_contents($docxPath, $content);
-            $manuscript = $parser->parse($docxPath);
+            $manuscript = $parser->parse($docxPath, $publication->content_start_marker);
 
             $publication->update([
                 'word_count' => $manuscript->wordCount,

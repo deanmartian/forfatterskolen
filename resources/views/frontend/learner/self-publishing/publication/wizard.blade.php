@@ -148,6 +148,11 @@
                 <label>Kolofoninformasjon (ekstra)</label>
                 <textarea name="colophon_extra" placeholder="Ekstra tekst til kolofonsiden...">{{ $publication->colophon_extra }}</textarea>
             </div>
+            <div class="pub-field">
+                <label>Startmarkør for bokinnhold (valgfritt)</label>
+                <input type="text" name="content_start_marker" value="{{ $publication->content_start_marker }}" placeholder="F.eks. «Kapittel 1» eller første setning i romanen">
+                <p style="font-size: 0.8rem; color: #888; margin-top: 4px;">Om filen inneholder redaktørvurdering eller annet som ikke skal med i boken, skriv inn teksten der romanen starter. Alt før dette fjernes.</p>
+            </div>
             <button type="submit" class="pub-btn">Lagre og fortsett</button>
         </form>
     </div>

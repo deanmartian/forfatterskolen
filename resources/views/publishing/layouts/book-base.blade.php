@@ -148,19 +148,19 @@ foreach (['bodySize','lineHeight','h1Size','chNumSize','headerSize','pageNumSize
    ═══════════════════════════════════════════ */
 
 @page {
-    size: var(--page-width) var(--page-height);
-    margin-top: var(--margin-top);
-    margin-bottom: var(--margin-bottom);
+    size: {{ $f['w'] }}mm {{ $f['h'] }}mm;
+    margin-top: {{ $f['mt'] }}mm;
+    margin-bottom: {{ $f['mb'] }}mm;
 }
 
 @page :left {
-    margin-left: var(--margin-outside);
-    margin-right: var(--margin-inside);
+    margin-left: {{ $f['mo'] }}mm;
+    margin-right: {{ $f['mi'] }}mm;
 }
 
 @page :right {
-    margin-left: var(--margin-inside);
-    margin-right: var(--margin-outside);
+    margin-left: {{ $f['mi'] }}mm;
+    margin-right: {{ $f['mo'] }}mm;
 }
 
 @page chapter-first {
@@ -189,8 +189,8 @@ body {
     hyphenate-limit-chars: 6 3 3;
     hyphenate-limit-zone: 8%;
     hyphenate-character: "-";
-    orphans: 3;
-    widows: 3;
+    orphans: 2;
+    widows: 2;
     font-kerning: normal;
     font-variant-ligatures: common-ligatures;
     margin: 0;
@@ -236,14 +236,18 @@ p + p {
     height: 100vh;
 }
 
+/* Feil 5: Kolofon nederst — position absolute fungerer bedre i WeasyPrint */
 .colophon {
     page: frontmatter;
     break-before: left;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    height: 100vh;
-    padding-bottom: 15mm;
+    position: relative;
+    min-height: 100%;
+}
+.colophon-content {
+    position: absolute;
+    bottom: 15mm;
+    left: 0;
+    right: 0;
 }
 
 .colophon p {
@@ -274,6 +278,24 @@ p + p {
     padding: 0;
 }
 
+/* Feil 4: Innholdsfortegnelse med automatisk sidetall via target-counter */
+.toc a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.toc a .toc-page::after {
+    content: target-counter(attr(href), page);
+}
+
+.toc li {
+    padding: 1.5mm 0;
+    border-bottom: 0.5pt dotted #ccc;
+}
+
 .chapter {
     page: chapter-first;
     break-before: right;
@@ -295,9 +317,16 @@ p.no-indent {
     text-indent: 0;
 }
 
+/* Feil 7: string-set fungerer ikke med display:none i WeasyPrint */
 .book-title-string {
     string-set: book-title content();
-    display: none;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+    font-size: 0;
+    line-height: 0;
+    margin: 0;
+    padding: 0;
 }
 
 /* Forhindre sideskift midt i korte avsnitt */
@@ -330,20 +359,31 @@ blockquote {
 
 {{-- TITTELSIDE --}}
 <div class="titlepage">
-    @yield('titlepage-content')
+    @hasSection('titlepage-content')
+        @yield('titlepage-content')
+    @else
+        <h1>{{ $book->title }}</h1>
+        @if($book->subtitle)<p class="subtitle">{{ $book->subtitle }}</p>@endif
+        <p class="author">{{ $book->author_name }}</p>
+        <p class="publisher">{{ $book->publisher ?? 'Indiemoon' }}</p>
+    @endif
 </div>
 
 {{-- KOLOFON --}}
 <div class="colophon">
-    <p>© {{ date('Y') }} {{ $book->author_name }}</p>
-    <p>Utgitt av {{ $book->publisher ?? 'Indiemoon' }}</p>
-    @if($book->isbn)<p>ISBN {{ $book->isbn }}</p>@endif
-    <p>Sats og layout: Indiemoon</p>
-    <p>Trykk: ScandinavianBook</p>
-    <p>@yield('colophon-fonts')</p>
-    @if($book->colophon_extra)<p style="margin-top:4mm;">{{ $book->colophon_extra }}</p>@endif
-    <p style="margin-top:4mm;">Alle rettigheter forbeholdt. Ingen del av denne boken
-    kan gjengis uten skriftlig tillatelse fra forlaget.</p>
+    <div class="colophon-content">
+        <p>&copy; {{ date('Y') }} {{ $book->author_name }}</p>
+        <p>Utgitt av {{ $book->publisher ?? 'Indiemoon' }}</p>
+        @if($book->isbn)<p>ISBN {{ $book->isbn }}</p>@endif
+        <p>Sats og layout: Indiemoon</p>
+        <p>Trykk: ScandinavianBook</p>
+        @hasSection('colophon-fonts')
+        <p>@yield('colophon-fonts')</p>
+        @endif
+        @if($book->colophon_extra)<p style="margin-top:4mm;">{{ $book->colophon_extra }}</p>@endif
+        <p style="margin-top:4mm;">Alle rettigheter forbeholdt. Ingen del av denne boken
+        kan gjengis uten skriftlig tillatelse fra forlaget.</p>
+    </div>
 </div>
 
 {{-- DEDIKASJON --}}
@@ -354,21 +394,27 @@ blockquote {
 @endif
 
 {{-- INNHOLDSFORTEGNELSE --}}
+@if(count($chapters) > 1)
 <div class="toc">
     @yield('toc-header')
     <ul>
-        @foreach($chapters as $ch)
+        @foreach($chapters as $i => $ch)
+        @if(!empty($ch['title']))
         <li>
-            <span>{{ $ch['title'] }}</span>
-            <span class="page-num">{{ $ch['page'] ?? '' }}</span>
+            <a href="#chapter-{{ $i }}">
+                <span class="toc-title">{{ $ch['title'] }}</span>
+                <span class="toc-page"></span>
+            </a>
         </li>
+        @endif
         @endforeach
     </ul>
 </div>
+@endif
 
 {{-- KAPITLER --}}
-@foreach($chapters as $ch)
-<div class="chapter">
+@foreach($chapters as $i => $ch)
+<div class="chapter" id="chapter-{{ $i }}">
     @yield('chapter-header', '')
     <span class="chapter-number">@yield('chapter-number-prefix'){{ $ch['number'] }}</span>
     <h1>{{ $ch['title'] }}</h1>
