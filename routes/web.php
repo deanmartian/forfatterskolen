@@ -2201,6 +2201,13 @@ Route::domain($admin)->group(function () {
         Route::get('/webhook-logs', [Backend\HelpwiseController::class, 'webhookLogs'])->name('admin.helpwise.webhook-logs');
     });
 
+    // Publikasjoner (Indiemoon ombrekk)
+    Route::prefix('publications')->group(function () {
+        Route::get('/', [Backend\PublicationAdminController::class, 'index'])->name('admin.publications.index');
+        Route::get('/{id}', [Backend\PublicationAdminController::class, 'show'])->name('admin.publications.show');
+        Route::delete('/{id}', [Backend\PublicationAdminController::class, 'destroy'])->name('admin.publications.destroy');
+    });
+
     // AI Assistent
     Route::get('ai', [Backend\AdminAiController::class, 'index'])->name('admin.ai.index');
     Route::post('ai/execute', [Backend\AdminAiController::class, 'execute'])->name('admin.ai.execute');
