@@ -116,15 +116,8 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
 <script>
-tinymce.init({
-    selector: '#body_html',
-    height: 500,
-    menubar: true,
-    plugins: 'link image code lists table',
-    toolbar: 'undo redo | formatselect | bold italic underline | alignleft aligncenter | link image | bullist numlist | table | code',
-    content_style: 'body { font-family: Georgia, serif; font-size: 16px; }'
-});
+// Bruker den lokale TinyMCE fra backend layout (GPL-versjon)
+// Textarea har allerede class="tinymce" som plukkes opp automatisk
 </script>
 @stop
