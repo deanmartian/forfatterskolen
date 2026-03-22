@@ -2168,6 +2168,8 @@ Route::domain($admin)->group(function () {
         Route::get('/{id}/edit', [Backend\NewsletterController::class, 'edit'])->name('admin.newsletter.edit');
         Route::put('/{id}', [Backend\NewsletterController::class, 'update'])->name('admin.newsletter.update');
         Route::post('/{id}/send', [Backend\NewsletterController::class, 'send'])->name('admin.newsletter.send');
+        Route::get('/{id}/preview', [Backend\NewsletterController::class, 'preview'])->name('admin.newsletter.preview');
+        Route::post('/{id}/duplicate', [Backend\NewsletterController::class, 'duplicate'])->name('admin.newsletter.duplicate');
     });
 
     // Kontakt-import
