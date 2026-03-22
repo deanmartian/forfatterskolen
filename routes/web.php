@@ -2170,6 +2170,9 @@ Route::domain($admin)->group(function () {
         Route::post('/{id}/send', [Backend\NewsletterController::class, 'send'])->name('admin.newsletter.send');
         Route::get('/{id}/preview', [Backend\NewsletterController::class, 'preview'])->name('admin.newsletter.preview');
         Route::post('/{id}/duplicate', [Backend\NewsletterController::class, 'duplicate'])->name('admin.newsletter.duplicate');
+        Route::post('/{id}/test', [Backend\NewsletterController::class, 'sendTest'])->name('admin.newsletter.test');
+        Route::get('/{id}/stats', [Backend\NewsletterController::class, 'stats'])->name('admin.newsletter.stats');
+        Route::delete('/{id}', [Backend\NewsletterController::class, 'destroy'])->name('admin.newsletter.destroy');
     });
 
     // Kontakt-import
