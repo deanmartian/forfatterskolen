@@ -262,6 +262,7 @@
 .kr-course-card__image img {
     width: 100%; height: 100%;
     object-fit: cover;
+    object-position: center 20%;
 }
 .kr-course-card__badges {
     position: absolute;
@@ -403,6 +404,7 @@
 .kr-mentor__image img {
     width: 100%; height: 100%;
     object-fit: cover;
+    object-position: center 20%;
 }
 
 /* ── CTA BANNER ── */

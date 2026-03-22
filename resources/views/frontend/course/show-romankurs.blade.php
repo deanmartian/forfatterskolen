@@ -211,7 +211,7 @@
         background: #e8e4df;
     }
 
-    .rk-hero__image img { width: 100%; height: 100%; object-fit: cover; }
+    .rk-hero__image img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
 
     .rk-hero__quick-price {
         background: var(--cream);
