@@ -3,7 +3,7 @@
         <tr>
             <th>Service</th>
             <th>Word Count</th>
-            <th>Amount</th>
+            <th>Beløp</th>
             <th></th>
         </tr>
     </thead>

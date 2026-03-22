@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Total Sold Books</label>
+                        <label class="control-label">Totalt solgte bøker</label>
                     </div>
                 </div>
                 <div class="col-9">
@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Total Sales</label>
+                        <label class="control-label">Totalt salg</label>
                     </div>
                 </div>
                 <div class="col-9">
@@ -32,18 +32,18 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Inventory</label>
+                        <label class="control-label">Lagerstatus</label>
                     </div>
                 </div>
                 <div class="col-9">
                     <table class="table">
                         <thead>
                             <tr>
-                                <td>Total</td>
-                                <td>Delivered</td>
-                                <td>Physical Items</td>
-                                <td>Returns</td>
-                                <td>Balance</td>
+                                <td>Totalt</td>
+                                <td>Levert</td>
+                                <td>Fysiske eksemplarer</td>
+                                <td>Returer</td>
+                                <td>Saldo</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -72,7 +72,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Order</label>
+                        <label class="control-label">Bestilling</label>
                     </div>
                 </div>
                 <div class="col-9">
@@ -86,7 +86,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Reservations</label>
+                        <label class="control-label">Reservasjoner</label>
                     </div>
                 </div>
                 <div class="col-9">

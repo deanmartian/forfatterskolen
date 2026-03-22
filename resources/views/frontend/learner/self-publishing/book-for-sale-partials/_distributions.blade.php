@@ -5,9 +5,9 @@
                 <thead>
                     <tr>
                         <th>Nr</th>
-                        <th>Service</th>
-                        <th>Number</th>
-                        <th>Amount</th>
+                        <th>Tjeneste</th>
+                        <th>Antall</th>
+                        <th>Beløp</th>
                     </tr>
                 </thead>
                 <tbody>

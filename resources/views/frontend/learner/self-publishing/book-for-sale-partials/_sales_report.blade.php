@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Quantity Sold</label>
+                        <label class="control-label">Antall solgt</label>
                     </div>
                 </div>
                 <div class="col-9">
@@ -19,7 +19,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Turned over</label>
+                        <label class="control-label">Omsatt</label>
                     </div>
                 </div>
                 <div class="col-9">
@@ -34,7 +34,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Free</label>
+                        <label class="control-label">Gratis</label>
                     </div>
                 </div>
                 <div class="col-9">
@@ -49,7 +49,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Commission</label>
+                        <label class="control-label">Provisjon</label>
                     </div>
                 </div>
                 <div class="col-9">
@@ -64,7 +64,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Shredded</label>
+                        <label class="control-label">Makulert</label>
                     </div>
                 </div>
                 <div class="col-9">
@@ -79,7 +79,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Defective</label>
+                        <label class="control-label">Defekte</label>
                     </div>
                 </div>
                 <div class="col-9">
@@ -94,7 +94,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Corrections</label>
+                        <label class="control-label">Korreksjoner</label>
                     </div>
                 </div>
                 <div class="col-9">
@@ -109,7 +109,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Counts</label>
+                        <label class="control-label">Tellinger</label>
                     </div>
                 </div>
                 <div class="col-9">
@@ -124,7 +124,7 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label class="control-label">Returns</label>
+                        <label class="control-label">Returer</label>
                     </div>
                 </div>
                 <div class="col-9">

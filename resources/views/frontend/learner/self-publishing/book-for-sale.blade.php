@@ -24,21 +24,21 @@
                     <div class="card global-card p-3">
                         <div class="card-body">
                             <a href="{{ route('learner.book-sale') }}" class="btn btn-secondary">
-                                <i class="fa fa-arrow-left"></i> Back
+                                <i class="fa fa-arrow-left"></i> Tilbake
                             </a>
 
                             <ul class="nav nav-tabs mt-3">
                                 <li @if( Request::input('tab') == 'inventory' || Request::input('tab') == '') class="active" @endif>
-                                    <a href="?tab=inventory">Inventory</a>
+                                    <a href="?tab=inventory">Lagerstatus</a>
                                 </li>
                                 <li @if( Request::input('tab') == 'sales-report') class="active" @endif>
-                                    <a href="?tab=sales-report">Sales Report</a>
+                                    <a href="?tab=sales-report">Salgsrapport</a>
                                 </li>
                                 <li @if( Request::input('tab') == 'book-sales') class="active" @endif>
-                                    <a href="?tab=book-sales">Book Sales</a>
+                                    <a href="?tab=book-sales">Boksalg</a>
                                 </li>
                                 <li @if( Request::input('tab') == 'distribution') class="active" @endif>
-                                    <a href="?tab=distribution">Distribution</a>
+                                    <a href="?tab=distribution">Distribusjon</a>
                                 </li>
                             </ul>
 

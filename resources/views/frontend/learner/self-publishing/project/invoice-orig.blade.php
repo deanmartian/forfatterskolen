@@ -23,7 +23,7 @@
             <div class="row">
                 <a href="{{ route('learner.project.show', $project->id) }}"
                    class="btn btn-secondary mb-3">
-                    <i class="fa fa-arrow-left"></i> Back
+                    <i class="fa fa-arrow-left"></i> Tilbake
                 </a>
 
                 <div class="col-md-12 dashboard-course no-left-padding">
@@ -32,8 +32,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>File</th>
-                                    <th>Note</th>
+                                    <th>Fil</th>
+                                    <th>Notat</th>
                                 </tr>
                                 </thead>
                                 <tbody>

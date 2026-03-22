@@ -767,7 +767,7 @@
                 <li>
                     <a href="{{ route('learner.dashboard') }}" 
                        class="nav-item {{ request()->routeIs('learner.dashboard') ? 'active' : '' }}">
-                        <i class="fas fa-th-large"></i> Dashboard
+                        <i class="fas fa-th-large"></i> Oversikt
                     </a>
                 </li>
                 <li>

@@ -8,7 +8,7 @@
     <div class="learner-container">
         <div class="container">
             <a href="{{ route('learner.progress-plan') }}" class="btn btn-secondary mb-3">
-                <i class="fa fa-arrow-left"></i> Back
+                <i class="fa fa-arrow-left"></i> Tilbake
             </a>
 
             <div class="card card-global">
@@ -27,8 +27,8 @@
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <td>File</td>
-                                <td>Date</td>
+                                <td>Fil</td>
+                                <td>Dato</td>
                             </tr>
                         </thead>
                         <tbody>

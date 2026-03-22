@@ -5,11 +5,11 @@
                 <table class="table dt-table">
                     <thead>
                     <tr>
-                        <th>Book</th>
+                        <th>Bok</th>
                         <th>Type</th>
-                        <th>Quantity</th>
-                        <th>Amount</th>
-                        <th>Date</th>
+                        <th>Antall</th>
+                        <th>Beløp</th>
+                        <th>Dato</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -35,7 +35,7 @@
                         @if($book->sales->count())
                             <tr>
                                 <td colspan="3">
-                                    <b>Total</b>
+                                    <b>Totalt</b>
                                 </td>
                                 <td colspan="2">
                                     {{ FrontendHelpers::currencyFormat($totalBookSale) }}

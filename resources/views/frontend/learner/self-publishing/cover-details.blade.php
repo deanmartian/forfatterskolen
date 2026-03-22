@@ -20,12 +20,12 @@
         <div class="row">
             <div class="col-md-12 dashboard-course">
                 <a href="{{ route('learner.self-publishing.cover') }}" class="btn btn-light mb-3">
-                    <i class="fa fa-arrow-left"></i> Back
+                    <i class="fa fa-arrow-left"></i> Tilbake
                 </a>
 
                 <div class="card global-card">
                     <div class="page-toolbar mb-3">
-                        <h3 class="float-start"><i class="fa fa-file-text-o"></i> Cover Details</h3>
+                        <h3 class="float-start"><i class="fa fa-file-text-o"></i> Omslagsdetaljer</h3>
 
                         <button type="button" class="btn btn-primary float-end graphicWorkBtn" data-bs-toggle="modal" 
                                 data-bs-target="#graphicWorkModal" data-type="cover" data-id="{{ $cover->id }}"
@@ -37,14 +37,14 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Cover</th>
-                                <th>Description</th>
+                                <th>Omslag</th>
+                                <th>Beskrivelse</th>
                                 <th>Format</th>
                                 <th>ISBN</th>
-                                <th>Backside Text</th>
-                                <th>Backside Image</th>
-                                <th>Instruction</th>
-                                <th>Print Ready</th>
+                                <th>Baksidetekst</th>
+                                <th>Baksidebilde</th>
+                                <th>Instruksjon</th>
+                                <th>Trykkeklar</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -149,12 +149,12 @@
 
                 <div class="cover-container">
                     <div class="form-group">
-                        <label>Cover</label>
+                        <label>Omslag</label>
                         <input type="file" class="form-control" name="cover[]" accept="image/*" multiple>
                     </div>
                     
                     <div class="form-group">
-                        <label>Description</label>
+                        <label>Beskrivelse</label>
                         <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
                     </div>
 
@@ -185,7 +185,7 @@
                     <div class="form-group">
                         <label>ISBN</label>
                         <select class="form-control" name="isbn_id">
-                            <option value="" disabled selected>- Select ISBN -</option>
+                            <option value="" disabled selected>- Velg ISBN -</option>
                             @foreach ($isbns as $isbn)
                                 <option value="{{ $isbn->id }}">
                                     {{ $isbn->value }}
@@ -195,7 +195,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Backside Text (optional)</label> <br>
+                        <label>Baksidetekst (valgfritt)</label> <br>
                         <input type="checkbox" data-bs-toggle="toggle" data-on="Text" data-off="Document"
                             name="backside_type" data-width="100" class="backsideToggle" checked
                             >
@@ -208,19 +208,19 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Backside Image (optional)</label>
+                        <label>Baksidebilde (valgfritt)</label>
                         <input type="file" class="form-control" name="backside_image[]" accept="image/*" multiple>
                     </div>
 
                     <div class="form-group">
-                        <label>Instruction (for graphic designer)</label>
+                        <label>Instruksjon (til grafisk designer)</label>
                         <textarea name="instruction" cols="30" rows="10" class="form-control"></textarea>
                     </div>
                 </div>
 
                 <div class="description-container">
                     <div class="form-group">
-                        <label>Print Ready</label>
+                        <label>Trykkeklar fil</label>
                         <input type="file" class="form-control" name="cover_print_ready" accept="application/pdf">
                     </div>
                 </div>

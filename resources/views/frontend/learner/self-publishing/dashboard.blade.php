@@ -1,11 +1,11 @@
 @extends('frontend.learner.self-publishing.layout')
 
 @section('title')
-    <title>Dashboard &rsaquo; Indiemoon</title>
+    <title>Oversikt &rsaquo; Indiemoon</title>
 @stop
 
 @section('breadcrumbs')
-    <span class="bc-current">Dashboard</span>
+    <span class="bc-current">Oversikt</span>
 @stop
 
 @section('styles')
@@ -328,9 +328,9 @@
                                         {{ trans('site.author-portal.active') }}
                                     </span>
                                 @elseif ($project->status === 'lead')
-                                    <span class="sp-badge sp-badge-lead">Lead</span>
+                                    <span class="sp-badge sp-badge-lead">Potensiell</span>
                                 @elseif($project->status === 'finished')
-                                    <span class="sp-badge sp-badge-finished">Finished</span>
+                                    <span class="sp-badge sp-badge-finished">Fullført</span>
                                 @endif
                             </td>
                             <td>
