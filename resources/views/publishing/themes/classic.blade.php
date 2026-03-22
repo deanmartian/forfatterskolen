@@ -1,11 +1,4 @@
-{{-- 
-  KLASSISK ROMAN — Tidløs skandinavisk typografi
-  Crimson Text + Cormorant Garamond
-  
-  @extends('publishing.layouts.book-base')
-  Arver alle format-dimensjoner via CSS-variabler.
-  Denne filen styrer KUN visuelt uttrykk.
---}}
+@extends('publishing.layouts.book-base')
 
 @section('theme-styles')
 
