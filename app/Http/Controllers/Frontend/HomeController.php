@@ -324,6 +324,22 @@ class HomeController extends Controller
         return view('frontend.ombrekk-indiemoon');
     }
 
+    public function unsubscribeNewsletter(string $token)
+    {
+        $email = base64_decode($token);
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            abort(404);
+        }
+
+        $contact = \App\Models\Contact::where('email', $email)->first();
+        if ($contact) {
+            $contact->update(['unsubscribed_at' => now()]);
+        }
+
+        return view('frontend.unsubscribed', ['email' => $email]);
+    }
+
     /**
      * Display all blog
      *

@@ -137,7 +137,16 @@ class NewsletterController extends Controller
             'reply_to' => 'post@forfatterskolen.no',
             'to' => [$testEmail],
             'subject' => '[TEST] ' . $newsletter->subject,
-            'html' => $newsletter->body_html,
+            'html' => $newsletter->body_html . '
+                <div style="text-align:center;font-size:12px;color:#999;margin-top:40px;padding:20px 30px;border-top:1px solid #eee;">
+                    <p style="margin:0 0 5px;">Spørsmål? Svar på denne e-posten eller ring 411 23 555</p>
+                    <p style="margin:0 0 5px;">Forfatterskolen · Lihagen 21, 3029 Drammen</p>
+                    <p style="margin:10px 0 0;">
+                        <a href="https://forfatterskolen.no" style="color:#862736;text-decoration:none;">forfatterskolen.no</a>
+                        &middot;
+                        <a href="' . url('/avmeld/' . base64_encode($testEmail)) . '" style="color:#999;text-decoration:underline;">Avmeld nyhetsbrev</a>
+                    </p>
+                </div>',
         ]);
 
         if ($response->failed()) {

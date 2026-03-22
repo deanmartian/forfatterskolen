@@ -142,9 +142,15 @@ class NewsletterService
                 $unsubscribeUrl = url('/avmeld/' . base64_encode($send->email));
 
                 $bodyWithUnsubscribe = $newsletter->body_html . '
-                    <p style="text-align:center;font-size:12px;color:#999;margin-top:30px;">
-                        <a href="' . $unsubscribeUrl . '" style="color:#999;">Avmeld nyhetsbrev</a>
-                    </p>';
+                    <div style="text-align:center;font-size:12px;color:#999;margin-top:40px;padding:20px 30px;border-top:1px solid #eee;">
+                        <p style="margin:0 0 5px;">Spørsmål? Svar på denne e-posten eller ring 411 23 555</p>
+                        <p style="margin:0 0 5px;">Forfatterskolen · Lihagen 21, 3029 Drammen</p>
+                        <p style="margin:10px 0 0;">
+                            <a href="https://forfatterskolen.no" style="color:#862736;text-decoration:none;">forfatterskolen.no</a>
+                            &middot;
+                            <a href="' . $unsubscribeUrl . '" style="color:#999;text-decoration:underline;">Avmeld nyhetsbrev</a>
+                        </p>
+                    </div>';
 
                 if ($useResend) {
                     $this->sendViaResend(
