@@ -1134,13 +1134,24 @@
 						</textarea>
 					</div>
 
+					<div style="margin: 10px 0;">
+						<button type="button" class="btn btn-sm btn-info" onclick="
+							var content = '';
+							try { var ed = tinymce.get('FMEmailContentEditor'); if(ed) content = ed.getContent(); } catch(e) {}
+							if(!content) content = document.getElementById('FMEmailContentEditor').value;
+							var w = window.open('', 'preview', 'width=700,height=600');
+							w.document.write('<html><head><title>Forhåndsvisning</title><style>body{font-family:Georgia,serif;font-size:16px;line-height:1.6;color:#333;max-width:600px;margin:20px auto;padding:20px;}strong{font-weight:700;}em{font-style:italic;}</style></head><body>' + content + '</body></html>');
+							w.document.close();
+						"><i class="fa fa-eye"></i> Forhåndsvis e-post</button>
+					</div>
+
 					<hr class="margin-top">
 					<div class="form-group">
 						<label>
-							Follow Up Email
+							Oppfølgings-epost
 						</label>
 						<br>
-						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+						<input type="checkbox" data-toggle="toggle" data-on="Ja" data-off="Nei"
 							   class="follow-up-email-toggle" name="follow_up_email" data-width="84">
 					</div>
 
@@ -1149,7 +1160,7 @@
                         $followUpEmailTemplate = \App\Http\AdminHelpers::emailTemplate('Free Manuscript Follow-up Email');
                         ?>
 						<div class="form-group">
-							<label>Send Date</label>
+							<label>Sendedato</label>
 							<input type="date" class="form-control" name="send_date"
 								   value="{{ \Carbon\Carbon::today()->addDay(1)->format('Y-m-d') }}">
 						</div>
@@ -1408,17 +1419,20 @@
         let fields = $(this).data('fields');
         let content = fields.feedback_content || '';
 
-        // TinyMCE kan feile pga API-nøkkel — fallback til textarea
-        try {
-            let editor = tinymce.get('FMEmailContentEditor');
-            if (editor) {
-                editor.setContent(content);
-            } else {
-                $('#FMEmailContentEditor').val(content);
+        // Sett innhold i textarea først
+        $('#FMEmailContentEditor').val(content);
+
+        // Vent på at TinyMCE initialiseres av loadScriptButton, deretter sett innhold
+        setTimeout(function() {
+            try {
+                let editor = tinymce.get('FMEmailContentEditor');
+                if (editor) {
+                    editor.setContent(content);
+                }
+            } catch(e) {
+                // TinyMCE ikke tilgjengelig — textarea viser HTML
             }
-        } catch(e) {
-            $('#FMEmailContentEditor').val(content);
-        }
+        }, 800);
     });
 
     $(".selfPublishingApproveFeedbackBtn").click(function() {
