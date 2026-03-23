@@ -1365,18 +1365,26 @@ class ShopManuscriptController extends Controller
             ->orderBy('max_words', 'ASC')->first();
 
         if ($suggestedPlan) {
-            $price = $suggestedPlan->full_payment_price;
-            if ($newWordCount > 17500) {
+            // Ordbasert prisberegning (samme som kalkulatoren)
+            if ($newWordCount <= 5000) {
+                $price = 1500;
+                $excessPerWordAmount = 0.112;
+                $excessWords = 0;
+            } elseif ($newWordCount <= 17500) {
+                $excessPerWordAmount = 0.112;
+                $excessWords = $newWordCount - 5000;
+                $price = 1500 + round($excessWords * $excessPerWordAmount);
+            } else {
                 $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
                 $excessWords = $newWordCount - 17500;
-                $price += $excessWords * $excessPerWordAmount;
+                $price = 2900 + round($excessWords * $excessPerWordAmount);
             }
 
             $buttonLink = route($checkoutRoute, $suggestedPlan->id);
+        } else {
+            $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
+            $excessWords = max($newWordCount - 17500, 0);
         }
-
-        $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
-        $excessWords = $newWordCount - 17500;
 
         session([
             'temp_uploaded_file' => [
