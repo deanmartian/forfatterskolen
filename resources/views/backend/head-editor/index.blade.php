@@ -381,7 +381,7 @@
 									<td>{{ \App\Http\AdminHelpers::assignmentType($freeManuscript->genre) }}</td>
 									<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
 									<td>
-										<button class="btn btn-xs btn-success sendFMApproveFeedbackBtn"
+										<button class="btn btn-xs btn-success sendFMApproveFeedbackBtn loadScriptButton"
 												data-toggle="modal" data-target="#freeManuscriptApproveFeedbackModal"
 												data-fields="{{ json_encode($freeManuscript) }}"
 												data-action="{{ route('head_editor.free-manuscript.feedback_approve', $freeManuscript->id) }}">
