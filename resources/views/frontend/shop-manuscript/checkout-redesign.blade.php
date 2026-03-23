@@ -1404,16 +1404,18 @@
 
         // Bestill-knapper (order confirm) — forhindrer dobbelt-klikk
         document.querySelectorAll('.order-confirm').forEach(function(btn) {
-            if (btn.disabled) return;
-            btn.addEventListener('click', function() {
-                var form = btn.closest('form');
-                if (form && form.checkValidity()) {
-                    if (form.dataset.submitted) return;
-                    form.dataset.submitted = 'true';
-                    btn.disabled = true;
-                    btn.textContent = 'Behandler bestilling...';
-                    showLoading();
+            var form = btn.closest('form');
+            if (!form) return;
+            form.addEventListener('submit', function(e) {
+                if (form.dataset.submitted) {
+                    e.preventDefault();
+                    return;
                 }
+                form.dataset.submitted = 'true';
+                btn.textContent = 'Behandler bestilling...';
+                showLoading();
+                // Disable ETTER submit er sendt
+                setTimeout(function() { btn.disabled = true; }, 50);
             });
         });
     })();
