@@ -212,17 +212,44 @@ class ShopManuscriptService
                         }
                     }
 
-                    // Fallback: bruk shell pdftotext hvis tilgjengelig
-                    $pdftotext = '/usr/bin/pdftotext';
-                    if (file_exists($pdftotext)) {
-                        $tmpTxt = tempnam(sys_get_temp_dir(), 'pdf_');
-                        exec("{$pdftotext} " . escapeshellarg($filePath) . " {$tmpTxt} 2>/dev/null");
-                        if (file_exists($tmpTxt) && filesize($tmpTxt) > 0) {
-                            $text = file_get_contents($tmpTxt);
-                            unlink($tmpTxt);
+                    // Fallback 1: bruk shell pdftotext hvis tilgjengelig
+                    foreach (['/usr/bin/pdftotext', '/usr/local/bin/pdftotext'] as $pdftotext) {
+                        if (file_exists($pdftotext)) {
+                            $tmpTxt = tempnam(sys_get_temp_dir(), 'pdf_');
+                            exec("{$pdftotext} " . escapeshellarg($filePath) . " {$tmpTxt} 2>/dev/null");
+                            if (file_exists($tmpTxt) && filesize($tmpTxt) > 0) {
+                                $text = file_get_contents($tmpTxt);
+                                unlink($tmpTxt);
+                                return FrontendHelpers::get_num_of_words($text);
+                            }
+                            @unlink($tmpTxt);
+                        }
+                    }
+
+                    // Fallback 2: enkel PHP-basert PDF-tekstekstraksjon
+                    try {
+                        $content = file_get_contents($filePath);
+                        // Fjern binær data, behold tekst-streams
+                        $text = '';
+                        // Dekode PDF text streams
+                        if (preg_match_all('/\(([^)]+)\)/', $content, $matches)) {
+                            $text = implode(' ', $matches[1]);
+                        }
+                        // Prøv også BT/ET text blocks
+                        if (empty($text) && preg_match_all('/BT\s*(.*?)\s*ET/s', $content, $btMatches)) {
+                            foreach ($btMatches[1] as $block) {
+                                if (preg_match_all('/\(([^)]+)\)/', $block, $textMatches)) {
+                                    $text .= ' ' . implode(' ', $textMatches[1]);
+                                }
+                            }
+                        }
+                        $text = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $text);
+                        $text = preg_replace('/\s+/', ' ', trim($text));
+                        if (strlen($text) > 100) {
                             return FrontendHelpers::get_num_of_words($text);
                         }
-                        @unlink($tmpTxt);
+                    } catch (\Throwable $e) {
+                        Log::warning('PDF fallback-ekstraksjon feilet.', ['error' => $e->getMessage()]);
                     }
                     break;
                 case 'docx':
