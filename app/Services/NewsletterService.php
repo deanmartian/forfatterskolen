@@ -179,6 +179,10 @@ class NewsletterService
                 $newsletter->incrementSent();
                 $sent++;
 
+                // Rate limiting: max 8/sekund for å holde oss under Resend-grensen (10/s)
+                // og unngå spam-filtre
+                usleep(125000); // 125ms = ~8 per sekund
+
             } catch (\Exception $e) {
                 Log::error("Nyhetsbrev send feilet for {$send->email}: {$e->getMessage()}");
                 $send->markFailed();
