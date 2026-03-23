@@ -287,7 +287,7 @@
 											$feedback = DB::SELECT("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = $assignedAssignment->user_id AND A.assignment_group_learner_id = ".$groupDetails[0]->assignment_group_learner_id . " AND A.is_admin = 1");
 											if ($feedback) {
                                                 echo '<td>';
-                                                echo '<button class="btn btn-success btn-xs courseAssignmentShowFeedbackBtn"
+                                                echo '<button class="btn btn-success btn-xs courseAssignmentShowFeedbackBtn loadScriptButton"
 															data-target="#courseAssignmentShowFeedbackModal"
 															data-toggle="modal"
 															data-id = "'.$assignedAssignment->id.'"
@@ -810,7 +810,7 @@
 
 					<div class="form-group">
 						<label>
-							Send Email
+							Send e-post
 						</label>
 						<br>
 						<input type="checkbox" data-toggle="toggle" data-on="Yes"
@@ -876,7 +876,7 @@
 
 					<div class="form-group">
 						<label>
-							Send Email
+							Send e-post
 						</label>
 						<br>
 						<input type="checkbox" data-toggle="toggle" data-on="Yes"
@@ -984,7 +984,7 @@
 					</div>
 						<div class="form-group">
 							<label>
-								Send Email
+								Send e-post
 							</label>
 							<br>
 							<input type="checkbox" data-toggle="toggle" data-on="Yes"
@@ -1045,7 +1045,7 @@
 					</div>
 						<div class="form-group">
 							<label>
-								Send Email
+								Send e-post
 							</label>
 							<br>
 							<input type="checkbox" data-toggle="toggle" data-on="Yes"
@@ -1233,7 +1233,7 @@
 
 					<div class="form-group">
 						<label>
-							Send Email
+							Send e-post
 						</label>
 						<br>
 						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"name="send_email" data-width="84"
