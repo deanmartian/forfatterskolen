@@ -634,17 +634,27 @@ class ShopManuscriptService
 
         if ($request->temp_file && $request->temp_file !== 'null') {
             $tempFile = session('temp_uploaded_file');
-            $fullPath = $tempFile['path'];
-            $originalPath = Str::after($fullPath, 'storage/');
-            $newDirectory = 'storage/shop-manuscripts/'; // need storage for checking unique name
-            $extension = pathinfo($originalPath, PATHINFO_EXTENSION);
-            $filename = AdminHelpers::checkFileName($newDirectory, $userId ?: time(), $extension);
-            $newPath = $newDirectory.basename($filename);
+            if ($tempFile && isset($tempFile['path'])) {
+                $fullPath = $tempFile['path'];
+                $originalPath = Str::after($fullPath, 'storage/');
+                $newDirectory = 'storage/shop-manuscripts/';
+                $extension = pathinfo($originalPath, PATHINFO_EXTENSION);
+                $filename = AdminHelpers::checkFileName($newDirectory, $userId ?: time(), $extension);
+                $newPath = $newDirectory.basename($filename);
 
-            // remove storage for copying the file to new file name
-            Storage::disk('public')->copy($originalPath, Str::after($newPath, 'storage/'));
-            $filePath = '/'.$newPath;
-            $word_count = $tempFile['word_count'];
+                try {
+                    Storage::disk('public')->copy($originalPath, Str::after($newPath, 'storage/'));
+                    $filePath = '/'.$newPath;
+                } catch (\Throwable $e) {
+                    Log::warning('Kunne ikke kopiere temp-fil, bruker original sti', ['error' => $e->getMessage()]);
+                    $filePath = '/' . $fullPath;
+                }
+                $word_count = $tempFile['word_count'];
+            } else {
+                Log::warning('temp_file satt men session tom', ['pre_word_count' => $request->input('pre_word_count')]);
+                $word_count = (int) $request->input('pre_word_count', 0);
+                $filePath = $request->input('pre_manuscript_path') ? '/' . $request->input('pre_manuscript_path') : null;
+            }
         }
 
         // Coaching file upload (valgfritt manus for gjennomlesing)
