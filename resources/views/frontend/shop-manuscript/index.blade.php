@@ -1116,12 +1116,18 @@
         }
 
         function manusGetCheckoutUrl(words) {
+            var url = '#';
             for (var i = 0; i < manusProducts.length; i++) {
                 if (words <= manusProducts[i].maxWords) {
-                    return manusProducts[i].checkoutUrl;
+                    url = manusProducts[i].checkoutUrl;
+                    break;
                 }
             }
-            return manusProducts.length ? manusProducts[manusProducts.length - 1].checkoutUrl : '#';
+            if (url === '#' && manusProducts.length) {
+                url = manusProducts[manusProducts.length - 1].checkoutUrl;
+            }
+            // Legg til ordtelling som URL-parameter
+            return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'words=' + words;
         }
 
         var manusSlider = document.getElementById('manusWordSlider');
