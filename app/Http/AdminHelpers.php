@@ -469,13 +469,13 @@ class AdminHelpers
             $package = Package::find($order->package_id);
             $paymentPlan = PaymentPlan::find($order->plan_id);
             $orderDetails = "<a href='".route('admin.course.show', $order->item_id)."?section=packages'>"
-                .$package->variation.'</a>'.' - '.$paymentPlan->plan;
+                .($package->variation ?? 'Ukjent pakke').'</a>'.' - '.($paymentPlan->plan ?? 'Ukjent plan');
         }
 
         if (in_array($order->type, [2, 7])) {
             $shopManuscript = ShopManuscript::find($order->item_id);
             $orderDetails = "<a href='".route('admin.shop-manuscript.index')."'>"
-                .$shopManuscript->title.'</a>';
+                .($shopManuscript->title ?? 'Ukjent').'</a>';
         }
 
         switch ($order->type) {
