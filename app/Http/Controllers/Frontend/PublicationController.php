@@ -166,11 +166,34 @@ class PublicationController extends Controller
             'pdf' => 'output_pdf',
             'epub' => 'output_epub',
             'docx' => 'output_docx',
+            'idml' => 'output_idml',
             'cover' => 'cover_front',
             'cover-preview' => null,
             'cover-template' => null,
             default => null,
         };
+
+        if ($format === 'idml') {
+            $idmlPath = storage_path("app/publications/{$id}/book.idml");
+            if (!file_exists($idmlPath)) {
+                // Generate on-the-fly
+                $parser = new \App\Services\Publishing\ManuscriptParser();
+                $dropboxPath = $publication->source_manuscript;
+                $tempFile = storage_path("app/publications/{$id}/source.docx");
+                if (!file_exists($tempFile)) {
+                    $content = \Illuminate\Support\Facades\Storage::disk('dropbox')->get($dropboxPath);
+                    @mkdir(dirname($tempFile), 0755, true);
+                    file_put_contents($tempFile, $content);
+                }
+                $manuscript = $parser->parse($tempFile);
+                $generator = new \App\Services\Publishing\IdmlGenerator();
+                $generator->generate($manuscript, $publication, $idmlPath);
+            }
+            if (file_exists($idmlPath)) {
+                return response()->download($idmlPath, \Illuminate\Support\Str::slug($publication->title) . '.idml');
+            }
+            return back()->with('error', 'IDML kunne ikke genereres.');
+        }
 
         if ($format === 'cover-preview') {
             $filePath = storage_path("app/publications/{$id}/covers/cover-preview.pdf");
