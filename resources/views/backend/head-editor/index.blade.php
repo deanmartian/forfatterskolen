@@ -1406,9 +1406,19 @@
         let modal = $('#freeManuscriptApproveFeedbackModal');
         modal.find('form').attr('action', action);
         let fields = $(this).data('fields');
-        let content = fields.feedback_content;
+        let content = fields.feedback_content || '';
 
-        tinymce.get('FMEmailContentEditor').setContent(content);
+        // TinyMCE kan feile pga API-nøkkel — fallback til textarea
+        try {
+            let editor = tinymce.get('FMEmailContentEditor');
+            if (editor) {
+                editor.setContent(content);
+            } else {
+                $('#FMEmailContentEditor').val(content);
+            }
+        } catch(e) {
+            $('#FMEmailContentEditor').val(content);
+        }
     });
 
     $(".selfPublishingApproveFeedbackBtn").click(function() {
