@@ -378,6 +378,9 @@
                 @if($publication->output_docx)
                     <a href="{{ route('learner.publication.download', [$publication->id, 'docx']) }}" class="pub-btn-outline">Last ned Word</a>
                 @endif
+                @if($publication->output_pdf)
+                    <a href="{{ route('learner.publication.download', [$publication->id, 'idml']) }}" class="pub-btn-outline">Last ned InDesign (IDML)</a>
+                @endif
             </div>
             <form action="{{ route('learner.publication.generate', $publication->id) }}" method="POST" style="margin-top: 20px;">
                 @csrf
