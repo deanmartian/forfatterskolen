@@ -1189,7 +1189,7 @@ class LearnerController extends Controller
                             }
                         }
 
-                        if ($assignmentManuscript && $assignmentManuscript->locked && !$assignment->for_editor) {
+                        if ($assignmentManuscript && $assignmentManuscript->locked && $assignmentManuscript->editor_id > 0 && !$assignment->for_editor) {
                             // Sjekk om feedback finnes OG er tilgjengelig (availability-dato nådd)
                             $amFeedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $assignmentManuscript->id)
                                 ->where('is_active', 1)->first();
@@ -1293,7 +1293,7 @@ class LearnerController extends Controller
             $feedbackAvailable = $feedback && (!$feedback->availability || date('Y-m-d') >= $feedback->availability);
 
             if (! $feedbackAvailable) {
-                if ($manuscript && $manuscript->locked) {
+                if ($manuscript && $manuscript->locked && $manuscript->editor_id > 0) {
                     $waitingForResponse[] = $assignment;
                 } else {
                     if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
