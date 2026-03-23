@@ -141,9 +141,7 @@ class FreeManuscriptController extends Controller
             $to = $freeManuscripts->email;
             $email_content = $freeManuscripts->feedback_content;
 
-            ob_start();
-            include base_path().'/resources/views/emails/free-manuscript-feedback.blade.php';
-            $message = ob_get_clean();
+            $message = view('emails.free-manuscript-feedback', compact('email_content'))->render();
 
             $emailTemplate = $this->emailTemplate('Free Manuscript');
             $search_string = [
@@ -273,9 +271,7 @@ class FreeManuscriptController extends Controller
 
         $email_content = $requests->email_content;
 
-        ob_start();
-        include base_path().'/resources/views/emails/free-manuscript-feedback.blade.php';
-        $message = ob_get_clean();
+        $message = view('emails.free-manuscript-feedback', compact('email_content'))->render();
 
         $headers = "From: Forfatterskolen<postmail@forfatterskolen.no>\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
