@@ -92,7 +92,7 @@
 										<!-- <button class="btn btn-success btn-xs">
 											<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
 										</button> -->
-                                        <button class="btn btn-success btn-xs personalAssignmentShowFeedbackBtn"
+                                        <button class="btn btn-success btn-xs personalAssignmentShowFeedbackBtn loadScriptButton"
                                                 data-target="#personalAssignmentShowFeedbackModal"
                                                 data-toggle="modal"
                                                 data-id = "{{$assignedManuscript->id}}"
@@ -318,7 +318,7 @@
 											}
 										}else{ //the course assignment does not belong to a group
 											echo '<td>';
-											echo '<button class="btn btn-success btn-xs personalAssignmentShowFeedbackBtn"
+											echo '<button class="btn btn-success btn-xs personalAssignmentShowFeedbackBtn loadScriptButton"
 															data-target="#personalAssignmentShowFeedbackModal"
 															data-toggle="modal"
 															data-id = "'.$assignedAssignment->id.'"
@@ -782,10 +782,10 @@
                     </div>
 					<div class="form-group">
 						<label>
-							Email Template	
+							E-postmal
 						</label>
 						<select name="email_templates" class="form-control">
-							<option value="" disabled selected>- Select Email - </option>
+							<option value="" disabled selected>- Velg e-postmal -</option>
 							@foreach ($assignmentFeedbackEmailTemplates as $assignmentFeedbackEmailTemplate)
 								<option value="{{ $assignmentFeedbackEmailTemplate->subject }}" 
 									data-fields="{{ $assignmentFeedbackEmailTemplate }}">
@@ -813,8 +813,8 @@
 							Send e-post
 						</label>
 						<br>
-						<input type="checkbox" data-toggle="toggle" data-on="Yes"
-							   class="for-sale-toggle" data-off="No"
+						<input type="checkbox" data-toggle="toggle" data-on="Ja"
+							   class="for-sale-toggle" data-off="Nei"
 							   name="send_email" data-width="84" checked>
 					</div>
 
@@ -879,8 +879,8 @@
 							Send e-post
 						</label>
 						<br>
-						<input type="checkbox" data-toggle="toggle" data-on="Yes"
-							   class="for-sale-toggle" data-off="No"
+						<input type="checkbox" data-toggle="toggle" data-on="Ja"
+							   class="for-sale-toggle" data-off="Nei"
 							   name="send_email" data-width="84" checked>
 					</div>
 
@@ -892,7 +892,7 @@
 							Follow Up Email
 						</label>
 						<br>
-						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+						<input type="checkbox" data-toggle="toggle" data-on="Ja" data-off="Nei"
 							   class="follow-up-email-toggle" name="follow_up_email" data-width="84">
 					</div>
 
@@ -987,8 +987,8 @@
 								Send e-post
 							</label>
 							<br>
-							<input type="checkbox" data-toggle="toggle" data-on="Yes"
-								   class="for-sale-toggle" data-off="No"
+							<input type="checkbox" data-toggle="toggle" data-on="Ja"
+								   class="for-sale-toggle" data-off="Nei"
 								   name="send_email" data-width="84" checked>
 						</div>
                     <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.approve-feedback') }}</button>
@@ -1048,8 +1048,8 @@
 								Send e-post
 							</label>
 							<br>
-							<input type="checkbox" data-toggle="toggle" data-on="Yes"
-								   class="for-sale-toggle" data-off="No"
+							<input type="checkbox" data-toggle="toggle" data-on="Ja"
+								   class="for-sale-toggle" data-off="Nei"
 								   name="send_email" data-width="84" checked>
 						</div>
                     <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.approve-feedback') }}</button>
@@ -1236,7 +1236,7 @@
 							Send e-post
 						</label>
 						<br>
-						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"name="send_email" data-width="84"
+						<input type="checkbox" data-toggle="toggle" data-on="Ja" data-off="Nei"name="send_email" data-width="84"
 							class="send-email-toggle">
 					</div>
 
