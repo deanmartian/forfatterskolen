@@ -815,7 +815,7 @@
                     @foreach($lessons as $index => $lesson)
                         @php
                             $lessonNum = $index + 1;
-                            $lessonDate = $lesson->delay ? \Carbon\Carbon::parse($lesson->delay) : null;
+                            $lessonDate = ($lesson->delay && $startDate) ? $startDate->copy()->addDays((int) $lesson->delay) : null;
                         @endphp
                         <div class="rk-timeline-item">
                             <div class="rk-timeline-item__marker">
