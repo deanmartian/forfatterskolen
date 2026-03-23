@@ -201,10 +201,28 @@ class ShopManuscriptService
                     }
 
                     if (class_exists('PdfToText')) {
-                        $pdf = new \PdfToText($filePath);
-                        $text = $pdf->Text;
+                        try {
+                            $pdf = new \PdfToText($filePath);
+                            $text = $pdf->Text;
+                            if ($text) {
+                                return FrontendHelpers::get_num_of_words($text);
+                            }
+                        } catch (\Throwable $e) {
+                            Log::warning('PDF ordtelling feilet, prøver alternativ metode.', ['error' => $e->getMessage()]);
+                        }
+                    }
 
-                        return FrontendHelpers::get_num_of_words($text);
+                    // Fallback: bruk shell pdftotext hvis tilgjengelig
+                    $pdftotext = '/usr/bin/pdftotext';
+                    if (file_exists($pdftotext)) {
+                        $tmpTxt = tempnam(sys_get_temp_dir(), 'pdf_');
+                        exec("{$pdftotext} " . escapeshellarg($filePath) . " {$tmpTxt} 2>/dev/null");
+                        if (file_exists($tmpTxt) && filesize($tmpTxt) > 0) {
+                            $text = file_get_contents($tmpTxt);
+                            unlink($tmpTxt);
+                            return FrontendHelpers::get_num_of_words($text);
+                        }
+                        @unlink($tmpTxt);
                     }
                     break;
                 case 'docx':
