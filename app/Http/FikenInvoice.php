@@ -505,4 +505,105 @@ class FikenInvoice
 
         return $response;
     }
+
+    /**
+     * Registrer betaling på en faktura i Fiken.
+     * Kalles etter vellykket Vipps/Bambora-betaling.
+     *
+     * @param Invoice $invoice  Lokal faktura med fiken_url
+     * @param float $amount     Beløp i kroner (brutto)
+     * @param string $date      Betalingsdato (Y-m-d)
+     * @param string $paymentType  Beskrivelse (vipps, bambora, kort)
+     * @return bool
+     */
+    public function registerPaymentInFiken(Invoice $invoice, float $amount, string $date = null, string $paymentType = 'vipps'): bool
+    {
+        if (!$invoice->fiken_url) {
+            Log::warning("registerPaymentInFiken: Ingen fiken_url for faktura {$invoice->id}");
+            return false;
+        }
+
+        $date = $date ?? date('Y-m-d');
+
+        try {
+            // Hent fakturadata fra Fiken for å finne sale-URL
+            $invoiceData = $this->get_invoice_data($invoice->fiken_url);
+
+            if (!$invoiceData || !isset($invoiceData->sale)) {
+                Log::warning("registerPaymentInFiken: Kunne ikke hente sale for faktura {$invoice->id}");
+                return false;
+            }
+
+            // Hent sale-URL (kan være objekt med href eller direkte URL)
+            $saleUrl = is_object($invoiceData->sale) && isset($invoiceData->sale->_links)
+                ? $invoiceData->sale->_links->self->href
+                : (is_string($invoiceData->sale) ? $invoiceData->sale : null);
+
+            // Alternativt: bruk saleId direkte
+            if (!$saleUrl && isset($invoiceData->sale->saleId)) {
+                $companyUrl = $this->isTesting
+                    ? 'https://api.fiken.no/api/v2/companies/fiken-demo-glede-og-bil-as2'
+                    : 'https://api.fiken.no/api/v2/companies/forfatterskolen-as';
+                $saleUrl = $companyUrl . '/sales/' . $invoiceData->sale->saleId;
+            }
+
+            if (!$saleUrl) {
+                // Bygg URL fra fiken_invoice_id
+                $companyUrl = $this->isTesting
+                    ? 'https://api.fiken.no/api/v2/companies/fiken-demo-glede-og-bil-as2'
+                    : 'https://api.fiken.no/api/v2/companies/forfatterskolen-as';
+
+                // Hent saleId fra invoice-endepunkt
+                $invoiceApiUrl = $companyUrl . '/invoices/' . $invoice->fiken_invoice_id;
+                $invData = $this->get_invoice_data($invoiceApiUrl);
+                if ($invData && isset($invData->sale->saleId)) {
+                    $saleUrl = $companyUrl . '/sales/' . $invData->sale->saleId;
+                } else {
+                    Log::error("registerPaymentInFiken: Kunne ikke finne saleUrl for faktura {$invoice->id}");
+                    return false;
+                }
+            }
+
+            // POST betaling til Fiken
+            $paymentUrl = $saleUrl . '/payments';
+            $paymentData = [
+                'date' => $date,
+                'account' => $this->fiken_bank_account_code, // 1920:10001
+                'amount' => (int) round($amount * 100), // Fiken bruker øre
+                'paymentType' => $paymentType,
+            ];
+
+            Log::info("registerPaymentInFiken: POST {$paymentUrl}", $paymentData);
+
+            $ch = curl_init($paymentUrl);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($paymentData));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HEADER, true);
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if (in_array($httpCode, [200, 201])) {
+                Log::info("registerPaymentInFiken: Betaling registrert i Fiken for faktura {$invoice->id} (kr {$amount})");
+
+                // Oppdater lokal faktura
+                $invoice->fiken_is_paid = 1;
+                $invoice->fiken_sale_payment_date = $date;
+                $invoice->fiken_balance = 0;
+                $invoice->save();
+
+                return true;
+            } else {
+                Log::error("registerPaymentInFiken: Fiken returnerte HTTP {$httpCode} for faktura {$invoice->id}", [
+                    'response' => substr($response, 0, 500),
+                ]);
+                return false;
+            }
+        } catch (\Exception $e) {
+            Log::error("registerPaymentInFiken: Feil for faktura {$invoice->id}: {$e->getMessage()}");
+            return false;
+        }
+    }
 }

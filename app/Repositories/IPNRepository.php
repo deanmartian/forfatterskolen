@@ -55,6 +55,17 @@ class IPNRepository
                         'fiken_is_paid' => $invoice::COMPLETED,
                     ]);
 
+                    // Registrer betaling i Fiken (sanntidssync)
+                    try {
+                        $fiken = new \App\Http\FikenInvoice();
+                        $amount = $invoice->fiken_balance ?: ($invoice->gross ? $invoice->gross / 100 : 0);
+                        if ($amount > 0) {
+                            $fiken->registerPaymentInFiken($invoice, $amount, date('Y-m-d'), 'bambora');
+                        }
+                    } catch (\Exception $e) {
+                        \Illuminate\Support\Facades\Log::error('Bambora→Fiken sync feilet for faktura ' . $invoice->id . ': ' . $e->getMessage());
+                    }
+
                     $email = 'support@forfatterskolen.no';
                     $subject = 'Paypal Payment';
                     $message = $invoice->user->full_name . ' has paid the amount of ' .

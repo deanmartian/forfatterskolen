@@ -224,6 +224,17 @@ class VippsRepository
             if ($invoice) {
                 $invoice->fiken_is_paid = 1;
                 $invoice->save();
+
+                // Registrer betaling i Fiken (sanntidssync)
+                try {
+                    $fiken = new \App\Http\FikenInvoice();
+                    $amount = $invoice->fiken_balance ?: ($invoice->gross ? $invoice->gross / 100 : 0);
+                    if ($amount > 0) {
+                        $fiken->registerPaymentInFiken($invoice, $amount, date('Y-m-d'), 'vipps');
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Vipps→Fiken sync feilet for faktura ' . $invoice->id . ': ' . $e->getMessage());
+                }
             } else {
                 $expOrderId = explode('-', $orderId);
                 $order_id = $expOrderId[0];
