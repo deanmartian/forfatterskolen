@@ -391,8 +391,8 @@ class EmailOutController extends Controller
     public function previewBranded($course_id, $id)
     {
         $emailOut = EmailOut::find($id);
-        if (!$emailOut || !$emailOut->template_type) {
-            return 'Ingen branded mal for denne e-posten.';
+        if (!$emailOut) {
+            return 'E-post ikke funnet.';
         }
 
         $course = Course::find($course_id);
@@ -402,8 +402,22 @@ class EmailOutController extends Controller
             'email' => 'ola@eksempel.no',
         ]);
 
-        $mail = new \App\Mail\BrandedCourseMail($emailOut, $user, $course);
-        return $mail->render();
+        // Branded template
+        if ($emailOut->template_type) {
+            $mail = new \App\Mail\BrandedCourseMail($emailOut, $user, $course);
+            return $mail->render();
+        }
+
+        // Legacy: vis i branded layout med demo-variabler
+        $message = $emailOut->message;
+        $message = str_replace([':firstname', ':name'], ['Ola', 'Ola Nordmann'], $message);
+        $message = str_replace(':redirect_link', '<a href="#" style="display:inline-block;padding:14px 32px;background-color:#862736;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:600;">', $message);
+        $message = str_replace(':end_redirect_link', '</a>', $message);
+
+        return view('emails.mail_to_queue', [
+            'email_message' => $message,
+            'track_code' => 'preview-' . $id,
+        ])->render();
     }
 
     /**

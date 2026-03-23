@@ -72,11 +72,9 @@
                             {{ $email->send_immediately_text }}
                         </td>
                         <td style="white-space: nowrap; min-width: 120px;">
-                            @if($email->template_type)
-                            <a href="{{ route('admin.email-out.preview-branded', ['course_id' => $course->id, 'email_out' => $email->id]) }}" target="_blank" class="btn btn-default btn-xs" title="Preview" style="margin-bottom:3px;">
+                            <a href="{{ route('admin.email-out.preview-branded', ['course_id' => $course->id, 'email_out' => $email->id]) }}" target="_blank" class="btn btn-default btn-xs" title="Forhåndsvis e-post" style="margin-bottom:3px;">
                                 <i class="fa fa-eye"></i>
                             </a>
-                            @endif
                             <button class="btn btn-success btn-xs sendEmailBtn" data-toggle="modal"                                    data-target="#sendEmailModal"                                    data-action="{{ route('admin.email-out.send-email', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
                                     style="margin-bottom:3px;">
                                 <i class="fa fa-paper-plane"></i>
