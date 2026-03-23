@@ -808,6 +808,32 @@
 						<textarea class="form-control tinymce" name="message" id="messageEditor" rows="6"></textarea>
 					</div>
 
+					<div style="margin: 10px 0;">
+						<button type="button" class="btn btn-sm btn-info" onclick="
+							var content = '';
+							try { var ed = tinymce.get('messageEditor'); if(ed) content = ed.getContent(); } catch(e) {}
+							if(!content) content = document.getElementById('messageEditor').value;
+							var w = window.open('', 'preview', 'width=700,height=700');
+							w.document.write(`<html><head><title>Forhåndsvisning</title></head>
+							<body style='margin:0;padding:0;background:#f0eeeb;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;'>
+							<table width='100%' cellpadding='0' cellspacing='0' style='background:#f0eeeb;'><tr><td style='padding:32px 16px;'>
+							<table width='100%' cellpadding='0' cellspacing='0' style='max-width:640px;margin:0 auto;'>
+							<tr><td style='padding:32px 40px 24px;text-align:center;background:#fff;border-radius:14px 14px 0 0;'>
+							<img src='https://forfatterskolen.no/images/logo.png' alt='Forfatterskolen' height='28'>
+							</td></tr>
+							<tr><td style='background:#fff;padding:8px 40px 32px;text-align:left;font-family:Georgia,Times New Roman,serif;font-size:16px;line-height:1.7;color:#333;'>
+							` + content + `
+							</td></tr>
+							<tr><td style='background:#faf8f5;padding:28px 40px;border-radius:0 0 14px 14px;border-top:1px solid rgba(0,0,0,0.06);text-align:center;'>
+							<p style='font-size:13px;color:#5a5550;margin:0 0 4px;'>Spørsmål? Svar på denne e-posten eller ring 411 23 555</p>
+							<p style='font-size:12px;color:#8a8580;margin:0 0 12px;'>Forfatterskolen · Lihagen 21, 3029 Drammen</p>
+							<p style='font-size:11px;color:#b5b0ab;margin:0;'>forfatterskolen.no · Vilkår</p>
+							</td></tr>
+							</table></td></tr></table></body></html>`);
+							w.document.close();
+						"><i class="fa fa-eye"></i> Forhåndsvis e-post</button>
+					</div>
+
 					<div class="form-group">
 						<label>
 							Send e-post
