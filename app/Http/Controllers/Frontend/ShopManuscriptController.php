@@ -621,7 +621,22 @@ class ShopManuscriptController extends Controller
 
         \Session::remove('vipps_checkout');
 
-        return view('frontend.shop-manuscript.thankyou');
+        $orderData = null;
+        if (isset($order)) {
+            $user = Auth::user() ?? $order->user;
+            $invoice = \App\Invoice::where('user_id', $order->user_id)->latest()->first();
+            $shopManuscript = ShopManuscript::find($order->item_id);
+            $orderData = [
+                'id' => $order->id,
+                'email' => $user->email ?? '',
+                'product_name' => $shopManuscript->title ?? 'Manusutvikling — Redaktørvurdering',
+                'price' => ($order->price + ($order->additional ?? 0)) - ($order->discount ?? 0),
+                'date' => $order->created_at,
+                'invoice_pdf_url' => $invoice->pdf_url ?? null,
+            ];
+        }
+
+        return view('frontend.shop-manuscript.thankyou', ['orderData' => $orderData]);
     }
 
     public function place_order($id, Request $request, ShopManuscriptService $shopManuscriptService)
