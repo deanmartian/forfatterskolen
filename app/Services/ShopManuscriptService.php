@@ -120,6 +120,25 @@ class ShopManuscriptService
             }
 
             $absolutePath = $this->resolveFilePath($filepath);
+
+            // Konverter ikke-docx filer til docx via CloudConvert
+            if ($extension !== 'docx' && $absolutePath && file_exists($absolutePath)) {
+                try {
+                    $converter = new CloudConvertService();
+                    $convertedPath = $converter->convertToDocx($absolutePath);
+                    if ($convertedPath && file_exists($convertedPath)) {
+                        $absolutePath = $convertedPath;
+                        $extension = 'docx';
+                        $filepath = str_replace('.' . pathinfo($filepath, PATHINFO_EXTENSION), '.docx', $filepath);
+                        $originalName = pathinfo($originalName, PATHINFO_FILENAME) . '.docx';
+                        $mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                        Log::info('Manus konvertert til docx via CloudConvert', ['file' => basename($convertedPath)]);
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning('CloudConvert konvertering feilet, bruker original fil', ['error' => $e->getMessage()]);
+                }
+            }
+
             $word_count = $this->calculateWordCount($absolutePath, $extension, $providedWordCount);
             $integrityPassed = $this->fileIntegrityService->passes($absolutePath, $extension);
         }
