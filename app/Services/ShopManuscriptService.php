@@ -213,7 +213,7 @@ class ShopManuscriptService
                     }
 
                     // Fallback 1: bruk shell pdftotext hvis tilgjengelig
-                    foreach (['/usr/bin/pdftotext', '/usr/local/bin/pdftotext'] as $pdftotext) {
+                    foreach (['/bin/pdftotext', '/usr/bin/pdftotext', '/usr/local/bin/pdftotext'] as $pdftotext) {
                         if (file_exists($pdftotext)) {
                             $tmpTxt = tempnam(sys_get_temp_dir(), 'pdf_');
                             exec("{$pdftotext} " . escapeshellarg($filePath) . " {$tmpTxt} 2>/dev/null");
