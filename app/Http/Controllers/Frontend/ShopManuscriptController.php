@@ -355,8 +355,16 @@ class ShopManuscriptController extends Controller
         // Opprett ordre via service
         $orderRecord = $shopManuscriptService->createOrder($request);
 
-        // Opprett OrderShopManuscript med temp-fil fra session
+        // Opprett OrderShopManuscript med temp-fil fra session eller hidden fields
         $tempFile = session('temp_uploaded_file');
+        if (!$tempFile && $request->input('pre_manuscript_path') && $request->input('pre_word_count')) {
+            $tempFile = [
+                'path' => $request->input('pre_manuscript_path'),
+                'word_count' => (int) $request->input('pre_word_count'),
+                'original_name' => basename($request->input('pre_manuscript_path')),
+            ];
+            session(['temp_uploaded_file' => $tempFile]);
+        }
         if ($tempFile) {
             $request->merge(['temp_file' => 'true']);
             $shopManuscriptService->createOrderShopManuscript($orderRecord->id, $request);
