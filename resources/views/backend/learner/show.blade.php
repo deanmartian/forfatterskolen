@@ -1014,6 +1014,7 @@
 					        $assignments = [];
 					        $addOns = $learner->assignmentAddOns->pluck('assignment_id')->toArray();
 					        foreach( $learner->coursesTaken()->withTrashed()->get() as $courseTaken ) :
+					            if (!$courseTaken->package || !$courseTaken->package->course) continue;
 					            foreach( $courseTaken->package->course->assignments as $assignment ) :
                             		$allowed_package = json_decode($assignment->allowed_package);
                             		$package_id = $courseTaken->package->id;
