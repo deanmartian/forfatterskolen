@@ -80,6 +80,15 @@ class ShopManuscriptController extends Controller
         }
 
         $tempFile = session('temp_uploaded_file');
+
+        // Fallback: hent ordtelling fra URL-parameter hvis session er tom
+        if ((!$tempFile || empty($tempFile['word_count'])) && request('words')) {
+            $words = (int) request('words');
+            $tempFile = $tempFile ?: [];
+            $tempFile['word_count'] = $words;
+            $tempFile['from_url'] = true;
+        }
+
         $genres = Genre::orderBy('name')->get();
 
         return view('frontend.shop-manuscript.checkout-redesign', compact(
@@ -1380,7 +1389,7 @@ class ShopManuscriptController extends Controller
                 $price = 2900 + round($excessWords * $excessPerWordAmount);
             }
 
-            $buttonLink = route($checkoutRoute, $suggestedPlan->id);
+            $buttonLink = route($checkoutRoute, $suggestedPlan->id) . '?words=' . $newWordCount;
         } else {
             $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
             $excessWords = max($newWordCount - 17500, 0);
