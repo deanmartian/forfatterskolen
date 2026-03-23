@@ -1009,6 +1009,9 @@
                         <form method="POST" action="{{ route('front.shop-manuscript.create-order', $shopManuscript->id) }}" id="order-form-mvafri" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="shop_manuscript_id" value="{{ $shopManuscript->id }}">
+                            <input type="hidden" name="pre_word_count" value="{{ $tempFile['word_count'] ?? 0 }}">
+                            <input type="hidden" name="pre_manuscript_path" value="{{ $tempFile['path'] ?? '' }}">
+                            @if($tempFile && isset($tempFile['path']))<input type="hidden" name="temp_file" value="1">@endif
                             <input type="hidden" name="price" value="{{ $priceBeforeMva }}" id="hidden-price-mvafri">
                             <input type="hidden" name="additional" value="0" id="hidden-additional-mvafri">
                             <input type="hidden" name="genre" value="{{ $selectedGenreId }}" id="hidden-genre-mvafri">
@@ -1040,6 +1043,9 @@
                         <form method="POST" action="{{ route('front.shop-manuscript.create-order', $shopManuscript->id) }}" id="order-form-mva" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="shop_manuscript_id" value="{{ $shopManuscript->id }}">
+                            <input type="hidden" name="pre_word_count" value="{{ $tempFile['word_count'] ?? 0 }}">
+                            <input type="hidden" name="pre_manuscript_path" value="{{ $tempFile['path'] ?? '' }}">
+                            @if($tempFile && isset($tempFile['path']))<input type="hidden" name="temp_file" value="1">@endif
                             <input type="hidden" name="price" value="{{ $priceBeforeMva }}" id="hidden-price-mva">
                             <input type="hidden" name="additional" value="{{ $mva }}" id="hidden-additional-mva">
                             <input type="hidden" name="genre" value="{{ $selectedGenreId }}" id="hidden-genre-mva">

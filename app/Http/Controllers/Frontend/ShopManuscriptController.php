@@ -129,14 +129,29 @@ class ShopManuscriptController extends Controller
         }
 
         $word_count = 0;
+        $tempFile = session('temp_uploaded_file');
 
-        if ($request->temp_file && $request->temp_file !== 'null') {
-            $word_count = session('temp_uploaded_file')['word_count'];
-            $manuscript_file = session('temp_uploaded_file')['path'];
-        } else {
+        if ($request->temp_file && $request->temp_file !== 'null' && $tempFile) {
+            // Manus fra session (opplastet på kalkulatorsiden)
+            $word_count = $tempFile['word_count'];
+            $manuscript_file = $tempFile['path'];
+        } elseif ($request->input('pre_word_count') && $request->hasFile('manuscript')) {
+            // Manus lastet opp på checkout-siden — IKKE konverter via CloudConvert
+            $uploadedManuscript = $shopManuscriptService->performManuscriptUpload($request, 'storage/manuscript-tests', [
+                'convert_to_docx' => false,
+                'word_count_field' => 'word_count',
+            ]);
+            $word_count = (int) $request->input('pre_word_count');
+            $manuscript_file = $uploadedManuscript['manuscript_file'];
+        } elseif ($request->hasFile('manuscript')) {
+            // Nytt manus lastet opp direkte på checkout — konverter
             $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest($request);
             $word_count = $uploadedManuscript['word_count'];
             $manuscript_file = $uploadedManuscript['manuscript_file'];
+        } elseif ($request->input('pre_word_count') && $request->input('pre_manuscript_path')) {
+            // Fallback: data fra hidden fields (session mistet)
+            $word_count = (int) $request->input('pre_word_count');
+            $manuscript_file = $request->input('pre_manuscript_path');
         }
 
         if ($word_count == 0) {
