@@ -42,6 +42,7 @@ class ShopManuscriptService
         return $this->performManuscriptUpload($request, 'storage/shop-manuscripts', [
             'apply_word_margin' => true,
             'prepend_slash' => true,
+            'convert_to_docx' => false, // Ikke konverter ved bestilling — allerede gjort ved opplasting
             'user_id' => $userId,
             'path_resolver' => function (string $directory, string $extension, $file, ?int $resolvedUserId) {
                 $filenameBase = $resolvedUserId ?? time();
@@ -121,8 +122,9 @@ class ShopManuscriptService
 
             $absolutePath = $this->resolveFilePath($filepath);
 
-            // Konverter ikke-docx filer til docx via CloudConvert
-            if ($extension !== 'docx' && $absolutePath && file_exists($absolutePath)) {
+            // Konverter ikke-docx filer til docx via CloudConvert (kun ved test-opplasting, ikke bestilling)
+            $shouldConvert = ($options['convert_to_docx'] ?? true) && $extension !== 'docx';
+            if ($shouldConvert && $absolutePath && file_exists($absolutePath)) {
                 try {
                     $converter = new CloudConvertService();
                     $convertedPath = $converter->convertToDocx($absolutePath);
