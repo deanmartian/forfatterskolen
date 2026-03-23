@@ -291,15 +291,19 @@ class AdminHelpers
     {
         $encode_email = encrypt($to);
         $redirectLink = encrypt($redirect_link);
+        $loginUrl = route('auth.login.emailRedirect', [$encode_email, $redirectLink]);
+        $btnStyle = 'display:inline-block;padding:14px 32px;background-color:#862736;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:600;';
         $search_string = [
             ':firstname',
             ':redirect_link',
             ':end_redirect_link',
+            ':login_url',
         ];
         $replace_string = [
             $first_name,
-            "<a href='".route('auth.login.emailRedirect', [$encode_email, $redirectLink])."'>",
+            "<a href='{$loginUrl}' style='{$btnStyle}'>",
             '</a>',
+            $loginUrl,
         ];
 
         return str_replace($search_string, $replace_string, $email_content);
