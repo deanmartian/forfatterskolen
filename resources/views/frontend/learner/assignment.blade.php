@@ -774,8 +774,16 @@
 					@php
 						$manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first();
 						$extension = $manuscript ? explode('.', basename($manuscript->filename)) : '';
+						// Skip oppgaver uten redaktør (redigeringswebinarer)
+						$skipExpired = false;
+						if ($manuscript && $manuscript->editor_id == 0) $skipExpired = true;
+						// Skip oppgaver som har tilgjengelig feedback (vises under Tilbakemelding fra redaktør)
+						if ($manuscript) {
+							$expFb = \App\AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript->id)->where('is_active', 1)->first();
+							if ($expFb && (!$expFb->availability || date('Y-m-d') >= $expFb->availability)) $skipExpired = true;
+						}
 					@endphp
-					@if($manuscript)
+					@if($manuscript && !$skipExpired)
 						<div class="op-sub-item">
 							<span class="op-sub-item__dot op-sub-item__dot--done"></span>
 							<div class="op-sub-item__info">
