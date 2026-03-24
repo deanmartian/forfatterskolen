@@ -1,35 +1,164 @@
 @extends('frontend.layout')
 
 @section('title')
-<title>Thank You &rsaquo; Forfatterskolen</title>
+<title>Takk for bestillingen › Forfatterskolen</title>
 @stop
 
 @section('content')
-{{-- data-bg="https://www.forfatterskolen.no/images-new/thankyou-bg.png" --}}
-	<div class="thank-you-page" >
-		<div class="container">
-			<div class="row">
+<style>
+@@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@@keyframes checkPop { 0% { transform: scale(0) rotate(-45deg); } 60% { transform: scale(1.2) rotate(0); } 100% { transform: scale(1) rotate(0); } }
+@@keyframes confetti1 { 0% { transform: translateY(0) rotate(0); opacity:1; } 100% { transform: translateY(-80px) translateX(30px) rotate(360deg); opacity:0; } }
+@@keyframes confetti2 { 0% { transform: translateY(0) rotate(0); opacity:1; } 100% { transform: translateY(-60px) translateX(-25px) rotate(-270deg); opacity:0; } }
+@@keyframes confetti3 { 0% { transform: translateY(0) rotate(0); opacity:1; } 100% { transform: translateY(-90px) translateX(15px) rotate(200deg); opacity:0; } }
+@@keyframes confetti4 { 0% { transform: translateY(0) rotate(0); opacity:1; } 100% { transform: translateY(-70px) translateX(-40px) rotate(310deg); opacity:0; } }
+@@keyframes slideRight { from { width: 0; } to { width: 33.3%; } }
+@@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(134,39,54,0.3); } 50% { box-shadow: 0 0 0 12px rgba(134,39,54,0); } }
+@@keyframes stepIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+@@keyframes dotBounce1 { 0%,80%,100% { transform: scale(0); } 40% { transform: scale(1); } }
+@@keyframes dotBounce2 { 0%,80%,100% { transform: scale(0); } 50% { transform: scale(1); } }
+@@keyframes dotBounce3 { 0%,80%,100% { transform: scale(0); } 60% { transform: scale(1); } }
 
-				<?php
-					$header = trans('site.thankyou-page.pay-later.title');
-					$message = trans('site.thankyou-page.pay-later.description');
-					$button = '<a class="btn buy-btn" href="'.route('learner.course').'">
-	<i class="fa fa-graduation-cap"></i>&nbsp;&nbsp;&nbsp;Se på mine kurs</a>';
-				?>
+.ty-anim1 { animation: fadeInUp 0.6s ease both; }
+.ty-anim2 { animation: fadeInUp 0.6s ease 0.2s both; }
+.ty-anim3 { animation: fadeInUp 0.6s ease 0.4s both; }
+.ty-anim4 { animation: fadeInUp 0.6s ease 0.6s both; }
+.ty-anim5 { animation: fadeInUp 0.6s ease 0.8s both; }
+.ty-step { animation: stepIn 0.5s ease both; }
+.ty-step:nth-child(1) { animation-delay: 0.6s; }
+.ty-step:nth-child(2) { animation-delay: 0.9s; }
+.ty-step:nth-child(3) { animation-delay: 1.2s; }
+.ty-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 20px 24px; }
 
-				<div class="col-sm-6 left-container">
-					{{-- <img src="{{ asset('images-new/thumb-icon.png') }}" alt="" class="thumb"> --}}
-					<h1>{{ $header }}</h1>
-					<p>
-						{!! $message !!}
-					</p>
-					{!! $button !!}
-				</div>
+@@media (max-width: 640px) {
+    .ty-bottom { flex-direction: column !important; }
+}
+</style>
 
-				<div class="col-sm-6 right-container">
-					<img src="{{ asset('images-new/thankyou-hero.png') }}" alt="">
-				</div>
-			</div>
-		</div>
-	</div>
+<div style="max-width: 680px; margin: 0 auto; padding: 40px 20px;">
+
+    {{-- ════════ SUKSESS-HEADER MED KONFETTI ════════ --}}
+    <div class="ty-anim1" style="text-align: center; margin-bottom: 28px; position: relative;">
+
+        {{-- Konfetti-partikler --}}
+        <div style="position: absolute; top: 10px; left: 50%; margin-left: -70px;">
+            <div style="position:absolute; width:8px; height:8px; background:#862736; border-radius:2px; animation:confetti1 1.5s ease 0.8s both;"></div>
+            <div style="position:absolute; left:20px; width:6px; height:10px; background:#D4A574; border-radius:2px; animation:confetti2 1.3s ease 0.9s both;"></div>
+            <div style="position:absolute; left:-15px; top:5px; width:7px; height:7px; background:#5DCAA5; border-radius:50%; animation:confetti3 1.4s ease 1s both;"></div>
+            <div style="position:absolute; left:110px; width:6px; height:9px; background:#ED93B1; border-radius:2px; animation:confetti1 1.6s ease 1.1s both;"></div>
+            <div style="position:absolute; left:90px; top:3px; width:8px; height:6px; background:#85B7EB; border-radius:2px; animation:confetti2 1.2s ease 0.7s both;"></div>
+            <div style="position:absolute; left:130px; top:-5px; width:5px; height:8px; background:#FAC775; border-radius:50%; animation:confetti3 1.5s ease 0.85s both;"></div>
+            <div style="position:absolute; left:-30px; top:-8px; width:7px; height:5px; background:#AFA9EC; border-radius:2px; animation:confetti4 1.4s ease 0.95s both;"></div>
+            <div style="position:absolute; left:60px; top:-10px; width:5px; height:7px; background:#97C459; border-radius:2px; animation:confetti4 1.7s ease 1.05s both;"></div>
+        </div>
+
+        {{-- Gronn hake --}}
+        <div style="display:inline-flex; align-items:center; justify-content:center; width:64px; height:64px; border-radius:50%; background:#E8F5E9; margin-bottom:12px; animation:checkPop 0.6s ease 0.3s both;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+        </div>
+
+        <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Takk for bestillingen!</h1>
+        <p style="margin: 6px 0 0; font-size: 14px; color: #999;">
+            Bekreftelse sendt til <strong>{{ Auth::user()->email ?? '' }}</strong>
+        </p>
+    </div>
+
+    {{-- ════════ ORDREBEKREFTELSE ════════ --}}
+    <div class="ty-card ty-anim2" style="margin-bottom: 16px;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 1px; color: #999; margin-bottom: 12px;">ORDREBEKREFTELSE</div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 14px;">
+            <span style="color: #999;">Status:</span>
+            <span style="display: flex; align-items: center; gap: 4px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                <span style="color: #2E7D32; font-size: 13px;">Bestilling registrert</span>
+            </span>
+
+            <span style="color: #999;">Dato:</span>
+            <span>{{ now()->translatedFormat('j. F Y') }}</span>
+        </div>
+
+        {{-- Faktura-info --}}
+        <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #eee; display: flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+            <span style="font-size: 13px; color: #999;">Du vil motta informasjon om betalingsmuligheter per e-post.</span>
+        </div>
+    </div>
+
+    {{-- ════════ HVA SKJER NA — STEPPER ════════ --}}
+    <div class="ty-card ty-anim3" style="margin-bottom: 16px;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: 1px; color: #999; margin-bottom: 16px;">HVA SKJER NÅ?</div>
+
+        {{-- Progress bar 33% --}}
+        <div style="height: 3px; background: #eee; border-radius: 3px; margin-bottom: 20px; overflow: hidden;">
+            <div style="height: 100%; background: #862736; border-radius: 3px; animation: slideRight 1.5s ease 1s both;"></div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+
+            {{-- Steg 1: Bestilling mottatt --}}
+            <div class="ty-step" style="display: flex; gap: 14px;">
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:50%; background:#2E7D32; display:flex; align-items:center; justify-content:center;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div>
+                    <div style="font-size: 14px; font-weight: 600;">Bestilling mottatt</div>
+                    <p style="font-size: 12px; margin: 4px 0 0; line-height: 1.5; color: #999;">Din plass på kurset er reservert.</p>
+                </div>
+            </div>
+
+            {{-- Steg 2: Velg betalingslosning (aktiv, animert) --}}
+            <div class="ty-step" style="display: flex; gap: 14px;">
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:50%; background:#862736; display:flex; align-items:center; justify-content:center;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+                </div>
+                <div>
+                    <div style="font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        Velg betalingsløsning
+                        <span style="display: inline-flex; gap: 3px;">
+                            <span style="width:4px; height:4px; border-radius:50%; background:#862736; animation:dotBounce1 1.4s infinite;"></span>
+                            <span style="width:4px; height:4px; border-radius:50%; background:#862736; animation:dotBounce2 1.4s infinite;"></span>
+                            <span style="width:4px; height:4px; border-radius:50%; background:#862736; animation:dotBounce3 1.4s infinite;"></span>
+                        </span>
+                    </div>
+                    <p style="font-size: 12px; margin: 4px 0 0; line-height: 1.5; color: #999;">Gå til Min side for å velge betalingsplan — Vipps, faktura eller delbetaling.</p>
+                </div>
+            </div>
+
+            {{-- Steg 3: Kursstart --}}
+            <div class="ty-step" style="display: flex; gap: 14px;">
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:50%; background:#f5f5f5; border:1.5px solid #ddd; display:flex; align-items:center; justify-content:center; color:#999; font-weight:600; font-size:14px;">3</div>
+                <div>
+                    <div style="font-size: 14px; font-weight: 600;">Kursstart</div>
+                    <p style="font-size: 12px; margin: 4px 0 0; line-height: 1.5; color: #999;">Når betalingen er i orden, får du full tilgang til kurset og alt materialet.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {{-- ════════ SITAT ════════ --}}
+    <div class="ty-anim4" style="text-align: center; padding: 16px 20px; margin-bottom: 16px; font-style: italic; font-size: 14px; color: #999; line-height: 1.6;">
+        «Vi gleder oss til å ha deg med på kurset!»
+    </div>
+
+    {{-- ════════ BUNN: KONTAKT + CTA ════════ --}}
+    <div class="ty-anim5 ty-bottom" style="display: flex; gap: 12px; align-items: stretch;">
+        <div style="flex: 1; background: #f8f8f8; border-radius: 10px; padding: 14px 18px; text-align: center;">
+            <div style="font-size: 12px; color: #999; margin-bottom: 4px;">Spørsmål?</div>
+            <div style="font-size: 13px;">
+                <a href="mailto:post@forfatterskolen.no" style="color: inherit; text-decoration: none;">post@forfatterskolen.no</a>
+            </div>
+        </div>
+
+        <a href="{{ route('learner.course') }}"
+           style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; background: #862736; color: white; border-radius: 10px; padding: 14px 18px; text-decoration: none; font-size: 14px; font-weight: 600; animation: pulse 2s ease-in-out 2s infinite; transition: transform 0.15s;"
+           onmouseover="this.style.transform='scale(1.02)'"
+           onmouseout="this.style.transform=''">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+            Se på mine kurs
+        </a>
+    </div>
+
+</div>
 @stop
