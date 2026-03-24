@@ -345,6 +345,21 @@
 
                 {{-- Login form --}}
                 <div id="panel-login" style="display: none;">
+                    {{-- Magic link --}}
+                    <div id="magicLinkSection" style="margin-bottom: 16px;">
+                        <div class="co-form-group">
+                            <label>E-post</label>
+                            <input type="email" id="magicLinkEmail" placeholder="ola@eksempel.no" value="{{ old('email') }}">
+                        </div>
+                        <button type="button" onclick="sendMagicLink()" id="magicLinkBtn"
+                            style="width:100%;padding:0.7rem;background:#f8f4f0;border:1.5px solid #862736;color:#862736;border-radius:8px;font-size:0.85rem;font-weight:600;cursor:pointer;margin-bottom:8px;transition:all 0.2s;">
+                            ✉️ Send meg innloggingslenke
+                        </button>
+                        <div id="magicLinkMsg" style="display:none;font-size:0.8rem;text-align:center;padding:8px;border-radius:6px;margin-bottom:12px;"></div>
+                    </div>
+
+                    <div class="co-divider" style="margin: 12px 0;">eller med passord</div>
+
                     <form method="POST" action="{{ route('frontend.login.checkout.store') }}">
                         @csrf
                         <div class="co-form-group">
@@ -928,5 +943,38 @@
     showCouponField(new Event('click'));
     setTimeout(applyCoupon, 500);
     @endif
+
+    function sendMagicLink() {
+        var email = document.getElementById('magicLinkEmail').value;
+        var btn = document.getElementById('magicLinkBtn');
+        var msg = document.getElementById('magicLinkMsg');
+
+        if (!email) { msg.style.display = 'block'; msg.style.background = '#fde8e8'; msg.style.color = '#862736'; msg.textContent = 'Skriv inn e-postadressen din'; return; }
+
+        btn.disabled = true;
+        btn.textContent = 'Sender...';
+
+        fetch('{{ route("auth.magic-link.send") }}', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json'},
+            body: JSON.stringify({ email: email })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            msg.style.display = 'block';
+            msg.style.background = '#e8f5e9';
+            msg.style.color = '#2e7d32';
+            msg.textContent = 'Innloggingslenke sendt til ' + email + '. Sjekk innboksen din.';
+            btn.textContent = 'Sendt ✓';
+        })
+        .catch(function() {
+            msg.style.display = 'block';
+            msg.style.background = '#fde8e8';
+            msg.style.color = '#862736';
+            msg.textContent = 'Kunne ikke sende lenke. Prøv igjen.';
+            btn.disabled = false;
+            btn.textContent = '✉️ Send meg innloggingslenke';
+        });
+    }
 </script>
 @stop
