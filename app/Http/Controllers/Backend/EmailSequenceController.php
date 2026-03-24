@@ -55,15 +55,22 @@ class EmailSequenceController extends Controller
         $request->validate([
             'subject' => 'required|string|max:255',
             'body_html' => 'required|string',
-            'delay_hours' => 'required|integer|min:0',
+            'delay_hours' => 'nullable|integer|min:0',
+            'scheduled_date' => 'nullable|date',
             'from_type' => 'required|in:transactional,newsletter',
         ]);
 
         $step = EmailSequenceStep::findOrFail($stepId);
-        $step->update($request->only([
+        $data = $request->only([
             'subject', 'body_html', 'delay_hours', 'send_time',
-            'from_type', 'only_without_active_course',
-        ]));
+            'scheduled_date', 'from_type', 'only_without_active_course',
+        ]);
+        if (!empty($data['scheduled_date'])) {
+            $data['delay_hours'] = 0;
+        } else {
+            $data['scheduled_date'] = null;
+        }
+        $step->update($data);
 
         return redirect()->route('admin.crm.sequences.show', $id)->with('success', 'Steg oppdatert.');
     }
@@ -73,15 +80,23 @@ class EmailSequenceController extends Controller
         $request->validate([
             'subject' => 'required|string|max:255',
             'body_html' => 'required|string',
-            'delay_hours' => 'required|integer|min:0',
+            'delay_hours' => 'nullable|integer|min:0',
+            'scheduled_date' => 'nullable|date',
             'from_type' => 'required|in:transactional,newsletter',
         ]);
 
         $sequence = EmailSequence::findOrFail($id);
         $maxStep = $sequence->steps()->max('step_number') ?? 0;
 
+        $data = $request->only(['subject', 'body_html', 'delay_hours', 'send_time', 'scheduled_date', 'from_type', 'only_without_active_course']);
+        if (!empty($data['scheduled_date'])) {
+            $data['delay_hours'] = 0;
+        } else {
+            $data['scheduled_date'] = null;
+        }
+
         EmailSequenceStep::create(array_merge(
-            $request->only(['subject', 'body_html', 'delay_hours', 'send_time', 'from_type', 'only_without_active_course']),
+            $data,
             [
                 'sequence_id' => $sequence->id,
                 'step_number' => $maxStep + 1,

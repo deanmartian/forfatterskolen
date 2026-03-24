@@ -9,7 +9,7 @@ class EmailSequenceStep extends Model
 {
     protected $fillable = [
         'sequence_id', 'step_number', 'subject', 'body_html',
-        'delay_hours', 'send_time', 'from_type', 'only_without_active_course',
+        'delay_hours', 'send_time', 'scheduled_date', 'from_type', 'only_without_active_course',
     ];
 
     protected $casts = [
