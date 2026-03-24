@@ -164,7 +164,40 @@
             @endif
 
             <h3>Om webinaret</h3>
-            <p>{!! nl2br(e($freeWebinar->description)) !!}</p>
+            <p style="font-size: 15px; color: #444; line-height: 1.7;">
+                Gro Dahle er en av Norges mest elskede forfattere. I dette webinaret deler hun sine beste tips for hvordan du skaper karakterer som lever og puster — karakterer leseren ikke glemmer.
+            </p>
+            <p style="font-size: 15px; color: #444; line-height: 1.7; margin-top: 16px;"><strong>Du vil lære:</strong></p>
+            <ul style="font-size: 15px; color: #444; line-height: 1.9; padding-left: 20px;">
+                <li>Hvordan bygge en karakter som bærer en hel historie</li>
+                <li>Intuitive og analytiske teknikker du kan bruke med en gang</li>
+                <li>Hvordan gi karakteren stemme, vilje og liv</li>
+            </ul>
+
+            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #eee;">
+                <h3>Nå har vi et konkret spørsmål til deg:</h3>
+                <p style="font-size: 15px; color: #444; line-height: 1.7;">
+                    Har du en romanidé du ikke helt får tak på — eller et manus du vil løfte til et høyere nivå?
+                </p>
+                <p style="font-size: 15px; color: #444; line-height: 1.7; margin-top: 12px;">
+                    20. april sparker vi i gang et nytt <strong>10 ukers intensivt romankurs</strong>, der du får lære og komme tett på noen av landets mest erfarne forfattere:
+                    <strong>Trude Marstein, Gro Dahle, Bjarte Breiteig og Rolf Enger.</strong>
+                </p>
+                <p style="font-size: 15px; color: #444; line-height: 1.7; margin-top: 12px;">
+                    Dette er ikke et kurs du bare «tar».<br>
+                    Det er et kurs du <strong>skriver deg gjennom.</strong>
+                </p>
+                <p style="font-size: 15px; color: #444; line-height: 1.7; margin-top: 16px;"><strong>Du får:</strong></p>
+                <ul style="font-size: 15px; color: #444; line-height: 1.9; padding-left: 20px;">
+                    <li>En tydelig struktur om hvordan du går fra idé til ferdig førsteutkast</li>
+                    <li>Ukentlige webinarer med undervisning og mulighet for spørsmål (til forfatterne — og oss)</li>
+                    <li>Profesjonell tilbakemelding på teksten din</li>
+                    <li>Et skrivemiljø som hjelper deg videre (og varer lenge etter at kurset er ferdig)</li>
+                </ul>
+                <p style="font-size: 15px; color: #444; line-height: 1.7; margin-top: 16px;">
+                    I løpet av 10 uker bygger du, eller bearbeider, romanen din — steg for steg, med veiledning fra folk som virkelig kan faget.
+                </p>
+            </div>
         </div>
 
         {{-- CTA: Romankurs --}}
