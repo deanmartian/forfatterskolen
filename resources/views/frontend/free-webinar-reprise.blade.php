@@ -148,7 +148,7 @@
             @endif
         </div>
 
-        {{-- Presenter + beskrivelse --}}
+        {{-- Om webinaret --}}
         <div class="reprise-description">
             @php $presenter = $freeWebinar->webinar_presenters->first(); @endphp
             @if($presenter)
@@ -167,62 +167,73 @@
             <p style="font-size: 15px; color: #444; line-height: 1.7;">
                 Gro Dahle er en av Norges mest elskede forfattere. I dette webinaret deler hun sine beste tips for hvordan du skaper karakterer som lever og puster — karakterer leseren ikke glemmer.
             </p>
-            <p style="font-size: 15px; color: #444; line-height: 1.7; margin-top: 16px;"><strong>Du vil lære:</strong></p>
-            <ul style="font-size: 15px; color: #444; line-height: 1.9; padding-left: 20px;">
-                <li>Hvordan bygge en karakter som bærer en hel historie</li>
-                <li>Intuitive og analytiske teknikker du kan bruke med en gang</li>
-                <li>Hvordan gi karakteren stemme, vilje og liv</li>
-            </ul>
 
-            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #eee;">
-                <h3>Nå har vi et konkret spørsmål til deg:</h3>
-                <p style="font-size: 15px; color: #444; line-height: 1.7;">
-                    Har du en romanidé du ikke helt får tak på — eller et manus du vil løfte til et høyere nivå?
-                </p>
-                <p style="font-size: 15px; color: #444; line-height: 1.7; margin-top: 12px;">
-                    20. april sparker vi i gang et nytt <strong>10 ukers intensivt romankurs</strong>, der du får lære og komme tett på noen av landets mest erfarne forfattere:
-                    <strong>Trude Marstein, Gro Dahle, Bjarte Breiteig og Rolf Enger.</strong>
-                </p>
-                <p style="font-size: 15px; color: #444; line-height: 1.7; margin-top: 12px;">
-                    Dette er ikke et kurs du bare «tar».<br>
-                    Det er et kurs du <strong>skriver deg gjennom.</strong>
-                </p>
-                <p style="font-size: 15px; color: #444; line-height: 1.7; margin-top: 16px;"><strong>Du får:</strong></p>
-                <ul style="font-size: 15px; color: #444; line-height: 1.9; padding-left: 20px;">
-                    <li>En tydelig struktur om hvordan du går fra idé til ferdig førsteutkast</li>
-                    <li>Ukentlige webinarer med undervisning og mulighet for spørsmål (til forfatterne — og oss)</li>
-                    <li>Profesjonell tilbakemelding på teksten din</li>
-                    <li>Et skrivemiljø som hjelper deg videre (og varer lenge etter at kurset er ferdig)</li>
-                </ul>
-                <p style="font-size: 15px; color: #444; line-height: 1.7; margin-top: 16px;">
-                    I løpet av 10 uker bygger du, eller bearbeider, romanen din — steg for steg, med veiledning fra folk som virkelig kan faget.
-                </p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                <div style="display:flex;align-items:center;gap:12px;background:#f8f4f0;border-radius:8px;padding:14px 18px;border-left:3px solid #862736;">
+                    <span style="font-size:20px;">🎭</span>
+                    <span style="font-size:15px;color:#333;">Hvordan bygge en karakter som bærer en hel historie</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;background:#f8f4f0;border-radius:8px;padding:14px 18px;border-left:3px solid #D4A574;">
+                    <span style="font-size:20px;">🧠</span>
+                    <span style="font-size:15px;color:#333;">Intuitive og analytiske teknikker du kan bruke med en gang</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;background:#f8f4f0;border-radius:8px;padding:14px 18px;border-left:3px solid #5DCAA5;">
+                    <span style="font-size:20px;">✍️</span>
+                    <span style="font-size:15px;color:#333;">Hvordan gi karakteren stemme, vilje og liv</span>
+                </div>
             </div>
         </div>
 
-        {{-- CTA: Romankurs --}}
-        <div class="reprise-cta" style="text-align: left;">
-            <h3 style="text-align: center;">Har du en romanidé du ikke helt får tak på?</h3>
-            <p style="text-align: center; margin-bottom: 24px;">20. april sparker vi i gang et nytt <strong>10 ukers intensivt romankurs</strong>, der du får lære og komme tett på noen av landets mest erfarne forfattere:</p>
-            <p style="text-align: center; font-size: 17px; font-weight: 600; color: #1a1a1a; margin-bottom: 24px;">
-                Trude Marstein, Gro Dahle, Bjarte Breiteig og Rolf Enger.
+        {{-- Romankurs-pitch --}}
+        <div style="background:linear-gradient(135deg,#fdf8f0,#fff);border-radius:12px;padding:32px;margin-bottom:32px;border:1px solid #e8ddd0;">
+            <h3 style="font-family:Georgia,serif;font-size:22px;color:#862736;margin:0 0 8px;text-align:center;">Har du en romanidé du ikke helt får tak på?</h3>
+            <p style="font-size:15px;color:#666;text-align:center;margin:0 0 24px;">Eller et manus du vil løfte til et høyere nivå?</p>
+
+            <div style="background:#fff;border-radius:10px;padding:24px;border-left:4px solid #862736;margin-bottom:24px;">
+                <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 12px;">
+                    <strong style="color:#862736;">20. april</strong> sparker vi i gang et nytt <strong>10 ukers intensivt romankurs</strong>, der du får lære og komme tett på noen av landets mest erfarne forfattere:
+                </p>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;">
+                    <span style="background:#862736;color:#fff;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:600;">Trude Marstein</span>
+                    <span style="background:#862736;color:#fff;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:600;">Gro Dahle</span>
+                    <span style="background:#862736;color:#fff;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:600;">Bjarte Breiteig</span>
+                    <span style="background:#862736;color:#fff;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:600;">Rolf Enger</span>
+                </div>
+            </div>
+
+            <p style="font-size:16px;color:#444;line-height:1.7;font-style:italic;text-align:center;margin:0 0 24px;">
+                Dette er ikke et kurs du bare «tar».<br>
+                Det er et kurs du <strong style="font-style:normal;">skriver deg gjennom.</strong>
             </p>
 
-            <p style="font-size: 15px; color: #444; line-height: 1.7; margin-bottom: 8px;">Dette er ikke et kurs du bare «tar».<br>Det er et kurs du <strong>skriver deg gjennom</strong>.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+                <div style="background:#fff;border-radius:10px;padding:16px;text-align:center;border:1px solid #eee;">
+                    <div style="font-size:24px;margin-bottom:6px;">✍️</div>
+                    <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Fra idé til førsteutkast</div>
+                    <div style="font-size:12px;color:#888;margin-top:4px;">Steg for steg med veiledning</div>
+                </div>
+                <div style="background:#fff;border-radius:10px;padding:16px;text-align:center;border:1px solid #eee;">
+                    <div style="font-size:24px;margin-bottom:6px;">📹</div>
+                    <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Ukentlige webinarer</div>
+                    <div style="font-size:12px;color:#888;margin-top:4px;">Med forfatterne — still spørsmål</div>
+                </div>
+                <div style="background:#fff;border-radius:10px;padding:16px;text-align:center;border:1px solid #eee;">
+                    <div style="font-size:24px;margin-bottom:6px;">📝</div>
+                    <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Profesjonell tilbakemelding</div>
+                    <div style="font-size:12px;color:#888;margin-top:4px;">På teksten din fra redaktør</div>
+                </div>
+                <div style="background:#fff;border-radius:10px;padding:16px;text-align:center;border:1px solid #eee;">
+                    <div style="font-size:24px;margin-bottom:6px;">🤝</div>
+                    <div style="font-size:13px;font-weight:600;color:#1a1a1a;">Skrivemiljø som varer</div>
+                    <div style="font-size:12px;color:#888;margin-top:4px;">Lenge etter kurset er ferdig</div>
+                </div>
+            </div>
 
-            <p style="font-size: 15px; color: #444; line-height: 1.7; margin-bottom: 4px;"><strong>Du får:</strong></p>
-            <ul style="font-size: 15px; color: #444; line-height: 1.9; margin-bottom: 24px; padding-left: 20px;">
-                <li>En tydelig struktur om hvordan du går fra idé til ferdig førsteutkast.</li>
-                <li>Ukentlige webinarer med undervisning og mulighet for spørsmål</li>
-                <li>Profesjonell tilbakemelding på teksten din.</li>
-                <li>Et skrivemiljø som hjelper deg videre (og varer lenge etter at kurset er ferdig)</li>
-            </ul>
-
-            <div style="text-align: center;">
-                <a href="/course/121" class="reprise-cta-btn" style="font-size: 17px; padding: 16px 40px;">
+            <div style="text-align:center;">
+                <a href="/course/121" class="reprise-cta-btn" style="font-size:17px;padding:16px 40px;box-shadow:0 4px 15px rgba(134,39,54,0.3);">
                     Les mer og bestill →
                 </a>
-                <p style="font-size: 13px; color: #888; margin-top: 12px;">Earlybird-pris til 1. april — spar kr 5 500</p>
+                <p style="font-size:13px;color:#888;margin-top:12px;">🏷️ Earlybird-pris til 1. april — <strong style="color:#862736;">spar kr 5 500</strong></p>
             </div>
         </div>
     </div>
