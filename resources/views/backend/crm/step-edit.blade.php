@@ -75,7 +75,16 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Lagre endringer</button>
+        <button type="button" class="btn btn-outline-secondary ml-2" onclick="togglePreview()">Forhåndsvisning</button>
     </form>
+
+    <div id="emailPreview" style="display:none; margin-top:20px;">
+        <h4>Forhåndsvisning</h4>
+        <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:8px;padding:20px;max-width:700px;">
+            <div id="previewSubject" style="font-weight:bold;font-size:16px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #ddd;"></div>
+            <div id="previewBody"></div>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -117,5 +126,16 @@ tinymce.init({
         });
     }
 });
+
+function togglePreview() {
+    var preview = document.getElementById('emailPreview');
+    if (preview.style.display === 'none') {
+        preview.style.display = 'block';
+        document.getElementById('previewSubject').textContent = document.querySelector('input[name="subject"]').value;
+        document.getElementById('previewBody').innerHTML = tinymce.get('body_html').getContent();
+    } else {
+        preview.style.display = 'none';
+    }
+}
 </script>
 @stop
