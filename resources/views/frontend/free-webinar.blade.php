@@ -672,6 +672,14 @@
                 <form action="{{ route('front.free-webinar.submit', $freeWebinar->id) }}" method="POST">
                     @csrf
                     <div class="fw-form-group">
+                        <label>Fornavn</label>
+                        <input type="text" name="first_name" placeholder="Ola" required value="{{ old('first_name') }}">
+                    </div>
+                    <div class="fw-form-group">
+                        <label>Etternavn</label>
+                        <input type="text" name="last_name" placeholder="Nordmann" required value="{{ old('last_name') }}">
+                    </div>
+                    <div class="fw-form-group">
                         <label>E-post</label>
                         <input type="email" name="email" placeholder="ola@eksempel.no" required value="{{ old('email') }}">
                     </div>

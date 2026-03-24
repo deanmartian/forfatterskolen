@@ -1282,6 +1282,13 @@ class HomeController extends Controller
         }
 
         if ($request->isMethod('post')) {
+            // Auto-fyll fra innlogget bruker hvis feltene mangler
+            if (\Auth::check()) {
+                $user = \Auth::user();
+                if (!$request->first_name) $request->merge(['first_name' => $user->first_name]);
+                if (!$request->last_name) $request->merge(['last_name' => $user->last_name]);
+                if (!$request->email) $request->merge(['email' => $user->email]);
+            }
             $request->validate(['email' => 'required|email', 'first_name' => 'required', 'last_name' => 'required']);
 
             $url = config('services.big_marker.register_link');
