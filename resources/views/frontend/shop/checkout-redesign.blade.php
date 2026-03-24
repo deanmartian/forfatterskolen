@@ -228,11 +228,8 @@
         {{-- Feilmeldinger --}}
         @if($errors->any())
             <div class="co-error">
-                <ul>
-                    @foreach($errors->all() as $error)
-                        <li>{!! $error !!}</li>
-                    @endforeach
-                </ul>
+                <p style="font-weight:600;margin:0 0 4px;">Vennligst fyll ut alle feltene under for å bestille.</p>
+                <p style="margin:0;font-size:0.78rem;">Har du allerede konto? Klikk «Logg inn» lenger ned.</p>
             </div>
         @endif
 
@@ -810,13 +807,7 @@
             .then(function(r) {
                 if (r.status === 422) {
                     return r.json().then(function(errors) {
-                        var errorHtml = '<div class="co-error"><ul>';
-                        Object.values(errors).forEach(function(msgs) {
-                            (Array.isArray(msgs) ? msgs : [msgs]).forEach(function(m) {
-                                errorHtml += '<li>' + m + '</li>';
-                            });
-                        });
-                        errorHtml += '</ul></div>';
+                        var errorHtml = '<div class="co-error"><p style="font-weight:600;margin:0 0 4px;">Vennligst fyll ut alle feltene for å bestille.</p><p style="margin:0;font-size:0.78rem;">Har du allerede konto? Klikk «Logg inn» lenger ned.</p></div>';
                         var existing = document.querySelector('.co-error');
                         if (existing) existing.remove();
                         document.querySelector('.co-main').insertAdjacentHTML('afterbegin', errorHtml);

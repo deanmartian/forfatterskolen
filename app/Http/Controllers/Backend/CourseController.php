@@ -1608,4 +1608,47 @@ class CourseController extends Controller
             'message' => 'Kurset «' . $course->title . '» er opprettet med ' . count($request->input('modules')) . ' moduler (inaktivt).',
         ]);
     }
+
+    /**
+     * Auto-kategoriser leksjoner basert på tittel
+     */
+    public function autoCategorizeLessons($courseId)
+    {
+        $course = Course::findOrFail($courseId);
+        $lessons = $course->lessons;
+        $updated = 0;
+
+        foreach ($lessons as $lesson) {
+            $title = strtolower($lesson->title);
+            $newType = null;
+
+            if (str_contains($title, 'reprise') || str_contains($title, 'opptak')) {
+                $newType = 'reprise';
+            } elseif (str_contains($title, 'modul') || str_contains($title, 'leksjon') || str_contains($title, 'steg') || str_contains($title, 'uke')) {
+                $newType = 'module';
+            } elseif (str_contains($title, 'kursplan') || str_contains($title, 'ressurs') || str_contains($title, 'velkommen') || str_contains($title, 'bonus') || str_contains($title, 'info')) {
+                $newType = 'resource';
+            } else {
+                $newType = 'resource';
+            }
+
+            if ($lesson->type !== $newType) {
+                $lesson->update(['type' => $newType]);
+                $updated++;
+            }
+        }
+
+        return response()->json(['success' => true, 'updated' => $updated]);
+    }
+
+    /**
+     * Oppdater leksjonstype
+     */
+    public function updateLessonType($courseId, $lessonId, Request $request)
+    {
+        $lesson = \App\Lesson::where('course_id', $courseId)->findOrFail($lessonId);
+        $lesson->update(['type' => $request->input('type')]);
+
+        return response()->json(['success' => true]);
+    }
 }

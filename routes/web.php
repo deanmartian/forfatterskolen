@@ -1174,6 +1174,8 @@ Route::domain($admin)->group(function () {
                 'destroy' => 'admin.lesson.destroy',
             ],
         ])->except('show');
+        Route::post('/course/{course_id}/auto-categorize-lessons', [Backend\CourseController::class, 'autoCategorizeLessons'])->name('admin.course.auto-categorize');
+        Route::post('/course/{course_id}/lesson/{lesson_id}/update-type', [Backend\CourseController::class, 'updateLessonType'])->name('admin.lesson.update-type');
         Route::post('/lesson/save_order', [Backend\LessonController::class, 'save_order'])->name('admin.lesson.save_order'); // Save lesson order
         Route::get('/lesson/download-document/{id}', [Backend\LessonController::class, 'downloadLessonDocument'])->name('admin.lesson.download-lesson-document');
         Route::delete('/lesson/delete-document/{id}', [Backend\LessonController::class, 'deleteLessonDocument'])->name('admin.lesson.delete-lesson-document');
