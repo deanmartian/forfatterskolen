@@ -518,7 +518,7 @@ class ShopController extends Controller
         }
 
         // Email to support
-        $from = 'postmail@forfatterskolen.no';
+        $from = 'post@forfatterskolen.no';
         $headers1 = 'From: Forfatterskolen<'.$from.">\r\n";
         $headers1 .= "MIME-Version: 1.0\r\n";
         $headers1 .= "Content-Type: text/html; charset=UTF-8\r\n";
@@ -562,7 +562,7 @@ class ShopController extends Controller
             asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
 
         dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
-            'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
+            'post@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
 
         if ($paymentMode->mode == 'Paypal') {
@@ -1497,7 +1497,7 @@ class ShopController extends Controller
         endif;*/
 
         // Email to support
-        $from = 'postmail@forfatterskolen.no';
+        $from = 'post@forfatterskolen.no';
         $headers1 = 'From: Forfatterskolen<'.$from.">\r\n";
         $headers1 .= "MIME-Version: 1.0\r\n";
         $headers1 .= "Content-Type: text/html; charset=UTF-8\r\n";
@@ -1541,11 +1541,11 @@ class ShopController extends Controller
 
         // mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
         /*AdminHelpers::send_email($package->course->title,
-            'postmail@forfatterskolen.no', $user_email,
+            'post@forfatterskolen.no', $user_email,
             view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')),
             'Forfatterskolen', $attachments);*/
         dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
-            'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
+            'post@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
 
         if ($paymentMode->mode == 'Paypal') {
@@ -1920,7 +1920,7 @@ class ShopController extends Controller
         endif;*/
 
         // Email to support
-        $from = 'postmail@forfatterskolen.no';
+        $from = 'post@forfatterskolen.no';
         $headers1 = 'From: Forfatterskolen<'.$from.">\r\n";
         $headers1 .= "MIME-Version: 1.0\r\n";
         $headers1 .= "Content-Type: text/html; charset=UTF-8\r\n";
@@ -1931,7 +1931,7 @@ class ShopController extends Controller
         // Send course email
         $actionText = 'Mine Kurs';
         $actionUrl = 'http://www.forfatterskolen.no/account/course';
-        $headers = "From: Forfatterskolen<postmail@forfatterskolen.no>\r\n";
+        $headers = "From: Forfatterskolen<post@forfatterskolen.no>\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         $user = Auth::user();
