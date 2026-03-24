@@ -517,20 +517,7 @@
                     </div>
                 </label>
 
-                <div id="sveaConfig" class="co-installment-config">
-                    <label>Antall måneder</label>
-                    <select id="sveaMonths" onchange="updateSvea()">
-                        <option value="6">6 mnd</option>
-                        <option value="12" selected>12 mnd</option>
-                        <option value="18">18 mnd</option>
-                        <option value="24">24 mnd</option>
-                        <option value="36">36 mnd</option>
-                    </select>
-                    <div class="co-installment-config__result" id="sveaResult"></div>
-                    <div style="font-size: 0.62rem; color: var(--co-text-muted); margin-top: 0.35rem; line-height: 1.4;">
-                        Kredittvurdering av Svea Finans. <a href="#" style="color: var(--co-wine); text-decoration: none;">Vilkår →</a>
-                    </div>
-                </div>
+                <div id="sveaConfig" class="co-installment-config" style="display:none;"></div>
             </div>
 
             <button class="co-submit-btn" id="submitBtn" onclick="handleSubmit()">
