@@ -193,6 +193,68 @@ class DownloadWebinarRecordings extends Command
             }
         }
 
+        // ── Gratiswebinarer (free_webinars) ──
+        $this->newLine();
+        $this->info('=== Gratiswebinarer ===');
+
+        $freeQuery = \App\FreeWebinar::where('start_date', '<', now())
+            ->where('start_date', '>', now()->subDays($days))
+            ->whereNotNull('gtwebinar_id')
+            ->where('gtwebinar_id', '!=', '')
+            ->whereNull('replay_url');
+
+        $freeWebinars = $freeQuery->get();
+        $this->info("Fant {$freeWebinars->count()} gratiswebinarer uten reprise.");
+
+        foreach ($freeWebinars as $fw) {
+            $conferenceId = $fw->gtwebinar_id;
+            $recordingUrl = $bigmarker->getRecordingUrl($conferenceId);
+
+            if (!$recordingUrl) {
+                $this->line("  — Ingen opptak ennå: {$fw->title}");
+                $skipped++;
+                continue;
+            }
+
+            if ($this->option('dry-run')) {
+                $this->info("  [DRY-RUN] Ville lastet opp: {$fw->title}");
+                $this->line("    Recording: {$recordingUrl}");
+                $downloaded++;
+                continue;
+            }
+
+            $this->info("  ⬇ Laster opp gratiswebinar: {$fw->title}");
+
+            try {
+                $wistia = app(WistiaService::class);
+                $videoName = "{$fw->title}";
+                $projectId = $this->getOrCreateWistiaProject($wistia, 'Gratiswebinarer');
+
+                $wistiaResult = $wistia->uploadFromUrl($recordingUrl, $videoName, $projectId);
+                $wistiaHashedId = $wistiaResult['hashed_id'] ?? null;
+
+                if (!$wistiaHashedId) {
+                    $this->error("  ❌ Wistia-opplasting feilet: {$fw->title}");
+                    $failed++;
+                    continue;
+                }
+
+                $wistiaEmbedUrl = "https://fast.wistia.net/embed/iframe/{$wistiaHashedId}?seo=true&videoFoam=true";
+                $fw->update(['replay_url' => $wistiaEmbedUrl]);
+
+                $this->info("  ✅ Reprise klar: {$fw->title} (Wistia: {$wistiaHashedId})");
+                $downloaded++;
+
+            } catch (\Exception $e) {
+                $this->error("  ❌ Feil: {$e->getMessage()}");
+                Log::error("Gratiswebinar recording feilet", [
+                    'free_webinar_id' => $fw->id,
+                    'error' => $e->getMessage(),
+                ]);
+                $failed++;
+            }
+        }
+
         $this->newLine();
         $this->table(
             ['Lastet ned', 'Hoppet over', 'Feilet'],
