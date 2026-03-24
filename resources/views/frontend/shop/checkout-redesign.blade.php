@@ -599,6 +599,10 @@
         document.querySelectorAll('.co-pay-option').forEach(function(o) { o.classList.remove('co-pay-option--selected'); });
         el.classList.add('co-pay-option--selected');
 
+        // Eksplisitt sett radio-knappen
+        var radio = el.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+
         document.getElementById('rentefriConfig').style.display = method === 'rentefri' ? 'block' : 'none';
         document.getElementById('sveaConfig').style.display = method === 'svea' ? 'block' : 'none';
 
