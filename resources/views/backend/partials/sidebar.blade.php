@@ -116,20 +116,6 @@
             </a>
         </li>
         <li>
-            <a href="{{ route('admin.helpwise.index') }}"
-               class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.helpwise') ? 'active' : '' }}">
-                <span class="ed-nav-item__icon"><i class="fa fa-comments"></i></span>
-                <span class="ed-nav-item__label">
-                    Helpwise CRM
-                    @php
-                        try { $openHelpwiseCount = \App\HelpwiseConversation::where('status', 'open')->count(); } catch(\Exception $e) { $openHelpwiseCount = 0; }
-                    @endphp
-                    @if($openHelpwiseCount > 0)
-                        <span class="badge" style="background: #f39c12; color: #fff; border-radius: 10px; font-size: 10px; padding: 2px 6px; margin-left: 4px;">{{ $openHelpwiseCount }}</span>
-                    @endif
-                </span>
-            </a>
-        </li>
         <li>
             <a href="{{ route('admin.inbox.index') }}"
                class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.inbox') ? 'active' : '' }}">
