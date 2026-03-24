@@ -624,6 +624,13 @@ class LearnerController extends Controller
             ->latest('lesson_contents.date')
             ->paginate(10);
 
+        // Parse [video src="..."] shortcodes til iframes i lesson_content
+        foreach ($replayWebinars as $replay) {
+            $replay->lesson_content = FrontendHelpers::parseShortcodes(
+                html_entity_decode($replay->lesson_content ?? '')
+            );
+        }
+
         $subscriptionWebinars = DB::table('courses_taken')
             ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
             ->join('courses', 'packages.course_id', '=', 'courses.id')
