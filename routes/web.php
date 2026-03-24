@@ -2143,6 +2143,13 @@ Route::domain($admin)->group(function () {
         Route::get('/strategist', [Backend\AdOsController::class, 'strategist'])->name('admin.ads.strategist');
     });
 
+    // Bilde-opplasting for TinyMCE
+    Route::post('/upload-image', function (\Illuminate\Http\Request $request) {
+        $request->validate(['file' => 'required|image|max:5120']);
+        $path = $request->file('file')->store('uploads/email-images', 'public');
+        return response()->json(['location' => asset('storage/' . $path)]);
+    })->name('admin.upload-image');
+
     // CRM & E-postsekvenser
     Route::prefix('crm')->group(function () {
         Route::get('/', [Backend\CrmController::class, 'index'])->name('admin.crm.index');

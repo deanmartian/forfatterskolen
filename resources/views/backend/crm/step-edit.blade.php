@@ -71,9 +71,29 @@ tinymce.init({
     selector: '#body_html',
     height: 400,
     menubar: false,
-    plugins: 'link code lists',
-    toolbar: 'undo redo | bold italic underline | link | bullist numlist | code',
-    content_style: 'body { font-family: Georgia, serif; font-size: 16px; }'
+    plugins: 'link code lists image',
+    toolbar: 'undo redo | bold italic underline | link image | bullist numlist | code',
+    content_style: 'body { font-family: Georgia, serif; font-size: 16px; }',
+    image_title: true,
+    automatic_uploads: true,
+    file_picker_types: 'image',
+    images_upload_handler: function (blobInfo) {
+        return new Promise(function (resolve, reject) {
+            var formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+            formData.append('_token', '{{ csrf_token() }}');
+            fetch('/admin/upload-image', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.location) resolve(data.location);
+                else reject('Opplasting feilet');
+            })
+            .catch(function() { reject('Opplasting feilet'); });
+        });
+    }
 });
 </script>
 @stop
