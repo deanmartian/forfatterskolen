@@ -136,6 +136,15 @@ class CrmController extends Controller
         ]);
 
         $oldEmail = $contact->email;
+
+        // Sjekk om ny e-post allerede finnes
+        if ($request->email !== $oldEmail) {
+            $existing = Contact::where('email', $request->email)->where('id', '!=', $contact->id)->first();
+            if ($existing) {
+                return back()->with('error', "E-postadressen {$request->email} er allerede registrert på kontakt #{$existing->id} ({$existing->fullName()}).");
+            }
+        }
+
         $contact->update($request->only(['email', 'first_name', 'last_name', 'phone']));
 
         // Oppdater også ventende e-poster i køen hvis e-post endret
