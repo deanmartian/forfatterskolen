@@ -19,6 +19,20 @@
             Vi håper du har fått inspirasjon til skrivingen din — og ønsker deg lykke til videre!
             Skulle du ombestemme deg, er du alltid velkommen tilbake.
         </p>
+
+        <div id="resubscribeSection">
+            <form method="POST" action="{{ route('newsletter.resubscribe') }}" style="margin-bottom: 16px;">
+                @csrf
+                <input type="hidden" name="email" value="{{ $email }}">
+                <button type="submit"
+                    style="display: inline-block; padding: 14px 32px; background-color: #fff; color: #862736; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; border: 2px solid #862736; cursor: pointer; transition: all 0.2s;"
+                    onmouseover="this.style.backgroundColor='#862736';this.style.color='#fff'"
+                    onmouseout="this.style.backgroundColor='#fff';this.style.color='#862736'">
+                    Meld meg på igjen →
+                </button>
+            </form>
+        </div>
+
         <a href="https://forfatterskolen.no"
            style="display: inline-block; padding: 14px 32px; background-color: #862736; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
             Til forsiden →

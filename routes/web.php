@@ -81,6 +81,7 @@ Route::domain($front)->group(function () {
         Route::get('/publishing', [Frontend\HomeController::class, 'publishing'])->name('front.publishing'); // Forlag page
         Route::get('/ombrekk-indiemoon', [Frontend\HomeController::class, 'ombrekkIndiemoon'])->name('front.ombrekk-indiemoon'); // Indiemoon ombrekk
         Route::get('/avmeld/{token}', [Frontend\HomeController::class, 'unsubscribeNewsletter'])->name('newsletter.unsubscribe');
+        Route::post('/paameld-igjen', [Frontend\HomeController::class, 'resubscribeNewsletter'])->name('newsletter.resubscribe');
         Route::get('/konkurranse', [Frontend\HomeController::class, 'competition'])->name('front.competition'); // Forlag page
         Route::get('/coaching-timer', [Frontend\HomeController::class, 'coachingTimer'])->name('front.coaching-timer'); // Coaching Timer Page
         Route::get('/coaching-timer/checkout/{plan}', [Frontend\HomeController::class, 'coachingTimerCheckout'])->name('front.coaching-timer-checkout'); // Coaching Timer Page

@@ -340,6 +340,22 @@ class HomeController extends Controller
         return view('frontend.unsubscribed', ['email' => $email]);
     }
 
+    public function resubscribeNewsletter(Request $request)
+    {
+        $email = $request->email;
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            abort(404);
+        }
+
+        $contact = \App\Models\Contact::where('email', $email)->first();
+        if ($contact) {
+            $contact->update(['unsubscribed_at' => null]);
+        }
+
+        return view('frontend.resubscribed', ['email' => $email]);
+    }
+
     /**
      * Display all blog
      *
