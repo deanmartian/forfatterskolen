@@ -680,36 +680,37 @@
                 </div>
                 @endif
 
-                <form action="{{ route('front.free-webinar.submit', $freeWebinar->id) }}" method="POST">
-                    @csrf
-                    <div class="fw-form-group">
-                        <label>Fornavn</label>
-                        <input type="text" name="first_name" placeholder="Ola" required value="{{ old('first_name') }}">
-                    </div>
-                    <div class="fw-form-group">
-                        <label>Etternavn</label>
-                        <input type="text" name="last_name" placeholder="Nordmann" required value="{{ old('last_name') }}">
-                    </div>
-                    <div class="fw-form-group">
-                        <label>E-post</label>
-                        <input type="email" name="email" placeholder="ola@eksempel.no" required value="{{ old('email') }}">
-                    </div>
-                    <div class="consent-group">
-                        <div class="consent-item">
-                            <input type="checkbox" name="consent_terms" required>
-                            <label>Jeg godtar <a href="/terms/all" target="_blank">vilk&aring;rene</a> og <a href="/privacy" target="_blank">personvernreglene</a>. *</label>
+                @if($freeWebinar->replay_url)
+                    <a href="{{ route('front.free-webinar-reprise', $freeWebinar->id) }}" class="reg-btn" style="display:block;text-align:center;text-decoration:none;margin-top:16px;">Se reprisen gratis &rarr;</a>
+                    <p style="font-size:13px;color:#888;text-align:center;margin-top:12px;">Ingen registrering nødvendig</p>
+                @else
+                    <form action="{{ route('front.free-webinar.submit', $freeWebinar->id) }}" method="POST">
+                        @csrf
+                        <div class="fw-form-group">
+                            <label>Fornavn</label>
+                            <input type="text" name="first_name" placeholder="Ola" required value="{{ old('first_name') }}">
                         </div>
-                        <div class="consent-item">
-                            <input type="checkbox" name="consent_marketing">
-                            <label>Jeg &oslash;nsker gratis skrivetips og info om kurs. (Valgfritt)</label>
+                        <div class="fw-form-group">
+                            <label>Etternavn</label>
+                            <input type="text" name="last_name" placeholder="Nordmann" required value="{{ old('last_name') }}">
                         </div>
-                    </div>
-                    @if($freeWebinar->replay_url)
-                        <a href="{{ route('front.free-webinar-reprise', $freeWebinar->id) }}" class="reg-btn" style="display:block;text-align:center;text-decoration:none;">Se reprisen gratis &rarr;</a>
-                    @else
+                        <div class="fw-form-group">
+                            <label>E-post</label>
+                            <input type="email" name="email" placeholder="ola@eksempel.no" required value="{{ old('email') }}">
+                        </div>
+                        <div class="consent-group">
+                            <div class="consent-item">
+                                <input type="checkbox" name="consent_terms" required>
+                                <label>Jeg godtar <a href="/terms/all" target="_blank">vilk&aring;rene</a> og <a href="/privacy" target="_blank">personvernreglene</a>. *</label>
+                            </div>
+                            <div class="consent-item">
+                                <input type="checkbox" name="consent_marketing">
+                                <label>Jeg &oslash;nsker gratis skrivetips og info om kurs. (Valgfritt)</label>
+                            </div>
+                        </div>
                         <button type="submit" class="reg-btn">Se reprisen gratis &rarr;</button>
-                    @endif
-                </form>
+                    </form>
+                @endif
             </div>
             @endif
         </div>
