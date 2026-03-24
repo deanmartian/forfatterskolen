@@ -832,6 +832,11 @@
                     window.location.href = data.redirect_link;
                 } else if (data && data.course_link) {
                     window.location.href = data.course_link;
+                } else if (typeof data === 'string' && data.indexOf('<') !== -1) {
+                    // Svea checkout snippet — vis i ny side
+                    document.open();
+                    document.write(data);
+                    document.close();
                 } else {
                     // Reload — user is now logged in
                     window.location.reload();
