@@ -75,10 +75,12 @@ class SendGraDahleReprise extends Command
 
         $this->info("Fant {$registrations->count()} registreringer for Gro Dahle-webinaret.");
 
-        // Finn elev-e-poster (kun gyldige, ikke-utløpte kurs)
+        // Finn elev-e-poster (kun aktive elever på kurs 17 med gyldig end_date)
+        $kurs17PackageIds = DB::table('packages')->where('course_id', 17)->pluck('id');
         $studentEmails = DB::table('courses_taken')
             ->join('users', 'courses_taken.user_id', '=', 'users.id')
             ->where('courses_taken.is_active', 1)
+            ->whereIn('courses_taken.package_id', $kurs17PackageIds)
             ->where(function ($q) {
                 $q->where('end_date', '>=', now())->orWhereNull('end_date');
             })
