@@ -40,6 +40,8 @@
                         <th>Emne</th>
                         <th>Forsinkelse</th>
                         <th>Tidspunkt</th>
+                        <th>Neste utsendelse</th>
+                        <th>I kø</th>
                         <th>Fra</th>
                         <th>Kun uten kurs</th>
                         <th></th>
@@ -52,6 +54,24 @@
                         <td>{{ $step->subject }}</td>
                         <td>{{ $step->delay_hours }}t</td>
                         <td>{{ $step->send_time ?? 'Straks' }}</td>
+                        <td>
+                            @php
+                                $nextSend = DB::table('email_automation_queue')
+                                    ->where('sequence_id', $sequence->id)
+                                    ->where('step_id', $step->id)
+                                    ->where('status', 'pending')
+                                    ->orderBy('scheduled_at')
+                                    ->value('scheduled_at');
+                            @endphp
+                            @if($nextSend)
+                                <span class="badge badge-info">{{ \Carbon\Carbon::parse($nextSend)->format('d.m.Y H:i') }}</span>
+                            @else
+                                <span class="text-muted">—</span>
+                            @endif
+                        </td>
+                        <td>
+                            <span class="badge badge-secondary">{{ DB::table('email_automation_queue')->where('sequence_id', $sequence->id)->where('step_id', $step->id)->where('status', 'pending')->count() }}</span>
+                        </td>
                         <td><small>{{ $step->from_type }}</small></td>
                         <td>{!! $step->only_without_active_course ? '<i class="fa fa-check text-success"></i>' : '' !!}</td>
                         <td>
