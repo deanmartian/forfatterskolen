@@ -21,11 +21,11 @@ $html = <<<'HTML'
 
 <h3 style="color:#862736;">Hva du kan forvente:</h3>
 <ul>
-<li>📚 <strong>10 kursmoduler</strong> — ny modul hver uke fra 20. april</li>
-<li>📹 <strong>Ukentlige live-webinarer</strong> — still spørsmål direkte til forfatterne</li>
-<li>📝 <strong>Tilbakemelding fra redaktør</strong> — profesjonell vurdering av teksten din</li>
-<li>💬 <strong>Skriveforum i portalen</strong> — del tekst, få respons, og bli kjent med medstudentene dine</li>
-<li>🎓 <strong>Mentormøter</strong> — ukentlige nettmøter med kjente forfattere og redaktører</li>
+<li><strong>10 kursmoduler</strong> — ny modul hver uke fra 20. april</li>
+<li><strong>Ukentlige live-webinarer</strong> — still spørsmål direkte til forfatterne</li>
+<li><strong>Tilbakemelding fra redaktør</strong> — profesjonell vurdering av teksten din</li>
+<li><strong>Skriveforum i portalen</strong> — del tekst, få respons, og bli kjent med medstudentene dine</li>
+<li><strong>Mentormøter</strong> — ukentlige nettmøter med kjente forfattere og redaktører</li>
 </ul>
 
 <h3 style="color:#862736;">Før kursstart 20. april:</h3>
