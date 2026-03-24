@@ -461,6 +461,15 @@
                     <img src="/images-new/vipps.png" alt="Vipps" style="height:16px;flex-shrink:0;">
                 </label>
 
+                {{-- Faktura / Bestill nå, betal senere --}}
+                <label class="co-pay-option" onclick="selectPayment(this, 'pay_later')">
+                    <input type="radio" name="payment_method" value="pay_later">
+                    <div class="co-pay-option__info">
+                        <div class="co-pay-option__name">Faktura</div>
+                        <div class="co-pay-option__desc">Bestill nå, betal senere</div>
+                    </div>
+                </label>
+
                 {{-- Rentefri delbetaling --}}
                 <label class="co-pay-option" onclick="selectPayment(this, 'rentefri')">
                     <input type="radio" name="payment_method" value="rentefri">
@@ -609,6 +618,8 @@
 
         if (method === 'vipps') {
             btn.textContent = 'Betal kr ' + total.toLocaleString('nb-NO') + ' med Vipps →';
+        } else if (method === 'pay_later') {
+            btn.textContent = 'Bestill nå — betal senere →';
         } else if (method === 'rentefri') {
             var m = parseInt(document.getElementById('rentefriMonths').value);
             btn.textContent = 'Bestill — kr ' + Math.ceil(total / m).toLocaleString('nb-NO') + '/mnd rentefritt';
@@ -753,6 +764,9 @@
                 terms: true,
                 package_id: pkgId,
                 payment_method: method,
+                is_pay_later: method === 'pay_later' ? true : false,
+                price: currentPrice - couponDiscount,
+                coupon: couponCode,
                 _token: '{{ csrf_token() }}'
             };
 
@@ -789,8 +803,12 @@
                 return r.json();
             })
             .then(function(data) {
-                if (data && data.redirect_link) {
+                if (data && data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                } else if (data && data.redirect_link) {
                     window.location.href = data.redirect_link;
+                } else if (data && data.course_link) {
+                    window.location.href = data.course_link;
                 } else {
                     // Reload — user is now logged in
                     window.location.reload();
@@ -806,6 +824,8 @@
             // User is already logged in — proceed based on payment method
             if (method === 'vipps') {
                 proceedVipps(pkgId);
+            } else if (method === 'pay_later') {
+                proceedPayLater(pkgId);
             } else if (method === 'rentefri') {
                 // Redirect to payment page (delbetaling)
                 var months = document.getElementById('rentefriMonths').value;
@@ -846,6 +866,54 @@
         .catch(function() {
             btn.disabled = false;
             updateButtonText('vipps');
+        });
+    }
+
+    function proceedPayLater(pkgId) {
+        var btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Behandler bestilling...';
+
+        var total = currentPrice - couponDiscount;
+        var user = @json(Auth::user());
+        var addr = @json(Auth::user() ? Auth::user()->address : null);
+
+        fetch('{{ route("front.course.checkout.validate-form", $course->id) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                email: user.email,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                street: addr ? addr.street : '-',
+                zip: addr ? addr.zip : '0000',
+                city: addr ? addr.city : '-',
+                phone: addr ? addr.phone : '-',
+                terms: true,
+                package_id: pkgId,
+                payment_method: 'pay_later',
+                price: total,
+                coupon: couponCode,
+                is_pay_later: true
+            })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+            } else if (data.course_link) {
+                window.location.href = data.course_link;
+            } else {
+                window.location.href = '/thankyou?pl_ord=1';
+            }
+        })
+        .catch(function() {
+            btn.disabled = false;
+            updateButtonText('pay_later');
         });
     }
 
