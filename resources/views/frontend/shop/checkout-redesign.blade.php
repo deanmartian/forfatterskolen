@@ -868,7 +868,7 @@
             } else if (method === 'rentefri') {
                 // Redirect to payment page (delbetaling)
                 var months = document.getElementById('rentefriMonths').value;
-                window.location.href = '/course/' + courseId + '/checkout?package=' + pkgId + '&payment=rentefri&months=' + months + (couponCode ? '&c=' + couponCode : '');
+                window.location.href = '/course/' + courseId + '/payment?package=' + pkgId + '&months=' + months + (couponCode ? '&c=' + couponCode : '');
             } else if (method === 'svea') {
                 proceedSvea(pkgId);
             }
