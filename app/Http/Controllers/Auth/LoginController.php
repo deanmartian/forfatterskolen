@@ -292,7 +292,7 @@ class LoginController extends Controller
                 'dashboard' => '/learner/dashboard',
                 'course' => '/learner/course',
                 'assignments' => '/learner/dashboard',
-                'webinars' => '/learner/dashboard',
+                'webinars' => '/learner/course-webinar?tab=replays',
                 'profile' => '/learner/profile',
             ];
             if (isset($allowed[$redirect])) {
@@ -318,6 +318,74 @@ class LoginController extends Controller
             }
         }
 
+        return redirect()->route('learner.dashboard');
+    }
+
+    /**
+     * Send magic link via e-post
+     */
+    public function sendMagicLink(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+        $email = strtolower(trim($request->email));
+
+        $user = User::where('email', $email)->where('role', 2)->first();
+
+        // Alltid vis suksess-melding (ikke avslør om bruker finnes)
+        if (!$user) {
+            return back()->with('magic_link_sent', true);
+        }
+
+        // Generer token
+        $token = bin2hex(random_bytes(32));
+        $expiresAt = now()->addMinutes(30);
+
+        // Lagre i cache
+        cache()->put("magic_link:{$token}", $user->id, $expiresAt);
+
+        // Send e-post
+        $loginUrl = url("/auth/magic-link/verify/{$token}");
+        $html = view('emails.magic-link', ['firstName' => $user->first_name, 'loginUrl' => $loginUrl])->render();
+
+        \Illuminate\Support\Facades\Mail::to($user->email)->queue(
+            new \App\Mail\AddMailToQueueMail(
+                $user->email,
+                'Din innloggingslenke — Forfatterskolen',
+                $html,
+                'post@forfatterskolen.no',
+                'Forfatterskolen',
+                null,
+                'magic-link',
+                null,
+                'emails.mail_to_queue_branded'
+            )
+        );
+
+        return back()->with('magic_link_sent', true);
+    }
+
+    /**
+     * Verifiser magic link og logg inn
+     */
+    public function verifyMagicLink(string $token)
+    {
+        $userId = cache()->get("magic_link:{$token}");
+
+        if (!$userId) {
+            return redirect()->route('auth.login.show')
+                ->with('error', 'Lenken er utløpt eller ugyldig. Prøv igjen.');
+        }
+
+        $user = User::find($userId);
+        if (!$user) {
+            return redirect()->route('auth.login.show')
+                ->with('error', 'Bruker ikke funnet.');
+        }
+
+        // Slett token (engangsbruk)
+        cache()->forget("magic_link:{$token}");
+
+        Auth::login($user);
         return redirect()->route('learner.dashboard');
     }
 

@@ -744,6 +744,8 @@ Route::domain($front)->group(function () {
         Route::get('login/email-redirect/{email}/{redirect_link}', [Auth\LoginController::class, 'emailLoginRedirect'])
             ->name('auth.login.emailRedirect');
         Route::get('login/email-normal/{email}', [Auth\LoginController::class, 'emailLoginNormal'])->name('auth.login.email-normal');
+        Route::post('magic-link/send', [Auth\LoginController::class, 'sendMagicLink'])->name('auth.magic-link.send');
+        Route::get('magic-link/verify/{token}', [Auth\LoginController::class, 'verifyMagicLink'])->name('auth.magic-link.verify');
         Route::get('/vipps-login/{state?}', [Auth\LoginController::class, 'vippsLogin'])->name('auth.login.vipps');
         Route::get('/vipps-login-redirect', [Auth\LoginController::class, 'vippsLoginRedirect']);
     });

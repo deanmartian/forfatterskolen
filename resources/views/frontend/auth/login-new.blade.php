@@ -256,12 +256,18 @@
             ✉️ Send meg en innloggingslenke
         </a>
 
-        <div id="magicForm" class="magic-link-form">
-            <form method="POST" action="{{ url('/auth/magic-link/send') }}">
-                @csrf
-                <input type="email" name="email" placeholder="Skriv inn e-postadressen din" required>
-                <button type="submit">Send innloggingslenke</button>
-            </form>
+        <div id="magicForm" class="magic-link-form @if(session('magic_link_sent')) show @endif">
+            @if(session('magic_link_sent'))
+                <div style="background:#e8f5e9;color:#2e7d32;padding:12px 16px;border-radius:8px;margin-bottom:12px;text-align:center;">
+                    ✅ Sjekk innboksen din! Vi har sendt en innloggingslenke.
+                </div>
+            @else
+                <form method="POST" action="{{ url('/auth/magic-link/send') }}">
+                    @csrf
+                    <input type="email" name="email" placeholder="Skriv inn e-postadressen din" required>
+                    <button type="submit">Send innloggingslenke</button>
+                </form>
+            @endif
         </div>
 
         {{-- Google --}}
