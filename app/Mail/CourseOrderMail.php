@@ -56,7 +56,7 @@ class CourseOrderMail extends Mailable
         $email = $this->to($this->recipient)
             ->from($this->from_email, $this->from_name)
             ->subject($this->email_subject)
-            ->view('emails.course_order')
+            ->view('emails.mail_to_queue_branded', ['email_message' => $this->email_content])
             ->text('emails.subject_body_plain');
 
         // check if there's an attachment to prevent error
