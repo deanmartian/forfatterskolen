@@ -552,6 +552,17 @@ class ShopController extends Controller
         ];
         $email_content = str_replace($search_string, $replace_string, $package->course->email);
 
+        // Legg til ordrebekreftelse øverst
+        $orderBox = '<div style="background:#f8f8f8;border-radius:10px;padding:20px 24px;margin-bottom:24px;border-left:4px solid #862736;">'
+            . '<p style="font-size:11px;font-weight:600;letter-spacing:1px;color:#999;margin:0 0 10px;">ORDREBEKREFTELSE</p>'
+            . '<table style="width:100%;font-size:14px;color:#444;">'
+            . '<tr><td style="padding:3px 0;color:#888;">Kurs:</td><td style="padding:3px 0;font-weight:600;">' . e($package->course->title) . '</td></tr>'
+            . '<tr><td style="padding:3px 0;color:#888;">Pakke:</td><td style="padding:3px 0;font-weight:600;">' . e($package->title ?? 'Standard') . '</td></tr>'
+            . '<tr><td style="padding:3px 0;color:#888;">Pris:</td><td style="padding:3px 0;font-weight:600;">kr ' . number_format($price / 100, 0, ',', ' ') . '</td></tr>'
+            . '<tr><td style="padding:3px 0;color:#888;">Dato:</td><td style="padding:3px 0;">' . now()->format('d.m.Y') . '</td></tr>'
+            . '</table></div>';
+        $email_content = $orderBox . $email_content;
+
         $user_email = $user->email;
 
         $encode_email = encrypt($user_email);
