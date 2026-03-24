@@ -768,6 +768,7 @@
 
     // ── Submit handler ─────────────────────────
     function handleSubmit() {
+      try {
         var btn = document.getElementById('submitBtn');
         var method = document.querySelector('input[name="payment_method"]:checked').value;
         var pkgId = document.querySelector('input[name="package_id"]:checked').value;
@@ -854,13 +855,13 @@
                     method: 'POST',
                     headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json'},
                     body: JSON.stringify({
-                        email: '{{ Auth::check() ? Auth::user()->email : "" }}',
-                        first_name: '{{ Auth::check() ? Auth::user()->first_name : "" }}',
-                        last_name: '{{ Auth::check() ? Auth::user()->last_name : "" }}',
-                        street: '{{ Auth::check() && Auth::user()->address ? Auth::user()->address->street : "-" }}',
-                        zip: '{{ Auth::check() && Auth::user()->address ? Auth::user()->address->zip : "0000" }}',
-                        city: '{{ Auth::check() && Auth::user()->address ? Auth::user()->address->city : "-" }}',
-                        phone: '{{ Auth::check() && Auth::user()->address ? Auth::user()->address->phone : "-" }}',
+                        email: '{{ e(Auth::user()->email ?? "") }}',
+                        first_name: '{{ e(Auth::user()->first_name ?? "") }}',
+                        last_name: '{{ e(Auth::user()->last_name ?? "") }}',
+                        street: '{{ e(optional(optional(Auth::user())->address)->street ?? "-") }}',
+                        zip: '{{ e(optional(optional(Auth::user())->address)->zip ?? "0000") }}',
+                        city: '{{ e(optional(optional(Auth::user())->address)->city ?? "-") }}',
+                        phone: '{{ e(optional(optional(Auth::user())->address)->phone ?? "-") }}',
                         terms: true, package_id: pkgId, payment_method: 'pay_later',
                         is_pay_later: true, price: plTotal, coupon: couponCode || ''
                     })
@@ -880,6 +881,7 @@
                 proceedSvea(pkgId);
             }
         @endif
+      } catch(e) { alert('Feil ved bestilling: ' + e.message); }
     }
 
     @if(!Auth::guest())
