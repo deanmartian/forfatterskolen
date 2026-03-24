@@ -25,13 +25,28 @@
         </div>
 
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="form-group">
-                    <label><strong>Forsinkelse (timer)</strong></label>
-                    <input type="number" name="delay_hours" class="form-control" value="{{ old('delay_hours', $step->delay_hours) }}" min="0" required>
+                    <label><strong>Planlegging</strong></label>
+                    <select id="scheduleType" class="form-control" onchange="toggleSchedule()">
+                        <option value="delay" {{ empty($step->scheduled_date) ? 'selected' : '' }}>Forsinkelse</option>
+                        <option value="date" {{ !empty($step->scheduled_date) ? 'selected' : '' }}>Fast dato</option>
+                    </select>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2" id="delayField">
+                <div class="form-group">
+                    <label><strong>Forsinkelse (timer)</strong></label>
+                    <input type="number" name="delay_hours" class="form-control" value="{{ old('delay_hours', $step->delay_hours) }}" min="0">
+                </div>
+            </div>
+            <div class="col-md-2" id="dateField" style="display:{{ !empty($step->scheduled_date) ? 'block' : 'none' }}">
+                <div class="form-group">
+                    <label><strong>Send dato</strong></label>
+                    <input type="date" name="scheduled_date" class="form-control" value="{{ old('scheduled_date', $step->scheduled_date ?? '') }}">
+                </div>
+            </div>
+            <div class="col-md-2">
                 <div class="form-group">
                     <label><strong>Send kl. (valgfritt)</strong></label>
                     <input type="time" name="send_time" class="form-control" value="{{ old('send_time', $step->send_time) }}">
@@ -65,6 +80,13 @@
 @endsection
 
 @section('scripts')
+<script>
+function toggleSchedule() {
+    var type = document.getElementById('scheduleType').value;
+    document.getElementById('delayField').style.display = type === 'delay' ? 'block' : 'none';
+    document.getElementById('dateField').style.display = type === 'date' ? 'block' : 'none';
+}
+</script>
 <script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script>
 tinymce.init({
