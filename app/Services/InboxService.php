@@ -241,7 +241,9 @@ class InboxService
 
     public function getTeamMembers()
     {
-        return User::where('role', 1)->orderBy('first_name')->get();
+        return User::where('role', 1)
+            ->whereIn('id', [5749, 1064, 6058, 1376, 5003]) // Annina, Kristine, Reservekonto, Sven I, Taran
+            ->orderBy('first_name')->get();
     }
 
     public function getInboxes(): array
