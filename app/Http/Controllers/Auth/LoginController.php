@@ -347,19 +347,17 @@ class LoginController extends Controller
         $loginUrl = url("/auth/magic-link/verify/{$token}");
         $html = view('emails.magic-link', ['firstName' => $user->first_name, 'loginUrl' => $loginUrl])->render();
 
-        \Illuminate\Support\Facades\Mail::to($user->email)->queue(
-            new \App\Mail\AddMailToQueueMail(
-                $user->email,
-                'Din innloggingslenke — Forfatterskolen',
-                $html,
-                'post@forfatterskolen.no',
-                'Forfatterskolen',
-                null,
-                'magic-link',
-                null,
-                'emails.mail_to_queue_branded'
-            )
-        );
+        dispatch(new \App\Jobs\AddMailToQueueJob(
+            $user->email,
+            'Din innloggingslenke — Forfatterskolen',
+            $html,
+            'post@forfatterskolen.no',
+            'Forfatterskolen',
+            null,
+            'magic-link',
+            null,
+            'emails.mail_to_queue_branded'
+        ));
 
         return back()->with('magic_link_sent', true);
     }
