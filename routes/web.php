@@ -710,6 +710,9 @@ Route::domain($front)->group(function () {
 
     Route::get('/api/pilotleser/login', [Frontend\LearnerController::class, 'pilotleserLogin']);
 
+    // Redirect /login til /auth/login (gamle bokmerker og e-postlenker)
+    Route::get('/login', function () { return redirect('/auth/login'); });
+
     // Authentication
     Route::prefix('auth')->middleware('guest')->group(function () {
         Route::get('login', [Auth\LoginController::class, 'showFrontend'])->name('auth.login.show');
