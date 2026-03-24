@@ -122,7 +122,7 @@ class ResetPasswordController extends Controller
             return redirect()->back()->with(['status' => 'Vi har sendt en passord tilbakestillingslink til din epost.']);
         }
 
-        return redirect()->back()->withErrors("We can't find the email in our records.");
+        return redirect()->back()->withErrors("Vi finner ingen bruker med den e-postadressen.");
     }
 
     public function editorStore(Request $request): RedirectResponse
@@ -132,6 +132,9 @@ class ResetPasswordController extends Controller
         ]);
 
         $exists = User::where('email', $request->email)->where('admin_with_editor_access', 1)->first();
+        if (!$exists) {
+            $exists = \App\Editor::where('email', $request->email)->first();
+        }
 
         if ($exists) {
             $i = 0;
@@ -156,7 +159,7 @@ class ResetPasswordController extends Controller
             return redirect()->back()->with(['status' => 'Vi har sendt en passord tilbakestillingslink til din epost.']);
         }
 
-        return redirect()->back()->withErrors("We can't find the email in our records.");
+        return redirect()->back()->withErrors("Vi finner ingen bruker med den e-postadressen.");
     }
 
     public function resetForm($token): View
