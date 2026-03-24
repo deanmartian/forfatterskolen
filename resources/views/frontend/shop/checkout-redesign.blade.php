@@ -458,7 +458,7 @@
                     <div class="co-pay-option__info">
                         <div class="co-pay-option__name">Betal nå</div>
                     </div>
-                    <img src="/images-new/vipps.png" alt="Vipps" style="height:16px;flex-shrink:0;">
+                    <span style="font-size:0.75rem;font-weight:700;color:#FF5B24;flex-shrink:0;">Vipps</span>
                 </label>
 
                 {{-- Faktura / Bestill nå, betal senere --}}
@@ -886,13 +886,13 @@
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
-                email: user.email,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                street: addr ? addr.street : '-',
-                zip: addr ? addr.zip : '0000',
-                city: addr ? addr.city : '-',
-                phone: addr ? addr.phone : '-',
+                email: user ? user.email : '',
+                first_name: user ? user.first_name : '',
+                last_name: user ? user.last_name : '',
+                street: addr && addr.street ? addr.street : '-',
+                zip: addr && addr.zip ? addr.zip : '0000',
+                city: addr && addr.city ? addr.city : '-',
+                phone: addr && addr.phone ? addr.phone : '-',
                 terms: true,
                 package_id: pkgId,
                 payment_method: 'pay_later',
@@ -901,7 +901,15 @@
                 is_pay_later: true
             })
         })
-        .then(function(r) { return r.json(); })
+        .then(function(r) {
+            if (!r.ok) {
+                return r.json().then(function(err) {
+                    console.error('Pay later error:', err);
+                    throw new Error('Server error');
+                });
+            }
+            return r.json();
+        })
         .then(function(data) {
             if (data.redirect_url) {
                 window.location.href = data.redirect_url;
@@ -911,7 +919,8 @@
                 window.location.href = '/thankyou?pl_ord=1';
             }
         })
-        .catch(function() {
+        .catch(function(e) {
+            console.error('Pay later catch:', e);
             btn.disabled = false;
             updateButtonText('pay_later');
         });
