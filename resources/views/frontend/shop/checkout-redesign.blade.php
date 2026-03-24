@@ -323,6 +323,24 @@
                         <label>Passord</label>
                         <input type="password" name="password" id="reg_password" placeholder="Minst 8 tegn" required>
                     </div>
+                    <div class="co-form-group">
+                        <label>Adresse</label>
+                        <input type="text" name="street" id="reg_street" placeholder="Gateadresse" value="{{ old('street') }}" required>
+                    </div>
+                    <div class="co-form-row">
+                        <div class="co-form-group">
+                            <label>Postnummer</label>
+                            <input type="text" name="zip" id="reg_zip" placeholder="0000" value="{{ old('zip') }}" required>
+                        </div>
+                        <div class="co-form-group">
+                            <label>Poststed</label>
+                            <input type="text" name="city" id="reg_city" placeholder="Oslo" value="{{ old('city') }}" required>
+                        </div>
+                    </div>
+                    <div class="co-form-group">
+                        <label>Telefon</label>
+                        <input type="tel" name="phone" id="reg_phone" placeholder="Mobilnummer" value="{{ old('phone') }}" required>
+                    </div>
                 </div>
 
                 {{-- Login form --}}
@@ -761,10 +779,10 @@
                 first_name: document.getElementById('reg_first_name') ? document.getElementById('reg_first_name').value : '',
                 last_name: document.getElementById('reg_last_name') ? document.getElementById('reg_last_name').value : '',
                 password: document.getElementById('reg_password') ? document.getElementById('reg_password').value : '',
-                street: '-',
-                zip: '0000',
-                city: '-',
-                phone: '-',
+                street: document.getElementById('reg_street') ? document.getElementById('reg_street').value : '-',
+                zip: document.getElementById('reg_zip') ? document.getElementById('reg_zip').value : '0000',
+                city: document.getElementById('reg_city') ? document.getElementById('reg_city').value : '-',
+                phone: document.getElementById('reg_phone') ? document.getElementById('reg_phone').value : '-',
                 terms: true,
                 package_id: pkgId,
                 payment_method: method,
