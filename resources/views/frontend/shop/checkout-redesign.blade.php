@@ -897,8 +897,6 @@
         btn.textContent = 'Behandler bestilling...';
 
         var total = currentPrice - couponDiscount;
-        var user = @json(Auth::user());
-        var addr = @json(Auth::user() ? Auth::user()->address : null);
 
         fetch('{{ route("front.course.checkout.validate-form", $course->id) }}', {
             method: 'POST',
@@ -908,13 +906,13 @@
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
-                email: user ? user.email : '',
-                first_name: user ? user.first_name : '',
-                last_name: user ? user.last_name : '',
-                street: addr && addr.street ? addr.street : '-',
-                zip: addr && addr.zip ? addr.zip : '0000',
-                city: addr && addr.city ? addr.city : '-',
-                phone: addr && addr.phone ? addr.phone : '-',
+                email: '{{ Auth::user()->email ?? "" }}',
+                first_name: '{{ Auth::user()->first_name ?? "" }}',
+                last_name: '{{ Auth::user()->last_name ?? "" }}',
+                street: '{{ optional(Auth::user()->address)->street ?? "-" }}',
+                zip: '{{ optional(Auth::user()->address)->zip ?? "0000" }}',
+                city: '{{ optional(Auth::user()->address)->city ?? "-" }}',
+                phone: '{{ optional(Auth::user()->address)->phone ?? "-" }}',
                 terms: true,
                 package_id: pkgId,
                 payment_method: 'pay_later',
