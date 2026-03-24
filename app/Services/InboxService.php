@@ -241,7 +241,7 @@ class InboxService
 
     public function getTeamMembers()
     {
-        return User::whereIn('role', [1, 3])->orderBy('first_name')->get();
+        return User::where('role', 1)->orderBy('first_name')->get();
     }
 
     public function getInboxes(): array
