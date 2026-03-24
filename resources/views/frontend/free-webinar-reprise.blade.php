@@ -167,11 +167,30 @@
             <p>{!! nl2br(e($freeWebinar->description)) !!}</p>
         </div>
 
-        {{-- CTA --}}
-        <div class="reprise-cta">
-            <h3>Inspirert av webinaret?</h3>
-            <p>Ta neste steg i skrivereisen din — vi har kurs for alle nivåer.</p>
-            <a href="/course" class="reprise-cta-btn">Se våre kurs →</a>
+        {{-- CTA: Romankurs --}}
+        <div class="reprise-cta" style="text-align: left;">
+            <h3 style="text-align: center;">Har du en romanidé du ikke helt får tak på?</h3>
+            <p style="text-align: center; margin-bottom: 24px;">20. april sparker vi i gang et nytt <strong>10 ukers intensivt romankurs</strong>, der du får lære og komme tett på noen av landets mest erfarne forfattere:</p>
+            <p style="text-align: center; font-size: 17px; font-weight: 600; color: #1a1a1a; margin-bottom: 24px;">
+                Trude Marstein, Gro Dahle, Bjarte Breiteig og Rolf Enger.
+            </p>
+
+            <p style="font-size: 15px; color: #444; line-height: 1.7; margin-bottom: 8px;">Dette er ikke et kurs du bare «tar».<br>Det er et kurs du <strong>skriver deg gjennom</strong>.</p>
+
+            <p style="font-size: 15px; color: #444; line-height: 1.7; margin-bottom: 4px;"><strong>Du får:</strong></p>
+            <ul style="font-size: 15px; color: #444; line-height: 1.9; margin-bottom: 24px; padding-left: 20px;">
+                <li>En tydelig struktur om hvordan du går fra idé til ferdig førsteutkast.</li>
+                <li>Ukentlige webinarer med undervisning og mulighet for spørsmål</li>
+                <li>Profesjonell tilbakemelding på teksten din.</li>
+                <li>Et skrivemiljø som hjelper deg videre (og varer lenge etter at kurset er ferdig)</li>
+            </ul>
+
+            <div style="text-align: center;">
+                <a href="/course/121" class="reprise-cta-btn" style="font-size: 17px; padding: 16px 40px;">
+                    Les mer og bestill →
+                </a>
+                <p style="font-size: 13px; color: #888; margin-top: 12px;">Earlybird-pris til 1. april — spar kr 5 500</p>
+            </div>
         </div>
     </div>
 </div>
