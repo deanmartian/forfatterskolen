@@ -407,11 +407,11 @@
             <div class="lv-content">
                 @if($course->id == 17)
                     @if($lesson->id <= 169)
-                        {!! html_entity_decode($lesson->content) !!}
+                        {!! html_entity_decode(\App\Http\FrontendHelpers::parseShortcodes($lesson->content)) !!}
                     @else
                         @foreach($lesson_content as $content)
                             <h1>{{ $content->title }}</h1>
-                            {!! html_entity_decode($content->lesson_content) !!}
+                            {!! html_entity_decode(\App\Http\FrontendHelpers::parseShortcodes($content->lesson_content)) !!}
                         @endforeach
                     @endif
                 @else
