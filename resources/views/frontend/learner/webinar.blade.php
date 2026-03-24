@@ -624,7 +624,12 @@
         let modal = $("#fwVideoModal");
         let record = $(this).data('record');
         modal.find(".modal-title").text(record.title);
-        modal.find('#fw-video-container').html(record.lesson_content);
+        // Parse [video src="URL"] shortcodes til iframe
+        var content = record.lesson_content || '';
+        content = content.replace(/\[video\s+src="([^"]+)"\]/gi, function(match, url) {
+            return '<iframe width="100%" height="100%" src="' + url + '" frameborder="0" allowfullscreen allow="autoplay; fullscreen" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"></iframe>';
+        });
+        modal.find('#fw-video-container').html(content);
     });
 
     // Tøm video ved lukking
