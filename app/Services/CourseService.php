@@ -572,13 +572,13 @@ class CourseService
      */
     public function createOrder(Request $request)
     {
-        $plan_id = $request->payment_plan_id;
+        $plan_id = $request->payment_plan_id ?? 3;
         if ($request->campaign_months > 1) {
             $plan = PaymentPlan::where('division', $request->campaign_months)->first();
             $plan_id = $plan ? $plan->id : 3; // if no plan found then just use full payment
         }
 
-        $sveaPrice = $request->campaign_initial_fee + ($request->campaign_admin_fee * $request->campaign_months);
+        $sveaPrice = ($request->campaign_initial_fee ?? 0) + (($request->campaign_admin_fee ?? 0) * ($request->campaign_months ?? 0));
         $totalPrice = $request->price + $sveaPrice;
 
         $orderType = Order::COURSE_TYPE;
@@ -599,7 +599,7 @@ class CourseService
         $newOrder['plan_id'] = $plan_id;
         $newOrder['price'] = $totalPrice;
         $newOrder['discount'] = $discount;
-        $newOrder['payment_mode_id'] = $request->payment_mode_id;
+        $newOrder['payment_mode_id'] = $request->payment_mode_id ?? null;
         $newOrder['is_processed'] = 0;
         $newOrder['is_pay_later'] = $request->is_pay_later ?? 0;
 
