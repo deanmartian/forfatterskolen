@@ -355,7 +355,7 @@ class LoginController extends Controller
             'Forfatterskolen',
             null,
             'magic-link',
-            null,
+            0,
             'emails.mail_to_queue_branded'
         ));
 
