@@ -72,6 +72,20 @@ class EmailSequenceController extends Controller
         }
         $step->update($data);
 
+        // Oppdater eksisterende kø-elementer med ny dato/tid
+        if (!empty($data['scheduled_date'])) {
+            $scheduledAt = $data['scheduled_date'];
+            if (!empty($data['send_time'])) {
+                $scheduledAt .= ' ' . $data['send_time'];
+            } else {
+                $scheduledAt .= ' 08:00:00';
+            }
+            \DB::table('email_automation_queue')
+                ->where('step_id', $stepId)
+                ->where('status', 'pending')
+                ->update(['scheduled_at' => $scheduledAt]);
+        }
+
         return redirect()->route('admin.crm.sequences.show', $id)->with('success', 'Steg oppdatert.');
     }
 
