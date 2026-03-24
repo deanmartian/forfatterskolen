@@ -847,7 +847,31 @@
             if (method === 'vipps') {
                 proceedVipps(pkgId);
             } else if (method === 'pay_later') {
-                proceedPayLater(pkgId);
+                btn.disabled = true;
+                btn.textContent = 'Behandler bestilling...';
+                var plTotal = currentPrice - couponDiscount;
+                fetch('/course/{{ $course->id }}/checkout/validate-form', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json'},
+                    body: JSON.stringify({
+                        email: '{{ Auth::check() ? Auth::user()->email : "" }}',
+                        first_name: '{{ Auth::check() ? Auth::user()->first_name : "" }}',
+                        last_name: '{{ Auth::check() ? Auth::user()->last_name : "" }}',
+                        street: '{{ Auth::check() && Auth::user()->address ? Auth::user()->address->street : "-" }}',
+                        zip: '{{ Auth::check() && Auth::user()->address ? Auth::user()->address->zip : "0000" }}',
+                        city: '{{ Auth::check() && Auth::user()->address ? Auth::user()->address->city : "-" }}',
+                        phone: '{{ Auth::check() && Auth::user()->address ? Auth::user()->address->phone : "-" }}',
+                        terms: true, package_id: pkgId, payment_method: 'pay_later',
+                        is_pay_later: true, price: plTotal, coupon: couponCode || ''
+                    })
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.redirect_url) { window.location.href = data.redirect_url; }
+                    else if (data.course_link) { window.location.href = data.course_link; }
+                    else { alert('Feil: ' + JSON.stringify(data)); btn.disabled = false; updateButtonText('pay_later'); }
+                })
+                .catch(function(e) { alert('Nettverksfeil: ' + e.message); btn.disabled = false; updateButtonText('pay_later'); });
             } else if (method === 'rentefri') {
                 // Redirect to payment page (delbetaling)
                 var months = document.getElementById('rentefriMonths').value;
@@ -888,61 +912,6 @@
         .catch(function() {
             btn.disabled = false;
             updateButtonText('vipps');
-        });
-    }
-
-    function proceedPayLater(pkgId) {
-        var btn = document.getElementById('submitBtn');
-        btn.disabled = true;
-        btn.textContent = 'Behandler bestilling...';
-
-        var total = currentPrice - couponDiscount;
-
-        fetch('{{ route("front.course.checkout.validate-form", $course->id) }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                email: '{{ Auth::user()->email ?? "" }}',
-                first_name: '{{ Auth::user()->first_name ?? "" }}',
-                last_name: '{{ Auth::user()->last_name ?? "" }}',
-                street: '{{ optional(Auth::user()->address)->street ?? "-" }}',
-                zip: '{{ optional(Auth::user()->address)->zip ?? "0000" }}',
-                city: '{{ optional(Auth::user()->address)->city ?? "-" }}',
-                phone: '{{ optional(Auth::user()->address)->phone ?? "-" }}',
-                terms: true,
-                package_id: pkgId,
-                payment_method: 'pay_later',
-                price: total,
-                coupon: couponCode,
-                is_pay_later: true
-            })
-        })
-        .then(function(r) {
-            if (!r.ok) {
-                return r.json().then(function(err) {
-                    console.error('Pay later error:', err);
-                    throw new Error('Server error');
-                });
-            }
-            return r.json();
-        })
-        .then(function(data) {
-            if (data.redirect_url) {
-                window.location.href = data.redirect_url;
-            } else if (data.course_link) {
-                window.location.href = data.course_link;
-            } else {
-                window.location.href = '/thankyou?pl_ord=1';
-            }
-        })
-        .catch(function(e) {
-            console.error('Pay later catch:', e);
-            btn.disabled = false;
-            updateButtonText('pay_later');
         });
     }
 
