@@ -501,7 +501,7 @@
                 <div id="rentefriConfig" class="co-installment-config">
                     <label>Fordel over</label>
                     <select id="rentefriMonths" onchange="updateRentefri()">
-                        @for($i = 2; $i <= $maxFreeMonths; $i++)
+                        @for($i = 1; $i <= $maxFreeMonths; $i++)
                             <option value="{{ $i }}" {{ $i == $maxFreeMonths ? 'selected' : '' }}>{{ $i }} mnd</option>
                         @endfor
                     </select>
