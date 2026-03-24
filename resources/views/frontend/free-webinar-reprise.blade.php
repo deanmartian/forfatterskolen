@@ -4,6 +4,13 @@
 <title>Reprise: {{ $freeWebinar->title }} — Forfatterskolen</title>
 @stop
 
+@section('metas')
+    <meta property="og:title" content="Se reprisen: {{ $freeWebinar->title }}">
+    <meta property="og:description" content="{{ Str::limit(strip_tags($freeWebinar->description), 160) }}">
+    <meta name="description" content="Se reprisen av {{ $freeWebinar->title }} gratis. {{ Str::limit(strip_tags($freeWebinar->description), 120) }}">
+    <meta property="og:type" content="video.other">
+@stop
+
 @section('styles')
 <style>
     .reprise-page { background: #f0eeeb; }

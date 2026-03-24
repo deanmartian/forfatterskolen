@@ -1,7 +1,13 @@
 @extends('frontend.layout')
 
 @section('title')
-    <title>Forfatterskolen – Din litterære familie. Skrivekurs for deg</title>
+    <title>Forfatterskolen — Skrivekurs på nett med erfarne forfattere og redaktører</title>
+@stop
+
+@section('metas')
+    <meta property="og:title" content="Forfatterskolen — for deg som vil gjøre alvor av skrivedrømmen">
+    <meta property="og:description" content="Lær skrivehåndverket fra erfarne forfattere og redaktører. Vi hjelper deg fra første utkast til ferdig manus. 15+ skrivekurs, 5000+ kursdeltagere, 200+ utgitte forfattere.">
+    <meta name="description" content="Skrivekurs på nett med erfarne forfattere og redaktører. Roman, barnebok, sakprosa. Fra idé til ferdig manus. 5000+ kursdeltagere siden 2015.">
 @stop
 
 @section('styles')
