@@ -82,7 +82,7 @@ tinymce.init({
             var formData = new FormData();
             formData.append('file', blobInfo.blob(), blobInfo.filename());
             formData.append('_token', '{{ csrf_token() }}');
-            fetch('/admin/upload-image', {
+            fetch('/upload-image', {
                 method: 'POST',
                 body: formData
             })
