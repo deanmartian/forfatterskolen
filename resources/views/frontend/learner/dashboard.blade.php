@@ -346,9 +346,14 @@
         }
     }
 
-    // Pay later reminder
-    $hasPayLater = Auth::user()->coursesTaken()->where('is_pay_later', 1)->exists();
-    $payLaterAlert = $hasPayLater && !$invoiceAlert;
+    // Pay later reminder — vis kun hvis det finnes ordrer som mangler betalingsløsning
+    $hasPayLaterWithoutInvoice = Auth::user()->orders()
+        ->where('is_pay_later', 1)
+        ->where('is_processed', 1)
+        ->where('is_invoice_sent', 0)
+        ->where('is_order_withdrawn', 0)
+        ->exists();
+    $payLaterAlert = $hasPayLaterWithoutInvoice && !$invoiceAlert;
 
     // Calendar entries
     $uniqueStart = array_unique(array_map(function ($i) {
