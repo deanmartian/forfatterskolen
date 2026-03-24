@@ -626,9 +626,15 @@ class LearnerController extends Controller
 
         // Parse [video src="..."] shortcodes til iframes i lesson_content
         foreach ($replayWebinars as $replay) {
-            $replay->lesson_content = FrontendHelpers::parseShortcodes(
+            $parsed = FrontendHelpers::parseShortcodes(
                 html_entity_decode($replay->lesson_content ?? '')
             );
+            // Behold kun iframe-taggen, fjern tittel-tekst foran
+            if (preg_match('/<iframe[^>]*>.*?<\/iframe>/is', $parsed, $m)) {
+                $replay->lesson_content = $m[0];
+            } else {
+                $replay->lesson_content = $parsed;
+            }
         }
 
         $subscriptionWebinars = DB::table('courses_taken')

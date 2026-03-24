@@ -594,7 +594,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Lukk"></button>
             </div>
             <div class="modal-body">
-                <div id="fw-video-container"></div>
+                <div id="fw-video-container" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+                </div>
+                <style>#fw-video-container iframe{position:absolute;top:0;left:0;width:100%!important;height:100%!important;border:none;}</style>
             </div>
         </div>
     </div>
