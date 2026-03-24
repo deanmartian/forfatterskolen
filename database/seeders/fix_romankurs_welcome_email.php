@@ -44,5 +44,16 @@ Skriveglad hilsen,<br>
 </p>
 HTML;
 
-DB::table('courses')->where('id', 121)->update(['email' => $html]);
-echo "Velkomstmail oppdatert for Romankurs i gruppe!\n";
+// Oppdater courses_email_out (velkomstmail)
+$updated = DB::table('courses_email_out')
+    ->where('course_id', 121)
+    ->where('subject', 'LIKE', '%Velkommen%')
+    ->update(['message' => $html]);
+
+if ($updated) {
+    echo "Velkomstmail oppdatert i courses_email_out! ({$updated} rad)\n";
+} else {
+    echo "Fant ingen velkomstmail i courses_email_out for kurs 121. Prøver courses.email...\n";
+    DB::table('courses')->where('id', 121)->update(['email' => $html]);
+    echo "Oppdatert courses.email i stedet.\n";
+}
