@@ -1370,7 +1370,12 @@ class HomeController extends Controller
 
                 return view('frontend.free-webinar-success', compact('freeWebinar'));
             } else {
-                $message = $decoded_response->error;
+                // Hvis allerede registrert og reprise finnes, redirect til reprisen
+                if ($freeWebinar->replay_url && str_contains($decoded_response->error ?? '', 'already registered')) {
+                    return redirect()->route('front.free-webinar-reprise', $freeWebinar->id);
+                }
+
+                $message = 'Du er allerede registrert for dette webinaret.';
 
                 return redirect()->back()->withInput()->with([
                     'errors' => AdminHelpers::createMessageBag($message),
