@@ -122,6 +122,34 @@ class CrmController extends Controller
     }
 
     /**
+     * Oppdater kontaktinfo
+     */
+    public function updateContact($id, Request $request)
+    {
+        $contact = Contact::findOrFail($id);
+
+        $request->validate([
+            'email' => 'required|email',
+            'first_name' => 'nullable|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:50',
+        ]);
+
+        $oldEmail = $contact->email;
+        $contact->update($request->only(['email', 'first_name', 'last_name', 'phone']));
+
+        // Oppdater også ventende e-poster i køen hvis e-post endret
+        if ($oldEmail !== $request->email) {
+            \DB::table('email_automation_queue')
+                ->where('contact_id', $contact->id)
+                ->where('status', 'pending')
+                ->update(['email' => $request->email]);
+        }
+
+        return back()->with('success', 'Kontaktinfo oppdatert.');
+    }
+
+    /**
      * Planlagte e-poster
      */
     public function planned(Request $request)

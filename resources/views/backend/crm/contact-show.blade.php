@@ -12,17 +12,46 @@
         <!-- Kontaktinfo -->
         <div class="col-md-4">
             <div class="card mb-3">
-                <div class="card-header"><strong>Kontaktinfo</strong></div>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>Kontaktinfo</strong>
+                    <button class="btn btn-sm btn-outline-primary" onclick="document.getElementById('editContactForm').style.display = document.getElementById('editContactForm').style.display === 'none' ? 'block' : 'none'">
+                        <i class="fa fa-pencil"></i> Rediger
+                    </button>
+                </div>
                 <div class="card-body">
-                    <p><strong>Navn:</strong> {{ $contact->fullName() ?: '—' }}</p>
-                    <p><strong>E-post:</strong> {{ $contact->email }}</p>
-                    <p><strong>Telefon:</strong> {{ $contact->phone ?: '—' }}</p>
-                    <p><strong>Kilde:</strong> {{ $contact->source }}</p>
-                    <p><strong>Status:</strong> <span class="badge badge-{{ $contact->status }}">{{ $contact->status }}</span></p>
-                    <p><strong>Opprettet:</strong> {{ $contact->created_at?->format('d.m.Y H:i') }}</p>
-                    @if($contact->user_id)
-                        <p><strong>Bruker-ID:</strong> {{ $contact->user_id }}</p>
-                    @endif
+                    <div id="contactInfo">
+                        <p><strong>Navn:</strong> {{ $contact->fullName() ?: '—' }}</p>
+                        <p><strong>E-post:</strong> {{ $contact->email }}</p>
+                        <p><strong>Telefon:</strong> {{ $contact->phone ?: '—' }}</p>
+                        <p><strong>Kilde:</strong> {{ $contact->source }}</p>
+                        <p><strong>Status:</strong> <span class="badge badge-{{ $contact->status }}">{{ $contact->status }}</span></p>
+                        <p><strong>Opprettet:</strong> {{ $contact->created_at?->format('d.m.Y H:i') }}</p>
+                        @if($contact->user_id)
+                            <p><strong>Bruker-ID:</strong> {{ $contact->user_id }}</p>
+                        @endif
+                    </div>
+
+                    <form id="editContactForm" method="POST" action="{{ route('admin.crm.contacts.update', $contact->id) }}" style="display:none;" class="mt-2">
+                        @csrf @method('PUT')
+                        <div class="form-group mb-2">
+                            <label><small>Fornavn</small></label>
+                            <input type="text" name="first_name" class="form-control form-control-sm" value="{{ $contact->first_name }}">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label><small>Etternavn</small></label>
+                            <input type="text" name="last_name" class="form-control form-control-sm" value="{{ $contact->last_name }}">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label><small>E-post</small></label>
+                            <input type="email" name="email" class="form-control form-control-sm" value="{{ $contact->email }}" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label><small>Telefon</small></label>
+                            <input type="text" name="phone" class="form-control form-control-sm" value="{{ $contact->phone }}">
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-success">Lagre</button>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('editContactForm').style.display='none'">Avbryt</button>
+                    </form>
 
                     @if($contact->status === 'active')
                     <form method="POST" action="{{ route('admin.crm.contacts.unsubscribe', $contact->id) }}" class="mt-3">

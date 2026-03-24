@@ -2150,6 +2150,7 @@ Route::domain($admin)->group(function () {
         Route::post('/contacts/{id}/tag', [Backend\CrmController::class, 'addTag'])->name('admin.crm.contacts.tag');
         Route::delete('/contacts/{id}/tag/{tag}', [Backend\CrmController::class, 'removeTag'])->name('admin.crm.contacts.untag');
         Route::post('/contacts/{id}/unsubscribe', [Backend\CrmController::class, 'unsubscribeContact'])->name('admin.crm.contacts.unsubscribe');
+        Route::put('/contacts/{id}', [Backend\CrmController::class, 'updateContact'])->name('admin.crm.contacts.update');
         Route::get('/sequences', [Backend\EmailSequenceController::class, 'index'])->name('admin.crm.sequences.index');
         Route::get('/sequences/{id}', [Backend\EmailSequenceController::class, 'show'])->name('admin.crm.sequences.show');
         Route::post('/sequences/{id}/toggle', [Backend\EmailSequenceController::class, 'toggleActive'])->name('admin.crm.sequences.toggle');
