@@ -2140,6 +2140,7 @@ Route::domain($admin)->group(function () {
         Route::put('/rules/{id}', [Backend\AdOsController::class, 'updateRule'])->name('admin.ads.rules.update');
         Route::delete('/rules/{id}', [Backend\AdOsController::class, 'deleteRule'])->name('admin.ads.rules.delete');
         Route::post('/kill-switch', [Backend\AdOsController::class, 'toggleKillSwitch'])->name('admin.ads.kill-switch');
+        Route::get('/strategist', [Backend\AdOsController::class, 'strategist'])->name('admin.ads.strategist');
     });
 
     // CRM & E-postsekvenser
