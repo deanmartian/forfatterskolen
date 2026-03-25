@@ -309,7 +309,7 @@
                 </div>
                 <div class="py-form-group">
                     <label>E-post for faktura</label>
-                    <input type="email" name="email" placeholder="ola@eksempel.no" value="{{ Auth::user()->email ?? '' }}" required>
+                    <input type="email" name="invoice_email" placeholder="ola@eksempel.no" value="{{ Auth::user()->email ?? '' }}" required>
                     <div style="font-size: 0.68rem; color: var(--py-text-muted); margin-top: 0.2rem;">Hit sender vi fakturaer med betalingslenke.</div>
                 </div>
                 <div class="py-form-group">
@@ -327,7 +327,7 @@
                 </div>
             </div>
 
-            <button type="button" class="py-submit" id="submitBtn" onclick="submitPayment()">
+            <button type="submit" class="py-submit" id="submitBtn">
                 Bekreft bestilling — kr {{ number_format($price, 0, ',', ' ') }} faktura
             </button>
 

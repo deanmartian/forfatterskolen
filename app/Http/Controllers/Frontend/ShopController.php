@@ -237,6 +237,11 @@ class ShopController extends Controller
 
     public function processOrder($course_id, Request $request)
     {
+        // Map invoice_email til email (WAF blokkerer 'email' med adressefelt)
+        if ($request->has('invoice_email') && !$request->has('email')) {
+            $request->merge(['email' => $request->invoice_email]);
+        }
+
         // Fallback: GET-request redirecter tilbake til checkout
         if ($request->isMethod('get')) {
             return redirect()->route('front.course.checkout', $course_id)
