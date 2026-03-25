@@ -10,18 +10,17 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\PaypalController;
 use Illuminate\Support\Facades\Route;
 
-// Domains — $front satt til null = ingen domene-begrensning for frontend
-// Admin og editor har egne subdomener som matcher eksplisitt
+// Domains
 if (config('app.app_site') == 'no') {
-    $front = null;
+    $front = 'www.forfatterskolen.no';
     $admin = 'admin.forfatterskolen.no';
     $editor = 'editor.forfatterskolen.no';
 } elseif (config('app.app_site') == 'localhost') {
-    $front = null;
+    $front = 'forfatterskolen.local';
     $admin = 'admin.forfatterskolen.local';
     $editor = 'editor.forfatterskolen.local';
 } elseif (config('app.app_site') == 'dev.no') {
-    $front = null;
+    $front = 'dev.forfatterskolen.no';
     $admin = 'admin.dev.forfatterskolen.no';
     $editor = 'editor.dev.forfatterskolen.no';
 }
@@ -40,8 +39,7 @@ Route::get('/sitemap.xml', function () {
  * Front End Routes
  */
 Route::view('/easywrite', 'frontend-easywrite.index');
-$frontGroup = $front ? Route::domain($front) : Route::prefix('');
-$frontGroup->group(function () {
+Route::domain($front)->group(function () {
 
     Route::middleware('logActivity')->group(function () {
         Route::get('/', [Frontend\HomeController::class, 'index'])->name('front.home'); // Homepage
@@ -66,7 +64,6 @@ $frontGroup->group(function () {
         Route::get('/gratis-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar'); // Support Article
         Route::post('/gratis-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar.submit'); // Support Article
         Route::get('/gratis-webinar/{id}/thank-you', [Frontend\HomeController::class, 'freeWebinarThanks'])->name('front.free-webinar-thanks'); // Support Article
-        Route::get('/gratis-webinar/{id}/reprise', [Frontend\HomeController::class, 'freeWebinarReprise'])->name('front.free-webinar-reprise');
         Route::get('/free-webinar/{id}/', function ($id) {
             return redirect()->route('front.free-webinar', ['id' => $id], 301);
         });
@@ -84,7 +81,6 @@ $frontGroup->group(function () {
         Route::get('/publishing', [Frontend\HomeController::class, 'publishing'])->name('front.publishing'); // Forlag page
         Route::get('/ombrekk-indiemoon', [Frontend\HomeController::class, 'ombrekkIndiemoon'])->name('front.ombrekk-indiemoon'); // Indiemoon ombrekk
         Route::get('/avmeld/{token}', [Frontend\HomeController::class, 'unsubscribeNewsletter'])->name('newsletter.unsubscribe');
-        Route::post('/paameld-igjen', [Frontend\HomeController::class, 'resubscribeNewsletter'])->name('newsletter.resubscribe');
         Route::get('/konkurranse', [Frontend\HomeController::class, 'competition'])->name('front.competition'); // Forlag page
         Route::get('/coaching-timer', [Frontend\HomeController::class, 'coachingTimer'])->name('front.coaching-timer'); // Coaching Timer Page
         Route::get('/coaching-timer/checkout/{plan}', [Frontend\HomeController::class, 'coachingTimerCheckout'])->name('front.coaching-timer-checkout'); // Coaching Timer Page
@@ -548,10 +544,6 @@ $frontGroup->group(function () {
         Route::get('/forum', [Frontend\LearnerController::class, 'forum'])->name('learner.forum');
         Route::post('/webinar-auto-register-update', [Frontend\LearnerController::class, 'autoRegisterCourseWebinar']);
 
-        // Påbyggingstreff
-        Route::get('/pabygg-treff', [Frontend\PabyggTreffController::class, 'index'])->name('learner.pabygg-treff');
-        Route::post('/pabygg-treff', [Frontend\PabyggTreffController::class, 'store'])->name('learner.pabygg-treff.store');
-
         Route::post('/profile', [Frontend\LearnerController::class, 'profileUpdate'])->name('learner.profile.update'); // Profile Update
         Route::post('/profile/photo', [Frontend\LearnerController::class, 'profileUpdatePhoto'])->name('learner.profile.update-photo'); // Profile Update
         Route::post('/profile/notifications', [Frontend\LearnerController::class, 'profileUpdateNotifications'])->name('learner.profile.update-notifications'); // Notification Preferences
@@ -718,9 +710,6 @@ $frontGroup->group(function () {
 
     Route::get('/api/pilotleser/login', [Frontend\LearnerController::class, 'pilotleserLogin']);
 
-    // Redirect /login til /auth/login (gamle bokmerker og e-postlenker)
-    Route::get('/login', function () { return redirect('/auth/login'); });
-
     // Authentication
     Route::prefix('auth')->middleware('guest')->group(function () {
         Route::get('login', [Auth\LoginController::class, 'showFrontend'])->name('auth.login.show');
@@ -799,7 +788,6 @@ Route::domain($admin)->group(function () {
         Route::get('/add-end-date-to-courses-taken', [Backend\PageController::class, 'updateCourseEndDatesFromPackage29']);
         Route::post('/self-publishing/feedback/{id}/approve', [Backend\HeadEditorController::class, 'approveSelfPublishingFeedback'])->name('head_editor.self-publishing-feedback.approve');
         Route::get('/svea-orders', [Backend\PageController::class, 'sveaOrders'])->name('admin.svea.orders');
-        Route::get('/pabygg-treff', [Frontend\PabyggTreffController::class, 'adminIndex'])->name('admin.pabygg-treff');
         Route::post('/self-publishing-request/{id}/approve', [Backend\PageController::class, 'approveSelfPublishingRequest'])->name('admin.self-publishing-portal-request.approve');
         Route::delete('/self-publishing-request/{id}/delete', [Backend\PageController::class, 'deleteSelfPublishingRequest'])->name('admin.self-publishing-portal-request.destroy');
         Route::get('/learner-not-started-manu', [Backend\PageController::class, 'learnerNotStartedManu']);
@@ -1181,8 +1169,6 @@ Route::domain($admin)->group(function () {
                 'destroy' => 'admin.lesson.destroy',
             ],
         ])->except('show');
-        Route::post('/course/{course_id}/auto-categorize-lessons', [Backend\CourseController::class, 'autoCategorizeLessons'])->name('admin.course.auto-categorize');
-        Route::post('/course/{course_id}/lesson/{lesson_id}/update-type', [Backend\CourseController::class, 'updateLessonType'])->name('admin.lesson.update-type');
         Route::post('/lesson/save_order', [Backend\LessonController::class, 'save_order'])->name('admin.lesson.save_order'); // Save lesson order
         Route::get('/lesson/download-document/{id}', [Backend\LessonController::class, 'downloadLessonDocument'])->name('admin.lesson.download-lesson-document');
         Route::delete('/lesson/delete-document/{id}', [Backend\LessonController::class, 'deleteLessonDocument'])->name('admin.lesson.delete-lesson-document');
@@ -1430,21 +1416,12 @@ Route::domain($admin)->group(function () {
         Route::get('/project/{id}/print', [Backend\ProjectController::class, 'print'])->name('admin.project.print');
         Route::post('/project/{id}/print/save', [Backend\ProjectController::class, 'savePrint'])->name('admin.project.save-print');
         Route::get('/project/{id}/notes', [Backend\ProjectController::class, 'showNotes'])->name('admin.project.notes');
-        Route::get('/project/{id}/shop', [Backend\ProjectShopController::class, 'edit'])->name('admin.project.shop');
-        Route::put('/project/{id}/shop', [Backend\ProjectShopController::class, 'update'])->name('admin.project.shop.update');
-        Route::post('/project/{id}/shop/ai-autofill', [Backend\ProjectShopController::class, 'aiAutofill'])->name('admin.project.shop.ai-autofill');
         Route::get('/project', [Backend\ProjectController::class, 'index'])->name('admin.project.index');
         Route::post('/project/save', [Backend\ProjectController::class, 'saveProject']);
         Route::get('/project/{id}', [Backend\ProjectController::class, 'show'])->name('admin.project.show');
         Route::delete('/project/{id}/delete', [Backend\ProjectController::class, 'deleteProject']);
         Route::get('/project/book/generate', [Backend\ProjectController::class, 'generateProjectBook']);
         Route::post('/project/quarterly-payout/store', [Backend\ProjectController::class, 'storePayout'])->name('admin.quarterly-payouts.store');
-
-        // Indiemoon nettbutikk-bestillinger
-        Route::get('/shop-orders', [Backend\ShopOrderAdminController::class, 'index'])->name('admin.shop-orders');
-        Route::get('/shop-orders/{order}', [Backend\ShopOrderAdminController::class, 'show'])->name('admin.shop-orders.show');
-        Route::post('/shop-orders/{order}/ship', [Backend\ShopOrderAdminController::class, 'ship'])->name('admin.shop-orders.ship');
-        Route::post('/shop-orders/{order}/refund', [Backend\ShopOrderAdminController::class, 'refund'])->name('admin.shop-orders.refund');
 
         Route::get('/storage-books', [Backend\StorageBookController::class, 'index'])->name('admin.storage-books.index');
 
