@@ -547,6 +547,10 @@ Route::domain($front)->group(function () {
         Route::get('/forum', [Frontend\LearnerController::class, 'forum'])->name('learner.forum');
         Route::post('/webinar-auto-register-update', [Frontend\LearnerController::class, 'autoRegisterCourseWebinar']);
 
+        // Påbyggingstreff
+        Route::get('/pabygg-treff', [Frontend\PabyggTreffController::class, 'index'])->name('learner.pabygg-treff');
+        Route::post('/pabygg-treff', [Frontend\PabyggTreffController::class, 'store'])->name('learner.pabygg-treff.store');
+
         Route::post('/profile', [Frontend\LearnerController::class, 'profileUpdate'])->name('learner.profile.update'); // Profile Update
         Route::post('/profile/photo', [Frontend\LearnerController::class, 'profileUpdatePhoto'])->name('learner.profile.update-photo'); // Profile Update
         Route::post('/profile/notifications', [Frontend\LearnerController::class, 'profileUpdateNotifications'])->name('learner.profile.update-notifications'); // Notification Preferences
@@ -794,6 +798,7 @@ Route::domain($admin)->group(function () {
         Route::get('/add-end-date-to-courses-taken', [Backend\PageController::class, 'updateCourseEndDatesFromPackage29']);
         Route::post('/self-publishing/feedback/{id}/approve', [Backend\HeadEditorController::class, 'approveSelfPublishingFeedback'])->name('head_editor.self-publishing-feedback.approve');
         Route::get('/svea-orders', [Backend\PageController::class, 'sveaOrders'])->name('admin.svea.orders');
+        Route::get('/pabygg-treff', [Frontend\PabyggTreffController::class, 'adminIndex'])->name('admin.pabygg-treff');
         Route::post('/self-publishing-request/{id}/approve', [Backend\PageController::class, 'approveSelfPublishingRequest'])->name('admin.self-publishing-portal-request.approve');
         Route::delete('/self-publishing-request/{id}/delete', [Backend\PageController::class, 'deleteSelfPublishingRequest'])->name('admin.self-publishing-portal-request.destroy');
         Route::get('/learner-not-started-manu', [Backend\PageController::class, 'learnerNotStartedManu']);

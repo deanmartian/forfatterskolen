@@ -19,7 +19,7 @@ class CoursesTaken extends Model
     protected $fillable = ['user_id', 'package_id', 'gift_purchase_id', 'is_active', 'started_at', 'start_date',
         'end_date', 'access_lessons', 'years', 'is_free', 'send_expiry_reminder', 'is_welcome_email_sent',
         'can_receive_email', 'is_pay_later', 'exclude_in_scheduled_registration', 'in_facebook_group',
-        'disable_start_date', 'disable_end_date', 'created_at', 'updated_at'];
+        'disable_start_date', 'disable_end_date', 'pabygg_treff_day', 'created_at', 'updated_at'];
 
     protected $appends = ['order'];
 
