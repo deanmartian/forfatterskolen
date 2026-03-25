@@ -1260,6 +1260,7 @@ class AdminHelpers
             ['id' => 15, 'option' => 'Fellesskap', 'route' => 'admin.community.index', 'request_name' => 'community'],
             ['id' => 16, 'option' => 'E-poster', 'route' => 'admin.emails.index', 'request_name' => 'emails'],
             ['id' => 2, 'option' => 'Juleantologi', 'route' => 'admin.anthology.index', 'request_name' => 'anthology'],
+            ['id' => 17, 'option' => 'Bokbestillinger', 'route' => 'admin.shop-orders', 'request_name' => 'shop-orders'],
         ];
 
         if ($id > 0) {

@@ -91,6 +91,9 @@
                                 @case('anthology')
                                     <i class="fa fa-snowflake-o"></i>
                                     @break
+                                @case('shop-orders')
+                                    <i class="fa fa-shopping-cart"></i>
+                                    @break
                                 @default
                                     <i class="fa fa-circle-o"></i>
                             @endswitch

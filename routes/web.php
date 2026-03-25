@@ -1423,12 +1423,20 @@ Route::domain($admin)->group(function () {
         Route::get('/project/{id}/print', [Backend\ProjectController::class, 'print'])->name('admin.project.print');
         Route::post('/project/{id}/print/save', [Backend\ProjectController::class, 'savePrint'])->name('admin.project.save-print');
         Route::get('/project/{id}/notes', [Backend\ProjectController::class, 'showNotes'])->name('admin.project.notes');
+        Route::get('/project/{id}/shop', [Backend\ProjectShopController::class, 'edit'])->name('admin.project.shop');
+        Route::put('/project/{id}/shop', [Backend\ProjectShopController::class, 'update'])->name('admin.project.shop.update');
         Route::get('/project', [Backend\ProjectController::class, 'index'])->name('admin.project.index');
         Route::post('/project/save', [Backend\ProjectController::class, 'saveProject']);
         Route::get('/project/{id}', [Backend\ProjectController::class, 'show'])->name('admin.project.show');
         Route::delete('/project/{id}/delete', [Backend\ProjectController::class, 'deleteProject']);
         Route::get('/project/book/generate', [Backend\ProjectController::class, 'generateProjectBook']);
         Route::post('/project/quarterly-payout/store', [Backend\ProjectController::class, 'storePayout'])->name('admin.quarterly-payouts.store');
+
+        // Indiemoon nettbutikk-bestillinger
+        Route::get('/shop-orders', [Backend\ShopOrderAdminController::class, 'index'])->name('admin.shop-orders');
+        Route::get('/shop-orders/{order}', [Backend\ShopOrderAdminController::class, 'show'])->name('admin.shop-orders.show');
+        Route::post('/shop-orders/{order}/ship', [Backend\ShopOrderAdminController::class, 'ship'])->name('admin.shop-orders.ship');
+        Route::post('/shop-orders/{order}/refund', [Backend\ShopOrderAdminController::class, 'refund'])->name('admin.shop-orders.refund');
 
         Route::get('/storage-books', [Backend\StorageBookController::class, 'index'])->name('admin.storage-books.index');
 
