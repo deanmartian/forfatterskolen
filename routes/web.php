@@ -10,17 +10,18 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\PaypalController;
 use Illuminate\Support\Facades\Route;
 
-// Domains
+// Domains — $front satt til null = ingen domene-begrensning for frontend
+// Admin og editor har egne subdomener som matcher eksplisitt
 if (config('app.app_site') == 'no') {
-    $front = 'www.forfatterskolen.no';
+    $front = null;
     $admin = 'admin.forfatterskolen.no';
     $editor = 'editor.forfatterskolen.no';
 } elseif (config('app.app_site') == 'localhost') {
-    $front = 'forfatterskolen.local';
+    $front = null;
     $admin = 'admin.forfatterskolen.local';
     $editor = 'editor.forfatterskolen.local';
 } elseif (config('app.app_site') == 'dev.no') {
-    $front = 'dev.forfatterskolen.no';
+    $front = null;
     $admin = 'admin.dev.forfatterskolen.no';
     $editor = 'editor.dev.forfatterskolen.no';
 }
@@ -39,7 +40,8 @@ Route::get('/sitemap.xml', function () {
  * Front End Routes
  */
 Route::view('/easywrite', 'frontend-easywrite.index');
-Route::domain($front)->group(function () {
+$frontGroup = $front ? Route::domain($front) : Route::prefix('');
+$frontGroup->group(function () {
 
     Route::middleware('logActivity')->group(function () {
         Route::get('/', [Frontend\HomeController::class, 'index'])->name('front.home'); // Homepage
