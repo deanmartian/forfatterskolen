@@ -500,7 +500,8 @@
                     </div>
                 </label>
 
-                {{-- Rentefri delbetaling --}}
+                {{-- Rentefri delbetaling (midlertidig skjult pga WAF-blokkering) --}}
+                {{--
                 <label class="co-pay-option" onclick="selectPayment(this, 'rentefri')">
                     <input type="radio" name="payment_method" value="rentefri">
                     <div class="co-pay-option__info">
@@ -519,6 +520,7 @@
                     </select>
                     <div class="co-installment-config__result" id="rentefriResult"></div>
                 </div>
+                --}}
 
                 {{-- Svea Finans --}}
                 <label class="co-pay-option" onclick="selectPayment(this, 'svea')" style="margin-bottom: 0;">
