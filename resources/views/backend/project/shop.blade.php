@@ -209,10 +209,11 @@ function aiAutofill() {
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
-        if (data.error) {
+        if (data.error && !data.genre && !data.short_description) {
             alert('Feil: ' + data.error);
             return;
         }
+        var filled = [];
         // Fyll ut feltene
         if (data.genre) {
             var genreSelect = document.querySelector('select[name="genre"]');
@@ -238,8 +239,9 @@ function aiAutofill() {
         if (data.long_description) {
             document.querySelector('textarea[name="long_description"]').value = data.long_description;
         }
-        btn.innerHTML = '✅ Ferdig — sjekk feltene';
-        setTimeout(function() { btn.innerHTML = origText; btn.disabled = false; }, 3000);
+        var sourceText = data._sources ? ' (kilder: ' + data._sources.join(', ') + ')' : '';
+        btn.innerHTML = '✅ Ferdig' + sourceText;
+        setTimeout(function() { btn.innerHTML = origText; btn.disabled = false; }, 5000);
     })
     .catch(function(err) {
         alert('Feil: ' + err.message);
