@@ -783,6 +783,16 @@ Route::domain($front)->group(function () {
  */
 Route::domain($admin)->group(function () {
 
+    // Auth routes (utenfor admin middleware - må være tilgjengelig uten innlogging)
+    Route::prefix('auth')->group(function () {
+        Route::view('login', 'backend.auth.login')->name('admin.login.show');
+        Route::post('login', [Auth\LoginController::class, 'adminLogin'])->name('admin.login.store');
+        Route::view('password/reset', 'backend.auth.forgot-password')->name('admin.password-reset');
+        Route::post('password/email', [Auth\ResetPasswordController::class, 'adminStore'])->name('admin.password.email');
+        Route::get('passwordreset/{token}', [Auth\ResetPasswordController::class, 'adminResetForm'])->name('admin.passwordreset.form');
+        Route::post('passwordreset/{token}/update', [Auth\ResetPasswordController::class, 'adminUpdatePassword'])->name('admin.passwordreset.update');
+    });
+
     Route::middleware('admin', 'logActivity')->group(function () {
 
         // Dashboard Page
@@ -2109,15 +2119,7 @@ Route::domain($admin)->group(function () {
         });
     });
 
-    // Authentication
-    Route::prefix('auth')->group(function () {
-        Route::view('password/reset', 'backend.auth.forgot-password')->name('admin.password-reset');
-        Route::post('password/email', [Auth\ResetPasswordController::class, 'adminStore'])->name('admin.password.email');
-        Route::get('passwordreset/{token}', [Auth\ResetPasswordController::class, 'adminResetForm'])->name('admin.passwordreset.form');
-        Route::post('passwordreset/{token}/update', [Auth\ResetPasswordController::class, 'adminUpdatePassword'])->name('admin.passwordreset.update');
-        Route::view('login', 'backend.auth.login')->name('admin.login.show');
-        Route::post('login', [Auth\LoginController::class, 'adminLogin'])->name('admin.login.store');
-    });
+    // Authentication (moved outside admin middleware above)
 
     Route::get('/backup', [Backend\PageController::class, 'backup'])->name('backup');
     Route::get('/check-nearly-expired-course', [Backend\PageController::class, 'checkNearlyExpiredCourses']);
