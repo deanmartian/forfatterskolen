@@ -22,9 +22,9 @@ class ProjectShopController extends Controller
         $book = $project->books()->first();
 
         $genres = [
-            'Roman', 'Krim', 'Thriller', 'Fantasy', 'Science Fiction',
+            'Roman', 'Feelgood', 'Krim', 'Thriller', 'Fantasy', 'Science Fiction',
             'Barnebok', 'Ungdomsbok', 'Poesi', 'Noveller', 'Sakprosa',
-            'Biografi', 'Selvhjelp', 'Kokebok', 'Reise', 'Annet',
+            'Biografi', 'Selvhjelp', 'Historisk', 'Kokebok', 'Reise', 'Annet',
         ];
 
         return view('backend.project.shop', compact('layout', 'project', 'book', 'genres'));
@@ -163,7 +163,7 @@ class ProjectShopController extends Controller
         }
 
         $promptText .= "Basert på all tilgjengelig informasjon (baksidetekst, bilder, tittel), svar BARE med JSON:\n";
-        $promptText .= '{"genre":"en av: Roman|Krim|Thriller|Fantasy|Science Fiction|Barnebok|Ungdomsbok|Poesi|Noveller|Sakprosa|Biografi|Selvhjelp|Kokebok|Reise|Annet",';
+        $promptText .= '{"genre":"en av: Roman|Feelgood|Krim|Thriller|Fantasy|Science Fiction|Barnebok|Ungdomsbok|Poesi|Noveller|Sakprosa|Biografi|Selvhjelp|Historisk|Kokebok|Reise|Annet",';
         $promptText .= '"target_audience":"en av: voksen|ungdom|barn",';
         $promptText .= '"short_description":"maks 300 tegn, engasjerende norsk salgstekst for bokkort",';
         $promptText .= '"long_description":"baksidetekst for nettbutikken, 2-3 avsnitt på norsk, fang leseren. Bruk baksideteksten som utgangspunkt hvis den finnes."}';
