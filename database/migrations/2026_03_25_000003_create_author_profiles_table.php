@@ -10,7 +10,8 @@ return new class extends Migration
     {
         Schema::create('author_profiles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->unsignedInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->string('display_name');
             $table->string('slug')->unique();
             $table->text('bio')->nullable();
