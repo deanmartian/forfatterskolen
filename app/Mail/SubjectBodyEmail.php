@@ -26,6 +26,10 @@ class SubjectBodyEmail extends Mailable
 
     public $view_data;
 
+    public $reply_to_email;
+
+    public $reply_to_name;
+
     public function __construct($email_data)
     {
         $this->email_message = $email_data['email_message'];
@@ -36,12 +40,14 @@ class SubjectBodyEmail extends Mailable
         $this->email_view = isset($email_data['view']) ? $email_data['view'] : 'emails.subject_body';
         $this->text_view = isset($email_data['text_view']) ? $email_data['text_view'] : 'emails.subject_body_plain';
         $this->view_data = isset($email_data['view_data']) ? $email_data['view_data'] : [];
+        $this->reply_to_email = $email_data['reply_to_email'] ?? null;
+        $this->reply_to_name = $email_data['reply_to_name'] ?? null;
     }
 
     public function build()
     {
-        $replyToAddress = config('mail.reply_to.address', $this->from_email);
-        $replyToName = config('mail.reply_to.name', $this->from_name);
+        $replyToAddress = $this->reply_to_email ?: config('mail.reply_to.address', $this->from_email);
+        $replyToName = $this->reply_to_name ?: config('mail.reply_to.name', $this->from_name);
 
         $email = $this->from($this->from_email, $this->from_name)
             ->replyTo($replyToAddress, $replyToName)

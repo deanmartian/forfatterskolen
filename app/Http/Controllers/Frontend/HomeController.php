@@ -220,23 +220,19 @@ class HomeController extends Controller
             // validate the post request
             $request->validate($validates);
 
-            $email_content = 'From: '.$request->fullname.'<br/>';
-            $email_content .= 'Email: '.$request->email.'<br/>';
-            $email_content .= 'Message: '.$request->message;
+            $email_content = '<p><strong>Fra:</strong> '.$request->fullname.'</p>';
+            $email_content .= '<p><strong>E-post:</strong> <a href="mailto:'.$request->email.'">'.$request->email.'</a></p>';
+            $email_content .= '<p><strong>Melding:</strong></p><p>'.nl2br(e($request->message)).'</p>';
 
-            $headers = "From: Forfatterskolen<no-reply@forfatterskolen.no>\r\n";
-            $headers .= "MIME-Version: 1.0\r\n";
-            $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-
-            // mail('post@forfatterskolen.no', 'Inquiry Message', $email_content, $headers);
-            // AdminHelpers::send_email('Inquiry Message','post@forfatterskolen.no','post@forfatterskolen.no', $email_content);
-            $to = 'post@forfatterskolen.no'; //
+            $to = 'post@forfatterskolen.no';
             $emailData = [
-                'email_subject' => trans('site.inquiry-message'),
+                'email_subject' => 'Henvendelse fra ' . $request->fullname,
                 'email_message' => $email_content,
-                'from_name' => $request->fullname,
-                'from_email' => $request->email,
+                'from_name' => 'Forfatterskolen',
+                'from_email' => 'post@forfatterskolen.no',
                 'attach_file' => null,
+                'reply_to_email' => $request->email,
+                'reply_to_name' => $request->fullname,
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
