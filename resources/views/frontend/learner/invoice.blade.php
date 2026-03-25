@@ -1441,7 +1441,7 @@
 							<label style="font-size: 13px; color: #5D7285;">Forfallsdag i måneden</label>
 							<select id="ppDueDay" class="form-control" style="max-width: 180px; border-radius: 6px;">
 								@for($d = 1; $d <= 28; $d++)
-									<option value="{{ $d }}" {{ $d == now()->day ? 'selected' : '' }}>{{ $d }}.</option>
+									<option value="{{ $d }}" {{ $d == 1 ? 'selected' : '' }}>{{ $d }}.</option>
 								@endfor
 							</select>
 						</div>
