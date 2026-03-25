@@ -291,7 +291,7 @@
 
                 <div class="py-form-group">
                     <label>Fullt navn</label>
-                    <input type="text" name="billing_name" placeholder="Ola Nordmann" value="{{ Auth::user()->name ?? '' }}" required>
+                    <input type="text" name="billing_name" placeholder="Fullt navn" value="{{ Auth::check() ? Auth::user()->first_name . ' ' . Auth::user()->last_name : '' }}" required>
                 </div>
                 <div class="py-form-group">
                     <label>Adresse</label>
