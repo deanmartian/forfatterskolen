@@ -9,9 +9,9 @@
     RewriteCond %{SERVER_PORT} 80
     RewriteRule ^(.*)$ https://www.forfatterskolen.no/$1 [R=301,L]
 
-    # redirect non-www to www (HTTPS)
+    # redirect non-www to www (HTTPS) — 307 beholder POST-metode
     RewriteCond %{HTTP_HOST} ^forfatterskolen\.no$ [NC]
-    RewriteRule ^(.*)$ https://www.forfatterskolen.no/$1 [R=301,L]
+    RewriteRule ^(.*)$ https://www.forfatterskolen.no/$1 [R=307,L]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
