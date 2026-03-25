@@ -191,3 +191,35 @@ Route::post('/webhooks/facebook/leads', [\App\Http\Controllers\FacebookLeadWebho
 | POST = mottak av hendelser fra Helpwise (samtaler, meldinger, etc.)
 */
 Route::post('/webhooks/helpwise', [\App\Http\Controllers\HelpwiseWebhookController::class, 'handle']);
+
+/*
+|--------------------------------------------------------------------------
+| Indiemoon Shop API
+|--------------------------------------------------------------------------
+| Public API for shop.indiemoon.no / indiemoon.no frontend
+*/
+Route::prefix('shop')->middleware(['cors', 'throttle:60,1'])->group(function () {
+    // Katalog (public, ingen auth)
+    Route::get('/books', [\App\Http\Controllers\Api\Shop\ShopController::class, 'books']);
+    Route::get('/books/featured', [\App\Http\Controllers\Api\Shop\ShopController::class, 'featured']);
+    Route::get('/books/{slug}', [\App\Http\Controllers\Api\Shop\ShopController::class, 'show']);
+    Route::get('/search', [\App\Http\Controllers\Api\Shop\ShopController::class, 'search']);
+    Route::get('/genres', [\App\Http\Controllers\Api\Shop\ShopController::class, 'genres']);
+    Route::get('/authors/{slug}', [\App\Http\Controllers\Api\Shop\ShopController::class, 'author']);
+
+    // Ordrestatus (public, ordrenummer er nok)
+    Route::get('/orders/{orderNumber}', [\App\Http\Controllers\Api\Shop\ShopOrderController::class, 'show']);
+    Route::get('/orders/{orderNumber}/status', [\App\Http\Controllers\Api\Shop\ShopPaymentController::class, 'checkStatus']);
+
+    // E-bok nedlasting
+    Route::get('/download/{token}', [\App\Http\Controllers\Api\Shop\ShopDownloadController::class, 'download']);
+});
+
+Route::prefix('shop')->middleware(['cors', 'throttle:10,1'])->group(function () {
+    // Bestilling og betaling (rate limited)
+    Route::post('/orders', [\App\Http\Controllers\Api\Shop\ShopOrderController::class, 'store']);
+    Route::post('/orders/{orderNumber}/pay/vipps', [\App\Http\Controllers\Api\Shop\ShopPaymentController::class, 'vipps']);
+});
+
+// Vipps webhook for shop (ingen rate limit, ingen CORS)
+Route::post('/webhooks/shop/vipps', [\App\Http\Controllers\Api\Shop\ShopPaymentController::class, 'vippsWebhook']);
