@@ -184,7 +184,7 @@
 </div>
 
 {{-- ═══════════ LAYOUT ═══════════ --}}
-<form method="POST" action="/course/{{ $course->id }}/checkout/process-order" id="paymentForm">
+<form method="POST" action="/course/{{ $course->id }}/checkout/complete" id="paymentForm">
     @csrf
     <input type="hidden" name="package_id" value="{{ $package->id }}">
     <input type="hidden" name="payment_mode_id" value="{{ \App\PaymentMode::where('mode', 'Faktura')->first()->id ?? 3 }}">
