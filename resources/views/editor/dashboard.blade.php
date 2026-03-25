@@ -326,20 +326,7 @@
 	</div>
 
 	{{-- ═══════ MELDING FRA SVEN INGE ═══════ --}}
-	<div id="svenIngeMelding" style="background: #fdf8f4; border-left: 4px solid var(--brand-primary); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); position:relative; display:none;">
-		<button onclick="document.getElementById('svenIngeMelding').style.display='none'; localStorage.setItem('hideSvenMelding','{{ md5(now()->format('Y-m-d')) }}')" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.3rem;color:var(--text-secondary);cursor:pointer;line-height:1;" title="Lukk melding">&times;</button>
-		<h4 style="margin-top: 0; color: var(--brand-primary); font-family: var(--font-display); font-size: 1.1rem;">📢 Melding fra Sven Inge</h4>
-		<p>Hei alle sammen!</p>
-		<p>Markedet er i stor endring nå — stadig flere ønsker å selvpublisere, og vi følger veldig med. Forfatterskolen ligger langt foran teknologisk, og admin-systemet har fått ekstreme nye automasjoner som sparer oss for hundrevis av admintimer. Det betyr lavere kostnader på admin-siden — og det er penger vi heller vil bruke på dere.</p>
-		<p>Ergo holder jeg på å regne ut <strong>lønnsøkning</strong> på dere fantastiske redaktørene våre! 🎉</p>
-		<p>Men uansett hvor smart teknologien blir: <strong>gode redaktører trenger vi alltid</strong>. Det er dere som gjør den virkelige forskjellen for elevene våre.</p>
-		<p>Jeg kommer i løpet av helgen å oppdatere redaktørportalen. Nå har jeg fått på plass et nytt kontraktsystem for dere, og jeg kommer til å legge inn manus vi har fått inn som dere kan ta om dere ønsker det.</p>
-		<p>PS: Det finnes nå <strong>ledige manus</strong> i den nye «Ledige manus»-seksjonen nedenfor — første mann til mølla! 🏃‍♂️</p>
-		<p>Jeg trenger også <strong>gode ombrekkere og designere</strong> — spesielt for coverdesign. Jeg bygger nå programmer med samme teknologi som Typefi har, som vil gjøre ombrekking enklere. Den bør være på plass før sommeren, men ombrekkere og coverdesignere vil vi alltid trenge. Kjenner du noen, eller er du interessert selv? Send meg en e-post på <a href="mailto:sven.inge@forfatterskolen.no" style="color: var(--brand-primary); font-weight: 600;">sven.inge@forfatterskolen.no</a>! Jeg programmerer også nye verktøy som jeg håper vil gjøre hverdagen deres enklere. Har du en god idé til et program du trenger, eller forslag til hvordan vi kan gjøre nettsiden enda bedre — hører jeg gjerne fra deg!</p>
-		<p>🎄 <strong>Juleantologi!</strong> Jeg planlegger en juleantologi, og om dere ønsker å bidra som redaktør så gi meg gjerne beskjed! Trenger at rektor godkjenner, men her er litt info på forhånd: <a href="https://www.forfatterskolen.no/juleantologi" target="_blank" style="color: var(--brand-primary); font-weight: 600;">forfatterskolen.no/juleantologi</a></p>
-		<p>⚽ PS: Noen av dere vil kanskje oppleve å måtte svare på en liten quiz før dere får tildelt et manus — ikke ta det personlig, det er bare litt moro! 😉</p>
-		<p style="margin-bottom: 0; color: var(--text-secondary); font-style: italic;">— Sven Inge, {{ \Carbon\Carbon::now()->format('d.m.Y') }}</p>
-	</div>
+	{{-- Melding fra Sven Inge (fjernet 25.03.2026) --}}
 
 	{{-- ═══════ PL QUIZ MODAL ═══════ --}}
 	<div class="modal fade" id="plQuizModal" tabindex="-1" role="dialog">

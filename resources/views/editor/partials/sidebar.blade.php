@@ -78,6 +78,34 @@
         @endforeach
     </ul>
 
+    <div id="pl-sidebar-table" style="padding:0 12px;margin-bottom:12px;display:none;">
+        <div style="font-size:11px;font-weight:700;color:#999;letter-spacing:0.5px;margin-bottom:6px;">⚽ PREMIER LEAGUE</div>
+        <div id="pl-sidebar-rows" style="font-size:11px;line-height:1.8;"></div>
+    </div>
+    <script>
+    (function(){
+        fetch('https://site.api.espn.com/apis/v2/sports/soccer/eng.1/standings')
+        .then(r=>r.json()).then(data=>{
+            var entries=data.children[0].standings.entries;
+            entries.sort((a,b)=>{
+                var ar=a.stats.find(s=>s.name==='rank'),br=b.stats.find(s=>s.name==='rank');
+                return (ar?ar.value:99)-(br?br.value:99);
+            });
+            var html='';
+            var top=Math.min(6,entries.length);
+            for(var i=0;i<top;i++){
+                var e=entries[i],name=e.team.abbreviation,pts=e.stats.find(s=>s.name==='points');
+                var bold=(name==='ARS')?'font-weight:700;color:#EF0107;':'color:#ccc;';
+                html+='<div style="display:flex;justify-content:space-between;'+bold+'">'
+                    +'<span>'+(i+1)+'. '+name+'</span>'
+                    +'<span>'+(pts?pts.value:'')+'p</span></div>';
+            }
+            document.getElementById('pl-sidebar-rows').innerHTML=html;
+            document.getElementById('pl-sidebar-table').style.display='block';
+        }).catch(function(){});
+    })();
+    </script>
+
     <div class="ed-sidebar__user">
         <div class="ed-sidebar__avatar">
             {{ strtoupper(substr(Auth::user()->fullName, 0, 1)) }}{{ strtoupper(substr(explode(' ', Auth::user()->fullName)[1] ?? '', 0, 1)) }}

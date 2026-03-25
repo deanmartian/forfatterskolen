@@ -18,17 +18,7 @@
 	<div class="row">
 		<div class="col-sm-12">
 
-			<!-- Melding fra Sven Inge -->
-			<div class="panel panel-default" style="border-left: 4px solid #8B1A1A; background: #fdf8f4;">
-				<div class="panel-body">
-					<h4 style="margin-top: 0; color: #8B1A1A;"><i class="fa fa-bullhorn"></i> Melding fra Sven Inge</h4>
-					<p>Hei alle sammen!</p>
-					<p>Nå er jeg et godt stykke på vei med å oppdatere hele systemet. Det gjør at vi får mindre kostnader på admin-siden, som vi har brukt alt for mye tid på nå.</p>
-					<p>Ergo holder jeg på å regne ut <strong>lønnsøkning</strong> på dere fantastiske redaktørene våre! 🎉</p>
-					<p>Jeg kommer i løpet av helgen å oppdatere redaktørportalen. Nå har jeg fått på plass et nytt kontraktsystem for dere. Jeg kommer til å legge inn manus vi har fått inn som dere kan ta om dere ønsker dette.</p>
-					<p style="margin-bottom: 0; color: #666; font-style: italic;">— Sven Inge, {{ \Carbon\Carbon::now()->format('d.m.Y') }}</p>
-				</div>
-			</div>
+			{{-- Melding fra Sven Inge (fjernet 25.03.2026) --}}
 
 			<!-- My assigned manuscripts -->
 			<div class="row">
