@@ -35,6 +35,9 @@
             <a :href="'/project/' + project.id + '/print'" class="btn btn-primary btn-sm">
                 Print
             </a>
+            <a :href="'/project/' + project.id + '/shop'" class="btn btn-sm" style="background:#862736;color:#fff;border:none;">
+                🛒 Nettbutikk
+            </a>
             <div class="pull-right">
                 <button class="btn btn-success btn-sm" @click="showLearnerFormModal()">
                     <i class="fa fa-user"></i> Add Learner
