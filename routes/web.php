@@ -278,7 +278,7 @@ Route::domain($front)->group(function () {
             Route::get('/{id}/fs_checkout', [Frontend\ShopController::class, 'checkout'])->name('front.course.fs-checkout'); // Checkout
             Route::get('/{id}/cancelled-order', [Frontend\ShopController::class, 'orderCancelled'])->name('front.course.cancelled-order');
             Route::get('/{id}/checkout-svea', [Frontend\ShopController::class, 'sveaCheckout'])->name('front.course.svea-checkout'); // Checkout
-            Route::post('/{id}/checkout/process-order', [Frontend\ShopController::class, 'processOrder'])->name('front.course.process_order'); // Place Order
+            Route::match(['get', 'post'], '/{id}/checkout/process-order', [Frontend\ShopController::class, 'processOrder'])->name('front.course.process_order'); // Place Order
             Route::get('/{id}/thank-you', [Frontend\CourseController::class, 'thankyou'])->name('front.course.thank-you'); // Checkout
             Route::get('/{id}/confirmation/{order}', [Frontend\CourseController::class, 'confirmation'])->name('front.course.confirmation'); // Confirmation
             Route::post('/{id}/checkout/validate-form', [Frontend\ShopController::class, 'validateCheckoutForm'])->name('front.course.checkout.validate-form');

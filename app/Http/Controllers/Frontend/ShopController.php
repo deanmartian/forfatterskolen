@@ -235,8 +235,37 @@ class ShopController extends Controller
         return view('frontend.shop.payment', compact('course', 'package', 'price', 'maxFreeMonths', 'discount', 'coupon'));
     }
 
-    public function processOrder($course_id, OrderCreateRequest $request)
+    public function processOrder($course_id, Request $request)
     {
+        // Fallback: GET-request redirecter tilbake til checkout
+        if ($request->isMethod('get')) {
+            return redirect()->route('front.course.checkout', $course_id)
+                ->with('error', 'Bestillingen ble avbrutt. Vennligst prøv igjen.');
+        }
+
+        // Valider manuelt (erstattet OrderCreateRequest)
+        $request->validate(array_merge(
+            [
+                'email' => 'required',
+                'street' => 'required',
+                'city' => 'required',
+                'zip' => 'required',
+                'payment_mode_id' => 'required',
+                'payment_plan_id' => 'required',
+                'package_id' => 'required',
+            ],
+            !\Auth::check() ? ['first_name' => 'required', 'last_name' => 'required', 'agree_terms' => 'required|accepted'] : []
+        ));
+
+        // Fyll inn manglende felter for innloggede
+        if (\Auth::check()) {
+            $request->merge([
+                'email' => $request->email ?: \Auth::user()->email,
+                'first_name' => $request->first_name ?: \Auth::user()->first_name,
+                'last_name' => $request->last_name ?: \Auth::user()->last_name,
+            ]);
+        }
+
         // check if webinar-pakke
         // if ($course_id == 17) {
         $course = Course::findOrFail($course_id);
