@@ -11,13 +11,29 @@ use Illuminate\Http\Request;
 
 class ShopPaymentController extends Controller
 {
+    /**
+     * Hent VippsRepository med Indiemoon-nøkler (KUN bokkjøp/selvpublisering)
+     */
+    private function indiemoonVipps(): VippsRepository
+    {
+        // Midlertidig sett Indiemoon-nøkler i config
+        config([
+            'services.vipps.client_id' => config('shop.vipps.client_id'),
+            'services.vipps.client_secret' => config('shop.vipps.client_secret'),
+            'services.vipps.subscription_key' => config('shop.vipps.subscription_key'),
+            'services.vipps.merchant_serial_number' => config('shop.vipps.msn'),
+        ]);
+
+        return new VippsRepository();
+    }
+
     public function vipps($orderNumber)
     {
         $order = BookOrder::where('order_number', $orderNumber)
             ->where('payment_status', 'pending')
             ->firstOrFail();
 
-        $vipps = app(VippsRepository::class);
+        $vipps = $this->indiemoonVipps();
 
         $reference = 'SHOP-' . $order->id;
         $result = $vipps->initiatePayment(
@@ -55,7 +71,7 @@ class ShopPaymentController extends Controller
         }
 
         // Sjekk Vipps-status
-        $vipps = app(VippsRepository::class);
+        $vipps = $this->indiemoonVipps();
         $details = $vipps->getPaymentDetails($reference);
 
         $captured = collect($details['transactionLogHistory'] ?? [])
@@ -77,7 +93,7 @@ class ShopPaymentController extends Controller
         }
 
         if ($order->payment_reference && str_starts_with($order->payment_reference, 'SHOP-')) {
-            $vipps = app(VippsRepository::class);
+            $vipps = $this->indiemoonVipps();
             $details = $vipps->getPaymentDetails($order->payment_reference);
 
             $captured = collect($details['transactionLogHistory'] ?? [])

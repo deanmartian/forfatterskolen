@@ -1,7 +1,15 @@
 <?php
 
 return [
-    'frontend_url' => env('SHOP_FRONTEND_URL', 'https://shop.indiemoon.no'),
+    'frontend_url' => env('SHOP_FRONTEND_URL', 'https://indiemoon.no'),
+
+    // Indiemoon Vipps — KUN for bokkjøp og selvpublisering
+    'vipps' => [
+        'client_id' => env('INDIEMOON_VIPPS_CLIENT_ID'),
+        'client_secret' => env('INDIEMOON_VIPPS_CLIENT_SECRET'),
+        'subscription_key' => env('INDIEMOON_VIPPS_SUBSCRIPTION_KEY'),
+        'msn' => env('INDIEMOON_VIPPS_MSN'),
+    ],
 
     'shipping' => [
         'NO' => 59,
