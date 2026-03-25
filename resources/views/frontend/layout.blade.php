@@ -256,15 +256,13 @@
                 }
             });
 
-            if ('serviceWorker' in navigator ) {
-                window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-                        // Registration was successful
-                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                    }, function(err) {
-                        // registration failed :(
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
+            // Avregistrer service worker for å unngå cache-problemer ved innlogging
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    registrations.forEach(function(r) { r.unregister(); });
+                });
+                caches.keys().then(function(names) {
+                    names.forEach(function(name) { caches.delete(name); });
                 });
             }
 
