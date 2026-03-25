@@ -327,7 +327,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="py-submit" id="submitBtn">
+            <button type="button" onclick="submitPayment()" class="py-submit" id="submitBtn">
                 Bekreft bestilling — kr {{ number_format($price, 0, ',', ' ') }} faktura
             </button>
 
