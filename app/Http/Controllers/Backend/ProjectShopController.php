@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\ProjectBookPicture;
+use App\ProjectGraphicWork;
 
 class ProjectShopController extends Controller
 {
@@ -85,11 +86,6 @@ class ProjectShopController extends Controller
             return response()->json(['error' => 'Ingen bok funnet.'], 404);
         }
 
-        // Hent bokbilder fra Dropbox
-        $pictures = ProjectBookPicture::where('project_id', $project->id)->get();
-        $imageUrls = $pictures->pluck('image')->filter()->values()->toArray();
-
-        // Hent boknavn og eksisterende info
         $bookName = $book->book_name ?? $project->name;
         $authorName = $project->user->full_name ?? 'Ukjent';
 
@@ -98,43 +94,81 @@ class ProjectShopController extends Controller
             return response()->json(['error' => 'AI-nøkkel ikke konfigurert.'], 500);
         }
 
-        // Bygg meldinger — med bilder hvis tilgjengelig
+        // Hent data fra Graphic Work
+        // 1. Baksidetekst fra cover (type=cover, backside_text)
+        $coverWork = ProjectGraphicWork::where('project_id', $project->id)
+            ->cover()
+            ->whereNotNull('backside_text')
+            ->orderByDesc('id')
+            ->first();
+
+        $backsideText = '';
+        if ($coverWork && $coverWork->backside_type === 'text') {
+            $backsideText = $coverWork->backside_text;
+        }
+
+        // 2. Siste print-ready cover (for bilde-analyse)
+        $printReadyCover = ProjectGraphicWork::where('project_id', $project->id)
+            ->printReady()
+            ->orderByDesc('upload_date')
+            ->orderByDesc('id')
+            ->first();
+
+        // 3. Bokbilder fra ProjectBookPicture
+        $pictures = ProjectBookPicture::where('project_id', $project->id)->get();
+
+        // Bygg AI-prompt
         $content = [];
 
-        // Legg til bilder
-        foreach (array_slice($imageUrls, 0, 3) as $url) {
-            // Prøv å hente bildet
+        // Prøv å legge til cover-bilde fra BookPicture
+        foreach ($pictures->take(2) as $pic) {
+            $url = $pic->image;
+            if (!$url) continue;
             try {
+                // Dropbox-filer må gå via intern route
+                if (str_contains($url, 'project-')) {
+                    $url = url('/dropbox/shared-link/' . trim($url));
+                }
                 $imageData = @file_get_contents($url);
-                if ($imageData) {
-                    $base64 = base64_encode($imageData);
-                    $mime = 'image/jpeg';
-                    if (str_contains($url, '.png')) $mime = 'image/png';
-                    $content[] = [
-                        'type' => 'image',
-                        'source' => [
-                            'type' => 'base64',
-                            'media_type' => $mime,
-                            'data' => $base64,
-                        ],
-                    ];
+                if ($imageData && strlen($imageData) < 5000000) {
+                    $finfo = new \finfo(FILEINFO_MIME_TYPE);
+                    $mime = $finfo->buffer($imageData);
+                    if (in_array($mime, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'])) {
+                        $content[] = [
+                            'type' => 'image',
+                            'source' => [
+                                'type' => 'base64',
+                                'media_type' => $mime,
+                                'data' => base64_encode($imageData),
+                            ],
+                        ];
+                    }
                 }
             } catch (\Exception $e) {
-                Log::warning("Kunne ikke hente bilde: {$url}");
+                Log::warning("AI autofill: Kunne ikke hente bilde", ['url' => $url]);
             }
         }
 
-        $content[] = [
-            'type' => 'text',
-            'text' => "Analyser denne boken og gi meg strukturert informasjon for en nettbutikk.\n\n"
-                . "Boktittel: {$bookName}\n"
-                . "Forfatter: {$authorName}\n\n"
-                . "Svar BARE med JSON i dette formatet (ingen annen tekst):\n"
-                . '{"genre":"en av: Roman|Krim|Thriller|Fantasy|Science Fiction|Barnebok|Ungdomsbok|Poesi|Noveller|Sakprosa|Biografi|Selvhjelp|Kokebok|Reise|Annet",'
-                . '"target_audience":"en av: voksen|ungdom|barn",'
-                . '"short_description":"maks 300 tegn, engasjerende salgstekst for bokkort",'
-                . '"long_description":"baksidetekst, 2-3 avsnitt, fang leseren"}'
-        ];
+        // Bygg tekstprompt med all tilgjengelig info
+        $promptText = "Analyser denne boken og gi meg strukturert informasjon for nettbutikken Indiemoon.no.\n\n";
+        $promptText .= "Boktittel: {$bookName}\n";
+        $promptText .= "Forfatter: {$authorName}\n\n";
+
+        if ($backsideText) {
+            $promptText .= "Baksidetekst fra boken:\n{$backsideText}\n\n";
+        }
+
+        if ($printReadyCover) {
+            $promptText .= "Print Ready info: format={$printReadyCover->format}, dato={$printReadyCover->upload_date}\n\n";
+        }
+
+        $promptText .= "Basert på all tilgjengelig informasjon (baksidetekst, bilder, tittel), svar BARE med JSON:\n";
+        $promptText .= '{"genre":"en av: Roman|Krim|Thriller|Fantasy|Science Fiction|Barnebok|Ungdomsbok|Poesi|Noveller|Sakprosa|Biografi|Selvhjelp|Kokebok|Reise|Annet",';
+        $promptText .= '"target_audience":"en av: voksen|ungdom|barn",';
+        $promptText .= '"short_description":"maks 300 tegn, engasjerende norsk salgstekst for bokkort",';
+        $promptText .= '"long_description":"baksidetekst for nettbutikken, 2-3 avsnitt på norsk, fang leseren. Bruk baksideteksten som utgangspunkt hvis den finnes."}';
+
+        $content[] = ['type' => 'text', 'text' => $promptText];
 
         try {
             $response = Http::withHeaders([
@@ -151,20 +185,24 @@ class ProjectShopController extends Controller
 
             if (!$response->successful()) {
                 Log::error('AI autofill feil', ['status' => $response->status(), 'body' => $response->body()]);
-                return response()->json(['error' => 'AI-forespørsel feilet.'], 500);
+                return response()->json(['error' => 'AI-forespørsel feilet: ' . $response->status()], 500);
             }
 
             $text = $response->json('content.0.text', '');
 
-            // Ekstraher JSON fra responsen
             if (preg_match('/\{[\s\S]*\}/', $text, $match)) {
                 $data = json_decode($match[0], true);
                 if ($data) {
+                    // Legg til kilde-info
+                    $data['_sources'] = [];
+                    if ($backsideText) $data['_sources'][] = 'baksidetekst';
+                    if ($pictures->count() > 0) $data['_sources'][] = 'bokbilder';
+                    if (!$backsideText && $pictures->count() === 0) $data['_sources'][] = 'kun tittel og forfatter';
                     return response()->json($data);
                 }
             }
 
-            return response()->json(['error' => 'Kunne ikke parse AI-respons.'], 500);
+            return response()->json(['error' => 'Kunne ikke parse AI-respons.', 'raw' => $text], 500);
 
         } catch (\Exception $e) {
             Log::error('AI autofill exception', ['message' => $e->getMessage()]);
