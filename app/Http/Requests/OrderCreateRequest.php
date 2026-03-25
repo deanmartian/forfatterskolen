@@ -19,18 +19,35 @@ class OrderCreateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'email' => 'required',
-            'first_name' => 'required',
-            'last_name' => 'required',
             'street' => 'required',
             'city' => 'required',
             'zip' => 'required',
             'payment_mode_id' => 'required',
             'payment_plan_id' => 'required',
             'package_id' => 'required',
-            'agree_terms' => 'required|accepted',
         ];
+
+        // Innloggede brukere trenger ikke sende navn og terms separat
+        if (!\Auth::check()) {
+            $rules['first_name'] = 'required';
+            $rules['last_name'] = 'required';
+            $rules['agree_terms'] = 'required|accepted';
+        }
+
+        return $rules;
+    }
+
+    protected function prepareForValidation()
+    {
+        if (\Auth::check()) {
+            $this->merge([
+                'email' => $this->email ?: \Auth::user()->email,
+                'first_name' => $this->first_name ?: \Auth::user()->first_name,
+                'last_name' => $this->last_name ?: \Auth::user()->last_name,
+            ]);
+        }
     }
 
     /**
