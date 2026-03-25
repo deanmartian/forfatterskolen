@@ -974,7 +974,8 @@ class PageController extends Controller
                 foreach ($searchTerms as $term) {
                     $query->where(function ($subQuery) use ($term) {
                         $subQuery->where('first_name', 'like', $term.'%')
-                            ->orWhere('last_name', 'like', $term.'%');
+                            ->orWhere('last_name', 'like', $term.'%')
+                            ->orWhere('email', 'like', $term.'%');
                     });
                 }
             });
