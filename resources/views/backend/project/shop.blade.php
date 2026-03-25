@@ -64,7 +64,7 @@
                         <div class="col-md-6">
                             <label><strong>Slug (URL)</strong></label>
                             <div class="input-group">
-                                <span class="input-group-text">shop.indiemoon.no/bok/</span>
+                                <span class="input-group-text">indiemoon.no/butikk/</span>
                                 <input type="text" name="slug" class="form-control" value="{{ old('slug', $book->slug) }}" placeholder="auto-genereres fra boknavn">
                             </div>
                         </div>
