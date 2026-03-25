@@ -169,12 +169,17 @@ class ShopController extends Controller
 
     private function formatBook(ProjectBook $book): array
     {
+        $cover = $book->shop_cover_image;
+        if ($cover && str_starts_with($cover, '/Forfatterskolen_app/')) {
+            $cover = url('/dropbox/shared-link/' . ltrim($cover, '/'));
+        }
+
         return [
             'id' => $book->id,
             'title' => $book->book_name,
             'slug' => $book->slug,
             'author' => $book->project?->user?->full_name ?? 'Ukjent',
-            'cover' => $book->shop_cover_image,
+            'cover' => $cover,
             'genre' => $book->genre,
             'price' => $book->price_paperback ?? $book->price_ebook,
             'price_ebook' => $book->price_ebook,
