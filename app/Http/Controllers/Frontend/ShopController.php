@@ -690,6 +690,14 @@ class ShopController extends Controller
                 'phone' => $request->phone,
             ];
             $this->courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
+        } else {
+            // Oppdater adresse for innloggede brukere også
+            $address = \App\Address::firstOrNew(['user_id' => \Auth::user()->id]);
+            $address->street = $request->street;
+            $address->zip = $request->zip;
+            $address->city = $request->city;
+            $address->phone = $request->phone;
+            $address->save();
         }
 
         $user = \Auth::user();
