@@ -22,9 +22,9 @@ class HelpwiseImportService
      */
     public function getConversations(int $inboxId, ?string $pageToken = null): array
     {
-        $params = ['inboxIds[]' => $inboxId];
+        $params = ['mailboxId' => $inboxId];
         if ($pageToken) {
-            $params['nextPageToken'] = $pageToken;
+            $params['pageToken'] = $pageToken;
         }
 
         $response = $this->request('GET', '/conversations', $params);
@@ -50,7 +50,7 @@ class HelpwiseImportService
         $url = $this->baseUrl . $endpoint;
 
         $request = Http::withBasicAuth($this->apiKey, $this->apiSecret)
-            ->timeout(30);
+            ->timeout(120);
 
         if ($method === 'GET') {
             $response = $request->get($url, $params);
