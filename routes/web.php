@@ -1425,6 +1425,7 @@ Route::domain($admin)->group(function () {
         Route::get('/project/{id}/notes', [Backend\ProjectController::class, 'showNotes'])->name('admin.project.notes');
         Route::get('/project/{id}/shop', [Backend\ProjectShopController::class, 'edit'])->name('admin.project.shop');
         Route::put('/project/{id}/shop', [Backend\ProjectShopController::class, 'update'])->name('admin.project.shop.update');
+        Route::post('/project/{id}/shop/ai-autofill', [Backend\ProjectShopController::class, 'aiAutofill'])->name('admin.project.shop.ai-autofill');
         Route::get('/project', [Backend\ProjectController::class, 'index'])->name('admin.project.index');
         Route::post('/project/save', [Backend\ProjectController::class, 'saveProject']);
         Route::get('/project/{id}', [Backend\ProjectController::class, 'show'])->name('admin.project.show');

@@ -8,8 +8,17 @@
 <div class="container-fluid" style="max-width:900px;padding:2rem;">
     <a href="{{ route('admin.project.show', $project->id) }}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Tilbake til prosjekt</a>
 
-    <h2 style="margin-bottom:0.25rem;">🛒 Nettbutikk-innstillinger</h2>
-    <p class="text-muted">{{ $project->name }} — {{ $project->user->full_name ?? 'Ukjent forfatter' }}</p>
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 style="margin-bottom:0.25rem;">🛒 Nettbutikk-innstillinger</h2>
+            <p class="text-muted">{{ $project->name }} — {{ $project->user->full_name ?? 'Ukjent forfatter' }}</p>
+        </div>
+        @if($book)
+        <button type="button" id="aiAutofillBtn" class="btn btn-sm" style="background:#4a2c8a;color:#fff;border:none;border-radius:8px;padding:8px 16px;" onclick="aiAutofill()">
+            ✨ Auto-fyll med AI
+        </button>
+        @endif
+    </div>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -180,4 +189,63 @@
         </form>
     @endif
 </div>
+@endsection
+
+@section('scripts')
+<script>
+function aiAutofill() {
+    var btn = document.getElementById('aiAutofillBtn');
+    var origText = btn.innerHTML;
+    btn.innerHTML = '⏳ Analyserer...';
+    btn.disabled = true;
+
+    fetch('{{ route("admin.project.shop.ai-autofill", $project->id) }}', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.error) {
+            alert('Feil: ' + data.error);
+            return;
+        }
+        // Fyll ut feltene
+        if (data.genre) {
+            var genreSelect = document.querySelector('select[name="genre"]');
+            for (var i = 0; i < genreSelect.options.length; i++) {
+                if (genreSelect.options[i].value === data.genre) {
+                    genreSelect.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+        if (data.target_audience) {
+            var audienceSelect = document.querySelector('select[name="target_audience"]');
+            for (var i = 0; i < audienceSelect.options.length; i++) {
+                if (audienceSelect.options[i].value === data.target_audience) {
+                    audienceSelect.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+        if (data.short_description) {
+            document.querySelector('textarea[name="short_description"]').value = data.short_description;
+        }
+        if (data.long_description) {
+            document.querySelector('textarea[name="long_description"]').value = data.long_description;
+        }
+        btn.innerHTML = '✅ Ferdig — sjekk feltene';
+        setTimeout(function() { btn.innerHTML = origText; btn.disabled = false; }, 3000);
+    })
+    .catch(function(err) {
+        alert('Feil: ' + err.message);
+        btn.innerHTML = origText;
+        btn.disabled = false;
+    });
+}
+</script>
 @endsection
