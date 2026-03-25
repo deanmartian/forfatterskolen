@@ -327,7 +327,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="py-submit" id="submitBtn">
+            <button type="button" class="py-submit" id="submitBtn" onclick="submitPayment()">
                 Bekreft bestilling — kr {{ number_format($price, 0, ',', ' ') }} faktura
             </button>
 
@@ -575,5 +575,33 @@
     @if(request('months'))
         setMonths(parseInt('{{ request("months") }}') || 1);
     @endif
+
+    function submitPayment() {
+        var btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Behandler...';
+        var form = document.getElementById('paymentForm');
+        var data = new URLSearchParams(new FormData(form));
+        fetch(form.action, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/html'},
+            body: data,
+            redirect: 'manual'
+        }).then(function(r) {
+            if (r.type === 'opaqueredirect' || r.status === 302 || r.status === 301) {
+                window.location.href = r.headers.get('Location') || '/course/{{ $course->id }}/thank-you';
+            } else if (r.ok || r.status === 302) {
+                window.location.href = '/course/{{ $course->id }}/thank-you';
+            } else {
+                return r.text().then(function(html) {
+                    document.open(); document.write(html); document.close();
+                });
+            }
+        }).catch(function(e) {
+            alert('Feil: ' + e.message);
+            btn.disabled = false;
+            btn.textContent = 'Bekreft bestilling';
+        });
+    }
 </script>
 @stop
