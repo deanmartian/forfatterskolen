@@ -43,12 +43,5 @@
         </a>
     </li>
 
-@if ($course->id == 120)
-    <li @if(request()->is('*/pabygg-treff*')) class="active" @endif>
-        <a href="{{ route('admin.pabygg-treff') }}">
-            <i class="fa fa-calendar"></i>&nbsp;&nbsp;Påbyggingstreff
-        </a>
-    </li>
-@endif
 </ul>
 </div>
