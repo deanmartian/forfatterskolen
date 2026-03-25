@@ -907,10 +907,13 @@
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
             });
 
-            // Service Worker
+            // Avregistrer service worker for å unngå cache-problemer
             if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/service-worker.js');
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    registrations.forEach(function(r) { r.unregister(); });
+                });
+                caches.keys().then(function(names) {
+                    names.forEach(function(name) { caches.delete(name); });
                 });
             }
 
