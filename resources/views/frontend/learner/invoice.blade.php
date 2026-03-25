@@ -1436,6 +1436,16 @@
 								style="max-width: 180px; border-radius: 6px;">
 						</div>
 
+						{{-- Forfallsdag --}}
+						<div style="margin-bottom: 12px;">
+							<label style="font-size: 13px; color: #5D7285;">Forfallsdag i måneden</label>
+							<select id="ppDueDay" class="form-control" style="max-width: 180px; border-radius: 6px;">
+								@for($d = 1; $d <= 28; $d++)
+									<option value="{{ $d }}" {{ $d == now()->day ? 'selected' : '' }}>{{ $d }}.</option>
+								@endfor
+							</select>
+						</div>
+
 						{{-- Månedlig beløp --}}
 						<div id="ppMonthlyRow" style="display: none; background: #e8f5e9; border-radius: 6px; padding: 10px 16px; margin-bottom: 16px; text-align: center;">
 							<span style="color: #2e7d32; font-size: 14px;">= <strong id="ppMonthlyAmount">0 kr</strong>/mnd</span>
@@ -1593,7 +1603,7 @@
             $ppPlans = App\PaymentPlan::orderBy('division', 'asc')->get()->map(function($p) {
                 return ['id' => $p->id, 'plan' => $p->plan, 'division' => $p->division];
             })->values()->toArray();
-            $ppPlans[] = ['id' => 10, 'plan' => '24 måneder', 'division' => 24];
+            // 24 mnd fjernet - bruker kun planer fra DB
         @endphp
         const allPaymentPlans = @json($ppPlans);
 
@@ -1739,8 +1749,10 @@
                 }
                 runningTotal += amount;
 
+                var dueDay = parseInt($('#ppDueDay').val()) || new Date().getDate();
                 var dueDate = new Date(baseDate);
                 dueDate.setMonth(dueDate.getMonth() + i);
+                dueDate.setDate(Math.min(dueDay, 28));
                 var dateStr = ('0' + dueDate.getDate()).slice(-2) + '.' +
                               ('0' + (dueDate.getMonth() + 1)).slice(-2) + '.' +
                               dueDate.getFullYear();
@@ -1841,6 +1853,11 @@
         // Custom months input
         $('#ppCustomMonths').on('input', function() {
             selectCustomMonths($(this).val());
+        });
+
+        // Forfallsdag endring → oppdater forhåndsvisning
+        $('#ppDueDay').on('change', function() {
+            if (ppSelectedMonths > 0) updatePreview(ppSelectedMonths);
         });
 
         // Førstebetaling input
