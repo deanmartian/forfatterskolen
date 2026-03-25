@@ -170,7 +170,7 @@
 
     .footer-main {
         background: #1e1e1e;
-        padding: 3rem 1.5rem 1.5rem;
+        padding: 3rem 1.5rem 2rem;
     }
 
     .footer-main__inner {
@@ -315,7 +315,9 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-top: 2rem;
         padding-top: 1.25rem;
+        border-top: 1px solid rgba(255,255,255,0.1);
         flex-wrap: wrap;
         gap: 0.5rem;
     }
@@ -323,7 +325,7 @@
     .footer-bottom__copy {
         font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
         font-size: 0.75rem;
-        color: #8a8680;
+        color: rgba(255,255,255,0.35);
     }
 
     .footer-bottom__links {
@@ -334,7 +336,7 @@
     .footer-bottom__links a {
         font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
         font-size: 0.75rem;
-        color: #8a8680;
+        color: rgba(255,255,255,0.35);
         text-decoration: none;
         transition: color 0.15s;
     }
