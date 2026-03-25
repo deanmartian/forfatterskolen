@@ -1851,8 +1851,11 @@ class LearnerController extends Controller
 
         if ($request->has('payment_plan_id')) {
             $paymentPlan = PaymentPlan::find($request->payment_plan_id);
-            $payment_plan = (int) $request->payment_plan_id === 10 ? '24 måneder' : $paymentPlan->plan;
-            $divisor = (int) $request->payment_plan_id === 10 ? 24 : $paymentPlan->division;
+            if (!$paymentPlan) {
+                return back()->with('error', 'Ugyldig betalingsplan. Vennligst prøv igjen.');
+            }
+            $payment_plan = $paymentPlan->plan;
+            $divisor = $paymentPlan->division;
         } else {
             $payment_plan = $request->payment_plan_in_months.' måneder';
             $divisor = $request->payment_plan_in_months;
