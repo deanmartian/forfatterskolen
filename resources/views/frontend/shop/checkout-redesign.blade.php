@@ -662,7 +662,9 @@
 
     // ── Svea ───────────────────────────────────
     function updateSvea() {
-        var months = parseInt(document.getElementById('sveaMonths').value);
+        var el = document.getElementById('sveaMonths');
+        if (!el) return;
+        var months = parseInt(el.value);
         var total = currentPrice - couponDiscount;
         if (total < 0) total = 0;
         var monthly = Math.ceil(total / months);
