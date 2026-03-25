@@ -2115,6 +2115,7 @@ Route::domain($admin)->group(function () {
         Route::post('password/email', [Auth\ResetPasswordController::class, 'adminStore'])->name('admin.password.email');
         Route::get('passwordreset/{token}', [Auth\ResetPasswordController::class, 'adminResetForm'])->name('admin.passwordreset.form');
         Route::post('passwordreset/{token}/update', [Auth\ResetPasswordController::class, 'adminUpdatePassword'])->name('admin.passwordreset.update');
+        Route::get('login', [Auth\LoginController::class, 'showAdmin'])->name('admin.login.show');
         Route::post('login', [Auth\LoginController::class, 'adminLogin'])->name('admin.login.store');
     });
 
