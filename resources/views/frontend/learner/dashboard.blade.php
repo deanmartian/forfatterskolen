@@ -408,6 +408,20 @@
         </div>
     @endif
 
+    @php
+        $isPabyggElev = Auth::user()->coursesTaken()->whereHas('package', fn($q) => $q->where('course_id', 120))->where('is_active', 1)->exists();
+        $harMeldtPabygg = Auth::user()->coursesTaken()->whereHas('package', fn($q) => $q->where('course_id', 120))->where('is_active', 1)->whereNotNull('pabygg_treff_day')->exists();
+    @endphp
+    @if($isPabyggElev && !$harMeldtPabygg)
+        <div class="db-alert db-alert--warning" style="margin-bottom: 1rem;">
+            <div class="db-alert__icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="db-alert__text"><strong>Påbyggingstreff 8.–9. mai:</strong> Du har ikke meldt deg på ennå — velg fredag eller lørdag.</div>
+            <a href="{{ route('learner.pabygg-treff') }}" class="db-alert__action">Meld deg på</a>
+        </div>
+    @endif
+
     {{-- ═══ NEXT UP ═══ --}}
     <div class="db-next-grid">
         <div class="db-next-card">
