@@ -965,6 +965,8 @@ Route::domain($admin)->group(function () {
         Route::post('course/{id}/update/email', [Backend\CourseController::class, 'update_email'])->name('admin.course.update.email');
         Route::post('course/{id}/welcome-email/send', [Backend\CourseController::class, 'sendWelcomeEmail'])->name('admin.course.welcome-email.send');
         Route::post('course/{id}/clone', [Backend\CourseController::class, 'clone_course'])->name('admin.course.clone');
+        Route::post('course/{id}/auto-categorize-lessons', [Backend\CourseController::class, 'autoCategorizeLessons'])->name('admin.course.auto-categorize');
+        Route::get('pabygg-treff', [\App\Http\Controllers\Frontend\PabyggTreffController::class, 'adminIndex'])->name('admin.pabygg-treff');
         Route::post('course/{id}/add_similar_course', [Backend\CourseController::class, 'add_similar_course'])->name('admin.course.add_similar_course');
         Route::post('course/remove_similar_course/{similar_course_id}', [Backend\CourseController::class, 'remove_similar_course'])->name('admin.course.remove_similar_course');
         Route::post('/course/learner/add', [Backend\LearnerController::class, 'addLearner'])->name('learner.course.add.learner'); // Add Learner To Course

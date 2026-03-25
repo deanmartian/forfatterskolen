@@ -109,7 +109,7 @@ function autoCategorize() {
     btn.disabled = true;
     btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i> Kategoriserer...';
 
-    fetch('/course/{{ $course->id }}/auto-categorize-lessons', {
+    fetch('{{ route("admin.course.auto-categorize", $course->id) }}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
