@@ -661,6 +661,17 @@ class ShopController extends Controller
             ]);
         }*/
 
+        // For innloggede brukere: fyll inn manglende felter fra profilen
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            $request->merge([
+                'email' => $request->email ?: $user->email,
+                'first_name' => $request->first_name ?: $user->first_name,
+                'last_name' => $request->last_name ?: $user->last_name,
+                'terms' => $request->terms ?: 'on',
+            ]);
+        }
+
         $validation = [
             'email' => 'required|email',
             'first_name' => 'required',
