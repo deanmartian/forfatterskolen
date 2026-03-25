@@ -64,6 +64,7 @@ Route::domain($front)->group(function () {
         Route::get('/gratis-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar'); // Support Article
         Route::post('/gratis-webinar/{id}/', [Frontend\HomeController::class, 'freeWebinar'])->name('front.free-webinar.submit'); // Support Article
         Route::get('/gratis-webinar/{id}/thank-you', [Frontend\HomeController::class, 'freeWebinarThanks'])->name('front.free-webinar-thanks'); // Support Article
+        Route::get('/gratis-webinar/{id}/reprise', [Frontend\HomeController::class, 'freeWebinarReprise'])->name('front.free-webinar-reprise');
         Route::get('/free-webinar/{id}/', function ($id) {
             return redirect()->route('front.free-webinar', ['id' => $id], 301);
         });
@@ -81,6 +82,7 @@ Route::domain($front)->group(function () {
         Route::get('/publishing', [Frontend\HomeController::class, 'publishing'])->name('front.publishing'); // Forlag page
         Route::get('/ombrekk-indiemoon', [Frontend\HomeController::class, 'ombrekkIndiemoon'])->name('front.ombrekk-indiemoon'); // Indiemoon ombrekk
         Route::get('/avmeld/{token}', [Frontend\HomeController::class, 'unsubscribeNewsletter'])->name('newsletter.unsubscribe');
+        Route::post('/paameld-igjen', [Frontend\HomeController::class, 'resubscribeNewsletter'])->name('newsletter.resubscribe');
         Route::get('/konkurranse', [Frontend\HomeController::class, 'competition'])->name('front.competition'); // Forlag page
         Route::get('/coaching-timer', [Frontend\HomeController::class, 'coachingTimer'])->name('front.coaching-timer'); // Coaching Timer Page
         Route::get('/coaching-timer/checkout/{plan}', [Frontend\HomeController::class, 'coachingTimerCheckout'])->name('front.coaching-timer-checkout'); // Coaching Timer Page
@@ -544,6 +546,10 @@ Route::domain($front)->group(function () {
         Route::get('/forum', [Frontend\LearnerController::class, 'forum'])->name('learner.forum');
         Route::post('/webinar-auto-register-update', [Frontend\LearnerController::class, 'autoRegisterCourseWebinar']);
 
+        // Påbyggingstreff
+        Route::get('/pabygg-treff', [Frontend\PabyggTreffController::class, 'index'])->name('learner.pabygg-treff');
+        Route::post('/pabygg-treff', [Frontend\PabyggTreffController::class, 'store'])->name('learner.pabygg-treff.store');
+
         Route::post('/profile', [Frontend\LearnerController::class, 'profileUpdate'])->name('learner.profile.update'); // Profile Update
         Route::post('/profile/photo', [Frontend\LearnerController::class, 'profileUpdatePhoto'])->name('learner.profile.update-photo'); // Profile Update
         Route::post('/profile/notifications', [Frontend\LearnerController::class, 'profileUpdateNotifications'])->name('learner.profile.update-notifications'); // Notification Preferences
@@ -709,6 +715,9 @@ Route::domain($front)->group(function () {
     });
 
     Route::get('/api/pilotleser/login', [Frontend\LearnerController::class, 'pilotleserLogin']);
+
+    // Redirect /login til /auth/login (gamle bokmerker og e-postlenker)
+    Route::get('/login', function () { return redirect('/auth/login'); });
 
     // Authentication
     Route::prefix('auth')->middleware('guest')->group(function () {
