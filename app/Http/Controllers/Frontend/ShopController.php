@@ -668,7 +668,6 @@ class ShopController extends Controller
                 'email' => $request->email ?: $user->email,
                 'first_name' => $request->first_name ?: $user->first_name,
                 'last_name' => $request->last_name ?: $user->last_name,
-                'terms' => $request->terms ?: 'on',
             ]);
         }
 
@@ -680,7 +679,6 @@ class ShopController extends Controller
             'zip' => 'required',
             'city' => 'required',
             'phone' => 'required',
-            'terms' => 'accepted',
         ];
 
         if (! \Auth::check()) {
