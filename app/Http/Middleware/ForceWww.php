@@ -9,11 +9,11 @@ class ForceWww
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!str_starts_with($request->getHost(), 'www.') &&
-            str_contains($request->getHost(), 'forfatterskolen.no')) {
+        // Kun redirect forfatterskolen.no (uten subdomain) til www
+        if ($request->getHost() === 'forfatterskolen.no') {
             return redirect()->to(
                 str_replace('://forfatterskolen.no', '://www.forfatterskolen.no', $request->fullUrl()),
-                307 // 307 beholder POST-metode
+                307
             );
         }
 
