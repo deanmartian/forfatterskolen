@@ -70,7 +70,7 @@
         @endif
 
         @include('frontend.partials.scripts')
-        <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js" defer></script>
+        {{-- vooplayer fjernet --}}
         <script src="/js/lang.js"></script>
         @yield('scripts')
        

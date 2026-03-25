@@ -208,7 +208,7 @@
         @endif
 
         @include('frontend.partials.scripts')
-        <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js" defer></script>
+        {{-- vooplayer fjernet - ikke lenger i bruk --}}
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const cacheValue = Date.now().toString();
