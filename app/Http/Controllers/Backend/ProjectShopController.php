@@ -13,6 +13,7 @@ class ProjectShopController extends Controller
 {
     public function edit($id)
     {
+        $layout = str_contains(request()->getHttpHost(), 'giutbok') ? 'giutbok.layout' : 'backend.layout';
         $project = Project::with(['books', 'user'])->findOrFail($id);
         $book = $project->books()->first();
 
@@ -22,7 +23,7 @@ class ProjectShopController extends Controller
             'Biografi', 'Selvhjelp', 'Kokebok', 'Reise', 'Annet',
         ];
 
-        return view('backend.project.shop', compact('project', 'book', 'genres'));
+        return view('backend.project.shop', compact('layout', 'project', 'book', 'genres'));
     }
 
     public function update($id, Request $request)

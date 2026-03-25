@@ -1,4 +1,4 @@
-@extends('backend.layouts.app')
+@extends($layout ?? 'backend.layout')
 
 @section('title')
     <title>Nettbutikk &rsaquo; {{ $project->name }} &rsaquo; Admin</title>
