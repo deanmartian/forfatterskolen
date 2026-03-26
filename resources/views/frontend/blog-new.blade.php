@@ -78,7 +78,7 @@
         overflow: hidden;
     }
     .bl-featured-img img {
-        width: 100%; height: 100%; object-fit: cover;
+        width: 100%; height: 100%; object-fit: cover; object-position: top;
         position: absolute; inset: 0;
     }
     .bl-featured-img .bl-avatar-lg {
@@ -159,7 +159,7 @@
         border-bottom: 1px solid var(--bl-border);
         overflow: hidden;
     }
-    .bl-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .bl-card-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
     .bl-card-body { padding: 16px 18px; }
     .bl-card-body h3 {
         font-family: 'Lora', serif;

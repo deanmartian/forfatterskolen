@@ -45,7 +45,7 @@
     }
     .ba-hero-img {
         position: absolute; inset: 0;
-        width: 100%; height: 100%; object-fit: cover;
+        width: 100%; height: 100%; object-fit: cover; object-position: top;
         opacity: 0.35;
     }
     .ba-hero-overlay {
@@ -218,7 +218,7 @@
         height: 110px; background: var(--ba-bg-soft);
         overflow: hidden; border-bottom: 1px solid var(--ba-border);
     }
-    .ba-related-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .ba-related-card-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
     .ba-related-card-body {
         padding: 14px 16px;
     }
