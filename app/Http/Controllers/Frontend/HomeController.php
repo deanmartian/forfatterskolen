@@ -388,7 +388,12 @@ class HomeController extends Controller
     {
         $blog = Blog::find($id);
         if ($blog && $blog->status == 1) {
-            return view('frontend.blog-read', compact('blog'));
+            $relatedBlogs = Blog::activeOnly()
+                ->where('id', '!=', $blog->id)
+                ->orderByRaw('RAND()')
+                ->limit(3)
+                ->get();
+            return view('frontend.blog-read', compact('blog', 'relatedBlogs'));
         }
 
         return redirect()->route('front.blog');
