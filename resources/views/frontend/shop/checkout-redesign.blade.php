@@ -523,8 +523,8 @@
                 <label class="co-pay-option" onclick="selectPayment(this, 'svea')" style="margin-bottom: 0;">
                     <input type="radio" name="payment_method" value="svea">
                     <div class="co-pay-option__info">
-                        <div class="co-pay-option__name">Avbetaling 6–36 mnd</div>
-                        <div class="co-pay-option__desc">Kortbetaling via Svea Finans</div>
+                        <div class="co-pay-option__name">Delbetaling opptil 36 mnd</div>
+                        <div class="co-pay-option__desc">Betal med Visa/Mastercard via Svea Finans</div>
                     </div>
                     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
                         {{-- Visa official logo --}}
