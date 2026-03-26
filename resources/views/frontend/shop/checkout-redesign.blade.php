@@ -276,7 +276,8 @@
                 {{-- Hurtiginnlogging: Vipps + Google --}}
                 <div style="display: flex; gap: 0.65rem; margin-bottom: 1.25rem;">
                     <a href="{{ route('auth.login.vipps', 'checkout_state') }}" class="co-vipps-btn" style="flex: 1; margin-bottom: 0; text-decoration: none;">
-                        <svg viewBox="0 0 340 82" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:54px;height:16px;">
+                        Logg inn med
+                        <svg viewBox="0 0 340 82" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:70px;height:20px;">
                             <path d="M62.4 14.1L41.2 60.4c-1.2 2.6-3.4 3.9-5.9 3.9-2.6 0-4.8-1.3-5.9-3.9L8.2 14.1c-.5-1.1-.8-2.1-.8-3 0-3.3 2.7-5.8 6-5.8 2.8 0 4.7 1.5 5.8 4.1l16.1 38.1L51.4 9.4c1.1-2.6 3-4.1 5.8-4.1 3.3 0 6 2.5 6 5.8 0 .9-.3 1.9-.8 3z" fill="white"/>
                             <path d="M77.4 12.7c-3.6 0-6.4-2.8-6.4-6.3S73.8.1 77.4.1s6.4 2.8 6.4 6.3-2.8 6.3-6.4 6.3zm-5.3 51c0-3 2.2-5.3 5.3-5.3s5.3 2.3 5.3 5.3v.6c0 3-2.2 5.3-5.3 5.3s-5.3-2.3-5.3-5.3v-.6zm0-45.6c0-3 2.2-5.3 5.3-5.3s5.3 2.3 5.3 5.3v33.5c0 3-2.2 5.3-5.3 5.3s-5.3-2.3-5.3-5.3V18.1z" fill="white"/>
                         </svg>
