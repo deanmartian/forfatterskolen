@@ -1,4 +1,4 @@
-@extends('backend.layouts.app')
+@extends('backend.layout')
 
 @section('title')
     <title>Bokbestillinger &rsaquo; Admin</title>

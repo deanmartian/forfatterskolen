@@ -1,4 +1,4 @@
-@extends('backend.layouts.app')
+@extends('backend.layout')
 
 @section('title')
     <title>{{ $order->order_number }} &rsaquo; Admin</title>
