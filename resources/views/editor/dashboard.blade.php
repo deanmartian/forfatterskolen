@@ -2106,9 +2106,12 @@
 
 	// Vis melding fra Sven Inge (med mulighet for å lukke)
 	(function() {
-		var key = '{{ md5(now()->format('Y-m-d')) }}';
-		if (localStorage.getItem('hideSvenMelding') !== key) {
-			document.getElementById('svenIngeMelding').style.display = 'block';
+		var el = document.getElementById('svenIngeMelding');
+		if (el) {
+			var key = '{{ md5(now()->format('Y-m-d')) }}';
+			if (localStorage.getItem('hideSvenMelding') !== key) {
+				el.style.display = 'block';
+			}
 		}
 	})();
 
