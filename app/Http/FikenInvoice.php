@@ -516,7 +516,7 @@ class FikenInvoice
      * @param string $paymentType  Beskrivelse (vipps, bambora, kort)
      * @return bool
      */
-    public function registerPaymentInFiken(Invoice $invoice, float $amount, string $date = null, string $paymentType = 'vipps'): bool
+    public function registerPaymentInFiken(Invoice $invoice, float $amount, string $date = null, string $paymentType = 'vipps', string $account = null): bool
     {
         if (!$invoice->fiken_url) {
             Log::warning("registerPaymentInFiken: Ingen fiken_url for faktura {$invoice->id}");
@@ -568,7 +568,7 @@ class FikenInvoice
             $paymentUrl = $saleUrl . '/payments';
             $paymentData = [
                 'date' => $date,
-                'account' => $this->fiken_bank_account_code, // 1920:10001
+                'account' => $account ?? $this->fiken_bank_account_code, // Default: 1920:10001
                 'amount' => (int) round($amount * 100), // Fiken bruker øre
                 'paymentType' => $paymentType,
             ];

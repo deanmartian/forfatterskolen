@@ -60,7 +60,7 @@ class IPNRepository
                         $fiken = new \App\Http\FikenInvoice();
                         $amount = $invoice->fiken_balance ?: ($invoice->gross ? $invoice->gross / 100 : 0);
                         if ($amount > 0) {
-                            $fiken->registerPaymentInFiken($invoice, $amount, date('Y-m-d'), 'bambora');
+                            $fiken->registerPaymentInFiken($invoice, $amount, date('Y-m-d'), 'paypal', '1960:10001');
                         }
                     } catch (\Exception $e) {
                         \Illuminate\Support\Facades\Log::error('Bambora→Fiken sync feilet for faktura ' . $invoice->id . ': ' . $e->getMessage());
