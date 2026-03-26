@@ -496,7 +496,7 @@
                     <input type="radio" name="payment_method" value="pay_later">
                     <div class="co-pay-option__info">
                         <div class="co-pay-option__name">Faktura</div>
-                        <div class="co-pay-option__desc">Bestill nå, betal senere</div>
+                        <div class="co-pay-option__desc">Bestill nå, betal senere. Faktura gjennom Forfatterskolen, opptil 6 mnd delbetaling uten ekstra kostnader.</div>
                     </div>
                 </label>
 
