@@ -105,21 +105,24 @@ class FikenInvoice
         ];
 
         if ($has_vat) {
+            // Beregn MVA som nøyaktig 25% av netto for å unngå "Invalid VAT value" fra Fiken
+            $netAmount = $post_fields['netAmount'];
+            $calculatedVat = (int) round($netAmount * 0.25);
             $fields = [
                 'issueDate' => isset($post_fields['issueDate']) && $post_fields['issueDate']
                     ? Carbon::parse($post_fields['issueDate'])->format('Y-m-d') : date('Y-m-d'),
                 'dueDate' => $post_fields['dueDate'],
                 'lines' => [[
-                    'net' => $post_fields['netAmount'],
-                    'vat' => $post_fields['vat'],
-                    'gross' => $post_fields['netAmount'] + $post_fields['vat'],
+                    'net' => $netAmount,
+                    'vat' => $calculatedVat,
+                    'gross' => $netAmount + $calculatedVat,
                     'vatType' => 'HIGH',
                     'vatInPercent' => 25,
                     'description' => $post_fields['description'],
                     'productId' => $lineProductId,
                     'comment' => $post_fields['comment'],
                     'quantity' => 1,
-                    'unitPrice' => $post_fields['netAmount'],
+                    'unitPrice' => $netAmount,
                 ]],
                 'customerId' => $customer->contactId,
                 'bankAccountCode' => $this->fiken_bank_account_code,
