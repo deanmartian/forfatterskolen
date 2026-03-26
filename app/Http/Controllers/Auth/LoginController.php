@@ -34,7 +34,7 @@ class LoginController extends Controller
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 1])) {
             // Authentication passed...
-            return redirect()->back();
+            return redirect('/');
         }
 
         return redirect()->back()->withInput()->withErrors(trans('site.wrong-password'));
@@ -57,10 +57,10 @@ class LoginController extends Controller
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 3])) {
             // Authentication passed...
-            return redirect()->back();
+            return redirect('/');
         } elseif (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'admin_with_editor_access' => 1])) {
             // Authentication passed...
-            return redirect()->back();
+            return redirect('/');
         }
 
         return redirect()->back()->withInput()->withErrors(trans('site.wrong-password'));
