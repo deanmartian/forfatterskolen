@@ -137,12 +137,20 @@ class FikenInvoice
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         $data = curl_exec($ch);
-        Log::info(\GuzzleHttp\json_encode($data));
         // get the http code response
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        Log::info('http code = '.$http_code);
+        Log::info('Fiken create_invoice http code = '.$http_code);
         if (! in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
-            abort($http_code); // display error page instead of the Whoops page
+            // Log the full response body for debugging
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $responseBody = substr($data, $header_size);
+            Log::error('Fiken create_invoice failed', [
+                'http_code' => $http_code,
+                'response' => $responseBody,
+                'request' => $field_string,
+            ]);
+            curl_close($ch);
+            abort($http_code, 'Fiken faktura feilet: ' . $responseBody);
         }
 
         curl_close($ch);
