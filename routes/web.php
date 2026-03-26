@@ -2133,6 +2133,13 @@ Route::domain($admin)->group(function () {
         ->where('path', '.*')
         ->name('admin.dropbox.download_file');
 
+    // Bokbestillinger (Indiemoon nettbutikk)
+    Route::prefix('shop-orders')->name('admin.shop-orders')->group(function () {
+        Route::get('/', [Backend\ShopOrderAdminController::class, 'index']);
+        Route::get('/{order}', [Backend\ShopOrderAdminController::class, 'show'])->name('.show');
+        Route::post('/{order}/ship', [Backend\ShopOrderAdminController::class, 'ship'])->name('.ship');
+    });
+
     // Ad OS Routes
     Route::prefix('ads')->group(function () {
         Route::get('/', [Backend\AdOsController::class, 'dashboard'])->name('admin.ads.dashboard');
