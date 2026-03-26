@@ -69,6 +69,35 @@
                                        @if(Auth::guest()) value="{{old('phone')}}"
                                        @else value="{{Auth::user()->address['phone']}}" @endif>
                             </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="street" class="control-label">
+                                    Adresse
+                                </label>
+                                <input type="text" id="street" class="form-control large-input" name="street" required
+                                       @if(Auth::guest()) value="{{old('street')}}"
+                                       @else value="{{Auth::user()->address['street'] ?? ''}}" @endif
+                                       placeholder="Gateadresse">
+                            </div>
+                        </div>
+                        <div class="form-group row mb-0">
+                            <div class="col-md-3 mb-4">
+                                <label for="zip" class="control-label">
+                                    Postnummer
+                                </label>
+                                <input type="text" id="zip" class="form-control large-input" name="zip" required
+                                       @if(Auth::guest()) value="{{old('zip')}}"
+                                       @else value="{{Auth::user()->address['zip'] ?? ''}}" @endif
+                                       placeholder="0000">
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <label for="city" class="control-label">
+                                    Sted
+                                </label>
+                                <input type="text" id="city" class="form-control large-input" name="city" required
+                                       @if(Auth::guest()) value="{{old('city')}}"
+                                       @else value="{{Auth::user()->address['city'] ?? ''}}" @endif
+                                       placeholder="By">
+                            </div>
                             @if(Auth::guest())
                                 <div class="col-md-6 mb-4">
                                     <label for="password" class="control-label">
@@ -78,6 +107,8 @@
                                            name="password" required>
                                 </div>
                             @endif
+                        </div>
+                        <div class="form-group row mb-0">
                             <div class="col-md-6 mb-4">
                                 <label for="age" class="control-label">
                                     {{ trans('site.front.form.age') }}

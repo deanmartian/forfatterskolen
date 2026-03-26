@@ -105,6 +105,9 @@ class CourseController extends Controller
             'first_name' => 'required|alpha_spaces',
             'last_name' => 'required|alpha_spaces',
             'phone' => 'required',
+            'street' => 'required',
+            'zip' => 'required',
+            'city' => 'required',
             'manuscript' => 'required',
         ]);
 
@@ -138,10 +141,13 @@ class CourseController extends Controller
             }
         }
 
-        // Lagre telefon fra søknadsskjemaet
-        if ($request->phone) {
+        // Lagre adresse og telefon fra søknadsskjemaet
+        if ($request->phone || $request->street || $request->zip) {
             $address = \App\Address::firstOrNew(['user_id' => Auth::user()->id]);
-            $address->phone = $request->phone;
+            if ($request->phone) $address->phone = $request->phone;
+            if ($request->street) $address->street = $request->street;
+            if ($request->zip) $address->zip = $request->zip;
+            if ($request->city) $address->city = $request->city;
             $address->save();
         }
 
