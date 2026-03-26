@@ -373,7 +373,7 @@ class HomeController extends Controller
 
         // check if ajax to display the page without loading
         if ($request->ajax()) {
-            return response()->json(\View::make('frontend.blog-post', ['blogs' => $blogs])->render());
+            return response()->json(\View::make('frontend.blog-post-redesign', ['blogs' => $blogs])->render());
         }
 
         return view('frontend.blog-new', compact('mainBlog', 'blogs'));
