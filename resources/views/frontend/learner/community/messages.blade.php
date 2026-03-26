@@ -27,11 +27,10 @@
         <div class="row">
             {{-- Conversation list --}}
             <div class="col-md-4">
-                <div class="card community-card mb-3">
+                <div class="community-card mb-3">
                     <div class="card-body p-0">
-                        {{-- New message button --}}
                         <div style="padding: 12px;">
-                            <button class="btn community-btn-primary btn-block" onclick="document.getElementById('new-message-form').style.display = document.getElementById('new-message-form').style.display === 'none' ? 'block' : 'none'">
+                            <button class="community-btn-primary" style="width: 100%;" onclick="document.getElementById('new-message-form').style.display = document.getElementById('new-message-form').style.display === 'none' ? 'block' : 'none'">
                                 <i class="fa fa-pencil"></i> Ny melding
                             </button>
                         </div>
@@ -40,7 +39,7 @@
                             <form action="{{ route('learner.community.sendMessage') }}" method="POST">
                                 @csrf
                                 <div class="form-group">
-                                    <select name="recipient_id" class="form-control" required>
+                                    <select name="recipient_id" class="form-control" required style="border: 1px solid var(--border); border-radius: 8px; font-size: 13px;">
                                         <option value="">Velg mottaker</option>
                                         @foreach($members as $member)
                                             @if($member->user_id !== Auth::id())
@@ -50,9 +49,9 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <textarea name="content" class="form-control" rows="2" placeholder="Skriv melding..." required></textarea>
+                                    <textarea name="content" class="form-control community-textarea" rows="2" placeholder="Skriv melding..." required></textarea>
                                 </div>
-                                <button type="submit" class="btn community-btn-primary btn-sm">Send</button>
+                                <button type="submit" class="community-btn-primary" style="font-size: 12px; padding: 6px 14px;">Send</button>
                             </form>
                         </div>
 
@@ -63,20 +62,22 @@
                                 $cName = $cProfile ? ucwords($cProfile->name) : ucwords($cPartner->first_name . ' ' . $cPartner->last_name);
                                 $cInitials = collect(explode(' ', $cName))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('');
                                 $isActive = $activeChat == $cPartner->id;
+                                $cColors = ['#2563eb', '#0d7a5f', '#7c3aed', '#b45309', '#862736'];
+                                $cColor = $cColors[crc32($cName) % count($cColors)];
                             @endphp
                             <a href="{{ route('learner.community.conversation', $cPartner->id) }}" class="conversation-item {{ $isActive ? 'active' : '' }}">
-                                <div class="avatar-circle avatar-sm">{{ $cInitials }}</div>
+                                <div class="avatar-circle avatar-sm" style="background: {{ $cColor }};">{{ $cInitials }}</div>
                                 <div style="flex: 1; min-width: 0;">
                                     <strong class="conversation-name">{{ $cName }}</strong>
                                     <p class="conversation-preview">{{ Str::limit($conv['last_message']->content ?? '', 40) }}</p>
                                 </div>
                                 @if($conv['unread_count'] > 0)
-                                    <span class="badge badge-danger">{{ $conv['unread_count'] }}</span>
+                                    <span style="background: var(--brand); color: #fff; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 10px;">{{ $conv['unread_count'] }}</span>
                                 @endif
                             </a>
                         @empty
                             <div class="text-center py-4">
-                                <p class="text-muted" style="font-size: 13px;">Ingen samtaler ennå</p>
+                                <p style="font-size: 13px; color: var(--text-muted);">Ingen samtaler ennå</p>
                             </div>
                         @endforelse
                     </div>
@@ -90,7 +91,7 @@
                         $partnerProfile = $chatPartner->profile ?? null;
                         $partnerName = $partnerProfile ? ucwords($partnerProfile->name) : ucwords($chatPartner->first_name . ' ' . $chatPartner->last_name);
                     @endphp
-                    <div class="card community-card">
+                    <div class="community-card">
                         <div class="card-body">
                             <div class="chat-header">
                                 <strong>{{ $partnerName }}</strong>
@@ -110,15 +111,15 @@
                                 @csrf
                                 <input type="hidden" name="recipient_id" value="{{ $chatPartner->id }}">
                                 <input type="text" name="content" class="form-control" placeholder="Skriv en melding..." required autofocus>
-                                <button type="submit" class="btn community-btn-primary">Send</button>
+                                <button type="submit" class="community-btn-primary">Send</button>
                             </form>
                         </div>
                     </div>
                 @else
-                    <div class="card community-card">
+                    <div class="community-card">
                         <div class="card-body text-center py-5">
-                            <i class="fa fa-envelope-o" style="font-size: 48px; color: #ccc;"></i>
-                            <p class="text-muted mt-3">Velg en samtale eller start en ny melding</p>
+                            <i class="fa fa-envelope-o" style="font-size: 48px; color: var(--border);"></i>
+                            <p style="color: var(--text-muted); margin-top: 12px;">Velg en samtale eller start en ny melding</p>
                         </div>
                     </div>
                 @endif

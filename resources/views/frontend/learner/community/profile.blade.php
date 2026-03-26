@@ -50,7 +50,7 @@
             </div>
 
             {{-- Redigeringsskjema --}}
-            <div class="card community-card">
+            <div class="community-card">
                 <div class="card-body profile-form-section">
                     <h4 class="widget-title">Rediger profil</h4>
                     <form action="{{ route('learner.community.updateProfile') }}" method="POST">
@@ -96,7 +96,7 @@
                             <input type="text" name="current_project" class="form-control" value="{{ $profile->current_project }}" placeholder="Hva jobber du med?">
                         </div>
 
-                        <button type="submit" class="btn community-btn-primary">Lagre endringer</button>
+                        <button type="submit" class="community-btn-primary">Lagre endringer</button>
                     </form>
                 </div>
             </div>

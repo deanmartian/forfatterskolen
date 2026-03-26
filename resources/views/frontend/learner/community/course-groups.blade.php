@@ -1,7 +1,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('title')
-<title>Kursgrupper > Skrivefellesskap > Forfatterskolen</title>
+<title>Kursgrupper › Skrivefellesskap › Forfatterskolen</title>
 @stop
 
 @section('styles')
@@ -30,7 +30,7 @@
                 @foreach($courses as $course)
                     <div class="col-md-6">
                         <a href="{{ route('learner.community.courseGroup', $course->id) }}" class="discussion-link">
-                            <div class="card community-card mb-3 discussion-card">
+                            <div class="community-card mb-3 discussion-card">
                                 <div class="card-body">
                                     <div class="d-flex" style="gap: 15px;">
                                         <div class="manuscript-icon">
@@ -56,9 +56,9 @@
                 @endforeach
             </div>
         @else
-            <div class="card community-card">
+            <div class="community-card">
                 <div class="card-body text-center py-5">
-                    <p class="text-muted">Du er ikke meldt på noen kurs ennå.</p>
+                    <p style="color: var(--text-muted);">Du er ikke meldt på noen kurs ennå.</p>
                 </div>
             </div>
         @endif

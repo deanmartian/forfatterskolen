@@ -31,23 +31,25 @@
                     $mName = ucwords($member->name);
                     $mInitials = collect(explode(' ', $mName))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('');
                     $mGenres = is_array($member->genres) ? implode(', ', array_slice($member->genres, 0, 3)) : '';
+                    $mColors = ['#2563eb', '#0d7a5f', '#7c3aed', '#b45309', '#862736'];
+                    $mColor = $mColors[crc32($mName) % count($mColors)];
                 @endphp
                 <div class="col-md-4 col-sm-6 mb-3">
-                    <div class="card community-card member-card">
+                    <div class="community-card member-card">
                         <div class="card-body text-center">
-                            <div class="avatar-circle avatar-lg mx-auto">{{ $mInitials }}</div>
+                            <div class="avatar-circle avatar-lg mx-auto" style="background: {{ $mColor }};">{{ $mInitials }}</div>
                             <h4 class="member-card-name">{{ $mName }}</h4>
                             @if($member->badge)
                                 <span class="user-badge">{{ $member->badge }}</span>
                             @endif
                             @if($mGenres)
-                                <p class="text-muted member-card-genres">{{ $mGenres }}</p>
+                                <p class="member-card-genres">{{ $mGenres }}</p>
                             @endif
                             @if($member->bio)
                                 <p class="member-card-bio">{{ Str::limit($member->bio, 80) }}</p>
                             @endif
                             @if($member->user_id !== Auth::id())
-                                <a href="{{ route('learner.community.conversation', $member->user_id) }}" class="btn community-btn-outline btn-sm mt-2">
+                                <a href="{{ route('learner.community.conversation', $member->user_id) }}" class="community-btn-outline" style="display: inline-block; margin-top: 8px; text-decoration: none; font-size: 12px;">
                                     <i class="fa fa-envelope-o"></i> Send melding
                                 </a>
                             @endif

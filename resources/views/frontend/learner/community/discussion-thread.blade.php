@@ -30,27 +30,29 @@
             $dProfile = $discussion->user->profile ?? null;
             $dName = $dProfile ? ucwords($dProfile->name) : 'Ukjent';
             $dInitials = collect(explode(' ', $dName))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('');
+            $dColors = ['pa-red', 'pa-blue', 'pa-teal', 'pa-purple', 'pa-amber'];
+            $dColor = $dColors[crc32($dName) % count($dColors)];
         @endphp
 
         {{-- Discussion --}}
-        <div class="card community-card mb-4">
+        <div class="community-card mb-4">
             <div class="card-body">
                 <div class="d-flex" style="gap: 12px;">
-                    <div class="avatar-circle">{{ $dInitials }}</div>
+                    <div class="avatar-circle {{ $dColor }}">{{ $dInitials }}</div>
                     <div style="flex: 1;">
-                        <h2 class="discussion-title" style="font-size: 1.3em;">{{ $discussion->title }}</h2>
+                        <h2 class="discussion-title" style="font-size: 1.3em; font-family: var(--font-display);">{{ $discussion->title }}</h2>
                         <div class="post-header mb-3">
                             <strong>{{ $dName }}</strong>
                             @if($dProfile && $dProfile->badge)
                                 <span class="user-badge">{{ $dProfile->badge }}</span>
                             @endif
-                            <span class="text-muted">{{ \Carbon\Carbon::parse($discussion->created_at)->diffForHumans() }}</span>
-                            <span class="category-tag ms-2">{{ $discussion->category }}</span>
+                            <span class="post-time">{{ \Carbon\Carbon::parse($discussion->created_at)->diffForHumans() }}</span>
+                            <span class="category-tag" style="margin-left: 4px;">{{ $discussion->category }}</span>
                         </div>
                         <p class="post-content">{{ $discussion->content }}</p>
                         @if($discussion->image_url)
                             <div style="margin-top: 10px;">
-                                <img src="{{ $discussion->image_url }}" alt="Diskusjonsbilde" style="max-width: 100%; border-radius: 8px;">
+                                <img src="{{ $discussion->image_url }}" alt="Diskusjonsbilde" style="max-width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
                             </div>
                         @endif
                     </div>
@@ -66,18 +68,20 @@
                 $rProfile = $reply->user->profile ?? null;
                 $rName = $rProfile ? ucwords($rProfile->name) : 'Ukjent';
                 $rInitials = collect(explode(' ', $rName))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('');
+                $rColors = ['#2563eb', '#0d7a5f', '#7c3aed', '#b45309', '#862736'];
+                $rColor = $rColors[crc32($rName) % count($rColors)];
             @endphp
-            <div class="card community-card mb-3">
+            <div class="community-card mb-3">
                 <div class="card-body">
                     <div class="d-flex" style="gap: 12px;">
-                        <div class="avatar-circle avatar-sm">{{ $rInitials }}</div>
+                        <div class="avatar-circle avatar-sm" style="background: {{ $rColor }};">{{ $rInitials }}</div>
                         <div style="flex: 1;">
                             <div class="post-header">
                                 <strong>{{ $rName }}</strong>
                                 @if($rProfile && $rProfile->badge)
                                     <span class="user-badge">{{ $rProfile->badge }}</span>
                                 @endif
-                                <span class="text-muted">{{ \Carbon\Carbon::parse($reply->created_at)->diffForHumans() }}</span>
+                                <span class="post-time">{{ \Carbon\Carbon::parse($reply->created_at)->diffForHumans() }}</span>
                             </div>
                             <p class="post-content">{{ $reply->content }}</p>
                         </div>
@@ -87,7 +91,7 @@
         @endforeach
 
         {{-- Reply form --}}
-        <div class="card community-card mt-3">
+        <div class="community-card mt-3">
             <div class="card-body">
                 <h4 class="widget-title">Skriv et svar</h4>
                 <form action="{{ route('learner.community.storeReply', $discussion->id) }}" method="POST">
@@ -101,7 +105,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn community-btn-primary">Publiser svar</button>
+                    <button type="submit" class="community-btn-primary">Publiser svar</button>
                 </form>
             </div>
         </div>

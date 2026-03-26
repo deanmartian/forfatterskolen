@@ -27,9 +27,9 @@
         </a>
 
         {{-- Excerpt --}}
-        <div class="card community-card mb-4">
+        <div class="community-card mb-4">
             <div class="card-body">
-                <h2 class="discussion-title" style="font-size: 1.3em;">{{ $excerpt->title }}</h2>
+                <h2 class="discussion-title" style="font-size: 1.3em; font-family: var(--font-display);">{{ $excerpt->title }}</h2>
                 <div class="discussion-meta mb-3">
                     <span>{{ $excerpt->word_count }} ord</span>
                     <span>·</span>
@@ -49,15 +49,17 @@
                 $fbProfile = $fb->user->profile ?? null;
                 $fbName = $fbProfile ? ucwords($fbProfile->name) : 'Ukjent';
                 $fbInitials = collect(explode(' ', $fbName))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('');
+                $fbColors = ['#2563eb', '#0d7a5f', '#7c3aed', '#b45309', '#862736'];
+                $fbColor = $fbColors[crc32($fbName) % count($fbColors)];
             @endphp
-            <div class="card community-card mb-3">
+            <div class="community-card mb-3">
                 <div class="card-body">
                     <div class="d-flex" style="gap: 12px;">
-                        <div class="avatar-circle avatar-sm">{{ $fbInitials }}</div>
+                        <div class="avatar-circle avatar-sm" style="background: {{ $fbColor }};">{{ $fbInitials }}</div>
                         <div>
                             <div class="post-header">
                                 <strong>{{ $fbName }}</strong>
-                                <span class="text-muted">{{ \Carbon\Carbon::parse($fb->created_at)->diffForHumans() }}</span>
+                                <span class="post-time">{{ \Carbon\Carbon::parse($fb->created_at)->diffForHumans() }}</span>
                             </div>
                             <p class="post-content">{{ $fb->content }}</p>
                         </div>
@@ -65,15 +67,15 @@
                 </div>
             </div>
         @empty
-            <div class="card community-card mb-3">
+            <div class="community-card mb-3">
                 <div class="card-body text-center py-4">
-                    <p class="text-muted">Ingen tilbakemeldinger ennå. Bli den første!</p>
+                    <p style="color: var(--text-muted);">Ingen tilbakemeldinger ennå. Bli den første!</p>
                 </div>
             </div>
         @endforelse
 
         {{-- Feedback form --}}
-        <div class="card community-card">
+        <div class="community-card">
             <div class="card-body">
                 <h4 class="widget-title">Gi tilbakemelding</h4>
                 <form action="{{ route('learner.community.storeFeedback', $excerpt->id) }}" method="POST">
@@ -81,7 +83,7 @@
                     <div class="form-group">
                         <textarea name="content" class="form-control community-textarea" rows="4" placeholder="Skriv din tilbakemelding her..." required></textarea>
                     </div>
-                    <button type="submit" class="btn community-btn-primary">Send tilbakemelding</button>
+                    <button type="submit" class="community-btn-primary">Send tilbakemelding</button>
                 </form>
             </div>
         </div>
