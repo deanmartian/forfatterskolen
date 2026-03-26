@@ -369,7 +369,7 @@ class HomeController extends Controller
         $mainBlog = Blog::activeOnly()->orderBy('created_at', 'DESC')->first();
         $blogs = Blog::activeOnly()->where('id', '!=', $mainBlog->id)
             ->orderBy('created_at', 'DESC')
-            ->simplePaginate(4);
+            ->simplePaginate(12);
 
         // check if ajax to display the page without loading
         if ($request->ajax()) {
