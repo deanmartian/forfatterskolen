@@ -612,6 +612,29 @@
         inc.innerHTML = html;
     }
 
+    // ── Bring postnummer-oppslag ─────────────
+    (function() {
+        var zipInput = document.getElementById('reg_zip');
+        var cityInput = document.getElementById('reg_city');
+        if (!zipInput || !cityInput) return;
+
+        zipInput.addEventListener('input', function() {
+            var zip = this.value.trim();
+            if (zip.length !== 4 || !/^\d{4}$/.test(zip)) { cityInput.value = ''; return; }
+
+            fetch('https://api.bring.com/postal-code/api/v1/postal_codes/NO/search?q=' + zip, {
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.postal_codes && data.postal_codes.length > 0) {
+                    cityInput.value = data.postal_codes[0].city;
+                }
+            })
+            .catch(function() {});
+        });
+    })();
+
     // ── Auth tabs ──────────────────────────────
     function switchTab(tab, btn) {
         document.querySelectorAll('.co-auth-tab').forEach(function(t) { t.classList.remove('co-auth-tab--active'); });
