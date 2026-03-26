@@ -1239,7 +1239,7 @@ class AssignmentController extends Controller
                 dispatch(new AddMailToQueueJob($to->email, $emailTemplate->subject, $emailTemplate->email_content, $emailTemplate->from_email,
                     null, null, 'new-pending-assignment-feedback-no-group', $assignmentFeedbackNoGroup->id));
 
-                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback saved successfully.'),
+                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Tilbakemelding lagret.'),
                     'alert_type' => 'success']);
 
             } else {
