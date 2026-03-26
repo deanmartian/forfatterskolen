@@ -14,6 +14,8 @@ class PabyggTreffController extends Controller
     /**
      * Show the Påbyggingstreff signup/info page.
      */
+    private const MAX_PER_DAY = 9;
+
     public function index()
     {
         $user = Auth::user();
@@ -25,6 +27,9 @@ class PabyggTreffController extends Controller
 
         return view('frontend.learner.pabygg-treff', [
             'courseTaken' => $courseTaken,
+            'fridayCount' => $this->countForDay('friday'),
+            'saturdayCount' => $this->countForDay('saturday'),
+            'maxPerDay' => self::MAX_PER_DAY,
         ]);
     }
 
@@ -44,7 +49,18 @@ class PabyggTreffController extends Controller
             abort(403, 'Du har ikke tilgang til denne siden.');
         }
 
-        $courseTaken->pabygg_treff_day = $request->input('pabygg_treff_day');
+        $chosenDay = $request->input('pabygg_treff_day');
+
+        // Don't count current user if they're switching days
+        $currentCount = $this->countForDay($chosenDay);
+        if ($courseTaken->pabygg_treff_day === $chosenDay) {
+            // Already on this day, no change needed
+        } elseif ($currentCount >= self::MAX_PER_DAY) {
+            return redirect()->route('learner.pabygg-treff')
+                ->withErrors(['pabygg_treff_day' => ucfirst($chosenDay === 'friday' ? 'Fredag' : 'Lørdag') . ' er fullt (maks ' . self::MAX_PER_DAY . ' deltakere). Velg en annen dag.']);
+        }
+
+        $courseTaken->pabygg_treff_day = $chosenDay;
         $courseTaken->save();
 
         return redirect()->route('learner.pabygg-treff')->with('success', 'Påmelding registrert!');
@@ -79,6 +95,16 @@ class PabyggTreffController extends Controller
     /**
      * Get the active course_taken record for course 120 for a user.
      */
+    private function countForDay(string $day): int
+    {
+        return CoursesTaken::whereHas('package', function ($q) {
+            $q->where('course_id', self::COURSE_ID);
+        })
+            ->where('pabygg_treff_day', $day)
+            ->where('is_active', 1)
+            ->count();
+    }
+
     private function getCourseTaken($user)
     {
         return CoursesTaken::where('user_id', $user->id)

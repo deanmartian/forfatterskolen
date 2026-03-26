@@ -163,6 +163,29 @@
         color: #666;
     }
 
+    .pabygg-radio-option label .day-spots {
+        display: block;
+        font-size: 12px;
+        margin-top: 6px;
+        color: #2e7d32;
+        font-weight: 500;
+    }
+
+    .pabygg-radio-option label .day-spots.full {
+        color: #c62828;
+    }
+
+    .pabygg-radio-option input[type="radio"]:disabled + label {
+        opacity: 0.5;
+        cursor: not-allowed;
+        border-color: #ddd;
+    }
+
+    .pabygg-radio-option input[type="radio"]:disabled + label:hover {
+        border-color: #ddd;
+        background: #fff;
+    }
+
     .btn-wine {
         background: var(--wine);
         color: #fff;
@@ -323,19 +346,27 @@
                             <div class="pabygg-radio-option">
                                 <input type="radio" name="pabygg_treff_day" value="friday"
                                        id="day-friday"
-                                       {{ old('pabygg_treff_day', $courseTaken->pabygg_treff_day) === 'friday' ? 'checked' : '' }}>
+                                       {{ old('pabygg_treff_day', $courseTaken->pabygg_treff_day) === 'friday' ? 'checked' : '' }}
+                                       {{ $fridayCount >= $maxPerDay && $courseTaken->pabygg_treff_day !== 'friday' ? 'disabled' : '' }}>
                                 <label for="day-friday">
                                     <span class="day-name">Fredag</span>
                                     <span class="day-date">8. mai 2026</span>
+                                    <span class="day-spots {{ $fridayCount >= $maxPerDay ? 'full' : '' }}">
+                                        {{ $fridayCount >= $maxPerDay ? 'Fullt' : ($maxPerDay - $fridayCount) . ' plasser igjen' }}
+                                    </span>
                                 </label>
                             </div>
                             <div class="pabygg-radio-option">
                                 <input type="radio" name="pabygg_treff_day" value="saturday"
                                        id="day-saturday"
-                                       {{ old('pabygg_treff_day', $courseTaken->pabygg_treff_day) === 'saturday' ? 'checked' : '' }}>
+                                       {{ old('pabygg_treff_day', $courseTaken->pabygg_treff_day) === 'saturday' ? 'checked' : '' }}
+                                       {{ $saturdayCount >= $maxPerDay && $courseTaken->pabygg_treff_day !== 'saturday' ? 'disabled' : '' }}>
                                 <label for="day-saturday">
                                     <span class="day-name">Lørdag</span>
                                     <span class="day-date">9. mai 2026</span>
+                                    <span class="day-spots {{ $saturdayCount >= $maxPerDay ? 'full' : '' }}">
+                                        {{ $saturdayCount >= $maxPerDay ? 'Fullt' : ($maxPerDay - $saturdayCount) . ' plasser igjen' }}
+                                    </span>
                                 </label>
                             </div>
                         </div>
