@@ -138,6 +138,13 @@ class CourseController extends Controller
             }
         }
 
+        // Lagre telefon fra søknadsskjemaet
+        if ($request->phone) {
+            $address = \App\Address::firstOrNew(['user_id' => Auth::user()->id]);
+            $address->phone = $request->phone;
+            $address->save();
+        }
+
         $package_id = $course->packagesIsShow[0]->id;
         $user_id = Auth::user()->id;
         $file = FrontendHelpers::saveFile($request, 'course-application', 'manuscript');
