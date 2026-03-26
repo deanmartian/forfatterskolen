@@ -529,6 +529,12 @@
                         <div class="co-pay-option__name">Avbetaling 6–36 mnd</div>
                         <div class="co-pay-option__desc">Svea Finans</div>
                     </div>
+                    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                        {{-- Visa logo --}}
+                        <svg width="38" height="24" viewBox="0 0 750 471" xmlns="http://www.w3.org/2000/svg"><rect width="750" height="471" rx="40" fill="#1A1F71"/><path d="M278 334l47-292h75l-47 292z" fill="#fff"/><path d="M524 46c-15-6-38-12-67-12-74 0-126 39-126 96-1 42 37 65 66 79 29 14 39 24 39 36 0 20-23 29-45 29-30 0-46-4-71-15l-10-5-10 64c18 8 50 15 84 15 79 0 130-39 131-99 0-33-20-58-63-79-26-13-42-22-42-36 0-12 14-25 43-25 24 0 42 5 56 11l7 3 10-62z" fill="#fff"/><path d="M661 42h-58c-18 0-31 5-39 23l-110 263h78l16-43h95l9 43h69zM571 235l39-107 8-20 4 18 23 109z" fill="#fff"/><path d="M247 42l-74 199-8-40c-14-47-57-98-105-123l67 256h79l117-292z" fill="#fff"/><path d="M137 42H13l-1 5c93 24 155 81 180 150l-26-131c-4-18-17-23-29-24z" fill="#F7B600"/></svg>
+                        {{-- Mastercard logo --}}
+                        <svg width="38" height="24" viewBox="0 0 750 471" xmlns="http://www.w3.org/2000/svg"><rect width="750" height="471" rx="40" fill="#16366F"/><circle cx="300" cy="236" r="150" fill="#D9222A"/><circle cx="450" cy="236" r="150" fill="#EE9F2D"/><path d="M375 116c38 32 62 80 62 134s-24 102-62 134c-38-32-62-80-62-134s24-102 62-134z" fill="#EB600A"/></svg>
+                    </div>
                 </label>
 
                 <div id="sveaConfig" class="co-installment-config" style="display:none;"></div>
