@@ -78,7 +78,7 @@
         overflow: hidden;
     }
     .bl-featured-img img {
-        width: 100%; height: 100%; object-fit: cover; object-position: top;
+        width: 100%; height: 100%; object-fit: cover; object-position: center 20%;
         position: absolute; inset: 0;
     }
     .bl-featured-img .bl-avatar-lg {
@@ -154,12 +154,14 @@
     }
     .bl-card:hover { border-color: var(--bl-brand-mid); }
     .bl-card-img {
-        height: 120px; background: var(--bl-bg-soft);
+        aspect-ratio: 4 / 3;
+        background: var(--bl-bg-soft);
         display: flex; align-items: center; justify-content: center;
         border-bottom: 1px solid var(--bl-border);
         overflow: hidden;
+        position: relative;
     }
-    .bl-card-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .bl-card-img img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; position: absolute; inset: 0; }
     .bl-card-body { padding: 16px 18px; }
     .bl-card-body h3 {
         font-family: 'Lora', serif;
