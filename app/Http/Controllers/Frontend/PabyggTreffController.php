@@ -25,10 +25,12 @@ class PabyggTreffController extends Controller
             abort(403, 'Du har ikke tilgang til denne siden.');
         }
 
+        $digitalCount = $this->countForDay('digital');
+
         return view('frontend.learner.pabygg-treff', [
             'courseTaken' => $courseTaken,
-            'fridayCount' => $this->countForDay('friday'),
-            'saturdayCount' => $this->countForDay('saturday'),
+            'fridayCount' => $this->countForDay('friday') + $digitalCount,
+            'saturdayCount' => $this->countForDay('saturday') + $digitalCount,
             'maxPerDay' => self::MAX_PER_DAY,
         ]);
     }
@@ -52,13 +54,20 @@ class PabyggTreffController extends Controller
         $chosenDay = $request->input('pabygg_treff_day');
 
         // Don't count current user if they're switching days
-        // Digital has no limit
+        // Digital takes a spot from both days
+        $digitalCount = $this->countForDay('digital');
         $currentCount = $this->countForDay($chosenDay);
         if ($chosenDay === 'digital') {
-            // No limit for digital
+            // Check both days have room
+            $fridayTotal = $this->countForDay('friday') + $digitalCount;
+            $saturdayTotal = $this->countForDay('saturday') + $digitalCount;
+            if ($fridayTotal >= self::MAX_PER_DAY && $saturdayTotal >= self::MAX_PER_DAY) {
+                return redirect()->route('learner.pabygg-treff')
+                    ->withErrors(['pabygg_treff_day' => 'Begge dager er fulle.']);
+            }
         } elseif ($courseTaken->pabygg_treff_day === $chosenDay) {
             // Already on this day, no change needed
-        } elseif ($currentCount >= self::MAX_PER_DAY) {
+        } elseif (($currentCount + $digitalCount) >= self::MAX_PER_DAY) {
             return redirect()->route('learner.pabygg-treff')
                 ->withErrors(['pabygg_treff_day' => ucfirst($chosenDay === 'friday' ? 'Fredag' : 'Lørdag') . ' er fullt (maks ' . self::MAX_PER_DAY . ' deltakere). Velg en annen dag.']);
         }
