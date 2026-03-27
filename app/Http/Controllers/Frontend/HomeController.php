@@ -371,7 +371,7 @@ class HomeController extends Controller
             ->orderBy('created_at', 'DESC')
             ->simplePaginate(12);
 
-        $blogs->setPath(route('front.blog'));
+        $blogs->setPath(config('app.url') . '/blog');
 
         return view('frontend.blog-new', compact('mainBlog', 'blogs'));
     }
