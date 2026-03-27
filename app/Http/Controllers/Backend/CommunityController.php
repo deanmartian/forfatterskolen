@@ -234,28 +234,21 @@ class CommunityController extends Controller
         $userPrompt = $request->input('prompt', 'Gi meg et inspirerende skrivetips for forfattere.');
 
         try {
-            $client = new Client(['base_uri' => 'https://api.openai.com/v1/']);
-            $response = $client->post('chat/completions', [
-                'headers' => [
-                    'Content-Type'  => 'application/json',
-                    'Authorization' => 'Bearer ' . config('services.openai.key'),
-                ],
-                'json' => [
-                    'model'    => 'gpt-4o-mini',
-                    'messages' => [
-                        [
-                            'role'    => 'system',
-                            'content' => 'Du er Forfatterskolen sin assistent. Skriv innlegg på norsk for et skrivefellesskap. Innleggene skal være inspirerende, lærerike og engasjerende for forfattere og skriveglade. Hold det kort og engasjerende (maks 3-4 avsnitt). Ikke bruk markdown-formatering.',
-                        ],
-                        ['role' => 'user', 'content' => $userPrompt],
-                    ],
-                    'temperature' => 0.8,
-                    'max_tokens'  => 500,
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'x-api-key' => config('services.anthropic.key'),
+                'anthropic-version' => '2023-06-01',
+                'Content-Type' => 'application/json',
+            ])->post('https://api.anthropic.com/v1/messages', [
+                'model' => 'claude-sonnet-4-20250514',
+                'max_tokens' => 500,
+                'system' => 'Du er Forfatterskolen sin assistent. Skriv innlegg på norsk for et skrivefellesskap. Innleggene skal være inspirerende, lærerike og engasjerende for forfattere og skriveglade. Hold det kort og engasjerende (maks 3-4 avsnitt). Ikke bruk markdown-formatering.',
+                'messages' => [
+                    ['role' => 'user', 'content' => $userPrompt],
                 ],
             ]);
 
-            $data = json_decode($response->getBody(), true);
-            $content = $data['choices'][0]['message']['content'] ?? '';
+            $data = $response->json();
+            $content = $data['content'][0]['text'] ?? '';
 
             return response()->json(['content' => $content]);
         } catch (\Exception $e) {
