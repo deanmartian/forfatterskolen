@@ -121,6 +121,28 @@ class LearnerCalendarService
             }
         }
 
+        // Påbygg-treff / Samlinger
+        $pabyggCourse = $user->coursesTaken->first(function ($ct) {
+            return $ct->package && $ct->package->course_id == 120 && $ct->is_active;
+        });
+        if ($pabyggCourse && $pabyggCourse->pabygg_treff_day) {
+            $treffDate = $pabyggCourse->pabygg_treff_day === 'friday'
+                ? Carbon::parse('2026-05-08', $timezone)->startOfDay()
+                : Carbon::parse('2026-05-09', $timezone)->startOfDay();
+            $dayLabel = $pabyggCourse->pabygg_treff_day === 'friday' ? 'Fredag 8. mai' : 'Lørdag 9. mai';
+
+            $events->push([
+                'id' => 'pabygg-treff',
+                'type' => 'samling',
+                'title' => '📍 Samling: Påbyggingstreff – ' . $dayLabel,
+                'className' => 'event-samling',
+                'start' => $treffDate->copy(),
+                'end' => $treffDate->copy(),
+                'color' => '#8e44ad',
+                'all_day' => true,
+            ]);
+        }
+
         $approvedCoaching = $user->coachingTimers()->whereNotNull('approved_date')->get();
         foreach ($approvedCoaching as $coaching) {
             $start = Carbon::parse($coaching->approved_date, $timezone);
