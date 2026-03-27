@@ -354,20 +354,4 @@
 @stop
 
 @section('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.addEventListener('click', function(e) {
-            var link = e.target.closest('.bl-pagination a');
-            if (!link) return;
-            e.preventDefault();
-            var page = link.href.split('page=')[1];
-            fetch('?page=' + page, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(function(r) { return r.json(); })
-                .then(function(html) {
-                    document.getElementById('blog-grid').innerHTML = html;
-                    window.scrollTo({ top: document.getElementById('blog-grid').offsetTop - 100, behavior: 'smooth' });
-                });
-        });
-    });
-</script>
 @stop
