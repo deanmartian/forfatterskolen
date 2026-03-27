@@ -133,11 +133,11 @@
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i> Send svar</button>
                                 <button type="submit" name="save_as_draft" value="1" class="btn btn-default"><i class="fa fa-save"></i> Lagre utkast</button>
-                                <form action="{{ route('admin.inbox.ai-draft', $conversation->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    <button type="submit" class="btn btn-warning"><i class="fa fa-magic"></i> Generer AI-utkast</button>
-                                </form>
+                                <button type="button" class="btn btn-warning" id="btn-ai-draft"><i class="fa fa-magic"></i> Generer AI-utkast</button>
                             </div>
+                        </form>
+                        <form id="ai-draft-form" action="{{ route('admin.inbox.ai-draft', $conversation->id) }}" method="POST" style="display:none;">
+                            @csrf
                         </form>
                     </div>
 
@@ -244,10 +244,20 @@
 </div>
 
 <script>
-    // Auto-scroll to bottom of thread
     document.addEventListener('DOMContentLoaded', function() {
+        // Auto-scroll to bottom of thread
         var thread = document.getElementById('message-thread');
         if (thread) thread.scrollTop = thread.scrollHeight;
+
+        // AI draft button
+        var aiBtn = document.getElementById('btn-ai-draft');
+        if (aiBtn) {
+            aiBtn.addEventListener('click', function() {
+                aiBtn.disabled = true;
+                aiBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Genererer...';
+                document.getElementById('ai-draft-form').submit();
+            });
+        }
     });
 </script>
 @stop
