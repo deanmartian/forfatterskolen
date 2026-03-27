@@ -330,7 +330,13 @@
                             <div class="success-text">
                                 <strong>Du er påmeldt!</strong>
                                 <span>
-                                    {{ $courseTaken->pabygg_treff_day === 'friday' ? 'Fredag 8. mai' : 'Lørdag 9. mai' }}
+                                    @if($courseTaken->pabygg_treff_day === 'friday')
+                                        Fredag 8. mai
+                                    @elseif($courseTaken->pabygg_treff_day === 'saturday')
+                                        Lørdag 9. mai
+                                    @elseif($courseTaken->pabygg_treff_day === 'digital')
+                                        Digitalt møte
+                                    @endif
                                 </span>
                             </div>
                         </div>
@@ -367,6 +373,16 @@
                                     <span class="day-spots {{ $saturdayCount >= $maxPerDay ? 'full' : '' }}">
                                         {{ $saturdayCount >= $maxPerDay ? 'Fullt' : ($maxPerDay - $saturdayCount) . ' plasser igjen' }}
                                     </span>
+                                </label>
+                            </div>
+                            <div class="pabygg-radio-option">
+                                <input type="radio" name="pabygg_treff_day" value="digital"
+                                       id="day-digital"
+                                       {{ old('pabygg_treff_day', $courseTaken->pabygg_treff_day) === 'digital' ? 'checked' : '' }}>
+                                <label for="day-digital">
+                                    <span class="day-name"><i class="fa fa-video-camera"></i> Digitalt</span>
+                                    <span class="day-date">Kan ikke komme fysisk</span>
+                                    <span class="day-spots">Digitalt møte avtales</span>
                                 </label>
                             </div>
                         </div>

@@ -126,15 +126,22 @@ class LearnerCalendarService
             return $ct->package && $ct->package->course_id == 120 && $ct->is_active;
         });
         if ($pabyggCourse && $pabyggCourse->pabygg_treff_day) {
-            $treffDate = $pabyggCourse->pabygg_treff_day === 'friday'
-                ? Carbon::parse('2026-05-08', $timezone)->startOfDay()
-                : Carbon::parse('2026-05-09', $timezone)->startOfDay();
-            $dayLabel = $pabyggCourse->pabygg_treff_day === 'friday' ? 'Fredag 8. mai' : 'Lørdag 9. mai';
+            if ($pabyggCourse->pabygg_treff_day === 'digital') {
+                $treffDate = Carbon::parse('2026-05-08', $timezone)->startOfDay();
+                $dayLabel = 'Digitalt møte (avtales)';
+                $icon = '💻';
+            } else {
+                $treffDate = $pabyggCourse->pabygg_treff_day === 'friday'
+                    ? Carbon::parse('2026-05-08', $timezone)->startOfDay()
+                    : Carbon::parse('2026-05-09', $timezone)->startOfDay();
+                $dayLabel = $pabyggCourse->pabygg_treff_day === 'friday' ? 'Fredag 8. mai' : 'Lørdag 9. mai';
+                $icon = '📍';
+            }
 
             $events->push([
                 'id' => 'pabygg-treff',
                 'type' => 'samling',
-                'title' => '📍 Samling: Påbyggingstreff – ' . $dayLabel,
+                'title' => $icon . ' Samling: Påbyggingstreff – ' . $dayLabel,
                 'className' => 'event-samling',
                 'start' => $treffDate->copy(),
                 'end' => $treffDate->copy(),

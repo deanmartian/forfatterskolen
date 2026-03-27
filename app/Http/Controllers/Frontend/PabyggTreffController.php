@@ -39,7 +39,7 @@ class PabyggTreffController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'pabygg_treff_day' => 'required|in:friday,saturday',
+            'pabygg_treff_day' => 'required|in:friday,saturday,digital',
         ]);
 
         $user = Auth::user();
@@ -52,8 +52,11 @@ class PabyggTreffController extends Controller
         $chosenDay = $request->input('pabygg_treff_day');
 
         // Don't count current user if they're switching days
+        // Digital has no limit
         $currentCount = $this->countForDay($chosenDay);
-        if ($courseTaken->pabygg_treff_day === $chosenDay) {
+        if ($chosenDay === 'digital') {
+            // No limit for digital
+        } elseif ($courseTaken->pabygg_treff_day === $chosenDay) {
             // Already on this day, no change needed
         } elseif ($currentCount >= self::MAX_PER_DAY) {
             return redirect()->route('learner.pabygg-treff')
