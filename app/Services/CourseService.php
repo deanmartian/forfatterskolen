@@ -159,6 +159,24 @@ class CourseService
 
         $orderRecord = $this->createOrder($request);
 
+        // Auto-activate course for pay-later orders (no manual approval needed)
+        $courseTaken = CoursesTaken::where('user_id', \Auth::user()->id)
+            ->where('package_id', $request->package_id)
+            ->where('is_active', false)
+            ->latest()
+            ->first();
+
+        if ($courseTaken) {
+            if ($courseTaken->package->course->type == 'Group') {
+                $courseTaken->started_at = \Carbon\Carbon::now();
+                $courseTaken->end_date = $courseTaken->package->validity_period > 0
+                    ? \Carbon\Carbon::today()->addMonth($courseTaken->package->validity_period)
+                    : \Carbon\Carbon::today()->addYear(1);
+            }
+            $courseTaken->is_active = 1;
+            $courseTaken->save();
+        }
+
         return [
             'redirect_url' => url('/thankyou?pl_ord='.$orderRecord->id),
         ];
