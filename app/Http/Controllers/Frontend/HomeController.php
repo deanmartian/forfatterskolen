@@ -371,10 +371,7 @@ class HomeController extends Controller
             ->orderBy('created_at', 'DESC')
             ->simplePaginate(12);
 
-        // check if ajax to display the page without loading
-        if ($request->ajax()) {
-            return response()->json(\View::make('frontend.blog-post-redesign', ['blogs' => $blogs])->render());
-        }
+        $blogs->setPath(route('front.blog'));
 
         return view('frontend.blog-new', compact('mainBlog', 'blogs'));
     }
