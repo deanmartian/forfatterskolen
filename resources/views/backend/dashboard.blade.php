@@ -1001,11 +1001,11 @@
 				<div class="col-sm-12">
 					<div class="panel panel-default">
 						<div class="panel-heading"><h4>{{ trans('site.pending-coaching-timer') }}</h4></div>
-						<table class="table">
-							<thead>
+						<div class="table-responsive">
+						<table class="table coaching-timer-table">
+							<thead class="hidden-xs">
 							<tr>
 								<th>{{ trans_choice('site.learners', 1) }}</th>
-								<th>{{ trans('site.learner-suggested-date') }}</th>
 								<th>{{ trans('site.session-length') }}</th>
 								<th>{{ trans_choice('site.editors', 1) }}</th>
 								<th></th>
@@ -1016,9 +1016,8 @@
 								<tr>
 									<td>
 										<a href="{{ route('admin.learner.show', $coachingTimer->user->id) }}">
-											{{ $coachingTimer->user->full_name }}
+											<strong>{{ $coachingTimer->user->full_name }}</strong>
 										</a>
-
 										@if ($coachingTimer->help_with)
 											<br>
 											<a href="#viewHelpWithModal" style="color:#eea236" class="viewHelpWithBtn"
@@ -1026,25 +1025,26 @@
 												{{ trans('site.view-help-with') }}
 											</a>
 										@endif
-									</td>
-									<td>
-                                        <?php
-                                        $suggested_dates = json_decode($coachingTimer->suggested_date);
-                                        ?>
+                                        <?php $suggested_dates = json_decode($coachingTimer->suggested_date); ?>
 										@if($suggested_dates)
+											<div class="visible-xs" style="margin-top:5px;">
+												<small class="text-muted">Foreslåtte datoer:</small>
+											</div>
+											<div style="margin-top:3px;">
 											@for($i =0; $i <= 2; $i++)
-												<div style="margin-top: 5px">
+												<span class="label label-default" style="margin-right:3px;font-weight:normal;">
 													{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($suggested_dates[$i]) }}
 													@if (!$coachingTimer->approved_date)
-														<button class="btn btn-success btn-xs approveDateBtn"
+														<a href="#" class="approveDateBtn" style="color:#fff;margin-left:3px;"
 																data-toggle="modal" data-target="#approveDateModal"
 																data-date="{{ $suggested_dates[$i] }}"
 																data-action="{{ route('admin.other-service.coaching-timer.approve_date', $coachingTimer->id) }}">
 															<i class="fa fa-check"></i>
-														</button>
+														</a>
 													@endif
-												</div>
+												</span>
 											@endfor
+											</div>
 										@endif
 									</td>
 									<td>
@@ -1070,6 +1070,7 @@
 							@endforeach
 							</tbody>
 						</table>
+						</div>
 					</div>
 				</div>
 			</div>
