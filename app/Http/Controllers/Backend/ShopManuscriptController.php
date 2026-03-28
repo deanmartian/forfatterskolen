@@ -346,7 +346,7 @@ class ShopManuscriptController extends Controller
             '</a>',
         ];
 
-        $format_content = str_replace($search_string, $replace_string, $email_content);
+        $format_content = str_replace($search_string, $replace_string, $email_content ?? '');
 
         /*\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
@@ -411,8 +411,10 @@ class ShopManuscriptController extends Controller
 
             $to = $user->email;
 
-            $replace_string = Carbon::parse($request->expected_finish)->format('d.m.Y');
-            $replace_content = str_replace('_date_', $replace_string, $emailTemplate->email_content);
+            $replace_string = $request->expected_finish
+                ? Carbon::parse($request->expected_finish)->format('d.m.Y')
+                : 'vi tar kontakt';
+            $replace_content = str_replace('_date_', $replace_string, $emailTemplate->email_content ?? '');
             $email_body = $replace_content;
 
             $subject = $emailTemplate->subject;
@@ -457,8 +459,10 @@ class ShopManuscriptController extends Controller
                 $user = User::find($shopManuscriptTaken->user_id);
                 $to = $user->email;
 
-                $replace_string = Carbon::parse($shopManuscriptTaken->expected_finish)->format('d.m.Y');
-                $replace_content = str_replace('_date_', $replace_string, $emailTemplate->email_content);
+                $replace_string = $shopManuscriptTaken->expected_finish
+                    ? Carbon::parse($shopManuscriptTaken->expected_finish)->format('d.m.Y')
+                    : 'vi tar kontakt';
+                $replace_content = str_replace('_date_', $replace_string, $emailTemplate->email_content ?? '');
                 $email_body = $replace_content;
 
                 $subject = $emailTemplate->subject;

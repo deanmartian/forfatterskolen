@@ -55,6 +55,15 @@
                                 $emailTemplate = $tempData ? $tempData : $singleCourseEmail;
                             }
 
+                            // Pre-fill shortcodes with actual values
+                            if ($emailTemplate) {
+                                $emailTemplate = clone $emailTemplate;
+                                $emailTemplate->email_content = str_replace(
+                                    [':course_name', ':firstname'],
+                                    [$newCourseTaken->package->course->title ?? '', $newCourseTaken->user->first_name ?? ''],
+                                    $emailTemplate->email_content ?? ''
+                                );
+                            }
                         ?>
                         <button class="btn btn-success btn-xs sendEmailBtn"
                             data-toggle="modal"

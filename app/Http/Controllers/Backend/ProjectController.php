@@ -372,7 +372,7 @@ class ProjectController extends Controller
                 "<a href='$loginLink'>Klikk her for å logge inn</a>",
             ];
 
-            $emailContent = str_replace($searchString, $replaceString, $emailTemplate->email_content);
+            $emailContent = str_replace($searchString, $replaceString, $emailTemplate->email_content ?? '');
 
             dispatch(new AddMailToQueueJob($to, $emailTemplate->subject, $emailContent,
                 $emailTemplate->from_email, null, null,

@@ -287,7 +287,7 @@ class AdminHelpers
     /**
      * @return mixed
      */
-    public static function formatEmailContent($email_content, $to, $first_name, $redirect_link)
+    public static function formatEmailContent($email_content, $to, $first_name, $redirect_link, $extra_replacements = [])
     {
         $encode_email = encrypt($to);
         $redirectLink = encrypt($redirect_link);
@@ -298,15 +298,27 @@ class AdminHelpers
             ':redirect_link',
             ':end_redirect_link',
             ':login_url',
+            ':editor',
+            ':learner',
+            ':coaching_session',
+            ':booking_details',
+            ':manuscript_from',
+            ':assignment',
         ];
         $replace_string = [
             $first_name,
             "<a href='{$loginUrl}' style='{$btnStyle}'>",
             '</a>',
             $loginUrl,
+            $extra_replacements[':editor'] ?? '',
+            $extra_replacements[':learner'] ?? $first_name,
+            $extra_replacements[':coaching_session'] ?? '',
+            $extra_replacements[':booking_details'] ?? '',
+            $extra_replacements[':manuscript_from'] ?? '',
+            $extra_replacements[':assignment'] ?? '',
         ];
 
-        return str_replace($search_string, $replace_string, $email_content);
+        return str_replace($search_string, $replace_string, $email_content ?? '');
     }
 
     public static function checkNearlyExpiredCourses()

@@ -272,7 +272,7 @@ class ShopManuscriptController extends ApiController
             $user->first_name,
             "<a href='".$link."'>".$link.'</a>',
         ];
-        $emailContent = str_replace($searchString, $replaceString, $emailTemplate->email_content);
+        $emailContent = str_replace($searchString, $replaceString, $emailTemplate->email_content ?? '');
 
         if ($headEditor) {
             AdminHelpers::queue_mail($headEditor->email, $emailTemplate->subject, $emailContent, $emailTemplate->from_email);

@@ -3970,7 +3970,7 @@ class LearnerController extends Controller
                 $user->first_name,
                 "<a href='".$link."'>".$link.'</a>',
             ];
-            $email_content = str_replace($search_string, $replace_string, $emailTemplate->email_content);
+            $email_content = str_replace($search_string, $replace_string, $emailTemplate->email_content ?? '');
 
             if ($headEditor) {
                 AdminHelpers::queue_mail($headEditor->email, $emailTemplate->subject, $email_content, $emailTemplate->from_email);
@@ -5400,9 +5400,10 @@ class LearnerController extends Controller
             ':end_button',
         ], [
             $manuscript->user->first_name,
-            '<em>'.$manuscript->assignment->title.'</em>'
-
-        ], $emailTemplate->email_content);
+            '<em>'.$manuscript->assignment->title.'</em>',
+            '<a href="'.route('learner.assignment').'">',
+            '</a>',
+        ], $emailTemplate->email_content ?? '');
 
         dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
             $emailTemplate->from_email, null, null, 'learner', $user->id));

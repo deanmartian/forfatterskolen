@@ -117,7 +117,7 @@ kristine@forfatterskolen.no | 411 23 555',
                 'from_email' => 'post@forfatterskolen.no',
                 'email_content' => 'Hei :firstname,
 
-Velkommen til Forfatterskolen! Vi er så glade for at du har valgt å ta steget og melde deg på kurs.
+Velkommen til Forfatterskolen og kurset <strong>:course_name</strong>! Vi er så glade for at du har valgt å ta steget og melde deg på.
 
 Du har nå tilgang til kursinnholdet ditt i portalen. Logg inn og kom i gang — det første steget er alltid det viktigste!
 

@@ -173,7 +173,7 @@ class CourseController extends Controller
         CourseApplication::create($request->except('_token', 'manuscript'));
 
         $emailTemplate = AdminHelpers::emailTemplate('Course Application Email');
-        $message = str_replace(':firstname', Auth::user()->first_name, $emailTemplate->email_content);
+        $message = str_replace(':firstname', Auth::user()->first_name, $emailTemplate->email_content ?? '');
         $to = Auth::user()->email;
         $emailData = [
             'email_subject' => $emailTemplate->subject,
