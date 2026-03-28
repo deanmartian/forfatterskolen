@@ -246,7 +246,19 @@
 											@php
 												$lastRequest = $shopManuscript->requests->last();
 												$lastAnswer = $lastRequest->answer ?? null;
-												$btnClass = (strtolower($lastAnswer ?? '') === 'no' || strtolower($lastAnswer ?? '') === 'nei') ? 'btn-danger' : ($lastAnswer ? 'btn-success' : 'btn-warning');
+												$hasEditor = $shopManuscript->admin ? true : false;
+												if ($hasEditor) {
+													$btnClass = 'btn-success';
+												} elseif ($lastAnswer === null) {
+													$btnClass = 'btn-warning';
+												} elseif (strtolower($lastAnswer) === 'no' || strtolower($lastAnswer) === 'nei') {
+													// Check if asked again after rejection
+													$rejectedRequest = $shopManuscript->requests->filter(fn($r) => in_array(strtolower($r->answer ?? ''), ['no', 'nei']))->last();
+													$askedAgain = $shopManuscript->requests->filter(fn($r) => $r->answer === null && $r->created_at > ($rejectedRequest->created_at ?? now()))->count() > 0;
+													$btnClass = $askedAgain ? 'btn-warning' : 'btn-danger';
+												} else {
+													$btnClass = 'btn-success';
+												}
 											@endphp
 											<button class="btn btn-xs {{ $btnClass }} previewRequestsSentBtn"
 													data-toggle="modal"
