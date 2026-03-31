@@ -1520,8 +1520,20 @@ class ShopManuscriptController extends Controller
     public function checkoutUpgradeManuscript($id): View
     {
         $shopManuscript = ShopManuscript::findOrFail($id);
-        $shopManuscriptTaken = Auth::user()->shopManuscriptsTaken;
-        $upgradeManuscript = ShopManuscriptUpgrade::where('shop_manuscript_id', $shopManuscriptTaken[0]->shop_manuscript->id)
+
+        // Find the specific unused manuscript taken that can be upgraded
+        $shopManuscriptTaken = Auth::user()->shopManuscriptsTaken
+            ->filter(function ($taken) use ($shopManuscript) {
+                return !$taken->is_manuscript_locked
+                    && !$taken->file
+                    && $taken->shop_manuscript_id < $shopManuscript->id;
+            })->first();
+
+        if (!$shopManuscriptTaken) {
+            $shopManuscriptTaken = Auth::user()->shopManuscriptsTaken->sortByDesc('id')->first();
+        }
+
+        $upgradeManuscript = ShopManuscriptUpgrade::where('shop_manuscript_id', $shopManuscriptTaken->shop_manuscript_id)
             ->where('upgrade_shop_manuscript_id', $id)->first();
 
         return view('frontend.shop-manuscript.upgrade', compact('shopManuscript', 'upgradeManuscript'));
@@ -1562,10 +1574,33 @@ class ShopManuscriptController extends Controller
 
         $previousManuscript = ShopManuscript::where('max_words', '<', $shopManuscript->max_words)->first();
 
-        // $shopManuscriptTaken = ShopManuscriptsTaken::where('shop_manuscript_id',$previousManuscript->id)->where('user_id',Auth::user()->id)->first();
-        $shopManuscriptTaken = Auth::user()->shopManuscriptsTaken;
-        $upgradeManuscript = ShopManuscriptUpgrade::where('shop_manuscript_id', $shopManuscriptTaken[0]->shop_manuscript->id)
+        // Find the specific unused manuscript taken that can be upgraded
+        $shopManuscriptTaken = Auth::user()->shopManuscriptsTaken
+            ->filter(function ($taken) use ($shopManuscript) {
+                return !$taken->is_manuscript_locked
+                    && !$taken->file
+                    && $taken->shop_manuscript_id < $shopManuscript->id;
+            })->first();
+
+        if (!$shopManuscriptTaken) {
+            // Fallback: find any manuscript taken that can be upgraded
+            $shopManuscriptTaken = Auth::user()->shopManuscriptsTaken
+                ->sortByDesc('id')
+                ->first(function ($taken) {
+                    return !$taken->is_manuscript_locked && !$taken->file;
+                });
+        }
+
+        if (!$shopManuscriptTaken) {
+            return redirect()->back()->withErrors(['Du har ingen ubrukt manusutvikling å oppgradere.']);
+        }
+
+        $upgradeManuscript = ShopManuscriptUpgrade::where('shop_manuscript_id', $shopManuscriptTaken->shop_manuscript_id)
             ->where('upgrade_shop_manuscript_id', $id)->first();
+
+        if (!$upgradeManuscript) {
+            return redirect()->back()->withErrors(['Oppgradering fra denne pakken er ikke tilgjengelig.']);
+        }
 
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
         $shopManuscriptTaken->shop_manuscript_id = $shopManuscript->id;
