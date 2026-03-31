@@ -287,13 +287,13 @@ class LoginController extends Controller
         if ($request->has('redirect')) {
             $redirect = $request->get('redirect');
             $allowed = [
-                'upgrade' => '/learner/upgrade',
-                'invoices' => '/learner/invoices',
-                'dashboard' => '/learner/dashboard',
-                'course' => '/learner/course',
-                'assignments' => '/learner/dashboard',
-                'webinars' => '/learner/course-webinar?tab=replays',
-                'profile' => '/learner/profile',
+                'upgrade' => '/account/upgrade',
+                'invoices' => '/account/invoices',
+                'dashboard' => '/account/dashboard',
+                'course' => '/account/course',
+                'assignments' => '/account/dashboard',
+                'webinars' => '/account/course-webinar?tab=replays',
+                'profile' => '/account/profile',
             ];
             if (isset($allowed[$redirect])) {
                 return redirect()->to($allowed[$redirect]);
