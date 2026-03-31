@@ -98,7 +98,7 @@ class InactiveNudgeCommand extends Command
             Mail::send('emails.branded.inactive-nudge', [
                 'firstName' => $user->first_name,
                 'quote' => $quote,
-                'portalUrl' => config('app.url') . '/learner/dashboard',
+                'portalUrl' => config('app.url') . '/account/dashboard',
             ], function ($message) use ($user, $subject) {
                 $message->from('post@forfatterskolen.no', 'Kristine S. Henningsen')
                     ->to($user->email)

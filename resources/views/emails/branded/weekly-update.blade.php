@@ -76,7 +76,7 @@
         <tr><td style="padding:16px 20px;">
             <p style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#862736;margin:0 0 8px;font-family:-apple-system,sans-serif;">&#128101; MENTORMØTE</p>
             <p style="font-size:14px;color:#1a1a1a;margin:0 0 8px;font-family:-apple-system,sans-serif;">Husk at du kan booke en mentortime med din redaktør! Få personlig veiledning og tilbakemelding på manuset ditt.</p>
-            <a href="{{ config('app.url') . '/learner/dashboard' }}" style="display:inline-block;padding:8px 20px;background:#862736;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;font-family:-apple-system,sans-serif;">Book mentortime &rarr;</a>
+            <a href="{{ config('app.url') . '/account/dashboard' }}" style="display:inline-block;padding:8px 20px;background:#862736;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;font-family:-apple-system,sans-serif;">Book mentortime &rarr;</a>
         </td></tr>
     </table>
 </td></tr>
@@ -101,7 +101,7 @@
 <tr><td style="background:#fff;padding:32px 40px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
         <tr><td style="text-align:center;">
-            <a href="{{ $portalUrl ?? config('app.url') . '/learner/dashboard' }}" style="display:inline-block;padding:14px 32px;background:#862736;color:#fff;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;font-family:-apple-system,sans-serif;">Gå til portalen &rarr;</a>
+            <a href="{{ $portalUrl ?? config('app.url') . '/account/dashboard' }}" style="display:inline-block;padding:14px 32px;background:#862736;color:#fff;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;font-family:-apple-system,sans-serif;">Gå til portalen &rarr;</a>
         </td></tr>
     </table>
 

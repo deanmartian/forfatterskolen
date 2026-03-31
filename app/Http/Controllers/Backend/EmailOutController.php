@@ -435,7 +435,7 @@ class EmailOutController extends Controller
                     'packageName' => 'Premium',
                     'courseStartDate' => '20. april 2026',
                     'totalAmount' => '8 900',
-                    'portalUrl' => config('app.url') . '/learner/dashboard',
+                    'portalUrl' => config('app.url') . '/account/dashboard',
                 ],
             ],
             'invoice' => [
@@ -449,7 +449,7 @@ class EmailOutController extends Controller
                     'courseName' => 'Romankurset',
                     'orderNumber' => 'FS-2026-001',
                     'remaining' => '2 967',
-                    'payUrl' => config('app.url') . '/learner/invoices',
+                    'payUrl' => config('app.url') . '/account/invoices',
                 ],
             ],
             'magic-link' => [
@@ -477,7 +477,7 @@ class EmailOutController extends Controller
                 'view' => 'emails.branded.feedback-ready',
                 'data' => [
                     'firstName' => 'Ola',
-                    'feedbackUrl' => config('app.url') . '/learner/manuscripts',
+                    'feedbackUrl' => config('app.url') . '/account/manuscripts',
                 ],
             ],
             'webinar-registration' => [
@@ -511,7 +511,7 @@ class EmailOutController extends Controller
                     'hasAssignment' => true,
                     'progressPercent' => 37,
                     'totalLessons' => 8,
-                    'portalUrl' => config('app.url') . '/learner/dashboard',
+                    'portalUrl' => config('app.url') . '/account/dashboard',
                 ],
             ],
             'assignment-available' => [
@@ -522,7 +522,7 @@ class EmailOutController extends Controller
                     'firstName' => 'Ola',
                     'submissionDate' => '05.05.2026',
                     'assignmentDescription' => 'Lever de første 10 sidene av manuset ditt.',
-                    'portalUrl' => config('app.url') . '/learner/dashboard',
+                    'portalUrl' => config('app.url') . '/account/dashboard',
                 ],
             ],
             'assignment-reminder' => [
@@ -532,7 +532,7 @@ class EmailOutController extends Controller
                     'courseName' => 'Romankurset',
                     'firstName' => 'Ola',
                     'submissionDate' => '05.05.2026',
-                    'portalUrl' => config('app.url') . '/learner/dashboard',
+                    'portalUrl' => config('app.url') . '/account/dashboard',
                 ],
             ],
             'assignment-deadline' => [
@@ -542,7 +542,7 @@ class EmailOutController extends Controller
                     'courseName' => 'Romankurset',
                     'firstName' => 'Ola',
                     'submissionDate' => '05.05.2026',
-                    'portalUrl' => config('app.url') . '/learner/dashboard',
+                    'portalUrl' => config('app.url') . '/account/dashboard',
                 ],
             ],
             'weekly-update' => [
@@ -558,7 +558,7 @@ class EmailOutController extends Controller
                         ['title' => 'Første innlevering', 'type' => 'deadline', 'deadline' => '05.05.2026'],
                     ],
                     'quote' => ['text' => 'Skriv det du vil lese.', 'author' => 'Toni Morrison'],
-                    'portalUrl' => config('app.url') . '/learner/dashboard',
+                    'portalUrl' => config('app.url') . '/account/dashboard',
                 ],
             ],
         ];

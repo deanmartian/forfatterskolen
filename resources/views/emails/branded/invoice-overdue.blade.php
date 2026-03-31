@@ -39,7 +39,7 @@
 
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
         <tr><td style="text-align:center;padding:8px 0;">
-            <a href="{{ $payUrl ?? config('app.url').'/learner/invoices' }}" style="display:inline-block;padding:14px 32px;background:#862736;color:#fff;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;font-family:-apple-system,sans-serif;">Betal n&aring; &rarr;</a>
+            <a href="{{ $payUrl ?? config('app.url').'/account/invoices' }}" style="display:inline-block;padding:14px 32px;background:#862736;color:#fff;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;font-family:-apple-system,sans-serif;">Betal n&aring; &rarr;</a>
         </td></tr>
     </table>
 
