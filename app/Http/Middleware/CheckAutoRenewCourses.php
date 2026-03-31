@@ -32,7 +32,9 @@ class CheckAutoRenewCourses
 
                     // check if the date is in the past or today
                     // and if the user wants to auto renew the courses
-                    if (Carbon::now()->gt(Carbon::parse($checkDate)) && \Auth::user()->auto_renew_courses) {
+                    // and if the course hasn't already been renewed recently (prevent duplicate invoices)
+                    $alreadyRenewed = $courseTaken->renewed_at && Carbon::parse($courseTaken->renewed_at)->gt(Carbon::parse($checkDate));
+                    if (Carbon::now()->gt(Carbon::parse($checkDate)) && \Auth::user()->auto_renew_courses && !$alreadyRenewed) {
                         $user = \Auth::user();
                         $payment_mode = 'Bankoverføring';
                         $price = (int) 1490 * 100;
