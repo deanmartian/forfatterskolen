@@ -1569,17 +1569,19 @@ class LearnerController extends Controller
                 \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             }
 
-            // notify user
+            // notify user (bekreftelse til eleven)
             $user_email = Auth::user()->email;
-            $confirm_email['email_message'] = 'Oppgaven din er levert, har vi problemer med filen vil vi ta kontakt med med deg.';
-            // Mail::to($user_email)->queue(new SendEmailMessageOnly($confirm_email));
+            $learnerMessage = 'Hei ' . Auth::user()->first_name . ',
 
-            $emailTemplate = AdminHelpers::emailTemplate('Assignment Submitted');
-            $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
-                Auth::user()->first_name, '');
+Takk for at du leverte oppgaven din! Vi har mottatt den og redaktøren vil gi deg tilbakemelding.
 
-            dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
-                $emailTemplate->from_email, null, null, 'assignment-manuscripts',
+Har vi problemer med filen vil vi ta kontakt med deg.
+
+Skrivevarm hilsen,
+Forfatterskolen';
+
+            dispatch(new AddMailToQueueJob($user_email, 'Oppgaven din er levert ✓', $learnerMessage,
+                'post@forfatterskolen.no', null, null, 'assignment-manuscripts',
                 $submittedManuscript->id));
 
             return redirect()->back()->with('success', true);
