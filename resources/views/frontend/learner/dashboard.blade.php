@@ -873,26 +873,36 @@
 @if (Auth::user()->need_pass_update)
     <button class="passUpdateBtn hidden" data-bs-toggle="modal" data-bs-target="#passUpdateModal"></button>
     <div class="modal fade" role="dialog" id="passUpdateModal" data-backdrop="static">
-        <div class="modal-dialog" role="document"><div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">{{ trans('site.learner.update-password.title') }}</h3>
-                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p class="font-weight-bold">{{ trans('site.learner.update-password.enter-new-password') }}</p>
-                <form action="{{ route('learner.password.update') }}" method="POST" onsubmit="disableSubmitOrigText(this)">
-                    {{ csrf_field() }}
-                    <div class="input-group mb-4">
-                        <div class="input-group-prepend"><span class="input-group-text"><i class="fa lock-icon"></i></span></div>
-                        <input type="password" name="password" placeholder="{{ trans('site.front.form.password') }}" class="form-control no-border-left w-auto" required>
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content" style="border:none;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15);">
+                <div style="background:linear-gradient(135deg,#862736 0%,#a83347 100%);padding:32px 32px 24px;text-align:center;">
+                    <div style="width:56px;height:56px;background:rgba(255,255,255,.15);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
+                        <svg width="28" height="28" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg>
                     </div>
-                    @if ($errors->has('password'))
-                        <div class="alert alert-danger no-bottom-margin">{{ $errors->first('password') }}</div>
-                    @endif
-                    <button type="submit" class="btn site-btn-global float-end">{{ trans('site.learner.update-password.update') }}</button>
-                </form>
+                    <h3 style="color:#fff;font-family:'Lora',serif;font-size:22px;font-weight:500;margin:0 0 6px;">Velkommen, {{ Auth::user()->first_name }}!</h3>
+                    <p style="color:rgba(255,255,255,.8);font-size:14px;margin:0;">Opprett et passord for enkel innlogging senere</p>
+                </div>
+                <div style="padding:28px 32px 32px;">
+                    <form action="{{ route('learner.password.update') }}" method="POST" onsubmit="disableSubmitOrigText(this)">
+                        {{ csrf_field() }}
+                        <label style="font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:6px;">Velg passord</label>
+                        <input type="password" name="password" placeholder="Minst 8 tegn" required minlength="8"
+                               style="width:100%;padding:12px 16px;border:1.5px solid #ddd;border-radius:10px;font-size:15px;font-family:inherit;outline:none;transition:border-color .2s;"
+                               onfocus="this.style.borderColor='#862736'" onblur="this.style.borderColor='#ddd'">
+                        @if ($errors->has('password'))
+                            <div style="color:#dc3545;font-size:13px;margin-top:6px;">{{ $errors->first('password') }}</div>
+                        @endif
+                        <button type="submit" style="width:100%;margin-top:16px;padding:13px;background:#862736;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s;"
+                                onmouseover="this.style.background='#6e1e2b'" onmouseout="this.style.background='#862736'">
+                            Opprett passord
+                        </button>
+                    </form>
+                    <div style="text-align:center;margin-top:14px;">
+                        <button type="button" class="close" data-bs-dismiss="modal" style="background:none;border:none;color:#999;font-size:13px;cursor:pointer;">Hopp over for nå</button>
+                    </div>
+                </div>
             </div>
-        </div></div>
+        </div>
     </div>
 @endif
 
