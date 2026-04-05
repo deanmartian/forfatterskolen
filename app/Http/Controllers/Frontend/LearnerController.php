@@ -1540,7 +1540,7 @@ class LearnerController extends Controller
             }
 
             if ($assignment->parent === 'users' && $assignment->editor_id) {
-                $emailTemplate = AdminHelpers::emailTemplate('Assignment Submitted');
+                $emailTemplate = AdminHelpers::emailTemplate('Personal Assignment Editor Notification');
                 $editor = User::find($assignment->editor_id);
                 $to = $editor->email;
                 $redirect_link = route('editor.dashboard');
