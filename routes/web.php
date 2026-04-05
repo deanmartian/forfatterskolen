@@ -35,6 +35,9 @@ Route::get('/sitemap.xml', function () {
     ]);
 });
 
+// Svea payment push callback (server-to-server, no auth required)
+Route::get('/svea-callback', [Frontend\ShopController::class, 'sveaCallback'])->name('svea.callback');
+
 /**
  * Front End Routes
  */

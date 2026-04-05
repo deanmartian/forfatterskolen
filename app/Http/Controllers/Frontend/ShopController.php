@@ -2590,4 +2590,82 @@ class ShopController extends Controller
             return '';
         }
     }
+
+    /**
+     * Svea push callback - server-to-server notification after payment.
+     * No authentication required.
+     */
+    public function sveaCallback(Request $request, CourseService $courseService)
+    {
+        $sveaOrderId = $request->input('svea_order_id');
+
+        if (! $sveaOrderId) {
+            Log::warning('Svea callback: missing svea_order_id');
+            return response('Missing svea_order_id', 400);
+        }
+
+        Log::info('Svea callback received for svea_order_id: '.$sveaOrderId);
+
+        $order = Order::where('svea_order_id', $sveaOrderId)->first();
+
+        if (! $order) {
+            Log::warning('Svea callback: order not found for svea_order_id: '.$sveaOrderId);
+            return response('Order not found', 404);
+        }
+
+        if ($order->is_processed) {
+            Log::info('Svea callback: order already processed, order_id: '.$order->id);
+            return response('OK', 200);
+        }
+
+        try {
+            DB::transaction(function () use ($courseService, $order) {
+                if ($order->type === 6) {
+                    $courseTaken = $courseService->upgradeCourseTaken($order);
+                    $courseService->notifyUserForUpgrade($order, $courseTaken);
+                } else {
+                    $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
+                    $courseTaken->is_pay_later = $order->is_pay_later;
+                    $courseTaken->is_active = $order->is_pay_later ? 0 : 1;
+                    $courseTaken->save();
+
+                    $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken, true, true);
+                }
+
+                $courseService->notifyAdmin($order->user_id, $order->package_id);
+
+                $order->is_processed = 1;
+                $order->save();
+            });
+
+            Log::info('Svea callback: order processed successfully, order_id: '.$order->id);
+        } catch (\Throwable $exception) {
+            Log::error('Svea callback: failed to process order.', [
+                'order_id' => $order->id,
+                'learner_id' => $order->user_id,
+                'exception' => $exception->getMessage(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+            ]);
+
+            $emailData = [
+                'email_subject' => 'Error processing Svea callback order',
+                'email_message' => 'An error occurred while processing the Svea callback.<br>'
+                    .'Learner ID: '.$order->user_id.'<br>'
+                    .'Order ID: '.$order->id.'<br>'
+                    .'Error: '.$exception->getMessage(),
+                'from_name' => 'Forfatterskolen',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => null,
+            ];
+
+            \Mail::to('elybutabara@gmail.com')->queue(new SubjectBodyEmail($emailData));
+
+            return response('Processing failed', 500);
+        }
+
+        SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+
+        return response('OK', 200);
+    }
 }
