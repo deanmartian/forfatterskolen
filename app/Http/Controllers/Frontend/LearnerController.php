@@ -2367,11 +2367,11 @@ class LearnerController extends Controller
         $registeredWebinars = $user->registeredWebinars->pluck('id');
         $learnerAssignmentManuscripts = $user->assignmentManuscripts->pluck('id');
 
-        // Bygg email_history-query (samme logikk som admin-panelet)
+        // Bygg email_history-query — kun inneværende år for ytelse
         $emailLogsQuery = DB::table('email_history')
             ->select('id', 'subject', 'from_email as from_name', 'message', 'created_at')
             ->whereNull('deleted_at')
-            ->where('created_at', '>=', '2025-01-01')
+            ->where('created_at', '>=', now()->startOfYear()->toDateString())
             ->where(function ($outer) use ($learnerCoursesTaken, $learnerInvoices, $registeredWebinars, $learnerAssignmentManuscripts, $user) {
                 $outer->where(function ($q) use ($learnerCoursesTaken) {
                     $q->where('parent', 'LIKE', 'courses-taken%')
@@ -2425,10 +2425,10 @@ class LearnerController extends Controller
         $emailLogs = $emailLogsQuery->orderBy('created_at', 'desc')->paginate(10);
         $emailLogs->appends(['search' => $search, 'type' => $type, 'tab' => 'epost']);
 
-        // Total e-poster (uten søk/filter)
+        // Total e-poster (uten søk/filter) — kun inneværende år
         $totalEmailsQuery = DB::table('email_history')
             ->whereNull('deleted_at')
-            ->where('created_at', '>=', '2025-01-01')
+            ->where('created_at', '>=', now()->startOfYear()->toDateString())
             ->where(function ($outer) use ($learnerCoursesTaken, $learnerInvoices, $registeredWebinars, $learnerAssignmentManuscripts, $user) {
                 $outer->where(function ($q) use ($learnerCoursesTaken) {
                     $q->where('parent', 'LIKE', 'courses-taken%')
