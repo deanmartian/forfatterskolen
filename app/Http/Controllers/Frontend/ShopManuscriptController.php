@@ -962,6 +962,12 @@ class ShopManuscriptController extends Controller
         $currentPlanWords = $shopManuscriptTaken->shop_manuscript->max_words;
 
         if ($word_count > $currentPlanWords) { // $word_count > 17500
+            // Save the manuscript file and synopsis even though upgrade is needed
+            // so they don't get lost during the upgrade flow
+            $shopManuscriptTaken->genre = $request->genre;
+            $shopManuscriptTaken->description = $request->description;
+            $shopManuscriptTaken->save();
+
             $price = 0;
 
             /*
@@ -1521,13 +1527,12 @@ class ShopManuscriptController extends Controller
     {
         $shopManuscript = ShopManuscript::findOrFail($id);
 
-        // Find the specific unused manuscript taken that can be upgraded
+        // Find the specific manuscript taken that can be upgraded
         $shopManuscriptTaken = Auth::user()->shopManuscriptsTaken
             ->filter(function ($taken) use ($shopManuscript) {
                 return !$taken->is_manuscript_locked
-                    && !$taken->file
                     && $taken->shop_manuscript_id < $shopManuscript->id;
-            })->first();
+            })->sortByDesc('id')->first();
 
         if (!$shopManuscriptTaken) {
             $shopManuscriptTaken = Auth::user()->shopManuscriptsTaken->sortByDesc('id')->first();
@@ -1574,20 +1579,20 @@ class ShopManuscriptController extends Controller
 
         $previousManuscript = ShopManuscript::where('max_words', '<', $shopManuscript->max_words)->first();
 
-        // Find the specific unused manuscript taken that can be upgraded
+        // Find the specific manuscript taken that can be upgraded
+        // (not locked, and current plan is smaller than requested upgrade)
         $shopManuscriptTaken = Auth::user()->shopManuscriptsTaken
             ->filter(function ($taken) use ($shopManuscript) {
                 return !$taken->is_manuscript_locked
-                    && !$taken->file
                     && $taken->shop_manuscript_id < $shopManuscript->id;
-            })->first();
+            })->sortByDesc('id')->first();
 
         if (!$shopManuscriptTaken) {
             // Fallback: find any manuscript taken that can be upgraded
             $shopManuscriptTaken = Auth::user()->shopManuscriptsTaken
                 ->sortByDesc('id')
                 ->first(function ($taken) {
-                    return !$taken->is_manuscript_locked && !$taken->file;
+                    return !$taken->is_manuscript_locked;
                 });
         }
 
@@ -1639,6 +1644,10 @@ class ShopManuscriptController extends Controller
             $shopManuscriptTaken->words = $word_count;
         }
 
+        // Set manuscript_uploaded_date if file was uploaded (either now or during initial upload)
+        if ($shopManuscriptTaken->file && !$shopManuscriptTaken->manuscript_uploaded_date) {
+            $shopManuscriptTaken->manuscript_uploaded_date = Carbon::now()->toDateTimeString();
+        }
         $shopManuscriptTaken->is_active = false;
         $shopManuscriptTaken->save();
 
