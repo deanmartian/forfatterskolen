@@ -1540,17 +1540,25 @@ class LearnerController extends Controller
             }
 
             if ($assignment->parent === 'users' && $assignment->editor_id) {
-                $emailTemplate = AdminHelpers::emailTemplate('Personal Assignment Editor Notification');
-                $email_content = str_replace([
-                    '_learner_',
-                    '_assignment_',
-                ], [
-                    Auth::user()->full_name,
-                    $assignment->title,
-                ], $emailTemplate->email_content);
-
+                $emailTemplate = AdminHelpers::emailTemplate('Assignment Submitted');
                 $editor = User::find($assignment->editor_id);
                 $to = $editor->email;
+                $redirect_link = route('editor.dashboard');
+
+                $email_content = AdminHelpers::formatEmailContent(
+                    $emailTemplate->email_content ?? '',
+                    $to,
+                    Auth::user()->full_name,
+                    $redirect_link,
+                    [
+                        ':editor' => $editor->first_name,
+                        ':learner' => Auth::user()->full_name,
+                        ':assignment' => $assignment->title,
+                    ]
+                );
+                // Replace :date with today
+                $email_content = str_replace(':date', now()->format('d.m.Y'), $email_content);
+
                 $emailData = [
                     'email_subject' => $emailTemplate->subject,
                     'email_message' => $email_content,
@@ -1559,7 +1567,6 @@ class LearnerController extends Controller
                     'attach_file' => null,
                 ];
                 \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-
             }
 
             // notify user
