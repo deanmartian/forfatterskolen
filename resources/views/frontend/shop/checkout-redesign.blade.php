@@ -240,7 +240,9 @@
             @foreach($packages as $package)
                 @php
                     $price = $package->full_payment_price;
-                    $displayPrice = $isEarlybird ? ($price - $earlybirdDiscount) : $price;
+                    $salePrice = $package->calculatedPrice;
+                    $hasSale = $salePrice && $salePrice < $price;
+                    $displayPrice = $isEarlybird ? ($price - $earlybirdDiscount) : ($hasSale ? $salePrice : $price);
                     $tierName = preg_replace('/^' . preg_quote($course->title, '/') . '\s*[-–]\s*/i', '', $package->variation);
                     if ($tierName === $package->variation) {
                         $parts = preg_split('/\s*[-–]\s*/', $package->variation);
@@ -258,7 +260,7 @@
                     </div>
                     <div class="co-pkg__price">
                         <div class="co-pkg__earlybird">kr {{ number_format($displayPrice, 0, ',', ' ') }}</div>
-                        @if($isEarlybird)
+                        @if($isEarlybird || $hasSale)
                             <div class="co-pkg__original">kr {{ number_format($price, 0, ',', ' ') }}</div>
                             <span class="co-pkg__save">Spar {{ number_format($earlybirdDiscount, 0, ',', ' ') }}</span>
                         @endif
@@ -433,16 +435,19 @@
             {{-- Pricing --}}
             @php
                 $selPrice = $selectedPackage->full_payment_price;
-                $selDisplayPrice = $isEarlybird ? ($selPrice - $earlybirdDiscount) : $selPrice;
+                $selSalePrice = $selectedPackage->calculatedPrice;
+                $selHasSale = $selSalePrice && $selSalePrice < $selPrice;
+                $selDisplayPrice = $isEarlybird ? ($selPrice - $earlybirdDiscount) : ($selHasSale ? $selSalePrice : $selPrice);
+                $selDiscount = $selPrice - $selDisplayPrice;
             @endphp
-            @if($isEarlybird)
+            @if($isEarlybird || $selHasSale)
                 <div class="co-price-row co-price-row--original">
                     <span>Ordinær pris</span>
                     <span id="priceOriginal">kr {{ number_format($selPrice, 0, ',', ' ') }}</span>
                 </div>
                 <div class="co-price-row co-price-row--discount">
-                    <span>Earlybird-rabatt</span>
-                    <span>– kr {{ number_format($earlybirdDiscount, 0, ',', ' ') }}</span>
+                    <span>{{ $isEarlybird ? 'Earlybird-rabatt' : 'Tilbudsrabatt' }}</span>
+                    <span>– kr {{ number_format($selDiscount, 0, ',', ' ') }}</span>
                 </div>
             @endif
 
@@ -576,9 +581,15 @@
     // Package data for JS
     var packageData = {};
     @foreach($packages as $package)
+        @php
+            $jprice = $package->full_payment_price;
+            $jsalePrice = $package->calculatedPrice;
+            $jhasSale = $jsalePrice && $jsalePrice < $jprice;
+            $jdisplayPrice = $isEarlybird ? ($jprice - $earlybirdDiscount) : ($jhasSale ? $jsalePrice : $jprice);
+        @endphp
         packageData[{{ $package->id }}] = {
-            price: {{ $package->full_payment_price }},
-            displayPrice: {{ $isEarlybird ? ($package->full_payment_price - $earlybirdDiscount) : $package->full_payment_price }},
+            price: {{ $jprice }},
+            displayPrice: {{ $jdisplayPrice }},
             name: '{{ addslashes(trim(preg_replace("/^" . preg_quote($course->title, "/") . "\s*[-–]\s*/i", "", $package->variation))) }}',
             desc: {!! json_encode(preg_split('/[\r\n]+/', strip_tags($package->description ?? ''))) !!}
         };
