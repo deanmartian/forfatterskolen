@@ -5291,16 +5291,22 @@ class LearnerController extends Controller
                 // notify editor if manuscript is updated
                 if ($assignmentManuscript->editor_id) {
                     $emailTemplate = AdminHelpers::emailTemplate('Manuscript Uploaded');
-                    $email_content = str_replace([
-                        ':manuscript_from',
-                        ':learner',
-                    ], [
-                        "<em>" . $assignmentManuscript->assignment->title . "</em>",
-                        "<b>" . Auth::user()->full_name . "</b>",
-                    ], $emailTemplate->email_content);
-
                     $editor = User::find($assignmentManuscript->editor_id);
                     $to = $editor->email;
+
+                    $email_content = AdminHelpers::formatEmailContent(
+                        $emailTemplate->email_content ?? '',
+                        $to,
+                        Auth::user()->full_name,
+                        route('editor.dashboard'),
+                        [
+                            ':editor' => $editor->first_name,
+                            ':learner' => '<b>' . Auth::user()->full_name . '</b>',
+                            ':manuscript_from' => '<em>' . $assignmentManuscript->assignment->title . '</em>',
+                            ':assignment' => $assignmentManuscript->assignment->title,
+                        ]
+                    );
+
                     $emailData = [
                         'email_subject' => $emailTemplate->subject,
                         'email_message' => $email_content,
