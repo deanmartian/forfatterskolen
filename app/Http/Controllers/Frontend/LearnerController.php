@@ -1571,7 +1571,24 @@ class LearnerController extends Controller
 
             // notify user (bekreftelse til eleven)
             $user_email = Auth::user()->email;
-            $learnerMessage = 'Hei ' . Auth::user()->first_name . ',
+
+            if ($assignment->for_editor) {
+                // Redigeringswebinar — teksten redigeres live
+                $learnerSubject = 'Teksten din er mottatt for redigeringswebinar ✓';
+                $learnerMessage = 'Hei ' . Auth::user()->first_name . ',
+
+Takk for at du sendte inn teksten din! Vi har mottatt den og den vil bli redigert live på neste redigeringswebinar.
+
+Du vil få beskjed om dato og klokkeslett. Følg med på kurswebinarene i portalen.
+
+Har vi problemer med filen vil vi ta kontakt med deg.
+
+Skrivevarm hilsen,
+Forfatterskolen';
+            } else {
+                // Vanlig oppgave — redaktøren gir skriftlig tilbakemelding
+                $learnerSubject = 'Oppgaven din er levert ✓';
+                $learnerMessage = 'Hei ' . Auth::user()->first_name . ',
 
 Takk for at du leverte oppgaven din! Vi har mottatt den og redaktøren vil gi deg tilbakemelding.
 
@@ -1579,8 +1596,9 @@ Har vi problemer med filen vil vi ta kontakt med deg.
 
 Skrivevarm hilsen,
 Forfatterskolen';
+            }
 
-            dispatch(new AddMailToQueueJob($user_email, 'Oppgaven din er levert ✓', $learnerMessage,
+            dispatch(new AddMailToQueueJob($user_email, $learnerSubject, $learnerMessage,
                 'post@forfatterskolen.no', null, null, 'assignment-manuscripts',
                 $submittedManuscript->id));
 
