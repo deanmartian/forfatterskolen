@@ -2,18 +2,38 @@
 
 @section('styles')
 <style>
-    .inbox-sidebar { background: #f8f9fa; border-right: 1px solid #ddd; min-height: 70vh; }
-    .inbox-sidebar .nav-item { padding: 8px 15px; cursor: pointer; border-bottom: 1px solid #eee; }
-    .inbox-sidebar .nav-item:hover { background: #e9ecef; }
-    .inbox-sidebar .nav-item.active { background: #fff; border-left: 3px solid #337ab7; }
-    .inbox-row { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.15s; }
-    .inbox-row:hover { background: #f5f8ff; }
-    .inbox-row.unread { background: #f0f7ff; font-weight: 500; }
-    .inbox-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; }
-    .inbox-star { color: #ccc; cursor: pointer; font-size: 16px; }
-    .inbox-star.starred { color: #f39c12; }
-    .inbox-avatar { width: 36px; height: 36px; border-radius: 50%; background: #337ab7; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
-    .inbox-snippet { color: #888; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px; }
+    .inbox-sidebar { background: #faf9f7; border-right: 1px solid #e8e4de; min-height: 70vh; }
+    .inbox-sidebar .nav-item { padding: 9px 16px; cursor: pointer; border-radius: 6px; margin: 2px 8px; font-size: 13.5px; color: #4a4a4a; display: flex; align-items: center; gap: 8px; }
+    .inbox-sidebar .nav-item:hover { background: rgba(134,39,54,0.06); color: #862736; }
+    .inbox-sidebar .nav-item.active { background: rgba(134,39,54,0.1); color: #862736; font-weight: 600; }
+    .inbox-sidebar .nav-item i { width: 16px; text-align: center; font-size: 13px; }
+    .inbox-sidebar .badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; background: #e8e4de; color: #666; font-weight: 500; }
+    .inbox-sidebar .nav-item.active .badge { background: #862736; color: #fff; }
+
+    .inbox-row { padding: 14px 16px; border-bottom: 1px solid #f0ede8; cursor: pointer; transition: background 0.12s; display: flex; align-items: center; gap: 12px; }
+    .inbox-row:hover { background: #faf8f5; }
+    .inbox-row.unread { background: #f5f0eb; }
+    .inbox-avatar { width: 40px; height: 40px; border-radius: 50%; background: #862736; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px; flex-shrink: 0; }
+    .inbox-row__content { flex: 1; min-width: 0; display: grid; grid-template-columns: 200px 1fr auto; gap: 12px; align-items: center; }
+    .inbox-row__sender { font-weight: 600; font-size: 13.5px; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .inbox-row__email { font-size: 12px; color: #8e8e8e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .inbox-row__subject { font-weight: 600; font-size: 13.5px; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .inbox-snippet { color: #8e8e8e; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .inbox-row__meta { text-align: right; white-space: nowrap; flex-shrink: 0; }
+    .inbox-row__time { font-size: 12px; color: #8e8e8e; }
+    .inbox-row__badges { display: flex; gap: 4px; margin-top: 4px; justify-content: flex-end; }
+    .inbox-row__badges .label { font-size: 10px; padding: 2px 6px; border-radius: 3px; }
+    .inbox-row__status { font-size: 11px; font-weight: 500; }
+    .inbox-row__status--open { color: #e65100; }
+    .inbox-row__status--closed { color: #2e7d32; }
+
+    @media (max-width: 1200px) {
+        .inbox-row__content { grid-template-columns: 160px 1fr auto; }
+    }
+    @media (max-width: 900px) {
+        .inbox-row__content { grid-template-columns: 1fr; }
+        .inbox-row__meta { display: none; }
+    }
 </style>
 @stop
 
@@ -117,46 +137,42 @@
                 <form id="bulkForm" method="POST" action="{{ route('admin.inbox.bulk') }}">@csrf<input type="hidden" name="action" id="bulkAction"><input type="hidden" name="ids" id="bulkIds"><input type="hidden" name="assign_to" id="bulkAssignTo"></form>
 
                 @forelse($conversations as $conv)
-                    <div class="inbox-row" style="position:relative;">
-                        <input type="checkbox" class="bulk-check" value="{{ $conv->id }}" onchange="bulkChanged()" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);z-index:2;">
-                    <a href="{{ route('admin.inbox.show', $conv->id) }}" style="text-decoration: none; color: inherit; display: block; padding-left:24px;">
-                            <div class="row">
-                                <div class="col-md-1" style="padding-top: 2px;">
-                                    <div class="inbox-avatar">
-                                        {{ strtoupper(substr($conv->customer_name ?? $conv->customer_email ?? '?', 0, 1)) }}
+                    <div class="inbox-row">
+                        <input type="checkbox" class="bulk-check" value="{{ $conv->id }}" onchange="bulkChanged()" style="flex-shrink:0;">
+                        <a href="{{ route('admin.inbox.show', $conv->id) }}" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+                            <div class="inbox-avatar">
+                                {{ strtoupper(substr($conv->customer_name ?? $conv->customer_email ?? '?', 0, 1)) }}
+                            </div>
+                            <div class="inbox-row__content">
+                                <div style="min-width:0;">
+                                    <div class="inbox-row__sender">{{ $conv->customer_name ?? 'Ukjent' }}</div>
+                                    <div class="inbox-row__email">{{ $conv->customer_email }}</div>
+                                </div>
+                                <div style="min-width:0;">
+                                    <div class="inbox-row__subject">
+                                        {{ $conv->subject ?? '(Uten emne)' }}
+                                        @if($conv->is_starred) <i class="fa fa-star" style="color:#f39c12;font-size:11px;"></i> @endif
+                                    </div>
+                                    <div class="inbox-snippet">{{ \Illuminate\Support\Str::limit($conv->latestMessage?->clean_body ?? '', 100) }}</div>
+                                </div>
+                                <div class="inbox-row__meta">
+                                    <div class="inbox-row__time">{{ $conv->updated_at->diffForHumans() }}</div>
+                                    <div class="inbox-row__badges">
+                                        @if($conv->assignee)
+                                            <span class="label label-info">{{ $conv->assignee->first_name }}</span>
+                                        @else
+                                            <span class="label label-default">Utildelt</span>
+                                        @endif
+                                        @if($conv->user_id)
+                                            <span class="label label-success">Elev</span>
+                                        @endif
+                                    </div>
+                                    <div class="inbox-row__status inbox-row__status--{{ $conv->status }}">
+                                        {{ $conv->status === 'open' ? 'Åpen' : ($conv->status === 'closed' ? 'Lukket' : ucfirst($conv->status)) }}
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <strong>{{ $conv->customer_name ?? 'Ukjent' }}</strong><br>
-                                    <small class="text-muted">{{ $conv->customer_email }}</small>
-                                </div>
-                                <div class="col-md-4">
-                                    <strong>{{ $conv->subject ?? '(Uten emne)' }}</strong><br>
-                                    <span class="inbox-snippet">
-                                        {{ $conv->latestMessage?->clean_body ?? '' }}
-                                    </span>
-                                </div>
-                                <div class="col-md-2">
-                                    @if($conv->assignee)
-                                        <span class="label label-info">{{ $conv->assignee->first_name }}</span>
-                                    @else
-                                        <span class="label label-default">Utildelt</span>
-                                    @endif
-                                    @if($conv->is_starred)
-                                        <i class="fa fa-star" style="color: #f39c12;"></i>
-                                    @endif
-                                    @if($conv->user_id)
-                                        <span class="label label-success" style="font-size: 10px;">Elev</span>
-                                    @endif
-                                </div>
-                                <div class="col-md-2 text-right">
-                                    <small class="text-muted">{{ $conv->updated_at->diffForHumans() }}</small><br>
-                                    <span class="label label-{{ $conv->status === 'open' ? 'warning' : ($conv->status === 'closed' ? 'success' : 'default') }} inbox-badge">
-                                        {{ $conv->status === 'open' ? 'Åpen' : ($conv->status === 'closed' ? 'Lukket' : ucfirst($conv->status)) }}
-                                    </span>
-                                </div>
                             </div>
-                    </a>
+                        </a>
                     </div>
                 @empty
                     <div style="padding: 40px; text-align: center; color: #999;">
