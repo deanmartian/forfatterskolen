@@ -295,6 +295,7 @@ class LoginController extends Controller
                 'webinars' => '/account/course-webinar?tab=replays',
                 'profile' => '/account/profile',
                 'editor-courses' => '/account/editor-courses',
+                'community' => '/account/community',
             ];
             if (isset($allowed[$redirect])) {
                 return redirect()->to($allowed[$redirect]);

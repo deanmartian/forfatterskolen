@@ -14,6 +14,7 @@
         <li class="active"><a href="{{ route('admin.community.posts') }}">Innlegg</a></li>
         <li><a href="{{ route('admin.community.discussions') }}">Diskusjoner</a></li>
         <li><a href="{{ route('admin.community.course-groups') }}">Kursgrupper</a></li>
+        <li><a href="{{ route('admin.community.live') }}">🔴 Live fellesskap</a></li>
     </ul>
 
     <div style="margin-bottom: 20px;">

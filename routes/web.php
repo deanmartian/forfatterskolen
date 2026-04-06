@@ -2131,6 +2131,7 @@ Route::domain($admin)->group(function () {
             Route::post('/course-groups', [Backend\CommunityController::class, 'storeCourseGroup'])->name('course-groups.store');
             Route::put('/course-groups/{id}', [Backend\CommunityController::class, 'updateCourseGroup'])->name('course-groups.update');
             Route::delete('/course-groups/{id}', [Backend\CommunityController::class, 'destroyCourseGroup'])->name('course-groups.destroy');
+            Route::get('/live', function () { return view('backend.community.live'); })->name('live');
         });
 
         // Admin Messaging
