@@ -1588,15 +1588,14 @@ class CourseController extends Controller
                 $moduleTitle = $module['title'] ?? ('Modul ' . ($index + 1));
                 $moduleContent = $module['content'] ?? '';
 
-                \App\Lesson::create([
-                    'course_id' => $course->id,
-                    'title' => mb_substr($moduleTitle, 0, 255),
-                    'description' => $moduleContent,
-                    'order' => $index + 1,
-                    'type' => 'standard',
-                    'delay' => $index * 7,
-                    'period' => 'days',
-                ]);
+                $lesson = new \App\Lesson;
+                $lesson->course_id = $course->id;
+                $lesson->title = mb_substr($moduleTitle, 0, 255);
+                $lesson->content = $moduleContent;
+                $lesson->order = $index + 1;
+                $lesson->delay = $index * 7;
+                $lesson->period = 'days';
+                $lesson->save();
             }
 
             return response()->json([
