@@ -310,7 +310,7 @@ class LoginController extends Controller
     public function emailLoginNormal($email, Request $request): RedirectResponse
     {
 
-        $user = User::where('email', $email)->where('role', 2)->first();
+        $user = User::where('email', $email)->whereIn('role', [1, 2, 3])->first();
         if (! $user) {
             return redirect()->route('front.home');
         }
@@ -333,7 +333,7 @@ class LoginController extends Controller
         $request->validate(['email' => 'required|email']);
         $email = strtolower(trim($request->email));
 
-        $user = User::where('email', $email)->where('role', 2)->first();
+        $user = User::where('email', $email)->whereIn('role', [1, 2, 3])->first();
 
         // Alltid vis suksess-melding (ikke avslør om bruker finnes)
         if (!$user) {
@@ -399,7 +399,7 @@ class LoginController extends Controller
         $email = decrypt($email);
         $redirect_link = decrypt($redirect_link);
 
-        $user = User::where('email', $email)->where('role', 2)->first();
+        $user = User::where('email', $email)->whereIn('role', [1, 2, 3])->first();
         if (! $user) {
             return redirect()->route('front.home');
         }
