@@ -76,6 +76,14 @@
                 </a>
             </li>
         @endforeach
+
+        {{-- Kurs-tilgang for redaktører --}}
+        <li>
+            <a href="{{ config('app.url') }}/account/editor-courses" class="ed-nav-item" target="_blank">
+                <span class="ed-nav-item__icon"><i class="fa fa-graduation-cap"></i></span>
+                <span class="ed-nav-item__label">Mine kurs</span>
+            </a>
+        </li>
     </ul>
 
     <div id="pl-sidebar-table" style="padding:0 12px;margin-bottom:12px;display:none;">
