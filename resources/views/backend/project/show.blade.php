@@ -60,8 +60,8 @@
 
         
         <div class="margin-top">
-            <div class="col-md-6">
-                <project-whole-book :current-project="{{ json_encode($project) }}" 
+            <div class="col-md-8">
+                <project-whole-book :current-project="{{ json_encode($project) }}"
                 :whole-book-list="{{ json_encode($wholeBooks) }}"
                 :designers="{{ json_encode(AdminHelpers::giutbokUsers()) }}"></project-whole-book>
 
@@ -535,7 +535,7 @@
                     </div> <!-- end correction -->
                 @endif
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <project-books :current-project="{{ json_encode($project) }}" 
                     :project-user="{{ json_encode($project->user) }}" :learners="{{ json_encode($learners) }}"></project-books>
 
