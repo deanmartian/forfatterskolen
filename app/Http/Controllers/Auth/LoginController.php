@@ -296,6 +296,8 @@ class LoginController extends Controller
                 'profile' => '/account/profile',
                 'editor-courses' => '/account/editor-courses',
                 'community' => '/account/community',
+                'community-discussions' => '/account/community/discussions',
+                'community-groups' => '/account/community/course-groups',
             ];
             if (isset($allowed[$redirect])) {
                 return redirect()->to($allowed[$redirect]);

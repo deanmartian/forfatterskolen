@@ -58,8 +58,29 @@
         <a href="#" onclick="loadPage('/account/community/notifications')" id="nav-notifications"><i class="fa fa-bell"></i> Varsler</a>
     </div>
 
-    <div class="community-iframe-wrap">
-        <iframe src="{{ config('app.url') }}/auth/login/email/{{ encrypt(Auth::user()->email) }}?redirect=community" id="communityFrame" allow="clipboard-write"></iframe>
+    <div style="text-align:center;padding:60px 20px;">
+        <div style="font-size:48px;margin-bottom:16px;">💬</div>
+        <h2 style="margin-bottom:8px;">Skrivefellesskapet</h2>
+        <p style="color:#666;margin-bottom:24px;">Åpnes i ny fane — du logges inn automatisk.</p>
+        <a href="{{ config('app.url') }}/auth/login/email/{{ encrypt(Auth::user()->email) }}?redirect=community"
+           target="_blank"
+           style="display:inline-block;padding:14px 32px;background:#862736;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;">
+            <i class="fa fa-external-link"></i> Åpne fellesskapet
+        </a>
+        <div style="margin-top:32px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:600px;margin-left:auto;margin-right:auto;">
+            <a href="{{ config('app.url') }}/auth/login/email/{{ encrypt(Auth::user()->email) }}?redirect=community" target="_blank" style="padding:20px;background:#faf9f7;border:1px solid #e8e4de;border-radius:10px;text-decoration:none;color:#333;">
+                <div style="font-size:24px;margin-bottom:6px;">📝</div>
+                <strong>Innlegg</strong><br><small style="color:#888;">Skriv og kommenter</small>
+            </a>
+            <a href="{{ config('app.url') }}/auth/login/email/{{ encrypt(Auth::user()->email) }}?redirect=community-discussions" target="_blank" style="padding:20px;background:#faf9f7;border:1px solid #e8e4de;border-radius:10px;text-decoration:none;color:#333;">
+                <div style="font-size:24px;margin-bottom:6px;">💬</div>
+                <strong>Diskusjoner</strong><br><small style="color:#888;">Delta i samtaler</small>
+            </a>
+            <a href="{{ config('app.url') }}/auth/login/email/{{ encrypt(Auth::user()->email) }}?redirect=community-groups" target="_blank" style="padding:20px;background:#faf9f7;border:1px solid #e8e4de;border-radius:10px;text-decoration:none;color:#333;">
+                <div style="font-size:24px;margin-bottom:6px;">📚</div>
+                <strong>Kursgrupper</strong><br><small style="color:#888;">Se gruppene dine</small>
+            </a>
+        </div>
     </div>
 </div>
 
