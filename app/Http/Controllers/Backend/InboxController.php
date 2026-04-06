@@ -145,14 +145,14 @@ class InboxController extends Controller
             'subject' => $request->input('subject'),
             'body' => $request->input('body'),
             'body_plain' => $request->input('body'),
-            'body_html' => collect(preg_split('/\r?\n\r?\n/', e($request->input('body'))))->map(fn($p) => '<p style="margin:0 0 8px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode(''),
+            'body_html' => collect(preg_split('/\r?\n\r?\n/', e($request->input('body'))))->map(fn($p) => '<p style="margin:0 0 4px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode(''),
             'sent_by_user_id' => auth()->id(),
             'is_draft' => $isDraft,
             'sent_at' => $isDraft ? null : now(),
         ]);
 
         if (!$isDraft) {
-            $htmlBody = collect(preg_split('/\r?\n\r?\n/', e($request->input('body'))))->map(fn($p) => '<p style="margin:0 0 8px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode('');
+            $htmlBody = collect(preg_split('/\r?\n\r?\n/', e($request->input('body'))))->map(fn($p) => '<p style="margin:0 0 4px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode('');
             dispatch(new \App\Jobs\AddMailToQueueJob(
                 $request->input('to'),
                 $request->input('subject'),
