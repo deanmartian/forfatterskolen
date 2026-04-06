@@ -198,12 +198,15 @@ PROMPT;
         }
 
         // Check if they have pending assignments
-        $pendingAssignments = \App\AssignmentLearner::where('user_id', $user->id)
-            ->whereIn('status', ['pending', 'in_progress'])
-            ->count();
-
-        if ($pendingAssignments > 0) {
-            $context['Ventende oppgaver'] = $pendingAssignments;
+        try {
+            $pendingAssignments = \App\AssignmentManuscript::where('user_id', $user->id)
+                ->where('status', 0)
+                ->count();
+            if ($pendingAssignments > 0) {
+                $context['Ventende oppgaver'] = $pendingAssignments;
+            }
+        } catch (\Exception $e) {
+            // Table might not exist
         }
 
         // Check shop manuscripts
