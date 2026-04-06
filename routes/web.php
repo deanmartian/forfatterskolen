@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api;
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\Backend;
 use App\Http\Controllers\Editor;
@@ -715,6 +716,13 @@ Route::domain($front)->group(function () {
             Route::post('/{id}/reply', [Frontend\LearnerMessageController::class, 'reply'])->name('reply');
         });
 
+
+    });
+
+    // Push-varsler (tilgjengelig for innloggede brukere)
+    Route::middleware('learner')->group(function () {
+        Route::post('/push/subscribe', [Api\PushSubscriptionController::class, 'store'])->name('learner.push.subscribe');
+        Route::delete('/push/unsubscribe', [Api\PushSubscriptionController::class, 'destroy'])->name('learner.push.unsubscribe');
     });
 
     Route::get('/api/pilotleser/login', [Frontend\LearnerController::class, 'pilotleserLogin']);
@@ -2290,6 +2298,10 @@ Route::domain($editor)->group(function () {
             Route::get('/{id}', [Editor\EditorMessageController::class, 'show'])->name('show');
             Route::post('/{id}/reply', [Editor\EditorMessageController::class, 'reply'])->name('reply');
         });
+
+        // Push-varsler
+        Route::post('/push/subscribe', [Api\PushSubscriptionController::class, 'store'])->name('editor.push.subscribe');
+        Route::delete('/push/unsubscribe', [Api\PushSubscriptionController::class, 'destroy'])->name('editor.push.unsubscribe');
     });
 
     Route::middleware('editor')->group(function () {

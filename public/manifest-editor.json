@@ -1,7 +1,7 @@
 {
-  "short_name": "Forfatterskolen",
-  "name": "Forfatterskolen — Kursportalen",
-  "description": "Din portal for skrivekurs, mentormøter, oppgaver og manusutvikling hos Forfatterskolen.",
+  "short_name": "FS Redaktør",
+  "name": "Forfatterskolen — Redaktørportalen",
+  "description": "Redaktørportalen for Forfatterskolen. Administrer manus, oppgaver og tilbakemeldinger.",
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -16,12 +16,12 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": "/account/dashboard",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#862736",
-  "categories": ["education"],
+  "categories": ["education", "productivity"],
   "lang": "nb-NO"
 }

@@ -14,6 +14,7 @@ if (mix.inProduction()) {
                 maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // optional: increase cache file size limit
                 skipWaiting: true,
                 clientsClaim: true,
+                importScripts: ['/push-sw.js'],
             })
         ]
     });

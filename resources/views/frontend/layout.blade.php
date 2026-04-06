@@ -2,6 +2,10 @@
 <html lang="{{ app()->getLocale() }}">
     <head>
         <link rel="manifest" href="{{ asset('manifest.json') }}">
+        <meta name="theme-color" content="#862736">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <link rel="apple-touch-icon" href="/icons/icon-192.png">
         <link rel="alternate" href="{{ config('app.url') }}" hreflang="no" />
         <link rel="alternate" href="{{ config('app.url') }}/en" hreflang="en" />
         <link rel="alternate" href="{{ url()->current() }}" hreflang="{{ app()->getLocale() }}" />
@@ -51,6 +55,9 @@
         <meta name="keywords" content="{{ $meta_keywords }}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
+        @auth
+        <meta name="user-id" content="{{ Auth::id() }}">
+        @endauth
         <meta name="p:domain_verify" content="eca72f9965922b1f82c80a1ef6e62743"/>
         @yield('metas')
 
@@ -256,14 +263,51 @@
                 }
             });
 
-            // Avregistrer service worker for å unngå cache-problemer ved innlogging
+            // Registrer service worker for PWA
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                    registrations.forEach(function(r) { r.unregister(); });
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(reg) { console.log('SW registered', reg.scope); })
+                    .catch(function(err) { console.log('SW registration failed', err); });
+            }
+
+            // Push-varsler
+            if ('Notification' in window && 'PushManager' in window) {
+                navigator.serviceWorker.ready.then(function(reg) {
+                    reg.pushManager.getSubscription().then(function(sub) {
+                        if (!sub) {
+                            if (document.querySelector('meta[name="user-id"]')) {
+                                Notification.requestPermission().then(function(permission) {
+                                    if (permission === 'granted') {
+                                        subscribePush(reg);
+                                    }
+                                });
+                            }
+                        }
+                    });
                 });
-                caches.keys().then(function(names) {
-                    names.forEach(function(name) { caches.delete(name); });
+            }
+
+            function subscribePush(reg) {
+                var vapidKey = '{{ config("webpush.vapid.public_key") }}';
+                reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(vapidKey)
+                }).then(function(sub) {
+                    fetch('/push/subscribe', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        body: JSON.stringify(sub)
+                    });
                 });
+            }
+
+            function urlBase64ToUint8Array(base64String) {
+                var padding = '='.repeat((4 - base64String.length % 4) % 4);
+                var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+                var rawData = atob(base64);
+                var outputArray = new Uint8Array(rawData.length);
+                for (var i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
+                return outputArray;
             }
 
             $(function(){

@@ -1,13 +1,1 @@
-// Service worker avregistrerer seg selv og tømmer all cache
-self.addEventListener('install', function() {
-    self.skipWaiting();
-});
-self.addEventListener('activate', function(event) {
-    event.waitUntil(
-        caches.keys().then(function(names) {
-            return Promise.all(names.map(function(name) { return caches.delete(name); }));
-        }).then(function() {
-            return self.registration.unregister();
-        })
-    );
-});
+if(!self.define){let s,e={};const o=(o,r)=>(o=new URL(o+".js",r).href,e[o]||new Promise(e=>{if("document"in self){const s=document.createElement("script");s.src=o,s.onload=e,document.head.appendChild(s)}else s=o,importScripts(o),e()}).then(()=>{let s=e[o];if(!s)throw new Error(`Module ${o} didn’t register its module`);return s}));self.define=(r,t)=>{const a=s||("document"in self?document.currentScript.src:"")||location.href;if(e[a])return;let f={};const n=s=>o(s,a),i={module:{uri:a},exports:f,require:n};e[a]=Promise.all(r.map(s=>i[s]||n(s))).then(s=>(t(...s),f))}}define(["./workbox-1f84e78b"],function(s){"use strict";importScripts("/push-sw.js"),self.skipWaiting(),s.clientsClaim(),s.precacheAndRoute([{url:"//js/app.js",revision:"4b8207fc02666767aaab752a1ca2ea05"},{url:"//js/app.js.LICENSE.txt",revision:"bd1d023949b177f750a78d15e2c9e187"},{url:"/css/app.css",revision:"b7dee2154048cbedc96a587660dd5263"},{url:"/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.eot?5be1347c682810f199c7f486f40c5974",revision:"f4769f9bdb7466be65088239c12046d1"},{url:"/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.svg?060b2710bdbbe3dfe48b58d59bd5f1fb",revision:"89889688147bd7575d6327160d64e760"},{url:"/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.ttf?4692b9ec53fd5972caa2f2372ae20d16",revision:"e18bbf611f2a2e43afc071aa2f4e1512"},{url:"/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.woff2?be810be3a3e14c682a257d6eff341fe4",revision:"448c34a56d699c29117adc64c43affeb"},{url:"/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.woff?82b1212e45a2bc35dd731913b27ad813",revision:"fa2772327f55d8198301fdb8bcfc8158"}],{})});

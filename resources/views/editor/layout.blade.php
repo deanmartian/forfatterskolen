@@ -3,6 +3,11 @@
     <head>
         @yield('title')
         @include('backend.partials.backend-css')
+        <link rel="manifest" href="{{ asset('manifest-editor.json') }}">
+        <meta name="theme-color" content="#862736">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <link rel="apple-touch-icon" href="/icons/icon-192.png">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" />
         <link rel="stylesheet" href="{{ asset('css/editor-v2.css') }}">
@@ -153,6 +158,12 @@
             $(document).on('click', '.ed-sidebar-toggle', function() {
                 $('#edSidebar').toggleClass('open');
             });
+            // Registrer service worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(reg) { console.log('SW registered', reg.scope); })
+                    .catch(function(err) { console.log('SW registration failed', err); });
+            }
         </script>
         @yield('scripts')
     </body>
