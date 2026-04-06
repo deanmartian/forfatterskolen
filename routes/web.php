@@ -771,7 +771,7 @@ Route::domain($front)->group(function () {
 
     // without checking middleware
     Route::prefix('auth')->group(function () {
-        Route::get('login/email/{email_hash}', [Auth\LoginController::class, 'emailLogin'])->name('auth.login.email');
+        Route::get('login/email/{email_hash}', [Auth\LoginController::class, 'emailLogin'])->where('email_hash', '.*')->name('auth.login.email');
         Route::get('login/email-redirect/{email}/{redirect_link}', [Auth\LoginController::class, 'emailLoginRedirect'])
             ->name('auth.login.emailRedirect');
         Route::get('login/email-normal/{email}', [Auth\LoginController::class, 'emailLoginNormal'])->name('auth.login.email-normal');

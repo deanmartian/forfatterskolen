@@ -276,7 +276,11 @@ class LoginController extends Controller
      */
     public function emailLogin($email, Request $request): RedirectResponse
     {
-        $email = decrypt($email);
+        try {
+            $email = decrypt($email);
+        } catch (\Exception $e) {
+            return redirect()->route('front.home');
+        }
 
         $user = User::where('email', $email)->whereIn('role', [1, 2, 3])->first();
         if (! $user) {
