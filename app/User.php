@@ -283,6 +283,12 @@ class User extends Authenticatable
         return $pref->enabled;
     }
 
+    public function wantsPushNotification(string $type): bool
+    {
+        $pref = $this->notificationPreferences->firstWhere('type', 'push_' . $type);
+        return $pref ? $pref->enabled : true; // Default: on
+    }
+
     public function pageAccess(): HasMany
     {
         return $this->hasMany(\App\PageAccess::class);

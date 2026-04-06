@@ -3664,6 +3664,23 @@ Forfatterskolen';
         return redirect()->back()->with('profile_success', 'Innstillinger lagret.');
     }
 
+    public function profileUpdatePushPreferences(Request $request): RedirectResponse
+    {
+        $types = [
+            'push_feedback_ready', 'push_mentor_reminder', 'push_task_reminder',
+            'push_new_lesson', 'push_community',
+        ];
+
+        foreach ($types as $type) {
+            Auth::user()->notificationPreferences()->updateOrCreate(
+                ['type' => $type],
+                ['enabled' => $request->boolean($type)]
+            );
+        }
+
+        return redirect()->back()->with('profile_success', 'Push-innstillinger lagret.');
+    }
+
     public function passwordUpdate(Request $request): RedirectResponse
     {
         $request->validate([

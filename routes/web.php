@@ -557,6 +557,7 @@ Route::domain($front)->group(function () {
         Route::post('/profile', [Frontend\LearnerController::class, 'profileUpdate'])->name('learner.profile.update'); // Profile Update
         Route::post('/profile/photo', [Frontend\LearnerController::class, 'profileUpdatePhoto'])->name('learner.profile.update-photo'); // Profile Update
         Route::post('/profile/notifications', [Frontend\LearnerController::class, 'profileUpdateNotifications'])->name('learner.profile.update-notifications'); // Notification Preferences
+        Route::post('/profile/push-preferences', [Frontend\LearnerController::class, 'profileUpdatePushPreferences'])->name('learner.profile.update-push-preferences'); // Push Notification Preferences
         Route::post('/password/update', [Frontend\LearnerController::class, 'passwordUpdate'])->name('learner.password.update'); // Profile Update
         Route::post('/course/take', [Frontend\LearnerController::class, 'takeCourse'])->name('learner.course.take'); // Take Course
         Route::post('/course/{id}/uploadManuscript', [Frontend\LearnerController::class, 'uploadManuscript'])->name('learner.course.uploadManuscript'); // Upload manuscript to course

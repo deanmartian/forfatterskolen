@@ -421,6 +421,16 @@
 								<span class="pf-toggle-slider"></span>
 							</label>
 						</div>
+						<div class="pf-toggle-item">
+							<div class="pf-toggle-item__info">
+								<div class="pf-toggle-item__title">Reprise-varsler</div>
+								<div class="pf-toggle-item__desc">E-post når en reprise er klar for et webinar du ikke deltok på.</div>
+							</div>
+							<label class="pf-toggle-switch">
+								<input type="checkbox" name="receive_replay_emails" value="1" {{ Auth::user()->receive_replay_emails ? 'checked' : '' }}>
+								<span class="pf-toggle-slider"></span>
+							</label>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -507,6 +517,93 @@
 				<button type="submit" class="pf-btn pf-btn--primary">Lagre innstillinger</button>
 			</div>
 		</form>
+
+		{{-- Push-varsler --}}
+		<div class="pf-card" style="margin-top: 1.25rem;">
+			<div class="pf-card__header">
+				<div>
+					<div class="pf-card__title">📱 Push-varsler på mobil</div>
+					<div class="pf-card__desc">Motta varsler direkte på telefonen din, selv når nettleseren er lukket.</div>
+				</div>
+			</div>
+			<div class="pf-card__body">
+				<div id="pushNotifStatus">
+					<div id="pushUnavailable" style="display:none;padding:12px 16px;background:#fce8e8;border-radius:8px;">
+						<span style="color:#c62828;">Push-varsler støttes ikke i denne nettleseren.</span>
+						<br><small style="color:#555;">Prøv Chrome, Edge eller Safari (iOS 16.4+).</small>
+					</div>
+					<div id="pushDisabled" style="display:none;padding:12px 16px;background:#fff3e0;border-radius:8px;margin-bottom:12px;">
+						<span style="color:#e65100;font-weight:600;">Push-varsler er ikke aktivert</span>
+						<br><small style="color:#555;">Aktiver for å få varsler direkte på telefonen.</small>
+						<br><button onclick="enablePushNotifications()" style="margin-top:8px;background:#862736;border:none;color:#fff;border-radius:6px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;">Aktiver push-varsler</button>
+					</div>
+					<div id="pushSettings" style="display:none;">
+						<div style="padding:10px 16px;background:#e8f5e9;border-radius:8px;margin-bottom:16px;">
+							<span style="color:#2e7d32;font-weight:600;">✓ Push-varsler er aktivert</span>
+							<button onclick="unsubscribePush()" style="float:right;background:none;border:1px solid #c62828;color:#c62828;border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer;">Slå av</button>
+						</div>
+						<form method="POST" action="{{ route('learner.profile.update-push-preferences') }}">
+							{{ csrf_field() }}
+							<div class="pf-toggle-list">
+								<div class="pf-toggle-item">
+									<label class="pf-toggle-item__label">
+										<div>
+											<div class="pf-toggle-item__title">Ny tilbakemelding</div>
+											<div class="pf-toggle-item__desc">Varsel når redaktøren har gitt tilbakemelding på manuset ditt.</div>
+										</div>
+										<input type="checkbox" name="push_feedback_ready" value="1" {{ Auth::user()->wantsPushNotification('feedback_ready') ? 'checked' : '' }}>
+										<span class="pf-toggle-item__switch"></span>
+									</label>
+								</div>
+								<div class="pf-toggle-item">
+									<label class="pf-toggle-item__label">
+										<div>
+											<div class="pf-toggle-item__title">Mentormøte-påminnelse</div>
+											<div class="pf-toggle-item__desc">Påminnelse før mentormøter og webinarer.</div>
+										</div>
+										<input type="checkbox" name="push_mentor_reminder" value="1" {{ Auth::user()->wantsPushNotification('mentor_reminder') ? 'checked' : '' }}>
+										<span class="pf-toggle-item__switch"></span>
+									</label>
+								</div>
+								<div class="pf-toggle-item">
+									<label class="pf-toggle-item__label">
+										<div>
+											<div class="pf-toggle-item__title">Innleveringsfrist</div>
+											<div class="pf-toggle-item__desc">Varsel når en innleveringsfrist nærmer seg.</div>
+										</div>
+										<input type="checkbox" name="push_task_reminder" value="1" {{ Auth::user()->wantsPushNotification('task_reminder') ? 'checked' : '' }}>
+										<span class="pf-toggle-item__switch"></span>
+									</label>
+								</div>
+								<div class="pf-toggle-item">
+									<label class="pf-toggle-item__label">
+										<div>
+											<div class="pf-toggle-item__title">Ny leksjon tilgjengelig</div>
+											<div class="pf-toggle-item__desc">Varsel når en ny modul åpnes i kurset ditt.</div>
+										</div>
+										<input type="checkbox" name="push_new_lesson" value="1" {{ Auth::user()->wantsPushNotification('new_lesson') ? 'checked' : '' }}>
+										<span class="pf-toggle-item__switch"></span>
+									</label>
+								</div>
+								<div class="pf-toggle-item">
+									<label class="pf-toggle-item__label">
+										<div>
+											<div class="pf-toggle-item__title">Fellesskap</div>
+											<div class="pf-toggle-item__desc">Varsler om nye innlegg og kommentarer i skrivefellesskapet.</div>
+										</div>
+										<input type="checkbox" name="push_community" value="1" {{ Auth::user()->wantsPushNotification('community') ? 'checked' : '' }}>
+										<span class="pf-toggle-item__switch"></span>
+									</label>
+								</div>
+							</div>
+							<div class="pf-form-actions" style="border:none;padding:0;margin-top:0.5rem;">
+								<button type="submit" class="pf-btn pf-btn--primary">Lagre push-innstillinger</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	{{-- ═══════════ TAB 3: E-POSTADRESSER ═══════════ --}}
@@ -667,6 +764,55 @@
 <script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
 <script src="{{ asset('js/profile.js') }}"></script>
 <script>
+// ── Push notification status check ─────────────────
+(function() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        document.getElementById('pushUnavailable').style.display = 'block';
+        return;
+    }
+    navigator.serviceWorker.ready.then(function(reg) {
+        reg.pushManager.getSubscription().then(function(sub) {
+            if (sub) {
+                document.getElementById('pushSettings').style.display = 'block';
+            } else {
+                document.getElementById('pushDisabled').style.display = 'block';
+            }
+        });
+    });
+})();
+
+function enablePushNotifications() {
+    Notification.requestPermission().then(function(permission) {
+        if (permission === 'granted') {
+            navigator.serviceWorker.ready.then(function(reg) {
+                if (typeof subscribePush === 'function') {
+                    subscribePush(reg);
+                }
+                document.getElementById('pushDisabled').style.display = 'none';
+                document.getElementById('pushSettings').style.display = 'block';
+            });
+        }
+    });
+}
+
+function unsubscribePush() {
+    navigator.serviceWorker.ready.then(function(reg) {
+        reg.pushManager.getSubscription().then(function(sub) {
+            if (sub) {
+                sub.unsubscribe().then(function() {
+                    fetch('/push/unsubscribe', {
+                        method: 'DELETE',
+                        headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        body: JSON.stringify({endpoint: sub.endpoint})
+                    });
+                    document.getElementById('pushSettings').style.display = 'none';
+                    document.getElementById('pushDisabled').style.display = 'block';
+                });
+            }
+        });
+    });
+}
+
 // ── Tab switching ────────────────────────────────────
 $('#profileTabs').on('click', '.pf-tab', function(e) {
 	e.preventDefault();
