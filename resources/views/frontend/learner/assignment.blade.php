@@ -1337,6 +1337,9 @@
 					<label style="font-weight:600;font-size:13px;">Begrunnelse</label>
 					<textarea name="reason" required minlength="10" rows="3" placeholder="Skriv kort hvorfor du trenger utsettelse..." style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;"></textarea>
 				</div>
+				<div style="padding:0 24px 8px;">
+					<p style="font-size:12px;color:#888;margin:0;"><em>Merk: Utsettelser er ikke garantert og kan bli avslått. Du vil få svar på e-post.</em></p>
+				</div>
 				<div style="padding:0 24px 24px;display:flex;gap:10px;">
 					<button type="submit" style="flex:1;background:#862736;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;">Send forespørsel</button>
 					<button type="button" data-dismiss="modal" style="padding:12px 20px;background:#f5f5f5;border:none;border-radius:8px;cursor:pointer;">Avbryt</button>
