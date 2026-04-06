@@ -21,10 +21,7 @@
 <div class="page-toolbar">
     <h3><i class="fa fa-inbox"></i> Inbox</h3>
     <div class="pull-right">
-        <form action="{{ route('admin.inbox.import-helpwise') }}" method="POST" style="display:inline;">
-            @csrf
-            <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-download"></i> Importer fra Helpwise</button>
-        </form>
+        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#newEmailModal"><i class="fa fa-pencil"></i> Ny e-post</button>
         <a href="{{ route('admin.inbox.canned-responses') }}" class="btn btn-sm btn-default"><i class="fa fa-bolt"></i> Hurtigsvar</a>
     </div>
 </div>
@@ -148,6 +145,40 @@
             <div style="padding: 15px;">
                 {{ $conversations->appends($filters)->links() }}
             </div>
+        </div>
+    </div>
+</div>
+
+{{-- Ny e-post modal --}}
+<div class="modal fade" id="newEmailModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius:10px;overflow:hidden;">
+            <div style="background:#862736;padding:18px 24px;color:#fff;">
+                <button type="button" class="close" data-dismiss="modal" style="color:#fff;opacity:0.8;">&times;</button>
+                <h4 style="margin:0;font-size:17px;"><i class="fa fa-pencil"></i> Ny e-post</h4>
+            </div>
+            <form action="{{ route('admin.inbox.compose') }}" method="POST">
+                @csrf
+                <div style="padding:24px;">
+                    <div class="form-group">
+                        <label>Til</label>
+                        <input type="email" name="to" class="form-control" placeholder="e-post@eksempel.no" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Emne</label>
+                        <input type="text" name="subject" class="form-control" placeholder="Emne" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Melding</label>
+                        <textarea name="body" class="form-control" rows="8" placeholder="Skriv meldingen din her..." required></textarea>
+                    </div>
+                </div>
+                <div style="padding:0 24px 24px;display:flex;gap:10px;">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i> Send</button>
+                    <button type="submit" name="save_draft" value="1" class="btn btn-default"><i class="fa fa-save"></i> Lagre som utkast</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Avbryt</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

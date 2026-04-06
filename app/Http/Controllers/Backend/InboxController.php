@@ -102,6 +102,61 @@ class InboxController extends Controller
             ->with('message', 'Markert som spam');
     }
 
+    public function compose(Request $request)
+    {
+        $request->validate(['to' => 'required|email', 'subject' => 'required', 'body' => 'required']);
+        $isDraft = $request->boolean('save_draft', false);
+
+        // Create conversation
+        $conversation = \App\Models\Inbox\InboxConversation::create([
+            'subject' => $request->input('subject'),
+            'customer_email' => $request->input('to'),
+            'customer_name' => $request->input('to'),
+            'status' => $isDraft ? 'pending' : 'open',
+            'source' => 'compose',
+            'inbox' => 'post@forfatterskolen.no',
+        ]);
+
+        // Try to link user
+        $user = \App\User::where('email', $request->input('to'))->first();
+        if ($user) {
+            $conversation->update(['user_id' => $user->id, 'customer_name' => $user->full_name]);
+        }
+
+        // Create message
+        $message = \App\Models\Inbox\InboxMessage::create([
+            'conversation_id' => $conversation->id,
+            'type' => 'reply',
+            'direction' => 'outbound',
+            'from_email' => 'post@forfatterskolen.no',
+            'from_name' => auth()->user()->full_name . ' — Forfatterskolen',
+            'to_email' => $request->input('to'),
+            'subject' => $request->input('subject'),
+            'body' => $request->input('body'),
+            'body_plain' => $request->input('body'),
+            'body_html' => nl2br(e($request->input('body'))),
+            'sent_by_user_id' => auth()->id(),
+            'is_draft' => $isDraft,
+            'sent_at' => $isDraft ? null : now(),
+        ]);
+
+        if (!$isDraft) {
+            $htmlBody = nl2br(e($request->input('body')));
+            dispatch(new \App\Jobs\AddMailToQueueJob(
+                $request->input('to'),
+                $request->input('subject'),
+                $htmlBody,
+                'post@forfatterskolen.no',
+                auth()->user()->full_name . ' — Forfatterskolen',
+                null, 'inbox-compose', $conversation->id
+            ));
+        }
+
+        return redirect()->route('admin.inbox.show', $conversation->id)
+            ->with('alert_type', 'success')
+            ->with('message', $isDraft ? 'Utkast lagret' : 'E-post sendt!');
+    }
+
     public function setFollowUp(Request $request, int $id)
     {
         $conversation = \App\Models\Inbox\InboxConversation::findOrFail($id);
