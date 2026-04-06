@@ -185,10 +185,8 @@
                                 <tr>
                                     <th>{{ trans_choice('site.manus', 2) }}</th>
                                     <th>{{ trans_choice('site.editors', 1) }}</th>
-                                    <th>{{ trans('site.date-ordered') }}</th>
-                                    <th>{{ trans('site.expected-finish') }}</th>
+                                    <th>Bestilt / Frist</th>
                                     <th>{{ trans_choice('site.feedbacks', 1) }}</th>
-                                    <th>{{ trans('site.status') }}</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -202,7 +200,7 @@
                                                     <a href="{{ url('/dropbox/download/' . trim($copy_editing->file)) }}">
                                                         <i class="fa fa-download" aria-hidden="true"></i>
                                                     </a>&nbsp;
-                                                    <a href="{{ url('/dropbox/shared-link/' . trim($copy_editing->file)) }}" 
+                                                    <a href="{{ url('/dropbox/shared-link/' . trim($copy_editing->file)) }}"
                                                         target="_blank">
                                                         {{ basename($copy_editing->file) }}
                                                     </a>
@@ -277,14 +275,11 @@
                                             @endif
                                         </td>
                                         <td>
-                                            {{ \App\Http\FrontendHelpers::formatDate($copy_editing->created_at) }}
-                                        </td>
-                                        <td>
+                                            <small class="text-muted">{{ \App\Http\FrontendHelpers::formatDate($copy_editing->created_at) }}</small>
+                                            <br>
                                             @if ($copy_editing->expected_finish)
-                                                {{ $copy_editing->expected_finish_formatted }}
-                                                <br>
+                                                <strong>{{ $copy_editing->expected_finish_formatted }}</strong>
                                             @endif
-
                                             @if ($copy_editing->status !== 2)
                                                 <a href="#setOtherServiceFinishDateModal" data-toggle="modal"
                                                 class="setOtherServiceFinishDateBtn"
@@ -376,10 +371,8 @@
                                 <tr>
                                     <th>{{ trans_choice('site.manus', 2) }}</th>
                                     <th>{{ trans_choice('site.editors', 1) }}</th>
-                                    <th>{{ trans('site.date-ordered') }}</th>
-                                    <th>{{ trans('site.expected-finish') }}</th>
+                                    <th>Bestilt / Frist</th>
                                     <th>{{ trans_choice('site.feedbacks', 1) }}</th>
-                                    <th>{{ trans('site.status') }}</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -463,14 +456,11 @@
                                             @endif
                                         </td>
                                         <td>
-                                            {{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
-                                        </td>
-                                        <td>
+                                            <small class="text-muted">{{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}</small>
+                                            <br>
                                             @if ($correction->expected_finish)
-                                                {{ $correction->expected_finish_formatted }}
-                                                <br>
+                                                <strong>{{ $correction->expected_finish_formatted }}</strong>
                                             @endif
-
                                             @if ($correction->status !== 2)
                                                 <a href="#setOtherServiceFinishDateModal" data-toggle="modal"
                                                 class="setOtherServiceFinishDateBtn"
@@ -478,7 +468,7 @@
                                                 ['id' => $correction->id, 'type' => 2]) }}"
                                                 data-finish="{{ $correction->expected_finish ?
                                                 strftime('%Y-%m-%d', strtotime($correction->expected_finish)) : '' }}">
-                                                    Set Date
+                                                    {{ trans('site.set-date') }}
                                                 </a>
                                             @endif
                                         </td>
