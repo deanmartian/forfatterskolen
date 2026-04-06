@@ -201,15 +201,10 @@ document.getElementById('ai-generate-submit').addEventListener('click', function
     });
 });
 
-// Unsplash image search
+// Stock image from Picsum (reliable, always works)
 function fetchUnsplashImage() {
-    var content = document.getElementById('bot-post-content').value;
-    if (!content) { alert('Skriv innholdet først'); return; }
-    var keywords = content.substring(0, 100).replace(/[^\w\s]/g, '').split(' ').slice(0, 3).join(' ');
-    var url = 'https://api.unsplash.com/search/photos?query=' + encodeURIComponent(keywords + ' writing') + '&per_page=1&client_id=YOUR_UNSPLASH_KEY';
-
-    // Fallback: use picsum for now
-    var imgUrl = 'https://source.unsplash.com/800x400/?' + encodeURIComponent(keywords + ',writing,books');
+    var random = Math.floor(Math.random() * 500);
+    var imgUrl = 'https://picsum.photos/seed/' + random + '/800/400';
     document.getElementById('preview-img').src = imgUrl;
     document.getElementById('image-url-input').value = imgUrl;
     document.getElementById('image-preview').style.display = 'block';
