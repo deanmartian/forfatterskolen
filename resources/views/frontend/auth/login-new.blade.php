@@ -177,8 +177,11 @@
         .magic-link-form {
             display: none;
             margin-bottom: 10px;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.2s;
         }
-        .magic-link-form.show { display: block; }
+        .magic-link-form.show { display: block; max-height: 200px; }
         .magic-link-form input {
             width: 100%;
             padding: 13px 14px;
