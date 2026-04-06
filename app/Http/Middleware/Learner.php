@@ -43,9 +43,9 @@ class Learner
             $user = $this->auth->user();
 
             // Check if the user has the correct role
-            if ($user->role != 2) {
+            // Role 2 = Elev, Role 1 = Admin, Role 3 = Redaktør med admin
+            if (!in_array($user->role, [1, 2, 3])) {
                 Auth::logout();
-                echo 'Forbidden <br />';
 
                 return redirect('/');
             }
