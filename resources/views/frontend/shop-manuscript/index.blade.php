@@ -984,7 +984,7 @@
     </section>
 
     {{-- ═══════════ COACHING ═══════════ --}}
-    <section class="manus-coaching">
+    <section class="manus-coaching" id="coaching">
         <div class="manus-coaching__inner">
             <span class="manus-coaching__badge">Tilleggstjeneste</span>
             <h2 class="manus-coaching__title">Coaching med redaktør</h2>
