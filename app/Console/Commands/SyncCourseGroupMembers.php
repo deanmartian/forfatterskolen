@@ -69,6 +69,10 @@ class SyncCourseGroupMembers extends Command
             // Find all users with active course for this course_id
             $activeUserIds = DB::table('courses_taken')
                 ->where('is_active', 1)
+                ->where(function ($q) {
+                    $q->whereNull('end_date')
+                      ->orWhere('end_date', '>=', now()->toDateString());
+                })
                 ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
                 ->where('packages.course_id', $group->course_id)
                 ->pluck('courses_taken.user_id')
