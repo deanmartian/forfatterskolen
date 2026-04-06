@@ -118,6 +118,16 @@ class InboxController extends Controller
         $request->validate(['to' => 'required|email', 'subject' => 'required', 'body' => 'required']);
         $isDraft = $request->boolean('save_draft', false);
 
+        // Handle attachments
+        $attachmentPaths = null;
+        if ($request->hasFile('attachments')) {
+            $attachmentPaths = [];
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('inbox-attachments', 'public');
+                $attachmentPaths[] = storage_path('app/public/' . $path);
+            }
+        }
+
         // Create conversation
         $conversation = \App\Models\Inbox\InboxConversation::create([
             'subject' => $request->input('subject'),
@@ -134,6 +144,9 @@ class InboxController extends Controller
             $conversation->update(['user_id' => $user->id, 'customer_name' => $user->full_name]);
         }
 
+        // Add signature
+        $bodyWithSig = rtrim($request->input('body')) . "\n\nSkrivevarm hilsen,\n" . auth()->user()->full_name . "\nForfatterskolen / Easywrite / Indiemoon Publishing";
+
         // Create message
         $message = \App\Models\Inbox\InboxMessage::create([
             'conversation_id' => $conversation->id,
@@ -143,23 +156,23 @@ class InboxController extends Controller
             'from_name' => auth()->user()->full_name . ' — Forfatterskolen',
             'to_email' => $request->input('to'),
             'subject' => $request->input('subject'),
-            'body' => $request->input('body'),
-            'body_plain' => $request->input('body'),
-            'body_html' => collect(preg_split('/\r?\n\r?\n/', e($request->input('body'))))->map(fn($p) => '<p style="margin:0 0 4px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode(''),
+            'body' => $bodyWithSig,
+            'body_plain' => $bodyWithSig,
+            'body_html' => collect(preg_split('/\r?\n\r?\n/', e($bodyWithSig)))->map(fn($p) => '<p style="margin:0 0 4px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode(''),
             'sent_by_user_id' => auth()->id(),
             'is_draft' => $isDraft,
             'sent_at' => $isDraft ? null : now(),
         ]);
 
         if (!$isDraft) {
-            $htmlBody = collect(preg_split('/\r?\n\r?\n/', e($request->input('body'))))->map(fn($p) => '<p style="margin:0 0 4px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode('');
+            $htmlBody = collect(preg_split('/\r?\n\r?\n/', e($bodyWithSig)))->map(fn($p) => '<p style="margin:0 0 4px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode('');
             dispatch(new \App\Jobs\AddMailToQueueJob(
                 $request->input('to'),
                 $request->input('subject'),
                 $htmlBody,
                 'post@forfatterskolen.no',
                 auth()->user()->full_name . ' — Forfatterskolen',
-                null, 'inbox-compose', $conversation->id
+                $attachmentPaths, 'inbox-compose', $conversation->id
             ));
         }
 

@@ -84,6 +84,10 @@ class InboxService
         $conversation = InboxConversation::findOrFail($conversationId);
         $user = User::findOrFail($userId);
 
+        // Add signature
+        $signature = "\n\nSkrivevarm hilsen,\n{$user->full_name}\nForfatterskolen / Easywrite / Indiemoon Publishing";
+        $body = rtrim($body) . $signature;
+
         $message = InboxMessage::create([
             'conversation_id' => $conversation->id,
             'type' => 'reply',

@@ -157,7 +157,7 @@
                 <button type="button" class="close" data-dismiss="modal" style="color:#fff;opacity:0.8;">&times;</button>
                 <h4 style="margin:0;font-size:17px;"><i class="fa fa-pencil"></i> Ny e-post</h4>
             </div>
-            <form action="{{ route('admin.inbox.compose') }}" method="POST">
+            <form action="{{ route('admin.inbox.compose') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div style="padding:24px;">
                     <div class="form-group">
@@ -171,6 +171,14 @@
                     <div class="form-group">
                         <label>Melding</label>
                         <textarea name="body" class="form-control" rows="8" placeholder="Skriv meldingen din her..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa fa-paperclip"></i> Vedlegg</label>
+                        <input type="file" name="attachments[]" multiple class="form-control">
+                    </div>
+                    <div style="background:#f8f8f8;border-radius:6px;padding:10px 14px;font-size:13px;color:#888;">
+                        <em>Signatur legges til automatisk:</em><br>
+                        <span style="color:#333;">Skrivevarm hilsen,<br>{{ Auth::user()->full_name }}<br>Forfatterskolen / Easywrite / Indiemoon Publishing</span>
                     </div>
                 </div>
                 <div style="padding:0 24px 24px;display:flex;gap:10px;">
