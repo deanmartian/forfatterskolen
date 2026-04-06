@@ -1588,6 +1588,7 @@ class CourseController extends Controller
             $package->description = 'Editor Package';
             $package->manuscripts_count = 0;
             $package->full_payment_price = 0;
+            $package->full_payment_sale_price_from = 0;
             $package->is_standard = 0;
             $package->save();
 
