@@ -436,6 +436,11 @@
 							if ($isExpired || $daysLeft == 0) $deadlineClass = 'op-card__deadline--today';
 							elseif ($daysLeft <= 3) $deadlineClass = 'op-card__deadline--urgent';
 
+							$extensionRequest = \App\Models\AssignmentExtensionRequest::where('assignment_id', $assignment->id)
+								->where('user_id', Auth::user()->id)
+								->whereIn('status', ['pending', 'approved'])
+								->latest()->first();
+
 							$deadlineBadgeClass = 'op-badge--deadline-future';
 							$deadlineBadgeText = '';
 							if ($isExpired) {
@@ -553,6 +558,13 @@
 									@elseif($manuscript && $assignment->parent === 'users')
 										<span class="op-badge op-badge--submitted">Innsendt</span>
 									@endif
+									@if($extensionRequest && $extensionRequest->status === 'pending')
+										<span class="op-badge op-badge--waiting" style="font-size:0.72rem;">&#9203; Utsettelse forespurt &mdash; venter på svar</span>
+									@elseif($extensionRequest && $extensionRequest->status === 'approved')
+										<span class="op-badge op-badge--submitted" style="font-size:0.72rem;">&#10004; Utsettelse godkjent til {{ $extensionRequest->requested_deadline->format('d.m.Y') }}</span>
+									@elseif(!$manuscript && ($daysLeft <= 7 || $isExpired))
+										<button type="button" class="op-btn op-btn--secondary" onclick="openExtensionModal({{ $assignment->id }}, '{{ addslashes($assignment->title) }}')">Be om utsettelse</button>
+									@endif
 								</div>
 							</div>
 						</div>
@@ -584,6 +596,11 @@
 						if ($isExpired || $daysLeft == 0) $deadlineClass = 'op-card__deadline--today';
 						elseif ($daysLeft <= 3) $deadlineClass = 'op-card__deadline--urgent';
 						$isForEditor = $assignment->for_editor;
+
+						$extensionRequest = \App\Models\AssignmentExtensionRequest::where('assignment_id', $assignment->id)
+							->where('user_id', Auth::user()->id)
+							->whereIn('status', ['pending', 'approved'])
+							->latest()->first();
 					@endphp
 
 					<div class="op-card">
@@ -672,6 +689,13 @@
 									@endif
 								@elseif($manuscript && $assignment->parent === 'users')
 									<span class="op-badge op-badge--submitted">Innsendt</span>
+								@endif
+								@if($extensionRequest && $extensionRequest->status === 'pending')
+									<span class="op-badge op-badge--waiting" style="font-size:0.72rem;">&#9203; Utsettelse forespurt &mdash; venter på svar</span>
+								@elseif($extensionRequest && $extensionRequest->status === 'approved')
+									<span class="op-badge op-badge--submitted" style="font-size:0.72rem;">&#10004; Utsettelse godkjent til {{ $extensionRequest->requested_deadline->format('d.m.Y') }}</span>
+								@elseif(!$manuscript && ($daysLeft <= 7 || $isExpired))
+									<button type="button" class="op-btn op-btn--secondary" onclick="openExtensionModal({{ $assignment->id }}, '{{ addslashes($assignment->title) }}')">Be om utsettelse</button>
 								@endif
 							</div>
 						</div>
@@ -1296,6 +1320,32 @@
 
 @stop
 
+{{-- ── Extension Request Modal ── --}}
+<div class="modal fade" id="extensionModal">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content" style="border-radius:12px;overflow:hidden;">
+			<div style="background:#862736;padding:20px 24px;color:#fff;">
+				<h4 style="margin:0;font-size:18px;">Be om utsettelse</h4>
+				<p style="margin:4px 0 0;opacity:0.8;font-size:13px;" id="extensionAssignmentName"></p>
+			</div>
+			<form method="POST" id="extensionForm" action="">
+				@csrf
+				<div style="padding:24px;">
+					<label style="font-weight:600;font-size:13px;">Ny ønsket frist</label>
+					<input type="date" name="requested_deadline" required min="{{ now()->addDay()->format('Y-m-d') }}" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;margin-bottom:16px;">
+
+					<label style="font-weight:600;font-size:13px;">Begrunnelse</label>
+					<textarea name="reason" required minlength="10" rows="3" placeholder="Skriv kort hvorfor du trenger utsettelse..." style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;"></textarea>
+				</div>
+				<div style="padding:0 24px 24px;display:flex;gap:10px;">
+					<button type="submit" style="flex:1;background:#862736;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:600;cursor:pointer;">Send forespørsel</button>
+					<button type="button" data-dismiss="modal" style="padding:12px 20px;background:#f5f5f5;border:none;border-radius:8px;cursor:pointer;">Avbryt</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
 @section('scripts')
 	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
@@ -1688,6 +1738,12 @@
 			if (submitButton) { submitButton.addEventListener('click', function (e) { if (!fileInput || !fileInput.files || !fileInput.files.length) { alert('Please select a document file.'); e.preventDefault(); } }); }
 		}
 		updateText(textWithBrowseButton);
+	}
+
+	function openExtensionModal(assignmentId, assignmentName) {
+		$('#extensionForm').attr('action', '/account/assignment/' + assignmentId + '/request-extension');
+		$('#extensionAssignmentName').text(assignmentName);
+		$('#extensionModal').modal('show');
 	}
 
 	function showGroupDetails(group_id) {

@@ -1416,6 +1416,45 @@
 	@endif
 
 	{{-- ══════════════════════════════════════════
+		GODKJENTE UTSETTELSER
+	══════════════════════════════════════════ --}}
+	@if($approvedExtensions->count() > 0)
+	<div class="dashboard-section">
+		<div class="section-header">
+			<h4>
+				<i class="fa fa-clock-o"></i>
+				Godkjente utsettelser
+				<span class="section-badge" style="background:#2e7d32;">{{ $approvedExtensions->count() }}</span>
+			</h4>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>Elev</th>
+						<th>Oppgave</th>
+						<th>Opprinnelig frist</th>
+						<th>Ny frist</th>
+						<th>Godkjent</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach($approvedExtensions as $ext)
+					<tr>
+						<td>{{ $ext->user->full_name ?? '—' }}</td>
+						<td>{{ $ext->assignment->title ?? '—' }}</td>
+						<td>{{ \Carbon\Carbon::parse($ext->original_deadline)->format('d.m.Y') }}</td>
+						<td><strong>{{ \Carbon\Carbon::parse($ext->requested_deadline)->format('d.m.Y') }}</strong></td>
+						<td>{{ $ext->decided_at ? \Carbon\Carbon::parse($ext->decided_at)->format('d.m.Y') : '—' }}</td>
+					</tr>
+					@endforeach
+				</tbody>
+			</table>
+		</div>
+	</div>
+	@endif
+
+	{{-- ══════════════════════════════════════════
 		PROSJEKTFORESPØRSLER (Project Requests)
 	══════════════════════════════════════════ --}}
 	@if($projectRequests->count() > 0)

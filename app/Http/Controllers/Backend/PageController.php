@@ -151,13 +151,15 @@ class PageController extends Controller
         $copyEditingEditors = AdminHelpers::editorByAdminQuery('is_copy_editing_admin');
         $projects = Project::all();
         $selfPublishingPortalRequests = SelfPublishingPortalRequest::all();
+        $pendingExtensions = \App\Models\AssignmentExtensionRequest::where('status', 'pending')->with(['user', 'assignment'])->latest()->get();
 
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
             'pending_workshops', 'pending_assignment_feedbacks', 'logs', 'shopManuscripts',
             'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
             'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
             'pendingTasks', 'pendingProjectTasks', 'assignedAssignmentManuscripts', 'selfPublishingList', 'editors',
-            'learners', 'coachingEditors', 'correctionEditors', 'copyEditingEditors', 'projects', 'selfPublishingPortalRequests'));
+            'learners', 'coachingEditors', 'correctionEditors', 'copyEditingEditors', 'projects', 'selfPublishingPortalRequests',
+            'pendingExtensions'));
     }
 
     public function updateExpectedFinish($type, $id, Request $request): RedirectResponse

@@ -29,6 +29,46 @@
 				</div>
 			</div>
 
+			<!-- Pending Extension Requests -->
+			@if(isset($pendingExtensions) && $pendingExtensions->count() > 0)
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4>Forespørsler om utsettelse <span class="badge" style="background:#e65100;">{{ $pendingExtensions->count() }}</span></h4>
+						</div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>Elev</th>
+								<th>Oppgave</th>
+								<th>Opprinnelig frist</th>
+								<th>Ønsket frist</th>
+								<th>Begrunnelse</th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach($pendingExtensions as $ext)
+							<tr>
+								<td>{{ $ext->user->fullname ?? '-' }}</td>
+								<td>{{ $ext->assignment->title ?? '-' }}</td>
+								<td>{{ $ext->original_deadline->format('d.m.Y') }}</td>
+								<td>{{ $ext->requested_deadline->format('d.m.Y') }}</td>
+								<td style="max-width:200px;">{{ \Illuminate\Support\Str::limit($ext->reason, 80) }}</td>
+								<td>
+									<a href="{{ route('admin.assignment.extension.decide', [$ext->id, 'approve']) }}" class="btn btn-sm btn-success">Godkjenn</a>
+									<a href="{{ route('admin.assignment.extension.decide', [$ext->id, 'reject']) }}" class="btn btn-sm btn-danger">Avslå</a>
+								</td>
+							</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			@endif
+
 			<!-- My assigned manuscripts -->
 			<div class="row">
 				<div class="col-sm-12">

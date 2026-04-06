@@ -7152,4 +7152,63 @@ Forfatterskolen';
             'help_with' => $helpWith,
         ];
     }
+
+    public function requestExtension($assignmentId, Request $request)
+    {
+        $request->validate([
+            'requested_deadline' => 'required|date|after:today',
+            'reason' => 'required|min:10',
+        ], [
+            'requested_deadline.required' => 'Du må velge en ny frist.',
+            'requested_deadline.after' => 'Ny frist må være etter i dag.',
+            'reason.required' => 'Du må oppgi en begrunnelse.',
+            'reason.min' => 'Begrunnelsen må være minst 10 tegn.',
+        ]);
+
+        $assignment = Assignment::findOrFail($assignmentId);
+        $user = Auth::user();
+
+        // Check no pending request exists
+        $existing = \App\Models\AssignmentExtensionRequest::where('assignment_id', $assignmentId)
+            ->where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($existing) {
+            return redirect()->back()->with('error', 'Du har allerede en ventende forespørsel om utsettelse for denne oppgaven.');
+        }
+
+        $originalDeadline = $assignment->submission_date;
+        // Check for individual deadline
+        $individualDeadline = AssignmentLearnerSubmissionDate::where('assignment_id', $assignmentId)
+            ->where('user_id', $user->id)->first();
+        if ($individualDeadline) {
+            $originalDeadline = $individualDeadline->submission_date;
+        }
+
+        $extensionRequest = \App\Models\AssignmentExtensionRequest::create([
+            'assignment_id' => $assignmentId,
+            'user_id' => $user->id,
+            'original_deadline' => \Carbon\Carbon::parse($originalDeadline)->format('Y-m-d'),
+            'requested_deadline' => $request->requested_deadline,
+            'reason' => $request->reason,
+            'status' => 'pending',
+        ]);
+
+        // Send email to admin
+        $subject = 'Forespørsel om utsettelse - ' . $assignment->title;
+        $approveUrl = url('/backend/assignment/extension/' . $extensionRequest->id . '/approve');
+        $rejectUrl = url('/backend/assignment/extension/' . $extensionRequest->id . '/reject');
+        $message = '<p><strong>' . $user->fullname . '</strong> ber om utsettelse for oppgaven <strong>' . $assignment->title . '</strong>.</p>'
+            . '<p><strong>Opprinnelig frist:</strong> ' . \Carbon\Carbon::parse($originalDeadline)->format('d.m.Y') . '</p>'
+            . '<p><strong>Ønsket ny frist:</strong> ' . \Carbon\Carbon::parse($request->requested_deadline)->format('d.m.Y') . '</p>'
+            . '<p><strong>Begrunnelse:</strong> ' . nl2br(e($request->reason)) . '</p>'
+            . '<p><a href="' . $approveUrl . '" style="background:#2e7d32;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;margin-right:10px;">Godkjenn</a>'
+            . '<a href="' . $rejectUrl . '" style="background:#c62828;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;">Avslå</a></p>';
+
+        dispatch(new AddMailToQueueJob('post@forfatterskolen.no', $subject, $message,
+            'post@forfatterskolen.no', 'Forfatterskolen', null, 'assignment_extension', $extensionRequest->id));
+
+        return redirect()->back()->with('success', 'Forespørsel om utsettelse er sendt. Du vil få svar på e-post.');
+    }
 }

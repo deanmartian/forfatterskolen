@@ -82,9 +82,21 @@ class PageController extends Controller
             ->where('answer_until', '>=', now()->toDateString())
             ->get();
 
+        // Godkjente utsettelser for oppgaver tildelt denne redaktøren
+        $approvedExtensions = \App\Models\AssignmentExtensionRequest::where('status', 'approved')
+            ->whereHas('assignment', function($q) {
+                $q->where('editor_id', Auth::id())
+                  ->orWhereHas('manuscripts', function($mq) {
+                      $mq->where('editor_id', Auth::id());
+                  });
+            })
+            ->with(['user', 'assignment'])
+            ->latest('decided_at')
+            ->get();
+
         return view('editor.dashboard', compact('assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimers',
             'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests', 'freeManuscripts', 'freeManuscriptEmailTemplate',
-            'freeManuscriptEmailTemplate2', 'selfPublishingList', 'editingAssignments', 'projects', 'availableManuscripts', 'projectRequests'));
+            'freeManuscriptEmailTemplate2', 'selfPublishingList', 'editingAssignments', 'projects', 'availableManuscripts', 'projectRequests', 'approvedExtensions'));
 
     }
 

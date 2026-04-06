@@ -513,6 +513,7 @@ Route::domain($front)->group(function () {
         Route::post('assignment/{id}/replace_manuscript', [Frontend\LearnerController::class, 'replaceAssignmentManuscript'])->name('learner.assignment.replace_manuscript');
         Route::post('assignment/{id}/delete_manuscript', [Frontend\LearnerController::class, 'deleteAssignmentManuscript'])->name('learner.assignment.delete_manuscript');
         Route::post('assignment/{id}/replace_letter', [Frontend\LearnerController::class, 'replaceAssignmentLetter'])->name('learner.assignment.replace_letter');
+        Route::post('/assignment/{id}/request-extension', [Frontend\LearnerController::class, 'requestExtension'])->name('learner.assignment.request-extension');
         Route::get('/assignment/group/{id}', [Frontend\LearnerController::class, 'group_show'])->name('learner.assignment.group.show'); // Assignment show Page
         Route::get('/assignment/group/{id}/learner-details', [Frontend\LearnerController::class, 'groupLearnerDetails']);
         Route::get('/assignment/group/{id}/show-details', [Frontend\LearnerController::class, 'groupShowDetails']);
@@ -818,6 +819,7 @@ Route::domain($admin)->group(function () {
         Route::post('/update-expected-finish/{type}/{id}', [Backend\PageController::class, 'updateExpectedFinish'])->name('backend.update-expected-finish');
         Route::get('/add-end-date-to-courses-taken', [Backend\PageController::class, 'updateCourseEndDatesFromPackage29']);
         Route::post('/self-publishing/feedback/{id}/approve', [Backend\HeadEditorController::class, 'approveSelfPublishingFeedback'])->name('head_editor.self-publishing-feedback.approve');
+        Route::get('/assignment/extension/{id}/{decision}', [Backend\AssignmentController::class, 'decideExtension'])->name('admin.assignment.extension.decide');
         Route::get('/svea-orders', [Backend\PageController::class, 'sveaOrders'])->name('admin.svea.orders');
         Route::post('/self-publishing-request/{id}/approve', [Backend\PageController::class, 'approveSelfPublishingRequest'])->name('admin.self-publishing-portal-request.approve');
         Route::delete('/self-publishing-request/{id}/delete', [Backend\PageController::class, 'deleteSelfPublishingRequest'])->name('admin.self-publishing-portal-request.destroy');
