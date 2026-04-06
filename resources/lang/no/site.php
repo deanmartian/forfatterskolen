@@ -1725,4 +1725,8 @@ Rektor Kristine',
     'pay-later-no-record' => 'Ingen bestillinger funnet.',
     'phone-call' => 'Telefonsamtale',
     'video-call' => 'Videosamtale',
+    'coaching-time-unavailable' => 'Opptatt',
+    'coaching-time-requested' => 'Forespurt',
+    'coaching-time-book' => 'Velg',
+    'coaching-time-no-coaching-hours-available' => 'Ingen ledige tider akkurat nå. Foreslå et tidspunkt nedenfor.',
 ];
