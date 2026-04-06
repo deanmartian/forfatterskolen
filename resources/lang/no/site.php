@@ -1723,4 +1723,6 @@ Rektor Kristine',
     'credit-note' => 'Kreditnota',
     'pay-later-invoice-processing' => 'Fakturaene opprettes, vennligst vent...',
     'pay-later-no-record' => 'Ingen bestillinger funnet.',
+    'phone-call' => 'Telefonsamtale',
+    'video-call' => 'Videosamtale',
 ];
