@@ -250,13 +250,28 @@
                                                     {{ trans('site.assign-editor') }}
                                                 </button>
                                             @endif
-                                            <button class="btn btn-xs btn-info projectRequestToEditorBtn" data-toggle="modal"
-                                                    data-target="#projectRequestToEditorModal"
-                                                    data-item-id="{{ $copy_editing->id }}"
-                                                    data-item-type="copy-editing"
-                                                    data-action="{{ route('admin.project.send-request-to-editor', ['itemId' => $copy_editing->id, 'type' => 'copy-editing']) }}">
-                                                Send forespørsel til redaktør
-                                            </button>
+                                            @if($copy_editing->status !== 2)
+                                                @php
+                                                    $ceRequests = \App\RequestToEditor::where('project_item_id', $copy_editing->id)
+                                                        ->where('project_item_type', 'copy-editing')->orderBy('id','desc')->get();
+                                                    $cePendingRequest = $ceRequests->where('answer', '')->first();
+                                                @endphp
+                                                @if($cePendingRequest)
+                                                    <span class="label label-warning" title="Venter på svar fra {{ $cePendingRequest->editor->full_name ?? '' }}">
+                                                        <i class="fa fa-clock-o"></i> Forespørsel sendt
+                                                    </span>
+                                                @endif
+                                                <button class="btn btn-xs btn-info projectRequestToEditorBtn" data-toggle="modal"
+                                                        data-target="#projectRequestToEditorModal"
+                                                        data-item-id="{{ $copy_editing->id }}"
+                                                        data-item-type="copy-editing"
+                                                        data-requests="{{ $ceRequests->toJson() }}"
+                                                        data-action="{{ route('admin.project.send-request-to-editor', ['itemId' => $copy_editing->id, 'type' => 'copy-editing']) }}">
+                                                    Send forespørsel
+                                                </button>
+                                            @else
+                                                <span class="label label-success"><i class="fa fa-check"></i> Ferdig</span>
+                                            @endif
                                         </td>
                                         <td>
                                             {{ \App\Http\FrontendHelpers::formatDate($copy_editing->created_at) }}
@@ -407,13 +422,28 @@
                                                     Assign Editor
                                                 </button>
                                             @endif
-                                            <button class="btn btn-xs btn-info projectRequestToEditorBtn" data-toggle="modal"
-                                                    data-target="#projectRequestToEditorModal"
-                                                    data-item-id="{{ $correction->id }}"
-                                                    data-item-type="correction"
-                                                    data-action="{{ route('admin.project.send-request-to-editor', ['itemId' => $correction->id, 'type' => 'correction']) }}">
-                                                Send forespørsel til redaktør
-                                            </button>
+                                            @if($correction->status !== 2)
+                                                @php
+                                                    $crRequests = \App\RequestToEditor::where('project_item_id', $correction->id)
+                                                        ->where('project_item_type', 'correction')->orderBy('id','desc')->get();
+                                                    $crPendingRequest = $crRequests->where('answer', '')->first();
+                                                @endphp
+                                                @if($crPendingRequest)
+                                                    <span class="label label-warning" title="Venter på svar fra {{ $crPendingRequest->editor->full_name ?? '' }}">
+                                                        <i class="fa fa-clock-o"></i> Forespørsel sendt
+                                                    </span>
+                                                @endif
+                                                <button class="btn btn-xs btn-info projectRequestToEditorBtn" data-toggle="modal"
+                                                        data-target="#projectRequestToEditorModal"
+                                                        data-item-id="{{ $correction->id }}"
+                                                        data-item-type="correction"
+                                                        data-requests="{{ $crRequests->toJson() }}"
+                                                        data-action="{{ route('admin.project.send-request-to-editor', ['itemId' => $correction->id, 'type' => 'correction']) }}">
+                                                    Send forespørsel
+                                                </button>
+                                            @else
+                                                <span class="label label-success"><i class="fa fa-check"></i> Ferdig</span>
+                                            @endif
                                         </td>
                                         <td>
                                             {{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
