@@ -530,8 +530,8 @@ class LoginController extends Controller
         }
 
         $user = new User;
-        $user->first_name = $userGoogle->user['name']['givenName'];
-        $user->last_name = $userGoogle->user['name']['familyName'];
+        $user->first_name = $userGoogle->user['given_name'] ?? $userGoogle->user['name']['givenName'] ?? $userGoogle->getName();
+        $user->last_name = $userGoogle->user['family_name'] ?? $userGoogle->user['name']['familyName'] ?? '';
         $user->email = $userGoogle->email;
         $user->password = bcrypt(123);
         $user->save();
