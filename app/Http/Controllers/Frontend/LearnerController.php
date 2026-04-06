@@ -6773,17 +6773,19 @@ Forfatterskolen';
                 $learnerTemplate = AdminHelpers::emailTemplate('Learner Coaching Time Reservation Confirmed');
 
                 if ($learnerTemplate) {
-                    $learnerContent = str_replace([
-                        ':first_name',
-                        ':coaching_session',
-                        ':booking_details'
-                    ], [
-                        $emailContext['learner_first_name'],
-                        $emailContext['coaching_session'],
-                        $emailContext['booking_details']
-                    ], $learnerTemplate->email_content ?? '');
-
                     $to = $timer->user->email;
+                    $redirect_link = route('learner.coaching-timer.prepare', $timer->id);
+
+                    $learnerContent = AdminHelpers::formatEmailContent(
+                        $learnerTemplate->email_content,
+                        $to,
+                        $emailContext['learner_first_name'],
+                        $redirect_link,
+                        [
+                            ':coaching_session' => $emailContext['coaching_session'],
+                            ':booking_details' => $emailContext['booking_details'],
+                        ]
+                    );
 
                     dispatch(new AddMailToQueueJob($to, $learnerTemplate->subject, $learnerContent,
                         $learnerTemplate->from_email, null, null, 'coaching-time-booking', $timer->id));
@@ -6821,6 +6823,50 @@ Forfatterskolen';
         }
 
         return redirect()->route('learner.coaching-time')->with('success', 'Time slot booked.');
+    }
+
+    public function showCoachingPreparation($id)
+    {
+        $user = Auth::user();
+        $timer = CoachingTimerManuscript::where('id', $id)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        $timer->load(['editor', 'timeSlot']);
+
+        return view('frontend.learner.coaching-preparation', compact('timer'));
+    }
+
+    public function uploadCoachingPreparation($id, Request $request)
+    {
+        $user = Auth::user();
+        $timer = CoachingTimerManuscript::where('id', $id)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        $request->validate([
+            'preparation_file' => 'nullable|file|mimes:pdf,doc,docx,odt|max:10240',
+            'preparation_notes' => 'nullable|string|max:5000',
+        ]);
+
+        if ($request->hasFile('preparation_file')) {
+            $file = $request->file('preparation_file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $destination = storage_path('coaching-preparations');
+            if (!is_dir($destination)) {
+                mkdir($destination, 0755, true);
+            }
+            $file->move($destination, $filename);
+            $timer->preparation_file = $filename;
+        }
+
+        if ($request->has('preparation_notes')) {
+            $timer->preparation_notes = $request->preparation_notes;
+        }
+
+        $timer->save();
+
+        return redirect()->back()->with('success', 'Filen ble lastet opp. Redaktoren vil motta den for coachingtimen.');
     }
 
     public function currentUser()

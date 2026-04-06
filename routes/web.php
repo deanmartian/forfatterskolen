@@ -510,6 +510,8 @@ Route::domain($front)->group(function () {
         Route::post('/coaching-timer/{id}/help_with', [Frontend\LearnerController::class, 'updateHelpWith'])->name('learner.coaching-timer.help_with');
         Route::post('/coaching-timer/{id}/set-status', [Frontend\LearnerController::class, 'setCoachingStatus'])->name('learner.coaching-timer.set-status');
         Route::post('/course-taken/coaching-timer/add', [Frontend\LearnerController::class, 'addCoachingSession'])->name('learner.course-taken.coaching-timer.add');
+        Route::get('/coaching-timer/{id}/prepare', [Frontend\LearnerController::class, 'showCoachingPreparation'])->name('learner.coaching-timer.prepare');
+        Route::post('/coaching-timer/{id}/preparation', [Frontend\LearnerController::class, 'uploadCoachingPreparation'])->name('learner.coaching-timer.preparation');
         Route::get('/webinar', [Frontend\LearnerController::class, 'webinar'])->name('learner.webinar'); // Webinars Page
         Route::post('/webinar', [Frontend\LearnerController::class, 'webinar'])->name('learner.webinar.submit'); // Webinars Page
         Route::get('/webinar/register/{webinar_key}/{webinar_id}', [Frontend\LearnerController::class, 'webinarRegister'])->name('learner.webinar.register'); // Webinars Page

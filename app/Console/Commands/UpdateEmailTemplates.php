@@ -585,14 +585,14 @@ post@forfatterskolen.no | 411 23 555',
             'Learner Coaching Time Reservation Confirmed' => [
                 'subject' => '✅ Coachingtime bekreftet — her er detaljene',
                 'from_email' => 'post@forfatterskolen.no',
-                'email_content' => 'Hei :first_name,
+                'email_content' => 'Hei :firstname,
 
 Coachingtimen din er nå bekreftet. Vi gleder oss til å jobbe med deg!
 
 <strong>Type veiledning:</strong> :coaching_session
 <strong>Dato og tid:</strong> :booking_details
 
-Har du tekst eller spørsmål du vil at redaktøren skal forberede seg på? Send det gjerne til oss i god tid før timen.
+:redirect_link Last opp tekst til redaktøren :end_redirect_link
 
 Vi sees!
 

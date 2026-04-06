@@ -24,7 +24,7 @@ class CoachingTimerManuscript extends Model
 
     protected $fillable = ['user_id', 'file', 'payment_price', 'plan_type', 'help_with', 'suggested_date', 'approved_date',
         'suggested_date_admin', 'editor_id', 'editor_time_slot_id', 'call_type', 'replay_link', 'comment', 'document', 
-        'status', 'is_approved', 'hours_worked'];
+        'status', 'is_approved', 'hours_worked', 'preparation_file', 'preparation_notes'];
 
     protected $appends = [
         'call_type_label',
