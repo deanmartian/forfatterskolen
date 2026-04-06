@@ -1,4 +1,4 @@
-@extends('frontend.layouts.course-portal')
+@extends('frontend.layout')
 
 @section('title')
     <title>Velg kurs - Forfatterskolen</title>
