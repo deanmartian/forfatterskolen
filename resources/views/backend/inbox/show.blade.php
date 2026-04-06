@@ -272,19 +272,20 @@
             });
         }
 
-        // Email preview
-        function toggleInboxPreview() {
-            var preview = document.getElementById('inboxEmailPreview');
-            var content = document.getElementById('inboxPreviewContent');
-            if (preview.style.display === 'none') {
-                var text = document.getElementById('reply-body').value;
-                if (!text) { alert('Skriv en melding først'); return; }
-                content.innerHTML = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-                preview.style.display = 'block';
-            } else {
-                preview.style.display = 'none';
-            }
-        }
     });
+
+    // Email preview (global scope)
+    function toggleInboxPreview() {
+        var preview = document.getElementById('inboxEmailPreview');
+        var content = document.getElementById('inboxPreviewContent');
+        if (preview.style.display === 'none') {
+            var text = document.getElementById('reply-body').value;
+            if (!text) { alert('Skriv en melding først'); return; }
+            content.innerHTML = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none';
+        }
+    }
 </script>
 @stop
