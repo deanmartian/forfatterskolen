@@ -43,7 +43,14 @@
                         $name = $profile ? ucwords($profile->name) : ($discussion->user->fullName ?? 'Ukjent');
                     @endphp
                     <tr @if($discussion->pinned) style="background: #fff8e1;" @endif>
-                        <td><strong>{{ $discussion->title }}</strong></td>
+                        <td>
+                            <strong>{{ $discussion->title }}</strong>
+                            <div class="hidden" id="disc-content-{{ $discussion->id }}">{{ $discussion->content }}</div>
+                            <div style="margin-top:4px;font-size:12px;color:#888;cursor:pointer;" onclick="var el=document.getElementById('disc-preview-{{ $discussion->id }}');el.style.display=el.style.display==='none'?'block':'none';">
+                                {{ Str::limit($discussion->content, 80) }} <small style="color:#862736;">vis mer</small>
+                            </div>
+                            <div id="disc-preview-{{ $discussion->id }}" style="display:none;margin-top:8px;padding:12px;background:#faf9f7;border-radius:6px;font-size:13px;white-space:pre-wrap;border:1px solid #e8e4de;">{{ $discussion->content }}</div>
+                        </td>
                         <td><span class="label label-info">{{ $discussion->category }}</span></td>
                         <td>{{ $name }}</td>
                         <td>{{ $discussion->replies_count }}</td>
@@ -58,9 +65,8 @@
                         <td>
                             <button class="btn btn-xs btn-info edit-discussion-btn" title="Rediger"
                                     data-id="{{ $discussion->id }}"
-                                    data-title="{{ $discussion->title }}"
-                                    data-content="{{ e($discussion->content) }}"
-                                    data-category="{{ $discussion->category }}"
+                                    data-title="{{ e($discussion->title) }}"
+                                    data-category="{{ e($discussion->category) }}"
                                     data-toggle="modal" data-target="#editDiscussionModal">
                                 <i class="fa fa-pencil"></i>
                             </button>
@@ -187,8 +193,8 @@
         var id = $(this).data('id');
         $('#editTitle').val($(this).data('title'));
         $('#editCategory').val($(this).data('category'));
-        $('#editContent').val($(this).data('content'));
-        $('#editDiscussionForm').attr('action', '/community/discussions/' + id + '/update');
+        $('#editContent').val($('#disc-content-' + id).text());
+        $('#editDiscussionForm').attr('action', '{{ url("community/discussions") }}/' + id + '/update');
     });
 
     $('.ai-topic-btn').click(function() {
