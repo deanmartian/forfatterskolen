@@ -654,10 +654,13 @@ class CommunityForumController extends Controller
         $user = Auth::user();
 
         if ($this->isAdmin()) {
-            // Admin ser alle aktive kurs som har elever
+            // Admin ser alle aktive kurs som har elever og er markert for kursgrupper
             $courseIds = \App\CoursesTaken::join('packages', 'courses_taken.package_id', '=', 'packages.id')
                 ->distinct()->pluck('packages.course_id');
-            $courses = \App\Course::whereIn('id', $courseIds)->where('status', 1)->get();
+            $courses = \App\Course::whereIn('id', $courseIds)
+                ->where('status', 1)
+                ->where('show_in_course_groups', 1)
+                ->get();
         } else {
             // Get user's active courses via CoursesTaken → Package → Course
             $coursesTaken = $user->coursesTaken()
