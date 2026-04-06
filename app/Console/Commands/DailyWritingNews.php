@@ -61,7 +61,7 @@ PROMPT;
                 return self::SUCCESS;
             }
 
-            // Save as draft for approval
+            // Save as draft for approval in admin
             $post = Post::create([
                 'id' => Str::uuid(),
                 'user_id' => 1376, // Sven Inge (admin)
@@ -71,20 +71,7 @@ PROMPT;
                 'status' => 'draft',
             ]);
 
-            // Send email notification for approval
-            $approveUrl = config('app.url') . '/admin/community/posts';
-            dispatch(new \App\Jobs\AddMailToQueueJob(
-                'sven.inge@forfatterskolen.no',
-                '📝 Morgennytt klart for godkjenning',
-                "Hei!<br><br>Dagens morgennytt for skrivefellesskapet er klart.<br><br>" .
-                "<strong>Forhåndsvisning:</strong><br>" . nl2br(e($content)) .
-                "<br><br><a href='{$approveUrl}' style='display:inline-block;padding:12px 28px;background:#862736;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;'>Godkjenn og publiser →</a>",
-                'post@forfatterskolen.no',
-                'Forfatterskolen',
-                null, 'daily-news', null
-            ));
-
-            $this->info('Morgennytt lagret som utkast — e-post sendt for godkjenning!');
+            $this->info('Morgennytt lagret som utkast — godkjenn i admin under Fellesskap → Innlegg.');
             Log::info('DailyWritingNews: posted successfully');
 
             return self::SUCCESS;

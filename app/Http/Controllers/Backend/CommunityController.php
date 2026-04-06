@@ -231,6 +231,17 @@ class CommunityController extends Controller
     /**
      * Generate AI content for bot post
      */
+    public function publishPost($id): RedirectResponse
+    {
+        $post = Post::findOrFail($id);
+        $post->update(['status' => 'published']);
+
+        return redirect()->back()->with([
+            'errors' => new MessageBag(['Innlegg publisert!']),
+            'alert_type' => 'success',
+        ]);
+    }
+
     public function generateAiContent(Request $request): JsonResponse
     {
         $request->validate([

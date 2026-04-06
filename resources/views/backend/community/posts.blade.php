@@ -102,8 +102,11 @@
                         $name = $profile ? ucwords($profile->name) : ($post->user->fullName ?? 'Ukjent');
                         $groupName = $post->course_group_id ? (\App\Models\CourseGroup::find($post->course_group_id)?->name ?? '') : '';
                     @endphp
-                    <tr @if($post->pinned) style="background: #fff8e1;" @endif>
+                    <tr @if($post->pinned) style="background: #fff8e1;" @endif @if(($post->status ?? '') === 'draft') style="background: #e3f2fd; border-left: 3px solid #1565c0;" @endif>
                         <td>
+                            @if(($post->status ?? '') === 'draft')
+                                <span class="label label-primary"><i class="fa fa-pencil"></i> Utkast</span><br>
+                            @endif
                             @if($post->is_bot_post ?? false)
                                 <span class="label label-info"><i class="fa fa-star"></i> Forfatterskolen</span>
                             @else
@@ -143,6 +146,12 @@
                             @endif
                         </td>
                         <td>
+                            @if(($post->status ?? '') === 'draft')
+                                <form action="{{ route('admin.community.posts.publish', $post->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    <button type="submit" class="btn btn-xs btn-success" title="Publiser"><i class="fa fa-check"></i> Publiser</button>
+                                </form>
+                            @endif
                             <form action="{{ route('admin.community.posts.toggle-pin', $post->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 <button type="submit" class="btn btn-xs {{ $post->pinned ? 'btn-default' : 'btn-warning' }}" title="{{ $post->pinned ? 'Løsne' : 'Fest' }}">
