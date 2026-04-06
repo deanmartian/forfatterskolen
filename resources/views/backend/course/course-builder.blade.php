@@ -553,7 +553,12 @@
         "Hvert kurs har 10 moduler med: faglig innhold (1500-2500 ord), 3-4 oppgaver, webinarforslag, og anbefalt lesning.\n" +
         "Modulene f\u00f8lger en progresjon fra grunnleggende til avansert.\n\n" +
         "Kvalitetskrav: Minimum 20.000 ord totalt, 15 unike skrive\u00f8velser, 20 referanser til b\u00f8ker/forfattere.\n\n" +
-        "Vis alltid moduloversikten f\u00f8rst og sp\u00f8r om godkjenning F\u00d8R du skriver alt innholdet.\n\n" +
+        "## VIKTIG: Bygg \u00e9n modul om gangen\n\n" +
+        "Du skal ALDRI skrive alle moduler i ett svar. F\u00f8lg denne prosessen:\n" +
+        "1. F\u00f8rst: Vis en oversikt over alle 10 moduler (kun tittel + kort beskrivelse). Sp\u00f8r om godkjenning.\n" +
+        "2. Etter godkjenning: Skriv Modul 1 ferdig (fullt innhold, oppgaver, alt). Sp\u00f8r om du skal g\u00e5 videre til Modul 2.\n" +
+        "3. Fortsett slik modul for modul til alle er ferdige.\n" +
+        "Dette sikrer kvalitet og at brukeren kan gi tilbakemelding underveis.\n\n" +
         "## Forfatterskolens eksisterende kurs\n\n" +
         "Her er kursene som allerede finnes. Bruk denne informasjonen n\u00e5r brukeren ber om \u00e5 revidere et eksisterende kurs:\n\n" +
         JSON.stringify(courseData, null, 2);
