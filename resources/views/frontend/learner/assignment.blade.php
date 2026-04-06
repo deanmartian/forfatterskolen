@@ -562,7 +562,7 @@
 										<span class="op-badge op-badge--waiting" style="font-size:0.72rem;">&#9203; Utsettelse forespurt &mdash; venter på svar</span>
 									@elseif($extensionRequest && $extensionRequest->status === 'approved')
 										<span class="op-badge op-badge--submitted" style="font-size:0.72rem;">&#10004; Utsettelse godkjent til {{ $extensionRequest->requested_deadline->format('d.m.Y') }}</span>
-									@elseif(!$manuscript && ($daysLeft <= 7 || $isExpired))
+									@elseif(!$manuscript && !$assignment->for_editor)
 										<button type="button" class="op-btn op-btn--secondary" onclick="openExtensionModal({{ $assignment->id }}, '{{ addslashes($assignment->title) }}')">Be om utsettelse</button>
 									@endif
 								</div>
@@ -694,7 +694,7 @@
 									<span class="op-badge op-badge--waiting" style="font-size:0.72rem;">&#9203; Utsettelse forespurt &mdash; venter på svar</span>
 								@elseif($extensionRequest && $extensionRequest->status === 'approved')
 									<span class="op-badge op-badge--submitted" style="font-size:0.72rem;">&#10004; Utsettelse godkjent til {{ $extensionRequest->requested_deadline->format('d.m.Y') }}</span>
-								@elseif(!$manuscript && ($daysLeft <= 7 || $isExpired))
+								@elseif(!$manuscript && !$assignment->for_editor)
 									<button type="button" class="op-btn op-btn--secondary" onclick="openExtensionModal({{ $assignment->id }}, '{{ addslashes($assignment->title) }}')">Be om utsettelse</button>
 								@endif
 							</div>
