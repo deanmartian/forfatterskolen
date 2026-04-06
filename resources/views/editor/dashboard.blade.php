@@ -1416,6 +1416,73 @@
 	@endif
 
 	{{-- ══════════════════════════════════════════
+		PROSJEKTFORESPØRSLER (Project Requests)
+	══════════════════════════════════════════ --}}
+	@if($projectRequests->count() > 0)
+	<div class="dashboard-section">
+		<div class="section-header">
+			<h4>
+				<i class="fa fa-envelope" style="color:var(--info);margin-right:8px;"></i>
+				Prosjektforespørsler
+				<span class="section-badge info">{{ $projectRequests->count() }}</span>
+			</h4>
+		</div>
+		<div class="section-body">
+			<div class="table-responsive">
+				<table class="table dt-table">
+					<thead>
+					<tr>
+						<th>Type</th>
+						<th>Svarfrist</th>
+						<th>Dato sendt</th>
+						<th></th>
+					</tr>
+					</thead>
+					<tbody>
+					@foreach($projectRequests as $pRequest)
+						<tr>
+							<td>
+								@if($pRequest->project_item_type == 'copy-editing')
+									Språkvask
+								@elseif($pRequest->project_item_type == 'correction')
+									Korrektur
+								@elseif($pRequest->project_item_type == 'self-publishing')
+									Selvpublisering
+								@endif
+							</td>
+							<td>{{ $pRequest->answer_until }}</td>
+							<td>{{ $pRequest->created_at->format('d.m.Y') }}</td>
+							<td>
+								<button class="btn btn-success btn-xs acceptRequestBtn"
+										data-toggle="modal"
+										data-target="#acceptRequest"
+										data-title="{{ trans('site.are-you-sure-you-want-to-accept') }}"
+										data-sub_title="{{ trans('site.are-you-sure-you-want-to-accept-sub') }}"
+										data-action="{{ route('editor.acceptProjectRequest', ['itemId' => $pRequest->project_item_id, 'type' => $pRequest->project_item_type, 'accept' => '1', 'requestId' => $pRequest->id]) }}">
+									<i class="fa fa-check" aria-hidden="true"></i>&nbsp;{{ trans('site.accept') }}
+								</button>&nbsp;
+								<button class="btn btn-danger btn-xs acceptRequestBtn"
+										data-toggle="modal"
+										data-target="#acceptRequest"
+										data-title="{{ trans('site.are-you-sure-you-want-to-reject') }}"
+										data-sub_title="{{ trans('site.are-you-sure-you-want-to-reject-sub') }}"
+										data-action="{{ route('editor.acceptProjectRequest', ['itemId' => $pRequest->project_item_id, 'type' => $pRequest->project_item_type, 'accept' => '0', 'requestId' => $pRequest->id]) }}">
+									<i class="fa fa-times" aria-hidden="true"></i>&nbsp;{{ trans('site.reject') }}
+								</button>&nbsp;
+								<span class="label label-info" style="font-size: 1.2rem; font-weight: 100;">
+									<i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;{{ trans('site.answer-until') }}&nbsp;{{ $pRequest->answer_until }}
+								</span>
+							</td>
+						</tr>
+					@endforeach
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	@endif
+
+	{{-- ══════════════════════════════════════════
 		10. PROSJEKTER (Projects)
 	══════════════════════════════════════════ --}}
 	@if($projects->count() > 0)

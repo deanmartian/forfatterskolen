@@ -245,11 +245,18 @@
                                             @else
                                                 <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal"
                                                         data-target="#assignEditorModal"
-                                                        data-action="{{ route($assignEditorRoute, 
+                                                        data-action="{{ route($assignEditorRoute,
                                                         ['id' => $copy_editing->id, 'type' => 1]) }}">
                                                     {{ trans('site.assign-editor') }}
                                                 </button>
                                             @endif
+                                            <button class="btn btn-xs btn-info projectRequestToEditorBtn" data-toggle="modal"
+                                                    data-target="#projectRequestToEditorModal"
+                                                    data-item-id="{{ $copy_editing->id }}"
+                                                    data-item-type="copy-editing"
+                                                    data-action="{{ route('admin.project.send-request-to-editor', ['itemId' => $copy_editing->id, 'type' => 'copy-editing']) }}">
+                                                Send forespørsel til redaktør
+                                            </button>
                                         </td>
                                         <td>
                                             {{ \App\Http\FrontendHelpers::formatDate($copy_editing->created_at) }}
@@ -400,6 +407,13 @@
                                                     Assign Editor
                                                 </button>
                                             @endif
+                                            <button class="btn btn-xs btn-info projectRequestToEditorBtn" data-toggle="modal"
+                                                    data-target="#projectRequestToEditorModal"
+                                                    data-item-id="{{ $correction->id }}"
+                                                    data-item-type="correction"
+                                                    data-action="{{ route('admin.project.send-request-to-editor', ['itemId' => $correction->id, 'type' => 'correction']) }}">
+                                                Send forespørsel til redaktør
+                                            </button>
                                         </td>
                                         <td>
                                             {{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
@@ -1285,5 +1299,91 @@
             });
         });
 
+        // Project Request To Editor modal
+        $('.projectRequestToEditorBtn').click(function(){
+            var action = $(this).data('action');
+            var itemId = $(this).data('item-id');
+            var itemType = $(this).data('item-type');
+            var modal = $('#projectRequestToEditorModal');
+            modal.find('form').attr('action', action);
+
+            // Load previous requests for this item
+            var tableBody = modal.find('.previous-requests-body');
+            tableBody.empty();
+
+            // Find requests from data attribute
+            var requests = $(this).data('requests');
+            if (requests && requests.length > 0) {
+                $.each(requests, function(i, req) {
+                    tableBody.append('<tr><td>' + req.created_at + '</td><td>' + req.editor_name + '</td><td>' + req.answer_until + '</td><td>' + (req.answer || 'Ikke svart') + '</td></tr>');
+                });
+            }
+        });
+
     </script>
+
+{{-- Project Request To Editor Modal --}}
+<div id="projectRequestToEditorModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Send forespørsel til redaktør</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Dato sendt</th>
+                            <th>Redaktør</th>
+                            <th>Svarfrist</th>
+                            <th>Svar</th>
+                        </tr>
+                    </thead>
+                    <tbody class="previous-requests-body">
+                    </tbody>
+                </table>
+                <hr>
+                <label>Kan du ta dette oppdraget?</label>
+                <form method="POST" action="">
+                    {{ csrf_field() }}
+                    <div class="margin-top">
+                        <div class="form-group">
+                            <label>Redaktør</label>
+                            <select class="form-control select2" name="editor_id" required>
+                                <option value="" disabled selected>- Velg redaktør -</option>
+                                @foreach($editors as $editor)
+                                    <option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Svarfrist</label>
+                            <input type="date" class="form-control" name="answer_until" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Emne</label>
+                            <input type="text" class="form-control" name="subject"
+                                value="{{ $requestToEditorEmailTemplate->subject ?? '' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fra</label>
+                            <input type="text" class="form-control" name="from_email"
+                                value="{{ $requestToEditorEmailTemplate->from_email ?? 'post@forfatterskolen.no' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Melding</label>
+                            <textarea class="form-control tinymce" name="message" rows="6"
+                                required>{!! $requestToEditorEmailTemplate->email_content ?? '' !!}</textarea>
+                        </div>
+                        <br>
+                        <hr>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @stop

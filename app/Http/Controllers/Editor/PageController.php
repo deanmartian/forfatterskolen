@@ -76,9 +76,15 @@ class PageController extends Controller
         $projects = Project::where('editor_id', Auth::user()->id)->get();
         $availableManuscripts = ShopManuscriptsTaken::where('available_for_editors', 1)->whereNull('feedback_user_id')->get();
 
+        $projectRequests = \App\RequestToEditor::where('editor_id', Auth::id())
+            ->whereNotNull('project_item_id')
+            ->where('answer', '')
+            ->where('answer_until', '>=', now()->toDateString())
+            ->get();
+
         return view('editor.dashboard', compact('assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimers',
             'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests', 'freeManuscripts', 'freeManuscriptEmailTemplate',
-            'freeManuscriptEmailTemplate2', 'selfPublishingList', 'editingAssignments', 'projects', 'availableManuscripts'));
+            'freeManuscriptEmailTemplate2', 'selfPublishingList', 'editingAssignments', 'projects', 'availableManuscripts', 'projectRequests'));
 
     }
 

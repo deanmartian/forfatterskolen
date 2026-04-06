@@ -31,6 +31,7 @@ use App\ProjectManualInvoice;
 use App\ProjectManuscript;
 use App\ProjectMarketing;
 use App\ProjectRegistration;
+use App\RequestToEditor;
 use App\ProjectRegistrationDistribution;
 use App\ProjectRoadmapStep;
 use App\ProjectTask;
@@ -148,6 +149,8 @@ class ProjectController extends Controller
             $deleteBookFormattingRoute = 'g-admin.project.delete-book-formatting';
         }
 
+        $requestToEditorEmailTemplate = AdminHelpers::emailTemplate('Request To Editor');
+
         return view('backend.project.show', compact('project', 'editors', 'copyEditingEditors', 'correctionEditors',
             'learners', 'activities', 'timeRegisters', 'projectTimeRegisters', 'projects', 'layout',
             'addOtherServiceRoute', 'selfPublishingStoreRoute', 'selfPublishingUpdateRoute',
@@ -156,7 +159,8 @@ class ProjectController extends Controller
             'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute', 'correctionFeedbackTemplate',
             'copyEditingFeedbackTemplate', 'otherServiceFeedbackRoute', 'saveBookPicturesRoute', 'bookPictures',
             'deleteBookPicturesRoute', 'wholeBooks', 'downloadOtherService', 'saveBookFormattingRoute', 'bookFormattingList',
-            'deleteBookFormattingRoute', 'editorAndAdminList', 'tasks', 'bookCritiques', 'otherServiceDownloadFeedbackRoute'));
+            'deleteBookFormattingRoute', 'editorAndAdminList', 'tasks', 'bookCritiques', 'otherServiceDownloadFeedbackRoute',
+            'requestToEditorEmailTemplate'));
     }
 
     public function saveTask(Request $request)
@@ -2644,5 +2648,74 @@ class ProjectController extends Controller
 
         // If the filtered array is not empty, return true, meaning it has values
         return ! empty($filtered);
+    }
+
+    public function sendProjectRequestToEditor(Request $request, $itemId, $type): RedirectResponse
+    {
+        $request->validate([
+            'editor_id' => 'required',
+            'answer_until' => 'required',
+        ]);
+
+        $data = [
+            'from_type' => 'project-' . $type,
+            'editor_id' => $request->editor_id,
+            'project_item_id' => $itemId,
+            'project_item_type' => $type,
+            'answer_until' => $request->answer_until,
+        ];
+
+        RequestToEditor::create($data);
+
+        // send email
+        $to = User::where('id', $request->editor_id)->pluck('email');
+
+        $emailTemplate_content = $request->message;
+        $emailTemplate_content = str_replace(':login_link',
+            "<a href='" . route('editor.login.email', encrypt($to)) . "'>" . trans('site.front.form.login') . '</a>',
+            $emailTemplate_content);
+
+        dispatch(new AddMailToQueueJob($to, $request->subject, $emailTemplate_content, $request->from_email,
+            null, null,
+            'project-request-to-editor', $itemId));
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Forespørsel sendt til redaktør.'),
+            'alert_type' => 'success',
+        ]);
+    }
+
+    public function editorAcceptProjectRequest($itemId, $type, $accepted, $requestId): RedirectResponse
+    {
+        $requestToEditor = RequestToEditor::find($requestId);
+
+        if ($accepted) {
+            $requestToEditor->answer = 'yes';
+            $requestToEditor->save();
+
+            // assign editor to the item
+            switch ($type) {
+                case 'copy-editing':
+                    $item = \App\CopyEditingManuscript::findOrFail($itemId);
+                    $item->editor_id = \Illuminate\Support\Facades\Auth::id();
+                    $item->save();
+                    break;
+                case 'correction':
+                    $item = \App\CorrectionManuscript::findOrFail($itemId);
+                    $item->editor_id = \Illuminate\Support\Facades\Auth::id();
+                    $item->save();
+                    break;
+                case 'self-publishing':
+                    $item = \App\SelfPublishing::findOrFail($itemId);
+                    $item->editor_id = \Illuminate\Support\Facades\Auth::id();
+                    $item->save();
+                    break;
+            }
+        } else {
+            $requestToEditor->answer = 'no';
+            $requestToEditor->save();
+        }
+
+        return redirect()->back();
     }
 }

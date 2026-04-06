@@ -1443,6 +1443,8 @@ Route::domain($admin)->group(function () {
         Route::get('/project', [Backend\ProjectController::class, 'index'])->name('admin.project.index');
         Route::post('/project/save', [Backend\ProjectController::class, 'saveProject']);
         Route::get('/project/{id}', [Backend\ProjectController::class, 'show'])->name('admin.project.show');
+        Route::post('/project/{itemId}/send-request-to-editor/{type}', [Backend\ProjectController::class, 'sendProjectRequestToEditor'])->name('admin.project.send-request-to-editor');
+        Route::get('/project/accept-request/{itemId}/{type}/{accept}/{requestId}', [Backend\ProjectController::class, 'editorAcceptProjectRequest'])->name('admin.project.accept-request');
         Route::delete('/project/{id}/delete', [Backend\ProjectController::class, 'deleteProject']);
         Route::get('/project/book/generate', [Backend\ProjectController::class, 'generateProjectBook']);
         Route::post('/project/quarterly-payout/store', [Backend\ProjectController::class, 'storePayout'])->name('admin.quarterly-payouts.store');
@@ -2309,6 +2311,7 @@ Route::domain($editor)->group(function () {
         Route::get('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}', [Backend\LearnerController::class, 'shopManuscriptTakenShowEditorPreview'])->name('editor.shop_manuscript_taken');
         Route::get('shop-manuscript/{id}/download_synopsis', [Backend\LearnerController::class, 'downloadManuscriptSynopsis'])->name('editor.learner.download_synopsis');
         Route::get('acceptShopManuscriptRequest/{shop_manuscript_taken_id}/{accept}/{request_id}', [Backend\ShopManuscriptController::class, 'editorAcceptRequest'])->name('editor.acceptShopManuscriptRequest');
+        Route::get('acceptProjectRequest/{itemId}/{type}/{accept}/{requestId}', [Backend\ProjectController::class, 'editorAcceptProjectRequest'])->name('editor.acceptProjectRequest');
         Route::post('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}/comment', [Backend\LearnerController::class, 'shopManuscriptTakenShowComment'])->name('editor.shop_manuscript_taken_comment');
         Route::post('/update-expected-finish/{type}/{id}', [Backend\PageController::class, 'updateExpectedFinish'])->name('editor.personal-assignment.update-expected-finish');
         Route::get('assignment-manuscript/{id}/download-letter', [Backend\AssignmentController::class, 'downloadManuscriptLetter'])->name('editor.assignment.manuscript.download_letter');
