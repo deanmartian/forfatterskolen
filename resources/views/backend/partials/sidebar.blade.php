@@ -208,20 +208,26 @@
 
 <script>
 function toggleSidebar() {
+    var root = document.documentElement;
     var sidebar = document.getElementById('edSidebar');
     var collapsed = sidebar.classList.toggle('ed-sidebar--collapsed');
-    document.body.classList.toggle('sidebar-collapsed', collapsed);
     var icon = document.getElementById('sidebarToggleIcon');
-    icon.className = collapsed ? 'fa fa-chevron-right' : 'fa fa-chevron-left';
+    icon.style.transform = collapsed ? 'rotate(180deg)' : '';
+
+    if (collapsed) {
+        root.style.setProperty('--sidebar-width', '60px');
+    } else {
+        root.style.setProperty('--sidebar-width', '250px');
+    }
     localStorage.setItem('sidebar_collapsed', collapsed ? '1' : '0');
 }
 (function() {
     if (localStorage.getItem('sidebar_collapsed') === '1') {
+        document.documentElement.style.setProperty('--sidebar-width', '60px');
         var sidebar = document.getElementById('edSidebar');
-        sidebar.classList.add('ed-sidebar--collapsed');
-        document.body.classList.add('sidebar-collapsed');
+        if (sidebar) sidebar.classList.add('ed-sidebar--collapsed');
         var icon = document.getElementById('sidebarToggleIcon');
-        if (icon) icon.className = 'fa fa-chevron-right';
+        if (icon) icon.style.transform = 'rotate(180deg)';
     }
 })();
 </script>
