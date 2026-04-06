@@ -135,6 +135,18 @@
                                 <button type="submit" name="send_and_close" value="1" class="btn btn-success"><i class="fa fa-check"></i> Send og lukk</button>
                                 <button type="submit" name="save_as_draft" value="1" class="btn btn-default"><i class="fa fa-save"></i> Lagre utkast</button>
                                 <button type="button" class="btn btn-warning" id="btn-ai-draft"><i class="fa fa-magic"></i> Generer AI-utkast</button>
+                                <button type="button" class="btn btn-info btn-sm" onclick="toggleInboxPreview()"><i class="fa fa-eye"></i> Forhåndsvisning</button>
+                            </div>
+                            <div id="inboxEmailPreview" style="display:none;border:1px solid #ddd;border-radius:8px;overflow:hidden;margin-top:10px;">
+                                <div style="background:#f8f8f8;padding:16px;text-align:center;border-bottom:1px solid #eee;">
+                                    <img src="{{ asset('photos/logos/fs-logo.png') }}" alt="Forfatterskolen" style="height:36px;">
+                                </div>
+                                <div id="inboxPreviewContent" style="padding:24px;font-family:-apple-system,sans-serif;font-size:14px;line-height:1.7;color:#333;">
+                                </div>
+                                <div style="padding:16px;background:#f8f8f8;text-align:center;font-size:11px;color:#999;border-top:1px solid #eee;">
+                                    Spørsmål? Svar på denne e-posten eller ring 411 23 555<br>
+                                    Forfatterskolen · Lihagen 21, 3029 Drammen
+                                </div>
                             </div>
                         </form>
                         <form id="ai-draft-form" action="{{ route('admin.inbox.ai-draft', $conversation->id) }}" method="POST" style="display:none;">
@@ -258,6 +270,20 @@
                 aiBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Genererer...';
                 document.getElementById('ai-draft-form').submit();
             });
+        }
+
+        // Email preview
+        function toggleInboxPreview() {
+            var preview = document.getElementById('inboxEmailPreview');
+            var content = document.getElementById('inboxPreviewContent');
+            if (preview.style.display === 'none') {
+                var text = document.getElementById('reply-body').value;
+                if (!text) { alert('Skriv en melding først'); return; }
+                content.innerHTML = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
         }
     });
 </script>

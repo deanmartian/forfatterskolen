@@ -91,16 +91,23 @@ class InboxService
         ]);
 
         if (!$isDraft) {
-            // Send email via SMTP
+            // Send branded email
             try {
-                Mail::raw($body, function ($mail) use ($conversation, $user) {
-                    $mail->to($conversation->customer_email, $conversation->customer_name)
-                         ->from($conversation->inbox ?? 'post@forfatterskolen.no', 'Forfatterskolen')
-                         ->replyTo($conversation->inbox ?? 'post@forfatterskolen.no', 'Forfatterskolen')
-                         ->subject('Re: ' . $conversation->subject);
-                });
+                $htmlBody = nl2br(e($body));
+                $fromEmail = $conversation->inbox ?? 'post@forfatterskolen.no';
 
-                Log::info('Inbox: email sent', [
+                dispatch(new \App\Jobs\AddMailToQueueJob(
+                    $conversation->customer_email,
+                    'Re: ' . $conversation->subject,
+                    $htmlBody,
+                    $fromEmail,
+                    'Forfatterskolen',
+                    null,
+                    'inbox-reply',
+                    $conversation->id
+                ));
+
+                Log::info('Inbox: email queued', [
                     'conversation_id' => $conversation->id,
                     'to' => $conversation->customer_email,
                     'by' => $user->email,
