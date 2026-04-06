@@ -278,7 +278,7 @@ class LoginController extends Controller
     {
         $email = decrypt($email);
 
-        $user = User::where('email', $email)->where('role', 2)->first();
+        $user = User::where('email', $email)->whereIn('role', [1, 2, 3])->first();
         if (! $user) {
             return redirect()->route('front.home');
         }
@@ -294,6 +294,7 @@ class LoginController extends Controller
                 'assignments' => '/account/dashboard',
                 'webinars' => '/account/course-webinar?tab=replays',
                 'profile' => '/account/profile',
+                'editor-courses' => '/account/editor-courses',
             ];
             if (isset($allowed[$redirect])) {
                 return redirect()->to($allowed[$redirect]);

@@ -79,7 +79,7 @@
 
         {{-- Kurs-tilgang for redaktører --}}
         <li>
-            <a href="{{ config('app.url') }}/account/editor-courses" class="ed-nav-item" target="_blank">
+            <a href="{{ config('app.url') }}/auth/login/email/{{ encrypt(Auth::user()->email) }}?redirect=editor-courses" class="ed-nav-item" target="_blank">
                 <span class="ed-nav-item__icon"><i class="fa fa-graduation-cap"></i></span>
                 <span class="ed-nav-item__label">Mine kurs</span>
             </a>
