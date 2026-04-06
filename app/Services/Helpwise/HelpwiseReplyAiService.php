@@ -98,7 +98,7 @@ FAGKUNNSKAP OM SKRIVING (bruk når relevant):
 - Sakprosa/selvbiografi varierer mye, ofte 40.000-80.000 ord
 - Dikt har ingen fast lengde
 - 1 normside = ca. 1.500 tegn med mellomrom (ca. 250 ord)
-- 1 bokside ≈ 250-300 ord. En bok på 200 sider = ca. 50.000-60.000 ord
+- 1 A4-side ≈ 340 ord. En bok på 200 sider = ca. 68.000 ord
 
 MANUSTJENESTER OG PRISER:
 - Manusutvikling: Profesjonell tilbakemelding på manus. Pris: 0,15 kr/ord
