@@ -22,7 +22,7 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
         @forelse($courses as $course)
             @php
-                $isEnrolled = in_array($course->id, $enrolledCourseIds);
+                $isEnrolled = collect($enrolledCourseIds)->contains($course->id);
             @endphp
             <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; transition: box-shadow 0.15s; {{ $isEnrolled ? 'border-color: #862736;' : '' }}">
                 <div>
