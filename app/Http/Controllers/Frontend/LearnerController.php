@@ -6893,34 +6893,7 @@ Forfatterskolen';
         }
         $timer->save();
 
-        $user = Auth::user();
-        $callTypeLabel = $data['call_type'] === 'video' ? 'Videosamtale' : 'Telefonsamtale';
-        $duration = $timer->plan_type == 1 ? '60 min' : '30 min';
-
-        $emailData = [
-            'email_subject' => 'Ny coaching-forespørsel fra ' . $user->full_name,
-            'email_message' => '<p><strong>' . e($user->full_name) . '</strong> (elev #' . $user->id . ') ønsker en coaching-time, men fant ingen ledige tider som passer.</p>'
-                . '<p><strong>Foreslått tidspunkt:</strong> ' . $formattedDate . '</p>'
-                . '<p><strong>Type:</strong> ' . $callTypeLabel . ' (' . $duration . ')</p>'
-                . ($data['message'] ? '<p><strong>Melding:</strong><br>' . nl2br(e($data['message'])) . '</p>' : '')
-                . '<p><strong>E-post:</strong> ' . e($user->email) . '</p>'
-                . '<p><strong>Telefon:</strong> ' . e(optional($user->address)->phone) . '</p>',
-            'from_name' => '',
-            'from_email' => 'post@forfatterskolen.no',
-            'attach_file' => null,
-        ];
-
-        // Send til elevens foretrukne redaktør, med kopi til admin
-        $preferredEditor = $user->preferredEditor ? $user->preferredEditor->editor : null;
-        $toEmail = $preferredEditor ? $preferredEditor->email : 'post@forfatterskolen.no';
-
-        $mail = Mail::to($toEmail);
-        if ($preferredEditor) {
-            $mail->cc('post@forfatterskolen.no');
-        }
-        $mail->queue(new SubjectBodyEmail($emailData));
-
-        return redirect()->route('learner.coaching-time')->with('success', 'Takk! Redaktøren har mottatt ditt forslag og tar kontakt for å avtale tidspunkt.');
+        return redirect()->route('learner.coaching-time')->with('success', 'Takk! Redaktøren ser forslaget ditt i sin portal og tar kontakt.');
     }
 
     public function currentUser()

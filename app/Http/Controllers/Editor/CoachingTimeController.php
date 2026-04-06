@@ -70,11 +70,24 @@ class CoachingTimeController extends Controller
             })
             ->count();
 
+        $suggestions = CoachingTimerManuscript::whereNotNull('suggested_date')
+            ->whereNull('editor_time_slot_id')
+            ->where('status', '!=', CoachingTimerManuscript::STATUS_FINISHED)
+            ->whereHas('user', function ($q) {
+                $q->whereHas('preferredEditor', function ($q2) {
+                    $q2->where('editor_id', Auth::id());
+                });
+            })
+            ->with(['user.address'])
+            ->latest()
+            ->get();
+
         return view('editor.coaching-time.index', [
             'requests'       => $requests,
             'bookings'       => $bookings,
             'bookingsThisWeek' => $bookingsThisWeek,
             'availableSlots'  => $availableSlots,
+            'suggestions'    => $suggestions,
         ]);
     }
 

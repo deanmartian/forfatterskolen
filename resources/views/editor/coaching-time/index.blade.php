@@ -170,6 +170,62 @@
             </div>
         </div>
 
+        @if($suggestions->count())
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background: #fff3e0; border-color: #ffe0b2;">
+                        <h4 style="color: #e65100; margin: 0;">
+                            <i class="fa fa-clock-o"></i>
+                            Tidsforslag fra elever ({{ $suggestions->count() }})
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <p style="color: #666; margin-bottom: 15px;">Disse elevene fant ingen ledige tider som passet og har foreslått egne tidspunkter.</p>
+                        <table class="table schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Elev</th>
+                                    <th>E-post</th>
+                                    <th>Telefon</th>
+                                    <th>Foreslått tid</th>
+                                    <th>Type</th>
+                                    <th>Varighet</th>
+                                    <th>Melding</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($suggestions as $suggestion)
+                                    @php
+                                        $suggestedDates = json_decode($suggestion->suggested_date, true) ?: [];
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $suggestion->user->full_name }}</td>
+                                        <td>{{ $suggestion->user->email }}</td>
+                                        <td>{{ optional($suggestion->user->address)->phone }}</td>
+                                        <td><strong>{{ implode(', ', $suggestedDates) }}</strong></td>
+                                        <td>{{ $suggestion->call_type_label }}</td>
+                                        <td>{{ $suggestion->plan_type == 1 ? '60 min' : '30 min' }}</td>
+                                        <td>
+                                            @if($suggestion->help_with)
+                                                <a href="#viewHelpWithModal" style="color:#eea236" class="viewHelpWithBtn"
+                                                   data-toggle="modal" data-details="{{ $suggestion->help_with }}">
+                                                    Se melding
+                                                </a>
+                                            @else
+                                                <span class="text-muted">–</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         {{-- <div class="row">
             <div class="col-sm-12">
                 <div class="panel panel-default">
