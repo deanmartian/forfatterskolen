@@ -37,6 +37,16 @@
                     <label>Bilde (valgfritt)</label>
                     <input type="file" name="image" class="form-control" accept="image/jpeg,image/png,image/gif,image/webp">
                 </div>
+                <div class="form-group">
+                    <label>Kursgruppe (valgfritt)</label>
+                    <select name="course_group_id" class="form-control">
+                        <option value="">Alle — synlig for hele fellesskapet</option>
+                        @foreach(\App\Models\CourseGroup::orderBy('name')->get() as $cg)
+                            <option value="{{ $cg->id }}">{{ $cg->name }}</option>
+                        @endforeach
+                    </select>
+                    <small class="text-muted">Velg en gruppe for å kun vise innlegget til elever i den gruppen.</small>
+                </div>
                 <div class="checkbox">
                     <label><input type="checkbox" name="pinned"> Fest innlegget</label>
                 </div>

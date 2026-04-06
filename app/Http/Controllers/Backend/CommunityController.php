@@ -208,12 +208,13 @@ class CommunityController extends Controller
         }
 
         Post::create([
-            'id'          => Str::uuid(),
-            'user_id'     => \Auth::id(),
-            'content'     => $request->content,
-            'image_url'   => $imageUrl,
-            'is_bot_post' => true,
-            'pinned'      => $request->has('pinned'),
+            'id'             => Str::uuid(),
+            'user_id'        => \Auth::id(),
+            'content'        => $request->content,
+            'image_url'      => $imageUrl,
+            'is_bot_post'    => true,
+            'pinned'         => $request->has('pinned'),
+            'course_group_id' => $request->input('course_group_id') ?: null,
         ]);
 
         return redirect()->back()->with([
