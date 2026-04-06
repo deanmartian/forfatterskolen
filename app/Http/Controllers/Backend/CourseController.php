@@ -1587,11 +1587,12 @@ class CourseController extends Controller
             foreach ($modules as $index => $module) {
                 $moduleTitle = $module['title'] ?? ('Modul ' . ($index + 1));
                 $moduleContent = $module['content'] ?? '';
+                $moduleHtml = \Str::markdown($moduleContent, ['html_input' => 'allow']);
 
                 $lesson = new \App\Lesson;
                 $lesson->course_id = $course->id;
                 $lesson->title = mb_substr($moduleTitle, 0, 255);
-                $lesson->content = $moduleContent;
+                $lesson->content = $moduleHtml;
                 $lesson->order = $index + 1;
                 $lesson->delay = $index * 7;
                 $lesson->period = 'days';
