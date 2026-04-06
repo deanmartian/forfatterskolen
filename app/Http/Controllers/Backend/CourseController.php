@@ -1550,6 +1550,7 @@ class CourseController extends Controller
                 'content' => $data['content'][0]['text'] ?? 'Ingen respons.',
             ]);
         } catch (\Exception $e) {
+            \Log::error('CourseBuilder AI error', ['message' => $e->getMessage()]);
             return response()->json([
                 'error' => 'Feil ved kommunikasjon med AI: ' . $e->getMessage(),
             ], 500);
