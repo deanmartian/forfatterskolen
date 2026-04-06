@@ -94,7 +94,7 @@ class InboxService
             'subject' => 'Re: ' . $conversation->subject,
             'body' => $body,
             'body_plain' => strip_tags($body),
-            'body_html' => nl2br(e($body)),
+            'body_html' => str_replace("\n\n", '<br>', str_replace("\n", '<br>', e($body))),
             'sent_by_user_id' => $userId,
             'is_draft' => $isDraft,
             'sent_at' => $isDraft ? null : now(),
@@ -103,7 +103,7 @@ class InboxService
         if (!$isDraft) {
             // Send branded email
             try {
-                $htmlBody = nl2br(e($body));
+                $htmlBody = str_replace("\n\n", '<br>', str_replace("\n", '<br>', e($body)));
                 $fromEmail = $conversation->inbox ?? 'post@forfatterskolen.no';
 
                 dispatch(new \App\Jobs\AddMailToQueueJob(

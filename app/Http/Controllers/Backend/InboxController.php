@@ -134,14 +134,14 @@ class InboxController extends Controller
             'subject' => $request->input('subject'),
             'body' => $request->input('body'),
             'body_plain' => $request->input('body'),
-            'body_html' => nl2br(e($request->input('body'))),
+            'body_html' => str_replace("\n", '<br>', e($request->input('body'))),
             'sent_by_user_id' => auth()->id(),
             'is_draft' => $isDraft,
             'sent_at' => $isDraft ? null : now(),
         ]);
 
         if (!$isDraft) {
-            $htmlBody = nl2br(e($request->input('body')));
+            $htmlBody = str_replace("\n", '<br>', e($request->input('body')));
             dispatch(new \App\Jobs\AddMailToQueueJob(
                 $request->input('to'),
                 $request->input('subject'),
