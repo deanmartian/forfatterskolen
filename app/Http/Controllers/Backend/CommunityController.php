@@ -180,6 +180,77 @@ class CommunityController extends Controller
     }
 
     /**
+     * Generate AI discussion content
+     */
+    public function generateAiDiscussion(Request $request): JsonResponse
+    {
+        $topic = $request->input('topic', 'skriveteknikk');
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'x-api-key' => config('services.anthropic.key'),
+                'anthropic-version' => '2023-06-01',
+                'Content-Type' => 'application/json',
+            ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
+                'model' => 'claude-sonnet-4-20250514',
+                'max_tokens' => 1024,
+                'system' => 'Du er Forfatterskolen sin community-manager. Lag en diskusjonstråd for et skrivefellesskap på norsk. '
+                    . 'Svaret SKAL være gyldig JSON med denne strukturen: {"title": "Diskusjons-tittel", "content": "Innholdet i diskusjonen (2-4 avsnitt, engasjerende, med spørsmål til leserne)", "category": "Kategori"} '
+                    . 'Kategorier kan være: Skriveteknikk, Inspirasjon, Forfatterlivet, Bokanbefaling, Skriveøvelse, Tilbakemelding, Sjanger, Publisering. '
+                    . 'Diskusjonen skal invitere til samtale og meningsutveksling. Avslutt med et åpent spørsmål. Ikke bruk markdown, skriv ren tekst. Svar KUN med JSON.',
+                'messages' => [
+                    ['role' => 'user', 'content' => 'Lag en diskusjon om: ' . $topic],
+                ],
+            ]);
+
+            $data = $response->json();
+            $text = $data['content'][0]['text'] ?? '';
+
+            // Parse JSON
+            $text = trim($text);
+            if (str_starts_with($text, '```')) {
+                $text = preg_replace('/^```(?:json)?\s*/', '', $text);
+                $text = preg_replace('/\s*```$/', '', $text);
+            }
+
+            $parsed = json_decode($text, true);
+            if (!$parsed || !isset($parsed['title'])) {
+                return response()->json(['error' => 'Kunne ikke parse AI-svaret.'], 500);
+            }
+
+            return response()->json($parsed);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'AI-feil: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Store an AI-generated discussion
+     */
+    public function storeAiDiscussion(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'category' => 'required|string|max:100',
+        ]);
+
+        Discussion::create([
+            'id' => \Str::uuid(),
+            'user_id' => \Auth::id(),
+            'title' => $request->title,
+            'content' => $request->content,
+            'category' => $request->category,
+            'pinned' => $request->has('pinned'),
+        ]);
+
+        return redirect()->back()->with([
+            'errors' => new MessageBag(['Diskusjon opprettet!']),
+            'alert_type' => 'success',
+        ]);
+    }
+
+    /**
      * Store a new bot post from admin
      */
     public function storeBotPost(Request $request): RedirectResponse

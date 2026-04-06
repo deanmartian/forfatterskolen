@@ -598,11 +598,37 @@ php artisan queue:restart
 - Dropbox token needs hourly refresh (scheduled command handles this).
 - Large file uploads go through signed URLs (`api.v1.files.upload`).
 
+### Lessons Table
+- Column is `content` (NOT `description`) for lesson body text
+- `description` is in the model's `$fillable` but the actual DB column is `content`
+
+### Coaching
+- `CoachingTimerManuscript` has `suggested_date` (JSON), `preparation_file`, `preparation_notes`
+- `EditorTimeSlot` stores editor availability (date, start_time, duration)
+- `CoachingTimeRequest` links manuscripts to time slots (status: pending/accepted/declined)
+- Coaching preparation page: `/account/coaching-timer/{id}/prepare`
+
+### Course Builder (Kursbygger AI)
+- Uses Claude Opus via Guzzle POST to `api.anthropic.com/v1/messages`
+- Builds modules one at a time to avoid timeouts
+- Markdown content is converted to HTML via `Str::markdown()` before saving to lessons
+- Packages are NOT auto-created — add manually in course editor after creation
+- Frontend stores chat in `localStorage` key `cb_messages`
+
+### Community
+- `isAdmin()` in `CommunityForumController` checks both `user->role == 1` AND `profile->badge === 'admin'`
+- Admin sees all course groups filtered by `status=1` AND `show_in_course_groups=1`
+- `course_group_id` in posts table references `courses.id`, not `course_groups.id`
+
+### Landing Pages
+- `/skriv-ditt-liv` — standalone Blade template at `resources/views/landing/skriv-ditt-liv.blade.php` (noindex)
+- Uses `Route::view()` — no controller needed
+
 ## Recent Work (April 2026)
 
 - **PWA with push notifications** - Service worker, `PushSubscription` model, web push API
 - **Inbox system replacing Helpwise** - Full email CRM with IMAP polling from Domeneshop, internal comments, AI draft replies using Claude, conversation assignment, canned responses, auto-replies
-- **Community with course groups** - Course-based groups, discussions, posts with reactions, direct messages, daily news sync
+- **Community with course groups** - Course-based groups, discussions, posts with reactions, direct messages, daily news sync, AI-generated discussions
 - **Blog redesign** - Updated blog views and routing
 - **Svea callback** - Server-to-server payment push callback
 - **Deadline extension requests** - `AssignmentExtensionRequest` model for students requesting deadline changes
@@ -610,4 +636,7 @@ php artisan queue:restart
 - **Indiemoon bookshop** - API for book orders, author profiles, e-book downloads
 - **Publishing pipeline** - `Publication` model, manuscript-to-book workflow
 - **AI manuscript feedback** - `ManuscriptFeedbackAiService` for AI-assisted editor feedback
-- **Coaching time tracking** - Session-based coaching with timer and finalization
+- **Coaching system** - Session-based coaching with timer, preparation upload, suggest-your-own-time (shown in editor portal), redesigned booking UX
+- **Kursbygger AI** - Course builder with Claude Opus, module-by-module generation, auto-create course with lessons, markdown→HTML conversion
+- **Landing pages** - `/skriv-ditt-liv` memoir course page with real student photos and 3-tier pricing
+- **Login fixes** - Google OAuth field format update, session handling for Login-as-user
