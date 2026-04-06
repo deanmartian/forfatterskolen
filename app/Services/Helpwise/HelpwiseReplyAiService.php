@@ -5,6 +5,9 @@ namespace App\Services\Helpwise;
 use App\User;
 use App\HelpwiseConversation;
 use App\HelpwiseMessage;
+use App\Models\HelpwiseReplyExample;
+use App\Models\Inbox\InboxConversation;
+use App\Models\Inbox\InboxMessage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -65,6 +68,8 @@ class HelpwiseReplyAiService
             $historySection = "\n\nTIDLIGERE MELDINGER I SAMTALEN:\n{$messageHistory}";
         }
 
+        $examplesSection = $this->getReplyExamples();
+
         return <<<PROMPT
 Du er en vennlig og profesjonell kundebehandler for Forfatterskolen, Norges ledende nettbaserte skriveskole.
 
@@ -73,6 +78,16 @@ Du er hjelpsom, varm og profesjonell.
 Du skal ALDRI finne på informasjon - bruk kun det du vet fra konteksten.
 Hvis du er usikker, si at du skal sjekke og komme tilbake.
 Svar kort og presist. Ikke skriv romaner.
+
+OM FORFATTERSKOLEN:
+- Forfatterskolen tilbyr nettbaserte skrivekurs (årskurs, halvårskurs, sjangerkurs, etc.)
+- Elever leverer innleveringer/manuskripter som redaktører gir tilbakemelding på
+- Forfatterskolen tilbyr også manustjenester (redaktør, språkvask, korrektur) for selvpublisister
+- Kurs har faste innleveringsfrister, men utsettelse kan gis ved behov
+- Webinarer er en del av kursopplevelsen
+- Eier/daglig leder er Sven Inge Henningsen
+- Kontakt: post@forfatterskolen.no / support@forfatterskolen.no
+{$examplesSection}
 
 INBOX: {$inbox}
 KUNDENS NAVN: {$customerName}
@@ -84,12 +99,14 @@ KUNDENS SISTE MELDING:
 {$customerMessage}
 
 Skriv et passende svarkutkast. Husk:
-- Start med å hilse på kunden ved navn hvis mulig
+- Start med å hilse på kunden ved fornavn hvis mulig
 - Svar direkte på spørsmålet
-- Vær hjelpsom og positiv
-- Avslutt med en hyggelig avslutning
-- Signer med "Vennlig hilsen, Forfatterskolen"
+- Vær hjelpsom, varm og positiv - men ikke overdrevent
+- Hold deg kort og direkte, lik eksemplene ovenfor
+- Bruk gjerne smilefjes som :-) eller :) der det passer naturlig
+- Avslutt med "Vennlig hilsen, Forfatterskolen" eller "Mvh, Forfatterskolen"
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
+- Matcher stilen og tonen fra eksemplene
 PROMPT;
     }
 
@@ -155,15 +172,35 @@ PROMPT;
 
     /**
      * Get recent message history for the conversation.
+     * Checks both HelpwiseMessage and InboxMessage tables.
      */
     private function getMessageHistory(HelpwiseConversation $conversation): string
     {
+        // Try HelpwiseMessage first
         $messages = $conversation->messages()
             ->orderBy('message_at')
             ->limit(10)
             ->get();
 
-        if ($messages->isEmpty()) return '';
+        // If no HelpwiseMessages, try InboxMessage (used for imported conversations)
+        if ($messages->isEmpty()) {
+            $inboxMessages = InboxMessage::where('conversation_id', $conversation->id)
+                ->where('is_draft', false)
+                ->orderBy('created_at')
+                ->limit(10)
+                ->get();
+
+            if ($inboxMessages->isEmpty()) return '';
+
+            $history = '';
+            foreach ($inboxMessages as $msg) {
+                $direction = $msg->direction === 'outbound' ? 'AGENT' : 'KUNDE';
+                $time = $msg->created_at?->format('d.m H:i') ?? '';
+                $body = \Illuminate\Support\Str::limit(strip_tags($msg->body_plain ?? $msg->body ?? ''), 300);
+                $history .= "[{$time}] {$direction}: {$body}\n\n";
+            }
+            return $history;
+        }
 
         $history = '';
         foreach ($messages as $msg) {
@@ -176,13 +213,53 @@ PROMPT;
         return $history;
     }
 
+    /**
+     * Get real reply examples from the database to teach the AI our writing style.
+     */
+    private function getReplyExamples(): string
+    {
+        $examples = HelpwiseReplyExample::orderBy('sent_at', 'desc')
+            ->limit(6)
+            ->get();
+
+        if ($examples->isEmpty()) {
+            return '';
+        }
+
+        $section = "\n\nEKSEMPLER PÅ HVORDAN VI SVARER (kopier stilen, IKKE innholdet):\n";
+
+        foreach ($examples as $i => $ex) {
+            // Try to find the customer message that was replied to
+            $customerMsg = '';
+            $inbound = InboxMessage::where('conversation_id', $ex->conversation_id)
+                ->where('direction', 'inbound')
+                ->orderBy('created_at', 'asc')
+                ->first();
+
+            if ($inbound) {
+                $customerMsg = \Illuminate\Support\Str::limit(strip_tags($inbound->body ?? ''), 150);
+            }
+
+            $replyBody = \Illuminate\Support\Str::limit(strip_tags($ex->reply_body), 250);
+            $num = $i + 1;
+
+            $section .= "\nEksempel {$num}:";
+            if ($customerMsg) {
+                $section .= "\n  Kunde: {$customerMsg}";
+            }
+            $section .= "\n  Vårt svar: {$replyBody}\n";
+        }
+
+        return $section;
+    }
+
     private function callAi(string $prompt): ?string
     {
         $provider = config('ad_os.ai_provider', 'openai');
 
         if ($provider === 'anthropic') {
             $response = Http::withHeaders([
-                'x-api-key' => config('services.anthropic.api_key'),
+                'x-api-key' => config('services.anthropic.key'),
                 'Content-Type' => 'application/json',
                 'anthropic-version' => '2023-06-01',
             ])->post('https://api.anthropic.com/v1/messages', [
