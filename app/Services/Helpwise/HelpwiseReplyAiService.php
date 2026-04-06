@@ -350,6 +350,120 @@ PROMPT;
         return $response->json('choices.0.message.content');
     }
 
+    /**
+     * Generate AI draft reply for an InboxConversation (brukes av inbox webhook).
+     */
+    public function generateInboxDraftReply(InboxConversation $conversation, InboxMessage $message): ?string
+    {
+        // Hent elevkontekst via e-post
+        $studentContext = [];
+        $user = $conversation->user_id
+            ? User::find($conversation->user_id)
+            : User::where('email', $conversation->customer_email)->first();
+
+        if ($user) {
+            if (!$conversation->user_id) {
+                $conversation->update(['user_id' => $user->id]);
+            }
+            $studentContext = [
+                'Navn' => $user->first_name . ' ' . $user->last_name,
+                'E-post' => $user->email,
+                'Rolle' => $this->getRoleName($user->role),
+            ];
+
+            $courses = $user->coursesTaken()->where('is_active', 1)->with('package')->get();
+            if ($courses->isNotEmpty()) {
+                $studentContext['Aktive kurs'] = $courses->map(fn($ct) => $ct->package?->course?->title ?? 'Ukjent kurs')->implode(', ');
+            }
+
+            $manuscripts = \App\ShopManuscriptsTaken::where('user_id', $user->id)->where('is_active', 1)->count();
+            if ($manuscripts > 0) {
+                $studentContext['Aktive manustjenester'] = $manuscripts;
+            }
+        }
+
+        // Hent meldingshistorikk
+        $inboxMessages = InboxMessage::where('conversation_id', $conversation->id)
+            ->where('is_draft', false)
+            ->orderBy('created_at')
+            ->limit(10)
+            ->get();
+
+        $history = '';
+        foreach ($inboxMessages as $msg) {
+            $direction = $msg->direction === 'outbound' ? 'AGENT' : 'KUNDE';
+            $time = $msg->created_at?->format('d.m H:i') ?? '';
+            $body = \Illuminate\Support\Str::limit(strip_tags($msg->body_plain ?? $msg->body ?? ''), 300);
+            $history .= "[{$time}] {$direction}: {$body}\n\n";
+        }
+
+        $customerMessage = $message->body_plain ?? strip_tags($message->body ?? '');
+
+        // Gjenbruk buildPrompt via et temporaert HelpwiseConversation-lignende objekt
+        // Enklere: bygg prompt direkte med samme mal
+        $inbox = $conversation->inbox ?? 'Ukjent';
+        $customerName = $conversation->customer_name ?? 'kunde';
+
+        $studentInfo = '';
+        if (!empty($studentContext)) {
+            $studentInfo = "\n\nELEVINFORMASJON FRA DATABASEN:\n";
+            foreach ($studentContext as $key => $value) {
+                if ($value) $studentInfo .= "- {$key}: {$value}\n";
+            }
+        }
+
+        $historySection = $history ? "\n\nTIDLIGERE MELDINGER I SAMTALEN:\n{$history}" : '';
+        $examplesSection = $this->getReplyExamples();
+
+        $prompt = <<<PROMPT
+Du er en vennlig og profesjonell kundebehandler for Forfatterskolen, Norges ledende nettbaserte skriveskole.
+
+Du skriver ALLTID på norsk (bokmål).
+Du er hjelpsom, varm og profesjonell.
+VIKTIGST: Du må ALLTID svare direkte på kundens spørsmål. Ikke ignorer spørsmålet.
+Hvis du kan svare faglig, gjør det. Du har kunnskap om skriving og bokbransjen.
+Hvis du er usikker på noe spesifikt om kundens konto, si at du skal sjekke og komme tilbake.
+Svar kort og presist. Ikke skriv romaner.
+{$examplesSection}
+
+INBOX: {$inbox}
+KUNDENS NAVN: {$customerName}
+KUNDENS E-POST: {$conversation->customer_email}
+{$studentInfo}
+{$historySection}
+
+KUNDENS SISTE MELDING:
+{$customerMessage}
+
+Skriv et passende svarkutkast. Husk:
+- Start med å hilse på kunden ved fornavn hvis mulig
+- Svar direkte på spørsmålet
+- Vær hjelpsom, varm og positiv - men ikke overdrevent
+- Hold deg kort og direkte, lik eksemplene ovenfor
+- Bruk gjerne smilefjes som :-) eller :) der det passer naturlig
+- Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende):
+  Skrivevarm hilsen,
+  {$this->getSenderName()}
+  Forfatterskolen / Easywrite / Indiemoon Publishing
+- IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
+- Matcher stilen og tonen fra eksemplene
+PROMPT;
+
+        try {
+            $reply = $this->callAi($prompt);
+            if ($reply) {
+                Log::info('Inbox AI: utkast generert', [
+                    'conversation_id' => $conversation->id,
+                    'length' => strlen($reply),
+                ]);
+            }
+            return $reply;
+        } catch (\Exception $e) {
+            Log::error('Inbox AI: utkast-generering feilet', ['error' => $e->getMessage()]);
+            return null;
+        }
+    }
+
     private function getRoleName(int $role): string
     {
         return match ($role) {

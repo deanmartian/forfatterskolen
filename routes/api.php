@@ -223,3 +223,11 @@ Route::prefix('shop')->middleware(['cors', 'throttle:10,1'])->group(function () 
 
 // Vipps webhook for shop (ingen rate limit, ingen CORS)
 Route::post('/webhooks/shop/vipps', [\App\Http\Controllers\Api\Shop\ShopPaymentController::class, 'vippsWebhook']);
+
+/*
+|--------------------------------------------------------------------------
+| Inbox Inbound E-post Webhook
+|--------------------------------------------------------------------------
+| POST = mottak av innkommende e-post (erstatter Helpwise)
+*/
+Route::post('/webhooks/inbox-inbound', [\App\Http\Controllers\Api\InboxWebhookController::class, 'handle']);
