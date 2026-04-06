@@ -1317,6 +1317,13 @@
             }
         }
 
+        // Editor lists per type
+        var editorsByType = {
+            'copy-editing': {!! json_encode($copyEditingEditors->map(fn($e) => ['id' => $e->id, 'name' => $e->full_name])->values()) !!},
+            'correction': {!! json_encode($correctionEditors->map(fn($e) => ['id' => $e->id, 'name' => $e->full_name])->values()) !!},
+            'self-publishing': {!! json_encode($editors->map(fn($e) => ['id' => $e->id, 'name' => $e->full_name])->values()) !!}
+        };
+
         // Project Request To Editor modal
         var projectRequestTexts = {
             'copy-editing': {
@@ -1342,6 +1349,14 @@
             var itemType = $(this).data('item-type');
             var modal = $('#projectRequestToEditorModal');
             modal.find('form').attr('action', action);
+
+            // Populate editor dropdown based on type
+            var select = document.getElementById('projectRequestEditorSelect');
+            select.innerHTML = '<option value="" disabled selected>- Velg redaktør -</option>';
+            var editors = editorsByType[itemType] || editorsByType['self-publishing'];
+            editors.forEach(function(e) {
+                select.innerHTML += '<option value="' + e.id + '">' + e.name + '</option>';
+            });
 
             // Set type-specific text
             var texts = projectRequestTexts[itemType] || projectRequestTexts['self-publishing'];
@@ -1395,11 +1410,8 @@
                     <div class="margin-top">
                         <div class="form-group">
                             <label>Redaktør</label>
-                            <select class="form-control select2" name="editor_id" required>
+                            <select class="form-control" name="editor_id" id="projectRequestEditorSelect" required>
                                 <option value="" disabled selected>- Velg redaktør -</option>
-                                @foreach($editors as $editor)
-                                    <option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
-                                @endforeach
                             </select>
                         </div>
                         <div class="form-group">
