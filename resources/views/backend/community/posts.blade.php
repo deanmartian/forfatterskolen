@@ -58,11 +58,11 @@
                     <label>Kursgruppe (valgfritt)</label>
                     <select name="course_group_id" class="form-control">
                         <option value="">Alle — synlig for hele fellesskapet</option>
-                        @foreach(\App\Models\CourseGroup::orderBy('name')->get() as $cg)
-                            <option value="{{ $cg->id }}">{{ $cg->name }}</option>
+                        @foreach(\App\Course::where('status', 1)->where('show_in_course_groups', 1)->orderBy('title')->get() as $course)
+                            <option value="{{ $course->id }}">{{ $course->title }}</option>
                         @endforeach
                     </select>
-                    <small class="text-muted">Velg en gruppe for å kun vise innlegget til elever i den gruppen.</small>
+                    <small class="text-muted">Velg et kurs for å kun vise innlegget i den kursgruppen.</small>
                 </div>
                 <div class="checkbox">
                     <label><input type="checkbox" name="pinned"> Fest innlegget</label>
@@ -100,7 +100,7 @@
                     @php
                         $profile = $post->user->profile ?? null;
                         $name = $profile ? ucwords($profile->name) : ($post->user->fullName ?? 'Ukjent');
-                        $groupName = $post->course_group_id ? (\App\Models\CourseGroup::find($post->course_group_id)?->name ?? '') : '';
+                        $groupName = $post->course_group_id ? (\App\Course::find($post->course_group_id)?->title ?? '') : '';
                     @endphp
                     <tr @if($post->pinned) style="background: #fff8e1;" @endif @if(($post->status ?? '') === 'draft') style="background: #e3f2fd; border-left: 3px solid #1565c0;" @endif>
                         <td>
