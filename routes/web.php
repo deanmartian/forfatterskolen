@@ -393,6 +393,7 @@ Route::domain($front)->group(function () {
         Route::get('/coaching-time', [Frontend\LearnerController::class, 'coachingTime'])->name('learner.coaching-time');
         Route::get('/coaching-time/available', [Frontend\LearnerController::class, 'availableCoachingTime'])->name('learner.coaching-time.available');
         Route::post('/coaching-time/request', [Frontend\LearnerController::class, 'requestCoachingTime'])->name('learner.coaching-time.request');
+        Route::post('/coaching-time/suggest', [Frontend\LearnerController::class, 'suggestCoachingTimeSlot'])->name('learner.coaching-time.suggest');
         Route::get('/time-register', [Frontend\LearnerController::class, 'timeRegister'])->name('learner.time-register');
         Route::get('/book-sale', [Frontend\LearnerController::class, 'bookSale'])->name('learner.book-sale');
         Route::get('/book-for-sale/{id}', [Frontend\LearnerController::class, 'bookForSale'])->name('learner.book-for-sale');

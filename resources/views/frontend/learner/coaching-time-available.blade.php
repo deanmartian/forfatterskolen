@@ -118,6 +118,62 @@
         </div>
     </div>
 
+    {{-- ═══════ SUGGEST OWN TIME ═══════ --}}
+    @if($coachingTimer)
+        <div class="container" style="margin-top: 2rem;">
+            <div class="card card-global">
+                <div class="card-body">
+                    <div style="text-align: center; margin-bottom: 1.25rem;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#862736" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0.5rem 0 0.25rem;">Finner du ikke en tid som passer?</h3>
+                        <p style="font-size: 0.85rem; color: #666; margin: 0;">Foreslå et tidspunkt, så ser vi om vi kan få det til.</p>
+                    </div>
+
+                    <form action="{{ route('learner.coaching-time.suggest') }}" method="POST" onsubmit="disableSubmit(this)" style="max-width: 480px; margin: 0 auto;">
+                        @csrf
+                        <input type="hidden" name="coaching_timer_id" value="{{ $coachingTimer->id }}">
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label style="font-weight: 600; font-size: 0.85rem;">Ønsket dato</label>
+                                    <input type="date" name="suggested_date" class="form-control" required
+                                           min="{{ \Carbon\Carbon::tomorrow()->format('Y-m-d') }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label style="font-weight: 600; font-size: 0.85rem;">Ønsket klokkeslett</label>
+                                    <input type="time" name="suggested_time" class="form-control" required value="10:00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight: 600; font-size: 0.85rem;">{{ trans('site.call-type') }}</label>
+                            <select name="call_type" class="form-control" required>
+                                <option value="phone">{{ trans('site.phone-call') }}</option>
+                                <option value="video">{{ trans('site.video-call') }}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-weight: 600; font-size: 0.85rem;">Melding (valgfritt)</label>
+                            <textarea name="message" class="form-control" rows="3"
+                                      placeholder="Er det noe spesielt du vil jobbe med, eller har du andre ønsker?"></textarea>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn" style="background: #862736; color: #fff; padding: 0.6rem 1.5rem; border-radius: 6px; font-weight: 600;">
+                                Send forslag
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+
     @if ($coachingTimer)
         <button data-bs-target="#bookSlotModal" data-bs-toggle="modal" class="hidden" id="bookSlotModalTriggerBtn"></button>
         <div id="bookSlotModal" class="modal fade" role="dialog">

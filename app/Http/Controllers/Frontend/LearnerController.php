@@ -6869,6 +6869,52 @@ Forfatterskolen';
         return redirect()->back()->with('success', 'Filen ble lastet opp. Redaktoren vil motta den for coachingtimen.');
     }
 
+    public function suggestCoachingTimeSlot(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'coaching_timer_id' => 'required|exists:coaching_timer_manuscripts,id',
+            'suggested_date'    => 'required|date|after:today',
+            'suggested_time'    => 'required|date_format:H:i',
+            'call_type'         => 'required|in:phone,video',
+            'message'           => 'nullable|string|max:1000',
+        ]);
+
+        $timer = CoachingTimerManuscript::where('id', $data['coaching_timer_id'])
+            ->where('user_id', Auth::id())
+            ->whereNull('editor_time_slot_id')
+            ->firstOrFail();
+
+        $formattedDate = \Carbon\Carbon::parse($data['suggested_date'] . ' ' . $data['suggested_time'])->format('d.m.Y \k\l. H:i');
+
+        $timer->suggested_date = json_encode([$formattedDate]);
+        $timer->call_type = $data['call_type'];
+        if ($data['message']) {
+            $timer->help_with = $data['message'];
+        }
+        $timer->save();
+
+        $user = Auth::user();
+        $callTypeLabel = $data['call_type'] === 'video' ? 'Videosamtale' : 'Telefonsamtale';
+        $duration = $timer->plan_type == 1 ? '60 min' : '30 min';
+
+        $emailData = [
+            'email_subject' => 'Ny coaching-forespørsel fra ' . $user->full_name,
+            'email_message' => '<p><strong>' . e($user->full_name) . '</strong> (elev #' . $user->id . ') ønsker en coaching-time, men fant ingen ledige tider som passer.</p>'
+                . '<p><strong>Foreslått tidspunkt:</strong> ' . $formattedDate . '</p>'
+                . '<p><strong>Type:</strong> ' . $callTypeLabel . ' (' . $duration . ')</p>'
+                . ($data['message'] ? '<p><strong>Melding:</strong><br>' . nl2br(e($data['message'])) . '</p>' : '')
+                . '<p><strong>E-post:</strong> ' . e($user->email) . '</p>'
+                . '<p><strong>Telefon:</strong> ' . e(optional($user->address)->phone) . '</p>',
+            'from_name' => '',
+            'from_email' => 'post@forfatterskolen.no',
+            'attach_file' => null,
+        ];
+
+        Mail::to('post@forfatterskolen.no')->queue(new SubjectBodyEmail($emailData));
+
+        return redirect()->route('learner.coaching-time')->with('success', 'Takk! Vi har mottatt ditt forslag og tar kontakt for å avtale tidspunkt.');
+    }
+
     public function currentUser()
     {
         $user = Auth::user();
