@@ -112,7 +112,7 @@ class InboxController extends Controller
             'subject' => $request->input('subject'),
             'customer_email' => $request->input('to'),
             'customer_name' => $request->input('to'),
-            'status' => $isDraft ? 'pending' : 'open',
+            'status' => $isDraft ? 'pending' : 'closed',
             'source' => 'compose',
             'inbox' => 'post@forfatterskolen.no',
         ]);
