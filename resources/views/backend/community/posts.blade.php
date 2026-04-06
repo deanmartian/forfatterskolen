@@ -35,8 +35,24 @@
                     <textarea name="content" id="bot-post-content" class="form-control" rows="5" placeholder="Skriv innholdet her..." required></textarea>
                 </div>
                 <div class="form-group">
+                    <label>Post som</label>
+                    <select name="post_as" class="form-control">
+                        <option value="school">⭐ Forfatterskolen (offisiell)</option>
+                        <option value="self">👤 {{ Auth::user()->full_name }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Bilde (valgfritt)</label>
                     <input type="file" name="image" class="form-control" accept="image/jpeg,image/png,image/gif,image/webp">
+                    <div style="margin-top:6px;display:flex;gap:6px;">
+                        <button type="button" class="btn btn-xs btn-info" onclick="fetchUnsplashImage()"><i class="fa fa-camera"></i> Hent fra Unsplash</button>
+                        <button type="button" class="btn btn-xs btn-warning" onclick="generateAiImage()"><i class="fa fa-magic"></i> Generer AI-bilde</button>
+                    </div>
+                    <div id="image-preview" style="display:none;margin-top:8px;">
+                        <img id="preview-img" style="max-width:300px;border-radius:8px;">
+                        <input type="hidden" name="image_url" id="image-url-input">
+                        <br><button type="button" class="btn btn-xs btn-default" onclick="clearImage()" style="margin-top:4px;">Fjern bilde</button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Kursgruppe (valgfritt)</label>
@@ -184,5 +200,33 @@ document.getElementById('ai-generate-submit').addEventListener('click', function
         alert('Feil ved generering: ' + err.message);
     });
 });
+
+// Unsplash image search
+function fetchUnsplashImage() {
+    var content = document.getElementById('bot-post-content').value;
+    if (!content) { alert('Skriv innholdet først'); return; }
+    var keywords = content.substring(0, 100).replace(/[^\w\s]/g, '').split(' ').slice(0, 3).join(' ');
+    var url = 'https://api.unsplash.com/search/photos?query=' + encodeURIComponent(keywords + ' writing') + '&per_page=1&client_id=YOUR_UNSPLASH_KEY';
+
+    // Fallback: use picsum for now
+    var imgUrl = 'https://source.unsplash.com/800x400/?' + encodeURIComponent(keywords + ',writing,books');
+    document.getElementById('preview-img').src = imgUrl;
+    document.getElementById('image-url-input').value = imgUrl;
+    document.getElementById('image-preview').style.display = 'block';
+}
+
+// AI image generation placeholder
+function generateAiImage() {
+    var content = document.getElementById('bot-post-content').value;
+    if (!content) { alert('Skriv innholdet først'); return; }
+    alert('AI-bildegenerering krever OpenAI DALL-E API. Kontakt utvikler for oppsett.\n\nBruker Unsplash i mellomtiden.');
+    fetchUnsplashImage();
+}
+
+function clearImage() {
+    document.getElementById('image-preview').style.display = 'none';
+    document.getElementById('preview-img').src = '';
+    document.getElementById('image-url-input').value = '';
+}
 </script>
 @stop

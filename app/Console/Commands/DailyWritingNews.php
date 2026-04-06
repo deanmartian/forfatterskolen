@@ -26,7 +26,7 @@ Skriv en kort, engasjerende morgenoppdatering for skrivefellesskapet vårt. Inkl
 2. **Bransjenyheter** — 1-2 aktuelle nyheter fra den norske eller internasjonale bokbransjen/forlagsverdenen (oppfinn realistiske men generelle nyheter basert på trender)
 3. **Inspirasjon** — et kort sitat fra en kjent forfatter
 
-Hold det kort og uformelt. Maks 200 ord totalt. Bruk emojier sparsomt men naturlig.
+Hold det kort og uformelt. Maks 200 ord totalt. Bruk emojier ofte og naturlig (📝✍️📚💡🎉❤️🔥✨💬🌟) for å gjøre det levende.
 Skriv på norsk bokmål. Ikke bruk markdown-overskrifter, bare vanlig tekst med linjeskift.
 Dato i dag: {$today}
 PROMPT;

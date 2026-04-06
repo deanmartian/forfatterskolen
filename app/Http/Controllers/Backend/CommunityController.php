@@ -207,12 +207,17 @@ class CommunityController extends Controller
             }
         }
 
+        // Use image URL if no file uploaded
+        if (!$imageUrl && $request->input('image_url')) {
+            $imageUrl = $request->input('image_url');
+        }
+
         Post::create([
             'id'             => Str::uuid(),
             'user_id'        => \Auth::id(),
             'content'        => $request->content,
             'image_url'      => $imageUrl,
-            'is_bot_post'    => true,
+            'is_bot_post'    => $request->input('post_as', 'school') === 'school',
             'pinned'         => $request->has('pinned'),
             'course_group_id' => $request->input('course_group_id') ?: null,
         ]);
@@ -242,7 +247,7 @@ class CommunityController extends Controller
             ])->post('https://api.anthropic.com/v1/messages', [
                 'model' => 'claude-sonnet-4-20250514',
                 'max_tokens' => 500,
-                'system' => 'Du er Forfatterskolen sin assistent. Skriv innlegg på norsk for et skrivefellesskap. Innleggene skal være inspirerende, lærerike og engasjerende for forfattere og skriveglade. Hold det kort og engasjerende (maks 3-4 avsnitt). Ikke bruk markdown-formatering.',
+                'system' => 'Du er Forfatterskolen sin assistent. Skriv innlegg på norsk for et skrivefellesskap. Innleggene skal være inspirerende, lærerike og engasjerende for forfattere og skriveglade. Hold det kort og engasjerende (maks 3-4 avsnitt). Bruk emojier naturlig og ofte (📝✍️📚💡🎉❤️🔥✨💬🌟) for å gjøre innlegget levende og engasjerende. Ikke bruk markdown-formatering som ** eller ##, bruk vanlig tekst med emojier.',
                 'messages' => [
                     ['role' => 'user', 'content' => $userPrompt],
                 ],
