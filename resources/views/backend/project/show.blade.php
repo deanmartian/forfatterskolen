@@ -1304,12 +1304,16 @@
             var preview = document.getElementById('projectEmailPreview');
             var content = document.getElementById('projectEmailPreviewContent');
             if (preview.style.display === 'none') {
-                var html = '';
-                if (typeof tinymce !== 'undefined' && tinymce.get('projectRequestMessage')) {
-                    html = tinymce.get('projectRequestMessage').getContent();
-                } else {
-                    html = document.getElementById('projectRequestMessage').value;
-                }
+                var text = document.getElementById('projectRequestMessage').value;
+                // Convert plain text to HTML
+                var html = text
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/:login_link/g, '<a href="#" style="display:inline-block;padding:12px 28px;background:#862736;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;">Logg inn i portalen →</a>')
+                    .replace(/\n\n/g, '</p><p style="margin:0 0 14px;">')
+                    .replace(/\n/g, '<br>');
+                html = '<p style="margin:0 0 14px;">' + html + '</p>';
                 content.innerHTML = html;
                 preview.style.display = 'block';
             } else {
@@ -1329,17 +1333,17 @@
             'copy-editing': {
                 title: 'Send forespørsel — Språkvask',
                 subject: 'Kan du ta en språkvask?',
-                message: 'Hei,\n\nVi har et manus som trenger språkvask. Har du kapasitet til å ta dette oppdraget?\n\n<strong>Omfang:</strong> Se vedlagt manus\n<strong>Frist for svar:</strong> Se svarfrist nedenfor\n\nLogg inn her for å se detaljer: :login_link\n\nMvh,\nForfatterskolen'
+                message: 'Hei,\n\nVi har et manus som trenger språkvask. Har du kapasitet til å ta dette oppdraget?\n\nOmfang: Se vedlagt manus\nFrist for svar: Se svarfrist nedenfor\n\nLogg inn her for å se detaljer: :login_link\n\nMvh,\nForfatterskolen'
             },
             'correction': {
                 title: 'Send forespørsel — Korrektur',
                 subject: 'Kan du ta en korrektur?',
-                message: 'Hei,\n\nVi har et manus som trenger korrekturlesing. Har du kapasitet til å ta dette oppdraget?\n\n<strong>Omfang:</strong> Se vedlagt manus\n<strong>Frist for svar:</strong> Se svarfrist nedenfor\n\nLogg inn her for å se detaljer: :login_link\n\nMvh,\nForfatterskolen'
+                message: 'Hei,\n\nVi har et manus som trenger korrekturlesing. Har du kapasitet til å ta dette oppdraget?\n\nOmfang: Se vedlagt manus\nFrist for svar: Se svarfrist nedenfor\n\nLogg inn her for å se detaljer: :login_link\n\nMvh,\nForfatterskolen'
             },
             'self-publishing': {
                 title: 'Send forespørsel — Redaktørarbeid',
                 subject: 'Kan du ta et redaktøroppdrag?',
-                message: 'Hei,\n\nVi har et manus som trenger redaktørarbeid. Har du kapasitet til å lese og gi tilbakemelding på dette manuset?\n\n<strong>Omfang:</strong> Se vedlagt manus\n<strong>Frist for svar:</strong> Se svarfrist nedenfor\n\nLogg inn her for å se detaljer: :login_link\n\nMvh,\nForfatterskolen'
+                message: 'Hei,\n\nVi har et manus som trenger redaktørarbeid. Har du kapasitet til å lese og gi tilbakemelding på dette manuset?\n\nOmfang: Se vedlagt manus\nFrist for svar: Se svarfrist nedenfor\n\nLogg inn her for å se detaljer: :login_link\n\nMvh,\nForfatterskolen'
             }
         };
 
@@ -1430,8 +1434,8 @@
                         </div>
                         <div class="form-group">
                             <label>Melding</label>
-                            <textarea class="form-control tinymce" name="message" id="projectRequestMessage" rows="6"
-                                required></textarea>
+                            <textarea class="form-control" name="message" id="projectRequestMessage" rows="8"
+                                style="font-family:inherit;font-size:14px;line-height:1.6;" required></textarea>
                         </div>
 
                         {{-- Forhåndsvisning --}}

@@ -2671,8 +2671,13 @@ class ProjectController extends Controller
         $to = User::where('id', $request->editor_id)->pluck('email');
 
         $emailTemplate_content = $request->message;
+        // Convert plain text newlines to HTML
+        $emailTemplate_content = nl2br(e($emailTemplate_content));
+        // Replace :login_link with styled button
+        $btnStyle = 'display:inline-block;padding:12px 28px;background:#862736;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;';
+        $loginUrl = route('editor.login.email', encrypt($to));
         $emailTemplate_content = str_replace(':login_link',
-            "<a href='" . route('editor.login.email', encrypt($to)) . "'>" . trans('site.front.form.login') . '</a>',
+            "<a href='{$loginUrl}' style='{$btnStyle}'>Logg inn i portalen →</a>",
             $emailTemplate_content);
 
         dispatch(new AddMailToQueueJob($to, $request->subject, $emailTemplate_content, $request->from_email,
