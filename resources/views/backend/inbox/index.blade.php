@@ -92,9 +92,21 @@
 
             {{-- Conversations --}}
             <div style="background: #fff;">
+                {{-- Bulk actions bar --}}
+                <div id="bulkBar" style="display:none;background:#862736;color:#fff;padding:8px 16px;border-radius:6px;margin-bottom:10px;align-items:center;gap:12px;">
+                    <span id="bulkCount">0</span> valgt
+                    <button type="button" class="btn btn-sm btn-success" onclick="bulkAction('close')"><i class="fa fa-check"></i> Lukk</button>
+                    <button type="button" class="btn btn-sm btn-warning" onclick="bulkAction('reopen')"><i class="fa fa-refresh"></i> Gjenåpne</button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="bulkAction('delete')"><i class="fa fa-trash"></i> Slett</button>
+                    <button type="button" class="btn btn-sm btn-default" onclick="bulkSelectNone()">Avbryt</button>
+                    <label style="margin-left:auto;cursor:pointer;font-size:12px;"><input type="checkbox" id="selectAll" onchange="bulkSelectAll(this)"> Velg alle</label>
+                </div>
+                <form id="bulkForm" method="POST" action="{{ route('admin.inbox.bulk') }}">@csrf<input type="hidden" name="action" id="bulkAction"><input type="hidden" name="ids" id="bulkIds"></form>
+
                 @forelse($conversations as $conv)
-                    <a href="{{ route('admin.inbox.show', $conv->id) }}" style="text-decoration: none; color: inherit; display: block;">
-                        <div class="inbox-row">
+                    <div class="inbox-row" style="position:relative;">
+                        <input type="checkbox" class="bulk-check" value="{{ $conv->id }}" onchange="bulkChanged()" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);z-index:2;">
+                    <a href="{{ route('admin.inbox.show', $conv->id) }}" style="text-decoration: none; color: inherit; display: block; padding-left:24px;">
                             <div class="row">
                                 <div class="col-md-1" style="padding-top: 2px;">
                                     <div class="inbox-avatar">
@@ -131,8 +143,8 @@
                                     </span>
                                 </div>
                             </div>
-                        </div>
                     </a>
+                    </div>
                 @empty
                     <div style="padding: 40px; text-align: center; color: #999;">
                         <i class="fa fa-check-circle fa-3x" style="color: #28a745;"></i>
@@ -190,4 +202,30 @@
         </div>
     </div>
 </div>
+
+<script>
+function bulkChanged() {
+    var checked = document.querySelectorAll('.bulk-check:checked');
+    var bar = document.getElementById('bulkBar');
+    document.getElementById('bulkCount').textContent = checked.length;
+    bar.style.display = checked.length > 0 ? 'flex' : 'none';
+}
+function bulkSelectAll(el) {
+    document.querySelectorAll('.bulk-check').forEach(function(cb) { cb.checked = el.checked; });
+    bulkChanged();
+}
+function bulkSelectNone() {
+    document.querySelectorAll('.bulk-check').forEach(function(cb) { cb.checked = false; });
+    document.getElementById('selectAll').checked = false;
+    bulkChanged();
+}
+function bulkAction(action) {
+    if (action === 'delete' && !confirm('Er du sikker på at du vil slette valgte samtaler?')) return;
+    var ids = [];
+    document.querySelectorAll('.bulk-check:checked').forEach(function(cb) { ids.push(cb.value); });
+    document.getElementById('bulkAction').value = action;
+    document.getElementById('bulkIds').value = JSON.stringify(ids);
+    document.getElementById('bulkForm').submit();
+}
+</script>
 @stop

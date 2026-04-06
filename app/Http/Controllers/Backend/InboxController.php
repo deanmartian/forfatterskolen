@@ -181,6 +181,38 @@ class InboxController extends Controller
             ->with('message', $isDraft ? 'Utkast lagret' : 'E-post sendt!');
     }
 
+    public function bulk(Request $request)
+    {
+        $ids = json_decode($request->input('ids', '[]'));
+        $action = $request->input('action');
+
+        if (empty($ids)) {
+            return redirect()->back();
+        }
+
+        switch ($action) {
+            case 'close':
+                \App\Models\Inbox\InboxConversation::whereIn('id', $ids)->update(['status' => 'closed']);
+                $msg = count($ids) . ' samtaler lukket';
+                break;
+            case 'reopen':
+                \App\Models\Inbox\InboxConversation::whereIn('id', $ids)->update(['status' => 'open']);
+                $msg = count($ids) . ' samtaler gjenåpnet';
+                break;
+            case 'delete':
+                \App\Models\Inbox\InboxMessage::whereIn('conversation_id', $ids)->delete();
+                \App\Models\Inbox\InboxConversation::whereIn('id', $ids)->delete();
+                $msg = count($ids) . ' samtaler slettet';
+                break;
+            default:
+                $msg = 'Ukjent handling';
+        }
+
+        return redirect()->route('admin.inbox.index')
+            ->with('alert_type', 'success')
+            ->with('message', $msg);
+    }
+
     public function setFollowUp(Request $request, int $id)
     {
         $conversation = \App\Models\Inbox\InboxConversation::findOrFail($id);

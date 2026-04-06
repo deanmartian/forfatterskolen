@@ -16,6 +16,7 @@ Route::prefix('inbox')->group(function () {
     Route::post('/conversation/{id}/ai-draft', [Backend\InboxController::class, 'generateAiDraft'])->name('admin.inbox.ai-draft');
     Route::post('/conversation/{id}/follow-up', [Backend\InboxController::class, 'setFollowUp'])->name('admin.inbox.follow-up');
     Route::post('/compose', [Backend\InboxController::class, 'compose'])->name('admin.inbox.compose');
+    Route::post('/bulk', [Backend\InboxController::class, 'bulk'])->name('admin.inbox.bulk');
     Route::post('/import-helpwise', [Backend\InboxController::class, 'importFromHelpwise'])->name('admin.inbox.import-helpwise');
     Route::get('/canned-responses', [Backend\InboxController::class, 'cannedResponses'])->name('admin.inbox.canned-responses');
     Route::post('/canned-responses', [Backend\InboxController::class, 'storeCannedResponse'])->name('admin.inbox.canned-responses.store');
