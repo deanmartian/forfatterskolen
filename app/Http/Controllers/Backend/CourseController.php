@@ -1562,53 +1562,61 @@ class CourseController extends Controller
      */
     public function courseBuilderCreate(Request $request): JsonResponse
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'modules' => 'required|array|min:1',
-            'modules.*.title' => 'required|string',
-            'modules.*.content' => 'required|string',
-        ]);
+        try {
+            $title = mb_substr($request->input('title', 'Nytt kurs'), 0, 255);
+            $description = $request->input('description', $title);
+            $modules = $request->input('modules', []);
 
-        $course = new Course;
-        $course->title = $request->input('title');
-        $course->description = $request->input('description');
-        $course->type = $request->input('type', 'Group');
-        $course->status = 0; // Alltid inaktiv ved opprettelse
-        $course->for_sale = 0;
-        $course->display_order = Course::max('display_order') + 1;
-        $course->is_free = 0;
-        $course->save();
+            if (empty($modules)) {
+                return response()->json(['error' => 'Ingen moduler funnet.'], 422);
+            }
 
-        // Opprett editor-pakke
-        $package = new Package;
-        $package->course_id = $course->id;
-        $package->variation = 'Editor Package';
-        $package->description = 'Editor Package';
-        $package->manuscripts_count = 0;
-        $package->full_payment_price = 0;
-        $package->is_standard = 0;
-        $package->save();
+            $course = new Course;
+            $course->title = $title;
+            $course->description = mb_substr($description, 0, 65000);
+            $course->type = $request->input('type', 'Group');
+            $course->status = 0;
+            $course->for_sale = 0;
+            $course->display_order = (Course::max('display_order') ?: 0) + 1;
+            $course->is_free = 0;
+            $course->save();
 
-        // Opprett moduler som leksjoner
-        foreach ($request->input('modules') as $index => $module) {
-            \App\Lesson::create([
+            // Opprett editor-pakke
+            $package = new Package;
+            $package->course_id = $course->id;
+            $package->variation = 'Editor Package';
+            $package->description = 'Editor Package';
+            $package->manuscripts_count = 0;
+            $package->full_payment_price = 0;
+            $package->is_standard = 0;
+            $package->save();
+
+            // Opprett moduler som leksjoner
+            foreach ($modules as $index => $module) {
+                $moduleTitle = $module['title'] ?? ('Modul ' . ($index + 1));
+                $moduleContent = $module['content'] ?? '';
+
+                \App\Lesson::create([
+                    'course_id' => $course->id,
+                    'title' => mb_substr($moduleTitle, 0, 255),
+                    'description' => $moduleContent,
+                    'order' => $index + 1,
+                    'type' => 'standard',
+                    'delay' => $index * 7,
+                    'period' => 'days',
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
                 'course_id' => $course->id,
-                'title' => $module['title'],
-                'description' => $module['content'],
-                'order' => $index + 1,
-                'type' => 'standard',
-                'delay' => $index * 7, // 1 uke mellom hver modul
-                'period' => 'days',
+                'url' => route('admin.course.show', $course->id),
+                'message' => 'Kurset "' . $title . '" er opprettet med ' . count($modules) . ' moduler (inaktivt).',
             ]);
+        } catch (\Exception $e) {
+            \Log::error('CourseBuilder create error', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Kunne ikke opprette kurs: ' . $e->getMessage()], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'course_id' => $course->id,
-            'url' => route('admin.course.show', $course->id),
-            'message' => 'Kurset «' . $course->title . '» er opprettet med ' . count($request->input('modules')) . ' moduler (inaktivt).',
-        ]);
     }
 
     /**
