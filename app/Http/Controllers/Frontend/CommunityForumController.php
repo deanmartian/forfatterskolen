@@ -69,6 +69,10 @@ class CommunityForumController extends Controller
 
     private function isAdmin()
     {
+        $user = Auth::user();
+        if ($user && $user->role == 1) {
+            return true;
+        }
         $profile = Profile::where('user_id', Auth::id())->first();
         return $profile && $profile->badge === 'admin';
     }
@@ -649,18 +653,25 @@ class CommunityForumController extends Controller
         $this->ensureProfile();
         $user = Auth::user();
 
-        // Get user's active courses via CoursesTaken → Package → Course
-        $coursesTaken = $user->coursesTaken()
-            ->with('package.course')
-            ->get();
+        if ($this->isAdmin()) {
+            // Admin ser alle kurs som har elever
+            $courseIds = \App\CoursesTaken::join('packages', 'courses_taken.package_id', '=', 'packages.id')
+                ->distinct()->pluck('packages.course_id');
+            $courses = \App\Course::whereIn('id', $courseIds)->get();
+        } else {
+            // Get user's active courses via CoursesTaken → Package → Course
+            $coursesTaken = $user->coursesTaken()
+                ->with('package.course')
+                ->get();
 
-        // Group by course, collecting unique courses
-        $courses = collect();
-        foreach ($coursesTaken as $ct) {
-            if ($ct->package && $ct->package->course) {
-                $course = $ct->package->course;
-                if (!$courses->contains('id', $course->id) && ($course->show_in_course_groups ?? true)) {
-                    $courses->push($course);
+            // Group by course, collecting unique courses
+            $courses = collect();
+            foreach ($coursesTaken as $ct) {
+                if ($ct->package && $ct->package->course) {
+                    $course = $ct->package->course;
+                    if (!$courses->contains('id', $course->id) && ($course->show_in_course_groups ?? true)) {
+                        $courses->push($course);
+                    }
                 }
             }
         }
