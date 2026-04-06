@@ -374,53 +374,6 @@
 	{{-- ═══════ MELDING FRA SVEN INGE ═══════ --}}
 	{{-- Melding fra Sven Inge (fjernet 25.03.2026) --}}
 
-	{{-- ═══════ PL QUIZ MODAL ═══════ --}}
-	<div class="modal fade" id="plQuizModal" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-sm" role="document">
-			<div class="modal-content" style="border-radius:var(--radius);border:2px solid var(--brand-primary);">
-				<div class="modal-header" style="background:var(--brand-primary);color:#fff;border-radius:var(--radius) var(--radius) 0 0;">
-					<button type="button" class="close" data-dismiss="modal" style="color:#fff;opacity:1;">&times;</button>
-					<h4 class="modal-title" style="font-family:var(--font-display);font-weight:700;">⚽ Premier League Quiz!</h4>
-				</div>
-				<div class="modal-body" style="text-align:center;padding:30px 24px;">
-					<p style="font-size:1.1rem;margin-bottom:20px;">Før du kan ta dette manuset må du svare riktig:</p>
-					<p style="font-size:1.2rem;font-weight:700;color:var(--brand-primary);margin-bottom:24px;">Hvem ligger først i Premier League?</p>
-					<div id="plQuizOptions" style="display:flex;flex-direction:column;gap:10px;"></div>
-					<div id="plQuizResult" style="margin-top:16px;font-weight:700;font-size:1.1rem;display:none;"></div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	{{-- ═══════ PREMIER LEAGUE (kun når Arsenal leder) ═══════ --}}
-	<div id="pl-table-container" style="display:none;">
-		<div class="dashboard-section">
-			<div class="section-header">
-				<h4>
-					<span style="margin-right:8px;">⚽</span>
-					Premier League
-					<span class="section-badge" style="background:#EF0107;color:#fff;" id="pl-arsenal-pos"></span>
-				</h4>
-			</div>
-			<div class="section-body" style="padding:12px 24px 16px;">
-				<table class="table" style="margin-bottom:0;font-size:.9rem;">
-					<thead>
-						<tr>
-							<th style="width:30px;">#</th>
-							<th>Lag</th>
-							<th style="text-align:center;">K</th>
-							<th style="text-align:center;">S</th>
-							<th style="text-align:center;">U</th>
-							<th style="text-align:center;">T</th>
-							<th style="text-align:center;">MF</th>
-							<th style="text-align:center;font-weight:700;">P</th>
-						</tr>
-					</thead>
-					<tbody id="pl-table-body"></tbody>
-				</table>
-			</div>
-		</div>
-	</div>
 
 	{{-- ═══════ STAT CARDS ═══════ --}}
 	<div class="stat-grid">
@@ -565,15 +518,9 @@
 							<td>
 								<form method="POST" action="{{ route('editor.claim-manuscript', $am->id) }}" id="claimForm{{ $am->id }}">
 									@csrf
-									@if(in_array(strtolower(trim(auth()->user()->first_name ?? '')), ['espen', 'karl inge']))
-									<button type="button" class="btn btn-sm" style="background:var(--brand-primary);color:#fff;" onclick="plQuiz({{ $am->id }})">
-										<i class="fa fa-hand-paper-o"></i> Ta dette manuset
-									</button>
-									@else
 									<button type="submit" class="btn btn-sm" style="background:var(--brand-primary);color:#fff;" onclick="return confirm('Er du sikker på at du vil ta dette manuset?')">
 										<i class="fa fa-hand-paper-o"></i> Ta dette manuset
 									</button>
-									@endif
 								</form>
 							</td>
 						</tr>
@@ -2303,155 +2250,11 @@
 		}
 	})();
 
-	// PL Quiz for Espen og Karl Inge
-	var plLeader = null;
-	var plQuizFormId = null;
-
-	function plQuiz(manuscriptId) {
-		plQuizFormId = manuscriptId;
-		var optionsDiv = document.getElementById('plQuizOptions');
-		var resultDiv = document.getElementById('plQuizResult');
-		resultDiv.style.display = 'none';
-		optionsDiv.innerHTML = '';
-
-		fetch('https://site.api.espn.com/apis/v2/sports/soccer/eng.1/standings')
-			.then(function(r) { return r.json(); })
-			.then(function(data) {
-				var entries = data.children[0].standings.entries;
-				entries.sort(function(a, b) {
-					var rA = a.stats.find(function(s) { return s.name === 'rank'; });
-					var rB = b.stats.find(function(s) { return s.name === 'rank'; });
-					return (rA ? rA.value : 99) - (rB ? rB.value : 99);
-				});
 
 				plLeader = entries[0].team.displayName;
 
 				// Velg 4 tilfeldige lag fra topp 10, inkludert lederen
 				var teams = [plLeader];
-				var pool = entries.slice(1, 12).map(function(e) { return e.team.displayName; });
-				while (teams.length < 4 && pool.length > 0) {
-					var idx = Math.floor(Math.random() * pool.length);
-					teams.push(pool.splice(idx, 1)[0]);
-				}
-				// Bland rekkefølgen
-				teams.sort(function() { return Math.random() - 0.5; });
-
-				teams.forEach(function(team) {
-					var btn = document.createElement('button');
-					btn.className = 'btn btn-default btn-block';
-					btn.style.cssText = 'font-size:1rem;padding:10px;border:2px solid var(--border);';
-					btn.textContent = team;
-					btn.onclick = function() { checkPlAnswer(team); };
-					optionsDiv.appendChild(btn);
-				});
-
-				$('#plQuizModal').modal('show');
-			})
-			.catch(function() {
-				// Hvis API feiler, la dem gå gjennom
-				if (confirm('Er du sikker på at du vil ta dette manuset?')) {
-					document.getElementById('claimForm' + manuscriptId).submit();
-				}
-			});
-	}
-
-	function checkPlAnswer(answer) {
-		var resultDiv = document.getElementById('plQuizResult');
-		resultDiv.style.display = 'block';
-		var buttons = document.getElementById('plQuizOptions').querySelectorAll('button');
-
-		if (answer === plLeader) {
-			resultDiv.innerHTML = '✅ Riktig! ' + plLeader + ' leder! Da kan du ta manuset.';
-			resultDiv.style.color = 'var(--success)';
-			buttons.forEach(function(b) { b.disabled = true; });
-			setTimeout(function() {
-				$('#plQuizModal').modal('hide');
-				document.getElementById('claimForm' + plQuizFormId).submit();
-			}, 1500);
-		} else {
-			resultDiv.innerHTML = '❌ Feil! Prøv igjen, ' + (document.querySelector('.ed-greeting h2') ? '' : '') + 'du vet svaret! 😄';
-			resultDiv.style.color = 'var(--danger)';
-			// Highlight feil svar
-			buttons.forEach(function(b) {
-				if (b.textContent === answer) {
-					b.style.background = '#ffebee';
-					b.style.borderColor = 'var(--danger)';
-					b.disabled = true;
-				}
-			});
-		}
-	}
-
-	// Premier League tabell - vis kun når Arsenal er foran Liverpool og Man Utd
-	(function() {
-		fetch('https://site.api.espn.com/apis/v2/sports/soccer/eng.1/standings')
-			.then(r => r.json())
-			.then(data => {
-				try {
-					var entries = data.children[0].standings.entries;
-					entries.sort(function(a, b) {
-						var rankA = a.stats.find(s => s.name === 'rank');
-						var rankB = b.stats.find(s => s.name === 'rank');
-						return (rankA ? rankA.value : 99) - (rankB ? rankB.value : 99);
-					});
-
-					var arsenalPos = -1, liverpoolPos = -1, manUtdPos = -1;
-					entries.forEach(function(entry, i) {
-						var name = entry.team.displayName.toLowerCase();
-						if (name.indexOf('arsenal') !== -1) arsenalPos = i;
-						if (name.indexOf('liverpool') !== -1) liverpoolPos = i;
-						if (name.indexOf('manchester united') !== -1 || name.indexOf('man united') !== -1) manUtdPos = i;
-					});
-
-					if (arsenalPos === -1 || arsenalPos >= liverpoolPos || arsenalPos >= manUtdPos) return;
-
-					var showTeams = ['arsenal', 'liverpool', 'manchester united', 'man united', 'tottenham', 'spurs'];
-					var filtered = entries.filter(function(entry) {
-						var name = entry.team.displayName.toLowerCase();
-						return showTeams.some(function(t) { return name.indexOf(t) !== -1; });
-					});
-					var html = '';
-					filtered.forEach(function(entry, i) {
-						var team = entry.team;
-						var stats = {};
-						entry.stats.forEach(function(s) { stats[s.name] = s.value || s.displayValue || 0; });
-
-						var gamesPlayed = parseInt(stats.gamesPlayed) || 0;
-						var wins = parseInt(stats.wins) || 0;
-						var ties = parseInt(stats.ties) || 0;
-						var losses = parseInt(stats.losses) || 0;
-						var goalDiff = stats.pointDifferential || stats.goalDifference || 0;
-						var points = parseInt(stats.points) || 0;
-						var rank = parseInt(stats.rank) || (i + 1);
-
-						var isArsenal = team.displayName.toLowerCase().indexOf('arsenal') !== -1;
-						var rowStyle = isArsenal ? 'background:#FFF1F1;font-weight:700;' : '';
-						var nameStyle = isArsenal ? 'color:#EF0107;font-weight:800;' : '';
-
-						html += '<tr style="' + rowStyle + '">';
-						html += '<td>' + rank + '</td>';
-						html += '<td style="' + nameStyle + '">';
-						if (team.logos && team.logos.length) {
-							html += '<img src="' + team.logos[0].href + '" style="width:20px;height:20px;margin-right:8px;vertical-align:middle;">';
-						}
-						html += team.displayName + '</td>';
-						html += '<td style="text-align:center;">' + gamesPlayed + '</td>';
-						html += '<td style="text-align:center;">' + wins + '</td>';
-						html += '<td style="text-align:center;">' + ties + '</td>';
-						html += '<td style="text-align:center;">' + losses + '</td>';
-						html += '<td style="text-align:center;">' + goalDiff + '</td>';
-						html += '<td style="text-align:center;font-weight:700;">' + points + '</td>';
-						html += '</tr>';
-					});
-
-					document.getElementById('pl-table-body').innerHTML = html;
-					document.getElementById('pl-arsenal-pos').textContent = (arsenalPos + 1) + '.';
-					document.getElementById('pl-table-container').style.display = 'block';
-				} catch(e) { console.log('PL tabell feil:', e); }
-			})
-			.catch(function() {});
-	})();
-
 	$('.viewManuscriptBtn').click(function(){
 		var fields = $(this).data('fields');
 		var modal = $('#viewManuscriptModal');
