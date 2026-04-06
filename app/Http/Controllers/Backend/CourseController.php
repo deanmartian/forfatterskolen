@@ -1535,12 +1535,13 @@ class CourseController extends Controller
                     'anthropic-version' => '2023-06-01',
                 ],
                 'json' => [
-                    'model' => 'claude-opus-4-20250514',
+                    'model' => 'claude-sonnet-4-20250514',
                     'max_tokens' => 8192,
                     'system' => $request->input('system_prompt', ''),
                     'messages' => $messages,
                 ],
-                'timeout' => 120,
+                'timeout' => 300,
+                'connect_timeout' => 10,
             ]);
 
             $data = json_decode($response->getBody(), true);
