@@ -254,12 +254,26 @@
                                                 @php
                                                     $ceRequests = \App\RequestToEditor::where('project_item_id', $copy_editing->id)
                                                         ->where('project_item_type', 'copy-editing')->orderBy('id','desc')->get();
-                                                    $cePendingRequest = $ceRequests->where('answer', '')->first();
+                                                    $ceLatest = $ceRequests->first();
                                                 @endphp
-                                                @if($cePendingRequest)
-                                                    <span class="label label-warning" title="Venter på svar fra {{ $cePendingRequest->editor->full_name ?? '' }}">
-                                                        <i class="fa fa-clock-o"></i> Forespørsel sendt
-                                                    </span>
+                                                @if($ceLatest)
+                                                    @if($ceLatest->answer === 'yes')
+                                                        <span class="label label-success" title="Godkjent av {{ $ceLatest->editor->full_name ?? '' }}">
+                                                            <i class="fa fa-check"></i> Godkjent
+                                                        </span>
+                                                    @elseif($ceLatest->answer === 'no')
+                                                        <span class="label label-danger" title="Avvist av {{ $ceLatest->editor->full_name ?? '' }}">
+                                                            <i class="fa fa-times"></i> Avvist
+                                                        </span>
+                                                    @elseif($ceLatest->answer === '' && \Carbon\Carbon::parse($ceLatest->answer_until)->lt(now()))
+                                                        <span class="label label-danger" title="Svarfrist utløpt for {{ $ceLatest->editor->full_name ?? '' }}">
+                                                            <i class="fa fa-exclamation-triangle"></i> Frist utløpt
+                                                        </span>
+                                                    @elseif($ceLatest->answer === '')
+                                                        <span class="label label-warning" title="Venter på svar fra {{ $ceLatest->editor->full_name ?? '' }} — frist {{ \Carbon\Carbon::parse($ceLatest->answer_until)->format('d.m.Y') }}">
+                                                            <i class="fa fa-clock-o"></i> Venter på svar
+                                                        </span>
+                                                    @endif
                                                 @endif
                                                 <button class="btn btn-xs btn-info projectRequestToEditorBtn" data-toggle="modal"
                                                         data-target="#projectRequestToEditorModal"
@@ -426,12 +440,26 @@
                                                 @php
                                                     $crRequests = \App\RequestToEditor::where('project_item_id', $correction->id)
                                                         ->where('project_item_type', 'correction')->orderBy('id','desc')->get();
-                                                    $crPendingRequest = $crRequests->where('answer', '')->first();
+                                                    $crLatest = $crRequests->first();
                                                 @endphp
-                                                @if($crPendingRequest)
-                                                    <span class="label label-warning" title="Venter på svar fra {{ $crPendingRequest->editor->full_name ?? '' }}">
-                                                        <i class="fa fa-clock-o"></i> Forespørsel sendt
-                                                    </span>
+                                                @if($crLatest)
+                                                    @if($crLatest->answer === 'yes')
+                                                        <span class="label label-success" title="Godkjent av {{ $crLatest->editor->full_name ?? '' }}">
+                                                            <i class="fa fa-check"></i> Godkjent
+                                                        </span>
+                                                    @elseif($crLatest->answer === 'no')
+                                                        <span class="label label-danger" title="Avvist av {{ $crLatest->editor->full_name ?? '' }}">
+                                                            <i class="fa fa-times"></i> Avvist
+                                                        </span>
+                                                    @elseif($crLatest->answer === '' && \Carbon\Carbon::parse($crLatest->answer_until)->lt(now()))
+                                                        <span class="label label-danger" title="Svarfrist utløpt for {{ $crLatest->editor->full_name ?? '' }}">
+                                                            <i class="fa fa-exclamation-triangle"></i> Frist utløpt
+                                                        </span>
+                                                    @elseif($crLatest->answer === '')
+                                                        <span class="label label-warning" title="Venter på svar fra {{ $crLatest->editor->full_name ?? '' }} — frist {{ \Carbon\Carbon::parse($crLatest->answer_until)->format('d.m.Y') }}">
+                                                            <i class="fa fa-clock-o"></i> Venter på svar
+                                                        </span>
+                                                    @endif
                                                 @endif
                                                 <button class="btn btn-xs btn-info projectRequestToEditorBtn" data-toggle="modal"
                                                         data-target="#projectRequestToEditorModal"
