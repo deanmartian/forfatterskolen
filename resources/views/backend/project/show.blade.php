@@ -74,16 +74,10 @@
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>{{ trans('site.title') }}</th>
-                            <th>{{ trans('site.description') }}</th>
-                            <th>File</th>
-                            <th>Editor</th>
-                            <th>{{ trans('site.expected-finish') }}</th>
-                            @if (Auth::user()->isSuperUser())
-                                <th>Price</th>
-                                <th>Editor Share</th>
-                            @endif
-                            <th>Feedback</th>
+                            <th>Tittel / Fil</th>
+                            <th>Redaktør</th>
+                            <th>Frist</th>
+                            <th>Tilbakemelding</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -91,42 +85,37 @@
                         @foreach($project->selfPublishingList as $publishing)
                             <tr>
                                 <td>
-                                    {{ $publishing->title }} <br>
+                                    <strong>{{ $publishing->title }}</strong>
+                                    @if($publishing->description)
+                                        <br><small class="text-muted">{{ \Illuminate\Support\Str::limit($publishing->description, 60) }}</small>
+                                    @endif
+                                    <br>{!! $publishing->dropbox_file_link_with_download !!}
                                     @if ($publishing->poInvoice)
-                                        <button class="btn btn-primary btn-xs powerOfficeOrderBtn" 
-                                        data-action="{{ route('admin.power-office.self-publishing.view-po-order', 
-                                        [$publishing->id, $publishing->poInvoice->id]) }}" 
+                                        <br><button class="btn btn-primary btn-xs powerOfficeOrderBtn"
+                                        data-action="{{ route('admin.power-office.self-publishing.view-po-order',
+                                        [$publishing->id, $publishing->poInvoice->id]) }}"
                                             data-target="#powerOfficeOrderModal"
                                             data-toggle="modal">
-                                            View Invoice
+                                            Faktura
                                         </button>
                                     @else
-                                        <a href="{{ route('admin.power-office.self-publishing.add-to-po', [$publishing->id]) }}" 
+                                        <br><a href="{{ route('admin.power-office.self-publishing.add-to-po', [$publishing->id]) }}"
                                             class="btn btn-primary btn-xs">
-                                            Add to PO
+                                            Legg til PO
                                         </a>
+                                    @endif
+                                    @if (Auth::user()->isSuperUser() && $publishing->price)
+                                        <br><small class="text-muted">Pris: {{ \App\Http\FrontendHelpers::currencyFormat($publishing->price) }}
+                                        @if($publishing->editor_share) · Red: {{ \App\Http\FrontendHelpers::currencyFormat($publishing->editor_share) }}@endif
+                                        </small>
                                     @endif
                                 </td>
                                 <td>
-                                    {{ $publishing->description }}
+                                    {{ $publishing->editor ? $publishing->editor->full_name : '—' }}
                                 </td>
                                 <td>
-                                    {!! $publishing->dropbox_file_link_with_download !!}
+                                    {{ $publishing->expected_finish ?: '—' }}
                                 </td>
-                                <td>
-                                    {{ $publishing->editor ? $publishing->editor->full_name : '' }}
-                                </td>
-                                <td>
-                                    {{ $publishing->expected_finish }}
-                                </td>
-                                @if (Auth::user()->isSuperUser())
-                                    <td>
-                                        {{ $publishing->price ? \App\Http\FrontendHelpers::currencyFormat($publishing->price) : '' }}
-                                    </td>
-                                    <td>
-                                        {{ $publishing->editor_share ? \App\Http\FrontendHelpers::currencyFormat($publishing->editor_share) : '' }}
-                                    </td>
-                                @endif
                                 <td>
                                     @if(!$publishing->feedback)
                                         <button class="btn btn-info btn-xs selfPublishingFeedbackBtn"
