@@ -83,6 +83,7 @@
                     @php
                         $profile = $post->user->profile ?? null;
                         $name = $profile ? ucwords($profile->name) : ($post->user->fullName ?? 'Ukjent');
+                        $groupName = $post->course_group_id ? (\App\Models\CourseGroup::find($post->course_group_id)?->name ?? '') : '';
                     @endphp
                     <tr @if($post->pinned) style="background: #fff8e1;" @endif>
                         <td>
@@ -91,35 +92,55 @@
                             @else
                                 {{ $name }}
                             @endif
-                        </td>
-                        <td>{{ Str::limit($post->content, 80) }}</td>
-                        <td>{{ $post->comments->count() }}</td>
-                        <td>{{ $post->created_at->format('d.m.Y H:i') }}</td>
-                        <td>
-                            @if($post->pinned)
-                                <span class="label label-warning"><i class="fa fa-thumb-tack"></i> Ja</span>
-                            @else
-                                <span class="text-muted">Nei</span>
+                            @if($groupName)
+                                <br><span class="label label-default" style="font-size:10px;">{{ $groupName }}</span>
                             @endif
                         </td>
                         <td>
-                            <form action="{{ route('admin.community.posts.toggle-pin', $post->id) }}" method="POST" style="display: inline;">
+                            <div style="cursor:pointer;" onclick="var el=document.getElementById('post-{{ $post->id }}');el.style.display=el.style.display==='none'?'block':'none';">
+                                {{ Str::limit($post->content, 80) }}
+                                <small style="color:#862736;">▼ vis mer</small>
+                            </div>
+                            <div id="post-{{ $post->id }}" style="display:none;margin-top:10px;padding:14px;background:#faf9f7;border-radius:8px;border:1px solid #e8e4de;white-space:pre-wrap;font-size:13px;line-height:1.7;">{{ $post->content }}</div>
+                            @if($post->image_url)
+                                <div style="margin-top:6px;"><img src="{{ $post->image_url }}" style="max-width:200px;border-radius:6px;"></div>
+                            @endif
+                            @if($post->comments->count() > 0)
+                                <div style="margin-top:8px;padding:8px 12px;background:#f0f0f0;border-radius:6px;font-size:12px;">
+                                    <strong>{{ $post->comments->count() }} kommentarer:</strong>
+                                    @foreach($post->comments->take(3) as $comment)
+                                        <div style="margin-top:4px;padding-left:8px;border-left:2px solid #ddd;">
+                                            <strong>{{ $comment->user->first_name ?? 'Ukjent' }}:</strong> {{ Str::limit($comment->body, 100) }}
+                                        </div>
+                                    @endforeach
+                                    @if($post->comments->count() > 3)
+                                        <div style="margin-top:4px;color:#888;">+ {{ $post->comments->count() - 3 }} til</div>
+                                    @endif
+                                </div>
+                            @endif
+                        </td>
+                        <td>{{ $post->created_at->format('d.m.Y H:i') }}</td>
+                        <td>
+                            @if($post->pinned)
+                                <span class="label label-warning"><i class="fa fa-thumb-tack"></i></span>
+                            @endif
+                        </td>
+                        <td>
+                            <form action="{{ route('admin.community.posts.toggle-pin', $post->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 <button type="submit" class="btn btn-xs {{ $post->pinned ? 'btn-default' : 'btn-warning' }}" title="{{ $post->pinned ? 'Løsne' : 'Fest' }}">
                                     <i class="fa fa-thumb-tack"></i>
                                 </button>
                             </form>
-                            <form action="{{ route('admin.community.posts.destroy', $post->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Er du sikker på at du vil slette dette innlegget?')">
+                            <form action="{{ route('admin.community.posts.destroy', $post->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Slette?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-xs btn-danger" title="Slett">
-                                    <i class="fa fa-trash"></i>
-                                </button>
+                                <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>
                             </form>
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="text-center text-muted">Ingen innlegg ennå.</td></tr>
+                    <tr><td colspan="5" class="text-center text-muted">Ingen innlegg ennå.</td></tr>
                 @endforelse
             </tbody>
         </table>
