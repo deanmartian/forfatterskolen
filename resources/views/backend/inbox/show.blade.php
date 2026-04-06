@@ -122,7 +122,7 @@
 
                 <div class="tab-content">
                     <div id="tab-reply" class="tab-pane active">
-                        <form action="{{ route('admin.inbox.reply', $conversation->id) }}" method="POST">
+                        <form action="{{ route('admin.inbox.reply', $conversation->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
                                 <label>Til: <strong>{{ $conversation->customer_email }}</strong></label>
@@ -130,6 +130,11 @@
                             <div class="form-group">
                                 <textarea name="body" id="reply-body" class="form-control" rows="6" placeholder="Skriv ditt svar her..." required></textarea>
                                 <input type="hidden" name="sender_name" value="{{ Auth::user()->full_name }}">
+                                <div style="margin-top:8px;">
+                                    <label style="cursor:pointer;font-size:13px;color:#666;"><i class="fa fa-paperclip"></i> Vedlegg
+                                        <input type="file" name="attachments[]" multiple style="margin-left:6px;font-size:12px;">
+                                    </label>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i> Send svar</button>
