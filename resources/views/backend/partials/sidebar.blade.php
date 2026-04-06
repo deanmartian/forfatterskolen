@@ -178,9 +178,9 @@
     </ul>
 
     <div class="ed-sidebar__toggle" style="padding: 8px 14px; border-top: 1px solid var(--border-light, #F0EDE8);">
-        <button onclick="toggleSidebar()" class="ed-btn ed-btn--ghost ed-btn--sm" style="width: 100%; text-align: center;" title="Skjul/vis meny">
-            <i class="fa fa-chevron-left" id="sidebarToggleIcon"></i>
-            <span class="ed-sidebar__nav-text">Skjul meny</span>
+        <button onclick="toggleSidebar()" style="width:100%;padding:10px;background:none;border:1px solid var(--border);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink-muted);font-size:13px;transition:all 0.15s;" title="Minimer/utvid meny">
+            <i class="fa fa-chevron-left" id="sidebarToggleIcon" style="transition:transform 0.2s;"></i>
+            <span class="ed-sidebar__nav-text">Minimer</span>
         </button>
     </div>
 
