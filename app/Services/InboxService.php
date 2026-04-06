@@ -142,6 +142,35 @@ class InboxService
                 $conversation->update(['first_response_at' => now()]);
             }
             $conversation->update(['status' => 'pending']);
+
+            // Save as AI training example — every sent reply teaches the AI
+            try {
+                $latestInbound = $conversation->messages()
+                    ->where('direction', 'inbound')
+                    ->latest()
+                    ->first();
+
+                if ($latestInbound) {
+                    $hash = md5($body);
+                    $exists = \DB::table('helpwise_reply_examples')->where('body_hash', $hash)->exists();
+                    if (!$exists) {
+                        \DB::table('helpwise_reply_examples')->insert([
+                            'external_message_id' => 'inbox-reply-' . $message->id,
+                            'conversation_id' => $conversation->id,
+                            'subject' => $latestInbound->subject ?? $conversation->subject,
+                            'sender_email' => $latestInbound->from_email ?? $conversation->customer_email,
+                            'reply_body' => $body,
+                            'sent_at' => now(),
+                            'category' => 'general',
+                            'body_hash' => $hash,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                }
+            } catch (\Exception $e) {
+                // Training example is optional
+            }
         }
 
         return $message;
