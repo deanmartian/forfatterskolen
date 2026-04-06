@@ -7211,4 +7211,78 @@ Forfatterskolen';
 
         return redirect()->back()->with('success', 'Forespørsel om utsettelse er sendt. Du vil få svar på e-post.');
     }
+
+    /**
+     * Show courses with Editor packages for self-enrollment (role 1 & 3 only).
+     */
+    public function editorCourseSelect()
+    {
+        $user = Auth::user();
+
+        if (!in_array($user->role, [1, 3])) {
+            abort(403);
+        }
+
+        // Get courses that have an Editor package
+        $courses = Course::whereHas('packages', function ($q) {
+            $q->where('variation', 'like', '%Editor%');
+        })->with(['packages' => function ($q) {
+            $q->where('variation', 'like', '%Editor%');
+        }])->orderBy('title')->get();
+
+        // Get course IDs the user is already enrolled in (active)
+        $enrolledCourseIds = CoursesTaken::where('user_id', $user->id)
+            ->where('is_active', 1)
+            ->whereHas('package', function ($q) {
+                $q->where('variation', 'like', '%Editor%');
+            })
+            ->get()
+            ->pluck('package.course_id')
+            ->toArray();
+
+        return view('frontend.learner.editor-courses', compact('courses', 'enrolledCourseIds'));
+    }
+
+    /**
+     * Enroll current user in a course via the Editor package.
+     */
+    public function editorCourseEnroll(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!in_array($user->role, [1, 3])) {
+            abort(403);
+        }
+
+        $request->validate(['course_id' => 'required|integer|exists:courses,id']);
+
+        $package = Package::where('course_id', $request->course_id)
+            ->where('variation', 'like', '%Editor%')
+            ->first();
+
+        if (!$package) {
+            return redirect()->back()->with('error', 'Ingen Editor-pakke funnet for dette kurset.');
+        }
+
+        // Check if already enrolled
+        $existing = CoursesTaken::where('user_id', $user->id)
+            ->where('package_id', $package->id)
+            ->where('is_active', 1)
+            ->first();
+
+        if ($existing) {
+            return redirect()->back()->with('info', 'Du er allerede påmeldt dette kurset.');
+        }
+
+        CoursesTaken::create([
+            'user_id' => $user->id,
+            'package_id' => $package->id,
+            'is_active' => 1,
+            'start_date' => now(),
+            'end_date' => now()->addYear(),
+            'is_free' => 1,
+        ]);
+
+        return redirect()->back()->with('success', 'Du er nå påmeldt kurset!');
+    }
 }

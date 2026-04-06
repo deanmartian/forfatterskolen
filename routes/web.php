@@ -555,6 +555,10 @@ Route::domain($front)->group(function () {
         Route::get('/pabygg-treff', [Frontend\PabyggTreffController::class, 'index'])->name('learner.pabygg-treff');
         Route::post('/pabygg-treff', [Frontend\PabyggTreffController::class, 'store'])->name('learner.pabygg-treff.store');
 
+        // Editor course self-enrollment
+        Route::get('/editor-courses', [Frontend\LearnerController::class, 'editorCourseSelect'])->name('learner.editor-courses');
+        Route::post('/editor-courses/enroll', [Frontend\LearnerController::class, 'editorCourseEnroll'])->name('learner.editor-courses.enroll');
+
         Route::post('/profile', [Frontend\LearnerController::class, 'profileUpdate'])->name('learner.profile.update'); // Profile Update
         Route::post('/profile/photo', [Frontend\LearnerController::class, 'profileUpdatePhoto'])->name('learner.profile.update-photo'); // Profile Update
         Route::post('/profile/notifications', [Frontend\LearnerController::class, 'profileUpdateNotifications'])->name('learner.profile.update-notifications'); // Notification Preferences
