@@ -37,7 +37,7 @@ class Learner
             if ($request->ajax()) {
                 return response('Unauthorized.', 401);
             } else {
-                return response(view('frontend.auth.login'));
+                return redirect()->guest(route('auth.login.show'));
             }
         } else {
             $user = $this->auth->user();
