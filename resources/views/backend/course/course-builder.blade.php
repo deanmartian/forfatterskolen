@@ -651,9 +651,15 @@
             bubble.innerHTML = renderMarkdown(content);
 
             // Check if response contains course modules - show create button
+            // Combine all assistant messages to detect modules built one-by-one
             var modules = detectModules(content);
-            if (modules.length >= 3) {
-                var title = detectCourseTitle(content) || 'Nytt kurs';
+            var allAssistantContent = content;
+            if (modules.length < 3) {
+                allAssistantContent = getMessages().filter(function(m){ return m.role === 'assistant'; }).map(function(m){ return m.content; }).join('\n\n') + '\n\n' + content;
+                modules = detectModules(allAssistantContent);
+            }
+            if (modules.length >= 2) {
+                var title = detectCourseTitle(allAssistantContent) || detectCourseTitle(content) || 'Nytt kurs';
                 var createBar = document.createElement('div');
                 createBar.style.cssText = 'margin-top:16px; padding:16px; background:#f0f7f0; border:1px solid #c3e6c3; border-radius:8px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;';
                 createBar.innerHTML = '<div style="flex:1;min-width:200px;">' +
@@ -661,7 +667,7 @@
                     '<span style="font-size:13px;color:#555;">«' + title + '» med ' + modules.length + ' moduler (opprettes som inaktivt)</span>' +
                     '</div>' +
                     '<button class="btn btn-success" onclick="cbCreateCourse(this)" ' +
-                    'data-content="' + btoa(unescape(encodeURIComponent(content))) + '" ' +
+                    'data-content="' + btoa(unescape(encodeURIComponent(allAssistantContent))) + '" ' +
                     'data-title="' + title.replace(/"/g, '&quot;') + '">' +
                     '<i class="fa fa-plus"></i> Opprett kurs' +
                     '</button>';
