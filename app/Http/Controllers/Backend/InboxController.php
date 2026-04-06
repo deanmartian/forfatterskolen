@@ -38,8 +38,16 @@ class InboxController extends Controller
     {
         $request->validate(['body' => 'required|string']);
         $isDraft = $request->boolean('save_as_draft', false);
+        $sendAndClose = $request->boolean('send_and_close', false);
 
         $this->inboxService->sendReply($id, $request->input('body'), auth()->id(), $isDraft);
+
+        if ($sendAndClose && !$isDraft) {
+            $this->inboxService->updateStatus($id, 'closed');
+            return redirect()->route('admin.inbox.index')
+                ->with('alert_type', 'success')
+                ->with('message', 'Svar sendt og samtale lukket!');
+        }
 
         return redirect()->route('admin.inbox.show', $id)
             ->with('alert_type', $isDraft ? 'info' : 'success')

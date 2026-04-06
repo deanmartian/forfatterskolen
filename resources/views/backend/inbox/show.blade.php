@@ -132,6 +132,7 @@
                             </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i> Send svar</button>
+                                <button type="submit" name="send_and_close" value="1" class="btn btn-success"><i class="fa fa-check"></i> Send og lukk</button>
                                 <button type="submit" name="save_as_draft" value="1" class="btn btn-default"><i class="fa fa-save"></i> Lagre utkast</button>
                                 <button type="button" class="btn btn-warning" id="btn-ai-draft"><i class="fa fa-magic"></i> Generer AI-utkast</button>
                             </div>
