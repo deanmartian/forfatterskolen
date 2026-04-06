@@ -154,6 +154,7 @@ Skriv et passende svarkutkast. Husk:
 - Bruk gjerne smilefjes som :-) eller :) der det passer naturlig
 - Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende):
   Skrivevarm hilsen,
+  {$this->getSenderName()}
   Forfatterskolen / Easywrite / Indiemoon Publishing
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
 - Matcher stilen og tonen fra eksemplene
@@ -304,6 +305,12 @@ PROMPT;
         }
 
         return $section;
+    }
+
+    private function getSenderName(): string
+    {
+        $user = auth()->user();
+        return $user ? $user->full_name : 'Forfatterskolen';
     }
 
     private function callAi(string $prompt): ?string
