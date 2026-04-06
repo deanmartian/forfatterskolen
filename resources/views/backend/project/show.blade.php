@@ -1300,6 +1300,24 @@
         });
 
         // Project Request To Editor modal
+        var projectRequestTexts = {
+            'copy-editing': {
+                title: 'Send forespørsel — Språkvask',
+                subject: 'Kan du ta en språkvask?',
+                message: 'Hei,\n\nVi har et manus som trenger språkvask. Har du kapasitet til å ta dette oppdraget?\n\n<strong>Omfang:</strong> Se vedlagt manus\n<strong>Frist for svar:</strong> Se svarfrist nedenfor\n\nLogg inn her for å se detaljer: :login_link\n\nMvh,\nForfatterskolen'
+            },
+            'correction': {
+                title: 'Send forespørsel — Korrektur',
+                subject: 'Kan du ta en korrektur?',
+                message: 'Hei,\n\nVi har et manus som trenger korrekturlesing. Har du kapasitet til å ta dette oppdraget?\n\n<strong>Omfang:</strong> Se vedlagt manus\n<strong>Frist for svar:</strong> Se svarfrist nedenfor\n\nLogg inn her for å se detaljer: :login_link\n\nMvh,\nForfatterskolen'
+            },
+            'self-publishing': {
+                title: 'Send forespørsel — Redaktørarbeid',
+                subject: 'Kan du ta et redaktøroppdrag?',
+                message: 'Hei,\n\nVi har et manus som trenger redaktørarbeid. Har du kapasitet til å lese og gi tilbakemelding på dette manuset?\n\n<strong>Omfang:</strong> Se vedlagt manus\n<strong>Frist for svar:</strong> Se svarfrist nedenfor\n\nLogg inn her for å se detaljer: :login_link\n\nMvh,\nForfatterskolen'
+            }
+        };
+
         $('.projectRequestToEditorBtn').click(function(){
             var action = $(this).data('action');
             var itemId = $(this).data('item-id');
@@ -1307,11 +1325,20 @@
             var modal = $('#projectRequestToEditorModal');
             modal.find('form').attr('action', action);
 
+            // Set type-specific text
+            var texts = projectRequestTexts[itemType] || projectRequestTexts['self-publishing'];
+            modal.find('.modal-title').text(texts.title);
+            modal.find('input[name="subject"]').val(texts.subject);
+            if (typeof tinymce !== 'undefined' && tinymce.get('projectRequestMessage')) {
+                tinymce.get('projectRequestMessage').setContent(texts.message.replace(/\n/g, '<br>'));
+            } else {
+                modal.find('textarea[name="message"]').val(texts.message);
+            }
+
             // Load previous requests for this item
             var tableBody = modal.find('.previous-requests-body');
             tableBody.empty();
 
-            // Find requests from data attribute
             var requests = $(this).data('requests');
             if (requests && requests.length > 0) {
                 $.each(requests, function(i, req) {
@@ -1373,8 +1400,8 @@
                         </div>
                         <div class="form-group">
                             <label>Melding</label>
-                            <textarea class="form-control tinymce" name="message" rows="6"
-                                required>{!! $requestToEditorEmailTemplate->email_content ?? '' !!}</textarea>
+                            <textarea class="form-control tinymce" name="message" id="projectRequestMessage" rows="6"
+                                required></textarea>
                         </div>
                         <br>
                         <hr>
