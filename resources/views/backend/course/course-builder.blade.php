@@ -734,7 +734,12 @@
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa fa-plus"></i> Opprett kurs';
                 var msg = 'Kunne ikke opprette kurset.';
-                if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON.message;
+                if (xhr.responseJSON) {
+                    msg = xhr.responseJSON.error || xhr.responseJSON.message || JSON.stringify(xhr.responseJSON);
+                } else {
+                    msg += ' (HTTP ' + xhr.status + ')';
+                }
+                console.error('Course create error:', xhr.status, xhr.responseText);
                 alert(msg);
             }
         });
