@@ -123,7 +123,7 @@
                     <span id="bulkCount">0</span> valgt
                     <button type="button" class="btn btn-sm btn-success" onclick="bulkAction('close')"><i class="fa fa-check"></i> Lukk</button>
                     <button type="button" class="btn btn-sm btn-warning" onclick="bulkAction('reopen')"><i class="fa fa-refresh"></i> Gjenåpne</button>
-                    <select id="bulkAssignSelect" style="padding:4px 8px;border-radius:4px;border:none;font-size:13px;">
+                    <select id="bulkAssignSelect" style="padding:6px 10px;border-radius:4px;border:1px solid rgba(255,255,255,0.3);font-size:13px;background:#fff;color:#333;">
                         <option value="">Tildel til...</option>
                         @foreach($teamMembers as $member)
                             <option value="{{ $member->id }}">{{ $member->first_name }}</option>
