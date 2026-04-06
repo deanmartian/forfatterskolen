@@ -40,7 +40,18 @@ class InboxController extends Controller
         $isDraft = $request->boolean('save_as_draft', false);
         $sendAndClose = $request->boolean('send_and_close', false);
 
-        $this->inboxService->sendReply($id, $request->input('body'), auth()->id(), $isDraft);
+        $attachments = [];
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('inbox-attachments', 'public');
+                $attachments[] = [
+                    'path' => storage_path('app/public/' . $path),
+                    'name' => $file->getClientOriginalName(),
+                ];
+            }
+        }
+
+        $this->inboxService->sendReply($id, $request->input('body'), auth()->id(), $isDraft, $attachments);
 
         if ($sendAndClose && !$isDraft) {
             $this->inboxService->updateStatus($id, 'closed');
@@ -134,14 +145,14 @@ class InboxController extends Controller
             'subject' => $request->input('subject'),
             'body' => $request->input('body'),
             'body_plain' => $request->input('body'),
-            'body_html' => str_replace("\n", '<br>', e($request->input('body'))),
+            'body_html' => collect(preg_split('/\r?\n\r?\n/', e($request->input('body'))))->map(fn($p) => '<p style="margin:0 0 8px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode(''),
             'sent_by_user_id' => auth()->id(),
             'is_draft' => $isDraft,
             'sent_at' => $isDraft ? null : now(),
         ]);
 
         if (!$isDraft) {
-            $htmlBody = str_replace("\n", '<br>', e($request->input('body')));
+            $htmlBody = collect(preg_split('/\r?\n\r?\n/', e($request->input('body'))))->map(fn($p) => '<p style="margin:0 0 8px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode('');
             dispatch(new \App\Jobs\AddMailToQueueJob(
                 $request->input('to'),
                 $request->input('subject'),

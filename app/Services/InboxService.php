@@ -79,7 +79,7 @@ class InboxService
         ])->findOrFail($id);
     }
 
-    public function sendReply(int $conversationId, string $body, int $userId, bool $isDraft = false): InboxMessage
+    public function sendReply(int $conversationId, string $body, int $userId, bool $isDraft = false, array $attachments = []): InboxMessage
     {
         $conversation = InboxConversation::findOrFail($conversationId);
         $user = User::findOrFail($userId);
@@ -94,7 +94,7 @@ class InboxService
             'subject' => 'Re: ' . $conversation->subject,
             'body' => $body,
             'body_plain' => strip_tags($body),
-            'body_html' => str_replace("\n\n", '<br>', str_replace("\n", '<br>', e($body))),
+            'body_html' => collect(preg_split('/\r?\n\r?\n/', e($body)))->map(fn($p) => '<p style="margin:0 0 8px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode(''),
             'sent_by_user_id' => $userId,
             'is_draft' => $isDraft,
             'sent_at' => $isDraft ? null : now(),
@@ -103,8 +103,10 @@ class InboxService
         if (!$isDraft) {
             // Send branded email
             try {
-                $htmlBody = str_replace("\n\n", '<br>', str_replace("\n", '<br>', e($body)));
+                $htmlBody = collect(preg_split('/\r?\n\r?\n/', e($body)))->map(fn($p) => '<p style="margin:0 0 8px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode('');
                 $fromEmail = $conversation->inbox ?? 'post@forfatterskolen.no';
+
+                $attachmentPaths = !empty($attachments) ? array_column($attachments, 'path') : null;
 
                 dispatch(new \App\Jobs\AddMailToQueueJob(
                     $conversation->customer_email,
@@ -112,7 +114,7 @@ class InboxService
                     $htmlBody,
                     $fromEmail,
                     $user->full_name . ' — Forfatterskolen',
-                    null,
+                    $attachmentPaths,
                     'inbox-reply',
                     $conversation->id
                 ));
