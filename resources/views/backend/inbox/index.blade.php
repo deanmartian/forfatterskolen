@@ -93,15 +93,22 @@
             {{-- Conversations --}}
             <div style="background: #fff;">
                 {{-- Bulk actions bar --}}
-                <div id="bulkBar" style="display:none;background:#862736;color:#fff;padding:8px 16px;border-radius:6px;margin-bottom:10px;align-items:center;gap:12px;">
+                <div id="bulkBar" style="display:none;background:#862736;color:#fff;padding:8px 16px;border-radius:6px;margin-bottom:10px;align-items:center;gap:12px;flex-wrap:wrap;">
                     <span id="bulkCount">0</span> valgt
                     <button type="button" class="btn btn-sm btn-success" onclick="bulkAction('close')"><i class="fa fa-check"></i> Lukk</button>
                     <button type="button" class="btn btn-sm btn-warning" onclick="bulkAction('reopen')"><i class="fa fa-refresh"></i> Gjenåpne</button>
+                    <select id="bulkAssignSelect" style="padding:4px 8px;border-radius:4px;border:none;font-size:13px;">
+                        <option value="">Tildel til...</option>
+                        @foreach($teamMembers as $member)
+                            <option value="{{ $member->id }}">{{ $member->first_name }}</option>
+                        @endforeach
+                    </select>
+                    <button type="button" class="btn btn-sm btn-info" onclick="bulkAssign()"><i class="fa fa-user"></i> Tildel</button>
                     <button type="button" class="btn btn-sm btn-danger" onclick="bulkAction('delete')"><i class="fa fa-trash"></i> Slett</button>
                     <button type="button" class="btn btn-sm btn-default" onclick="bulkSelectNone()">Avbryt</button>
                     <label style="margin-left:auto;cursor:pointer;font-size:12px;"><input type="checkbox" id="selectAll" onchange="bulkSelectAll(this)"> Velg alle</label>
                 </div>
-                <form id="bulkForm" method="POST" action="{{ route('admin.inbox.bulk') }}">@csrf<input type="hidden" name="action" id="bulkAction"><input type="hidden" name="ids" id="bulkIds"></form>
+                <form id="bulkForm" method="POST" action="{{ route('admin.inbox.bulk') }}">@csrf<input type="hidden" name="action" id="bulkAction"><input type="hidden" name="ids" id="bulkIds"><input type="hidden" name="assign_to" id="bulkAssignTo"></form>
 
                 @forelse($conversations as $conv)
                     <div class="inbox-row" style="position:relative;">
@@ -225,6 +232,16 @@ function bulkAction(action) {
     document.querySelectorAll('.bulk-check:checked').forEach(function(cb) { ids.push(cb.value); });
     document.getElementById('bulkAction').value = action;
     document.getElementById('bulkIds').value = JSON.stringify(ids);
+    document.getElementById('bulkForm').submit();
+}
+function bulkAssign() {
+    var assignTo = document.getElementById('bulkAssignSelect').value;
+    if (!assignTo) { alert('Velg en person å tildele til'); return; }
+    var ids = [];
+    document.querySelectorAll('.bulk-check:checked').forEach(function(cb) { ids.push(cb.value); });
+    document.getElementById('bulkAction').value = 'assign';
+    document.getElementById('bulkIds').value = JSON.stringify(ids);
+    document.getElementById('bulkAssignTo').value = assignTo;
     document.getElementById('bulkForm').submit();
 }
 </script>

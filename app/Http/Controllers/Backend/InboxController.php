@@ -199,6 +199,12 @@ class InboxController extends Controller
                 \App\Models\Inbox\InboxConversation::whereIn('id', $ids)->update(['status' => 'open']);
                 $msg = count($ids) . ' samtaler gjenåpnet';
                 break;
+            case 'assign':
+                $assignTo = (int) $request->input('assign_to');
+                $assignee = \App\User::find($assignTo);
+                \App\Models\Inbox\InboxConversation::whereIn('id', $ids)->update(['assigned_to' => $assignTo]);
+                $msg = count($ids) . ' samtaler tildelt ' . ($assignee->first_name ?? '');
+                break;
             case 'delete':
                 \App\Models\Inbox\InboxMessage::whereIn('conversation_id', $ids)->delete();
                 \App\Models\Inbox\InboxConversation::whereIn('id', $ids)->delete();
