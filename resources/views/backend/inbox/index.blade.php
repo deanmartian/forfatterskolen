@@ -56,6 +56,9 @@
                 <a href="{{ route('admin.inbox.index', ['status' => 'closed']) }}" class="nav-item {{ ($filters['status'] ?? '') === 'closed' ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
                     <i class="fa fa-check-circle"></i> Lukket <span class="badge pull-right">{{ $stats['closed_today'] }}</span>
                 </a>
+                <a href="{{ route('admin.inbox.index', ['sent' => 1]) }}" class="nav-item {{ !empty($filters['sent']) ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
+                    <i class="fa fa-paper-plane"></i> Sendt
+                </a>
 
                 <div style="padding: 10px 15px; border-top: 2px solid #ddd; margin-top: 10px;">
                     <strong style="font-size: 11px; text-transform: uppercase; color: #999;">Team</strong>

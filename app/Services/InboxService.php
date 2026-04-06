@@ -19,7 +19,9 @@ class InboxService
         $query = InboxConversation::with(['customer', 'assignee', 'latestMessage'])
             ->notSpam();
 
-        if (!empty($filters['status'])) {
+        if (!empty($filters['sent'])) {
+            // Show all statuses for sent filter
+        } elseif (!empty($filters['status'])) {
             $query->where('status', $filters['status']);
         } else {
             $query->whereIn('status', ['open', 'pending']);
@@ -52,6 +54,12 @@ class InboxService
 
         if (!empty($filters['starred'])) {
             $query->where('is_starred', true);
+        }
+
+        if (!empty($filters['sent'])) {
+            $query->whereHas('messages', fn($q) => $q->where('direction', 'outbound')->where('is_draft', false));
+            // Show all statuses for sent
+            $query->withoutGlobalScope('status');
         }
 
         return $query->orderByDesc('updated_at')->paginate(25);
