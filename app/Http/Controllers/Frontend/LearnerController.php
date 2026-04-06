@@ -6910,9 +6910,17 @@ Forfatterskolen';
             'attach_file' => null,
         ];
 
-        Mail::to('post@forfatterskolen.no')->queue(new SubjectBodyEmail($emailData));
+        // Send til elevens foretrukne redaktør, med kopi til admin
+        $preferredEditor = $user->preferredEditor ? $user->preferredEditor->editor : null;
+        $toEmail = $preferredEditor ? $preferredEditor->email : 'post@forfatterskolen.no';
 
-        return redirect()->route('learner.coaching-time')->with('success', 'Takk! Vi har mottatt ditt forslag og tar kontakt for å avtale tidspunkt.');
+        $mail = Mail::to($toEmail);
+        if ($preferredEditor) {
+            $mail->cc('post@forfatterskolen.no');
+        }
+        $mail->queue(new SubjectBodyEmail($emailData));
+
+        return redirect()->route('learner.coaching-time')->with('success', 'Takk! Redaktøren har mottatt ditt forslag og tar kontakt for å avtale tidspunkt.');
     }
 
     public function currentUser()
