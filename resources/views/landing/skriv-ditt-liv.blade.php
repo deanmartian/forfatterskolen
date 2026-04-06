@@ -549,15 +549,10 @@
       <a href="#historier" class="sp-btn-outline">Les historier</a>
     </div>
     <div class="sp-hero-image">
-      <div class="sp-hero-image-placeholder">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>
-        </svg>
-        Bilde: eldre person skriver ved vindu
-      </div>
+      <img src="/images/course-testimonials/Svanhild_Fosback_Larsen.jpeg" alt="Svanhild Fosback Larsen - debuterte som forfatter som 76-åring" style="width:100%;height:100%;object-fit:cover;">
       <div class="sp-hero-badge">
         <strong>76 år</strong>
-        da hun debuterte som forfatter
+        da Svanhild debuterte som forfatter
       </div>
     </div>
   </div>
@@ -613,27 +608,33 @@
     <p class="sp-section-lead">Elever som deg - som bestemte seg for at historien deres fortjente å bli fortalt.</p>
     <div class="sp-story-cards">
       <div class="sp-story-card">
-        <div class="sp-story-img">Bilde av forfatter</div>
+        <div class="sp-story-img">
+          <img src="/images/course-testimonials/Svanhild_Fosback_Larsen.jpeg" alt="Svanhild Fosback Larsen" style="width:100%;height:100%;object-fit:cover;">
+        </div>
         <div class="sp-story-body">
-          <h4>Diktsamlingsdebutant som 76-åring</h4>
+          <h4>Svanhild - diktsamlingsdebutant som 76-åring</h4>
           <p class="sp-story-quote">Det er aldri for sent å begynne.</p>
-          <a href="/utgitte-elever" class="sp-story-link">Les hele historien &rarr;</a>
+          <a href="/publishing" class="sp-story-link">Les hele historien &rarr;</a>
         </div>
       </div>
       <div class="sp-story-card">
-        <div class="sp-story-img">Bilde av Reidun</div>
+        <div class="sp-story-img">
+          <img src="/storage/publisher-books/authors/1765393548.png" alt="Reidun Kristine Vålberg" style="width:100%;height:100%;object-fit:cover;">
+        </div>
         <div class="sp-story-body">
-          <h4>Reidun (63) - fra blanke ark til roman</h4>
+          <h4>Reidun (63) - skilsmissehunder ga idé til feelgoodroman</h4>
           <p class="sp-story-quote">Jeg hadde aldri skrevet noe lengre enn en e-post.</p>
-          <a href="/utgitte-elever" class="sp-story-link">Les hele historien &rarr;</a>
+          <a href="/publishing" class="sp-story-link">Les hele historien &rarr;</a>
         </div>
       </div>
       <div class="sp-story-card">
-        <div class="sp-story-img">Bilde av forfatter</div>
+        <div class="sp-story-img">
+          <img src="/storage/publisher-books/authors/1754756734.jpg" alt="Chris-Helén Echrehaug" style="width:100%;height:100%;object-fit:cover;">
+        </div>
         <div class="sp-story-body">
-          <h4>Drømte om å skrive besteforeldrenes historie</h4>
+          <h4>Chris-Helén - fra drøm til ferdig bok</h4>
           <p class="sp-story-quote">Nå finnes historien - for alltid.</p>
-          <a href="/utgitte-elever" class="sp-story-link">Les hele historien &rarr;</a>
+          <a href="/publishing" class="sp-story-link">Les hele historien &rarr;</a>
         </div>
       </div>
     </div>
@@ -658,15 +659,33 @@
       </ul>
     </div>
     <div class="sp-pris-box">
-      <p class="sp-pris-label">Kurspris</p>
-      <p class="sp-pris-amount">3 490<span style="font-size: 1.5rem">,-</span></p>
-      <p class="sp-pris-avdrag">eller 3 &times; 1 200 kr</p>
-      <ul class="sp-pris-features">
-        <li>6 uker med veiledning</li>
-        <li>Ukentlig tilbakemelding</li>
-        <li>Tilgang til deltakergruppe</li>
-        <li>Kursmateriell for alltid</li>
-      </ul>
+      <p class="sp-pris-label">Velg ditt nivå</p>
+
+      <div style="border:1px solid #e8e0d8;border-radius:3px;padding:16px 20px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <strong style="font-size:0.95rem;">Grunnkurs</strong>
+          <span style="color:var(--primary);font-weight:700;">2 990 kr</span>
+        </div>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin:0;">Moduler, deltakergruppe, kursmateriell</p>
+      </div>
+
+      <div style="border:2px solid var(--primary);border-radius:3px;padding:16px 20px;margin-bottom:12px;position:relative;">
+        <span style="position:absolute;top:-10px;left:12px;background:var(--primary);color:#fff;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:2px;">Mest valgt</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <strong style="font-size:0.95rem;">Med veiledertilbakemelding</strong>
+          <span style="color:var(--primary);font-weight:700;">5 990 kr</span>
+        </div>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin:0;">Alt over + skriftlig tilbakemelding på dine tekster</p>
+      </div>
+
+      <div style="border:1px solid #e8e0d8;border-radius:3px;padding:16px 20px;margin-bottom:24px;background:var(--bg-cream);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <strong style="font-size:0.95rem;">Premium + Indiemoon</strong>
+          <span style="color:var(--primary);font-weight:700;">19 900 kr</span>
+        </div>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin:0;">Alt over + profesjonell publisering av ferdig bok</p>
+      </div>
+
       <a href="#pamelding" class="sp-btn-primary">Meld meg på nå</a>
       <p class="sp-pris-note">Eller start med <a href="/gratis-tekstvurdering" style="color: var(--primary);">gratis tekstvurdering</a></p>
     </div>
@@ -706,7 +725,7 @@
       <div>
         <p class="sp-section-label">Neste steg</p>
         <h3>Fra manus til trykt bok - med Indiemoon</h3>
-        <p>Når manuskriptet ditt er ferdig, kan vi hjelpe deg å gi det ut profesjonelt. En bok til familien. Til barnebarna. Til deg selv.</p>
+        <p>Når manuskriptet ditt er ferdig, kan vi hjelpe deg å gi det ut profesjonelt. En bok til familien. Til barnebarna. Til deg selv. Vi har allerede hjulpet over 25 elever med å trykke sin egen bok.</p>
       </div>
       <div>
         <a href="https://indiemoon.no" class="sp-btn-primary" target="_blank" rel="noopener">Les mer om publisering</a>
