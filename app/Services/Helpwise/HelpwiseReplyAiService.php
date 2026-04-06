@@ -152,7 +152,7 @@ Skriv et passende svarkutkast. Husk:
 - Vær hjelpsom, varm og positiv - men ikke overdrevent
 - Hold deg kort og direkte, lik eksemplene ovenfor
 - Bruk gjerne smilefjes som :-) eller :) der det passer naturlig
-- Avslutt med "Vennlig hilsen, Forfatterskolen" eller "Mvh, Forfatterskolen"
+- Avslutt med "Skrivevarm hilsen,\n[Navn]\nForfatterskolen / Easywrite / Indiemoon Publishing"
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
 - Matcher stilen og tonen fra eksemplene
 PROMPT;
