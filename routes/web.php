@@ -61,6 +61,7 @@ Route::domain($front)->group(function () {
         Route::get('/gift-cards', [Frontend\HomeController::class, 'giftCards'])->name('front.gift-cards');
         Route::post('/set-gift-card', [Frontend\HomeController::class, 'setGiftCard']);
         Route::get('/arskurs', [Frontend\HomeController::class, 'arskurs'])->name('front.arskurs'); // Årskurs landing page
+        Route::view('/skriv-ditt-liv', 'landing.skriv-ditt-liv')->name('front.skriv-ditt-liv');
         Route::get('/faq', [Frontend\HomeController::class, 'faq'])->name('front.faq'); // FAQ
         Route::get('/support', [Frontend\HomeController::class, 'support'])->name('front.support'); // Support
         Route::get('/support/{id}/articles', [Frontend\HomeController::class, 'supportArticles'])->name('front.support-articles'); // Support Articles
