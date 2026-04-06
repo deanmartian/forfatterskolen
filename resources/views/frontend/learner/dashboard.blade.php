@@ -381,6 +381,18 @@
         <span class="db-welcome__date">{{ $todayFormatted }}</span>
     </div>
 
+    {{-- Install app banner (only on mobile, only when not installed) --}}
+    <div id="installAppBanner" style="display:none;background:linear-gradient(135deg,#862736,#a83347);border-radius:12px;padding:16px 20px;margin-bottom:1.25rem;color:#fff;align-items:center;gap:14px;">
+        <div style="flex:1;">
+            <div style="font-weight:700;font-size:15px;margin-bottom:2px;">📱 Få Forfatterskolen som app</div>
+            <div style="font-size:13px;opacity:0.85;">Raskere tilgang, push-varsler og offline-støtte</div>
+        </div>
+        <button id="installAppBtn" onclick="installPWA()" style="background:#fff;color:#862736;border:none;border-radius:8px;padding:10px 20px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;">
+            Installer
+        </button>
+        <button onclick="dismissInstallBanner()" style="background:none;border:none;color:rgba(255,255,255,0.7);font-size:18px;cursor:pointer;padding:0 4px;">✕</button>
+    </div>
+
     {{-- Daily quote --}}
     <div class="db-quote">
         <p class="db-quote__text">"{{ $dailyQuote['text'] }}"</p>
@@ -921,6 +933,48 @@
 @section('scripts')
 <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
+    // PWA Install banner
+    var deferredPrompt = null;
+    var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+    window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        showInstallBanner();
+    });
+
+    function showInstallBanner() {
+        if (isStandalone) return; // Already installed
+        if (localStorage.getItem('pwa-install-dismissed')) return;
+        var banner = document.getElementById('installAppBanner');
+        if (banner) banner.style.display = 'flex';
+    }
+
+    function installPWA() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(function(result) {
+                if (result.outcome === 'accepted') {
+                    document.getElementById('installAppBanner').style.display = 'none';
+                }
+                deferredPrompt = null;
+            });
+        } else {
+            // iOS - show instructions
+            alert('For å installere appen:\n\n📱 iPhone/iPad: Trykk på Del-knappen (⎋) og velg «Legg til på Hjem-skjerm»\n\n📱 Android: Trykk på ⋮ menyen og velg «Installer app»');
+        }
+    }
+
+    function dismissInstallBanner() {
+        document.getElementById('installAppBanner').style.display = 'none';
+        localStorage.setItem('pwa-install-dismissed', '1');
+    }
+
+    // Show banner on mobile even without beforeinstallprompt (iOS)
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) && !isStandalone && !localStorage.getItem('pwa-install-dismissed')) {
+        document.getElementById('installAppBanner').style.display = 'flex';
+    }
+
     @if (Auth::user()->need_pass_update)
         $(".passUpdateBtn").trigger('click');
     @endif
