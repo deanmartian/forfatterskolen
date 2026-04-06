@@ -177,6 +177,13 @@
         </li>
     </ul>
 
+    <div class="ed-sidebar__toggle" style="padding: 8px 14px; border-top: 1px solid var(--border-light, #F0EDE8);">
+        <button onclick="toggleSidebar()" class="ed-btn ed-btn--ghost ed-btn--sm" style="width: 100%; text-align: center;" title="Skjul/vis meny">
+            <i class="fa fa-chevron-left" id="sidebarToggleIcon"></i>
+            <span class="ed-sidebar__nav-text">Skjul meny</span>
+        </button>
+    </div>
+
     <div class="ed-sidebar__user">
         <div class="ed-sidebar__avatar">
             {{ strtoupper(substr(Auth::user()->fullName, 0, 1)) }}{{ strtoupper(substr(explode(' ', Auth::user()->fullName)[1] ?? '', 0, 1)) }}
@@ -198,3 +205,23 @@
         </div>
     </div>
 </aside>
+
+<script>
+function toggleSidebar() {
+    var sidebar = document.getElementById('edSidebar');
+    var collapsed = sidebar.classList.toggle('ed-sidebar--collapsed');
+    document.body.classList.toggle('sidebar-collapsed', collapsed);
+    var icon = document.getElementById('sidebarToggleIcon');
+    icon.className = collapsed ? 'fa fa-chevron-right' : 'fa fa-chevron-left';
+    localStorage.setItem('sidebar_collapsed', collapsed ? '1' : '0');
+}
+(function() {
+    if (localStorage.getItem('sidebar_collapsed') === '1') {
+        var sidebar = document.getElementById('edSidebar');
+        sidebar.classList.add('ed-sidebar--collapsed');
+        document.body.classList.add('sidebar-collapsed');
+        var icon = document.getElementById('sidebarToggleIcon');
+        if (icon) icon.className = 'fa fa-chevron-right';
+    }
+})();
+</script>

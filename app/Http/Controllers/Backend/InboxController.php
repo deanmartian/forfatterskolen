@@ -14,7 +14,7 @@ class InboxController extends Controller
 
     public function index(Request $request)
     {
-        $filters = $request->only(['status', 'assigned_to', 'inbox', 'category', 'search', 'starred', 'sent', 'follow_up']);
+        $filters = $request->only(['status', 'assigned_to', 'inbox', 'category', 'search', 'starred', 'sent', 'follow_up', 'mentions', 'awaiting']);
         $conversations = $this->inboxService->getConversations($filters);
         $stats = $this->inboxService->getStats();
         $teamMembers = $this->inboxService->getTeamMembers();

@@ -58,7 +58,24 @@
     height: 100vh;
     overflow-y: auto;
     z-index: 100;
+    transition: width 0.2s ease;
 }
+
+/* ── Collapsed Sidebar ────────────────────────────── */
+.ed-sidebar--collapsed { width: 60px; }
+.ed-sidebar--collapsed .ed-sidebar__nav-text,
+.ed-sidebar--collapsed .ed-sidebar__logo-title,
+.ed-sidebar--collapsed .ed-sidebar__logo-sub,
+.ed-sidebar--collapsed .ed-sidebar__user-name,
+.ed-sidebar--collapsed .ed-sidebar__user-role,
+.ed-sidebar--collapsed .ed-sidebar__user-actions,
+.ed-sidebar--collapsed .ed-nav-item__label { display: none; }
+.ed-sidebar--collapsed .ed-nav-item { justify-content: center; padding: 12px; }
+.ed-sidebar--collapsed .ed-nav-item__icon { margin: 0; }
+.ed-sidebar--collapsed .ed-sidebar__logo { padding: 16px 10px; text-align: center; }
+.ed-sidebar--collapsed .ed-sidebar__avatar { margin: 0 auto; }
+.ed-sidebar--collapsed .ed-sidebar__user { justify-content: center; }
+body.sidebar-collapsed { padding-left: 60px; }
 
 .ed-sidebar__logo {
     padding: 24px 20px 18px;
@@ -268,6 +285,7 @@
 /* ── Push all body content right of sidebar ────────── */
 body {
     padding-left: var(--sidebar-width);
+    transition: padding-left 0.2s ease;
 }
 
 /* ── Dashboard Layout ───────────────────────────────── */

@@ -47,6 +47,12 @@
                 <a href="{{ route('admin.inbox.index', ['assigned_to' => auth()->id()]) }}" class="nav-item {{ ($filters['assigned_to'] ?? '') == auth()->id() ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
                     <i class="fa fa-user"></i> Mine <span class="badge pull-right">{{ \App\Models\Inbox\InboxConversation::where('assigned_to', auth()->id())->whereIn('status', ['open', 'pending'])->count() }}</span>
                 </a>
+                <a href="{{ route('admin.inbox.index', ['mentions' => 1]) }}" class="nav-item {{ !empty($filters['mentions']) ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
+                    <i class="fa fa-at"></i> Nevnt meg <span class="badge pull-right">{{ $stats['mentions'] }}</span>
+                </a>
+                <a href="{{ route('admin.inbox.index', ['awaiting' => 1]) }}" class="nav-item {{ !empty($filters['awaiting']) ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
+                    <i class="fa fa-hourglass-half"></i> Venter på svar <span class="badge pull-right">{{ $stats['awaiting'] }}</span>
+                </a>
                 <a href="{{ route('admin.inbox.index', ['starred' => 1]) }}" class="nav-item {{ !empty($filters['starred']) ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
                     <i class="fa fa-star"></i> Stjernet <span class="badge pull-right">{{ $stats['starred'] }}</span>
                 </a>

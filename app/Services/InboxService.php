@@ -64,6 +64,23 @@ class InboxService
             $query->whereNotNull('follow_up_at')->where('follow_up_at', '<=', now());
         }
 
+        if (!empty($filters['mentions'])) {
+            $userId = auth()->id();
+            $userName = auth()->user()->first_name;
+            $query->whereHas('comments', function ($q) use ($userId, $userName) {
+                $q->where(function ($q2) use ($userId, $userName) {
+                    $q2->whereJsonContains('mentioned_user_ids', $userId)
+                       ->orWhereJsonContains('mentioned_user_ids', (string) $userId)
+                       ->orWhere('body', 'like', '%@' . $userName . '%');
+                });
+            });
+        }
+
+        if (!empty($filters['awaiting'])) {
+            $query->where('status', 'open')
+                ->whereHas('latestMessage', fn($q) => $q->where('direction', 'inbound'));
+        }
+
         return $query->orderByDesc('updated_at')->paginate(25);
     }
 
@@ -288,7 +305,26 @@ class InboxService
             'closed_today' => InboxConversation::where('status', 'closed')->whereDate('resolved_at', today())->count(),
             'total' => InboxConversation::notSpam()->count(),
             'starred' => InboxConversation::where('is_starred', true)->notSpam()->count(),
+            'mentions' => $this->getMentionsCount(),
+            'awaiting' => InboxConversation::where('status', 'open')->notSpam()
+                ->whereHas('latestMessage', fn($q) => $q->where('direction', 'inbound'))->count(),
         ];
+    }
+
+    private function getMentionsCount(): int
+    {
+        $userId = auth()->id();
+        $userName = auth()->user()->first_name ?? '';
+
+        return InboxConversation::notSpam()
+            ->whereIn('status', ['open', 'pending'])
+            ->whereHas('comments', function ($q) use ($userId, $userName) {
+                $q->where(function ($q2) use ($userId, $userName) {
+                    $q2->whereJsonContains('mentioned_user_ids', $userId)
+                       ->orWhereJsonContains('mentioned_user_ids', (string) $userId)
+                       ->orWhere('body', 'like', '%@' . $userName . '%');
+                });
+            })->count();
     }
 
     public function getTeamMembers()
