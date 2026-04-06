@@ -353,6 +353,12 @@ Route::domain($front)->group(function () {
 
     });
 
+    // Editor course enrollment (outside learner middleware - editors/admins only)
+    Route::middleware('auth')->prefix('account')->group(function () {
+        Route::get('/editor-courses', [Frontend\LearnerController::class, 'editorCourseSelect'])->name('learner.editor-courses');
+        Route::post('/editor-courses/enroll', [Frontend\LearnerController::class, 'editorCourseEnroll'])->name('learner.editor-courses.enroll');
+    });
+
     // Learner Dashboard
     Route::middleware('learner', 'logActivity')->prefix('account')->group(function () {
         Route::get('/dashboard', [Frontend\LearnerController::class, 'dashboard'])->name('learner.dashboard'); // Dashboard Page
@@ -554,10 +560,6 @@ Route::domain($front)->group(function () {
         // Påbyggingstreff
         Route::get('/pabygg-treff', [Frontend\PabyggTreffController::class, 'index'])->name('learner.pabygg-treff');
         Route::post('/pabygg-treff', [Frontend\PabyggTreffController::class, 'store'])->name('learner.pabygg-treff.store');
-
-        // Editor course self-enrollment
-        Route::get('/editor-courses', [Frontend\LearnerController::class, 'editorCourseSelect'])->name('learner.editor-courses');
-        Route::post('/editor-courses/enroll', [Frontend\LearnerController::class, 'editorCourseEnroll'])->name('learner.editor-courses.enroll');
 
         Route::post('/profile', [Frontend\LearnerController::class, 'profileUpdate'])->name('learner.profile.update'); // Profile Update
         Route::post('/profile/photo', [Frontend\LearnerController::class, 'profileUpdatePhoto'])->name('learner.profile.update-photo'); // Profile Update
