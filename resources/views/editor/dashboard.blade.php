@@ -293,6 +293,52 @@
 		</p>
 	</div>
 
+	{{-- ═══════ PUSH NOTIFICATION SETTINGS ═══════ --}}
+	<div style="background:#fff;border:1px solid #e8e4de;border-radius:10px;padding:16px 20px;margin-bottom:1rem;">
+		<div style="display:flex;align-items:center;justify-content:space-between;">
+			<div>
+				<strong style="font-size:14px;">📱 Push-varsler</strong>
+				<span id="edPushStatus" style="font-size:12px;margin-left:8px;"></span>
+			</div>
+			<button id="edPushBtn" onclick="toggleEditorPush()" style="padding:6px 14px;border-radius:6px;border:1px solid #ddd;background:#fff;font-size:12px;cursor:pointer;">
+				Sjekker...
+			</button>
+		</div>
+	</div>
+	<script>
+	(function() {
+		var btn = document.getElementById('edPushBtn');
+		var status = document.getElementById('edPushStatus');
+		if (!('PushManager' in window)) { btn.textContent = 'Ikke støttet'; status.textContent = '(nettleseren støtter ikke push)'; return; }
+		navigator.serviceWorker && navigator.serviceWorker.ready.then(function(reg) {
+			reg.pushManager.getSubscription().then(function(sub) {
+				if (sub) { btn.textContent = 'Slå av'; btn.style.background='#e8f5e9'; btn.style.color='#2e7d32'; btn.style.borderColor='#2e7d32'; status.innerHTML = '<span style="color:#2e7d32;">✓ Aktivert</span>'; }
+				else { btn.textContent = 'Aktiver'; btn.style.background='#862736'; btn.style.color='#fff'; btn.style.borderColor='#862736'; status.innerHTML = '<span style="color:#e65100;">Ikke aktivert</span>'; }
+			});
+		});
+	})();
+	function toggleEditorPush() {
+		navigator.serviceWorker.ready.then(function(reg) {
+			reg.pushManager.getSubscription().then(function(sub) {
+				if (sub) { sub.unsubscribe().then(function() { location.reload(); }); }
+				else { Notification.requestPermission().then(function(p) { if (p==='granted' && typeof subscribePush==='function') { subscribePush(reg); location.reload(); } }); }
+			});
+		});
+	}
+	</script>
+
+	{{-- ═══════ INSTALL APP BANNER ═══════ --}}
+	<div id="editorInstallBanner" style="display:none;background:linear-gradient(135deg,#862736,#a83347);border-radius:12px;padding:16px 20px;margin-bottom:1.25rem;color:#fff;align-items:center;gap:14px;">
+		<div style="flex:1;">
+			<div style="font-weight:700;font-size:15px;margin-bottom:2px;">📱 Få Redaktørportalen som app</div>
+			<div style="font-size:13px;opacity:0.85;">Raskere tilgang til manus, oppgaver og tilbakemeldinger</div>
+		</div>
+		<button id="editorInstallBtn" onclick="installEditorPWA()" style="background:#fff;color:#862736;border:none;border-radius:8px;padding:10px 20px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;">
+			Installer
+		</button>
+		<button onclick="dismissEditorInstall()" style="background:none;border:none;color:rgba(255,255,255,0.7);font-size:18px;cursor:pointer;padding:0 4px;">✕</button>
+	</div>
+
 	{{-- ═══════ DAGENS ORDTAK ═══════ --}}
 	@php
 		$ordtak = [
@@ -2209,6 +2255,42 @@
 <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
 	var cacheBuster = '{{ $cacheBuster }}';
+
+	// PWA Install
+	var editorDeferredPrompt = null;
+	var editorIsStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+	window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); editorDeferredPrompt = e; showEditorInstall(); });
+	function showEditorInstall() {
+		if (editorIsStandalone || localStorage.getItem('editor-pwa-dismissed')) return;
+		document.getElementById('editorInstallBanner').style.display = 'flex';
+	}
+	function installEditorPWA() {
+		if (editorDeferredPrompt) {
+			editorDeferredPrompt.prompt();
+			editorDeferredPrompt.userChoice.then(function(r) { if (r.outcome==='accepted') document.getElementById('editorInstallBanner').style.display='none'; editorDeferredPrompt=null; });
+		} else {
+			alert('For å installere appen:\n\n📱 iPhone/iPad: Trykk Del-knappen (⎋) → «Legg til på Hjem-skjerm»\n\n📱 Android: Trykk ⋮ → «Installer app»');
+		}
+	}
+	function dismissEditorInstall() { document.getElementById('editorInstallBanner').style.display='none'; localStorage.setItem('editor-pwa-dismissed','1'); }
+	if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) && !editorIsStandalone && !localStorage.getItem('editor-pwa-dismissed')) {
+		document.getElementById('editorInstallBanner').style.display = 'flex';
+	}
+
+	// Push notification settings
+	(function() {
+		if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+		navigator.serviceWorker.ready.then(function(reg) {
+			reg.pushManager.getSubscription().then(function(sub) {
+				if (!sub && !localStorage.getItem('editor-push-asked')) {
+					localStorage.setItem('editor-push-asked', '1');
+					Notification.requestPermission().then(function(p) {
+						if (p === 'granted' && typeof subscribePush === 'function') subscribePush(reg);
+					});
+				}
+			});
+		});
+	})();
 
 	// Vis melding fra Sven Inge (med mulighet for å lukke)
 	(function() {
