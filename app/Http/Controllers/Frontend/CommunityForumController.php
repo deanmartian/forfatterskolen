@@ -783,4 +783,21 @@ class CommunityForumController extends Controller
 
         return redirect()->route('learner.community.profile')->with('success', 'Profil oppdatert!');
     }
+
+    public function updatePushPreferences(Request $request)
+    {
+        $types = [
+            'push_community_posts', 'push_community_comments', 'push_community_discussions',
+            'push_community_groups', 'push_community_mentions', 'push_community_likes',
+        ];
+
+        foreach ($types as $type) {
+            \Auth::user()->notificationPreferences()->updateOrCreate(
+                ['type' => $type],
+                ['enabled' => $request->boolean($type)]
+            );
+        }
+
+        return redirect()->route('learner.community.profile')->with('success', 'Push-innstillinger lagret!');
+    }
 }

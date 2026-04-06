@@ -100,6 +100,69 @@
                     </form>
                 </div>
             </div>
+
+            {{-- Push-varsler for community --}}
+            <div style="background:#fff;border:1px solid #e8e4de;border-radius:12px;padding:24px;margin-top:20px;">
+                <h3 style="margin:0 0 4px;font-size:18px;">🔔 Push-varsler for fellesskapet</h3>
+                <p style="color:#888;font-size:13px;margin:0 0 16px;">Velg hva du vil få varsler om på telefonen.</p>
+
+                <form method="POST" action="{{ route('learner.community.updatePushPreferences') }}">
+                    @csrf
+                    @php $prefs = Auth::user(); @endphp
+
+                    <div style="display:flex;flex-direction:column;gap:12px;">
+                        <label style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#faf9f7;border-radius:8px;cursor:pointer;">
+                            <div>
+                                <strong style="font-size:14px;">📝 Nye innlegg</strong>
+                                <div style="font-size:12px;color:#888;">Når noen publiserer et nytt innlegg i fellesskapet</div>
+                            </div>
+                            <input type="checkbox" name="push_community_posts" value="1" {{ $prefs->wantsPushNotification('community_posts') ? 'checked' : '' }} style="width:20px;height:20px;">
+                        </label>
+
+                        <label style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#faf9f7;border-radius:8px;cursor:pointer;">
+                            <div>
+                                <strong style="font-size:14px;">💬 Kommentarer på mine innlegg</strong>
+                                <div style="font-size:12px;color:#888;">Når noen kommenterer på noe du har skrevet</div>
+                            </div>
+                            <input type="checkbox" name="push_community_comments" value="1" {{ $prefs->wantsPushNotification('community_comments') ? 'checked' : '' }} style="width:20px;height:20px;">
+                        </label>
+
+                        <label style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#faf9f7;border-radius:8px;cursor:pointer;">
+                            <div>
+                                <strong style="font-size:14px;">💬 Diskusjoner</strong>
+                                <div style="font-size:12px;color:#888;">Nye diskusjoner og svar i diskusjoner du følger</div>
+                            </div>
+                            <input type="checkbox" name="push_community_discussions" value="1" {{ $prefs->wantsPushNotification('community_discussions') ? 'checked' : '' }} style="width:20px;height:20px;">
+                        </label>
+
+                        <label style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#faf9f7;border-radius:8px;cursor:pointer;">
+                            <div>
+                                <strong style="font-size:14px;">📚 Kursgruppe-innlegg</strong>
+                                <div style="font-size:12px;color:#888;">Nye innlegg i kursgruppene dine</div>
+                            </div>
+                            <input type="checkbox" name="push_community_groups" value="1" {{ $prefs->wantsPushNotification('community_groups') ? 'checked' : '' }} style="width:20px;height:20px;">
+                        </label>
+
+                        <label style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#faf9f7;border-radius:8px;cursor:pointer;">
+                            <div>
+                                <strong style="font-size:14px;">@ Mentions</strong>
+                                <div style="font-size:12px;color:#888;">Når noen nevner deg i et innlegg eller kommentar</div>
+                            </div>
+                            <input type="checkbox" name="push_community_mentions" value="1" {{ $prefs->wantsPushNotification('community_mentions') ? 'checked' : '' }} style="width:20px;height:20px;">
+                        </label>
+
+                        <label style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#faf9f7;border-radius:8px;cursor:pointer;">
+                            <div>
+                                <strong style="font-size:14px;">❤️ Likes</strong>
+                                <div style="font-size:12px;color:#888;">Når noen liker innleggene eller kommentarene dine</div>
+                            </div>
+                            <input type="checkbox" name="push_community_likes" value="1" {{ $prefs->wantsPushNotification('community_likes') ? 'checked' : '' }} style="width:20px;height:20px;">
+                        </label>
+                    </div>
+
+                    <button type="submit" class="community-btn-primary" style="margin-top:16px;">Lagre push-innstillinger</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>

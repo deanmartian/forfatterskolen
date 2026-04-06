@@ -713,6 +713,7 @@ Route::domain($front)->group(function () {
             Route::post('/course-groups/{id}/posts', [Frontend\CommunityForumController::class, 'storeCourseGroupPost'])->name('storeCourseGroupPost');
             Route::get('/profile', [Frontend\CommunityForumController::class, 'profile'])->name('profile');
             Route::post('/profile', [Frontend\CommunityForumController::class, 'updateProfile'])->name('updateProfile');
+            Route::post('/profile/push-preferences', [Frontend\CommunityForumController::class, 'updatePushPreferences'])->name('updatePushPreferences');
         });
 
         // Learner Messaging
