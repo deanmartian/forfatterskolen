@@ -45,6 +45,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('contract:expiry-reminder')->dailyAt('08:00');
         $schedule->command('webinar:download-recordings')->hourly();
         $schedule->command('community:sync-groups')->everyFifteenMinutes();
+        $schedule->command('community:daily-news')->dailyAt('07:30');
     }
 
     /**
