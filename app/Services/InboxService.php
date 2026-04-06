@@ -79,7 +79,7 @@ class InboxService
             'type' => 'reply',
             'direction' => 'outbound',
             'from_email' => $conversation->inbox ?? 'post@forfatterskolen.no',
-            'from_name' => 'Forfatterskolen',
+            'from_name' => $user->full_name . ' — Forfatterskolen / Easywrite / Indiemoon Publishing',
             'to_email' => $conversation->customer_email,
             'subject' => 'Re: ' . $conversation->subject,
             'body' => $body,
@@ -101,7 +101,7 @@ class InboxService
                     'Re: ' . $conversation->subject,
                     $htmlBody,
                     $fromEmail,
-                    'Forfatterskolen',
+                    $user->full_name . ' — Forfatterskolen',
                     null,
                     'inbox-reply',
                     $conversation->id

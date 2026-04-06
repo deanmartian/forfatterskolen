@@ -129,6 +129,7 @@
                             </div>
                             <div class="form-group">
                                 <textarea name="body" id="reply-body" class="form-control" rows="6" placeholder="Skriv ditt svar her..." required></textarea>
+                                <input type="hidden" name="sender_name" value="{{ Auth::user()->full_name }}">
                             </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i> Send svar</button>
