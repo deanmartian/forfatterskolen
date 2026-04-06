@@ -98,9 +98,43 @@ FAGKUNNSKAP OM SKRIVING (bruk når relevant):
 - Sakprosa/selvbiografi varierer mye, ofte 40.000-80.000 ord
 - Dikt har ingen fast lengde
 - 1 normside = ca. 1.500 tegn med mellomrom (ca. 250 ord)
-- Manusutvikling 1 = opptil 7.500 ord, Manus 2 = 17.500, Manus 3 = 35.000, Manus 4 = 52.500, Manus 5 = 70.000
-- Pris per ord for manusutvikling: 0,15 kr/ord
-- Språkvask og korrektur er separate tjenester
+- 1 bokside ≈ 250-300 ord. En bok på 200 sider = ca. 50.000-60.000 ord
+
+MANUSTJENESTER OG PRISER:
+- Manusutvikling: Profesjonell tilbakemelding på manus. Pris: 0,15 kr/ord
+  - Manus 1 = opptil 7.500 ord, Manus 2 = 17.500, Manus 3 = 35.000, Manus 4 = 52.500, Manus 5 = 70.000
+- Språkvask: Grundig språklig gjennomgang av manus
+- Korrektur: Siste finpuss før trykk
+- Selvpublisering via Indiemoon (søsterselskap): Omslag, layout, trykk, e-bok
+
+AKTIVE KURS OG PRISER:
+1. Romankurs i gruppe (oppstart 20.04.2026): Basic kr 10.900, Standard kr 13.900, Pro kr 18.900
+   - 10 kursmoduler med videoer, skriftlig materiale, ukentlige live-webinarer, redaktørtilbakemelding
+2. Årskurs 2026: Standard kr 44.000 — Skriv boken din på ett år med personlig redaktør
+3. Påbyggingsår 2026: kr 35.000 — Fordypningsår med nærlesing av manus og egen redaktør
+4. Barnebokkurs med Gro Dahle (oppstart 16.02.2026): fra kr 11.900 — Gruppekurs for barnebok
+5. Krimkurs med Tom Egeland: fra kr 9.400 — Lær å skrive krim/spenning (øyeblikkelig tilgang)
+6. Serieromankurs med Ida & Kaja: fra kr 10.900 — Lær å skrive serier (øyeblikkelig tilgang)
+7. Sakprosakurs med Kjersti Wold: fra kr 5.900 — Fagbok, håndbok, dokumentar (øyeblikkelig tilgang)
+8. Skriv ditt liv med Kjersti Wold: fra kr 6.900 — Slektshistorie/biografi (øyeblikkelig tilgang)
+9. Skriv for film og TV med Kjersti Steinsbø: fra kr 10.900 (øyeblikkelig tilgang)
+10. Diktkurs med Gro Dahle: kr 6.900 (øyeblikkelig tilgang)
+11. Kom i gang med Gro Dahle: kr 1.900 — Kort igangsetterkurs
+12. Mentormøter: kr 1.990/år — Ukentlige nettmøter med kjente forfattere og redaktører
+13. Gratis skrivekurs i 3 deler — åpent for alle
+
+PAKKEFORSKJELLER:
+- Basic: Kursmoduler + videoer + webinarer
+- Standard: Basic + tilbakemelding fra redaktør på manus
+- Pro: Standard + ekstra manusutvikling + prioritert tilbakemelding
+
+GENERELT:
+- Alle kurs er nettbaserte, kan følges hjemmefra
+- Opptak av alle webinarer tilgjengelig i portalen
+- Mentormøter inkludert i alle betalte kurs
+- Eleven har tilgang til kurset i ett år fra oppstart
+- Mulig å forlenge til symbolsk pris
+- Innleveringer kan utsettes ved behov
 {$examplesSection}
 
 INBOX: {$inbox}
