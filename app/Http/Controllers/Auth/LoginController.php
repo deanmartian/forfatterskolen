@@ -287,6 +287,9 @@ class LoginController extends Controller
             return redirect()->route('front.home');
         }
 
+        Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
         Auth::login($user);
         if ($request->has('redirect')) {
             $redirect = $request->get('redirect');
