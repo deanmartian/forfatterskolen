@@ -6773,7 +6773,7 @@ Forfatterskolen';
                 $learnerTemplate = AdminHelpers::emailTemplate('Learner Coaching Time Reservation Confirmed');
 
                 if ($learnerTemplate) {
-                    $learnerContent =str_replace([
+                    $learnerContent = str_replace([
                         ':first_name',
                         ':coaching_session',
                         ':booking_details'
@@ -6781,7 +6781,7 @@ Forfatterskolen';
                         $emailContext['learner_first_name'],
                         $emailContext['coaching_session'],
                         $emailContext['booking_details']
-                    ], $learnerTemplate->email_content);
+                    ], $learnerTemplate->email_content ?? '');
 
                     $to = $timer->user->email;
 
