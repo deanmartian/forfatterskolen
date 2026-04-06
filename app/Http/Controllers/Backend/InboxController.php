@@ -14,7 +14,7 @@ class InboxController extends Controller
 
     public function index(Request $request)
     {
-        $filters = $request->only(['status', 'assigned_to', 'inbox', 'category', 'search', 'starred', 'sent']);
+        $filters = $request->only(['status', 'assigned_to', 'inbox', 'category', 'search', 'starred', 'sent', 'follow_up']);
         $conversations = $this->inboxService->getConversations($filters);
         $stats = $this->inboxService->getStats();
         $teamMembers = $this->inboxService->getTeamMembers();
@@ -100,6 +100,20 @@ class InboxController extends Controller
         return redirect()->route('admin.inbox.index')
             ->with('alert_type', 'success')
             ->with('message', 'Markert som spam');
+    }
+
+    public function setFollowUp(Request $request, int $id)
+    {
+        $conversation = \App\Models\Inbox\InboxConversation::findOrFail($id);
+        $conversation->follow_up_at = $request->input('follow_up_at') ?: null;
+        if ($conversation->follow_up_at && $conversation->status === 'closed') {
+            $conversation->status = 'pending';
+        }
+        $conversation->save();
+
+        return redirect()->route('admin.inbox.show', $id)
+            ->with('alert_type', 'success')
+            ->with('message', $conversation->follow_up_at ? 'Oppfølging satt!' : 'Oppfølging fjernet');
     }
 
     public function generateAiDraft(int $id)

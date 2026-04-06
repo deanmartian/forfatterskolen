@@ -59,6 +59,9 @@
                 <a href="{{ route('admin.inbox.index', ['sent' => 1]) }}" class="nav-item {{ !empty($filters['sent']) ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
                     <i class="fa fa-paper-plane"></i> Sendt
                 </a>
+                <a href="{{ route('admin.inbox.index', ['follow_up' => 1]) }}" class="nav-item {{ !empty($filters['follow_up']) ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
+                    <i class="fa fa-bell" style="color:#e65100;"></i> Oppfølging <span class="badge pull-right" style="background:#e65100;">{{ \App\Models\Inbox\InboxConversation::whereNotNull('follow_up_at')->where('follow_up_at', '<=', now())->count() }}</span>
+                </a>
 
                 <div style="padding: 10px 15px; border-top: 2px solid #ddd; margin-top: 10px;">
                     <strong style="font-size: 11px; text-transform: uppercase; color: #999;">Team</strong>

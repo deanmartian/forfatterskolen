@@ -16,6 +16,7 @@ class InboxConversation extends Model
         'snoozed_until' => 'datetime',
         'first_response_at' => 'datetime',
         'resolved_at' => 'datetime',
+        'follow_up_at' => 'datetime',
     ];
 
     public function messages()

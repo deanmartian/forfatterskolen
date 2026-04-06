@@ -242,6 +242,34 @@
                 </form>
             </div>
 
+            {{-- Oppfølging --}}
+            <div class="sidebar-card">
+                <h5><i class="fa fa-bell"></i> Oppfølging</h5>
+                @if($conversation->follow_up_at)
+                    <div style="background:#fff3e0;padding:8px 12px;border-radius:6px;margin-bottom:8px;">
+                        <i class="fa fa-clock-o" style="color:#e65100;"></i>
+                        <strong style="color:#e65100;">{{ \Carbon\Carbon::parse($conversation->follow_up_at)->format('d.m.Y H:i') }}</strong>
+                        <form action="{{ route('admin.inbox.follow-up', $conversation->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            <input type="hidden" name="follow_up_at" value="">
+                            <button type="submit" style="background:none;border:none;color:#c62828;cursor:pointer;font-size:12px;margin-left:6px;"><i class="fa fa-times"></i> Fjern</button>
+                        </form>
+                    </div>
+                @endif
+                <form action="{{ route('admin.inbox.follow-up', $conversation->id) }}" method="POST">
+                    @csrf
+                    <div style="display:flex;gap:6px;">
+                        <input type="datetime-local" name="follow_up_at" class="form-control input-sm" required min="{{ now()->format('Y-m-d\TH:i') }}">
+                        <button type="submit" class="btn btn-sm btn-warning"><i class="fa fa-bell"></i></button>
+                    </div>
+                    <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap;">
+                        <button type="button" class="btn btn-xs btn-default" onclick="setFollowUp(1)">I morgen</button>
+                        <button type="button" class="btn btn-xs btn-default" onclick="setFollowUp(3)">3 dager</button>
+                        <button type="button" class="btn btn-xs btn-default" onclick="setFollowUp(7)">1 uke</button>
+                    </div>
+                </form>
+            </div>
+
             {{-- Canned Responses --}}
             @if($cannedResponses->count() > 0)
                 <div class="sidebar-card">
@@ -274,6 +302,15 @@
         }
 
     });
+
+    // Follow-up quick buttons
+    function setFollowUp(days) {
+        var d = new Date();
+        d.setDate(d.getDate() + days);
+        d.setHours(9, 0, 0);
+        var input = document.querySelector('input[name="follow_up_at"]');
+        input.value = d.toISOString().slice(0, 16);
+    }
 
     // Email preview (global scope)
     function toggleInboxPreview() {

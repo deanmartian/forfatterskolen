@@ -58,8 +58,10 @@ class InboxService
 
         if (!empty($filters['sent'])) {
             $query->whereHas('messages', fn($q) => $q->where('direction', 'outbound')->where('is_draft', false));
-            // Show all statuses for sent
-            $query->withoutGlobalScope('status');
+        }
+
+        if (!empty($filters['follow_up'])) {
+            $query->whereNotNull('follow_up_at')->where('follow_up_at', '<=', now());
         }
 
         return $query->orderByDesc('updated_at')->paginate(25);
