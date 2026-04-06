@@ -1299,6 +1299,24 @@
             });
         });
 
+        // Email preview toggle
+        function toggleProjectEmailPreview() {
+            var preview = document.getElementById('projectEmailPreview');
+            var content = document.getElementById('projectEmailPreviewContent');
+            if (preview.style.display === 'none') {
+                var html = '';
+                if (typeof tinymce !== 'undefined' && tinymce.get('projectRequestMessage')) {
+                    html = tinymce.get('projectRequestMessage').getContent();
+                } else {
+                    html = document.getElementById('projectRequestMessage').value;
+                }
+                content.innerHTML = html;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
         // Project Request To Editor modal
         var projectRequestTexts = {
             'copy-editing': {
@@ -1403,7 +1421,26 @@
                             <textarea class="form-control tinymce" name="message" id="projectRequestMessage" rows="6"
                                 required></textarea>
                         </div>
-                        <br>
+
+                        {{-- Forhåndsvisning --}}
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default btn-sm" onclick="toggleProjectEmailPreview()">
+                                <i class="fa fa-eye"></i> Forhåndsvisning
+                            </button>
+                        </div>
+                        <div id="projectEmailPreview" style="display:none;border:1px solid #ddd;border-radius:8px;padding:24px;background:#fafafa;margin-bottom:16px;">
+                            <div style="text-align:center;margin-bottom:16px;">
+                                <img src="{{ asset('photos/logos/fs-logo.png') }}" alt="Forfatterskolen" style="height:40px;">
+                            </div>
+                            <div id="projectEmailPreviewContent" style="font-family:-apple-system,sans-serif;font-size:14px;line-height:1.7;color:#333;">
+                            </div>
+                            <hr style="margin:20px 0;border-color:#eee;">
+                            <div style="text-align:center;font-size:12px;color:#999;">
+                                Spørsmål? Svar på denne e-posten eller ring 411 23 555<br>
+                                Forfatterskolen · Lihagen 21, 3029 Drammen
+                            </div>
+                        </div>
+
                         <hr>
                         <button type="submit" class="btn btn-primary">Send</button>
                     </div>
