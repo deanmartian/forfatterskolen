@@ -13,6 +13,14 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr v-if="books.length === 0 && project.user">
+                    <td>
+                        <a :href="'/learner/' + project.user_id">
+                            {{ project.user.full_name }}
+                        </a>
+                    </td>
+                    <td class="text-muted"><em>Ingen bok lagt inn</em></td>
+                </tr>
                 <tr v-for="book in books" :key="book.id">
                     <td>
                         <a :href="'/learner/' + project.user_id" v-if="project.user">
@@ -22,14 +30,6 @@
                     <td>
                         {{ book.book_name }}
                     </td>
-                    <!-- <td>
-                        <button class="btn btn-xs btn-primary" @click="showFormModal(book)">
-                            <i class="fa fa-edit"></i>
-                        </button>
-                        <button class="btn btn-xs btn-danger" @click="showDeleteModal(book)">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </td> -->
                 </tr>
                 </tbody>
             </table>
