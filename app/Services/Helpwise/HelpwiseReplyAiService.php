@@ -145,7 +145,7 @@ PROMPT;
             ->get();
 
         if ($courses->isNotEmpty()) {
-            $courseNames = $courses->map(fn($ct) => $ct->package?->name ?? 'Ukjent kurs')->implode(', ');
+            $courseNames = $courses->map(fn($ct) => $ct->package?->course?->title ?? 'Ukjent kurs')->implode(', ');
             $context['Aktive kurs'] = $courseNames;
         }
 

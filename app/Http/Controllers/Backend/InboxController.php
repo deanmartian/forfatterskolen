@@ -143,9 +143,9 @@ class InboxController extends Controller
         ];
 
         try {
-            $courses = $user->coursesTaken()->where('is_active', 1)->with('package')->get();
+            $courses = $user->coursesTaken()->where('is_active', 1)->with('package.course')->get();
             if ($courses->isNotEmpty()) {
-                $context['Aktive kurs'] = $courses->map(fn($ct) => $ct->package?->name ?? 'Ukjent')->implode(', ');
+                $context['Aktive kurs'] = $courses->map(fn($ct) => $ct->package?->course?->title ?? 'Ukjent')->implode(', ');
             }
         } catch (\Exception $e) {}
 
