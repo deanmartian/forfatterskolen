@@ -64,9 +64,29 @@
                             <div style="flex: 1;">
                                 <h4 style="margin: 0 0 4px;">{{ $group->name }}</h4>
                                 <p class="text-muted" style="font-size: 13px; margin: 0 0 6px;">{{ $group->description ?: 'Ingen beskrivelse' }}</p>
-                                <span class="label label-default">{{ $group->members_count }} medlemmer</span>
+                                @php
+                                    $postCount = \App\Models\Post::where('course_group_id', $group->id)->count();
+                                    $memberList = \DB::table('course_group_members')
+                                        ->where('course_group_id', $group->id)
+                                        ->join('users', 'course_group_members.user_id', '=', 'users.id')
+                                        ->select('users.first_name', 'users.last_name')
+                                        ->limit(5)->get();
+                                    $totalMembers = \DB::table('course_group_members')->where('course_group_id', $group->id)->count();
+                                @endphp
+                                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+                                    <span class="label label-default">{{ $totalMembers }} medlemmer</span>
+                                    <span class="label label-info">{{ $postCount }} innlegg</span>
+                                </div>
                             </div>
                         </div>
+
+                        {{-- Members preview --}}
+                        @if($memberList->count() > 0)
+                        <div style="margin-top:10px;padding:8px 10px;background:#faf9f7;border-radius:6px;font-size:12px;color:#666;">
+                            <strong>Medlemmer:</strong>
+                            {{ $memberList->map(fn($m) => $m->first_name . ' ' . $m->last_name)->implode(', ') }}{{ $totalMembers > 5 ? ' + ' . ($totalMembers - 5) . ' til' : '' }}
+                        </div>
+                        @endif
 
                         <hr style="margin: 10px 0;">
 
