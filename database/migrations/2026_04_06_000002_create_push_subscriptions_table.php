@@ -10,7 +10,7 @@ class CreatePushSubscriptionsTable extends Migration
     {
         Schema::create('push_subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedInteger('user_id');
             $table->text('endpoint');
             $table->string('public_key')->nullable();
             $table->string('auth_token')->nullable();
