@@ -215,12 +215,15 @@ function fetchUnsplashImage() {
     document.getElementById('image-preview').style.display = 'block';
 }
 
-// AI image generation placeholder
+// AI image generation via Pollinations.ai (free, no API key)
 function generateAiImage() {
     var content = document.getElementById('bot-post-content').value;
     if (!content) { alert('Skriv innholdet først'); return; }
-    alert('AI-bildegenerering krever OpenAI DALL-E API. Kontakt utvikler for oppsett.\n\nBruker Unsplash i mellomtiden.');
-    fetchUnsplashImage();
+    var prompt = content.substring(0, 200).replace(/[^\w\sæøåÆØÅ]/g, '') + ', beautiful illustration, warm colors, cozy writing atmosphere';
+    var imgUrl = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(prompt) + '?width=800&height=400&nologo=true';
+    document.getElementById('preview-img').src = imgUrl;
+    document.getElementById('image-url-input').value = imgUrl;
+    document.getElementById('image-preview').style.display = 'block';
 }
 
 function clearImage() {
