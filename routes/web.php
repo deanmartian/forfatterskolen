@@ -2135,6 +2135,7 @@ Route::domain($admin)->group(function () {
             Route::delete('/discussions/{id}', [Backend\CommunityController::class, 'destroyDiscussion'])->name('discussions.destroy');
             Route::post('/discussions/generate-ai', [Backend\CommunityController::class, 'generateAiDiscussion'])->name('discussions.generate-ai');
             Route::post('/discussions/store-ai', [Backend\CommunityController::class, 'storeAiDiscussion'])->name('discussions.store-ai');
+            Route::put('/discussions/{id}/update', [Backend\CommunityController::class, 'updateDiscussion'])->name('discussions.update');
             Route::get('/course-groups', [Backend\CommunityController::class, 'courseGroups'])->name('course-groups');
             Route::post('/course-groups', [Backend\CommunityController::class, 'storeCourseGroup'])->name('course-groups.store');
             Route::put('/course-groups/{id}', [Backend\CommunityController::class, 'updateCourseGroup'])->name('course-groups.update');

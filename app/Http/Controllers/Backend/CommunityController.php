@@ -179,6 +179,27 @@ class CommunityController extends Controller
         ]);
     }
 
+    public function updateDiscussion(Request $request, string $id): RedirectResponse
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'category' => 'required|string|max:100',
+        ]);
+
+        $discussion = Discussion::findOrFail($id);
+        $discussion->update([
+            'title' => $request->title,
+            'content' => $request->content,
+            'category' => $request->category,
+        ]);
+
+        return redirect()->back()->with([
+            'errors' => new MessageBag(['Diskusjon oppdatert.']),
+            'alert_type' => 'success',
+        ]);
+    }
+
     /**
      * Generate AI discussion content
      */
@@ -195,9 +216,14 @@ class CommunityController extends Controller
                 'model' => 'claude-sonnet-4-20250514',
                 'max_tokens' => 1024,
                 'system' => 'Du er Forfatterskolen sin community-manager. Lag en diskusjonstråd for et skrivefellesskap på norsk. '
-                    . 'Svaret SKAL være gyldig JSON med denne strukturen: {"title": "Diskusjons-tittel", "content": "Innholdet i diskusjonen (2-4 avsnitt, engasjerende, med spørsmål til leserne)", "category": "Kategori"} '
+                    . 'Svaret SKAL være gyldig JSON med denne strukturen: {"title": "Diskusjons-tittel", "content": "Innholdet", "category": "Kategori"} '
                     . 'Kategorier kan være: Skriveteknikk, Inspirasjon, Forfatterlivet, Bokanbefaling, Skriveøvelse, Tilbakemelding, Sjanger, Publisering. '
-                    . 'Diskusjonen skal invitere til samtale og meningsutveksling. Avslutt med et åpent spørsmål. Ikke bruk markdown, skriv ren tekst. Svar KUN med JSON.',
+                    . 'VIKTIG om innholdet: Skriv 3-4 avsnitt med DOBBEL linjeskift (\n\n) mellom hvert avsnitt. '
+                    . 'Første avsnitt: Engasjerende innledning som fanger oppmerksomheten. '
+                    . 'Andre avsnitt: Utdyp temaet med et konkret eksempel eller en personlig vinkling. '
+                    . 'Tredje avsnitt: Del et tips eller en innsikt. '
+                    . 'Siste avsnitt: Avslutt med 2-3 åpne spørsmål som inviterer til diskusjon. '
+                    . 'Bruk gjerne emojier naturlig (ikke overdrevet). Ikke bruk markdown. Svar KUN med JSON.',
                 'messages' => [
                     ['role' => 'user', 'content' => 'Lag en diskusjon om: ' . $topic],
                 ],

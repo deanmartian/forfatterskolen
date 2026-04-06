@@ -56,6 +56,14 @@
                             @endif
                         </td>
                         <td>
+                            <button class="btn btn-xs btn-info edit-discussion-btn" title="Rediger"
+                                    data-id="{{ $discussion->id }}"
+                                    data-title="{{ $discussion->title }}"
+                                    data-content="{{ e($discussion->content) }}"
+                                    data-category="{{ $discussion->category }}"
+                                    data-toggle="modal" data-target="#editDiscussionModal">
+                                <i class="fa fa-pencil"></i>
+                            </button>
                             <form action="{{ route('admin.community.discussions.toggle-pin', $discussion->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 <button type="submit" class="btn btn-xs {{ $discussion->pinned ? 'btn-default' : 'btn-warning' }}" title="{{ $discussion->pinned ? 'Løsne' : 'Fest' }}">
@@ -79,6 +87,37 @@
     </div>
 
     {!! $discussions->render() !!}
+</div>
+
+{{-- Edit Discussion Modal --}}
+<div class="modal fade" id="editDiscussionModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-pencil"></i> Rediger diskusjon</h4>
+            </div>
+            <div class="modal-body">
+                <form id="editDiscussionForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="form-group">
+                        <label>Tittel</label>
+                        <input type="text" name="title" id="editTitle" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Kategori</label>
+                        <input type="text" name="category" id="editCategory" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Innhold</label>
+                        <textarea name="content" id="editContent" class="form-control" rows="8" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Lagre</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 {{-- Generate Discussion Modal --}}
@@ -144,6 +183,14 @@
 
 @section('scripts')
 <script>
+    $('.edit-discussion-btn').click(function() {
+        var id = $(this).data('id');
+        $('#editTitle').val($(this).data('title'));
+        $('#editCategory').val($(this).data('category'));
+        $('#editContent').val($(this).data('content'));
+        $('#editDiscussionForm').attr('action', '/community/discussions/' + id + '/update');
+    });
+
     $('.ai-topic-btn').click(function() {
         $('#aiDiscussionTopic').val($(this).data('topic'));
     });
