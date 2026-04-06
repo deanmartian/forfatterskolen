@@ -549,6 +549,9 @@
                                     @elseif(!$hasEditor)
                                         <span class="session-item__badge" style="background: #fff3e0; color: #e65100;">{{ trans('site.coaching-time-waiting-editor') }}</span>
                                     @else
+                                        <a href="{{ route('learner.coaching-timer.prepare', $session->id) }}" class="btn-coaching btn-coaching--secondary" style="margin-right: 0.5rem;">
+                                            Last opp manus
+                                        </a>
                                         <span class="session-item__badge session-item__badge--upcoming">{{ trans('site.coaching-time-scheduled') }}</span>
                                     @endif
                                 </div>
