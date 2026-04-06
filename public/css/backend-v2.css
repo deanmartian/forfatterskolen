@@ -75,11 +75,10 @@
 .ed-sidebar--collapsed .ed-sidebar__logo { padding: 16px 10px; text-align: center; }
 .ed-sidebar--collapsed .ed-sidebar__avatar { margin: 0 auto; }
 .ed-sidebar--collapsed .ed-sidebar__user { justify-content: center; }
-body.sidebar-collapsed .ed-main,
+body.sidebar-collapsed { padding-left: 60px !important; }
 body.sidebar-collapsed .ed-header { margin-left: 60px !important; }
-body.sidebar-collapsed .ed-content { padding-left: 60px !important; }
+body.sidebar-collapsed .ed-content { margin-left: 60px !important; }
 .ed-sidebar { transition: width 0.2s ease; }
-.ed-main, .ed-header, .ed-content { transition: margin-left 0.2s ease, padding-left 0.2s ease; }
 
 .ed-sidebar__logo {
     padding: 24px 20px 18px;
