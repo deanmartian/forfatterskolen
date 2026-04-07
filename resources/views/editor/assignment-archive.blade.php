@@ -256,10 +256,10 @@
                     <thead><tr><th>Kurs</th><th>Sendt</th><th>Elev</th><th></th></tr></thead>
                     <tbody>
                     @foreach($assignedAssignments as $m)
-                        @php
-                            $groupDetails = \DB::select("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = {$m->user_id} WHERE A.assignment_id = {$m->assignment_id}");
-                            $feedback = $groupDetails ? \DB::select("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = {$m->user_id} AND A.assignment_group_learner_id = " . $groupDetails[0]->assignment_group_learner_id . " AND A.is_admin = 1") : null;
-                        @endphp
+                        <?php
+                            $groupDetails = DB::select("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = {$m->user_id} WHERE A.assignment_id = {$m->assignment_id}");
+                            $feedback = $groupDetails ? DB::select("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = {$m->user_id} AND A.assignment_group_learner_id = " . $groupDetails[0]->assignment_group_learner_id . " AND A.is_admin = 1") : null;
+                        ?>
                         <tr>
                             <td><a href="{{ route('editor.backend.download_assigned_manuscript', ['id' => $m->id, 'v' => $cacheBuster]) }}"><i class="fa fa-download"></i></a> {{ $m->assignment->course->title ?? $m->assignment->title }}</td>
                             <td style="font-size:0.8rem;color:#8a8580;">
