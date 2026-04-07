@@ -1179,7 +1179,7 @@ class AdminHelpers
         $genre = Genre::all();
 
         if ($id >= 0 && ! is_null($id)) {
-            $genre = 'None';
+            $genre = 'Ikke angitt';
             $findGenre = Genre::find($id);
 
             if ($id > 0 && $findGenre) {
@@ -1248,7 +1248,7 @@ class AdminHelpers
                 }
             }
 
-            return 'None';
+            return 'Ikke angitt';
         }
 
         return $types;

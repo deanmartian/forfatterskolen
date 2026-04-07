@@ -598,7 +598,7 @@
 						<th>{{ trans('site.type') }}</th>
 						<th>{{ trans('site.where') }}</th>
 						<th>{{ trans('site.expected-finish') }}</th>
-						<th>Uploaded Date</th>
+						<th>Opplastet</th>
 						<th>{{ trans('site.feedback-status') }}</th>
 							<th style="width:60px;">Lås</th>
 					</tr>
@@ -753,7 +753,7 @@
 											data-action="{{ route('editor.admin.shop-manuscript-taken-feedback.store', $shopManuscript->id) }}">+ {{ trans('site.add-feedback') }}</button>
 									@elseif($shopManuscript->status == 'Pending')
 										<?php $feedbackFile = implode(",",$shopManuscript->feedbacks->first()->filename); ?>
-										<span class="label label-default">Pending</span>
+										<span class="label label-default">Venter</span>
 										<button type="button" class="btn btn-success btn-xs addShopManuscriptFeedback" data-toggle="modal"
 											data-target="#addFeedbackModal"
 											data-f_id="{{$shopManuscript->feedbacks->first()->id}}"
@@ -844,7 +844,7 @@
 						<th>{{ trans('site.type') }}</th>
 						<th>{{ trans('site.where') }}</th>
 						<th>{{ trans('site.deadline') }}</th>
-						<th>Uploaded Date</th>
+						<th>Opplastet</th>
 						<th>{{ trans('site.feedback-status') }}</th>
 					</tr>
 					</thead>
@@ -880,7 +880,7 @@
 							}
 							
 							if($assignedAssignment->has_feedback){
-								echo '<span class="label label-default">Pending</span> ';
+								echo '<span class="label label-default">Venter</span> ';
 								if($groupDetails){
 								}else{
 									echo '<button type="button" class="btn btn-success btn-xs submitFeedbackBtn"
@@ -1364,7 +1364,7 @@
 							}
 							
 							if($assignedAssignment->has_feedback){
-								echo '<span class="label label-default">Pending</span> ';
+								echo '<span class="label label-default">Venter</span> ';
 								if($groupDetails){
 								}else{
 									echo '<button type="button" class="btn btn-success btn-xs submitFeedbackBtn"
@@ -1408,7 +1408,7 @@
 								<button class="btn btn-success btn-xs finishAssignmentManuscriptBtn" data-toggle="modal"
 										data-target="#finishAssignmentManuscriptModal"
 										data-action="{{ route('editor.assignment-manuscript.mark-finished', $assignedAssignment->id) }}">
-									Mark as finished
+									Merk som ferdig
 								</button>
 							</td>
 						</tr>
@@ -1778,7 +1778,7 @@
 						</select>
 						<div class="hidden-container">
 							<label></label>
-							<a href="javascript:void(0)" onclick="enableSelect('pendingAssignmentEditorModal')">Edit</a>
+							<a href="javascript:void(0)" onclick="enableSelect('pendingAssignmentEditorModal')">Rediger</a>
 						</div>
 					</div>
 					<div class="form-group">
@@ -2179,7 +2179,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 		    	<button type="button" class="close" data-dismiss="modal">&times;</button>
-		    	<h4 class="modal-title">Edit Project</h4>
+		    	<h4 class="modal-title">Rediger prosjekt</h4>
 		  	</div>
 		  	<div class="modal-body">
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -2321,7 +2321,7 @@
 			let notes_to_head_editor = $(this).data('notes_to_head_editor');
 
 			modal.find('form').find('input[type=file]').removeAttr('required');
-			modal.find('.modal-title').text("Edit Feedback");
+			modal.find('.modal-title').text("Rediger tilbakemelding");
 			modal.find('[name=grade]').val(grade)
 			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
 			modal.find('[name=feedback_id]').val(feedbackId)
@@ -2366,7 +2366,7 @@
 			let notes_to_head_editor = $(this).data('notes_to_head_editor');
 
 			modal.find('form').find('input[type=file]').removeAttr('required');
-			modal.find('.modal-title').text("Edit Feedback");
+			modal.find('.modal-title').text("Rediger tilbakemelding");
 			modal.find('[name=notes]').val(notes)
 			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
 			modal.find('[name=feedback_id]').val(feedbackId)
@@ -2466,7 +2466,7 @@
 			let notes_to_head_editor = $(this).data('notes_to_head_editor');
 
 			modal.find('form').find('input[type=file]').removeAttr('required');
-			modal.find('.modal-title').text("Edit Feedback");
+			modal.find('.modal-title').text("Rediger tilbakemelding");
 			modal.find('[name=feedback_id]').val(feedbackId)
 			modal.find('[name=hours_worked]').val(hours)
 			modal.find('[name=notes_to_head_editor]').val(notes_to_head_editor)
@@ -2513,7 +2513,7 @@
 			let notes_to_head_editor = $(this).data('notes_to_head_editor');
 
 			modal.find('form').find('input[type=file]').removeAttr('required');
-			modal.find('.modal-title').text("Edit Feedback");
+			modal.find('.modal-title').text("Rediger tilbakemelding");
 			modal.find('[name=feedback_id]').val(feedbackId)
 			modal.find('[name=hours_worked]').val(hours)
 			modal.find('[name=notes_to_head_editor]').val(notes_to_head_editor)
@@ -2638,7 +2638,7 @@
 			let notesToHeadEditor = $(this).data('notes_to_head_editor');
 
 			modal.find('form').find('input[type=file]').removeAttr('required');
-			modal.find('.modal-title').text("Edit Feedback");
+			modal.find('.modal-title').text("Rediger tilbakemelding");
 			modal.find('[name=grade]').val(grade)
 			modal.find('[name=feedback_id]').val(feedbackId)
 			modal.find('[name=notes_to_head_editor]').val(notesToHeadEditor)

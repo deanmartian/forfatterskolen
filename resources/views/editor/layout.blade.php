@@ -105,7 +105,14 @@
                 "aaSorting": [],
                 "language": {
                     "search": "",
-                    "searchPlaceholder": "Søk i tabell..."
+                    "searchPlaceholder": "Søk i tabell...",
+                    "lengthMenu": "Vis _MENU_ rader",
+                    "info": "Viser _START_ til _END_ av _TOTAL_ rader",
+                    "infoEmpty": "Ingen rader å vise",
+                    "infoFiltered": "(filtrert fra _MAX_ rader totalt)",
+                    "zeroRecords": "Ingen treff",
+                    "emptyTable": "Ingen data",
+                    "paginate": { "previous": "Forrige", "next": "Neste" }
                 }
             });
 
