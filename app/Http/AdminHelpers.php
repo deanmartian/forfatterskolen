@@ -1300,7 +1300,8 @@ class AdminHelpers
             ['id' => 18, 'option' => 'Veiledningssamtaler', 'route' => 'editor.coaching-sessions.index', 'request_name' => 'editors-coaching-sessions'],
             ['id' => 19, 'option' => 'Meldinger', 'route' => 'editor.messages.index', 'request_name' => 'editors-messages'],
             ['id' => 20, 'option' => 'Ledige manus', 'route' => 'editor.available-manuscripts', 'request_name' => 'available-manuscripts'],
-            ['id' => 17, 'option' => 'Calendar', 'route' => 'editor.calendar', 'request_name' => 'editors-calendar'],
+            ['id' => 21, 'option' => 'Mine elever', 'route' => 'editor.my-students', 'request_name' => 'my-students'],
+            ['id' => 17, 'option' => 'Kalender', 'route' => 'editor.calendar', 'request_name' => 'editors-calendar'],
         ];
 
         if ($id > 0) {

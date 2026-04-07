@@ -774,4 +774,137 @@ class PageController extends Controller
 
         return response()->json(['success' => true, 'locked' => $locked]);
     }
+
+    public function myStudents(): View
+    {
+        $editorId = Auth::id();
+
+        // Pending extension requests for assignments this editor handles
+        $extensionRequests = \App\Models\AssignmentExtensionRequest::where('status', 'pending')
+            ->whereHas('assignment', function ($q) use ($editorId) {
+                $q->where('editor_id', $editorId)
+                  ->orWhereHas('manuscripts', fn($mq) => $mq->where('editor_id', $editorId));
+            })
+            ->with(['user', 'assignment'])
+            ->latest()
+            ->get();
+
+        // Students who haven't submitted yet (assignment deadline passed, no manuscript)
+        $overdueStudents = Assignment::where('editor_id', $editorId)
+            ->where('submission_date', '<', now())
+            ->where('for_editor', 0)
+            ->with('course')
+            ->get()
+            ->flatMap(function ($assignment) {
+                $submittedUserIds = AssignmentManuscript::where('assignment_id', $assignment->id)->pluck('user_id');
+                $enrolledUsers = \App\CoursesTaken::whereHas('package', fn($q) => $q->where('course_id', $assignment->course_id))
+                    ->whereNotIn('user_id', $submittedUserIds)
+                    ->with('user')
+                    ->get();
+                return $enrolledUsers->map(fn($ct) => (object)[
+                    'user' => $ct->user,
+                    'assignment' => $assignment,
+                    'course' => $assignment->course,
+                    'deadline' => $assignment->submission_date,
+                    'manuscript_id' => null,
+                ]);
+            })
+            ->filter(fn($item) => $item->user && !$item->user->is_disabled)
+            ->take(50);
+
+        // Active manuscripts assigned to this editor
+        $activeManuscripts = AssignmentManuscript::where('editor_id', $editorId)
+            ->where('status', 0)
+            ->with(['user', 'assignment.course'])
+            ->latest()
+            ->get();
+
+        return view('editor.my-students', compact('extensionRequests', 'overdueStudents', 'activeManuscripts'));
+    }
+
+    public function decideExtension($id, $decision): RedirectResponse
+    {
+        $extensionRequest = \App\Models\AssignmentExtensionRequest::findOrFail($id);
+
+        if ($extensionRequest->status !== 'pending') {
+            return redirect()->route('editor.my-students')->with('info', 'Denne forespørselen er allerede behandlet.');
+        }
+
+        // Verify editor has access to this assignment
+        $editorId = Auth::id();
+        $assignment = $extensionRequest->assignment;
+        $hasAccess = $assignment->editor_id == $editorId
+            || $assignment->manuscripts()->where('editor_id', $editorId)->exists();
+        if (!$hasAccess) {
+            abort(403);
+        }
+
+        $student = $extensionRequest->user;
+
+        if ($decision === 'approve') {
+            $extensionRequest->update([
+                'status' => 'approved',
+                'decided_by' => $editorId,
+                'decided_at' => now(),
+            ]);
+
+            \App\AssignmentLearnerSubmissionDate::updateOrCreate(
+                ['assignment_id' => $extensionRequest->assignment_id, 'user_id' => $extensionRequest->user_id],
+                ['submission_date' => $extensionRequest->requested_deadline->format('M d, Y h:i A')]
+            );
+
+            $subject = 'Utsettelse godkjent — ' . $assignment->title;
+            $message = '<p>Hei ' . e($student->first_name) . ',</p>'
+                . '<p>Utsettelsen din for oppgaven <strong>' . e($assignment->title) . '</strong> er godkjent av redaktøren din.</p>'
+                . '<p>Ny frist: <strong>' . $extensionRequest->requested_deadline->format('d.m.Y') . '</strong></p>'
+                . '<p>Lykke til med skrivingen!</p>'
+                . '<p>Vennlig hilsen,<br>' . e(Auth::user()->full_name) . '<br>Forfatterskolen</p>';
+
+            dispatch(new \App\Jobs\AddMailToQueueJob($student->email, $subject, $message,
+                'post@forfatterskolen.no', 'Forfatterskolen', null, 'assignment_extension', $extensionRequest->id));
+
+            return redirect()->route('editor.my-students')->with('success', 'Utsettelse godkjent for ' . $student->full_name);
+
+        } elseif ($decision === 'reject') {
+            $extensionRequest->update([
+                'status' => 'rejected',
+                'decided_by' => $editorId,
+                'decided_at' => now(),
+            ]);
+
+            $subject = 'Utsettelse avslått — ' . $assignment->title;
+            $message = '<p>Hei ' . e($student->first_name) . ',</p>'
+                . '<p>Utsettelsen for oppgaven <strong>' . e($assignment->title) . '</strong> ble dessverre ikke godkjent.</p>'
+                . '<p>Opprinnelig frist gjelder fortsatt. Ta kontakt med redaktøren om du har spørsmål.</p>'
+                . '<p>Vennlig hilsen,<br>' . e(Auth::user()->full_name) . '<br>Forfatterskolen</p>';
+
+            dispatch(new \App\Jobs\AddMailToQueueJob($student->email, $subject, $message,
+                'post@forfatterskolen.no', 'Forfatterskolen', null, 'assignment_extension', $extensionRequest->id));
+
+            return redirect()->route('editor.my-students')->with('success', 'Utsettelse avslått for ' . $student->full_name);
+        }
+
+        return redirect()->route('editor.my-students');
+    }
+
+    public function sendReminder($id, Request $request): RedirectResponse
+    {
+        $manuscript = AssignmentManuscript::where('id', $id)
+            ->where('editor_id', Auth::id())
+            ->firstOrFail();
+
+        $student = $manuscript->user;
+        $assignment = $manuscript->assignment;
+
+        $subject = 'Påminnelse om innlevering — ' . $assignment->title;
+        $message = '<p>Hei ' . e($student->first_name) . ',</p>'
+            . '<p>Dette er en vennlig påminnelse om at vi venter på innleveringen din for oppgaven <strong>' . e($assignment->title) . '</strong>.</p>'
+            . '<p>Vi gleder oss til å lese teksten din! Ikke nøl med å ta kontakt om du har spørsmål eller trenger hjelp.</p>'
+            . '<p>Vennlig hilsen,<br>' . e(Auth::user()->full_name) . '<br>Forfatterskolen</p>';
+
+        dispatch(new \App\Jobs\AddMailToQueueJob($student->email, $subject, $message,
+            'post@forfatterskolen.no', Auth::user()->full_name . ' — Forfatterskolen', null, 'reminder', $manuscript->id));
+
+        return redirect()->route('editor.my-students')->with('success', 'Påminnelse sendt til ' . $student->full_name);
+    }
 }

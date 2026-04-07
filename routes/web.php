@@ -2357,6 +2357,10 @@ Route::domain($editor)->group(function () {
 
         Route::post('/manuscript/lock', [Editor\PageController::class, 'toggleManuscriptLock'])->name('editor.manuscript.lock');
 
+        Route::get('/mine-elever', [Editor\PageController::class, 'myStudents'])->name('editor.my-students');
+        Route::post('/mine-elever/extension/{id}/{decision}', [Editor\PageController::class, 'decideExtension'])->name('editor.extension.decide');
+        Route::post('/mine-elever/remind/{id}', [Editor\PageController::class, 'sendReminder'])->name('editor.student.remind');
+
         Route::prefix('/coaching-time')->name('editor.coaching-time.')->group(function () {
             Route::controller(CoachingTimeController::class)->group(function() {
                 Route::get('/', 'index')->name('index');
