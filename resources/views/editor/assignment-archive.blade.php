@@ -50,7 +50,7 @@
         gap: 8px;
     }
     .arch-section__title {
-        font-size: 0.95rem;
+        font-size: 1.1rem;
         font-weight: 700;
         color: #1a1a1a;
         display: flex;
@@ -73,9 +73,9 @@
     .arch-section__search input {
         border: 1px solid rgba(0,0,0,0.12);
         border-radius: 6px;
-        padding: 6px 10px;
-        font-size: 0.8rem;
-        width: 140px;
+        padding: 8px 12px;
+        font-size: 0.95rem;
+        width: 160px;
     }
     .arch-section__search button {
         background: #f5f3f0;
@@ -90,7 +90,7 @@
     .arch-table { width: 100%; border-collapse: collapse; }
     .arch-table { width: 100%; border-collapse: collapse; }
     .arch-table th {
-        font-size: 0.75rem;
+        font-size: 0.85rem;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -102,7 +102,7 @@
     }
     .arch-table td {
         padding: 14px 18px;
-        font-size: 0.9rem;
+        font-size: 1rem;
         color: #1a1a1a;
         border-bottom: 1px solid rgba(0,0,0,0.05);
         vertical-align: middle;
@@ -114,7 +114,7 @@
 
     .arch-pagination { padding: 14px 18px; text-align: right; }
 
-    .arch-empty { text-align: center; padding: 48px; color: #8a8580; font-size: 0.95rem; }
+    .arch-empty { text-align: center; padding: 48px; color: #8a8580; font-size: 1rem; }
 
     .arch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
@@ -123,13 +123,13 @@
     .arch-modal .modal-header { background: #faf8f5; border-bottom: 1px solid rgba(0,0,0,0.08); padding: 18px 24px; }
     .arch-modal .modal-title { font-size: 1.1rem; font-weight: 700; }
     .arch-modal .modal-body { padding: 24px; }
-    .arch-modal .modal-body label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #8a8580; margin-bottom: 6px; display: block; }
-    .arch-modal .modal-body p { font-size: 0.95rem; color: #1a1a1a; margin-bottom: 20px; }
+    .arch-modal .modal-body label { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #8a8580; margin-bottom: 6px; display: block; }
+    .arch-modal .modal-body p { font-size: 1rem; color: #1a1a1a; margin-bottom: 20px; }
     .arch-modal .modal-body a { color: #862736; }
     .arch-modal .feedback-file-list a {
         display: inline-flex; align-items: center; gap: 6px;
         padding: 8px 14px; background: #f5f3f0; border-radius: 6px;
-        font-size: 0.85rem; margin: 3px 0; text-decoration: none;
+        font-size: 0.95rem; margin: 3px 0; text-decoration: none;
     }
     .arch-modal .feedback-file-list a:hover { background: #e8e4de; }
 
