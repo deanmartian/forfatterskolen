@@ -53,6 +53,7 @@ class CourseEmailOut extends Command
         $today = Carbon::today()->format('Y-m-d');
         CronLog::create(['activity' => 'CourseEmailOut CRON running.']);
         $courses = Course::pluck('id');
+        $sentToday = []; // Track emails sent this run to prevent duplicates
         $emailOutList = EmailOut::where('for_free_course', 0)->whereDate('delay', '=', $today)
             ->whereIn('course_id', $courses)
             ->where('send_immediately', 0)->get();
@@ -202,6 +203,13 @@ class CourseEmailOut extends Command
                         if ($user->is_disabled) {
                             continue;
                         }
+
+                        // Prevent duplicate emails to same user for same subject
+                        $dedupKey = $user->id . '|' . $emailOut->subject;
+                        if (isset($sentToday[$dedupKey])) {
+                            continue;
+                        }
+                        $sentToday[$dedupKey] = true;
 
                         $message = $this->replaceMessagePlaceholders($emailOut->message, $user);
                         $this->sendBrandedOrLegacy($emailOut, $user, $message, $attachmentText, 'courses-taken', $courseTaken->id);
@@ -379,6 +387,13 @@ class CourseEmailOut extends Command
                         if ($user->is_disabled) {
                             continue;
                         }
+
+                        // Prevent duplicate emails to same user for same subject
+                        $dedupKey = $user->id . '|' . $emailOut->subject;
+                        if (isset($sentToday[$dedupKey])) {
+                            continue;
+                        }
+                        $sentToday[$dedupKey] = true;
 
                         $message = $this->replaceMessagePlaceholders($emailOut->message, $user);
                         $this->sendBrandedOrLegacy($emailOut, $user, $message, $attachmentText, 'courses-taken', $courseTaken->id);
