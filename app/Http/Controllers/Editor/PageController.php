@@ -748,4 +748,29 @@ class PageController extends Controller
 
         return sprintf('%+03d%02d', $hours, $minutes);
     }
+
+    public function toggleManuscriptLock(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $type = $request->input('type'); // 'assignment' or 'shop'
+        $id = $request->input('id');
+        $locked = $request->input('locked') ? 1 : 0;
+
+        if ($type === 'assignment') {
+            $manuscript = AssignmentManuscript::where('id', $id)
+                ->where('editor_id', Auth::id())
+                ->firstOrFail();
+            $manuscript->locked = $locked;
+            $manuscript->save();
+        } elseif ($type === 'shop') {
+            $manuscript = ShopManuscriptsTaken::where('id', $id)
+                ->where('feedback_user_id', Auth::id())
+                ->firstOrFail();
+            $manuscript->is_manuscript_locked = $locked;
+            $manuscript->save();
+        } else {
+            return response()->json(['success' => false], 422);
+        }
+
+        return response()->json(['success' => true, 'locked' => $locked]);
+    }
 }

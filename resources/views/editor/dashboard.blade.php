@@ -245,6 +245,10 @@
 			display: block;
 			opacity: .4;
 		}
+		.lock-label { display: inline-flex; align-items: center; gap: 4px; }
+		.lock-label input[type="checkbox"] { display: none; }
+		.lock-label i { font-size: 16px; cursor: pointer; transition: color 0.15s; }
+		.lock-label:hover i { opacity: 0.7; }
 
 		/* ── Labels ── */
 		.label-pending {
@@ -596,6 +600,7 @@
 						<th>{{ trans('site.expected-finish') }}</th>
 						<th>Uploaded Date</th>
 						<th>{{ trans('site.feedback-status') }}</th>
+							<th style="width:60px;">Lås</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -681,6 +686,13 @@
 										</button>
 									@endif
 								</div>
+							</td>
+							<td>
+								<label class="lock-label" style="cursor:pointer;margin:0;">
+									<input type="checkbox" class="manuscript-lock-toggle" data-type="assignment" data-id="{{ $assignedManuscript->id }}"
+										{{ $assignedManuscript->locked ? 'checked' : '' }}>
+									<i class="fa {{ $assignedManuscript->locked ? 'fa-lock text-danger' : 'fa-unlock-alt text-muted' }}"></i>
+								</label>
 							</td>
 						</tr>
 					@endforeach
@@ -2532,15 +2544,20 @@
 		modal.find('.modal-body').find('pre').text(details);
 	});
 
-	$(".is-manuscript-locked-toggle").change(function(){
-		let shopManuscriptTakenId = $(this).attr('data-id');
-		let is_checked = $(this).prop('checked');
-		let check_val = is_checked ? 1 : 0;
+	// Unified manuscript lock toggle for editor portal
+	$(document).on('change', '.manuscript-lock-toggle', function(){
+		var $cb = $(this);
+		var type = $cb.data('type');
+		var id = $cb.data('id');
+		var locked = $cb.prop('checked') ? 1 : 0;
+		var $icon = $cb.siblings('i');
+		$icon.attr('class', locked ? 'fa fa-lock text-danger' : 'fa fa-unlock-alt text-muted');
 		$.ajax({
-			type:'POST',
-			url:'/is-manuscript-locked-status',
-			data: { "shop_manuscript_taken_id" : shopManuscriptTakenId, 'is_manuscript_locked' : check_val },
-			success: function(data){}
+			type: 'POST',
+			url: '{{ route("editor.manuscript.lock") }}',
+			headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+			data: { type: type, id: id, locked: locked },
+			error: function() { $cb.prop('checked', !locked); $icon.attr('class', !locked ? 'fa fa-lock text-danger' : 'fa fa-unlock-alt text-muted'); }
 		});
 	});
 
@@ -2560,7 +2577,13 @@
 		modal.find('form').find('[name=assigned_to]').val(fields.assigned_to).trigger('change');
 	});
 
+	// Legacy lock-toggle (replaced by manuscript-lock-toggle above)
 	$(".lock-toggle").change(function(){
+		var $cb = $(this);
+		$cb.closest('label').find('.manuscript-lock-toggle').trigger('change');
+	});
+	/* Old code kept for reference:
+	$(".lock-toggle-old").change(function(){
 		let course_id = $(this).attr('data-id');
 		let is_checked = $(this).prop('checked');
 		let check_val = is_checked ? 1 : 0;
@@ -2572,6 +2595,7 @@
 			success: function(data){}
 		});
 	});
+	*/
 
 	$(".deleteTaskBtn").click(function(){
 		let action = $(this).data('action');

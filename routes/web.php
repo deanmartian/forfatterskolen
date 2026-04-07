@@ -2355,6 +2355,8 @@ Route::domain($editor)->group(function () {
         Route::post('/time-register/{id}/save-time-used', [Backend\TimeRegisterController::class, 'saveTimeUsed']);
         Route::delete('/time-register/time-used/{id}/delete', [Backend\TimeRegisterController::class, 'deleteTimeUsed']);
 
+        Route::post('/manuscript/lock', [Editor\PageController::class, 'toggleManuscriptLock'])->name('editor.manuscript.lock');
+
         Route::prefix('/coaching-time')->name('editor.coaching-time.')->group(function () {
             Route::controller(CoachingTimeController::class)->group(function() {
                 Route::get('/', 'index')->name('index');
