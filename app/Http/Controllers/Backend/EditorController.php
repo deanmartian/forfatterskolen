@@ -244,6 +244,10 @@ class EditorController extends Controller
     {
 
         $manuscriptEditorCanTake = ManuscriptEditorCanTake::where('editor_id', Auth::user()->id)
+            ->where(function ($q) {
+                $q->where('date_to', '>=', now()->toDateString())
+                  ->orWhereNull('date_to');
+            })
             ->orderBy('date_from', 'asc')
             ->get();
 

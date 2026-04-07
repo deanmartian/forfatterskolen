@@ -297,6 +297,24 @@
 		</p>
 	</div>
 
+	{{-- ═══════ KAPASITET-VARSLING ═══════ --}}
+	@php
+		$hasActiveCapacity = \App\ManuscriptEditorCanTake::where('editor_id', auth()->id())
+			->where(function ($q) { $q->where('date_to', '>=', now()->toDateString())->orWhereNull('date_to'); })
+			->exists();
+	@endphp
+	@if(!$hasActiveCapacity)
+		<div style="background:#fff3e0;border:1px solid #ffe0b2;border-left:4px solid #e65100;border-radius:8px;padding:16px 20px;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+			<div>
+				<strong style="color:#e65100;"><i class="fa fa-exclamation-triangle"></i> Kapasitet ikke satt</strong>
+				<p style="margin:4px 0 0;font-size:14px;color:#5a5550;">Du har ikke registrert din kapasitet. Oppdater innstillingene slik at vi vet hvor mange manus du kan ta.</p>
+			</div>
+			<a href="{{ route('editor.settings') }}" class="btn btn-warning btn-sm" style="white-space:nowrap;">
+				<i class="fa fa-cog"></i> Sett kapasitet
+			</a>
+		</div>
+	@endif
+
 	{{-- ═══════ PUSH NOTIFICATION SETTINGS ═══════ --}}
 	<div style="background:#fff;border:1px solid #e8e4de;border-radius:10px;padding:16px 20px;margin-bottom:1rem;">
 		<div style="display:flex;align-items:center;justify-content:space-between;">

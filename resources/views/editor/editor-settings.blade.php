@@ -1,21 +1,38 @@
 @extends('editor.layout')
 
 @section('title')
-<title>Dashboard &rsaquo; Forfatterskolen Admin</title>
+<title>Redaktør innstillinger &rsaquo; Forfatterskolen Redaktørportal</title>
 @stop
+
+@section('page-title', 'Redaktør innstillinger')
 
 @section('styles')
 	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="{{asset('css/editor.css')}}">
 	<style>
-		.panel {
-			overflow-x: auto;
+		.panel { overflow-x: auto; }
+		.settings-header {
+			background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%);
+			border-radius: 12px;
+			padding: 24px 28px;
+			color: #fff;
+			margin-bottom: 24px;
 		}
+		.settings-header h2 { font-size: 1.3rem; font-weight: 700; margin: 0 0 4px; }
+		.settings-header p { font-size: 0.85rem; opacity: 0.7; margin: 0; }
+		.nav-tabs > li > a { font-size: 14px; padding: 12px 18px; }
+		.panel-heading h4 { font-size: 1.1rem; }
+		.table > thead > tr > th { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.3px; color: #8a8580; }
+		.table > tbody > tr > td { font-size: 0.95rem; vertical-align: middle; }
 	</style>
 @stop
 
 @section('content')
 <div class="col-sm-12 dashboard-left">
+	<div class="settings-header">
+		<h2><i class="fa fa-cog"></i> Redaktør innstillinger</h2>
+		<p>Administrer din kapasitet, sjangerpreferanser og oppgaver.</p>
+	</div>
 	<div class="row">
 		<div class="col-sm-12">
             <ul class="nav nav-tabs margin-top">
@@ -32,10 +49,10 @@
 						<h4 class="dib">
 							{{ trans('site.admin-menu.how-many-manuscript-you-can-take') }}
 						</h4>
-						<button class="btn btn-xs btn-primary addBtn pull-right"
+						<button class="btn btn-sm btn-primary addBtn pull-right"
 								data-toggle="modal"
 								data-target="#addModal"
-								data-action="{{ route('editor.manuscript-you-can-take-save') }}">{{ trans('site.add-new') }}</button>
+								data-action="{{ route('editor.manuscript-you-can-take-save') }}"><i class="fa fa-plus"></i> {{ trans('site.add-new') }}</button>
 					</div>
 					<table class="table">
 						<thead>
