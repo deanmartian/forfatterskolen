@@ -5657,67 +5657,96 @@ Forfatterskolen';
                     $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
                     if ($ext === 'docx') {
                         try {
-                            // Extract Word comments from docx (stored in word/comments.xml)
                             $zip = new \ZipArchive();
                             if ($zip->open($filePath) === true) {
+                                $docXml = $zip->getFromName('word/document.xml');
                                 $commentsXml = $zip->getFromName('word/comments.xml');
                                 $zip->close();
 
+                                // Parse comments into lookup
+                                $commentLookup = [];
                                 if ($commentsXml) {
-                                    $xml = simplexml_load_string($commentsXml);
-                                    $xml->registerXPathNamespace('w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main');
-                                    $comments = $xml->xpath('//w:comment');
-
-                                    if ($comments && count($comments) > 0) {
-                                        $feedbackContent .= '<h3 style="color:#862736;font-size:13px;margin-top:16px;">Kommentarer fra redaktøren (' . count($comments) . ')</h3>';
-                                        $commentNum = 1;
-                                        foreach ($comments as $comment) {
-                                            $author = (string) $comment->attributes()['w:author'] ?? 'Redaktør';
-                                            $date = (string) $comment->attributes()['w:date'] ?? '';
-                                            $dateFormatted = $date ? \Carbon\Carbon::parse($date)->format('d.m.Y H:i') : '';
-
-                                            // Extract text from comment paragraphs
-                                            $commentText = '';
-                                            foreach ($comment->xpath('.//w:t') as $t) {
-                                                $commentText .= (string) $t;
-                                            }
-
-                                            if (trim($commentText)) {
-                                                $feedbackContent .= '<div style="border-left:3px solid #862736;padding:8px 12px;margin:8px 0;background:#faf8f5;">'
-                                                    . '<strong style="font-size:10px;color:#862736;">' . e($author) . ($dateFormatted ? ' — ' . $dateFormatted : '') . '</strong>'
-                                                    . '<br>' . e(trim($commentText))
-                                                    . '</div>';
-                                                $commentNum++;
-                                            }
+                                    $cXml = simplexml_load_string($commentsXml);
+                                    $cXml->registerXPathNamespace('w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main');
+                                    foreach ($cXml->xpath('//w:comment') as $comment) {
+                                        $attrs = $comment->attributes('http://schemas.openxmlformats.org/wordprocessingml/2006/main');
+                                        $id = (string) $attrs['id'];
+                                        $author = (string) $attrs['author'];
+                                        $commentText = '';
+                                        foreach ($comment->xpath('.//w:t') as $t) {
+                                            $commentText .= (string) $t;
                                         }
+                                        $commentLookup[$id] = ['author' => $author, 'text' => trim($commentText)];
                                     }
                                 }
 
-                                // Also extract body text
-                                $phpWord = \PhpOffice\PhpWord\IOFactory::load($filePath);
-                                $bodyText = '';
-                                foreach ($phpWord->getSections() as $section) {
-                                    foreach ($section->getElements() as $element) {
-                                        if (method_exists($element, 'getElements')) {
-                                            $line = '';
-                                            foreach ($element->getElements() as $child) {
-                                                if (method_exists($child, 'getText')) {
-                                                    $line .= $child->getText();
+                                // Parse document.xml to get text with comment references
+                                if ($docXml && count($commentLookup) > 0) {
+                                    $dXml = simplexml_load_string($docXml);
+                                    $dXml->registerXPathNamespace('w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main');
+
+                                    // Find commented text ranges
+                                    $activeCommentIds = [];
+                                    $commentedTexts = []; // commentId => marked text
+
+                                    $paragraphs = $dXml->xpath('//w:p');
+                                    foreach ($paragraphs as $para) {
+                                        foreach ($para->children('http://schemas.openxmlformats.org/wordprocessingml/2006/main') as $child) {
+                                            $name = $child->getName();
+                                            if ($name === 'commentRangeStart') {
+                                                $id = (string) $child->attributes('http://schemas.openxmlformats.org/wordprocessingml/2006/main')['id'];
+                                                $activeCommentIds[$id] = true;
+                                                if (!isset($commentedTexts[$id])) $commentedTexts[$id] = '';
+                                            } elseif ($name === 'commentRangeEnd') {
+                                                $id = (string) $child->attributes('http://schemas.openxmlformats.org/wordprocessingml/2006/main')['id'];
+                                                unset($activeCommentIds[$id]);
+                                            } elseif ($name === 'r') {
+                                                $text = '';
+                                                foreach ($child->xpath('.//w:t') as $t) {
+                                                    $text .= (string) $t;
+                                                }
+                                                // Add text to all active comment ranges
+                                                foreach ($activeCommentIds as $cId => $_) {
+                                                    $commentedTexts[$cId] = ($commentedTexts[$cId] ?? '') . $text;
                                                 }
                                             }
-                                            if (trim($line)) {
-                                                $bodyText .= '<p>' . e($line) . '</p>';
-                                            }
-                                        } elseif (method_exists($element, 'getText')) {
-                                            $text = $element->getText();
-                                            if (is_string($text) && trim($text)) {
-                                                $bodyText .= '<p>' . e($text) . '</p>';
+                                        }
+                                    }
+
+                                    $feedbackContent .= '<h3 style="color:#862736;font-size:14px;margin-top:16px;">Redaktørens kommentarer (' . count($commentLookup) . ')</h3>';
+                                    $num = 1;
+                                    foreach ($commentLookup as $cId => $c) {
+                                        $markedText = $commentedTexts[$cId] ?? '';
+                                        $feedbackContent .= '<div style="margin:12px 0;padding:12px 16px;border:1px solid #e8e4de;border-radius:6px;">';
+                                        if ($markedText) {
+                                            $feedbackContent .= '<div style="background:#fff8e1;padding:8px 12px;border-radius:4px;font-size:11px;color:#5a5550;margin-bottom:8px;border-left:3px solid #f9a825;">'
+                                                . '<em>«' . e(\Illuminate\Support\Str::limit($markedText, 200)) . '»</em></div>';
+                                        }
+                                        $feedbackContent .= '<div style="font-size:12px;color:#1a1a1a;">' . e($c['text']) . '</div>';
+                                        $feedbackContent .= '<div style="font-size:9px;color:#8a8580;margin-top:4px;">' . e($c['author']) . '</div>';
+                                        $feedbackContent .= '</div>';
+                                        $num++;
+                                    }
+                                } elseif ($docXml) {
+                                    // No comments, just extract body text
+                                    $phpWord = \PhpOffice\PhpWord\IOFactory::load($filePath);
+                                    $bodyText = '';
+                                    foreach ($phpWord->getSections() as $section) {
+                                        foreach ($section->getElements() as $element) {
+                                            if (method_exists($element, 'getElements')) {
+                                                $line = '';
+                                                foreach ($element->getElements() as $child) {
+                                                    if (method_exists($child, 'getText')) {
+                                                        $line .= $child->getText();
+                                                    }
+                                                }
+                                                if (trim($line)) $bodyText .= '<p>' . e($line) . '</p>';
                                             }
                                         }
                                     }
-                                }
-                                if ($bodyText) {
-                                    $feedbackContent .= '<h3 style="color:#862736;font-size:13px;margin-top:20px;">Tekst fra tilbakemelding</h3>' . $bodyText;
+                                    if ($bodyText) {
+                                        $feedbackContent .= '<h3 style="color:#862736;font-size:14px;margin-top:16px;">Tilbakemelding</h3>' . $bodyText;
+                                    }
                                 }
                             }
                         } catch (\Exception $e) {
