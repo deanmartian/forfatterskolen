@@ -124,8 +124,8 @@
 						<tr>
 							<td>{{ $key->course->title }}</td>
 							<td>{{ $key->title }}</td>
-							<td>{{ $key->submission_date }}</td>
-							<td>{{ $key->editor_expected_finish }}</td>
+							<td>{{ $key->submission_date ? \Carbon\Carbon::parse($key->submission_date)->format('d.m.Y \k\l. H:i') : '—' }}</td>
+							<td>{{ $key->editor_expected_finish ? \Carbon\Carbon::parse($key->editor_expected_finish)->format('d.m.Y') : '—' }}</td>
 							<td>
 								<?php 
 									$data = \App\AssignmentManuscriptEditorCanTake::where('assignment_manuscript_id', $key->id)->where('editor_id', Auth::user()->id)->first(); 
