@@ -120,7 +120,7 @@ class FrontendHelpers
 
     public static function formatToYMDtoPrettyDate($date)
     {
-        return Carbon::parse($date)->format('M d, Y h:i A');
+        return Carbon::parse($date)->format('d.m.Y \k\l. H:i');
     }
 
     public static function isLessonAvailable($startedAt, $delay, $period)
