@@ -5680,77 +5680,75 @@ Forfatterskolen';
                                     }
                                 }
 
-                                // Parse document.xml to get text with comment references
-                                if ($docXml && count($commentLookup) > 0) {
+                                // Build full text with inline comments
+                                if ($docXml) {
+                                    $ns = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
                                     $dXml = simplexml_load_string($docXml);
-                                    $dXml->registerXPathNamespace('w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main');
+                                    $dXml->registerXPathNamespace('w', $ns);
 
-                                    // Find commented text ranges
                                     $activeCommentIds = [];
-                                    $commentedTexts = []; // commentId => marked text
+                                    $html = '';
 
-                                    $paragraphs = $dXml->xpath('//w:p');
-                                    foreach ($paragraphs as $para) {
-                                        foreach ($para->children('http://schemas.openxmlformats.org/wordprocessingml/2006/main') as $child) {
+                                    foreach ($dXml->xpath('//w:body/w:p') as $para) {
+                                        $paraHtml = '';
+                                        $hasCommentedText = false;
+
+                                        foreach ($para->children($ns) as $child) {
                                             $name = $child->getName();
+
                                             if ($name === 'commentRangeStart') {
-                                                $id = (string) $child->attributes('http://schemas.openxmlformats.org/wordprocessingml/2006/main')['id'];
+                                                $id = (string) $child->attributes($ns)['id'];
                                                 $activeCommentIds[$id] = true;
-                                                if (!isset($commentedTexts[$id])) $commentedTexts[$id] = '';
                                             } elseif ($name === 'commentRangeEnd') {
-                                                $id = (string) $child->attributes('http://schemas.openxmlformats.org/wordprocessingml/2006/main')['id'];
+                                                $id = (string) $child->attributes($ns)['id'];
                                                 unset($activeCommentIds[$id]);
+                                                // Insert comment inline after the marked text
+                                                if (isset($commentLookup[$id]) && $commentLookup[$id]['text']) {
+                                                    $c = $commentLookup[$id];
+                                                    $paraHtml .= ' <span style="background:#862736;color:#fff;font-size:9px;padding:1px 6px;border-radius:3px;font-weight:700;">'
+                                                        . e($c['author']) . ':</span> '
+                                                        . '<span style="color:#862736;font-size:11px;font-style:italic;">'
+                                                        . e($c['text']) . '</span> ';
+                                                }
                                             } elseif ($name === 'r') {
                                                 $text = '';
                                                 foreach ($child->xpath('.//w:t') as $t) {
                                                     $text .= (string) $t;
                                                 }
-                                                // Add text to all active comment ranges
-                                                foreach ($activeCommentIds as $cId => $_) {
-                                                    $commentedTexts[$cId] = ($commentedTexts[$cId] ?? '') . $text;
+                                                if ($text) {
+                                                    if (count($activeCommentIds) > 0) {
+                                                        // Text is inside a comment range — highlight it
+                                                        $paraHtml .= '<span style="background:#fff3cd;padding:0 1px;">' . e($text) . '</span>';
+                                                        $hasCommentedText = true;
+                                                    } else {
+                                                        $paraHtml .= e($text);
+                                                    }
                                                 }
                                             }
+                                        }
+
+                                        if (trim(strip_tags($paraHtml))) {
+                                            $html .= '<p style="margin:0 0 8px;line-height:1.8;font-size:11px;">' . $paraHtml . '</p>';
                                         }
                                     }
 
-                                    $feedbackContent .= '<h3 style="color:#862736;font-size:14px;margin-top:16px;">Redaktørens kommentarer (' . count($commentLookup) . ')</h3>';
-                                    $num = 1;
-                                    foreach ($commentLookup as $cId => $c) {
-                                        $markedText = $commentedTexts[$cId] ?? '';
-                                        $feedbackContent .= '<div style="margin:12px 0;padding:12px 16px;border:1px solid #e8e4de;border-radius:6px;">';
-                                        if ($markedText) {
-                                            $feedbackContent .= '<div style="background:#fff8e1;padding:8px 12px;border-radius:4px;font-size:11px;color:#5a5550;margin-bottom:8px;border-left:3px solid #f9a825;">'
-                                                . '<em>«' . e(\Illuminate\Support\Str::limit($markedText, 200)) . '»</em></div>';
+                                    if ($html) {
+                                        $commentCount = count($commentLookup);
+                                        $feedbackContent .= '<h3 style="color:#862736;font-size:14px;margin-top:16px;">Tekst med redaktørkommentarer'
+                                            . ($commentCount ? ' (' . $commentCount . ' kommentarer)' : '')
+                                            . '</h3>';
+                                        if ($commentCount) {
+                                            $feedbackContent .= '<p style="font-size:10px;color:#8a8580;margin-bottom:12px;">'
+                                                . '<span style="background:#fff3cd;padding:1px 4px;">Gul markering</span> = tekst redaktøren kommenterer. '
+                                                . '<span style="color:#862736;font-style:italic;">Vinrød kursiv</span> = redaktørens kommentar.'
+                                                . '</p>';
                                         }
-                                        $feedbackContent .= '<div style="font-size:12px;color:#1a1a1a;">' . e($c['text']) . '</div>';
-                                        $feedbackContent .= '<div style="font-size:9px;color:#8a8580;margin-top:4px;">' . e($c['author']) . '</div>';
-                                        $feedbackContent .= '</div>';
-                                        $num++;
-                                    }
-                                } elseif ($docXml) {
-                                    // No comments, just extract body text
-                                    $phpWord = \PhpOffice\PhpWord\IOFactory::load($filePath);
-                                    $bodyText = '';
-                                    foreach ($phpWord->getSections() as $section) {
-                                        foreach ($section->getElements() as $element) {
-                                            if (method_exists($element, 'getElements')) {
-                                                $line = '';
-                                                foreach ($element->getElements() as $child) {
-                                                    if (method_exists($child, 'getText')) {
-                                                        $line .= $child->getText();
-                                                    }
-                                                }
-                                                if (trim($line)) $bodyText .= '<p>' . e($line) . '</p>';
-                                            }
-                                        }
-                                    }
-                                    if ($bodyText) {
-                                        $feedbackContent .= '<h3 style="color:#862736;font-size:14px;margin-top:16px;">Tilbakemelding</h3>' . $bodyText;
+                                        $feedbackContent .= $html;
                                     }
                                 }
                             }
                         } catch (\Exception $e) {
-                            $feedbackContent .= '<p><em>Kunne ikke lese innholdet fra ' . basename($filePath) . '</em></p>';
+                            $feedbackContent .= '<p><em>Kunne ikke lese innholdet fra ' . basename($filePath) . ': ' . e($e->getMessage()) . '</em></p>';
                         }
                     } elseif ($ext === 'txt') {
                         $feedbackContent .= '<p>' . nl2br(e(file_get_contents($filePath))) . '</p>';
