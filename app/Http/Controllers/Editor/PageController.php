@@ -104,6 +104,7 @@ class PageController extends Controller
     {
         $upcomingAssignments = Assignment::where('editor_id', '=', Auth::user()->id)
             ->whereDoesntHave('manuscripts') // check if there's no submitted manuscript yet
+            ->where('submission_date', '>=', now()->subYear())
             ->oldest('submission_date')
             ->get();
 
