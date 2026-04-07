@@ -8,7 +8,8 @@
 
 @section('styles')
 <style>
-    .en-wrapper { max-width: 800px; margin: 0 auto; padding: 0 16px; }
+    .en-wrapper { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+    .en-wrapper * { word-wrap: break-word; overflow-wrap: break-word; }
 
     .en-header {
         background: linear-gradient(135deg, #862736 0%, #5e1a26 100%);
@@ -45,6 +46,7 @@
         border: 1px solid rgba(0,0,0,0.08);
         border-radius: 12px;
         overflow: hidden;
+        max-width: 100%;
     }
     .en-card__body {
         padding: 32px 36px;
