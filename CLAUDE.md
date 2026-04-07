@@ -619,19 +619,50 @@ php artisan queue:restart
 - `isAdmin()` in `CommunityForumController` checks both `user->role == 1` AND `profile->badge === 'admin'`
 - Admin sees all course groups filtered by `status=1` AND `show_in_course_groups=1`
 - `course_group_id` in posts table references `courses.id`, not `course_groups.id`
+- AI discussion generator in admin: `admin.community.discussions.generate-ai` and `store-ai`
+- Course group dropdown in admin posts uses `Course` model (not `CourseGroup`) for `course_group_id`
 
 ### Landing Pages
 - `/skriv-ditt-liv` — standalone Blade template at `resources/views/landing/skriv-ditt-liv.blade.php` (noindex)
 - Uses `Route::view()` — no controller needed
 
+### Editor Portal
+- "Mine elever" page at `/mine-elever` — extension requests, active manuscripts, send reminders
+- Editor can approve/decline extension requests → email sent to student automatically
+- Manuscript lock toggle on dashboard — editors lock manus when reading
+- `AdminHelpers::editorPageList()` defines sidebar menu items
+- DataTables language set to Norwegian in `editor/layout.blade.php`
+- `formatToYMDtoPrettyDate()` returns `d.m.Y kl. H:i` (Norwegian format)
+- Årskurs/Påbygg excluded from "Hvor mange oppgaver kan du ta?" settings
+
+### Assignments
+- `auto_assign_editor` field on `assignments` table — auto-assigns editor on student submission
+- When enabled, `editor_id` and `editor_expected_finish` set automatically at submission time
+- Extension requests: student requests → admin/editor approves → deadline updated + email sent
+
+### Inbox
+- IMAP poller saves attachments to `storage/app/inbox-attachments/`
+- Attachments stored as JSON array in `inbox_messages.attachments` column
+- Download route: `admin.inbox.attachment`
+
+### Webinars
+- `webinarscheduledregistration:command` runs at 20:30 (day before) AND 07:00 (same day fallback)
+- Fallback checks all webinars starting today with <50% registrants and registers missing students
+- Registration uses BigMarker API PUT to `/api/v1/conferences/register`
+- `webinar_scheduled_registrations` table controls when registration happens
+
+### Email Deduplication
+- `CourseEmailOut` tracks `$sentToday[user_id|subject]` to prevent duplicate emails
+- Students on multiple courses only get one email per subject per run
+
 ## Recent Work (April 2026)
 
 - **PWA with push notifications** - Service worker, `PushSubscription` model, web push API
-- **Inbox system replacing Helpwise** - Full email CRM with IMAP polling from Domeneshop, internal comments, AI draft replies using Claude, conversation assignment, canned responses, auto-replies
+- **Inbox system replacing Helpwise** - Full email CRM with IMAP polling, AI draft replies, conversation assignment, canned responses, auto-replies, attachment support
 - **Community with course groups** - Course-based groups, discussions, posts with reactions, direct messages, daily news sync, AI-generated discussions
 - **Blog redesign** - Updated blog views and routing
 - **Svea callback** - Server-to-server payment push callback
-- **Deadline extension requests** - `AssignmentExtensionRequest` model for students requesting deadline changes
+- **Deadline extension requests** - `AssignmentExtensionRequest` model, admin + editor portal approval with email notifications
 - **Ad OS** - Ad campaign optimization system with Facebook/Google integration
 - **Indiemoon bookshop** - API for book orders, author profiles, e-book downloads
 - **Publishing pipeline** - `Publication` model, manuscript-to-book workflow
@@ -640,3 +671,8 @@ php artisan queue:restart
 - **Kursbygger AI** - Course builder with Claude Opus, module-by-module generation, auto-create course with lessons, markdown→HTML conversion
 - **Landing pages** - `/skriv-ditt-liv` memoir course page with real student photos and 3-tier pricing
 - **Login fixes** - Google OAuth field format update, session handling for Login-as-user
+- **Editor portal redesign** - New assignments, archive, settings, editors note pages with modern UX. "Mine elever" for extension management and student reminders. Manuscript lock toggle. All Norwegian text.
+- **Auto-assign editor** - `auto_assign_editor` flag on assignments for automatic editor assignment on submission
+- **Webinar fallback registration** - Same-day safety net at 07:00 for missed scheduled registrations
+- **Email deduplication** - Prevents students on multiple courses from receiving duplicate emails
+- **Inbox attachments** - IMAP poller extracts and stores email attachments with download support
