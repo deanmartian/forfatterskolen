@@ -148,13 +148,23 @@ class CommunityForumController extends Controller
     public function home()
     {
         $profile = $this->ensureProfile();
-        $postsQuery = Post::with(['user.profile', 'reactions', 'comments.user.profile'])
-            ->whereNull('course_group_id');
-        $this->safeOrderByPinned($postsQuery, 'posts');
-        $posts = $postsQuery->orderByDesc('created_at')->get();
+
+        // Pinned posts only (official announcements)
+        $posts = Post::with(['user.profile', 'reactions', 'comments.user.profile'])
+            ->whereNull('course_group_id')
+            ->where('pinned', true)
+            ->orderByDesc('created_at')
+            ->get();
+
+        // All discussions (user-generated content)
+        $discussions = Discussion::with(['user.profile', 'replies.user.profile'])
+            ->orderByDesc('pinned')
+            ->orderByDesc('created_at')
+            ->get();
 
         return view('frontend.learner.community.home', [
             'posts'   => $posts,
+            'discussions' => $discussions,
             'profile' => $profile,
             'unreadNotifications' => $this->unreadNotificationCount(),
             'unreadMessages'      => $this->unreadMessageCount(),

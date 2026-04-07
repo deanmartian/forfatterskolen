@@ -54,20 +54,29 @@
                     <a href="{{ route('learner.community.manuscripts') }}" class="btn-challenge">Delta nå</a>
                 </div>
 
-                {{-- Composer --}}
+                {{-- Composer — creates a Discussion --}}
                 <div class="community-card mb-4">
                     <div class="card-body" style="padding: 0;">
-                        <form action="{{ route('learner.community.storePost') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('learner.community.storeDiscussion') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="composer-top">
                                 <div class="avatar-circle">
                                     {{ strtoupper(substr($profile->name ?? '', 0, 1)) }}{{ strtoupper(substr(explode(' ', $profile->name ?? '')[1] ?? '', 0, 1)) }}
                                 </div>
                                 <div style="flex: 1;">
-                                    <textarea name="content" id="post-textarea" class="community-textarea" style="width: 100%; border: none; box-shadow: none; height: 68px; background: transparent;" placeholder="Hva tenker du på? Del en tanke, tekstutdrag eller spørsmål…" required></textarea>
+                                    <input type="text" name="title" class="community-textarea" style="width:100%;border:none;box-shadow:none;height:36px;background:transparent;font-weight:600;font-size:15px;" placeholder="Tittel på innlegget ditt..." required>
+                                    <textarea name="content" id="post-textarea" class="community-textarea" style="width: 100%; border: none; box-shadow: none; height: 68px; background: transparent;" placeholder="Del en tanke, tekstutdrag eller spørsmål…" required></textarea>
                                 </div>
                             </div>
                             <div class="composer-footer">
+                                <select name="category" style="border:1px solid #e8e4de;border-radius:6px;padding:4px 8px;font-size:12px;color:#5a5550;">
+                                    <option value="Generelt">Generelt</option>
+                                    <option value="Skriveteknikk">Skriveteknikk</option>
+                                    <option value="Inspirasjon">Inspirasjon</option>
+                                    <option value="Tilbakemelding">Tilbakemelding</option>
+                                    <option value="Sjanger">Sjanger</option>
+                                    <option value="Publisering">Publisering</option>
+                                </select>
                                 <label for="post-image-input" class="composer-action" style="cursor: pointer; margin: 0;">
                                     <i class="fa fa-camera"></i> Bilde
                                 </label>
@@ -180,11 +189,64 @@
                         </div>
                     </div>
                 @empty
+                @endforelse
+
+                {{-- Discussions feed --}}
+                @forelse($discussions ?? [] as $discussion)
+                    @php
+                        $dProfile = $discussion->user->profile ?? null;
+                        $dName = $dProfile ? ucwords($dProfile->name) : 'Ukjent';
+                        $dInitials = collect(explode(' ', $dName))->map(fn($w) => strtoupper(substr($w, 0, 1)))->join('');
+                        $avatarColors = ['pa-red', 'pa-blue', 'pa-teal', 'pa-purple', 'pa-amber'];
+                        $dColor = $avatarColors[crc32($dName) % count($avatarColors)];
+                    @endphp
+                    <div class="post-card">
+                        <div style="padding: 14px 16px 0;">
+                            @if($discussion->pinned)
+                                <div class="pinned-label"><i class="fa fa-thumb-tack"></i> Festet</div>
+                            @endif
+                            <div class="d-flex" style="gap: 10px; align-items: center;">
+                                <div class="avatar-circle {{ $dColor }}">{{ $dInitials }}</div>
+                                <div style="flex: 1;">
+                                    <div>
+                                        <strong style="font-size: 13.5px;">{{ $dName }}</strong>
+                                        @if($dProfile && $dProfile->badge)
+                                            <span class="user-badge">{{ $dProfile->badge }}</span>
+                                        @endif
+                                    </div>
+                                    <span class="post-time">{{ \Carbon\Carbon::parse($discussion->created_at)->diffForHumans() }}</span>
+                                </div>
+                                <span style="font-size:11px;background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:4px;">{{ $discussion->category }}</span>
+                            </div>
+                        </div>
+
+                        <div style="padding: 10px 16px 12px;">
+                            <h4 style="font-size:15px;font-weight:700;margin:0 0 6px;">
+                                <a href="{{ route('learner.community.discussion', $discussion->id) }}" style="color:#1a1a1a;text-decoration:none;">{{ $discussion->title }}</a>
+                            </h4>
+                            <p class="post-content" style="margin-top: 0;">{{ Str::limit($discussion->content, 300) }}</p>
+
+                            @if($discussion->image_url)
+                                <div style="margin: 8px 0 0; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-light);">
+                                    <img src="{{ $discussion->image_url }}" alt="Bilde" style="width: 100%; display: block; max-height: 280px; object-fit: cover;">
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="post-actions" style="padding: 8px 10px; border-top: 1px solid var(--border-light); margin-top: 0;">
+                            <a href="{{ route('learner.community.discussion', $discussion->id) }}" class="btn-action">
+                                <i class="fa fa-comment-o"></i> {{ $discussion->replies->count() }} svar
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    @if($posts->isEmpty())
                     <div class="community-card">
                         <div class="card-body text-center py-5">
                             <p style="color: var(--text-muted);">Ingen innlegg ennå. Vær den første til å dele noe!</p>
                         </div>
                     </div>
+                    @endif
                 @endforelse
             </div>
 
