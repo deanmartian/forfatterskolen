@@ -298,6 +298,7 @@ class AssignmentController extends Controller
                 'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0,
                 'check_max_words' => isset($request->check_max_words) ? 1 : 0,
                 'assigned_editor' => ! isset($request->check_max_words) ? $request->assigned_editor : null,
+                'auto_assign_editor' => isset($request->auto_assign_editor) ? 1 : 0,
                 'editor_expected_finish' => $request->editor_expected_finish,
                 'parent' => $request->linked_assignment ? 'assignment' : null,
                 'parent_id' => $request->linked_assignment,
@@ -343,6 +344,7 @@ class AssignmentController extends Controller
             $assignment->send_letter_to_editor = isset($request->send_letter_to_editor) ? 1 : 0;
             $assignment->check_max_words = isset($request->check_max_words) ? 1 : 0;
             $assignment->assigned_editor = ! isset($request->check_max_words) ? $request->assigned_editor : null;
+            $assignment->auto_assign_editor = isset($request->auto_assign_editor) ? 1 : 0;
             $assignment->editor_expected_finish = $request->editor_expected_finish;
             $assignment->expected_finish = $request->expected_finish;
 

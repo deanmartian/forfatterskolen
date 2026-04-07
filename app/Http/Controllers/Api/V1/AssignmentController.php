@@ -530,6 +530,8 @@ class AssignmentController extends ApiController
         $editorId = $assignment->editor_id ? $assignment->editor_id
             : ($assignment->assigned_editor ? $assignment->assigned_editor : 0);
 
+        $autoAssigned = $editorId > 0 && $assignment->auto_assign_editor;
+
         $submittedManuscript = AssignmentManuscript::create([
             'assignment_id' => $assignment->id,
             'user_id' => $user->id,
@@ -540,8 +542,13 @@ class AssignmentController extends ApiController
             'join_group' => $joinGroup,
             'letter_to_editor' => $letterToEditor,
             'editor_id' => $editorId,
+            'editor_expected_finish' => $autoAssigned ? $assignment->editor_expected_finish : null,
             'uploaded_at' => now(),
         ]);
+
+        if ($autoAssigned) {
+            \Log::info('Auto-assigned manuscript #' . $submittedManuscript->id . ' to editor #' . $editorId);
+        }
 
         return response()->json([
             'data' => [

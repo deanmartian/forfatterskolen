@@ -1513,6 +1513,8 @@ class LearnerController extends Controller
             $editor_id = $assignment->editor_id ? $assignment->editor_id
                 : ($assignment->assigned_editor ? $assignment->assigned_editor : 0);
 
+            $autoAssigned = $editor_id > 0 && $assignment->auto_assign_editor;
+
             $submittedManuscript = AssignmentManuscript::create([
                 'assignment_id' => $assignment->id,
                 'user_id' => Auth::user()->id,
@@ -1523,6 +1525,7 @@ class LearnerController extends Controller
                 'join_group' => $join_group,
                 'letter_to_editor' => $letterToEditor,
                 'editor_id' => $editor_id,
+                'editor_expected_finish' => $autoAssigned ? $assignment->editor_expected_finish : null,
                 'uploaded_at' => now(),
             ]);
             Log::create([

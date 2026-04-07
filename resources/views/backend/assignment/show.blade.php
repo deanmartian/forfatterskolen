@@ -896,16 +896,23 @@
 				</div>
 
 				<div class="form-group" id="assigned-editor-container">
-					<label>Assigned Editor</label> <br>
+					<label>Tildelt redaktør</label> <br>
 					<select name="assigned_editor" id="" class="form-control">
 						<option value="" disabled selected="">- Velg redaktør -</option>
 						@foreach(AdminHelpers::editorList() as $editor)
-							<option value="{{ $editor->id }}" 
+							<option value="{{ $editor->id }}"
 								@if($editor->id == $assignment->assigned_editor) selected @endif>
 								{{ $editor->full_name }}
 							</option>
 						@endforeach
 					</select>
+				</div>
+
+				<div class="form-group">
+					<label>Automatisk tildeling</label> <br>
+					<input type="checkbox" data-toggle="toggle" data-on="Ja" data-off="Nei" data-size="small" name="auto_assign_editor"
+					@if ($assignment->auto_assign_editor ?? false) checked @endif>
+					<p class="help-block" style="font-size:12px;color:#888;">Nye innleveringer tildeles automatisk til valgt redaktør.</p>
 				</div>
 
 				<div class="form-group">
