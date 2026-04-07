@@ -32,7 +32,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('invoiceduereminder:command')->dailyAt('08:00');
         $schedule->command('delayedemail:command')->dailyAt('08:00');
         $schedule->command('invoicevippsefaktura:command')->dailyAt('08:30');
-        $schedule->command('webinarscheduledregistration:command')->dailyAt('20:30');
+        $schedule->command('webinarscheduledregistration:command')->dailyAt('07:00'); // Fallback same-day
+        $schedule->command('webinarscheduledregistration:command')->dailyAt('20:30'); // Day-before
         $schedule->command('dropbox:refresh-token')->hourly();
         $schedule->command('inbox:poll --mark-read')->everyMinute()->withoutOverlapping();
         $schedule->command('freecoursedelayedemail:command')->everyMinute()->withoutOverlapping();
