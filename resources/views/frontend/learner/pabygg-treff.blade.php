@@ -302,7 +302,7 @@
                     <div class="pabygg-highlight">
                         <i class="fa fa-glass"></i>
                         <strong>NB: Antologi-lansering</strong>
-                        <span>Bar Bardot begge kveldene fra kl 19!</span>
+                        <span>Bar Bardot begge kveldene — dørene åpner kl 18:00!</span>
                     </div>
                 </div>
 
