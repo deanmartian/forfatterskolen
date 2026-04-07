@@ -90,11 +90,20 @@ class WebinarScheduledRegistrationCommand extends Command
                         $response = curl_exec($ch);
                         $decoded_response = json_decode($response);
 
+                        $joinUrl = null;
                         if (is_object($decoded_response) && property_exists($decoded_response, 'conference_url')) {
+                            $joinUrl = $decoded_response->conference_url;
+                        } elseif (is_object($decoded_response) && property_exists($decoded_response, 'error') && str_contains($decoded_response->error, 'bigmarker.com')) {
+                            // Already registered — extract URL from error message
+                            preg_match('/(https[^ ]+)/', $decoded_response->error, $matches);
+                            $joinUrl = $matches[1] ?? null;
+                        }
+
+                        if ($joinUrl) {
                             $registrant['user_id'] = $user->id;
                             $registrant['webinar_id'] = $webinar->id;
                             $webRegister = WebinarRegistrant::firstOrNew($registrant);
-                            $webRegister->join_url = $decoded_response->conference_url;
+                            $webRegister->join_url = $joinUrl;
                             $webRegister->save();
 
                             CronLog::create(['activity' => 'WebinarScheduledRegistration added '.$user->email.
@@ -104,7 +113,6 @@ class WebinarScheduledRegistrationCommand extends Command
                         } else {
                             Log::info("processing data for " . $user->email);
                             Log::info(json_encode($data));
-                            // Handle failure gracefully
                             Log::error('Webinar API response missing conference_url', [
                                 'response' => $response
                             ]);
@@ -182,11 +190,20 @@ class WebinarScheduledRegistrationCommand extends Command
                 $response = curl_exec($ch);
                 $decoded = json_decode($response);
 
+                $joinUrl = null;
                 if (is_object($decoded) && property_exists($decoded, 'conference_url')) {
-                    WebinarRegistrant::firstOrCreate(
-                        ['user_id' => $user->id, 'webinar_id' => $webinar->id],
-                        ['join_url' => $decoded->conference_url]
+                    $joinUrl = $decoded->conference_url;
+                } elseif (is_object($decoded) && property_exists($decoded, 'error') && str_contains($decoded->error, 'bigmarker.com')) {
+                    preg_match('/(https[^ ]+)/', $decoded->error, $matches);
+                    $joinUrl = $matches[1] ?? null;
+                }
+
+                if ($joinUrl) {
+                    $reg = WebinarRegistrant::firstOrNew(
+                        ['user_id' => $user->id, 'webinar_id' => $webinar->id]
                     );
+                    $reg->join_url = $joinUrl;
+                    $reg->save();
                     $added++;
                 }
                 curl_close($ch);
