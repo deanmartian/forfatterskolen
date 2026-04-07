@@ -48,10 +48,14 @@
     }
     .en-card__body {
         padding: 32px 36px;
-        font-size: 1rem;
+        font-size: 16px !important;
         line-height: 1.8;
         color: #1a1a1a;
     }
+    .en-card__body p,
+    .en-card__body li,
+    .en-card__body td,
+    .en-card__body span { font-size: 16px !important; }
 
     /* Typography for the note content */
     .en-card__body h1,
@@ -63,10 +67,10 @@
         margin-bottom: 0.5em;
         line-height: 1.3;
     }
-    .en-card__body h1 { font-size: 1.6rem; }
-    .en-card__body h2 { font-size: 1.35rem; }
-    .en-card__body h3 { font-size: 1.15rem; }
-    .en-card__body h4 { font-size: 1rem; }
+    .en-card__body h1 { font-size: 26px !important; }
+    .en-card__body h2 { font-size: 22px !important; }
+    .en-card__body h3 { font-size: 19px !important; }
+    .en-card__body h4 { font-size: 17px !important; }
     .en-card__body h1:first-child,
     .en-card__body h2:first-child,
     .en-card__body h3:first-child { margin-top: 0; }
