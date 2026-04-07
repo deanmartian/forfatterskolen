@@ -12,14 +12,14 @@
 	<style>
 		.panel { overflow-x: auto; }
 		.settings-header {
-			background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%);
+			background: linear-gradient(135deg, #862736 0%, #5e1a26 100%);
 			border-radius: 12px;
-			padding: 24px 28px;
+			padding: 28px 32px;
 			color: #fff;
 			margin-bottom: 24px;
 		}
-		.settings-header h2 { font-size: 1.3rem; font-weight: 700; margin: 0 0 4px; }
-		.settings-header p { font-size: 0.85rem; opacity: 0.7; margin: 0; }
+		.settings-header h2 { font-size: 1.5rem; font-weight: 700; margin: 0 0 6px; }
+		.settings-header p { font-size: 1rem; opacity: 0.85; margin: 0; }
 		.nav-tabs > li > a { font-size: 14px; padding: 12px 18px; }
 		.panel-heading h4 { font-size: 1.1rem; }
 		.table > thead > tr > th { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.3px; color: #8a8580; }
