@@ -203,7 +203,16 @@
             <div class="sidebar-card">
                 <h5>Samtaleinformasjon</h5>
                 <table class="table table-condensed" style="margin-bottom: 0;">
-                    <tr><td><strong>Kunde</strong></td><td>{{ $conversation->customer_name ?? 'Ukjent' }}</td></tr>
+                    <tr><td><strong>Kunde</strong></td><td>
+                        @php $inboxUser = App\User::where('email', $conversation->customer_email)->first(); @endphp
+                        @if($inboxUser)
+                            <a href="{{ route('admin.learner.show', $inboxUser->id) }}" style="color:#862736;font-weight:600;">
+                                {{ $conversation->customer_name ?? 'Ukjent' }}
+                            </a>
+                        @else
+                            {{ $conversation->customer_name ?? 'Ukjent' }}
+                        @endif
+                    </td></tr>
                     <tr><td><strong>E-post</strong></td><td>{{ $conversation->customer_email }}</td></tr>
                     <tr><td><strong>Inbox</strong></td><td>{{ $conversation->inbox ?? '-' }}</td></tr>
                     <tr><td><strong>Status</strong></td><td>

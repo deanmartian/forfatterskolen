@@ -128,7 +128,7 @@
 					<div>
 						<b>Could buy course:</b>
 						<a href="#" data-toggle="modal" data-target="#couldBuyCourseModal">
-							{{ $learner->could_buy_course ? 'Yes' : 'No' }}
+							{{ $learner->could_buy_course ? 'Ja' : 'Nei' }}
 						</a>
 					</div>
 
@@ -139,7 +139,7 @@
 							   name="is_self_publishing_learner" data-size="mini" @if($learner->is_self_publishing_learner) {{ 'checked' }} @endif>
 					</div> --}}
 
-					<b>Preferred Editor:</b>
+					<b>Foretrukket redaktør:</b>
 					<span>{{ $learner->preferredEditor ? $learner->preferredEditor->editor->fullname : '' }}</span><br>
 					<b>Vipps Efaktura:</b>
 					<span>{{ $learner->address ? $learner->address->vipps_phone_number : '' }}</span>
@@ -152,7 +152,7 @@
 			<button type="button" class="margin-top btn btn-success" data-toggle="modal" data-target="#learnerNotesModal">{{ trans_choice('site.notes', 2) }}</button>
 			<button type="button" class="margin-top btn btn-primary loadScriptButton" data-toggle="modal" 
 				data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
-			<button type="button" class="margin-top btn btn-warning" data-toggle="modal" data-target="#preferredEditorModal">Preferred Editor</button>
+			<button type="button" class="margin-top btn btn-warning" data-toggle="modal" data-target="#preferredEditorModal">Foretrukket redaktør</button>
 			<button type="button" class="margin-top btn btn-success setVippsEFakturaBtn" data-toggle="modal"
 					data-target="#setVippsEFakturaModal"
 					data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">
@@ -163,14 +163,19 @@
 			</a>
 
 			<button type="button" class="margin-top btn btn-primary loadScriptButton" data-toggle="modal" data-target="#sendUsernameAndPasswordModal">
-				Send Username and Password
+				Send brukernavn og passord
 			</button>
+
+			@php $inboxCount = App\Models\Inbox\InboxConversation::where('customer_email', $learner->email)->count(); @endphp
+			<a href="{{ route('admin.inbox.index') }}?search={{ $learner->email }}" class="btn btn-default margin-top">
+				<i class="fa fa-inbox"></i> Inbox ({{ $inboxCount }})
+			</a>
 
 			@if ($learner->disable_start_date) 
 				<br> <br>
-				<b>Disable Date: </b>
-				{{  \Carbon\Carbon::parse($learner->disable_start_date)->format('M d, Y') }} - 
-				{{  \Carbon\Carbon::parse($learner->disable_end_date)->format('M d, Y') }}
+				<b>Deaktivert: </b>
+				{{ \Carbon\Carbon::parse($learner->disable_start_date)->format('d.m.Y') }} -
+				{{ \Carbon\Carbon::parse($learner->disable_end_date)->format('d.m.Y') }}
 				<button class="btn btn-xs btn-danger removeCourseTakenDisableBtn"
 					data-toggle="modal" data-target="#removeCourseTakenDisableModal"
 					data-action="{{ route('admin.learner.remove_disable_date', $learner->id) }}">
