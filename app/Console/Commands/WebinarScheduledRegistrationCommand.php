@@ -118,7 +118,84 @@ class WebinarScheduledRegistrationCommand extends Command
 
         }
 
+        // ═══ FALLBACK: Register any webinars starting today that have 0 or few registrants ═══
+        $this->fallbackRegistration($header);
+
         CronLog::create(['activity' => 'WebinarScheduledRegistration CRON done running.']);
         Log::info("WebinarScheduledRegistration CRON done running.");
+    }
+
+    /**
+     * Fallback: find webinars starting today with few BigMarker registrations and register all enrolled students.
+     */
+    private function fallbackRegistration(array $header): void
+    {
+        $today = Carbon::today()->format('Y-m-d');
+        $webinars = \App\Webinar::where('status', 1)
+            ->whereDate('start_date', $today)
+            ->whereNotNull('link')
+            ->where('link', '!=', '')
+            ->get();
+
+        foreach ($webinars as $webinar) {
+            if (!$webinar->course) continue;
+
+            $registrantCount = WebinarRegistrant::where('webinar_id', $webinar->id)->count();
+
+            // Skip if already has many registrants (already processed)
+            $expectedCount = $webinar->course->webinarLearners->count();
+            if ($expectedCount > 0 && $registrantCount >= ($expectedCount * 0.5)) {
+                continue; // More than 50% registered, skip
+            }
+
+            Log::info("Fallback registration for webinar #{$webinar->id} {$webinar->title} ({$registrantCount} registrerte, {$expectedCount} forventet)");
+
+            if ($webinar->course->isWebinarPakke) {
+                $learners = UserAutoRegisterToCourseWebinar::where('course_id', $webinar->course->id)->get();
+            } else {
+                $learners = $webinar->course->webinarLearners->get();
+            }
+
+            $added = 0;
+            foreach ($learners as $learner) {
+                $user = $learner->user;
+                if (!$user || $user->is_disabled) continue;
+
+                // Skip if already registered
+                if (WebinarRegistrant::where('webinar_id', $webinar->id)->where('user_id', $user->id)->exists()) {
+                    continue;
+                }
+
+                $data = [
+                    'id' => $webinar->link,
+                    'email' => $user->email,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                ];
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, config('services.big_marker.register_link'));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+                $response = curl_exec($ch);
+                $decoded = json_decode($response);
+
+                if (is_object($decoded) && property_exists($decoded, 'conference_url')) {
+                    WebinarRegistrant::firstOrCreate(
+                        ['user_id' => $user->id, 'webinar_id' => $webinar->id],
+                        ['join_url' => $decoded->conference_url]
+                    );
+                    $added++;
+                }
+                curl_close($ch);
+            }
+
+            if ($added > 0) {
+                CronLog::create(['activity' => "Fallback: registrerte {$added} elever til webinar {$webinar->title}"]);
+                Log::info("Fallback: registered {$added} students for webinar #{$webinar->id} {$webinar->title}");
+            }
+        }
     }
 }
