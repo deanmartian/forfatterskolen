@@ -885,6 +885,9 @@
 											<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
 											Last ned
 										</a>
+										<a href="{{ route('learner.assignment.feedback.pdf', $feedback->id) }}" class="op-fb-table__dl" style="margin-left:8px;">
+											📄 PDF
+										</a>
 									</td>
 								</tr>
 							@endif

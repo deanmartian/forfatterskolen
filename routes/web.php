@@ -530,6 +530,7 @@ Route::domain($front)->group(function () {
         Route::get('/assignment/manuscript/{id}', [Frontend\LearnerController::class, 'downloadAssignmentGroupManuscript'])->name('learner.assignment.manuscript.download'); // Assignment show Page
         Route::get('/assignment/feedback/{id}/download', [Frontend\LearnerController::class, 'downloadAssignmentGroupFeedback'])->name('learner.assignment.feedback.download'); // Download assignment feedback
         Route::get('/assignment/feedback-no-group/{id}/download', [Frontend\LearnerController::class, 'downloadAssignmentNoGroupFeedback'])->name('learner.assignment.no-group-feedback.download'); // Download assignment feedback
+        Route::get('/assignment/feedback-no-group/{id}/pdf', [Frontend\LearnerController::class, 'downloadFeedbackPdf'])->name('learner.assignment.feedback.pdf'); // Download feedback summary PDF
         Route::get('/assignment/group/{id}/download-all-feedback', [Frontend\LearnerController::class, 'downloadAssignmentGroupAllFeedback'])->name('learner.assignment.group.feedback.download-all'); // Download all assignment group feedback
         Route::get('/word-written', [Frontend\LearnerController::class, 'wordWritten'])->name('learner.word-written'); // Word Written Page
         Route::post('/word-written', [Frontend\LearnerController::class, 'wordWritten'])->name('learner.word-written.submit'); // Word Written Page

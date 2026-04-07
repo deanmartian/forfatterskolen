@@ -5633,6 +5633,29 @@ Forfatterskolen';
         return redirect()->back();
     }
 
+    public function downloadFeedbackPdf($feedback_id)
+    {
+        $feedback = AssignmentFeedbackNoGroup::with(['manuscript.assignment.course', 'feedbackUser'])->find($feedback_id);
+
+        if (!$feedback || $feedback->learner_id != Auth::id()) {
+            abort(404);
+        }
+
+        $manuscript = $feedback->manuscript;
+        $assignment = $manuscript->assignment;
+        $course = $assignment->course;
+        $student = Auth::user();
+        $editor = $feedback->feedbackUser;
+
+        $pdf = \Pdf::loadView('frontend.pdf.feedback-summary', compact(
+            'feedback', 'manuscript', 'assignment', 'course', 'student', 'editor'
+        ));
+
+        $filename = 'Tilbakemelding - ' . ($assignment->title ?? 'Oppgave') . '.pdf';
+
+        return $pdf->download($filename);
+    }
+
     /**
      * Download all assignment group feedback
      *
