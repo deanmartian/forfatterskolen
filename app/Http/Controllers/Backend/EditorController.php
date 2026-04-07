@@ -257,10 +257,14 @@ class EditorController extends Controller
         })
             ->get();
 
-        // get the newly added assignments
+        // get the newly added assignments (exclude Årskurs/Påbygg - they use student count, not manuscript count)
         $assignmentsBeforeEditorDeadline = Assignment::where('editor_expected_finish', '>=', Carbon::now())
             ->where('for_editor', 0)
             ->whereNull('parent')
+            ->whereHas('course', function ($q) {
+                $q->where('title', 'NOT LIKE', '%rskurs%')
+                  ->where('title', 'NOT LIKE', '%byggings%');
+            })
             ->get();
 
         return view('editor.editor-settings', compact('manuscriptEditorCanTake', 'genrePrefrences', 'genreIHaveNotSelected', 'assignmentsBeforeEditorDeadline'));
