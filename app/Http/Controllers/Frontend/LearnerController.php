@@ -5657,31 +5657,69 @@ Forfatterskolen';
                     $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
                     if ($ext === 'docx') {
                         try {
-                            $phpWord = \PhpOffice\PhpWord\IOFactory::load($filePath);
-                            $html = '';
-                            foreach ($phpWord->getSections() as $section) {
-                                foreach ($section->getElements() as $element) {
-                                    if (method_exists($element, 'getText')) {
-                                        $text = $element->getText();
-                                        if (is_string($text)) {
-                                            $html .= '<p>' . e($text) . '</p>';
-                                        } elseif (is_object($text) && method_exists($text, 'getText')) {
-                                            $html .= '<p>' . e($text->getText()) . '</p>';
-                                        }
-                                    } elseif (method_exists($element, 'getElements')) {
-                                        $line = '';
-                                        foreach ($element->getElements() as $child) {
-                                            if (method_exists($child, 'getText')) {
-                                                $line .= $child->getText();
+                            // Extract Word comments from docx (stored in word/comments.xml)
+                            $zip = new \ZipArchive();
+                            if ($zip->open($filePath) === true) {
+                                $commentsXml = $zip->getFromName('word/comments.xml');
+                                $zip->close();
+
+                                if ($commentsXml) {
+                                    $xml = simplexml_load_string($commentsXml);
+                                    $xml->registerXPathNamespace('w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main');
+                                    $comments = $xml->xpath('//w:comment');
+
+                                    if ($comments && count($comments) > 0) {
+                                        $feedbackContent .= '<h3 style="color:#862736;font-size:13px;margin-top:16px;">Kommentarer fra redaktøren (' . count($comments) . ')</h3>';
+                                        $commentNum = 1;
+                                        foreach ($comments as $comment) {
+                                            $author = (string) $comment->attributes()['w:author'] ?? 'Redaktør';
+                                            $date = (string) $comment->attributes()['w:date'] ?? '';
+                                            $dateFormatted = $date ? \Carbon\Carbon::parse($date)->format('d.m.Y H:i') : '';
+
+                                            // Extract text from comment paragraphs
+                                            $commentText = '';
+                                            foreach ($comment->xpath('.//w:t') as $t) {
+                                                $commentText .= (string) $t;
                                             }
-                                        }
-                                        if ($line) {
-                                            $html .= '<p>' . e($line) . '</p>';
+
+                                            if (trim($commentText)) {
+                                                $feedbackContent .= '<div style="border-left:3px solid #862736;padding:8px 12px;margin:8px 0;background:#faf8f5;">'
+                                                    . '<strong style="font-size:10px;color:#862736;">' . e($author) . ($dateFormatted ? ' — ' . $dateFormatted : '') . '</strong>'
+                                                    . '<br>' . e(trim($commentText))
+                                                    . '</div>';
+                                                $commentNum++;
+                                            }
                                         }
                                     }
                                 }
+
+                                // Also extract body text
+                                $phpWord = \PhpOffice\PhpWord\IOFactory::load($filePath);
+                                $bodyText = '';
+                                foreach ($phpWord->getSections() as $section) {
+                                    foreach ($section->getElements() as $element) {
+                                        if (method_exists($element, 'getElements')) {
+                                            $line = '';
+                                            foreach ($element->getElements() as $child) {
+                                                if (method_exists($child, 'getText')) {
+                                                    $line .= $child->getText();
+                                                }
+                                            }
+                                            if (trim($line)) {
+                                                $bodyText .= '<p>' . e($line) . '</p>';
+                                            }
+                                        } elseif (method_exists($element, 'getText')) {
+                                            $text = $element->getText();
+                                            if (is_string($text) && trim($text)) {
+                                                $bodyText .= '<p>' . e($text) . '</p>';
+                                            }
+                                        }
+                                    }
+                                }
+                                if ($bodyText) {
+                                    $feedbackContent .= '<h3 style="color:#862736;font-size:13px;margin-top:20px;">Tekst fra tilbakemelding</h3>' . $bodyText;
+                                }
                             }
-                            $feedbackContent .= $html;
                         } catch (\Exception $e) {
                             $feedbackContent .= '<p><em>Kunne ikke lese innholdet fra ' . basename($filePath) . '</em></p>';
                         }
