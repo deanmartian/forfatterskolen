@@ -5647,8 +5647,53 @@ Forfatterskolen';
         $student = Auth::user();
         $editor = $feedback->feedbackUser;
 
+        // Extract feedback content from docx/file
+        $feedbackContent = '';
+        if ($feedback->filename) {
+            $files = explode(',', $feedback->filename);
+            foreach ($files as $file) {
+                $filePath = public_path(trim($file));
+                if (file_exists($filePath)) {
+                    $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+                    if ($ext === 'docx') {
+                        try {
+                            $phpWord = \PhpOffice\PhpWord\IOFactory::load($filePath);
+                            $html = '';
+                            foreach ($phpWord->getSections() as $section) {
+                                foreach ($section->getElements() as $element) {
+                                    if (method_exists($element, 'getText')) {
+                                        $text = $element->getText();
+                                        if (is_string($text)) {
+                                            $html .= '<p>' . e($text) . '</p>';
+                                        } elseif (is_object($text) && method_exists($text, 'getText')) {
+                                            $html .= '<p>' . e($text->getText()) . '</p>';
+                                        }
+                                    } elseif (method_exists($element, 'getElements')) {
+                                        $line = '';
+                                        foreach ($element->getElements() as $child) {
+                                            if (method_exists($child, 'getText')) {
+                                                $line .= $child->getText();
+                                            }
+                                        }
+                                        if ($line) {
+                                            $html .= '<p>' . e($line) . '</p>';
+                                        }
+                                    }
+                                }
+                            }
+                            $feedbackContent .= $html;
+                        } catch (\Exception $e) {
+                            $feedbackContent .= '<p><em>Kunne ikke lese innholdet fra ' . basename($filePath) . '</em></p>';
+                        }
+                    } elseif ($ext === 'txt') {
+                        $feedbackContent .= '<p>' . nl2br(e(file_get_contents($filePath))) . '</p>';
+                    }
+                }
+            }
+        }
+
         $pdf = \Pdf::loadView('frontend.pdf.feedback-summary', compact(
-            'feedback', 'manuscript', 'assignment', 'course', 'student', 'editor'
+            'feedback', 'manuscript', 'assignment', 'course', 'student', 'editor', 'feedbackContent'
         ));
 
         $filename = 'Tilbakemelding - ' . ($assignment->title ?? 'Oppgave') . '.pdf';

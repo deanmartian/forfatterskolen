@@ -180,23 +180,34 @@
 </div>
 @endif
 
+@if(!empty($feedbackContent))
+<div class="section">
+    <div class="section-title">Redaktørens tilbakemelding</div>
+    <div style="font-size:11px;line-height:1.8;color:#1a1a1a;">
+        {!! $feedbackContent !!}
+    </div>
+</div>
+@endif
+
 @if($feedback->filename)
 <div class="section">
-    <div class="section-title">Tilbakemeldingsfiler</div>
+    <div class="section-title">Vedlagte filer</div>
     <div class="files-list">
         @foreach(explode(',', $feedback->filename) as $file)
             <div class="file-item">📄 {{ basename(trim($file)) }}</div>
         @endforeach
     </div>
+    @if(empty($feedbackContent))
     <p style="font-size:10px;color:#8a8580;margin-top:8px;">
-        Filene kan lastes ned fra elevportalen på forfatterskolen.no
+        Tilbakemeldingen finnes i filene ovenfor. Last dem ned fra elevportalen på forfatterskolen.no
     </p>
+    @endif
 </div>
 @endif
 
 @if($manuscript->letter_to_editor)
 <div class="section">
-    <div class="section-title">Brev til redaktør</div>
+    <div class="section-title">Ditt brev til redaktør</div>
     <div class="feedback-content">
         {!! nl2br(e($manuscript->letter_to_editor)) !!}
     </div>
