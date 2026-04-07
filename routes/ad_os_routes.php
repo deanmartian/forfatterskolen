@@ -20,4 +20,5 @@ Route::prefix('inbox')->group(function () {
     Route::post('/import-helpwise', [Backend\InboxController::class, 'importFromHelpwise'])->name('admin.inbox.import-helpwise');
     Route::get('/canned-responses', [Backend\InboxController::class, 'cannedResponses'])->name('admin.inbox.canned-responses');
     Route::post('/canned-responses', [Backend\InboxController::class, 'storeCannedResponse'])->name('admin.inbox.canned-responses.store');
+    Route::get('/attachment/{filename}', [Backend\InboxController::class, 'downloadAttachment'])->name('admin.inbox.attachment');
 });

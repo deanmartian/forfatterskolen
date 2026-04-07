@@ -290,4 +290,13 @@ class InboxController extends Controller
 
         return $context;
     }
+
+    public function downloadAttachment($filename)
+    {
+        $path = storage_path('app/inbox-attachments/' . basename($filename));
+        if (!file_exists($path)) {
+            abort(404, 'Vedlegg ikke funnet.');
+        }
+        return response()->download($path);
+    }
 }

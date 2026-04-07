@@ -130,6 +130,9 @@ class PollInboxEmails extends Command
                     }
                 }
 
+                // Extract attachments
+                $attachments = $this->getAttachments($inbox, $emailNumber, $structure);
+
                 // Create message
                 $date = isset($header->date) ? \Carbon\Carbon::parse($header->date) : now();
 
@@ -144,6 +147,7 @@ class PollInboxEmails extends Command
                     'body' => $body,
                     'body_plain' => strip_tags($body),
                     'message_id_header' => $messageId,
+                    'attachments' => !empty($attachments) ? $attachments : null,
                     'sent_at' => $date,
                 ]);
 
@@ -240,6 +244,77 @@ class PollInboxEmails extends Command
         }
 
         return imap_fetchbody($inbox, $emailNumber, '1');
+    }
+
+    private function getAttachments($inbox, $emailNumber, $structure): array
+    {
+        $attachments = [];
+        if (!isset($structure->parts)) return $attachments;
+
+        $storagePath = storage_path('app/inbox-attachments');
+        if (!is_dir($storagePath)) {
+            mkdir($storagePath, 0755, true);
+        }
+
+        foreach ($structure->parts as $i => $part) {
+            $partNumber = (string) ($i + 1);
+
+            // Check disposition for attachment
+            $isAttachment = false;
+            $filename = null;
+
+            if (isset($part->disposition) && strtolower($part->disposition) === 'attachment') {
+                $isAttachment = true;
+            }
+
+            // Get filename from parameters
+            if (isset($part->dparameters)) {
+                foreach ($part->dparameters as $param) {
+                    if (strtolower($param->attribute) === 'filename') {
+                        $filename = imap_utf8($param->value);
+                        $isAttachment = true;
+                    }
+                }
+            }
+            if (!$filename && isset($part->parameters)) {
+                foreach ($part->parameters as $param) {
+                    if (strtolower($param->attribute) === 'name') {
+                        $filename = imap_utf8($param->value);
+                        $isAttachment = true;
+                    }
+                }
+            }
+
+            if (!$isAttachment || !$filename) continue;
+
+            try {
+                $content = imap_fetchbody($inbox, $emailNumber, $partNumber);
+                $decoded = $this->decodeBody($content, $part->encoding ?? 0);
+
+                $safeFilename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename);
+                $filePath = $storagePath . '/' . $safeFilename;
+                file_put_contents($filePath, $decoded);
+
+                $attachments[] = [
+                    'filename' => $filename,
+                    'path' => 'inbox-attachments/' . $safeFilename,
+                    'size' => strlen($decoded),
+                    'mime' => $this->getMimeType($part),
+                ];
+            } catch (\Exception $e) {
+                Log::warning('Kunne ikke lagre vedlegg: ' . $filename . ' - ' . $e->getMessage());
+            }
+        }
+
+        return $attachments;
+    }
+
+    private function getMimeType($part): string
+    {
+        $types = ['text', 'multipart', 'message', 'application', 'audio', 'image', 'video', 'model', 'other'];
+        $type = $types[$part->type] ?? 'application';
+        $subtype = strtolower($part->subtype ?? 'octet-stream');
+        return $type . '/' . $subtype;
     }
 
     private function decodeBody(string $body, int $encoding): string

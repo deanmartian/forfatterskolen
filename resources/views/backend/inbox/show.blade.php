@@ -65,6 +65,21 @@
                                 <span class="pull-right">{{ $entry['at']->format('d.m.Y H:i') }}</span>
                             </div>
                             {!! nl2br(e($entry['item']->body_plain ?? strip_tags($entry['item']->body ?? ''))) !!}
+                            @if($entry['item']->attachments)
+                                <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,0,0,0.1);">
+                                    <small style="color:#888;"><i class="fa fa-paperclip"></i> Vedlegg:</small>
+                                    @foreach($entry['item']->attachments as $att)
+                                        <div style="margin-top:4px;">
+                                            <a href="{{ route('admin.inbox.attachment', basename($att['path'])) }}" target="_blank" style="font-size:13px;">
+                                                <i class="fa fa-file-o"></i> {{ $att['filename'] }}
+                                                @if(isset($att['size']))
+                                                    <span style="color:#888;">({{ number_format($att['size'] / 1024, 0) }} KB)</span>
+                                                @endif
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
                     @elseif($entry['type'] === 'reply')
                         <div class="msg-bubble msg-outbound">
