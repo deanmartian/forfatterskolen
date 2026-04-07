@@ -1729,4 +1729,6 @@ Rektor Kristine',
     'coaching-time-requested' => 'Forespurt',
     'coaching-time-book' => 'Velg',
     'coaching-time-no-coaching-hours-available' => 'Ingen ledige tider akkurat nå. Foreslå et tidspunkt nedenfor.',
+    'edit-max-words' => 'Rediger maks ord',
+    'edit-submission-date' => 'Rediger innleveringsdato',
 ];

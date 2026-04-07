@@ -471,7 +471,7 @@
 											@elseif( $shopManuscriptTaken->status == 'Started' )
 												<span class="label label-primary">Started</span>
 											@elseif( $shopManuscriptTaken->status == 'Not started' )
-												<span class="label label-warning">Not started</span>
+												<span class="label label-warning">Ikke startet</span>
 											@endif
 										</td>
 										<td>
@@ -975,7 +975,7 @@
 									@if($manuscript->grade)
 									{{$manuscript->grade}}
 									@else
-									<em>Not set</em>
+									<em>Ikke satt</em>
 									@endif
 								</td>
 								<td>{{count($manuscript->feedbacks)}}</td>
@@ -1168,7 +1168,7 @@
 
 											$label = $hasOverride
 												? FrontendHelpers::formatToYMDtoPrettyDate($submissionDate)
-												: 'Edit submission date';
+												: trans('site.edit-submission-date');
 										@endphp
 
 										<br>
@@ -1435,7 +1435,7 @@
 					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#selfPublishingModal">
 						+ Add to Self publishing
 					</button>
-					<h4>Self publishing</h4>
+					<h4>Selvutgivelse</h4>
 				</div>
 
 				<div class="table-responsive">
@@ -1549,7 +1549,7 @@
 									@elseif( $correction->status == 1 )
 										<span class="label label-primary">Started</span>
 									@elseif( $correction->status == 0 )
-										<span class="label label-warning">Not started</span>
+										<span class="label label-warning">Ikke startet</span>
 									@endif
 								</td>
 								<td>
@@ -1654,7 +1654,7 @@
 									@elseif( $copy_editing->status == 1 )
 										<span class="label label-primary">Started</span>
 									@elseif( $copy_editing->status == 0 )
-										<span class="label label-warning">Not started</span>
+										<span class="label label-warning">Ikke startet</span>
 									@endif
 								</td>
 								<td>
@@ -3289,7 +3289,7 @@
 					</div>
 
 					<div class="form-group">
-						<label>Invoice file</label>
+						<label>Fakturafil</label>
 						<input type="file" name="invoice_file" class="form-control" accept="application/pdf">
 					</div>
 
@@ -3696,7 +3696,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Book sales</h4>
+				<h4 class="modal-title">Boksalg</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('admin.learner.save-book-sales', $learner->id) }}" onsubmit="disableSubmit(this)">
@@ -4235,7 +4235,7 @@
                                 <form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>Assign editor</label>
+						<label>Tildel redaktør</label>
 						<select name="editor_id" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Editor --</option>
 							@foreach( AdminHelpers::editorList() as $editor )
