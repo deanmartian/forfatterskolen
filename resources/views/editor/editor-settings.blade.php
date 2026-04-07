@@ -11,6 +11,16 @@
 	<link rel="stylesheet" href="{{asset('css/editor.css')}}">
 	<style>
 		.panel { overflow-x: auto; }
+		/* Modal styling */
+		.modal-content { border-radius: 12px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.15); overflow: hidden; }
+		.modal-header { background: #faf8f5; border-bottom: 1px solid rgba(0,0,0,0.08); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+		.modal-header .modal-title { font-size: 1.15rem; font-weight: 700; margin: 0; order: 1; }
+		.modal-header .close { order: 2; font-size: 1.5rem; opacity: 0.5; margin: 0; padding: 0; float: none; }
+		.modal-header .close:hover { opacity: 1; }
+		.modal-body { padding: 24px; }
+		.modal-body label { font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; display: block; }
+		.modal-body .form-control { border-radius: 8px; padding: 10px 14px; font-size: 0.95rem; }
+		.modal-body .btn-primary { border-radius: 8px; padding: 10px 24px; font-weight: 600; }
 		.settings-header {
 			background: linear-gradient(135deg, #862736 0%, #5e1a26 100%);
 			border-radius: 12px;
@@ -203,8 +213,8 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
+				<h4 class="modal-title">Kapasitet</h4>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title"></h4>
 			</div>
 			<div class="modal-body">
 				<form id="addForm" method="POST" action="" enctype="multipart/form-data">
@@ -243,8 +253,8 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">{{ trans('site.delete-question') }}</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form id="deleteForm" method="POST" action="" enctype="multipart/form-data">
@@ -267,8 +277,8 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">{{ trans('site.add-new') }}</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form id="addForm" method="POST" action="{{ route('editor.save-genre-prefences', 0) }}" enctype="multipart/form-data">
@@ -298,8 +308,8 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">{{ trans('site.delete-question') }}</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form id="deleteForm" method="POST" action="" enctype="multipart/form-data">
@@ -322,8 +332,8 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">{{ trans('site.how-many-you-can-take') }}</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form id="addForm" method="POST" action="" enctype="multipart/form-data">
@@ -355,7 +365,7 @@
 
 			$('#addForm').trigger('reset');
 			modal.find('#feedbackFileAppend').html('');
-			modal.find('.modal-title').text("Legg til ny");
+			modal.find('.modal-title').text("Legg til kapasitet");
 			modal.find('[name=id]').val('')
 
 			if(is_edit){
