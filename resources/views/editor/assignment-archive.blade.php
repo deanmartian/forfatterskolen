@@ -6,7 +6,7 @@
 
 @section('styles')
 <style>
-    .arch-wrapper { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+    .arch-wrapper { max-width: 100%; padding: 0 20px; }
 
     .arch-header {
         background: linear-gradient(135deg, #2C3E50 0%, #1a252f 100%);
@@ -88,33 +88,52 @@
     .arch-section__search button:hover { background: #e8e4de; }
 
     .arch-table { width: 100%; border-collapse: collapse; }
+    .arch-table { width: 100%; border-collapse: collapse; }
     .arch-table th {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         color: #8a8580;
-        padding: 10px 16px;
-        border-bottom: 1px solid rgba(0,0,0,0.06);
+        padding: 12px 18px;
+        border-bottom: 2px solid rgba(0,0,0,0.08);
         text-align: left;
+        white-space: nowrap;
     }
     .arch-table td {
-        padding: 10px 16px;
-        font-size: 0.85rem;
+        padding: 14px 18px;
+        font-size: 0.9rem;
         color: #1a1a1a;
-        border-bottom: 1px solid rgba(0,0,0,0.04);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        vertical-align: middle;
     }
     .arch-table tbody tr:hover { background: #faf8f5; }
     .arch-table a { color: #862736; text-decoration: none; font-weight: 500; }
     .arch-table a:hover { text-decoration: underline; }
+    .arch-table .btn { white-space: nowrap; }
 
-    .arch-pagination { padding: 12px 16px; text-align: right; }
+    .arch-pagination { padding: 14px 18px; text-align: right; }
 
-    .arch-empty { text-align: center; padding: 32px; color: #8a8580; font-size: 0.85rem; }
+    .arch-empty { text-align: center; padding: 48px; color: #8a8580; font-size: 0.95rem; }
 
-    .arch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .arch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-    @media (max-width: 768px) {
+    /* Modal styling */
+    .arch-modal .modal-content { border-radius: 12px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+    .arch-modal .modal-header { background: #faf8f5; border-bottom: 1px solid rgba(0,0,0,0.08); padding: 18px 24px; }
+    .arch-modal .modal-title { font-size: 1.1rem; font-weight: 700; }
+    .arch-modal .modal-body { padding: 24px; }
+    .arch-modal .modal-body label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #8a8580; margin-bottom: 6px; display: block; }
+    .arch-modal .modal-body p { font-size: 0.95rem; color: #1a1a1a; margin-bottom: 20px; }
+    .arch-modal .modal-body a { color: #862736; }
+    .arch-modal .feedback-file-list a {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 8px 14px; background: #f5f3f0; border-radius: 6px;
+        font-size: 0.85rem; margin: 3px 0; text-decoration: none;
+    }
+    .arch-modal .feedback-file-list a:hover { background: #e8e4de; }
+
+    @media (max-width: 900px) {
         .arch-grid { grid-template-columns: 1fr; }
         .arch-stats { flex-wrap: wrap; }
     }
@@ -413,57 +432,87 @@
 </div>
 
 {{-- MODALS --}}
-<div id="personalAssignmentShowFeedbackModal" class="modal fade" role="dialog" data-backdrop="static">
-    <div class="modal-dialog"><div class="modal-content">
-        <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">Tilbakemeldingsdetaljer</h4></div>
+<div id="personalAssignmentShowFeedbackModal" class="modal fade arch-modal" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-lg"><div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title"><i class="fa fa-file-text-o"></i> Tilbakemeldingsdetaljer</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
         <div class="modal-body">
-            <div class="form-group"><label>Dato</label><br><p id="feedback_date"></p></div>
-            <div class="form-group"><label>Fil</label><br><div id="feedbackFileAppend"></div></div>
-            <div class="form-group"><label>Karakter</label><br><p id="feedback_grade"></p></div>
+            <label>Dato</label>
+            <p id="feedback_date"></p>
+            <label>Tilbakemeldingsfil</label>
+            <div id="feedbackFileAppend" class="feedback-file-list"></div>
+            <label style="margin-top:16px;">Karakter</label>
+            <p id="feedback_grade"></p>
         </div>
     </div></div>
 </div>
 
-<div id="shopManuscriptShowFeedbackModal" class="modal fade" role="dialog" data-backdrop="static">
-    <div class="modal-dialog"><div class="modal-content">
-        <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">Tilbakemeldingsdetaljer</h4></div>
+<div id="shopManuscriptShowFeedbackModal" class="modal fade arch-modal" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-lg"><div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title"><i class="fa fa-book"></i> Tilbakemeldingsdetaljer</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
         <div class="modal-body">
-            <div class="form-group"><label>Dato</label><br><p id="created_at"></p></div>
-            <div class="form-group"><label>Fil</label><br><div id="feedbackFileAppend"></div></div>
-            <div class="form-group"><label>Karakter</label><br><p id="grade"></p></div>
-            <div class="form-group"><label>Notater</label><br><p id="notes"></p></div>
+            <label>Dato</label>
+            <p id="created_at"></p>
+            <label>Tilbakemeldingsfil</label>
+            <div id="feedbackFileAppend" class="feedback-file-list"></div>
+            <label style="margin-top:16px;">Karakter</label>
+            <p id="grade"></p>
+            <label>Notater</label>
+            <p id="notes" style="white-space:pre-wrap;background:#faf8f5;padding:12px;border-radius:6px;min-height:40px;"></p>
         </div>
     </div></div>
 </div>
 
-<div id="courseAssignmentShowFeedbackModal" class="modal fade" role="dialog" data-backdrop="static">
-    <div class="modal-dialog"><div class="modal-content">
-        <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">Tilbakemeldingsdetaljer</h4></div>
+<div id="courseAssignmentShowFeedbackModal" class="modal fade arch-modal" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-lg"><div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title"><i class="fa fa-graduation-cap"></i> Tilbakemeldingsdetaljer</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
         <div class="modal-body">
-            <div class="form-group"><label>Dato</label><br><p id="created_at"></p></div>
-            <div class="form-group"><label>Fil</label><br><div id="feedbackFileAppend"></div></div>
-            <div class="form-group"><label>Karakter</label><br><p id="grade"></p></div>
+            <label>Dato</label>
+            <p id="created_at"></p>
+            <label>Tilbakemeldingsfil</label>
+            <div id="feedbackFileAppend" class="feedback-file-list"></div>
+            <label style="margin-top:16px;">Karakter</label>
+            <p id="grade"></p>
         </div>
     </div></div>
 </div>
 
-<div id="coachingTimerFeedbackModal" class="modal fade" role="dialog" data-backdrop="static">
-    <div class="modal-dialog"><div class="modal-content">
-        <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">Coaching-detaljer</h4></div>
+<div id="coachingTimerFeedbackModal" class="modal fade arch-modal" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-lg"><div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title"><i class="fa fa-comments"></i> Coaching-detaljer</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
         <div class="modal-body">
-            <div class="form-group"><label>Repriselenke</label><br><a href="" id="replay_link"></a></div>
-            <div class="form-group"><label>Dokument</label><br><a href="" name="document" download></a></div>
-            <div class="form-group"><label>Kommentar</label><br><p id="comment"></p></div>
+            <label>Repriselenke</label>
+            <p><a href="" id="replay_link" target="_blank"></a></p>
+            <label>Dokument</label>
+            <div class="feedback-file-list"><a href="" name="document" download><i class="fa fa-download"></i> <span></span></a></div>
+            <label style="margin-top:16px;">Kommentar</label>
+            <p id="comment" style="white-space:pre-wrap;background:#faf8f5;padding:12px;border-radius:6px;min-height:40px;"></p>
         </div>
     </div></div>
 </div>
 
-<div id="approveOtherServiceFeedbackModal" class="modal fade" role="dialog" data-backdrop="static">
-    <div class="modal-dialog"><div class="modal-content">
-        <div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">Tilbakemeldingsdetaljer</h4></div>
+<div id="approveOtherServiceFeedbackModal" class="modal fade arch-modal" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-lg"><div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title"><i class="fa fa-check-circle"></i> Tilbakemeldingsdetaljer</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
         <div class="modal-body">
-            <div class="form-group"><label>Dato</label><br><p id="created_at"></p></div>
-            <div class="form-group"><label>Manus</label><br><div id="feedbackFileAppend"></div></div>
+            <label>Dato</label>
+            <p id="created_at"></p>
+            <label>Manus</label>
+            <div id="feedbackFileAppend" class="feedback-file-list"></div>
         </div>
     </div></div>
 </div>
@@ -474,10 +523,10 @@
     var cacheBuster = '{{ $cacheBuster }}';
 
     function showFeedbackFiles(modal, files) {
-        var el = modal.find('#feedbackFileAppend');
+        var el = modal.find('#feedbackFileAppend, .feedback-file-list').first();
         el.html('');
         files.split(',').forEach(function(f) {
-            if (f.trim()) el.append('<a href="' + f.trim() + '?v=' + cacheBuster + '" download style="display:block;margin:2px 0;"><i class="fa fa-download"></i> ' + f.trim().split('/').pop() + '</a>');
+            if (f.trim()) el.append('<a href="' + f.trim() + '?v=' + cacheBuster + '" download><i class="fa fa-download"></i> ' + f.trim().split('/').pop() + '</a><br>');
         });
     }
 
