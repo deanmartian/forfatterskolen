@@ -221,6 +221,78 @@ PROMPT;
             $context['Aktive manustjenester'] = $manuscripts;
         }
 
+        // Upcoming webinars (next 14 days)
+        try {
+            $upcomingWebinars = \App\WebinarRegistrant::where('user_id', $user->id)
+                ->whereHas('webinar', fn($q) => $q->where('start_date', '>=', now())->where('start_date', '<=', now()->addDays(14)))
+                ->with('webinar')
+                ->get();
+
+            if ($upcomingWebinars->isNotEmpty()) {
+                $webinarList = $upcomingWebinars->map(function ($reg) {
+                    $w = $reg->webinar;
+                    $date = \Carbon\Carbon::parse($w->start_date)->format('d.m.Y H:i');
+                    $joinUrl = $reg->join_url ?: 'Ingen lenke';
+                    return "{$w->title} ({$date}) — Lenke: {$joinUrl}";
+                })->implode("\n  ");
+                $context['Kommende webinarer'] = $webinarList;
+            }
+        } catch (\Exception $e) {}
+
+        // Assignment deadlines
+        try {
+            $assignments = \App\AssignmentManuscript::where('user_id', $user->id)
+                ->where('status', 0)
+                ->with('assignment')
+                ->get();
+
+            if ($assignments->isNotEmpty()) {
+                $assignmentList = $assignments->map(function ($m) {
+                    $title = $m->assignment->title ?? 'Ukjent';
+                    $deadline = $m->editor_expected_finish ?: ($m->assignment->editor_expected_finish ?? 'Ikke satt');
+                    $hasFile = $m->filename ? 'Levert' : 'Ikke levert';
+                    return "{$title} (Frist: {$deadline}, Status: {$hasFile})";
+                })->implode(', ');
+                $context['Oppgavestatus'] = $assignmentList;
+            }
+        } catch (\Exception $e) {}
+
+        // Extension requests
+        try {
+            $extensions = \App\Models\AssignmentExtensionRequest::where('user_id', $user->id)
+                ->whereIn('status', ['pending', 'approved'])
+                ->with('assignment')
+                ->get();
+
+            if ($extensions->isNotEmpty()) {
+                $extList = $extensions->map(fn($e) => $e->assignment->title . ' (' . $e->status . ', ønsket: ' . $e->requested_deadline->format('d.m.Y') . ')')->implode(', ');
+                $context['Utsettelsesforespørsler'] = $extList;
+            }
+        } catch (\Exception $e) {}
+
+        // Login link for this user
+        try {
+            $context['Innloggingslenke'] = route('auth.login.email', encrypt($user->email));
+        } catch (\Exception $e) {}
+
+        // Coaching sessions
+        try {
+            $coaching = \App\CoachingTimerManuscript::where('user_id', $user->id)
+                ->where('status', 0)
+                ->whereNotNull('editor_time_slot_id')
+                ->with(['editor', 'timeSlot'])
+                ->get();
+
+            if ($coaching->isNotEmpty()) {
+                $coachingList = $coaching->map(function ($c) {
+                    $editor = $c->editor ? $c->editor->full_name : 'Ikke tildelt';
+                    $date = $c->timeSlot ? \Carbon\Carbon::parse($c->timeSlot->date . ' ' . $c->timeSlot->start_time)->format('d.m.Y H:i') : 'Ikke satt';
+                    return "Coaching med {$editor} ({$date})";
+                })->implode(', ');
+                $context['Coaching-timer'] = $coachingList;
+            }
+        } catch (\Exception $e) {}
+
         return $context;
     }
 
@@ -380,6 +452,30 @@ PROMPT;
             if ($manuscripts > 0) {
                 $studentContext['Aktive manustjenester'] = $manuscripts;
             }
+
+            // Webinarer
+            try {
+                $webinars = \App\WebinarRegistrant::where('user_id', $user->id)
+                    ->whereHas('webinar', fn($q) => $q->where('start_date', '>=', now())->where('start_date', '<=', now()->addDays(14)))
+                    ->with('webinar')
+                    ->get();
+                if ($webinars->isNotEmpty()) {
+                    $studentContext['Kommende webinarer'] = $webinars->map(fn($r) => $r->webinar->title . ' (' . \Carbon\Carbon::parse($r->webinar->start_date)->format('d.m.Y H:i') . ') Lenke: ' . ($r->join_url ?: 'mangler'))->implode(', ');
+                }
+            } catch (\Exception $e) {}
+
+            // Oppgavefrister
+            try {
+                $assignments = \App\AssignmentManuscript::where('user_id', $user->id)->where('status', 0)->with('assignment')->get();
+                if ($assignments->isNotEmpty()) {
+                    $studentContext['Oppgavestatus'] = $assignments->map(fn($m) => ($m->assignment->title ?? '?') . ' (Frist: ' . ($m->editor_expected_finish ?: 'ikke satt') . ', ' . ($m->filename ? 'Levert' : 'Ikke levert') . ')')->implode(', ');
+                }
+            } catch (\Exception $e) {}
+
+            // Innloggingslenke
+            try {
+                $studentContext['Innloggingslenke'] = route('auth.login.email', encrypt($user->email));
+            } catch (\Exception $e) {}
         }
 
         // Hent meldingshistorikk
