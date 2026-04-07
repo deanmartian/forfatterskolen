@@ -2626,7 +2626,7 @@ class ShopController extends Controller
                 } else {
                     $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
                     $courseTaken->is_pay_later = $order->is_pay_later;
-                    $courseTaken->is_active = $order->is_pay_later ? 0 : 1;
+                    $courseTaken->is_active = 1; // Always activate — pay-later students chose payment solution
                     $courseTaken->save();
 
                     $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken, true, true);
