@@ -177,8 +177,8 @@
                             <td>
                                 @if($m->noGroupFeedbacks->first())
                                     <button class="btn btn-primary btn-xs personalAssignmentShowFeedbackBtn" data-toggle="modal" data-target="#personalAssignmentShowFeedbackModal"
-                                        data-feedback_file="{{ $m->noGroupFeedbacks->first()->filename }}"
-                                        data-feedback_date="{{ $m->noGroupFeedbacks->first()->created_at }}"
+                                        data-feedback_file="{{ $m->noGroupFeedbacks->first()?->filename }}"
+                                        data-feedback_date="{{ $m->noGroupFeedbacks->first()?->created_at }}"
                                         data-feedback_grade="{{ $m->grade }}">
                                         <i class="fa fa-eye"></i> Vis
                                     </button>
@@ -220,10 +220,10 @@
                             <td>
                                 @if($m->feedbacks->first())
                                     <button class="btn btn-primary btn-xs shopManuscriptShowFeedbackBtn" data-toggle="modal" data-target="#shopManuscriptShowFeedbackModal"
-                                        data-feedback_file="{{ implode(',', $m->feedbacks->first()->filename) }}"
-                                        data-feedback_notes="{{ $m->feedbacks->first()->notes }}"
+                                        data-feedback_file="{{ implode(',', $m->feedbacks->first()?->filename ?? []) }}"
+                                        data-feedback_notes="{{ $m->feedbacks->first()?->notes }}"
                                         data-feedback_grade="{{ $m->grade }}"
-                                        data-feedback_created_at="{{ $m->feedbacks->first()->created_at }}">
+                                        data-feedback_created_at="{{ $m->feedbacks->first()?->created_at }}">
                                         <i class="fa fa-eye"></i> Vis
                                     </button>
                                 @endif
@@ -280,9 +280,9 @@
                                     </button>
                                 @elseif($m->noGroupFeedbacks->first())
                                     <button class="btn btn-primary btn-xs personalAssignmentShowFeedbackBtn" data-toggle="modal" data-target="#personalAssignmentShowFeedbackModal"
-                                        data-feedback_file="{{ $m->noGroupFeedbacks->first()->filename }}"
+                                        data-feedback_file="{{ $m->noGroupFeedbacks->first()?->filename }}"
                                         data-feedback_grade="{{ $m->grade }}"
-                                        data-feedback_date="{{ $m->noGroupFeedbacks->first()->created_at }}">
+                                        data-feedback_date="{{ $m->noGroupFeedbacks->first()?->created_at }}">
                                         <i class="fa fa-eye"></i> Vis
                                     </button>
                                 @endif
