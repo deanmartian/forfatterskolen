@@ -141,8 +141,8 @@
             $btnIcon = 'list-alt';
             break;
         case 'vipps':
-            $header = 'Takk for betalingen!';
-            $message = 'Vipps-betalingen din er bekreftet. Du har nå tilgang til kurset og kan starte med en gang.';
+            $header = 'Betalt med Vipps — velkommen!';
+            $message = 'Din Vipps-betaling er bekreftet. Du har nå full tilgang til kurset og kan starte med en gang. Kvittering er sendt til e-posten din.';
             $btnLink = route('learner.course');
             $btnText = 'Gå til kursene mine';
             $btnIcon = 'graduation-cap';

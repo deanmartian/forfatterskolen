@@ -840,6 +840,7 @@ class ShopController extends Controller
             'transactionText' => $transactionText,
             'is_ajax' => true,
             'vipps_phone_number' => $user->address->vipps_phone_number,
+            'fallbackUrl' => url('/thankyou?page=vipps&svea_ord=' . $orderRecord->id),
         ];
 
         return redirect()->to($this->vippsInitiatePayment($vippsData));
