@@ -27,9 +27,9 @@ class AiKnownIssueSeeder extends Seeder
                 'category' => 'betaling',
             ],
             [
-                'title' => 'Bestill nå, betal senere — kurs aktiveres umiddelbart',
-                'description' => 'I checkout finnes det en valgmulighet "Bestill nå, betal senere". Når eleven velger dette, blir kurset AKTIVERT med en gang slik at de kan starte å lære, og resten av betalingen ordnes inne i portalen senere (under Mine kjøp). Dette er en perfekt løsning hvis Vipps krøller seg, hvis eleven trenger litt tid på å ordne betaling, eller hvis kurset starter snart og de ikke vil miste plass.',
-                'workaround' => 'Foreslå "Bestill nå, betal senere" som alternativ når en elev har betalings-trøbbel — særlig hvis kursoppstarten er nært forestående. Forklar at de aktiverer kurset umiddelbart, og kan ordne betalingen inne i sin egen portal under Mine kjøp etterpå.',
+                'title' => 'Bestill nå, betal senere — sikrer kursplassen, kurset starter på annonsert dato',
+                'description' => 'I checkout finnes valget "Bestill nå, betal senere". Da SIKRES kursplassen umiddelbart og betalingen ordnes inne i portalen senere (under Mine kjøp). VIKTIG: For instant-tilgang-kurs (Krimkurs, Diktkurs, Sakprosakurs etc.) får eleven tilgang til kursinnholdet med en gang. For gruppekurs med fast oppstart (Romankurs i gruppe oppstart 20.04, Barnebokkurs oppstart 16.02, Årskurs, Påbyggingsår) starter selve kurset på den annonserte datoen — ikke før. Nevn ALLTID antall dager til oppstart.',
+                'workaround' => 'Foreslå "Bestill nå, betal senere" når en elev har betalings-trøbbel. Forklar at kursplassen sikres umiddelbart. SJEKK om kurset er instant-tilgang eller gruppekurs med oppstart — formuler tydelig: instant = "du kan starte med en gang", gruppekurs = "kursplassen er sikret, og kurset starter [dato] (om X dager)".',
                 'severity' => 'info',
                 'category' => 'betaling',
             ],

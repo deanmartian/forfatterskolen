@@ -51,7 +51,9 @@ PWA-installasjon (legg-til-på-hjemskjerm) fungerer på alle tre subdomenene. Hv
 - Vi støtter Vipps, Svea (faktura/avbetaling), PayPal, og kort — alle valg gjøres i checkout på `/course/{id}`.
 - Avbetaling 3 eller 6 måneder via Svea — også et valg i checkout.
 - Kvitteringer/fakturaer ligger i elevens kontoside under "Mine kjøp" etter kjøp.
-- **"Bestill nå, betal senere"**: Eleven velger dette i checkout. Da blir kurset AKTIVERT umiddelbart slik at de kan starte å lære med en gang, og de fullfører resten av betalingen inne i portalen senere (under Mine kjøp). Dette er den BESTE løsningen hvis Vipps krøller seg eller eleven trenger litt tid på å ordne betalingen — de mister ikke kursplassen.
+- **"Bestill nå, betal senere"**: Eleven velger dette i checkout. Da blir kursplassen sikret umiddelbart, og resten av betalingen ordnes inne i portalen senere (under Mine kjøp). Dette er den BESTE løsningen hvis Vipps krøller seg eller eleven trenger litt tid på å ordne betalingen — de mister ikke kursplassen.
+  - **For instant-tilgang-kurs** (f.eks. Krimkurs, Diktkurs, Sakprosakurs): Kursinnholdet blir tilgjengelig umiddelbart og eleven kan starte å lære med en gang.
+  - **For gruppekurs med fast oppstart** (f.eks. Romankurs i gruppe oppstart 20.04, Barnebokkurs oppstart 16.02): Kursplassen sikres umiddelbart, men selve kurset starter på den annonserte oppstartdatoen — ikke før. Nevn alltid hvor mange dager det er til oppstart.
 
 **Hvis en elev har betalings-trøbbel:**
 1. Send dem TILBAKE til kurssiden (gi /course/{id}-lenken hvis du vet hvilket kurs det er)

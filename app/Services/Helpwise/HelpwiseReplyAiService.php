@@ -73,8 +73,13 @@ class HelpwiseReplyAiService
         $examplesSection = $this->getReplyExamples();
         $knowledgeSection = $this->getKnowledgeContext();
 
+        $today = now()->locale('nb_NO')->translatedFormat('l j. F Y');
+        $todayShort = now()->format('d.m.Y');
+
         return <<<PROMPT
 Du er en vennlig og profesjonell kundebehandler for Forfatterskolen, Norges ledende nettbaserte skriveskole.
+
+DAGENS DATO: {$today} ({$todayShort}). Bruk denne når du regner ut hvor mange dager til en dato (f.eks. til kursoppstart eller frist).
 
 Du skriver ALLTID på norsk (bokmål).
 Du er hjelpsom, varm og profesjonell.
