@@ -272,6 +272,7 @@ class InboxService
             ->first();
 
         $helpwiseMsg = null;
+        $fullEmailBody = null;
         if ($latestInbound) {
             // Strip e-post-sitater slik at AI fokuserer på det nye, ikke
             // den gamle e-postkjeden som henger med fra Gmail/Outlook.
@@ -282,11 +283,16 @@ class InboxService
                 'body' => $cleanBody ?: $latestInbound->body,
                 'body_plain' => $cleanPlain ?: $latestInbound->body_plain,
             ]);
+
+            // Behold også den FULLE versjonen (med sitater) slik at AI-en
+            // har tilgang til kontekst som ikke ligger i inbox_messages —
+            // f.eks. svar fra Kristine sendt direkte fra hennes Gmail.
+            $fullEmailBody = strip_tags($latestInbound->body_plain ?? $latestInbound->body ?? '');
         }
 
         try {
             $aiService = app(HelpwiseReplyAiService::class);
-            $draftText = $aiService->generateDraftReply($helpwiseConv, $helpwiseMsg);
+            $draftText = $aiService->generateDraftReply($helpwiseConv, $helpwiseMsg, $fullEmailBody);
 
             if (!$draftText) return null;
 

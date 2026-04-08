@@ -19,13 +19,13 @@ class HelpwiseReplyAiService
      * Generate an AI draft reply for a customer message.
      * Returns the draft text in Norwegian, never auto-sends.
      */
-    public function generateDraftReply(HelpwiseConversation $conversation, ?HelpwiseMessage $latestMessage = null): ?string
+    public function generateDraftReply(HelpwiseConversation $conversation, ?HelpwiseMessage $latestMessage = null, ?string $fullEmailBody = null): ?string
     {
         $studentContext = $this->getStudentContext($conversation);
         $messageHistory = $this->getMessageHistory($conversation);
         $customerMessage = $latestMessage?->body_plain ?? $latestMessage?->body ?? '';
 
-        $prompt = $this->buildPrompt($conversation, $customerMessage, $studentContext, $messageHistory);
+        $prompt = $this->buildPrompt($conversation, $customerMessage, $studentContext, $messageHistory, $fullEmailBody);
 
         try {
             $reply = $this->callAi($prompt);
@@ -52,7 +52,8 @@ class HelpwiseReplyAiService
         HelpwiseConversation $conversation,
         string $customerMessage,
         array $studentContext,
-        string $messageHistory
+        string $messageHistory,
+        ?string $fullEmailBody = null
     ): string {
         $inbox = $conversation->inbox ?? 'Ukjent';
         $customerName = $conversation->customer_name ?? 'kunde';
@@ -72,6 +73,15 @@ class HelpwiseReplyAiService
 
         $examplesSection = $this->getReplyExamples();
         $knowledgeSection = $this->getKnowledgeContext();
+
+        // Hvis vi har den fulle e-post-bodyen (med sitater), vis den som
+        // en egen seksjon. Begrens til 4000 tegn slik at vi ikke sprenger
+        // prompten på lange tråder.
+        $fullEmailSection = '';
+        if ($fullEmailBody && strlen(trim($fullEmailBody)) > strlen(trim($customerMessage))) {
+            $truncated = \Illuminate\Support\Str::limit(trim($fullEmailBody), 4000);
+            $fullEmailSection = "\n\nFULL E-POST FRA KUNDEN (inkluderer sitater fra hele tråden — bruk dette til å finne kursnumre, lenker, rabattkoder eller annet kontekst som ikke er i inbox-historikken):\n{$truncated}\n";
+        }
 
         $today = now()->locale('nb_NO')->translatedFormat('l j. F Y');
         $todayShort = now()->format('d.m.Y');
@@ -157,12 +167,13 @@ INBOX: {$inbox}
 KUNDENS NAVN: {$customerName}
 KUNDENS E-POST: {$conversation->customer_email}
 {$studentInfo}
-{$historySection}
+{$historySection}{$fullEmailSection}
 
-KUNDENS SISTE MELDING:
+KUNDENS SISTE MELDING (det DETTE du skal svare på):
 {$customerMessage}
 
 Skriv et passende svarkutkast. Husk:
+- LES HELE konteksten først — både inbox-historikken OG den fulle e-posten med sitater hvis det finnes. Ofte ligger viktig info (kursnummer, rabattkode, tidligere avtaler) i sitatene fra tidligere e-poster, særlig hvis svar har gått direkte fra Kristine sin Gmail og ikke gjennom inbox-systemet.
 - Start med å hilse på kunden ved fornavn hvis mulig
 - Svar direkte på spørsmålet
 - Vær hjelpsom, varm og positiv - men ikke overdrevent
@@ -170,6 +181,7 @@ Skriv et passende svarkutkast. Husk:
 - Bruk gjerne emojier der det passer naturlig — vi er en varm og personlig skole, ikke et korporativt firma. Eksempler: 📚 ✍️ 🎉 ✨ 💪 ❤️ 😊 ☺️ 🙌 ✅ 📖 🌟 — bruk 1-3 emojier i et typisk svar (ikke overdriv). Tekst-smileys som :-) eller :) er også fint.
 - ALLTID når du gir en lenke (innloggingslenke, webinar-lenke, etc): bruk markdown-format slik at den blir kort og klikkbar i e-posten. Eksempel: "[innloggingslenke](https://www.forfatterskolen.no/auth/login/email/...)" — IKKE lim inn rå URL-er midt i teksten.
 - ALDRI bruk markdown-formatering som **fet tekst**, *kursiv*, # overskrifter, eller - bullet-lister. Vi sender ren tekst-e-post, og asterisker blir synlige som stygge tegn. Bruk vanlig prosa, og vanlige linjeskift for å skille avsnitt. ENESTE unntak er [tekst](url) for lenker — det blir konvertert til klikkbare lenker automatisk.
+- ALDRI spør kunden om noe som allerede står i samtalehistorikken eller den fulle e-posten. Hvis du ser en /course/{id}-lenke i sitatene, vet du hvilket kurs det er. Hvis du ser en rabattkode, husk å nevne den. Hvis du ser en pris-avtale, respekter den.
 - Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende, ingen ekstra linjer mellom):
   {$this->getSignatureBlock()}
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
