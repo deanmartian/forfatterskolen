@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
     <head>
+        @include('partials.sw-cleanup-script')
         <title>Forfatterskolen | Logg inn</title>
         @include('backend.partials.backend-css')
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
     </head>
     <body>
+        @include('partials.login-help-banner')
         <div class="login-container">
             <div class="text-center">
                 <img src="{{asset('images/logo.png')}}">

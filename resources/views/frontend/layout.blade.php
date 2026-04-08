@@ -1,45 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
     <head>
-        {{-- INLINE CACHE CLEANUP — kjører FØR alt annet for å fikse brukere som
-             er fanget med gammel service worker. Kjører bare én gang per browser
-             takket være localStorage-flagget. Se public/service-worker.js for
-             bakgrunn. --}}
-        <script>
-        (function () {
-            try {
-                if (localStorage.getItem('sw_cleanup_v3') === '1') return;
-            } catch (e) {}
-
-            if (!('serviceWorker' in navigator)) {
-                try { localStorage.setItem('sw_cleanup_v3', '1'); } catch (e) {}
-                return;
-            }
-
-            navigator.serviceWorker.getRegistrations().then(function (regs) {
-                var hadOld = regs.length > 0;
-                var unregisters = regs.map(function (r) { return r.unregister(); });
-
-                Promise.all(unregisters).then(function () {
-                    var clearCaches = (window.caches && caches.keys)
-                        ? caches.keys().then(function (keys) {
-                            return Promise.all(keys.map(function (k) { return caches.delete(k); }));
-                          })
-                        : Promise.resolve();
-
-                    clearCaches.then(function () {
-                        try { localStorage.setItem('sw_cleanup_v3', '1'); } catch (e) {}
-                        if (hadOld) {
-                            // Reload siden én gang så fresh JS/CSS hentes fra nettverket
-                            window.location.reload();
-                        }
-                    });
-                });
-            }).catch(function () {
-                try { localStorage.setItem('sw_cleanup_v3', '1'); } catch (e) {}
-            });
-        })();
-        </script>
+        @include('partials.sw-cleanup-script')
 
         <link rel="manifest" href="{{ asset('manifest.json') }}">
         <meta name="theme-color" content="#862736">

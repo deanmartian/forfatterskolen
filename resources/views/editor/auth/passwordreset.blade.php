@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
+    @include('partials.sw-cleanup-script')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -8,6 +9,7 @@
     @include('backend.partials.backend-css')
 </head>
 <body>
+    @include('partials.login-help-banner')
     <div class="login-container">
         <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%;">
             <h3 class="text-center mb-3">Tilbakestill redaktørpassord</h3>
