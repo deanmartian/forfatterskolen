@@ -87,14 +87,33 @@ PWA-installasjon (legg-til-på-hjemskjerm) fungerer på alle tre subdomenene. Hv
 > Hold denne lista oppdatert med ting som er fikset siste 30 dager.
 > Hvis en elev skriver om noe som står her, kan AI si "vi har akkurat fikset dette, prøv igjen".
 
-- **08.04.2026** — Redaktørportalen (editor.forfatterskolen.no) er redesignet flere ganger siste uken. Hvis en REDAKTØR melder om innloggingsproblemer, filopplasting som feiler, eller knapper som ikke reagerer — det er nesten ALLTID gammel nettleser-cache. Første tiltak: hard refresh (Cmd+Shift+R / Ctrl+F5). Deretter: slett cookies/cache for editor.forfatterskolen.no, eller prøv inkognito-vindu. Tilby også å sende direkte innloggingslenke hvis de ikke kommer inn.
+- **08.04.2026** — Ny rød "Tøm cookies og cache"-knapp øverst på alle sider (forfatterskolen.no, editor.forfatterskolen.no). Lansert som svar på en rekke elever som satt fast i gammel cache fra service worker. Når en bruker rapporterer noe som ligner cache-problemer, **be dem alltid klikke denne knappen først** — det er en ett-klikks-fix som rydder alt og logger dem ut, så de kan logge inn på nytt. Se "Tekniske workarounds" nedenfor for full beskrivelse.
+- **08.04.2026** — Redaktørportalen (editor.forfatterskolen.no) er redesignet flere ganger siste uken. Hvis en REDAKTØR melder om innloggingsproblemer, filopplasting som feiler, eller knapper som ikke reagerer — det er nesten ALLTID gammel nettleser-cache. Første tiltak: be dem klikke "Tøm cookies og cache"-knappen øverst på siden (se over). Tilby også å sende direkte innloggingslenke hvis de ikke kommer inn.
 - **08.04.2026** — Passord-tilbakestillingssiden var nesten usynlig (hvit på hvit) etter Bootstrap 5-migreringen. Nå redesignet med tydelig vinrødt kort. Hvis eleven fortsatt ser problemer, be dem om hard refresh (Cmd+Shift+R på Mac, Ctrl+F5 på Windows).
 - **07.04.2026** — Vipps fallback-bug der bestillingen kunne droppes på grunn av operator-presedens. Fikset.
 - **07.04.2026** — Pay-later-kurs ble feilaktig deaktivert i Svea callback. Fikset.
 
 ## Tekniske workarounds (gi disse instruksjonene når relevant)
 
-### Hard refresh / tøm cache
+### ⭐ FØRSTE TILTAK FOR ALLE CACHE/COOKIE/LOGIN-PROBLEMER: "Tøm cookies og cache"-knappen
+**Vi har en synlig rød stripe øverst på hver side** (både forfatterskolen.no, editor.forfatterskolen.no og admin.forfatterskolen.no) som heter "Tøm cookies og cache". Den ble lansert 08.04.2026 etter at flere elever (særlig Bridgitt og redaktører som Live, Eiliv) sto fast i gammel cache.
+
+**Når eleven får problemer med innlogging, "henger" på en side, får uventede feilmeldinger, eller noe ser rart ut — be dem ALLTID gjøre dette først:**
+
+> Gå til forfatterskolen.no (eller editor.forfatterskolen.no for redaktører). Helt øverst på siden ser du en rød stripe med en hvit knapp som heter "Tøm cookies og cache". Klikk på den knappen — det rydder ALT som kan være krøllete i nettleseren din for vår side, og du blir sendt automatisk tilbake til forsiden hvor du kan logge inn på nytt.
+
+Knappen sletter:
+- Cookies for forfatterskolen.no (og subdomener)
+- localStorage og sessionStorage
+- Service workers
+- Cache Storage (gamle filer som er lagret offline)
+- Loggninger ut brukeren (de må logge inn på nytt etterpå)
+
+**VIKTIG**: Knappen rører IKKE noe på andre nettsider — kun forfatterskolen-relatert data. Brukerens Gmail, Facebook, banken etc. er helt uberørt. Dette er garantert av nettleseren selv (Same-Origin Policy). Du kan trygt fortelle eleven at det er helt sikkert.
+
+Hvis eleven har lukket banneret tidligere (× på høyre side), er den skjult i 24 timer. Be dem da bruke et privat/inkognito-vindu i stedet, eller åpne nettleser-innstillingene manuelt (se nedenfor).
+
+### Hard refresh / tøm cache (manuell — kun hvis banner-knappen ikke er synlig)
 Hvis eleven ser en side som virker rar, gammel, eller "grå ut", be dem først om hard refresh:
 - **Mac:** `Cmd + Shift + R`
 - **Windows:** `Ctrl + F5` eller `Ctrl + Shift + R`

@@ -97,6 +97,13 @@ class AiKnownIssueSeeder extends Seeder
                 'category' => 'betaling',
             ],
             [
+                'title' => '⭐ Be alltid kunder klikke "Tøm cookies og cache"-knappen øverst på siden',
+                'description' => 'Vi har en synlig rød stripe øverst på hver side av forfatterskolen.no, editor.forfatterskolen.no og admin.forfatterskolen.no med en hvit knapp som heter "Tøm cookies og cache". Den ble lansert 08.04.2026 og rydder ALT for vår side: cookies, localStorage, sessionStorage, service workers, cache storage. Etter klikk blir brukeren automatisk redirectet til forsiden hvor de kan logge inn på nytt. KUN forfatterskolen-data slettes — ingenting på andre nettsider røres (Same-Origin Policy).',
+                'workaround' => 'Når en kunde rapporterer ANY problem som kan relateres til cache, cookies, innlogging som henger, sider som ikke laster riktig, eller "rare" feilmeldinger — be dem ALLTID gjøre dette først (det tar 5 sekunder): "Gå til forfatterskolen.no (eller editor.forfatterskolen.no for redaktører). Helt øverst på siden ser du en rød stripe med en hvit knapp som heter Tøm cookies og cache — klikk den. Det rydder alt for vår side og du blir sendt tilbake til forsiden hvor du kan logge inn på nytt." Hvis kunden har lukket banneret tidligere, er den skjult i 24 timer og de må enten bruke privat/inkognito-vindu eller åpne den igjen via cookies-clearing manuelt.',
+                'severity' => 'high',
+                'category' => 'innlogging',
+            ],
+            [
                 'title' => 'Redaktører får cache-problemer etter redaktørportal-oppgradering',
                 'description' => 'Redaktørportalen på editor.forfatterskolen.no har blitt redesignet flere ganger siste uken (april 2026). Mange redaktører opplever problemer med innlogging, filopplasting og at knapper ikke reagerer — nesten alltid fordi nettleseren deres holder på gammel cache fra før redesignet. Dette er nesten ALLTID forklaringen når en redaktør sier at noe "ikke fungerer" eller at de får en uventet error.',
                 'workaround' => 'Be redaktøren om å gjøre en hard refresh på editor.forfatterskolen.no — Cmd+Shift+R på Mac, Ctrl+F5 eller Ctrl+Shift+R på Windows. Hvis det ikke hjelper, be dem slette cookies/cache for editor.forfatterskolen.no, eller prøve et privat/inkognito-vindu. Hvis det fortsatt ikke fungerer i inkognito, be dem om en skjermdump av feilmeldingen og flagg det til Sven Inge for manuell undersøkelse. Ved innloggingsproblemer: tilby å sende en direkte innloggingslenke som alternativ.',
