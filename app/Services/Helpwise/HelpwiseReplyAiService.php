@@ -73,6 +73,7 @@ class HelpwiseReplyAiService
 
         $examplesSection = $this->getReplyExamples();
         $knowledgeSection = $this->getKnowledgeContext();
+        $discountsSection = $this->getActiveDiscounts();
 
         // Hvis vi har den fulle e-post-bodyen (med sitater), vis den som
         // en egen seksjon. Begrens til 4000 tegn slik at vi ikke sprenger
@@ -163,6 +164,8 @@ GENERELT:
 - Innleveringer kan utsettes ved behov
 {$examplesSection}
 
+{$discountsSection}
+
 INBOX: {$inbox}
 KUNDENS NAVN: {$customerName}
 KUNDENS E-POST: {$conversation->customer_email}
@@ -181,7 +184,8 @@ Skriv et passende svarkutkast. Husk:
 - Bruk gjerne emojier der det passer naturlig — vi er en varm og personlig skole, ikke et korporativt firma. Eksempler: 📚 ✍️ 🎉 ✨ 💪 ❤️ 😊 ☺️ 🙌 ✅ 📖 🌟 — bruk 1-3 emojier i et typisk svar (ikke overdriv). Tekst-smileys som :-) eller :) er også fint.
 - ALLTID når du gir en lenke (innloggingslenke, webinar-lenke, etc): bruk markdown-format slik at den blir kort og klikkbar i e-posten. Eksempel: "[innloggingslenke](https://www.forfatterskolen.no/auth/login/email/...)" — IKKE lim inn rå URL-er midt i teksten.
 - ALDRI bruk markdown-formatering som **fet tekst**, *kursiv*, # overskrifter, eller - bullet-lister. Vi sender ren tekst-e-post, og asterisker blir synlige som stygge tegn. Bruk vanlig prosa, og vanlige linjeskift for å skille avsnitt. ENESTE unntak er [tekst](url) for lenker — det blir konvertert til klikkbare lenker automatisk.
-- ALDRI spør kunden om noe som allerede står i samtalehistorikken eller den fulle e-posten. Hvis du ser en /course/{id}-lenke i sitatene, vet du hvilket kurs det er. Hvis du ser en rabattkode, husk å nevne den. Hvis du ser en pris-avtale, respekter den.
+- ALDRI spør kunden om noe som allerede står i samtalehistorikken eller den fulle e-posten. Hvis du ser en /course/{id}-lenke i sitatene, vet du hvilket kurs det er. Hvis du ser en pris-avtale, respekter den.
+- RABATTKODER: Hvis du ser en rabattkode i samtalen eller sitatene, MÅ du sjekke at den fortsatt er gyldig i "AKTIVE RABATTKODER"-fasitten øverst. Hvis koden IKKE står i fasitten, ikke gjenta den til kunden — si i stedet at "den koden ser dessverre ut til å være utløpt" og foreslå at de tar kontakt for en ny rabatt, eller bare ikke nevn rabatt i det hele tatt. ALDRI lov en rabatt vi ikke vet finnes.
 - Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende, ingen ekstra linjer mellom):
   {$this->getSignatureBlock()}
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
@@ -377,6 +381,38 @@ PROMPT;
         }
 
         return $history;
+    }
+
+    /**
+     * Hent alle gjeldende aktive rabatter på tvers av alle kurs.
+     * AI-en bruker denne lista som "fasit" når kunden refererer til en
+     * rabattkode — slik at vi aldri lover en utgått kode.
+     */
+    private function getActiveDiscounts(): string
+    {
+        try {
+            $now = now();
+            $discounts = \App\CourseDiscount::where(function ($q) use ($now) {
+                $q->whereNull('valid_from')->orWhere('valid_from', '<=', $now);
+            })->where(function ($q) use ($now) {
+                $q->whereNull('valid_to')->orWhere('valid_to', '>=', $now);
+            })->with('course')->get();
+
+            if ($discounts->isEmpty()) {
+                return "AKTIVE RABATTKODER: ingen aktive rabatter for tiden.\n";
+            }
+
+            $section = "AKTIVE RABATTKODER (FASIT — ikke gjenta noen kode som ikke står her):\n";
+            foreach ($discounts as $d) {
+                $courseTitle = $d->course?->title ?? '?';
+                $courseId = $d->course_id;
+                $validTo = $d->valid_to ? ' (utløper ' . \Carbon\Carbon::parse($d->valid_to)->format('d.m.Y') . ')' : '';
+                $section .= "- Kurs {$courseId} ({$courseTitle}): kode \"{$d->coupon}\" gir {$d->discount} kr fratrekk{$validTo}\n";
+            }
+            return $section;
+        } catch (\Exception $e) {
+            return '';
+        }
     }
 
     /**
