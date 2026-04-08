@@ -1,22 +1,28 @@
 @extends('frontend.layout')
 
 @section('title')
-    <title>Thank You &rsaquo; Forfatterskolen</title>
+    <title>Takk for søknaden &rsaquo; Forfatterskolen</title>
+@stop
+
+@section('styles')
+@include('frontend.partials.thank-you-styles')
 @stop
 
 @section('content')
-    <div class="thank-you-page">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6 left-container">
-                    <img src="{{ asset('images-new/thumb-icon.png') }}" alt="" class="thumb">
-                    <h1>Takk for din søknad, vi vil kontakte deg så fort som mulig!</h1>
-                </div>
-
-                <div class="col-sm-6 right-container">
-                    <img src="{{ asset('images-new/thankyou-hero.jpg') }}" alt="">
-                </div>
-            </div>
+<div class="ty-wrapper">
+    <div class="ty-card">
+        <div class="ty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
         </div>
+
+        <h1>Takk for søknaden!</h1>
+        <p>Vi har mottatt søknaden din om personlig trener og vil kontakte deg så fort som mulig.</p>
+
+        <a href="/" class="ty-btn">
+            <i class="fa fa-home"></i> Til forsiden
+        </a>
     </div>
+</div>
 @stop

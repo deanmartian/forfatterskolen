@@ -1,34 +1,28 @@
 @extends('frontend.layout')
 
 @section('title')
-<title>Thank You &rsaquo; Forfatterskolen</title>
+<title>Takk for gavekortet &rsaquo; Forfatterskolen</title>
+@stop
+
+@section('styles')
+@include('frontend.partials.thank-you-styles')
 @stop
 
 @section('content')
-	<div class="thank-you-page" data-bg="https://www.forfatterskolen.no/images-new/thankyou-bg.png">
-		<div class="container">
-			<div class="row">
+<div class="ty-wrapper">
+    <div class="ty-card">
+        <div class="ty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
 
-				<?php
-                $header = trans('site.thankyou-page.course.title');
-                $message = trans('site.thankyou-page.course.description');
-                $button = '<a class="btn buy-btn" href="'.route('learner.invoice') . '?tab=gift'. '">
-	<i class="fa fa-graduation-cap"></i>&nbsp;&nbsp;&nbsp;See gift</a>';
-				?>
+        <h1>Takk for kjøpet!</h1>
+        <p>Gavekortet er bestilt. Du finner det under fakturaer i portalen.</p>
 
-				<div class="col-sm-6 left-container">
-					<img src="{{ asset('images-new/thumb-icon.png') }}" alt="" class="thumb">
-					<h1>{{ $header }}</h1>
-					<p>
-						{!! $message !!}
-					</p>
-					{!! $button !!}
-				</div>
-
-				<div class="col-sm-6 right-container">
-					<img src="{{ asset('images-new/thankyou-hero.jpg') }}" alt="">
-				</div>
-			</div>
-		</div>
-	</div>
+        <a class="ty-btn" href="{{ route('learner.invoice') }}?tab=gift">
+            <i class="fa fa-gift"></i> Se gavekort
+        </a>
+    </div>
+</div>
 @stop

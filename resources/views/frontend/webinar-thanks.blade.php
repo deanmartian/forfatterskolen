@@ -1,55 +1,34 @@
 @extends('frontend.layout')
 
 @section('title')
-<title>Thank You for Subscribing &rsaquo; Forfatterskolen</title>
+<title>Takk for påmeldingen &rsaquo; Forfatterskolen</title>
 @stop
 
 @section('styles')
-	<style>
-		.margin-top-50 {
-			margin-top: 50px;
-		}
-	</style>
+@include('frontend.partials.thank-you-styles')
 @stop
 
 @section('content')
-<div class="container">
-	<div class="row">
-		<div class="col-sm-10 col-sm-offset-1 mt-5">
-			<div class="panel">
-				<div class="panel-body">
-					<h1 class="text-center font-weight-bold" style="color:#E83945">TAKK FOR AT DU MELDTE DEG PÅ!</h1>
-					<section class="clearfix margin-top-50">
-						<p>
-							Dette er en bekreftelse på din påmelding. Du vil motta en mail fra oss med lenken du skal bruke til webinaret i løpet av kort tid.
-						</p>
+<div class="ty-wrapper">
+    <div class="ty-card">
+        <div class="ty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
 
-						<p class="margin-top">
-							Sven Inge <br>
-							Support​
-						</p>
+        <h1>Takk for påmeldingen!</h1>
+        <p>
+            Du er nå påmeldt webinaret. Du vil motta en e-post fra oss med lenken du skal bruke til webinaret i løpet av kort tid.
+        </p>
 
-					</section>
-				</div>
-			</div>
-		</div>
-	</div>
+        <a href="/" class="ty-btn">
+            <i class="fa fa-home"></i> Til forsiden
+        </a>
+
+        <p style="font-size:0.85rem;color:#8a8580;margin-top:32px;">
+            Hilsen Sven Inge<br>Forfatterskolen
+        </p>
+    </div>
 </div>
-@stop
-
-@section('scripts')
-<script>
-	/*jQuery(window).on('load', function(){
-		var time = 5;
-		window.setInterval(
-		  function() 
-		  {
-		  	time--;
-		  	if(time == 0){
-		  		window.location.href = '/';
-		  	}
-		  }, 
-		1000);
-	});*/
-</script>
 @stop

@@ -1,26 +1,28 @@
 @extends('frontend.layout')
 
 @section('title')
-    <title>Thank You &rsaquo; Forfatterskolen</title>
+    <title>Takk for bestillingen &rsaquo; Forfatterskolen</title>
+@stop
+
+@section('styles')
+@include('frontend.partials.thank-you-styles')
 @stop
 
 @section('content')
-{{-- data-bg="https://www.forfatterskolen.no/images-new/thankyou-bg.png" --}}
-    <div class="thank-you-page">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6 left-container">
-                    {{-- <img data-src="https://www.forfatterskolen.no/images-new/thumb-icon.png" alt="" class="thumb"> --}}
-                    <h1>Thank You</h1>
-                    <p>
-                        Thank you for buying our service
-                    </p>
-                </div>
-
-                <div class="col-sm-6 right-container">
-                    <img data-src="https://www.forfatterskolen.no/images-new/thankyou-hero.png" alt="">
-                </div>
-            </div>
+<div class="ty-wrapper">
+    <div class="ty-card">
+        <div class="ty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
         </div>
+
+        <h1>Takk for bestillingen!</h1>
+        <p>Vi har mottatt din bestilling av publiseringstjeneste. Vi vil ta kontakt med deg så snart som mulig.</p>
+
+        <a href="/" class="ty-btn">
+            <i class="fa fa-home"></i> Til forsiden
+        </a>
     </div>
+</div>
 @stop
