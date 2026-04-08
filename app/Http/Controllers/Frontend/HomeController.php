@@ -2189,21 +2189,34 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         $expOrder = explode('-', $request->t);
         $vippsOrder = $this->checkVippsOrderStatus($request->t);
 
-        // check for order status
-        if ($vippsOrder['data'] && $transactionHistory = $vippsOrder['data']->transactionLogHistory[0]
-                && $order = Order::find($expOrder[0])) {
+        \Log::info('Vipps fallback called', ['t' => $request->t, 'order_data' => $vippsOrder]);
 
+        // Parse order ID from request token
+        $order = Order::find($expOrder[0] ?? null);
+
+        if (!$order) {
+            \Log::warning('Vipps fallback: order not found', ['token' => $request->t]);
+            return redirect()->route('front.thank-you');
+        }
+
+        // Check if Vipps returned valid data
+        if (!empty($vippsOrder['data']) && !empty($vippsOrder['data']->transactionLogHistory)) {
             $transactionHistory = $vippsOrder['data']->transactionLogHistory[0];
-            $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.cancelled-order' : 'front.course.cancelled-order';
+
             // check if capture and operation is success
-            if ($transactionHistory->operation === 'CAPTURE' && $transactionHistory->operationSuccess) {
+            if (isset($transactionHistory->operation) && $transactionHistory->operation === 'CAPTURE' && ($transactionHistory->operationSuccess ?? false)) {
                 $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.thankyou' : 'front.shop.thankyou';
+            } else {
+                $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.cancelled-order' : 'front.course.cancelled-order';
             }
 
             return redirect()->route($route, $order->item_id);
         }
 
-        return redirect()->route('front.thank-you');
+        // No Vipps data — treat as cancelled but still redirect to order page, not homepage
+        \Log::warning('Vipps fallback: no transaction data', ['order_id' => $order->id]);
+        $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.cancelled-order' : 'front.course.cancelled-order';
+        return redirect()->route($route, $order->item_id);
     }
 
     /**
