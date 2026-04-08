@@ -87,6 +87,7 @@ PWA-installasjon (legg-til-på-hjemskjerm) fungerer på alle tre subdomenene. Hv
 > Hold denne lista oppdatert med ting som er fikset siste 30 dager.
 > Hvis en elev skriver om noe som står her, kan AI si "vi har akkurat fikset dette, prøv igjen".
 
+- **08.04.2026** — Redaktørportalen (editor.forfatterskolen.no) er redesignet flere ganger siste uken. Hvis en REDAKTØR melder om innloggingsproblemer, filopplasting som feiler, eller knapper som ikke reagerer — det er nesten ALLTID gammel nettleser-cache. Første tiltak: hard refresh (Cmd+Shift+R / Ctrl+F5). Deretter: slett cookies/cache for editor.forfatterskolen.no, eller prøv inkognito-vindu. Tilby også å sende direkte innloggingslenke hvis de ikke kommer inn.
 - **08.04.2026** — Passord-tilbakestillingssiden var nesten usynlig (hvit på hvit) etter Bootstrap 5-migreringen. Nå redesignet med tydelig vinrødt kort. Hvis eleven fortsatt ser problemer, be dem om hard refresh (Cmd+Shift+R på Mac, Ctrl+F5 på Windows).
 - **07.04.2026** — Vipps fallback-bug der bestillingen kunne droppes på grunn av operator-presedens. Fikset.
 - **07.04.2026** — Pay-later-kurs ble feilaktig deaktivert i Svea callback. Fikset.
