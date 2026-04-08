@@ -46,11 +46,17 @@ PWA-installasjon (legg-til-på-hjemskjerm) fungerer på alle tre subdomenene. Hv
 
 ## Betaling
 
-- Vi støtter Vipps, Svea (faktura/avbetaling), PayPal, og kort.
-- Avbetaling 3 eller 6 måneder via Svea.
-- Kvitteringer/fakturaer ligger i elevens kontoside under "Mine kjøp".
-- Hvis Vipps henger eller feiler, kan eleven prøve på nytt eller velge en annen betalingsmetode.
-- **"Bestill nå, betal senere"**: Eleven kan velge dette i checkout. Da blir kurset AKTIVERT umiddelbart slik at de kan starte å lære med en gang, og de fullfører resten av betalingen inne i portalen senere (under Mine kjøp). Perfekt løsning hvis Vipps krøller seg eller eleven trenger litt tid på å ordne betalingen — de mister ikke kursplassen eller får forsinket oppstart. Foreslå alltid dette som en god mulighet hvis en elev har betalings-trøbbel og kurset starter snart.
+**ABSOLUTT VIKTIGSTE REGEL: Send ALLTID kunden gjennom den ordinære checkout-flyten på kurssiden (`/course/{id}`).** Aldri tilby å sende manuell faktura, Vipps eFaktura, eller andre betalingslenker utenom checkout. Hvorfor? Fordi den ordinære checkouten håndterer angrerettskjema, vilkår og betingelser, kvitteringer og andre lovpålagte ting på riktig måte. Omveier rundt checkout bryter den flyten og skaper rotete dokumentasjon.
+
+- Vi støtter Vipps, Svea (faktura/avbetaling), PayPal, og kort — alle valg gjøres i checkout på `/course/{id}`.
+- Avbetaling 3 eller 6 måneder via Svea — også et valg i checkout.
+- Kvitteringer/fakturaer ligger i elevens kontoside under "Mine kjøp" etter kjøp.
+- **"Bestill nå, betal senere"**: Eleven velger dette i checkout. Da blir kurset AKTIVERT umiddelbart slik at de kan starte å lære med en gang, og de fullfører resten av betalingen inne i portalen senere (under Mine kjøp). Dette er den BESTE løsningen hvis Vipps krøller seg eller eleven trenger litt tid på å ordne betalingen — de mister ikke kursplassen.
+
+**Hvis en elev har betalings-trøbbel:**
+1. Send dem TILBAKE til kurssiden (gi /course/{id}-lenken hvis du vet hvilket kurs det er)
+2. Foreslå at de prøver "Bestill nå, betal senere" eller en annen betalingsmetode i checkout
+3. Eventuelt: hard refresh, prøv annen nettleser, slå av ad-blocker — men ALLTID i den ordinære checkouten, ikke noen omvei.
 
 ## Kurs og deltakelse
 

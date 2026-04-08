@@ -22,7 +22,7 @@ class AiKnownIssueSeeder extends Seeder
             [
                 'title' => 'Vipps-betalingsbug ble fikset 08.04.2026 — eleven kan trygt prøve på nytt',
                 'description' => 'Tidligere ble noen Vipps-bestillinger droppet pga en operator-presedens-bug i fallback-håndteringen. Dette ble fikset 08.04.2026. Hvis en elev rapporterer at de fikk en feil eller ble sendt tilbake til utgangspunktet ved Vipps-betaling før 08.04.2026, så er det dette som skjedde — be dem prøve på nytt nå.',
-                'workaround' => 'Be eleven prøve Vipps-betalingen på nytt — bugen er fikset. Hvis det FORTSATT ikke fungerer, kan de prøve hard refresh (Cmd+Shift+R), bytte nettleser, ELLER bruke "Bestill nå, betal senere" i checkout (kurset aktiveres umiddelbart, betalingen ordnes inne i portalen senere), eller velge Svea (faktura/avbetaling) som alternativ betalingsmetode.',
+                'workaround' => 'Send eleven tilbake til kurssiden /course/{id} og be dem prøve Vipps-betalingen på nytt — bugen er fikset. Hvis det FORTSATT ikke fungerer, kan de i samme checkout velge "Bestill nå, betal senere" (aktiverer kurset umiddelbart), eller en annen betalingsmetode som Svea (faktura/avbetaling). ALDRI tilby å sende manuell faktura eller Vipps eFaktura utenom checkout.',
                 'severity' => 'info',
                 'category' => 'betaling',
             ],
@@ -69,10 +69,10 @@ class AiKnownIssueSeeder extends Seeder
                 'category' => 'e-post',
             ],
             [
-                'title' => 'Vipps eFaktura kan ta 1-2 dager å dukke opp i Vipps-appen',
-                'description' => 'Når vi sender en eFaktura via Vipps, må den prosesseres av Vipps sitt system før den vises i elevens Vipps-app. Dette tar typisk 1-2 hverdager.',
-                'workaround' => 'Forklar at fakturaen er sendt og kommer i Vipps-appen om kort tid. Hvis det haster, kan eleven betale via vanlig faktura med KID i mellomtiden — den ligger i kontoportalen under Mine kjøp.',
-                'severity' => 'low',
+                'title' => 'ALDRI tilby manuell faktura/eFaktura — alle kjøp må gjennom checkout',
+                'description' => 'For at angrerettskjema, vilkår, kvitteringer og lovpålagte ting skal håndteres riktig, må ALLE bestillinger gå gjennom den ordinære checkout-flyten på /course/{id}. Vi sender ALDRI manuell Vipps eFaktura, ingen manuell Svea-faktura, ingen omveier rundt checkout. Hvis en elev har betalingsproblemer, send dem TILBAKE til kurssiden og foreslå at de prøver "Bestill nå, betal senere" eller en annen betalingsmetode i checkout.',
+                'workaround' => 'Send eleven til /course/{id}-lenken (bruk kursnummeret fra historikken hvis det er kjent). Foreslå "Bestill nå, betal senere" som primær løsning hvis Vipps krøller seg — da aktiveres kurset umiddelbart. Aldri si "vi kan sende deg en faktura" eller "vi kan sende deg en Vipps eFaktura" — det bryter compliance-flyten.',
+                'severity' => 'high',
                 'category' => 'betaling',
             ],
             [
@@ -108,6 +108,7 @@ class AiKnownIssueSeeder extends Seeder
         // Slett gamle/utdaterte oppføringer som har fått nye titler
         AiKnownIssue::where('title', 'Vi har ikke en egen app — forfatterskolen.no ER appen (PWA)')->delete();
         AiKnownIssue::where('title', 'Vipps-betaling kan henge på Mac med Safari')->delete();
+        AiKnownIssue::where('title', 'Vipps eFaktura kan ta 1-2 dager å dukke opp i Vipps-appen')->delete();
 
         foreach ($issues as $data) {
             AiKnownIssue::updateOrCreate(
