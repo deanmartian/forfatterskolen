@@ -779,58 +779,96 @@ class PageController extends Controller
     {
         $editorId = Auth::id();
 
-        // Pending extension requests for assignments this editor handles
+        // "Mine elever" gjelder KUN langtids-kurs (Årskurs og Påbyggingsår).
+        // Sjangerkurs og gruppekurs har egen flyt og skal ikke blandes inn her.
+        // Vi cacher kurs-ID-ene for alle aktive Årskurs/Påbygg-kurs én gang.
+        $longCourseIds = \App\Course::where(function ($q) {
+            $q->where('title', 'like', 'Årskurs%')
+              ->orWhere('title', 'like', 'Påbygg%');
+        })->pluck('id')->toArray();
+
+        // Pending extension requests for assignments this editor handles —
+        // begrenset til Årskurs/Påbygg-kurs.
         $extensionRequests = \App\Models\AssignmentExtensionRequest::where('status', 'pending')
-            ->whereHas('assignment', function ($q) use ($editorId) {
-                $q->where('editor_id', $editorId)
-                  ->orWhereHas('manuscripts', fn($mq) => $mq->where('editor_id', $editorId));
+            ->whereHas('assignment', function ($q) use ($editorId, $longCourseIds) {
+                $q->whereIn('course_id', $longCourseIds)
+                  ->where(function ($qq) use ($editorId) {
+                      $qq->where('editor_id', $editorId)
+                         ->orWhereHas('manuscripts', fn($mq) => $mq->where('editor_id', $editorId));
+                  });
             })
             ->with(['user', 'assignment'])
             ->latest()
             ->get();
 
-        // Approved extension requests where the new deadline hasn't passed yet —
-        // editoren trenger oversikt over hvem som har fått ekstra tid og når
-        // den nye fristen er, slik at hen kan følge opp.
+        // Approved extension requests — kun Årskurs/Påbygg, og kun nylig
+        // godkjente (siste 7 dager) eller frem i tid.
         $approvedExtensions = \App\Models\AssignmentExtensionRequest::where('status', 'approved')
-            ->whereHas('assignment', function ($q) use ($editorId) {
-                $q->where('editor_id', $editorId)
-                  ->orWhereHas('manuscripts', fn($mq) => $mq->where('editor_id', $editorId));
+            ->whereHas('assignment', function ($q) use ($editorId, $longCourseIds) {
+                $q->whereIn('course_id', $longCourseIds)
+                  ->where(function ($qq) use ($editorId) {
+                      $qq->where('editor_id', $editorId)
+                         ->orWhereHas('manuscripts', fn($mq) => $mq->where('editor_id', $editorId));
+                  });
             })
             ->where('requested_deadline', '>=', now()->subDays(7))
             ->with(['user', 'assignment'])
             ->orderBy('requested_deadline')
             ->get();
 
-        // Students who haven't submitted yet (assignment deadline passed, no manuscript)
-        $overdueStudents = Assignment::where('editor_id', $editorId)
-            ->where('submission_date', '<', now())
-            ->where('for_editor', 0)
-            ->with('course')
-            ->get()
-            ->flatMap(function ($assignment) {
-                $submittedUserIds = AssignmentManuscript::where('assignment_id', $assignment->id)->pluck('user_id');
-                $enrolledUsers = \App\CoursesTaken::whereHas('package', fn($q) => $q->where('course_id', $assignment->course_id))
-                    ->whereNotIn('user_id', $submittedUserIds)
-                    ->with('user')
-                    ->get();
-                return $enrolledUsers->map(fn($ct) => (object)[
-                    'user' => $ct->user,
-                    'assignment' => $assignment,
-                    'course' => $assignment->course,
-                    'deadline' => $assignment->submission_date,
-                    'manuscript_id' => null,
-                ]);
-            })
-            ->filter(fn($item) => $item->user && !$item->user->is_disabled)
-            ->take(50);
-
-        // Active manuscripts assigned to this editor
+        // Active manuscripts — kun Årskurs/Påbygg-kurs hvor editoren er
+        // tildelt direkte på manuset.
         $activeManuscripts = AssignmentManuscript::where('editor_id', $editorId)
             ->where('status', 0)
+            ->whereHas('assignment', fn($q) => $q->whereIn('course_id', $longCourseIds))
             ->with(['user', 'assignment.course'])
             ->latest()
             ->get();
+
+        // Students who haven't submitted yet — kun Årskurs/Påbygg, og KUN for
+        // elever der editoren faktisk er tildelt på et tidligere manus i samme
+        // kurs (slik at vi ikke viser ALLE elever på Årskurs som ikke har levert,
+        // bare DINE elever).
+        $editorStudentIdsByCourse = AssignmentManuscript::where('editor_id', $editorId)
+            ->whereHas('assignment', fn($q) => $q->whereIn('course_id', $longCourseIds))
+            ->with('assignment')
+            ->get()
+            ->groupBy(fn($m) => $m->assignment->course_id ?? null)
+            ->map(fn($manuscripts) => $manuscripts->pluck('user_id')->unique()->values()->all());
+
+        $overdueStudents = collect();
+        if ($editorStudentIdsByCourse->isNotEmpty()) {
+            $overdueStudents = Assignment::whereIn('course_id', $editorStudentIdsByCourse->keys()->toArray())
+                ->where('submission_date', '<', now())
+                ->where('submission_date', '>=', now()->subDays(30)) // maks 30 dager forsinket
+                ->where('for_editor', 0)
+                ->with('course')
+                ->get()
+                ->flatMap(function ($assignment) use ($editorStudentIdsByCourse) {
+                    $myStudentIds = $editorStudentIdsByCourse[$assignment->course_id] ?? [];
+                    if (empty($myStudentIds)) return collect();
+
+                    $submittedUserIds = AssignmentManuscript::where('assignment_id', $assignment->id)
+                        ->whereIn('user_id', $myStudentIds)
+                        ->pluck('user_id')
+                        ->toArray();
+
+                    $missingUserIds = array_diff($myStudentIds, $submittedUserIds);
+                    if (empty($missingUserIds)) return collect();
+
+                    return \App\User::whereIn('id', $missingUserIds)
+                        ->get()
+                        ->map(fn($user) => (object)[
+                            'user' => $user,
+                            'assignment' => $assignment,
+                            'course' => $assignment->course,
+                            'deadline' => $assignment->submission_date,
+                            'manuscript_id' => null,
+                        ]);
+                })
+                ->filter(fn($item) => $item->user && !$item->user->is_disabled)
+                ->values();
+        }
 
         return view('editor.my-students', compact('extensionRequests', 'approvedExtensions', 'overdueStudents', 'activeManuscripts'));
     }
