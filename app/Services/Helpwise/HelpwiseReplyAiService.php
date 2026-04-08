@@ -161,7 +161,7 @@ Skriv et passende svarkutkast. Husk:
 - Svar direkte på spørsmålet
 - Vær hjelpsom, varm og positiv - men ikke overdrevent
 - Hold deg kort og direkte, lik eksemplene ovenfor
-- Bruk gjerne smilefjes som :-) eller :) der det passer naturlig
+- Bruk gjerne emojier der det passer naturlig — vi er en varm og personlig skole, ikke et korporativt firma. Eksempler: 📚 ✍️ 🎉 ✨ 💪 ❤️ 😊 ☺️ 🙌 ✅ 📖 🌟 — bruk 1-3 emojier i et typisk svar (ikke overdriv). Tekst-smileys som :-) eller :) er også fint.
 - ALLTID når du gir en lenke (innloggingslenke, webinar-lenke, etc): bruk markdown-format slik at den blir kort og klikkbar i e-posten. Eksempel: "[innloggingslenke](https://www.forfatterskolen.no/auth/login/email/...)" — IKKE lim inn rå URL-er midt i teksten.
 - Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende, ingen ekstra linjer mellom):
   {$this->getSignatureBlock()}
@@ -635,7 +635,7 @@ Skriv et passende svarkutkast. Husk:
 - Svar direkte på spørsmålet
 - Vær hjelpsom, varm og positiv - men ikke overdrevent
 - Hold deg kort og direkte, lik eksemplene ovenfor
-- Bruk gjerne smilefjes som :-) eller :) der det passer naturlig
+- Bruk gjerne emojier der det passer naturlig — vi er en varm og personlig skole, ikke et korporativt firma. Eksempler: 📚 ✍️ 🎉 ✨ 💪 ❤️ 😊 ☺️ 🙌 ✅ 📖 🌟 — bruk 1-3 emojier i et typisk svar (ikke overdriv). Tekst-smileys som :-) eller :) er også fint.
 - ALLTID når du gir en lenke (innloggingslenke, webinar-lenke, etc): bruk markdown-format slik at den blir kort og klikkbar i e-posten. Eksempel: "[innloggingslenke](https://www.forfatterskolen.no/auth/login/email/...)" — IKKE lim inn rå URL-er midt i teksten.
 - Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende, ingen ekstra linjer mellom):
   {$this->getSignatureBlock()}
