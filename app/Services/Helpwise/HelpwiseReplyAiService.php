@@ -247,10 +247,9 @@ PROMPT;
     private function getStudentContext(HelpwiseConversation $conversation): array
     {
         if (!$conversation->user_id) {
-            // Try to find by email
-            $user = $conversation->customer_email
-                ? User::where('email', $conversation->customer_email)->first()
-                : null;
+            // Try to find by email — prioriter editor over learner ved duplikater,
+            // og sjekk også user_emails-tabellen for sekundære e-poster.
+            $user = User::findByEmailPreferringHighRole($conversation->customer_email);
 
             if ($user) {
                 $conversation->update(['user_id' => $user->id]);
@@ -670,7 +669,7 @@ PROMPT;
         $studentContext = [];
         $user = $conversation->user_id
             ? User::find($conversation->user_id)
-            : User::where('email', $conversation->customer_email)->first();
+            : User::findByEmailPreferringHighRole($conversation->customer_email);
 
         if ($user) {
             if (!$conversation->user_id) {

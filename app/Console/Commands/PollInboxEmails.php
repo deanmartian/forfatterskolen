@@ -170,8 +170,9 @@ class PollInboxEmails extends Command
                         'assigned_to' => $privateToUserIdForMessage,
                     ]);
 
-                    // Link to user
-                    $user = User::where('email', $fromEmail)->first();
+                    // Link to user — prioriter editor over learner ved duplikater
+                    // og sjekk også user_emails-tabellen for sekundære e-poster.
+                    $user = User::findByEmailPreferringHighRole($fromEmail);
                     if ($user) {
                         $conversation->update([
                             'user_id' => $user->id,

@@ -32,6 +32,55 @@ class User extends Authenticatable
     const GiutbokRole = 4;
 
     /**
+     * Finn en bruker basert på e-postadresse, men prioriter høyere roller
+     * når flere brukere har samme e-post (eller når e-posten finnes både
+     * direkte og via user_emails-tabellen).
+     *
+     * Prioritet: Admin (1) > Editor (3) > Giutbok (4) > Learner (2).
+     *
+     * Sjekker også user_emails-tabellen for sekundære e-poster slik at
+     * brukere som har flere registrerte e-poster blir gjenkjent.
+     *
+     * Brukes av inbox-AI og IMAP-polleren for å unngå at en redaktør
+     * som tilfeldigvis også har en gammel elev-konto blir behandlet
+     * som elev.
+     */
+    public static function findByEmailPreferringHighRole(?string $email): ?User
+    {
+        if (!$email) {
+            return null;
+        }
+
+        $email = strtolower(trim($email));
+
+        // Hent alle direkte matches
+        $directIds = self::whereRaw('LOWER(email) = ?', [$email])->pluck('id')->toArray();
+
+        // Hent alle indirekte matches via user_emails-tabellen
+        $secondaryIds = [];
+        try {
+            $secondaryIds = \App\UserEmail::whereRaw('LOWER(email) = ?', [$email])
+                ->pluck('user_id')
+                ->toArray();
+        } catch (\Throwable $e) {
+            // Tabellen finnes kanskje ikke — fall tilbake til kun direkte
+        }
+
+        $allIds = array_unique(array_merge($directIds, $secondaryIds));
+
+        if (empty($allIds)) {
+            return null;
+        }
+
+        // Sorter etter rolle-prioritet: Admin > Editor > Giutbok > Learner
+        // MySQL FIELD() returnerer ordens-indeks, derfor bruker vi det her
+        return self::whereIn('id', $allIds)
+            ->orderByRaw('FIELD(role, 1, 3, 4, 2)')
+            ->orderByDesc('is_active')
+            ->first();
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
