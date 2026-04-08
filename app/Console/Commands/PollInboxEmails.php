@@ -165,6 +165,9 @@ class PollInboxEmails extends Command
                         'source' => 'imap',
                         'inbox' => $targetInbox,
                         'private_to_user_id' => $privateToUserIdForMessage,
+                        // Auto-tildel privat-inbox-eieren slik at samtalene
+                        // dukker opp i deres "Mine"-filter automatisk.
+                        'assigned_to' => $privateToUserIdForMessage,
                     ]);
 
                     // Link to user

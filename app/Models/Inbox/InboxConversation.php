@@ -51,10 +51,13 @@ class InboxConversation extends Model
 
     /**
      * Filter ut private inbokser som ikke tilhører den innloggede brukeren.
-     * Offentlige inbokser (private_to_user_id = null) vises alltid.
      *
-     * Brukes som default-scope fra InboxService for å sikre at ingen admin
-     * kan lese en annen admins private inbox ved en feil (eller med vilje).
+     * En samtale er synlig hvis:
+     *   1) Den er offentlig (private_to_user_id = null), ELLER
+     *   2) Du eier den (private_to_user_id = ditt user_id), ELLER
+     *   3) Den er tildelt deg (assigned_to = ditt user_id) — gjør at
+     *      eieren av en privat inbox kan delegere svar til en annen admin
+     *      uten å miste eierskapet.
      */
     public function scopeVisibleToUser($query, ?int $userId)
     {
@@ -62,6 +65,7 @@ class InboxConversation extends Model
             $q->whereNull('private_to_user_id');
             if ($userId) {
                 $q->orWhere('private_to_user_id', $userId);
+                $q->orWhere('assigned_to', $userId);
             }
         });
     }
