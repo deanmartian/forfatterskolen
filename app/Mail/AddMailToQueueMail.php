@@ -52,6 +52,11 @@ class AddMailToQueueMail extends Mailable
         $replyToAddress = $this->reply_to_email ?: config('mail.reply_to.address', $this->from_email);
         $replyToName = $this->reply_to_name ?: config('mail.reply_to.name', $this->from_name);
 
+        // Tøm eksisterende reply-to slik at vi ikke får DUPLIKATER fra
+        // Laravel mail middleware eller Resend-adapteren. ->replyTo()
+        // appender til denne arrayen, så vi må reset-e først.
+        $this->replyTo = [];
+
         $email = $this->to($this->recipient)
             ->from($this->from_email, $this->from_name)
             ->replyTo($replyToAddress, $replyToName)
