@@ -90,16 +90,19 @@ class AiKnownIssueSeeder extends Seeder
                 'category' => 'betaling',
             ],
             [
-                'title' => 'Vi har ikke en egen app — forfatterskolen.no ER appen (PWA)',
-                'description' => 'Elever spør ofte hva appen heter eller hvor de laster den ned. Vi har INGEN separat app i App Store eller Google Play. Forfatterskolen.no er en Progressive Web App (PWA) som legges til hjemskjermen som en app-snarvei. Push-varsler virker bare hvis siden er åpnet via dette ikonet.',
-                'workaround' => 'Forklar at det ikke finnes noen egen app — de skal i stedet legge forfatterskolen.no til på hjemskjermen via nettleseren. iPhone (Safari): trykk Del-ikonet → "Legg til på Hjem-skjermen". Android (Chrome): tre prikker → "Legg til på startsiden". Etter at ikonet er på hjemskjermen, åpner de Forfatterskolen fra det ikonet og kan da aktivere push-varsler.',
+                'title' => 'Vi har ikke en egen app — siden ER appen (PWA), URL avhenger av rolle',
+                'description' => 'Brukere spør ofte hva appen heter eller hvor de laster den ned. Vi har INGEN separat app i App Store eller Google Play — sidene våre er Progressive Web Apps (PWA) som legges til hjemskjermen. VIKTIG: URL-en er forskjellig basert på rolle: elever bruker forfatterskolen.no, redaktører bruker editor.forfatterskolen.no, admin bruker admin.forfatterskolen.no. Sjekk ALLTID rollen før du gir instruksjon!',
+                'workaround' => 'Sjekk rollen i elevdata først. (1) Hvis ELEV: be dem legge forfatterskolen.no til på hjemskjermen. (2) Hvis REDAKTØR: be dem legge editor.forfatterskolen.no til på hjemskjermen. (3) Hvis ADMIN: admin.forfatterskolen.no. iPhone (Safari): trykk Del-ikonet → "Legg til på Hjem-skjermen". Android (Chrome): tre prikker → "Legg til på startsiden". Etter at ikonet er på hjemskjermen, åpner de portalen fra det ikonet og kan da aktivere push-varsler.',
                 'severity' => 'medium',
                 'category' => 'varsler',
             ],
         ];
 
+        // Slett gamle/utdaterte oppføringer som har fått nye titler
+        AiKnownIssue::where('title', 'Vi har ikke en egen app — forfatterskolen.no ER appen (PWA)')->delete();
+
         foreach ($issues as $data) {
-            AiKnownIssue::firstOrCreate(
+            AiKnownIssue::updateOrCreate(
                 ['title' => $data['title']],
                 array_merge($data, [
                     'status' => 'active',
