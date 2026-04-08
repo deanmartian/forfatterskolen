@@ -1,6 +1,43 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
     <head>
+        {{-- INLINE CACHE CLEANUP — samme som frontend/layout. Kjører én gang
+             per browser for å fikse redaktører som er fanget med gammel SW. --}}
+        <script>
+        (function () {
+            try {
+                if (localStorage.getItem('sw_cleanup_v3') === '1') return;
+            } catch (e) {}
+
+            if (!('serviceWorker' in navigator)) {
+                try { localStorage.setItem('sw_cleanup_v3', '1'); } catch (e) {}
+                return;
+            }
+
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+                var hadOld = regs.length > 0;
+                var unregisters = regs.map(function (r) { return r.unregister(); });
+
+                Promise.all(unregisters).then(function () {
+                    var clearCaches = (window.caches && caches.keys)
+                        ? caches.keys().then(function (keys) {
+                            return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+                          })
+                        : Promise.resolve();
+
+                    clearCaches.then(function () {
+                        try { localStorage.setItem('sw_cleanup_v3', '1'); } catch (e) {}
+                        if (hadOld) {
+                            window.location.reload();
+                        }
+                    });
+                });
+            }).catch(function () {
+                try { localStorage.setItem('sw_cleanup_v3', '1'); } catch (e) {}
+            });
+        })();
+        </script>
+
         @yield('title')
         @include('backend.partials.backend-css')
         <link rel="manifest" href="{{ asset('manifest-editor.json') }}">
@@ -165,17 +202,15 @@
             $(document).on('click', '.ed-sidebar-toggle', function() {
                 $('#edSidebar').toggleClass('open');
             });
-            // Registrer service worker for PWA.
-            // updateViaCache: 'none' — tvinger browser til å sjekke nettverket
-            // for ny SW-fil hver gang, i stedet for å bruke HTTP-cache.
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js', { updateViaCache: 'none' })
-                    .then(function(reg) {
-                        console.log('SW registered', reg.scope);
-                        try { reg.update(); } catch (e) {}
-                    })
-                    .catch(function(err) { console.log('SW registration failed', err); });
-            }
+            // Service worker registrering er MIDLERTIDIG SKRUDD AV (08.04.2026).
+            // Cleanup-koden øverst i <head> fikser stuck-brukere. Re-enable om
+            // ~2 uker med { updateViaCache: 'none' }.
+
+            // if ('serviceWorker' in navigator) {
+            //     navigator.serviceWorker.register('/service-worker.js', { updateViaCache: 'none' })
+            //         .then(function(reg) { try { reg.update(); } catch (e) {} })
+            //         .catch(function(err) { console.log('SW registration failed', err); });
+            // }
         </script>
         @yield('scripts')
     </body>

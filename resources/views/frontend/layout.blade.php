@@ -1,6 +1,46 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
     <head>
+        {{-- INLINE CACHE CLEANUP — kjører FØR alt annet for å fikse brukere som
+             er fanget med gammel service worker. Kjører bare én gang per browser
+             takket være localStorage-flagget. Se public/service-worker.js for
+             bakgrunn. --}}
+        <script>
+        (function () {
+            try {
+                if (localStorage.getItem('sw_cleanup_v3') === '1') return;
+            } catch (e) {}
+
+            if (!('serviceWorker' in navigator)) {
+                try { localStorage.setItem('sw_cleanup_v3', '1'); } catch (e) {}
+                return;
+            }
+
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+                var hadOld = regs.length > 0;
+                var unregisters = regs.map(function (r) { return r.unregister(); });
+
+                Promise.all(unregisters).then(function () {
+                    var clearCaches = (window.caches && caches.keys)
+                        ? caches.keys().then(function (keys) {
+                            return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+                          })
+                        : Promise.resolve();
+
+                    clearCaches.then(function () {
+                        try { localStorage.setItem('sw_cleanup_v3', '1'); } catch (e) {}
+                        if (hadOld) {
+                            // Reload siden én gang så fresh JS/CSS hentes fra nettverket
+                            window.location.reload();
+                        }
+                    });
+                });
+            }).catch(function () {
+                try { localStorage.setItem('sw_cleanup_v3', '1'); } catch (e) {}
+            });
+        })();
+        </script>
+
         <link rel="manifest" href="{{ asset('manifest.json') }}">
         <meta name="theme-color" content="#862736">
         <meta name="apple-mobile-web-app-capable" content="yes">
@@ -263,19 +303,18 @@
                 }
             });
 
-            // Registrer service worker for PWA.
-            // updateViaCache: 'none' — tvinger browser til å sjekke nettverket
-            // for ny SW-fil hver gang, i stedet for å bruke HTTP-cache.
-            // Uten dette kan brukere bli "fanget" med gammel SW i ukevis.
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js', { updateViaCache: 'none' })
-                    .then(function(reg) {
-                        console.log('SW registered', reg.scope);
-                        // Force update check on every page load
-                        try { reg.update(); } catch (e) {}
-                    })
-                    .catch(function(err) { console.log('SW registration failed', err); });
-            }
+            // Service worker registrering er MIDLERTIDIG SKRUDD AV (08.04.2026)
+            // på grunn av cache-trøbbel der gamle SW-er ble hengende fast.
+            // Cleanup-koden øverst i <head> sørger for at alle stuck-brukere
+            // blir "unstuck" automatisk. Re-enable dette om ~2 uker når vi er
+            // sikre på at alle klienter har kjørt cleanup. Når vi re-enabler,
+            // bruk { updateViaCache: 'none' } og kall reg.update() på load.
+
+            // if ('serviceWorker' in navigator) {
+            //     navigator.serviceWorker.register('/service-worker.js', { updateViaCache: 'none' })
+            //         .then(function(reg) { try { reg.update(); } catch (e) {} })
+            //         .catch(function(err) { console.log('SW registration failed', err); });
+            // }
 
             // Push-varsler
             if ('Notification' in window && 'PushManager' in window) {
