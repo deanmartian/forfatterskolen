@@ -449,6 +449,36 @@ TRACKING_ENABLED=true/false
 COMMUNITY_FORUM_URL
 ```
 
+## Local Development Environment
+
+**Local dev runs in Docker.** The MySQL database is NOT exposed on the host — it lives inside the Docker network as a container called `mysql`. This means:
+
+- Running `php artisan migrate` directly from Windows/host will FAIL with "getaddrinfo for mysql failed" because the host can't resolve the `mysql` container name
+- All artisan commands, composer commands, npm commands etc. that need DB access must be run **inside** the app container
+
+**Container names:**
+- `forfatterskolen-master-app-1` — Laravel app
+- `forfatterskolen-master-mysql-1` — MySQL 8.0
+
+**Run commands inside the container:**
+```bash
+docker exec forfatterskolen-master-app-1 php artisan migrate
+docker exec forfatterskolen-master-app-1 php artisan tinker
+docker exec forfatterskolen-master-app-1 composer install
+```
+
+**Open a shell in the container** (for multiple commands):
+```bash
+docker exec -it forfatterskolen-master-app-1 bash
+```
+
+**Check what's running:**
+```bash
+docker ps
+```
+
+If `docker ps` shows nothing, Docker Desktop probably needs to be started first.
+
 ## Common Commands
 
 ### Development
@@ -657,6 +687,9 @@ php artisan queue:restart
 
 ## Recent Work (April 2026)
 
+- **AI knowledge system for inbox** - Two-source curated knowledge that the inbox AI consults before generating drafts: `docs/ai-knowledge.md` (version-controlled markdown with FAQ, technical workarounds like cache/cookie clearing, recent fixes) and `ai_known_issues` table managed via `/admin/ai-knowledge` (admin UI to add ad-hoc bugs with severity/category/workaround). Both sources are merged into the AI prompt under "AKTUELL KUNNSKAP OG TEKNISKE FORHOLD". Active issues count badge in sidebar. Built in `HelpwiseReplyAiService::getKnowledgeContext()`.
+- **Password reset page redesign** - Old Bootstrap 3 panel classes rendered white-on-white after BS5 migration making the form look greyed out (especially on Mac). Replaced with the same clean card style used by thank-you pages — wine-red icon, visible inputs, clear button.
+- **AI draft signature deduplication** - Two related bugs caused "Forfatterskolen" to appear twice in inbox AI signatures. Fixed: (1) `getSenderName()` no longer falls back to "Forfatterskolen" when no auth user exists (webhook context), so the personal-name line is omitted; (2) `InboxService::sendReply()` now skips appending a signature if the body already contains one (e.g. when using an AI draft as-is).
 - **PWA with push notifications** - Service worker, `PushSubscription` model, web push API
 - **Inbox system replacing Helpwise** - Full email CRM with IMAP polling, AI draft replies, conversation assignment, canned responses, auto-replies, attachment support
 - **Community with course groups** - Course-based groups, discussions, posts with reactions, direct messages, daily news sync, AI-generated discussions
