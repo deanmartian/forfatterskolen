@@ -31,6 +31,13 @@ class AiToolRegistry
 
         // Action-tools (krever klikk)
         \App\Services\AiTools\Tools\Action\AddInternalNoteTool::class,
+        \App\Services\AiTools\Tools\Action\SendLoginLinkTool::class,
+        \App\Services\AiTools\Tools\Action\SendPasswordResetTool::class,
+        \App\Services\AiTools\Tools\Action\ExtendAssignmentDeadlineTool::class,
+        \App\Services\AiTools\Tools\Action\ApproveExtensionRequestTool::class,
+        \App\Services\AiTools\Tools\Action\RegisterForWebinarTool::class,
+        \App\Services\AiTools\Tools\Action\AssignEditorToManuscriptTool::class,
+        \App\Services\AiTools\Tools\Action\MarkConversationDoneTool::class,
     ];
 
     public function __construct()

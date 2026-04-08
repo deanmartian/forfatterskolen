@@ -1758,55 +1758,22 @@ class AssignmentController extends Controller
 
     public function decideExtension($id, $decision)
     {
-        $extensionRequest = \App\Models\AssignmentExtensionRequest::findOrFail($id);
-
-        if ($extensionRequest->status !== 'pending') {
-            return redirect()->route('backend.dashboard')->with('info', 'Denne forespørselen er allerede behandlet.');
-        }
-
-        $student = $extensionRequest->user;
-        $assignment = $extensionRequest->assignment;
+        $service = app(\App\Services\AssignmentExtensionService::class);
 
         if ($decision === 'approve') {
-            $extensionRequest->update([
-                'status' => 'approved',
-                'decided_by' => Auth::id(),
-                'decided_at' => now(),
-            ]);
+            $req = $service->approve((int) $id, Auth::id());
+            if (!$req) {
+                return redirect()->route('backend.dashboard')->with('info', 'Denne forespørselen er allerede behandlet.');
+            }
+            return redirect()->route('backend.dashboard')->with('success', 'Utsettelse godkjent for ' . ($req->user?->fullname ?? 'eleven'));
+        }
 
-            \App\AssignmentLearnerSubmissionDate::updateOrCreate(
-                ['assignment_id' => $extensionRequest->assignment_id, 'user_id' => $extensionRequest->user_id],
-                ['submission_date' => $extensionRequest->requested_deadline->format('M d, Y h:i A')]
-            );
-
-            $subject = 'Utsettelse godkjent - ' . $assignment->title;
-            $message = '<p>Hei ' . $student->fullname . ',</p>'
-                . '<p>Utsettelsen din for oppgaven <strong>' . $assignment->title . '</strong> er godkjent.</p>'
-                . '<p>Ny frist: <strong>' . $extensionRequest->requested_deadline->format('d.m.Y') . '</strong></p>'
-                . '<p>Vennlig hilsen,<br>Forfatterskolen</p>';
-
-            dispatch(new AddMailToQueueJob($student->email, $subject, $message,
-                'post@forfatterskolen.no', 'Forfatterskolen', null, 'assignment_extension', $extensionRequest->id));
-
-            return redirect()->route('backend.dashboard')->with('success', 'Utsettelse godkjent for ' . $student->fullname);
-
-        } elseif ($decision === 'reject') {
-            $extensionRequest->update([
-                'status' => 'rejected',
-                'decided_by' => Auth::id(),
-                'decided_at' => now(),
-            ]);
-
-            $subject = 'Utsettelse avslått - ' . $assignment->title;
-            $message = '<p>Hei ' . $student->fullname . ',</p>'
-                . '<p>Utsettelsen for oppgaven <strong>' . $assignment->title . '</strong> ble dessverre ikke godkjent.</p>'
-                . '<p>Opprinnelig frist gjelder fortsatt.</p>'
-                . '<p>Vennlig hilsen,<br>Forfatterskolen</p>';
-
-            dispatch(new AddMailToQueueJob($student->email, $subject, $message,
-                'post@forfatterskolen.no', 'Forfatterskolen', null, 'assignment_extension', $extensionRequest->id));
-
-            return redirect()->route('backend.dashboard')->with('success', 'Utsettelse avslått for ' . $student->fullname);
+        if ($decision === 'reject') {
+            $req = $service->reject((int) $id, Auth::id());
+            if (!$req) {
+                return redirect()->route('backend.dashboard')->with('info', 'Denne forespørselen er allerede behandlet.');
+            }
+            return redirect()->route('backend.dashboard')->with('success', 'Utsettelse avslått for ' . ($req->user?->fullname ?? 'eleven'));
         }
 
         return redirect()->route('backend.dashboard');
