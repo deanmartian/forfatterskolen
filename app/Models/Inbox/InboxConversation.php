@@ -44,6 +44,28 @@ class InboxConversation extends Model
         return $this->belongsTo(User::class, 'assigned_to');
     }
 
+    public function privateToUser()
+    {
+        return $this->belongsTo(User::class, 'private_to_user_id');
+    }
+
+    /**
+     * Filter ut private inbokser som ikke tilhører den innloggede brukeren.
+     * Offentlige inbokser (private_to_user_id = null) vises alltid.
+     *
+     * Brukes som default-scope fra InboxService for å sikre at ingen admin
+     * kan lese en annen admins private inbox ved en feil (eller med vilje).
+     */
+    public function scopeVisibleToUser($query, ?int $userId)
+    {
+        return $query->where(function ($q) use ($userId) {
+            $q->whereNull('private_to_user_id');
+            if ($userId) {
+                $q->orWhere('private_to_user_id', $userId);
+            }
+        });
+    }
+
     public function latestMessage()
     {
         return $this->hasOne(InboxMessage::class, 'conversation_id')

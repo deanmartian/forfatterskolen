@@ -58,6 +58,13 @@ class PollInboxEmails extends Command
                 // Extract subject
                 $subject = isset($header->subject) ? imap_utf8($header->subject) : '(Ingen emne)';
 
+                // Avgjør hvilken inbox dette tilhører ut fra To/Cc.
+                // Hvis e-posten er adressert til en admin-bruker sin egen
+                // e-post, skal den havne i den private inboksen deres.
+                $routing = $this->determineInboxRouting($header);
+                $targetInbox = $routing['inbox'];
+                $privateToUserId = $routing['private_to_user_id'];
+
                 // Extract body
                 $body = $this->getBody($inbox, $emailNumber, $structure);
 
@@ -100,7 +107,8 @@ class PollInboxEmails extends Command
                         'customer_name' => $fromName,
                         'status' => 'open',
                         'source' => 'imap',
-                        'inbox' => 'post@forfatterskolen.no',
+                        'inbox' => $targetInbox,
+                        'private_to_user_id' => $privateToUserId,
                     ]);
 
                     // Link to user
@@ -142,7 +150,7 @@ class PollInboxEmails extends Command
                     'direction' => 'inbound',
                     'from_email' => $fromEmail,
                     'from_name' => $fromName,
-                    'to_email' => 'post@forfatterskolen.no',
+                    'to_email' => $targetInbox,
                     'subject' => $subject,
                     'body' => $body,
                     'body_plain' => strip_tags($body),
@@ -178,6 +186,59 @@ class PollInboxEmails extends Command
         Log::info("IMAP poll: {$count} emails imported");
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Finn ut hvilken inbox en innkommende e-post tilhører basert på
+     * hvem den er adressert til. Hvis en av mottakerne (To/Cc) matcher
+     * e-posten til en aktiv admin-bruker, legges samtalen i den private
+     * inboksen deres. Ellers havner den i den offentlige post@-inboksen.
+     *
+     * Cacher admin-mapping per poll for ytelse.
+     *
+     * @return array{inbox: string, private_to_user_id: ?int}
+     */
+    private function determineInboxRouting(object $header): array
+    {
+        static $adminEmailMap = null;
+        if ($adminEmailMap === null) {
+            $adminEmailMap = User::where('role', 1)
+                ->where('is_active', 1)
+                ->whereNotNull('email')
+                ->pluck('id', 'email')
+                ->mapWithKeys(function ($id, $email) {
+                    return [strtolower(trim($email)) => $id];
+                })
+                ->toArray();
+        }
+
+        // Samle alle mottakere fra To og Cc
+        $recipients = [];
+        foreach (['to', 'cc'] as $field) {
+            if (!empty($header->{$field}) && is_array($header->{$field})) {
+                foreach ($header->{$field} as $addr) {
+                    if (!empty($addr->mailbox) && !empty($addr->host)) {
+                        $recipients[] = strtolower($addr->mailbox . '@' . $addr->host);
+                    }
+                }
+            }
+        }
+
+        // Sjekk om noen mottaker matcher en admin-brukers e-post
+        foreach ($recipients as $recipient) {
+            if (isset($adminEmailMap[$recipient])) {
+                return [
+                    'inbox' => $recipient,
+                    'private_to_user_id' => $adminEmailMap[$recipient],
+                ];
+            }
+        }
+
+        // Default: offentlig inbox, ingen privat eier
+        return [
+            'inbox' => 'post@forfatterskolen.no',
+            'private_to_user_id' => null,
+        ];
     }
 
     private function getBody($inbox, $emailNumber, $structure): string

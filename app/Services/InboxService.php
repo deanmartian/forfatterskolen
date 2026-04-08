@@ -17,7 +17,8 @@ class InboxService
     public function getConversations(array $filters = [])
     {
         $query = InboxConversation::with(['customer', 'assignee', 'latestMessage', 'latestInbound'])
-            ->notSpam();
+            ->notSpam()
+            ->visibleToUser(auth()->id());
 
         if (!empty($filters['sent'])) {
             // Show all statuses for sent filter
@@ -86,7 +87,7 @@ class InboxService
 
     public function getConversation(int $id): InboxConversation
     {
-        return InboxConversation::with([
+        $conversation = InboxConversation::with([
             'messages' => fn($q) => $q->orderBy('created_at'),
             'comments.user',
             'customer',
@@ -94,6 +95,14 @@ class InboxService
             'assignments.assignedBy',
             'assignments.assignedTo',
         ])->findOrFail($id);
+
+        // Sikkerhet: hvis samtalen er privat og ikke tilhører innlogget admin,
+        // nekt tilgang — selv om de gjetter ID-en eller bruker URL direkte.
+        if ($conversation->private_to_user_id && $conversation->private_to_user_id !== auth()->id()) {
+            abort(403, 'Denne samtalen tilhører en annen admins private inbox');
+        }
+
+        return $conversation;
     }
 
     public function sendReply(int $conversationId, string $body, int $userId, bool $isDraft = false, array $attachments = []): InboxMessage
@@ -362,15 +371,18 @@ class InboxService
 
     public function getStats(): array
     {
+        $userId = auth()->id();
+        $base = fn() => InboxConversation::notSpam()->visibleToUser($userId);
+
         return [
-            'open' => InboxConversation::where('status', 'open')->notSpam()->count(),
-            'pending' => InboxConversation::where('status', 'pending')->notSpam()->count(),
-            'unassigned' => InboxConversation::where('status', 'open')->whereNull('assigned_to')->notSpam()->count(),
-            'closed_today' => InboxConversation::where('status', 'closed')->whereDate('resolved_at', today())->count(),
-            'total' => InboxConversation::notSpam()->count(),
-            'starred' => InboxConversation::where('is_starred', true)->notSpam()->count(),
+            'open' => (clone $base())->where('status', 'open')->count(),
+            'pending' => (clone $base())->where('status', 'pending')->count(),
+            'unassigned' => (clone $base())->where('status', 'open')->whereNull('assigned_to')->count(),
+            'closed_today' => (clone $base())->where('status', 'closed')->whereDate('resolved_at', today())->count(),
+            'total' => (clone $base())->count(),
+            'starred' => (clone $base())->where('is_starred', true)->count(),
             'mentions' => $this->getMentionsCount(),
-            'awaiting' => InboxConversation::where('status', 'open')->notSpam()
+            'awaiting' => (clone $base())->where('status', 'open')
                 ->whereHas('latestMessage', fn($q) => $q->where('direction', 'inbound'))->count(),
         ];
     }
@@ -381,6 +393,7 @@ class InboxService
         $userName = auth()->user()->first_name ?? '';
 
         return InboxConversation::notSpam()
+            ->visibleToUser($userId)
             ->whereIn('status', ['open', 'pending'])
             ->whereHas('comments', function ($q) use ($userId, $userName) {
                 $q->where(function ($q2) use ($userId, $userName) {
@@ -403,6 +416,7 @@ class InboxService
         return InboxConversation::select('inbox')
             ->distinct()
             ->whereNotNull('inbox')
+            ->visibleToUser(auth()->id())
             ->pluck('inbox')
             ->toArray();
     }
