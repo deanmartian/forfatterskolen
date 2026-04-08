@@ -149,6 +149,9 @@ class InboxService
 
                 $attachmentPaths = !empty($attachments) ? array_column($attachments, 'path') : null;
 
+                // Sett Reply-To = from-adressen slik at kundens svar går
+                // tilbake til samme inbox (særlig viktig for private inbokser
+                // som sven.inge@ — uten dette ville svar havnet i support@).
                 dispatch(new \App\Jobs\AddMailToQueueJob(
                     $conversation->customer_email,
                     'Re: ' . $conversation->subject,
@@ -157,7 +160,10 @@ class InboxService
                     $user->full_name . ' — Forfatterskolen',
                     $attachmentPaths,
                     'inbox-reply',
-                    $conversation->id
+                    $conversation->id,
+                    'emails.mail_to_queue',
+                    $fromEmail,
+                    $user->full_name . ' — Forfatterskolen'
                 ));
 
                 Log::info('Inbox: email queued', [

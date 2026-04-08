@@ -37,13 +37,18 @@ class AddMailToQueueJob implements ShouldQueue
 
     private $email_view;
 
+    private $reply_to_email;
+
+    private $reply_to_name;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
     public function __construct($recipient, $subject, $message, $from_email, $from_name,
-        $attachment, $parent, $parent_id, $email_view = 'emails.mail_to_queue')
+        $attachment, $parent, $parent_id, $email_view = 'emails.mail_to_queue',
+        $reply_to_email = null, $reply_to_name = null)
     {
         $this->recipient = $recipient;
         $this->email_subject = $subject;
@@ -54,6 +59,8 @@ class AddMailToQueueJob implements ShouldQueue
         $this->parent = $parent;
         $this->parent_id = $parent_id;
         $this->email_view = $email_view;
+        $this->reply_to_email = $reply_to_email;
+        $this->reply_to_name = $reply_to_name;
     }
 
     /**
@@ -63,7 +70,7 @@ class AddMailToQueueJob implements ShouldQueue
     {
         $track_code = Str::random(32);
         \Mail::send(new AddMailToQueueMail($this->recipient, $this->email_subject, $this->email_message, $this->from_email,
-            $this->from_name, $this->attach_file, $track_code, $this->email_view));
+            $this->from_name, $this->attach_file, $track_code, $this->email_view, $this->reply_to_email, $this->reply_to_name));
 
         $saleService->createEmailHistory($this->email_subject, $this->from_email, $this->email_message, $this->parent,
             $this->parent_id, $this->recipient, $track_code);
