@@ -42,6 +42,7 @@
 	<a class="btn btn-primary margin-top" href="{{ route('admin.admin.export_nearly_expired_courses') }}">Export Nearly Expired Courses</a>
 	<button class="btn btn-success margin-top" data-toggle="modal" data-target="#headEditorModal">Head Editor</button>
 	<a class="btn btn-primary margin-top" href="{{ route('admin.contract.index') }}">Contract</a>
+	<a class="btn btn-warning margin-top" href="{{ route('admin.user-merge.index') }}" title="Slå sammen duplikat-brukerkontoer (f.eks. redaktør med gammel elev-konto)"><i class="fa fa-users"></i> Slå sammen brukere</a>
 	@if (auth()->user()->isSuperUser())
 		<a class="btn btn-primary margin-top" href="{{ url('/user-activity') }}">User Activity</a>
 	@endif
