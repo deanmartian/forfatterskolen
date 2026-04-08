@@ -1974,6 +1974,26 @@ Forfatterskolen';
         $order->is_invoice_sent = 1;
         $order->save();
 
+        // Activate the course now that the payment plan is set up
+        try {
+            $courseTaken = \App\CoursesTaken::where('user_id', $learner->id)
+                ->where('package_id', $order->package_id)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            if ($courseTaken && !$courseTaken->is_active) {
+                $courseTaken->is_active = 1;
+                $courseTaken->save();
+                \Log::info('Pay-later course activated after invoice setup', [
+                    'user_id' => $learner->id,
+                    'course_taken_id' => $courseTaken->id,
+                    'order_id' => $order->id,
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to activate pay-later course: ' . $e->getMessage());
+        }
+
         return redirect()->route('learner.invoice', ['tab' => 'pay-later'])->with([
             'errors' => AdminHelpers::createMessageBag(trans('site.invoice-create-success')),
             'alert_type' => 'success'
