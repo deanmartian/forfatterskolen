@@ -5,9 +5,11 @@ namespace App\Services\Helpwise;
 use App\User;
 use App\HelpwiseConversation;
 use App\HelpwiseMessage;
+use App\Models\AiKnownIssue;
 use App\Models\HelpwiseReplyExample;
 use App\Models\Inbox\InboxConversation;
 use App\Models\Inbox\InboxMessage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -69,6 +71,7 @@ class HelpwiseReplyAiService
         }
 
         $examplesSection = $this->getReplyExamples();
+        $knowledgeSection = $this->getKnowledgeContext();
 
         return <<<PROMPT
 Du er en vennlig og profesjonell kundebehandler for Forfatterskolen, Norges ledende nettbaserte skriveskole.
@@ -85,6 +88,7 @@ VIKTIGE REGLER:
 6. Lag ALDRI generiske svar som "vi skal sjekke og komme tilbake" når du har svaret i dataene.
 7. Si KUN at du skal sjekke videre hvis informasjonen VIRKELIG ikke finnes i konteksten.
 8. Svar kort og presist — maks 3-4 setninger for enkle spørsmål.
+9. Sjekk ALLTID "AKTUELL KUNNSKAP OG TEKNISKE FORHOLD" nedenfor — hvis kundens problem matcher en kjent feil eller en nylig fiks, nevn det.{$knowledgeSection}
 
 OM FORFATTERSKOLEN:
 - Forfatterskolen tilbyr nettbaserte skrivekurs (årskurs, halvårskurs, sjangerkurs, etc.)
@@ -344,6 +348,62 @@ PROMPT;
     }
 
     /**
+     * Build a knowledge context block combining the curated markdown file
+     * and any active known issues from the database. Both sources are
+     * optional — if neither has content, returns empty string.
+     */
+    private function getKnowledgeContext(): string
+    {
+        $sections = [];
+
+        // 1. Static curated knowledge from docs/ai-knowledge.md
+        try {
+            $path = base_path('docs/ai-knowledge.md');
+            if (File::exists($path)) {
+                $content = trim(File::get($path));
+                if ($content !== '') {
+                    $sections[] = "GENERELL KUNNSKAPSBASE:\n{$content}";
+                }
+            }
+        } catch (\Exception $e) {
+            // File missing or unreadable — skip silently
+        }
+
+        // 2. Active known issues from the database (managed via admin UI)
+        try {
+            $issues = AiKnownIssue::active()
+                ->orderByRaw("FIELD(severity, 'high', 'medium', 'low', 'info')")
+                ->orderByDesc('discovered_at')
+                ->limit(30)
+                ->get();
+
+            if ($issues->isNotEmpty()) {
+                $issueList = "AKTIVE KJENTE PROBLEMER (bruk når relevant):\n";
+                foreach ($issues as $issue) {
+                    $sevTag = strtoupper($issue->severity);
+                    $cat = $issue->category ? " [{$issue->category}]" : '';
+                    $disc = $issue->discovered_at ? ' (oppdaget ' . $issue->discovered_at->format('d.m.Y') . ')' : '';
+                    $issueList .= "\n- [{$sevTag}]{$cat} {$issue->title}{$disc}";
+                    $issueList .= "\n  Beskrivelse: {$issue->description}";
+                    if ($issue->workaround) {
+                        $issueList .= "\n  Foreslå dette til eleven: {$issue->workaround}";
+                    }
+                    $issueList .= "\n";
+                }
+                $sections[] = $issueList;
+            }
+        } catch (\Exception $e) {
+            // Table might not exist yet — skip silently
+        }
+
+        if (empty($sections)) {
+            return '';
+        }
+
+        return "\n\n=== AKTUELL KUNNSKAP OG TEKNISKE FORHOLD ===\n" . implode("\n\n", $sections) . "\n=== SLUTT KUNNSKAP ===\n";
+    }
+
+    /**
      * Get real reply examples from the database to teach the AI our writing style.
      */
     private function getReplyExamples(): string
@@ -529,6 +589,7 @@ PROMPT;
 
         $historySection = $history ? "\n\nTIDLIGERE MELDINGER I SAMTALEN:\n{$history}" : '';
         $examplesSection = $this->getReplyExamples();
+        $knowledgeSection = $this->getKnowledgeContext();
 
         $prompt = <<<PROMPT
 Du er en vennlig og profesjonell kundebehandler for Forfatterskolen, Norges ledende nettbaserte skriveskole.
@@ -545,6 +606,7 @@ VIKTIGE REGLER:
 6. Lag ALDRI generiske svar som "vi skal sjekke og komme tilbake" når du har svaret i dataene.
 7. Si KUN at du skal sjekke videre hvis informasjonen VIRKELIG ikke finnes i konteksten.
 8. Svar kort og presist — maks 3-4 setninger for enkle spørsmål.
+9. Sjekk ALLTID "AKTUELL KUNNSKAP OG TEKNISKE FORHOLD" nedenfor — hvis kundens problem matcher en kjent feil eller en nylig fiks, nevn det.{$knowledgeSection}
 {$examplesSection}
 
 INBOX: {$inbox}

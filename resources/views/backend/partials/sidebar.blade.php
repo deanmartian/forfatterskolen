@@ -136,9 +136,24 @@
         </li>
         <li>
             <a href="{{ route('admin.ai.index') }}"
-               class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.ai') ? 'active' : '' }}">
+               class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.ai.') ? 'active' : '' }}">
                 <span class="ed-nav-item__icon"><i class="fa fa-robot"></i></span>
                 <span class="ed-nav-item__label">AI-hjelper</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('admin.ai-knowledge.index') }}"
+               class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.ai-knowledge') ? 'active' : '' }}">
+                <span class="ed-nav-item__icon"><i class="fa fa-lightbulb"></i></span>
+                <span class="ed-nav-item__label">
+                    AI-kunnskap
+                    @php
+                        try { $activeAiIssues = \App\Models\AiKnownIssue::where('status', 'active')->count(); } catch (\Exception $e) { $activeAiIssues = 0; }
+                    @endphp
+                    @if($activeAiIssues > 0)
+                        <span class="badge" style="background: #f0ad4e; color: #fff; border-radius: 10px; font-size: 10px; padding: 2px 6px; margin-left: 4px;">{{ $activeAiIssues }}</span>
+                    @endif
+                </span>
             </a>
         </li>
         <li>
