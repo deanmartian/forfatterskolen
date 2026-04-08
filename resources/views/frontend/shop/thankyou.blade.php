@@ -141,8 +141,8 @@
             $btnIcon = 'list-alt';
             break;
         case 'vipps':
-            $header = 'Betalt med Vipps — velkommen!';
-            $message = 'Din Vipps-betaling er bekreftet. Du har nå full tilgang til kurset og kan starte med en gang. Kvittering er sendt til e-posten din.';
+            $header = 'Takk for bestillingen!';
+            $message = 'Din Vipps-betaling er bekreftet. Kursmateriellet blir tilgjengelig ved kursoppstart — vi sender deg en e-post når det er klart.';
             $btnLink = route('learner.course');
             $btnText = 'Gå til kursene mine';
             $btnIcon = 'graduation-cap';
@@ -163,7 +163,7 @@
             break;
         default:
             $header = 'Takk for bestillingen!';
-            $message = 'Velkommen til Forfatterskolen! Du har nå tilgang til kurset ditt og kan begynne med en gang.';
+            $message = 'Velkommen til Forfatterskolen! Vi gleder oss til å ha deg med. Første kursmodul blir tilgjengelig ved kursoppstart, og du får en e-post så snart det er klart.';
             $btnLink = route('learner.course');
             $btnText = 'Gå til kursene mine';
             $btnIcon = 'graduation-cap';
@@ -190,17 +190,17 @@
         </div>
 
         <div class="ty-steps">
-            <div class="ty-steps-title">Slik kommer du i gang</div>
+            <div class="ty-steps-title">Hva skjer nå?</div>
             <div class="ty-step">
                 <div class="ty-step-num">1</div>
                 <div class="ty-step-text">
-                    <strong>Sjekk e-posten din</strong> — du får snart en bekreftelse med nyttig informasjon.
+                    <strong>Sjekk e-posten din</strong> — du får en bekreftelse med all informasjon du trenger.
                 </div>
             </div>
             <div class="ty-step">
                 <div class="ty-step-num">2</div>
                 <div class="ty-step-text">
-                    <strong>Logg inn i portalen</strong> — der finner du kursmateriellet, webinarer og manus.
+                    <strong>Kursoppstart</strong> — kursmateriellet blir tilgjengelig ved oppstartsdato, og du får beskjed på e-post.
                 </div>
             </div>
             <div class="ty-step">
