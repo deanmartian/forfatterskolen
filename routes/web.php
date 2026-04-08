@@ -2289,6 +2289,13 @@ Route::domain($admin)->group(function () {
     // AI-handlinger audit-logg (oversikt over foreslåtte, utførte, feilede handlinger)
     Route::get('ai-actions', [Backend\AiToolActionController::class, 'index'])->name('admin.ai-actions.index');
 
+    // Sammenslå duplikat-brukerkontoer (admin-verktøy)
+    Route::prefix('user-merge')->group(function () {
+        Route::get('/', [Backend\UserMergeController::class, 'index'])->name('admin.user-merge.index');
+        Route::get('/search', [Backend\UserMergeController::class, 'search'])->name('admin.user-merge.search');
+        Route::post('/merge', [Backend\UserMergeController::class, 'merge'])->name('admin.user-merge.merge');
+    });
+
     // Inbox routes
     require __DIR__.'/ad_os_routes.php';
 });

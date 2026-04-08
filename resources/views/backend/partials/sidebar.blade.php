@@ -172,6 +172,13 @@
             </a>
         </li>
         <li>
+            <a href="{{ route('admin.user-merge.index') }}"
+               class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.user-merge') ? 'active' : '' }}">
+                <span class="ed-nav-item__icon"><i class="fa fa-users"></i></span>
+                <span class="ed-nav-item__label">Sl\u00e5 sammen brukere</span>
+            </a>
+        </li>
+        <li>
             <a href="{{ route('admin.ads.dashboard') }}"
                class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.ads') ? 'active' : '' }}">
                 <span class="ed-nav-item__icon"><i class="fa fa-bullhorn"></i></span>
