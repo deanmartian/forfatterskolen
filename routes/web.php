@@ -2380,6 +2380,7 @@ Route::domain($editor)->group(function () {
         Route::get('/mine-elever', [Editor\PageController::class, 'myStudents'])->name('editor.my-students');
         Route::post('/mine-elever/extension/{id}/{decision}', [Editor\PageController::class, 'decideExtension'])->name('editor.extension.decide');
         Route::post('/mine-elever/remind/{id}', [Editor\PageController::class, 'sendReminder'])->name('editor.student.remind');
+        Route::post('/mine-elever/remind-overdue/{userId}/{assignmentId}', [Editor\PageController::class, 'sendOverdueReminder'])->name('editor.student.remind-overdue');
 
         Route::prefix('/coaching-time')->name('editor.coaching-time.')->group(function () {
             Route::controller(CoachingTimeController::class)->group(function() {

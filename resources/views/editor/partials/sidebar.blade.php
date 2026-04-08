@@ -69,6 +69,8 @@
                             @endif
                         @elseif($page['request_name'] === 'editors-calendar')
                             {{ trans('site.learner.nav.calendar') }}
+                        @elseif($page['request_name'] === 'my-students')
+                            Mine elever
                         @else
                             {{ trans('site.admin-menu.'.$page['request_name']) }}
                         @endif

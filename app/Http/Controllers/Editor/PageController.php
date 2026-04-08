@@ -789,6 +789,19 @@ class PageController extends Controller
             ->latest()
             ->get();
 
+        // Approved extension requests where the new deadline hasn't passed yet —
+        // editoren trenger oversikt over hvem som har fått ekstra tid og når
+        // den nye fristen er, slik at hen kan følge opp.
+        $approvedExtensions = \App\Models\AssignmentExtensionRequest::where('status', 'approved')
+            ->whereHas('assignment', function ($q) use ($editorId) {
+                $q->where('editor_id', $editorId)
+                  ->orWhereHas('manuscripts', fn($mq) => $mq->where('editor_id', $editorId));
+            })
+            ->where('requested_deadline', '>=', now()->subDays(7))
+            ->with(['user', 'assignment'])
+            ->orderBy('requested_deadline')
+            ->get();
+
         // Students who haven't submitted yet (assignment deadline passed, no manuscript)
         $overdueStudents = Assignment::where('editor_id', $editorId)
             ->where('submission_date', '<', now())
@@ -819,7 +832,7 @@ class PageController extends Controller
             ->latest()
             ->get();
 
-        return view('editor.my-students', compact('extensionRequests', 'overdueStudents', 'activeManuscripts'));
+        return view('editor.my-students', compact('extensionRequests', 'approvedExtensions', 'overdueStudents', 'activeManuscripts'));
     }
 
     public function decideExtension($id, $decision): RedirectResponse
@@ -906,5 +919,46 @@ class PageController extends Controller
             'post@forfatterskolen.no', Auth::user()->full_name . ' — Forfatterskolen', null, 'reminder', $manuscript->id));
 
         return redirect()->route('editor.my-students')->with('success', 'Påminnelse sendt til ' . $student->full_name);
+    }
+
+    /**
+     * Send påminnelse til en elev som IKKE har levert ennå (ingen manuscript-rad).
+     * Tar user_id og assignment_id direkte. Verifiserer at oppgaven tilhører
+     * editoren og at eleven faktisk ikke har levert.
+     */
+    public function sendOverdueReminder($userId, $assignmentId, Request $request): RedirectResponse
+    {
+        $editorId = Auth::id();
+
+        // Verifiser at oppgaven tilhører denne editoren
+        $assignment = Assignment::where('id', $assignmentId)
+            ->where('editor_id', $editorId)
+            ->firstOrFail();
+
+        // Hent eleven
+        $student = \App\User::findOrFail($userId);
+
+        // Verifiser at eleven IKKE har levert ennå
+        $hasSubmitted = AssignmentManuscript::where('assignment_id', $assignmentId)
+            ->where('user_id', $userId)
+            ->exists();
+
+        if ($hasSubmitted) {
+            return redirect()->route('editor.my-students')
+                ->with('error', $student->full_name . ' har allerede levert oppgaven — ingen påminnelse sendt.');
+        }
+
+        $subject = 'Påminnelse om innlevering — ' . $assignment->title;
+        $message = '<p>Hei ' . e($student->first_name) . ',</p>'
+            . '<p>Dette er en vennlig påminnelse om at fristen for oppgaven <strong>' . e($assignment->title) . '</strong> har gått ut, og vi har ennå ikke mottatt innleveringen din.</p>'
+            . '<p>Vi forstår at livet kan komme i veien — om du trenger mer tid, kan du be om utsettelse via portalen, eller bare svare på denne e-posten så finner vi en løsning sammen.</p>'
+            . '<p>Vi gleder oss til å lese teksten din! ❤️</p>'
+            . '<p>Vennlig hilsen,<br>' . e(Auth::user()->full_name) . '<br>Forfatterskolen</p>';
+
+        dispatch(new \App\Jobs\AddMailToQueueJob($student->email, $subject, $message,
+            'post@forfatterskolen.no', Auth::user()->full_name . ' — Forfatterskolen', null, 'overdue-reminder', $assignment->id));
+
+        return redirect()->route('editor.my-students')
+            ->with('success', 'Påminnelse sendt til ' . $student->full_name);
     }
 }

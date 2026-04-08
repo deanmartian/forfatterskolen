@@ -174,6 +174,52 @@
         @endif
     </div>
 
+    {{-- ═══════ GODKJENTE UTSETTELSER ═══════ --}}
+    @if(isset($approvedExtensions) && $approvedExtensions->isNotEmpty())
+        <div class="ms-section">
+            <div class="ms-section__header" style="background:#f0fdf4;border-left:3px solid #22c55e;">
+                <i class="fa fa-check-circle" style="color:#16a34a;font-size:1.2rem;"></i>
+                <h3 class="ms-section__title" style="color:#166534;">Godkjente utsettelser</h3>
+                <span class="ms-section__count" style="background:#16a34a;">{{ $approvedExtensions->count() }}</span>
+            </div>
+            <table class="ms-table">
+                <thead>
+                    <tr>
+                        <th>Elev</th>
+                        <th>Oppgave</th>
+                        <th>Opprinnelig frist</th>
+                        <th>Ny frist</th>
+                        <th>Godkjent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($approvedExtensions as $ext)
+                        @php
+                            $newDeadline = \Carbon\Carbon::parse($ext->requested_deadline);
+                            $daysLeft = (int) round(now()->diffInDays($newDeadline, false));
+                        @endphp
+                        <tr>
+                            <td><strong>{{ $ext->user->full_name ?? 'Ukjent' }}</strong><br><small style="color:#8a8580;">#{{ $ext->user->id ?? '' }}</small></td>
+                            <td>{{ $ext->assignment->title ?? '—' }}</td>
+                            <td>{{ $ext->original_deadline ? \Carbon\Carbon::parse($ext->original_deadline)->format('d.m.Y') : '—' }}</td>
+                            <td>
+                                <strong style="color:#16a34a;">{{ $newDeadline->format('d.m.Y') }}</strong>
+                                @if($daysLeft >= 0)
+                                    <br><small style="color:#16a34a;">{{ $daysLeft === 0 ? 'i dag' : ($daysLeft === 1 ? 'i morgen' : "om {$daysLeft} dager") }}</small>
+                                @else
+                                    <br><small style="color:#c62828;">{{ abs($daysLeft) }} dager forsinket</small>
+                                @endif
+                            </td>
+                            <td>
+                                <small style="color:#666;">{{ $ext->decided_at ? \Carbon\Carbon::parse($ext->decided_at)->format('d.m.Y') : '—' }}</small>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+
     {{-- ═══════ AKTIVE MANUS ═══════ --}}
     <div class="ms-section">
         <div class="ms-section__header ms-section__header--default">
@@ -235,6 +281,63 @@
             </table>
         @endif
     </div>
+
+    {{-- ═══════ ELEVER SOM IKKE HAR LEVERT (etter fristen) ═══════ --}}
+    @if(isset($overdueStudents) && $overdueStudents->isNotEmpty())
+        <div class="ms-section">
+            <div class="ms-section__header" style="background:#fef2f2;border-left:3px solid #dc2626;">
+                <i class="fa fa-exclamation-triangle" style="color:#dc2626;font-size:1.15rem;"></i>
+                <h3 class="ms-section__title" style="color:#991b1b;">Ikke levert — etter frist</h3>
+                <span class="ms-section__count" style="background:#dc2626;">{{ $overdueStudents->count() }}</span>
+            </div>
+            <div style="padding:12px 16px;background:#fef9f9;font-size:13px;color:#7c2d12;">
+                <i class="fa fa-info-circle"></i>
+                Disse elevene har ikke levert oppgaven, og fristen er passert. Du kan sende en påminnelse om du vil — det er helt valgfritt.
+            </div>
+            <table class="ms-table">
+                <thead>
+                    <tr>
+                        <th>Elev</th>
+                        <th>Kurs</th>
+                        <th>Oppgave</th>
+                        <th>Frist (passert)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($overdueStudents as $item)
+                        @php
+                            $daysOverdue = $item->deadline ? (int) round(\Carbon\Carbon::parse($item->deadline)->diffInDays(now(), false)) : null;
+                        @endphp
+                        <tr>
+                            <td>
+                                <strong>{{ $item->user->full_name ?? 'Ukjent' }}</strong><br>
+                                <small style="color:#8a8580;">#{{ $item->user->id ?? '' }}</small>
+                            </td>
+                            <td>{{ $item->course->title ?? '—' }}</td>
+                            <td>{{ $item->assignment->title ?? '—' }}</td>
+                            <td>
+                                <span style="color:#c62828;">{{ $item->deadline ? \Carbon\Carbon::parse($item->deadline)->format('d.m.Y') : '—' }}</span>
+                                @if($daysOverdue !== null && $daysOverdue > 0)
+                                    <br><small style="color:#c62828;">{{ $daysOverdue }} {{ $daysOverdue === 1 ? 'dag' : 'dager' }} forsinket</small>
+                                @endif
+                            </td>
+                            <td>
+                                <form action="{{ route('editor.student.remind-overdue', ['userId' => $item->user->id, 'assignmentId' => $item->assignment->id]) }}"
+                                      method="POST" style="display:inline;">
+                                    @csrf
+                                    <button type="submit" class="ms-btn ms-btn--remind"
+                                            onclick="return confirm('Sende påminnelse til {{ addslashes($item->user->first_name ?? 'eleven') }}?')">
+                                        <i class="fa fa-envelope"></i> Påminn
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
 
 </div>
 @stop
