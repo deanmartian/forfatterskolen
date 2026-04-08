@@ -103,10 +103,30 @@
                                 <span class="pull-right">{{ $entry['at']->format('d.m.Y H:i') }}</span>
                             </div>
                             <div id="ai-draft-text" data-raw="{{ $aiDraftRaw }}">{!! \App\Helpers\InboxBodyFormatter::toHtml($aiDraftRaw) !!}</div>
-                            <div style="margin-top: 8px;">
-                                <button class="btn btn-xs btn-info" onclick="document.getElementById('reply-body').value = document.getElementById('ai-draft-text').dataset.raw;">
-                                    <i class="fa fa-copy"></i> Bruk som svar
+                            <div style="margin-top: 10px; display:flex; gap:6px; flex-wrap:wrap;">
+                                <button class="btn btn-xs btn-success" onclick="
+                                    if (!confirm('Sende AI-utkastet som det er og lukke samtalen?')) return;
+                                    document.getElementById('reply-body').value = document.getElementById('ai-draft-text').dataset.raw;
+                                    var f = document.getElementById('reply-form');
+                                    var hidden = document.createElement('input');
+                                    hidden.type = 'hidden';
+                                    hidden.name = 'send_and_close';
+                                    hidden.value = '1';
+                                    f.appendChild(hidden);
+                                    f.submit();
+                                ">
+                                    <i class="fa fa-paper-plane"></i> Send direkte og lukk
                                 </button>
+                                <button class="btn btn-xs btn-info" onclick="
+                                    document.getElementById('reply-body').value = document.getElementById('ai-draft-text').dataset.raw;
+                                    document.getElementById('reply-body').focus();
+                                    document.getElementById('reply-body').scrollIntoView({behavior:'smooth', block:'center'});
+                                ">
+                                    <i class="fa fa-pencil"></i> Bruk som svar (rediger)
+                                </button>
+                            </div>
+                            <div style="margin-top:6px; font-size:11px; color:#888;">
+                                <i class="fa fa-info-circle"></i> Tips: i tekstboksen blir <code>[tekst](url)</code> til en klikkbar lenke i e-posten.
                             </div>
                         </div>
                     @elseif($entry['type'] === 'comment')
@@ -140,7 +160,7 @@
 
                 <div class="tab-content">
                     <div id="tab-reply" class="tab-pane active">
-                        <form action="{{ route('admin.inbox.reply', $conversation->id) }}" method="POST" enctype="multipart/form-data">
+                        <form id="reply-form" action="{{ route('admin.inbox.reply', $conversation->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
                                 <label>Til: <strong>{{ $conversation->customer_email }}</strong></label>
