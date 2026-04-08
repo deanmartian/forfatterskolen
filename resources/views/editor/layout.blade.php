@@ -165,10 +165,15 @@
             $(document).on('click', '.ed-sidebar-toggle', function() {
                 $('#edSidebar').toggleClass('open');
             });
-            // Registrer service worker for PWA
+            // Registrer service worker for PWA.
+            // updateViaCache: 'none' — tvinger browser til å sjekke nettverket
+            // for ny SW-fil hver gang, i stedet for å bruke HTTP-cache.
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(function(reg) { console.log('SW registered', reg.scope); })
+                navigator.serviceWorker.register('/service-worker.js', { updateViaCache: 'none' })
+                    .then(function(reg) {
+                        console.log('SW registered', reg.scope);
+                        try { reg.update(); } catch (e) {}
+                    })
                     .catch(function(err) { console.log('SW registration failed', err); });
             }
         </script>

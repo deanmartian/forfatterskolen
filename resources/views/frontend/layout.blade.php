@@ -263,10 +263,17 @@
                 }
             });
 
-            // Registrer service worker for PWA
+            // Registrer service worker for PWA.
+            // updateViaCache: 'none' — tvinger browser til å sjekke nettverket
+            // for ny SW-fil hver gang, i stedet for å bruke HTTP-cache.
+            // Uten dette kan brukere bli "fanget" med gammel SW i ukevis.
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(function(reg) { console.log('SW registered', reg.scope); })
+                navigator.serviceWorker.register('/service-worker.js', { updateViaCache: 'none' })
+                    .then(function(reg) {
+                        console.log('SW registered', reg.scope);
+                        // Force update check on every page load
+                        try { reg.update(); } catch (e) {}
+                    })
                     .catch(function(err) { console.log('SW registration failed', err); });
             }
 
