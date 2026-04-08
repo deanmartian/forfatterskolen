@@ -52,6 +52,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
     </head>
     <body>
+        @include('partials.login-help-banner')
         <div class="ed-shell">
             {{-- Sidebar --}}
             @include('editor.partials.sidebar')
