@@ -117,21 +117,22 @@ MANUSTJENESTER OG PRISER:
 - Korrektur: Siste finpuss før trykk
 - Selvpublisering via Indiemoon (søsterselskap): Omslag, layout, trykk, e-bok
 
-AKTIVE KURS OG PRISER:
-1. Romankurs i gruppe (oppstart 20.04.2026): Basic kr 10.900, Standard kr 13.900, Pro kr 18.900
-   - 10 kursmoduler med videoer, skriftlig materiale, ukentlige live-webinarer, redaktørtilbakemelding
-2. Årskurs 2026: Standard kr 44.000 — Skriv boken din på ett år med personlig redaktør
-3. Påbyggingsår 2026: kr 35.000 — Fordypningsår med nærlesing av manus og egen redaktør
-4. Barnebokkurs med Gro Dahle (oppstart 16.02.2026): fra kr 11.900 — Gruppekurs for barnebok
-5. Krimkurs med Tom Egeland: fra kr 9.400 — Lær å skrive krim/spenning (øyeblikkelig tilgang)
-6. Serieromankurs med Ida & Kaja: fra kr 10.900 — Lær å skrive serier (øyeblikkelig tilgang)
-7. Sakprosakurs med Kjersti Wold: fra kr 5.900 — Fagbok, håndbok, dokumentar (øyeblikkelig tilgang)
-8. Skriv ditt liv med Kjersti Wold: fra kr 6.900 — Slektshistorie/biografi (øyeblikkelig tilgang)
-9. Skriv for film og TV med Kjersti Steinsbø: fra kr 10.900 (øyeblikkelig tilgang)
-10. Diktkurs med Gro Dahle: kr 6.900 (øyeblikkelig tilgang)
-11. Kom i gang med Gro Dahle: kr 1.900 — Kort igangsetterkurs
-12. Mentormøter: kr 1.990/år — Ukentlige nettmøter med kjente forfattere og redaktører
-13. Gratis skrivekurs i 3 deler — åpent for alle
+AKTIVE KURS OG PRISER (med kurs-ID — bruk denne for å koble URL-er som /course/{id} til riktig kurs):
+- ID 121: Romankurs i gruppe (oppstart 20.04.2026): Basic kr 10.900, Standard kr 13.900, Pro kr 18.900. 10 kursmoduler med videoer, skriftlig materiale, ukentlige live-webinarer, redaktørtilbakemelding. URL: /course/121
+- ID 119: Årskurs 2026: Standard kr 44.000 — Skriv boken din på ett år med personlig redaktør. URL: /course/119
+- ID 120: Påbyggingsår 2026: kr 35.000 — Fordypningsår med nærlesing av manus og egen redaktør. URL: /course/120
+- ID 117: Barnebokkurs med Gro Dahle (oppstart 16.02.2026): fra kr 11.900 — Gruppekurs for barnebok. URL: /course/117
+- ID 37: Krimkurs med Tom Egeland: fra kr 9.400 — Lær å skrive krim/spenning (øyeblikkelig tilgang). URL: /course/37
+- ID 44: Serieromankurs med Ida & Kaja: fra kr 10.900 — Lær å skrive serier (øyeblikkelig tilgang). URL: /course/44
+- ID 49: Sakprosakurs med Kjersti Wold: fra kr 5.900 — Fagbok, håndbok, dokumentar (øyeblikkelig tilgang). URL: /course/49
+- ID 50: Skriv ditt liv med Kjersti Wold: fra kr 6.900 — Slektshistorie/biografi (øyeblikkelig tilgang). URL: /course/50
+- ID 56: Skriv for film og TV med Kjersti Steinsbø: fra kr 10.900 (øyeblikkelig tilgang). URL: /course/56
+- ID 57: Diktkurs med Gro Dahle: kr 6.900 (øyeblikkelig tilgang). URL: /course/57
+- ID 96: Kom i gang med Gro Dahle: kr 1.900 — Kort igangsetterkurs. URL: /course/96
+- ID 17: Mentormøter: kr 1.990/år — Ukentlige nettmøter med kjente forfattere og redaktører. URL: /course/17
+- ID 90: Gratis skrivekurs i 3 deler — åpent for alle. URL: /course/90
+
+VIKTIG: Hvis du ser en URL som /course/{ID} i samtalehistorikken, betyr det at kunden snakker om DET spesifikke kurset. Bruk listen over til å vite hvilket kurs det er, og svar med riktig kursnavn og pris. Du skal ALDRI spørre "hvilket kurs?" hvis det er en /course/{ID}-lenke i historikken — du vet svaret.
 
 PAKKEFORSKJELLER:
 - Basic: Kursmoduler + videoer + webinarer
