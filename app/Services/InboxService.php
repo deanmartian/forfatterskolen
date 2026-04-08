@@ -16,7 +16,7 @@ class InboxService
 {
     public function getConversations(array $filters = [])
     {
-        $query = InboxConversation::with(['customer', 'assignee', 'latestMessage'])
+        $query = InboxConversation::with(['customer', 'assignee', 'latestMessage', 'latestInbound'])
             ->notSpam();
 
         if (!empty($filters['sent'])) {

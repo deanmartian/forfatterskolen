@@ -153,7 +153,7 @@
                                         {{ $conv->subject ?? '(Uten emne)' }}
                                         @if($conv->is_starred) <i class="fa fa-star" style="color:#f39c12;font-size:11px;"></i> @endif
                                     </div>
-                                    <div class="inbox-snippet">{{ \Illuminate\Support\Str::limit($conv->latestMessage?->clean_body ?? '', 100) }}</div>
+                                    <div class="inbox-snippet">{{ \Illuminate\Support\Str::limit($conv->latestInbound?->clean_body ?? $conv->latestMessage?->clean_body ?? '', 100) }}</div>
                                 </div>
                                 <div class="inbox-row__meta">
                                     <div class="inbox-row__time">{{ $conv->updated_at->diffForHumans() }}</div>
