@@ -915,8 +915,21 @@ class PageController extends Controller
             . '<p>Vi gleder oss til å lese teksten din! Ikke nøl med å ta kontakt om du har spørsmål eller trenger hjelp.</p>'
             . '<p>Vennlig hilsen,<br>' . e(Auth::user()->full_name) . '<br>Forfatterskolen</p>';
 
-        dispatch(new \App\Jobs\AddMailToQueueJob($student->email, $subject, $message,
-            'post@forfatterskolen.no', Auth::user()->full_name . ' — Forfatterskolen', null, 'reminder', $manuscript->id));
+        // Send FRA post@forfatterskolen.no, og sett Reply-To til samme adresse
+        // slik at kundens svar går inn i felles-inboksen og ikke til support@.
+        dispatch(new \App\Jobs\AddMailToQueueJob(
+            $student->email,
+            $subject,
+            $message,
+            'post@forfatterskolen.no',
+            'Forfatterskolen',
+            null,
+            'reminder',
+            $manuscript->id,
+            'emails.mail_to_queue',
+            'post@forfatterskolen.no',
+            'Forfatterskolen'
+        ));
 
         return redirect()->route('editor.my-students')->with('success', 'Påminnelse sendt til ' . $student->full_name);
     }
@@ -955,8 +968,21 @@ class PageController extends Controller
             . '<p>Vi gleder oss til å lese teksten din! ❤️</p>'
             . '<p>Vennlig hilsen,<br>' . e(Auth::user()->full_name) . '<br>Forfatterskolen</p>';
 
-        dispatch(new \App\Jobs\AddMailToQueueJob($student->email, $subject, $message,
-            'post@forfatterskolen.no', Auth::user()->full_name . ' — Forfatterskolen', null, 'overdue-reminder', $assignment->id));
+        // Send FRA post@forfatterskolen.no, og sett Reply-To til samme adresse
+        // slik at elevens svar går inn i felles-inboksen og ikke til support@.
+        dispatch(new \App\Jobs\AddMailToQueueJob(
+            $student->email,
+            $subject,
+            $message,
+            'post@forfatterskolen.no',
+            'Forfatterskolen',
+            null,
+            'overdue-reminder',
+            $assignment->id,
+            'emails.mail_to_queue',
+            'post@forfatterskolen.no',
+            'Forfatterskolen'
+        ));
 
         return redirect()->route('editor.my-students')
             ->with('success', 'Påminnelse sendt til ' . $student->full_name);
