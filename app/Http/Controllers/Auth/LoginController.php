@@ -768,13 +768,22 @@ class LoginController extends Controller
         if ($state === 'checkout_state') {
             $vipps = \Session::get('vipps_checkout');
 
-            if ($vipps['item_type'] === 'course') {
+            \Log::info('Vipps login redirect — checkout_state', [
+                'user_id' => $user->id ?? null,
+                'vipps_checkout_data' => $vipps,
+                'session_id' => session()->getId(),
+            ]);
+
+            if (!$vipps) {
+                \Log::warning('Vipps checkout session lost after Vipps login redirect');
+                return redirect(route('front.course.index'))->with('error', 'Sesjonen utløp under Vipps-login. Prøv igjen.');
+            }
+
+            if (($vipps['item_type'] ?? null) === 'course') {
                 return redirect()->route('front.course.checkout.process-vipps', $vipps['course_id']);
             }
 
-            if ($vipps['item_type'] === 'shop-manuscript') {
-                $vipps = \Session::get('vipps_checkout');
-
+            if (($vipps['item_type'] ?? null) === 'shop-manuscript') {
                 return redirect()->route('front.shop-manuscript.checkout.process-vipps', $vipps['shop_manuscript_id']);
             }
         }
