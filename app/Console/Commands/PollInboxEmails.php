@@ -15,21 +15,70 @@ class PollInboxEmails extends Command
 
     public function handle(): int
     {
-        $host = '{imap.domeneshop.no:993/imap/ssl}INBOX';
-        $username = env('IMAP_USERNAME', 'forfatterskolen3');
-        $password = env('IMAP_PASSWORD', '');
+        $accounts = config('inbox.accounts', []);
 
-        if (!$password) {
-            $this->error('IMAP_PASSWORD not set in .env');
+        if (empty($accounts)) {
+            $this->error('Ingen IMAP-kontoer konfigurert i config/inbox.php');
             return self::FAILURE;
         }
+
+        $totalCount = 0;
+        $accountsPolled = 0;
+
+        foreach ($accounts as $account) {
+            // Skip kontoer som ikke har username/password — trygt fallback
+            if (empty($account['username']) || empty($account['password'])) {
+                $this->line("Hopper over '{$account['inbox_email']}' (mangler credentials i .env)");
+                continue;
+            }
+
+            $accountsPolled++;
+            $this->line("Poller {$account['username']} → {$account['inbox_email']}...");
+
+            try {
+                $count = $this->pollAccount($account);
+                $totalCount += $count;
+            } catch (\Throwable $e) {
+                $this->warn("Feil ved polling av {$account['inbox_email']}: " . $e->getMessage());
+                Log::error('IMAP poll account error', [
+                    'inbox' => $account['inbox_email'],
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        if ($accountsPolled === 0) {
+            $this->error('Ingen IMAP-kontoer hadde gyldig credentials.');
+            return self::FAILURE;
+        }
+
+        $this->info("Ferdig! {$totalCount} nye e-poster importert fra {$accountsPolled} kontoer.");
+        Log::info("IMAP poll: {$totalCount} emails imported from {$accountsPolled} accounts");
+
+        return self::SUCCESS;
+    }
+
+    /**
+     * Poll én enkelt IMAP-konto. Returnerer antall importerte e-poster.
+     */
+    private function pollAccount(array $account): int
+    {
+        $host = $account['host'];
+        $username = $account['username'];
+        $password = $account['password'];
+        $accountInboxEmail = $account['inbox_email'];
 
         $inbox = @imap_open($host, $username, $password);
 
         if (!$inbox) {
-            $this->error('Kunne ikke koble til IMAP: ' . imap_last_error());
-            return self::FAILURE;
+            $this->warn("Kunne ikke koble til IMAP for {$accountInboxEmail}: " . imap_last_error());
+            return 0;
         }
+
+        // Resolv private_to_user_id automatisk basert på inbox_email —
+        // hvis adressen matcher en aktiv admin-bruker, blir hele kontoen
+        // privat for den brukeren.
+        $privateToUserId = $this->resolveAdminUserIdForEmail($accountInboxEmail);
 
         // Get emails — filter by date if specified
         $since = $this->option('since') ?: date('Y-m-d');
@@ -37,9 +86,8 @@ class PollInboxEmails extends Command
         $emails = imap_search($inbox, 'SINCE "' . $sinceFormatted . '" UNSEEN');
 
         if (!$emails) {
-            $this->info('Ingen nye e-poster.');
             imap_close($inbox);
-            return self::SUCCESS;
+            return 0;
         }
 
         $count = 0;
@@ -58,12 +106,20 @@ class PollInboxEmails extends Command
                 // Extract subject
                 $subject = isset($header->subject) ? imap_utf8($header->subject) : '(Ingen emne)';
 
-                // Avgjør hvilken inbox dette tilhører ut fra To/Cc.
-                // Hvis e-posten er adressert til en admin-bruker sin egen
-                // e-post, skal den havne i den private inboksen deres.
-                $routing = $this->determineInboxRouting($header);
-                $targetInbox = $routing['inbox'];
-                $privateToUserId = $routing['private_to_user_id'];
+                // For hovedkontoen (post@) bruker vi To/Cc-routing slik at
+                // e-post sendt til andre admin-adresser fra felles-mailboxen
+                // også havner i riktig privat inbox. For dedikerte private
+                // mailbokser er routingen allerede gitt av selve mailboxen.
+                if ($privateToUserId) {
+                    $targetInbox = $accountInboxEmail;
+                } else {
+                    $routing = $this->determineInboxRouting($header);
+                    $targetInbox = $routing['inbox'];
+                    $privateToUserIdForMessage = $routing['private_to_user_id'];
+                }
+                if (!isset($privateToUserIdForMessage)) {
+                    $privateToUserIdForMessage = $privateToUserId;
+                }
 
                 // Extract body
                 $body = $this->getBody($inbox, $emailNumber, $structure);
@@ -108,7 +164,7 @@ class PollInboxEmails extends Command
                         'status' => 'open',
                         'source' => 'imap',
                         'inbox' => $targetInbox,
-                        'private_to_user_id' => $privateToUserId,
+                        'private_to_user_id' => $privateToUserIdForMessage,
                     ]);
 
                     // Link to user
@@ -178,14 +234,39 @@ class PollInboxEmails extends Command
                 $this->warn("Feil ved import av e-post #{$emailNumber}: " . $e->getMessage());
                 Log::error('IMAP import error', ['email' => $emailNumber, 'error' => $e->getMessage()]);
             }
+
+            // Reset per-iteration variabel slik at neste e-post starter friskt
+            unset($privateToUserIdForMessage);
         }
 
         imap_close($inbox);
 
-        $this->info("Ferdig! {$count} nye e-poster importert.");
-        Log::info("IMAP poll: {$count} emails imported");
+        return $count;
+    }
 
-        return self::SUCCESS;
+    /**
+     * Finn ut om en e-postadresse tilhører en aktiv admin-bruker.
+     * Returnerer user_id hvis det matcher, ellers null.
+     *
+     * Brukes for å automatisk koble en dedikert IMAP-mailbox til den
+     * admin-brukeren som "eier" e-postadressen — slik at samtaler i den
+     * mailboxen automatisk blir private for den ene admin-brukeren.
+     */
+    private function resolveAdminUserIdForEmail(string $email): ?int
+    {
+        static $cache = null;
+        if ($cache === null) {
+            $cache = User::where('role', 1)
+                ->where('is_active', 1)
+                ->whereNotNull('email')
+                ->pluck('id', 'email')
+                ->mapWithKeys(function ($id, $email) {
+                    return [strtolower(trim($email)) => $id];
+                })
+                ->toArray();
+        }
+
+        return $cache[strtolower(trim($email))] ?? null;
     }
 
     /**
