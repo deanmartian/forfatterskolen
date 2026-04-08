@@ -20,10 +20,10 @@ class AiKnownIssueSeeder extends Seeder
     {
         $issues = [
             [
-                'title' => 'Vipps-betaling kan henge på Mac med Safari',
-                'description' => 'Noen Mac-brukere får hengende Vipps-vindu under betaling i Safari, særlig hvis personvern-utvidelser er aktive.',
-                'workaround' => 'Be eleven om å prøve i Chrome eller Firefox, eller åpne et privat vindu (Cmd+Shift+N) og prøve igjen. Hvis det fortsatt henger, kan eleven bruke faktura/Svea i stedet.',
-                'severity' => 'medium',
+                'title' => 'Vipps-betalingsbug ble fikset 08.04.2026 — eleven kan trygt prøve på nytt',
+                'description' => 'Tidligere ble noen Vipps-bestillinger droppet pga en operator-presedens-bug i fallback-håndteringen. Dette ble fikset 08.04.2026. Hvis en elev rapporterer at de fikk en feil eller ble sendt tilbake til utgangspunktet ved Vipps-betaling før 08.04.2026, så er det dette som skjedde — be dem prøve på nytt nå.',
+                'workaround' => 'Be eleven prøve Vipps-betalingen på nytt — bugen er fikset. Hvis det FORTSATT ikke fungerer, kan de prøve hard refresh (Cmd+Shift+R), bytte nettleser, eller velge Svea (faktura/avbetaling) som alternativ betalingsmetode i checkout.',
+                'severity' => 'info',
                 'category' => 'betaling',
             ],
             [
@@ -100,6 +100,7 @@ class AiKnownIssueSeeder extends Seeder
 
         // Slett gamle/utdaterte oppføringer som har fått nye titler
         AiKnownIssue::where('title', 'Vi har ikke en egen app — forfatterskolen.no ER appen (PWA)')->delete();
+        AiKnownIssue::where('title', 'Vipps-betaling kan henge på Mac med Safari')->delete();
 
         foreach ($issues as $data) {
             AiKnownIssue::updateOrCreate(

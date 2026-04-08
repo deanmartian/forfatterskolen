@@ -352,7 +352,9 @@ PROMPT;
             if ($direction === 'KUNDE') {
                 $rawBody = \App\Helpers\EmailQuoteStripper::strip($rawBody);
             }
-            $body = \Illuminate\Support\Str::limit($rawBody, 300);
+            // Større limit (800 tegn) for å beholde URL-er, kursnumre, og
+            // annen kontekst som AI-en trenger for å svare presist.
+            $body = \Illuminate\Support\Str::limit($rawBody, 800);
             $history .= "[{$time}] {$direction}: {$body}\n\n";
         }
 
