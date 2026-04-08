@@ -89,6 +89,13 @@ class AiKnownIssueSeeder extends Seeder
                 'severity' => 'medium',
                 'category' => 'betaling',
             ],
+            [
+                'title' => 'Vi har ikke en egen app — forfatterskolen.no ER appen (PWA)',
+                'description' => 'Elever spør ofte hva appen heter eller hvor de laster den ned. Vi har INGEN separat app i App Store eller Google Play. Forfatterskolen.no er en Progressive Web App (PWA) som legges til hjemskjermen som en app-snarvei. Push-varsler virker bare hvis siden er åpnet via dette ikonet.',
+                'workaround' => 'Forklar at det ikke finnes noen egen app — de skal i stedet legge forfatterskolen.no til på hjemskjermen via nettleseren. iPhone (Safari): trykk Del-ikonet → "Legg til på Hjem-skjermen". Android (Chrome): tre prikker → "Legg til på startsiden". Etter at ikonet er på hjemskjermen, åpner de Forfatterskolen fra det ikonet og kan da aktivere push-varsler.',
+                'severity' => 'medium',
+                'category' => 'varsler',
+            ],
         ];
 
         foreach ($issues as $data) {
