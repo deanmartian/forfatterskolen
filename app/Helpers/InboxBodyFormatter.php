@@ -20,6 +20,11 @@ class InboxBodyFormatter
             return '';
         }
 
+        // Steg 0: fjern markdown-formatering vi IKKE ønsker (fet, kursiv, overskrifter)
+        // — vi tillater kun [tekst](url)-lenker. Denne stripping skjer FØR vi
+        // håndterer lenker slik at vi ikke skader [tekst](url)-syntax.
+        $body = self::stripUnwantedMarkdown($body);
+
         // Steg 1: ekstraher markdown-lenker og bytt med plassholdere
         // (slik at HTML-escape ikke ødelegger dem)
         $placeholders = [];
@@ -57,6 +62,32 @@ class InboxBodyFormatter
 
         // Steg 5: linjeskift til <br>
         $body = nl2br($body);
+
+        return $body;
+    }
+
+    /**
+     * Fjerner markdown-formatering som ikke skal vises i e-poster:
+     * - **fet** → fet (uten asterisker)
+     * - *kursiv* → kursiv (uten asterisker)  — men IKKE rør URL-er
+     * - # Overskrifter → Overskrifter
+     * - __understrek__ → understrek
+     */
+    private static function stripUnwantedMarkdown(string $body): string
+    {
+        // **fet** → fet
+        $body = preg_replace('/\*\*(.+?)\*\*/s', '$1', $body);
+
+        // __understrek__ → understrek
+        $body = preg_replace('/__(.+?)__/s', '$1', $body);
+
+        // # Overskrift på egen linje (1-6 hashtags etterfulgt av space)
+        $body = preg_replace('/^#{1,6}\s+(.+)$/m', '$1', $body);
+
+        // *kursiv* → kursiv (men IKKE asterisker midt i ord, og IKKE inni URL-er)
+        // Regelen: en asterisk fulgt av tekst som ikke inneholder asterisk eller mellomrom
+        // før neste asterisk
+        $body = preg_replace('/(?<![\w*])\*([^\s*][^*]*?)\*(?![\w*])/s', '$1', $body);
 
         return $body;
     }

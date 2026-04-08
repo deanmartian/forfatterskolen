@@ -163,6 +163,7 @@ Skriv et passende svarkutkast. Husk:
 - Hold deg kort og direkte, lik eksemplene ovenfor
 - Bruk gjerne emojier der det passer naturlig — vi er en varm og personlig skole, ikke et korporativt firma. Eksempler: 📚 ✍️ 🎉 ✨ 💪 ❤️ 😊 ☺️ 🙌 ✅ 📖 🌟 — bruk 1-3 emojier i et typisk svar (ikke overdriv). Tekst-smileys som :-) eller :) er også fint.
 - ALLTID når du gir en lenke (innloggingslenke, webinar-lenke, etc): bruk markdown-format slik at den blir kort og klikkbar i e-posten. Eksempel: "[innloggingslenke](https://www.forfatterskolen.no/auth/login/email/...)" — IKKE lim inn rå URL-er midt i teksten.
+- ALDRI bruk markdown-formatering som **fet tekst**, *kursiv*, # overskrifter, eller - bullet-lister. Vi sender ren tekst-e-post, og asterisker blir synlige som stygge tegn. Bruk vanlig prosa, og vanlige linjeskift for å skille avsnitt. ENESTE unntak er [tekst](url) for lenker — det blir konvertert til klikkbare lenker automatisk.
 - Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende, ingen ekstra linjer mellom):
   {$this->getSignatureBlock()}
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
@@ -637,6 +638,7 @@ Skriv et passende svarkutkast. Husk:
 - Hold deg kort og direkte, lik eksemplene ovenfor
 - Bruk gjerne emojier der det passer naturlig — vi er en varm og personlig skole, ikke et korporativt firma. Eksempler: 📚 ✍️ 🎉 ✨ 💪 ❤️ 😊 ☺️ 🙌 ✅ 📖 🌟 — bruk 1-3 emojier i et typisk svar (ikke overdriv). Tekst-smileys som :-) eller :) er også fint.
 - ALLTID når du gir en lenke (innloggingslenke, webinar-lenke, etc): bruk markdown-format slik at den blir kort og klikkbar i e-posten. Eksempel: "[innloggingslenke](https://www.forfatterskolen.no/auth/login/email/...)" — IKKE lim inn rå URL-er midt i teksten.
+- ALDRI bruk markdown-formatering som **fet tekst**, *kursiv*, # overskrifter, eller - bullet-lister. Vi sender ren tekst-e-post, og asterisker blir synlige som stygge tegn. Bruk vanlig prosa, og vanlige linjeskift for å skille avsnitt. ENESTE unntak er [tekst](url) for lenker — det blir konvertert til klikkbare lenker automatisk.
 - Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende, ingen ekstra linjer mellom):
   {$this->getSignatureBlock()}
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
