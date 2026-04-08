@@ -2280,11 +2280,6 @@
 		}
 	})();
 
-
-				plLeader = entries[0].team.displayName;
-
-				// Velg 4 tilfeldige lag fra topp 10, inkludert lederen
-				var teams = [plLeader];
 	$('.viewManuscriptBtn').click(function(){
 		var fields = $(this).data('fields');
 		var modal = $('#viewManuscriptModal');
