@@ -23,6 +23,13 @@ class AiToolRegistry
      * @var array<class-string<AiToolInterface>>
      */
     protected array $defaultTools = [
+        // Lookup-tools (read-only, trygge, kan kjøres automatisk av AI)
+        \App\Services\AiTools\Tools\Lookup\GetUserCoursesTool::class,
+        \App\Services\AiTools\Tools\Lookup\GetInvoiceStatusTool::class,
+        \App\Services\AiTools\Tools\Lookup\GetAssignmentStatusTool::class,
+        \App\Services\AiTools\Tools\Lookup\GetUpcomingWebinarsTool::class,
+
+        // Action-tools (krever klikk)
         \App\Services\AiTools\Tools\Action\AddInternalNoteTool::class,
     ];
 
