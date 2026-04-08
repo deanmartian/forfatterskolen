@@ -26,14 +26,25 @@ class LoginController extends Controller
 {
     public function adminLogin(LoginRequest $request): RedirectResponse
     {
+        // Sjekk først direkte e-post-match
         $user = User::where('email', $request->email)->whereIn('role', [1])->first();
+
+        // Hvis ikke funnet, sjekk user_emails-tabellen for sekundære e-poster
+        if (! $user) {
+            $secondaryEmail = UserEmail::where('email', $request->email)->first();
+            if ($secondaryEmail) {
+                $candidate = $secondaryEmail->users->first();
+                if ($candidate && $candidate->role == 1) {
+                    $user = $candidate;
+                }
+            }
+        }
 
         if (! $user) {
             return redirect()->back()->withErrors(trans('site.unknown-email'));
         }
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 1])) {
-            // Authentication passed...
+        if (Auth::attempt(['email' => $user->email, 'password' => $request->password, 'role' => 1])) {
             return redirect('/');
         }
 
@@ -42,10 +53,22 @@ class LoginController extends Controller
 
     public function editorLogin(LoginRequest $request): RedirectResponse
     {
+        // Sjekk først direkte e-post-match
         $user = User::where('email', $request->email)
             ->where(function ($query) {
                 $query->whereIn('role', [3])->orWhere('admin_with_editor_access', 1);
             })->first();
+
+        // Hvis ikke funnet direkte, sjekk user_emails-tabellen for sekundære e-poster
+        if (! $user) {
+            $secondaryEmail = UserEmail::where('email', $request->email)->first();
+            if ($secondaryEmail) {
+                $candidate = $secondaryEmail->users->first();
+                if ($candidate && ($candidate->role == 3 || $candidate->admin_with_editor_access)) {
+                    $user = $candidate;
+                }
+            }
+        }
 
         if (! $user) {
             return redirect()->back()->withErrors(trans('site.unknown-email'));
@@ -55,11 +78,11 @@ class LoginController extends Controller
             return redirect()->back()->withErrors(trans('site.invalid-user'));
         }
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 3])) {
-            // Authentication passed...
+        // Bruk brukerens primær-e-post for Auth::attempt slik at autentiseringen
+        // funker selv om de skrev inn en sekundær adresse.
+        if (Auth::attempt(['email' => $user->email, 'password' => $request->password, 'role' => 3])) {
             return redirect('/');
-        } elseif (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'admin_with_editor_access' => 1])) {
-            // Authentication passed...
+        } elseif (Auth::attempt(['email' => $user->email, 'password' => $request->password, 'admin_with_editor_access' => 1])) {
             return redirect('/');
         }
 
@@ -73,6 +96,17 @@ class LoginController extends Controller
                 $query->whereIn('role', [4])->orWhere('admin_with_giutbok_access', 1);
             })->first();
 
+        // Hvis ikke funnet direkte, sjekk user_emails-tabellen
+        if (! $user) {
+            $secondaryEmail = UserEmail::where('email', $request->email)->first();
+            if ($secondaryEmail) {
+                $candidate = $secondaryEmail->users->first();
+                if ($candidate && ($candidate->role == 4 || $candidate->admin_with_giutbok_access)) {
+                    $user = $candidate;
+                }
+            }
+        }
+
         if (! $user) {
             return redirect()->back()->withErrors(trans('site.unknown-email'));
         }
@@ -81,11 +115,9 @@ class LoginController extends Controller
             return redirect()->back()->withErrors(trans('site.invalid-user'));
         }
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 4])) {
-            // Authentication passed...
+        if (Auth::attempt(['email' => $user->email, 'password' => $request->password, 'role' => 4])) {
             return redirect()->back();
-        } elseif (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'admin_with_giutbok_access' => 1])) {
-            // Authentication passed...
+        } elseif (Auth::attempt(['email' => $user->email, 'password' => $request->password, 'admin_with_giutbok_access' => 1])) {
             return redirect()->back();
         }
 
