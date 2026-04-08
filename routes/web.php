@@ -2277,15 +2277,6 @@ Route::domain($admin)->group(function () {
     Route::get('ai', [Backend\AdminAiController::class, 'index'])->name('admin.ai.index');
     Route::post('ai/execute', [Backend\AdminAiController::class, 'execute'])->name('admin.ai.execute');
 
-    // AI Kunnskap (kjente feil + workarounds som inbox-AI bruker)
-    Route::prefix('ai-knowledge')->group(function () {
-        Route::get('/', [Backend\AiKnowledgeController::class, 'index'])->name('admin.ai-knowledge.index');
-        Route::post('/', [Backend\AiKnowledgeController::class, 'store'])->name('admin.ai-knowledge.store');
-        Route::put('/{id}', [Backend\AiKnowledgeController::class, 'update'])->name('admin.ai-knowledge.update');
-        Route::delete('/{id}', [Backend\AiKnowledgeController::class, 'destroy'])->name('admin.ai-knowledge.destroy');
-        Route::post('/{id}/toggle', [Backend\AiKnowledgeController::class, 'toggle'])->name('admin.ai-knowledge.toggle');
-    });
-
     // Inbox routes
     require __DIR__.'/ad_os_routes.php';
 });
