@@ -779,13 +779,17 @@ class PageController extends Controller
     {
         $editorId = Auth::id();
 
-        // "Mine elever" gjelder KUN langtids-kurs (Årskurs og Påbyggingsår).
+        // "Mine elever" gjelder KUN AKTIVE langtids-kurs (Årskurs og Påbygg).
         // Sjangerkurs og gruppekurs har egen flyt og skal ikke blandes inn her.
-        // Vi cacher kurs-ID-ene for alle aktive Årskurs/Påbygg-kurs én gang.
-        $longCourseIds = \App\Course::where(function ($q) {
-            $q->where('title', 'like', 'Årskurs%')
-              ->orWhere('title', 'like', 'Påbygg%');
-        })->pluck('id')->toArray();
+        // KUN status=1 (aktive) — det finnes 15+ historiske Årskurs-rader i
+        // databasen fra 2020 og fremover, og vi vil bare vise pågående kurs.
+        $longCourseIds = \App\Course::where('status', 1)
+            ->where(function ($q) {
+                $q->where('title', 'like', 'Årskurs%')
+                  ->orWhere('title', 'like', 'Påbygg%');
+            })
+            ->pluck('id')
+            ->toArray();
 
         // Pending extension requests for assignments this editor handles —
         // begrenset til Årskurs/Påbygg-kurs.
