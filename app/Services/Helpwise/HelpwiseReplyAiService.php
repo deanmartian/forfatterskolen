@@ -19,7 +19,14 @@ class HelpwiseReplyAiService
      * Generate an AI draft reply for a customer message.
      * Returns the draft text in Norwegian, never auto-sends.
      */
-    public function generateDraftReply(HelpwiseConversation $conversation, ?HelpwiseMessage $latestMessage = null, ?string $fullEmailBody = null): ?string
+    /**
+     * Generer utkast til svar + liste over foreslåtte handlinger.
+     *
+     * Returnerer en assoc array: ['text' => string, 'tool_uses' => array]
+     * eller null ved feil. Tool_uses er en liste med foreslåtte verktøy-
+     * kall som AI-en anbefaler at administratoren utfører.
+     */
+    public function generateDraftReply(HelpwiseConversation $conversation, ?HelpwiseMessage $latestMessage = null, ?string $fullEmailBody = null): ?array
     {
         $studentContext = $this->getStudentContext($conversation);
         $messageHistory = $this->getMessageHistory($conversation);
@@ -27,18 +34,29 @@ class HelpwiseReplyAiService
 
         $prompt = $this->buildPrompt($conversation, $customerMessage, $studentContext, $messageHistory, $fullEmailBody);
 
+        // Hent tool-definisjoner fra registry
         try {
-            $reply = $this->callAi($prompt);
+            $tools = app(\App\Services\AiTools\AiToolRegistry::class)->getDefinitionsForAnthropic();
+        } catch (\Throwable $e) {
+            $tools = [];
+        }
 
-            if ($reply) {
-                Log::info('Helpwise AI: draft reply generated', [
-                    'conversation_id' => $conversation->id,
-                    'helpwise_id' => $conversation->helpwise_id,
-                    'length' => strlen($reply),
-                ]);
+        try {
+            $content = $this->callAi($prompt, $tools);
+            $parsed = $this->parseAiResponse($content);
+
+            if (!$parsed['text'] && empty($parsed['tool_uses'])) {
+                return null;
             }
 
-            return $reply;
+            Log::info('Helpwise AI: draft reply generated', [
+                'conversation_id' => $conversation->id,
+                'helpwise_id' => $conversation->helpwise_id,
+                'text_length' => strlen($parsed['text']),
+                'tool_use_count' => count($parsed['tool_uses']),
+            ]);
+
+            return $parsed;
         } catch (\Exception $e) {
             Log::error('Helpwise AI: draft generation failed', ['error' => $e->getMessage()]);
             return null;
@@ -48,6 +66,34 @@ class HelpwiseReplyAiService
     /**
      * Build the AI prompt with full context about the student and conversation.
      */
+    /**
+     * Bygger en kort seksjon som forteller AI om verktøyene og IDer den må bruke.
+     */
+    private function getToolsInstructionSection(HelpwiseConversation $conversation): string
+    {
+        $userId = $conversation->user_id ?? 'ukjent';
+        $convId = $conversation->id ?? 'ukjent';
+
+        return <<<TOOLS
+
+VERKTØY DU KAN FORESLÅ:
+Du har tilgang til verktøy som admin kan klikke for å utføre konkrete handlinger. Når det er relevant, bruk tool_use for å foreslå én eller flere handlinger. Handlingene utføres IKKE automatisk — admin må klikke en knapp for å godkjenne. Forklar i selve utkast-teksten hvilke handlinger du har foreslått, f.eks. "Jeg har foreslått at vi sender deg en ny innloggingslenke — den kommer straks etter at jeg har klikket godkjenn."
+
+VIKTIG — IDer du trenger til verktøy-kall i denne samtalen:
+- user_id (eleven): {$userId}
+- conversation_id (samtalen): {$convId}
+
+RETNINGSLINJER:
+- Foreslå maks 2-3 verktøy per svar — ikke overdriv
+- Foreslå KUN verktøy som tydelig hjelper med det kunden faktisk spør om
+- Ikke foreslå verktøy hvis du kan svare fyllestgjørende med tekst alene
+- For lookup-verktøy (get_*): ikke foreslå dem hvis du allerede har dataene du trenger i ELEVINFORMASJON ovenfor
+- For action-verktøy (send_*, extend_*, etc): bruk kun når kunden har bedt om noe konkret
+- VERIFISER at ID-ene du bruker matcher samtalens kontekst — aldri plukk et tilfeldig editor_id eller webinar_id
+
+TOOLS;
+    }
+
     private function buildPrompt(
         HelpwiseConversation $conversation,
         string $customerMessage,
@@ -74,6 +120,7 @@ class HelpwiseReplyAiService
         $examplesSection = $this->getReplyExamples();
         $knowledgeSection = $this->getKnowledgeContext();
         $discountsSection = $this->getActiveDiscounts();
+        $toolsInstructionSection = $this->getToolsInstructionSection($conversation);
 
         // Hvis vi har den fulle e-post-bodyen (med sitater), vis den som
         // en egen seksjon. Begrens til 4000 tegn slik at vi ikke sprenger
@@ -165,6 +212,7 @@ GENERELT:
 {$examplesSection}
 
 {$discountsSection}
+{$toolsInstructionSection}
 
 INBOX: {$inbox}
 KUNDENS NAVN: {$customerName}
@@ -532,28 +580,43 @@ PROMPT;
         return "Ha en fin dag!\n  Mvh\n  Forfatterskolen / Easywrite / Indiemoon Publishing";
     }
 
-    private function callAi(string $prompt): ?string
+    /**
+     * Kaller AI-provider og returnerer hele content-arrayet (Anthropic-format).
+     * Hvis providereren er OpenAI, pakkes tekstsvaret i et syntetisk
+     * content-block slik at parseAiResponse kan bruke samme kode.
+     *
+     * @param array $tools Tool-definisjoner i Anthropic-format (tom array = ingen tools)
+     * @return array Content-blocks [['type' => 'text', 'text' => ...], ['type' => 'tool_use', ...]]
+     */
+    private function callAi(string $prompt, array $tools = []): array
     {
         $provider = config('ad_os.ai_provider', 'openai');
 
         if ($provider === 'anthropic') {
-            $response = Http::withHeaders([
-                'x-api-key' => config('services.anthropic.key'),
-                'Content-Type' => 'application/json',
-                'anthropic-version' => '2023-06-01',
-            ])->post('https://api.anthropic.com/v1/messages', [
+            $body = [
                 'model' => 'claude-sonnet-4-20250514',
-                'max_tokens' => 1024,
+                'max_tokens' => 2048,
                 'messages' => [
                     ['role' => 'user', 'content' => $prompt],
                 ],
-            ]);
+            ];
 
-            return $response->json('content.0.text');
+            if (!empty($tools)) {
+                $body['tools'] = $tools;
+            }
+
+            $response = Http::timeout(60)->withHeaders([
+                'x-api-key' => config('services.anthropic.key'),
+                'Content-Type' => 'application/json',
+                'anthropic-version' => '2023-06-01',
+            ])->post('https://api.anthropic.com/v1/messages', $body);
+
+            $content = $response->json('content');
+            return is_array($content) ? $content : [];
         }
 
-        // Default: OpenAI
-        $response = Http::withHeaders([
+        // Default: OpenAI (ingen tool-støtte i denne implementasjonen)
+        $response = Http::timeout(60)->withHeaders([
             'Authorization' => 'Bearer ' . config('services.openai.api_key'),
             'Content-Type' => 'application/json',
         ])->post('https://api.openai.com/v1/chat/completions', [
@@ -566,7 +629,36 @@ PROMPT;
             'max_tokens' => 1024,
         ]);
 
-        return $response->json('choices.0.message.content');
+        $text = $response->json('choices.0.message.content');
+        return $text ? [['type' => 'text', 'text' => $text]] : [];
+    }
+
+    /**
+     * Deler et Anthropic-content-array i text og tool_use-blocks.
+     * Returnerer ['text' => string, 'tool_uses' => array].
+     */
+    private function parseAiResponse(array $content): array
+    {
+        $text = '';
+        $toolUses = [];
+
+        foreach ($content as $block) {
+            $type = $block['type'] ?? null;
+            if ($type === 'text') {
+                $text .= ($block['text'] ?? '');
+            } elseif ($type === 'tool_use') {
+                $toolUses[] = [
+                    'id' => $block['id'] ?? null,
+                    'name' => $block['name'] ?? null,
+                    'input' => $block['input'] ?? [],
+                ];
+            }
+        }
+
+        return [
+            'text' => trim($text),
+            'tool_uses' => $toolUses,
+        ];
     }
 
     /**
@@ -702,7 +794,9 @@ Skriv et passende svarkutkast. Husk:
 PROMPT;
 
         try {
-            $reply = $this->callAi($prompt);
+            $content = $this->callAi($prompt);
+            $parsed = $this->parseAiResponse($content);
+            $reply = $parsed['text'] ?: null;
             if ($reply) {
                 Log::info('Inbox AI: utkast generert', [
                     'conversation_id' => $conversation->id,

@@ -292,17 +292,38 @@ class InboxService
 
         try {
             $aiService = app(HelpwiseReplyAiService::class);
-            $draftText = $aiService->generateDraftReply($helpwiseConv, $helpwiseMsg, $fullEmailBody);
+            $result = $aiService->generateDraftReply($helpwiseConv, $helpwiseMsg, $fullEmailBody);
 
-            if (!$draftText) return null;
+            if (!$result) return null;
 
-            // Delete previous AI drafts
-            InboxMessage::where('conversation_id', $conversationId)
+            $draftText = $result['text'] ?? '';
+            $toolUses = $result['tool_uses'] ?? [];
+
+            // Hvis AI kun foreslo verktøy uten tekst, lag en minimal kroppstekst
+            if ($draftText === '' && !empty($toolUses)) {
+                $draftText = 'Se foreslåtte handlinger under.';
+            }
+
+            if ($draftText === '' && empty($toolUses)) {
+                return null;
+            }
+
+            // Slett tidligere AI-utkast OG tidligere suggested actions for denne samtalen
+            $oldDrafts = InboxMessage::where('conversation_id', $conversationId)
                 ->where('is_ai_draft', true)
                 ->where('is_draft', true)
-                ->delete();
+                ->pluck('id');
 
-            return InboxMessage::create([
+            if ($oldDrafts->isNotEmpty()) {
+                \App\Models\AiToolAction::whereIn('inbox_message_id', $oldDrafts)
+                    ->where('status', \App\Enums\AiToolActionStatus::Suggested->value)
+                    ->delete();
+
+                InboxMessage::whereIn('id', $oldDrafts)->delete();
+            }
+
+            // Opprett ny draft
+            $draft = InboxMessage::create([
                 'conversation_id' => $conversationId,
                 'type' => 'reply',
                 'direction' => 'outbound',
@@ -312,6 +333,27 @@ class InboxService
                 'is_ai_draft' => true,
                 'is_draft' => true,
             ]);
+
+            // Lagre suggested actions fra AI-en
+            if (!empty($toolUses)) {
+                $executor = app(\App\Services\AiTools\AiToolExecutor::class);
+                foreach ($toolUses as $toolUse) {
+                    $toolName = $toolUse['name'] ?? null;
+                    $input = $toolUse['input'] ?? [];
+                    if (!$toolName || !is_array($input)) continue;
+
+                    try {
+                        $executor->suggest($toolName, $input, $conversationId, $draft->id);
+                    } catch (\Throwable $e) {
+                        Log::warning('Inbox: kunne ikke lagre suggested action', [
+                            'tool' => $toolName,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
+            }
+
+            return $draft;
         } catch (\Exception $e) {
             Log::error('Inbox: AI draft failed', ['error' => $e->getMessage()]);
             return null;

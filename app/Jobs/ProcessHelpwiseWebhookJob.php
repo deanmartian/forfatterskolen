@@ -42,13 +42,15 @@ class ProcessHelpwiseWebhookJob implements ShouldQueue
         }
 
         try {
-            // Generate AI draft reply
-            $draftText = $aiService->generateDraftReply($conversation, $latestMessage);
+            // Generate AI draft reply — returns ['text' => ..., 'tool_uses' => ...] or null
+            $result = $aiService->generateDraftReply($conversation, $latestMessage);
 
-            if (!$draftText) {
+            if (!$result || empty($result['text'] ?? null)) {
                 Log::warning('Helpwise AI: no draft generated', ['conversation_id' => $conversation->id]);
                 return;
             }
+
+            $draftText = $result['text'];
 
             // Push draft to Helpwise (does NOT send - creates a draft for agent review)
             $result = $apiService->createDraft($conversation->helpwise_id, $draftText);
