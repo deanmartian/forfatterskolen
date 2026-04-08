@@ -162,6 +162,7 @@ Skriv et passende svarkutkast. Husk:
 - Vær hjelpsom, varm og positiv - men ikke overdrevent
 - Hold deg kort og direkte, lik eksemplene ovenfor
 - Bruk gjerne smilefjes som :-) eller :) der det passer naturlig
+- ALLTID når du gir en lenke (innloggingslenke, webinar-lenke, etc): bruk markdown-format slik at den blir kort og klikkbar i e-posten. Eksempel: "[innloggingslenke](https://www.forfatterskolen.no/auth/login/email/...)" — IKKE lim inn rå URL-er midt i teksten.
 - Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende, ingen ekstra linjer mellom):
   {$this->getSignatureBlock()}
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
@@ -459,9 +460,9 @@ PROMPT;
     {
         $name = $this->getSenderName();
         if ($name) {
-            return "Skrivevarm hilsen,\n  {$name}\n  Forfatterskolen / Easywrite / Indiemoon Publishing";
+            return "Ha en fin dag!\n  Mvh {$name}\n  Forfatterskolen / Easywrite / Indiemoon Publishing";
         }
-        return "Skrivevarm hilsen,\n  Forfatterskolen / Easywrite / Indiemoon Publishing";
+        return "Ha en fin dag!\n  Mvh\n  Forfatterskolen / Easywrite / Indiemoon Publishing";
     }
 
     private function callAi(string $prompt): ?string
@@ -624,6 +625,7 @@ Skriv et passende svarkutkast. Husk:
 - Vær hjelpsom, varm og positiv - men ikke overdrevent
 - Hold deg kort og direkte, lik eksemplene ovenfor
 - Bruk gjerne smilefjes som :-) eller :) der det passer naturlig
+- ALLTID når du gir en lenke (innloggingslenke, webinar-lenke, etc): bruk markdown-format slik at den blir kort og klikkbar i e-posten. Eksempel: "[innloggingslenke](https://www.forfatterskolen.no/auth/login/email/...)" — IKKE lim inn rå URL-er midt i teksten.
 - Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende, ingen ekstra linjer mellom):
   {$this->getSignatureBlock()}
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet

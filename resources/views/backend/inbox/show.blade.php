@@ -90,18 +90,21 @@
                                 @endif
                                 <span class="pull-right">{{ $entry['at']->format('d.m.Y H:i') }}</span>
                             </div>
-                            {!! nl2br(e($entry['item']->body_plain ?? strip_tags($entry['item']->body ?? ''))) !!}
+                            {!! \App\Helpers\InboxBodyFormatter::toHtml($entry['item']->body ?? $entry['item']->body_plain ?? '') !!}
                         </div>
                     @elseif($entry['type'] === 'ai_draft')
+                        @php
+                            $aiDraftRaw = $entry['item']->body ?? $entry['item']->body_plain ?? '';
+                        @endphp
                         <div class="msg-bubble msg-ai-draft">
                             <div class="msg-meta">
                                 <strong><i class="fa fa-magic"></i> AI Draft</strong>
                                 <span class="label label-warning">Utkast - ikke sendt</span>
                                 <span class="pull-right">{{ $entry['at']->format('d.m.Y H:i') }}</span>
                             </div>
-                            <div id="ai-draft-text">{!! nl2br(e($entry['item']->body_plain ?? $entry['item']->body ?? '')) !!}</div>
+                            <div id="ai-draft-text" data-raw="{{ $aiDraftRaw }}">{!! \App\Helpers\InboxBodyFormatter::toHtml($aiDraftRaw) !!}</div>
                             <div style="margin-top: 8px;">
-                                <button class="btn btn-xs btn-info" onclick="document.getElementById('reply-body').value = document.getElementById('ai-draft-text').innerText;">
+                                <button class="btn btn-xs btn-info" onclick="document.getElementById('reply-body').value = document.getElementById('ai-draft-text').dataset.raw;">
                                     <i class="fa fa-copy"></i> Bruk som svar
                                 </button>
                             </div>

@@ -103,12 +103,18 @@ class InboxService
 
         // Add signature — but only if the body doesn't already have one
         // (e.g. when sending an AI-generated draft that already includes it).
-        if (!preg_match('/Skrivevarm hilsen/i', $body)) {
-            $signature = "\n\nSkrivevarm hilsen,\n{$user->full_name}\nForfatterskolen / Easywrite / Indiemoon Publishing";
+        // We check for both "Mvh" and the older "Skrivevarm hilsen" so old
+        // drafts still work.
+        if (!preg_match('/(Mvh\s|Skrivevarm hilsen)/i', $body)) {
+            $signature = "\n\nHa en fin dag!\nMvh {$user->full_name}\nForfatterskolen / Easywrite / Indiemoon Publishing";
             $body = rtrim($body) . $signature;
         } else {
             $body = rtrim($body);
         }
+
+        // Convert markdown links + bare URLs to clickable HTML for the email.
+        $bodyHtml = \App\Helpers\InboxBodyFormatter::toHtml($body);
+        $htmlPlainNoTags = strip_tags($bodyHtml);
 
         $message = InboxMessage::create([
             'conversation_id' => $conversation->id,
@@ -119,8 +125,8 @@ class InboxService
             'to_email' => $conversation->customer_email,
             'subject' => 'Re: ' . $conversation->subject,
             'body' => $body,
-            'body_plain' => strip_tags($body),
-            'body_html' => collect(preg_split('/\r?\n\r?\n/', e($body)))->map(fn($p) => '<p style="margin:0 0 4px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode(''),
+            'body_plain' => $htmlPlainNoTags,
+            'body_html' => $bodyHtml,
             'sent_by_user_id' => $userId,
             'is_draft' => $isDraft,
             'sent_at' => $isDraft ? null : now(),
@@ -129,7 +135,7 @@ class InboxService
         if (!$isDraft) {
             // Send branded email
             try {
-                $htmlBody = collect(preg_split('/\r?\n\r?\n/', e($body)))->map(fn($p) => '<p style="margin:0 0 4px;">' . str_replace("\n", '<br>', trim($p)) . '</p>')->implode('');
+                $htmlBody = $bodyHtml;
                 $fromEmail = $conversation->inbox ?? 'post@forfatterskolen.no';
 
                 $attachmentPaths = !empty($attachments) ? array_column($attachments, 'path') : null;
