@@ -311,37 +311,47 @@ PROMPT;
      */
     private function getMessageHistory(HelpwiseConversation $conversation): string
     {
-        // Try HelpwiseMessage first
+        // Hent de SISTE 10 meldingene (ikke de første) — for lange tråder
+        // er det den nyeste konteksten som er viktigst.
         $messages = $conversation->messages()
-            ->orderBy('message_at')
+            ->orderByDesc('message_at')
             ->limit(10)
-            ->get();
+            ->get()
+            ->reverse()
+            ->values();
 
         // If no HelpwiseMessages, try InboxMessage (used for imported conversations)
         if ($messages->isEmpty()) {
             $inboxMessages = InboxMessage::where('conversation_id', $conversation->id)
                 ->where('is_draft', false)
-                ->orderBy('created_at')
+                ->orderByDesc('created_at')
                 ->limit(10)
-                ->get();
+                ->get()
+                ->reverse()
+                ->values();
 
             if ($inboxMessages->isEmpty()) return '';
 
-            $history = '';
-            foreach ($inboxMessages as $msg) {
-                $direction = $msg->direction === 'outbound' ? 'AGENT' : 'KUNDE';
-                $time = $msg->created_at?->format('d.m H:i') ?? '';
-                $body = \Illuminate\Support\Str::limit(strip_tags($msg->body_plain ?? $msg->body ?? ''), 300);
-                $history .= "[{$time}] {$direction}: {$body}\n\n";
-            }
-            return $history;
+            return $this->formatMessageHistory($inboxMessages, 'created_at');
         }
 
+        return $this->formatMessageHistory($messages, 'message_at');
+    }
+
+    private function formatMessageHistory($messages, string $timeField): string
+    {
         $history = '';
         foreach ($messages as $msg) {
             $direction = $msg->direction === 'outbound' ? 'AGENT' : 'KUNDE';
-            $time = $msg->message_at?->format('d.m H:i') ?? '';
-            $body = \Illuminate\Support\Str::limit(strip_tags($msg->body_plain ?? $msg->body ?? ''), 300);
+            $time = $msg->{$timeField}?->format('d.m H:i') ?? '';
+
+            // Strip e-post-sitater fra inngående meldinger slik at vi ikke
+            // sender hele e-postkjeden inn i prompten gang på gang.
+            $rawBody = strip_tags($msg->body_plain ?? $msg->body ?? '');
+            if ($direction === 'KUNDE') {
+                $rawBody = \App\Helpers\EmailQuoteStripper::strip($rawBody);
+            }
+            $body = \Illuminate\Support\Str::limit($rawBody, 300);
             $history .= "[{$time}] {$direction}: {$body}\n\n";
         }
 
@@ -558,22 +568,23 @@ PROMPT;
             } catch (\Exception $e) {}
         }
 
-        // Hent meldingshistorikk
+        // Hent meldingshistorikk — de SISTE 10 (ikke de første), nyeste
+        // konteksten er det viktigste i lange tråder.
         $inboxMessages = InboxMessage::where('conversation_id', $conversation->id)
             ->where('is_draft', false)
-            ->orderBy('created_at')
+            ->orderByDesc('created_at')
             ->limit(10)
-            ->get();
+            ->get()
+            ->reverse()
+            ->values();
 
-        $history = '';
-        foreach ($inboxMessages as $msg) {
-            $direction = $msg->direction === 'outbound' ? 'AGENT' : 'KUNDE';
-            $time = $msg->created_at?->format('d.m H:i') ?? '';
-            $body = \Illuminate\Support\Str::limit(strip_tags($msg->body_plain ?? $msg->body ?? ''), 300);
-            $history .= "[{$time}] {$direction}: {$body}\n\n";
-        }
+        $history = $this->formatMessageHistory($inboxMessages, 'created_at');
 
-        $customerMessage = $message->body_plain ?? strip_tags($message->body ?? '');
+        // Strip e-post-sitater fra siste melding slik at AI-en fokuserer
+        // på det nye spørsmålet, ikke den gamle e-postkjeden.
+        $rawCustomerMessage = $message->body_plain ?? strip_tags($message->body ?? '');
+        $customerMessage = \App\Helpers\EmailQuoteStripper::strip($rawCustomerMessage)
+            ?: $rawCustomerMessage;
 
         // Gjenbruk buildPrompt via et temporaert HelpwiseConversation-lignende objekt
         // Enklere: bygg prompt direkte med samme mal

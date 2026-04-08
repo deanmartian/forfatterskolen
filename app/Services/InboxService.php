@@ -273,9 +273,14 @@ class InboxService
 
         $helpwiseMsg = null;
         if ($latestInbound) {
+            // Strip e-post-sitater slik at AI fokuserer på det nye, ikke
+            // den gamle e-postkjeden som henger med fra Gmail/Outlook.
+            $cleanBody = \App\Helpers\EmailQuoteStripper::strip($latestInbound->body);
+            $cleanPlain = \App\Helpers\EmailQuoteStripper::strip($latestInbound->body_plain);
+
             $helpwiseMsg = new \App\HelpwiseMessage([
-                'body' => $latestInbound->body,
-                'body_plain' => $latestInbound->body_plain,
+                'body' => $cleanBody ?: $latestInbound->body,
+                'body_plain' => $cleanPlain ?: $latestInbound->body_plain,
             ]);
         }
 
