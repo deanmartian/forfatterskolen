@@ -32,4 +32,9 @@ class InboxMessage extends Model
     {
         return strip_tags($this->body_plain ?? $this->body ?? '');
     }
+
+    public function aiToolActions()
+    {
+        return $this->hasMany(\App\Models\AiToolAction::class, 'inbox_message_id');
+    }
 }

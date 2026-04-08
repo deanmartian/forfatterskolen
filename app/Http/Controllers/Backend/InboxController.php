@@ -242,6 +242,28 @@ class InboxController extends Controller
             ->with('message', $draft ? 'AI-utkast generert!' : 'Kunne ikke generere utkast');
     }
 
+    /**
+     * Utfør en AI-foreslått handling som er lagret i ai_tool_actions.
+     * Validerer at handlingen tilhører samtalen før den utføres.
+     */
+    public function executeTool(int $id, int $actionId, \App\Services\AiTools\AiToolExecutor $executor)
+    {
+        $action = \App\Models\AiToolAction::findOrFail($actionId);
+
+        // Sikkerhet: handlingen MÅ tilhøre denne samtalen
+        if ($action->conversation_id !== $id) {
+            abort(403, 'Handlingen tilhører ikke denne samtalen');
+        }
+
+        $result = $executor->execute($actionId, auth()->user());
+
+        return redirect()->route('admin.inbox.show', $id)
+            ->with('alert_type', $result->success ? 'success' : 'error')
+            ->with('message', $result->success
+                ? '✓ ' . $result->message
+                : '✗ Kunne ikke utføre: ' . $result->message);
+    }
+
     public function importFromHelpwise()
     {
         $imported = $this->inboxService->importFromHelpwise();

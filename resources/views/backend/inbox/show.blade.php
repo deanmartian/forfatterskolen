@@ -128,6 +128,11 @@
                             <div style="margin-top:6px; font-size:11px; color:#888;">
                                 <i class="fa fa-info-circle"></i> Tips: i tekstboksen blir <code>[tekst](url)</code> til en klikkbar lenke i e-posten.
                             </div>
+
+                            @include('backend.inbox.partials.ai-tool-actions', [
+                                'aiMessage' => $entry['item'],
+                                'conversation' => $conversation,
+                            ])
                         </div>
                     @elseif($entry['type'] === 'comment')
                         <div class="msg-comment">
