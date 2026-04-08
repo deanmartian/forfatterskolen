@@ -158,10 +158,8 @@ Skriv et passende svarkutkast. Husk:
 - Vær hjelpsom, varm og positiv - men ikke overdrevent
 - Hold deg kort og direkte, lik eksemplene ovenfor
 - Bruk gjerne smilefjes som :-) eller :) der det passer naturlig
-- Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende):
-  Skrivevarm hilsen,
-  {$this->getSenderName()}
-  Forfatterskolen / Easywrite / Indiemoon Publishing
+- Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende, ingen ekstra linjer mellom):
+  {$this->getSignatureBlock()}
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
 - Matcher stilen og tonen fra eksemplene
 PROMPT;
@@ -385,10 +383,25 @@ PROMPT;
         return $section;
     }
 
-    private function getSenderName(): string
+    private function getSenderName(): ?string
     {
         $user = auth()->user();
-        return $user ? $user->full_name : 'Forfatterskolen';
+        return $user ? $user->full_name : null;
+    }
+
+    /**
+     * Build the signature block for the AI prompt.
+     * When no user is authenticated (webhook generation), we omit the
+     * personal-name line so the signature doesn't end up with
+     * "Forfatterskolen" appearing twice in a row.
+     */
+    private function getSignatureBlock(): string
+    {
+        $name = $this->getSenderName();
+        if ($name) {
+            return "Skrivevarm hilsen,\n  {$name}\n  Forfatterskolen / Easywrite / Indiemoon Publishing";
+        }
+        return "Skrivevarm hilsen,\n  Forfatterskolen / Easywrite / Indiemoon Publishing";
     }
 
     private function callAi(string $prompt): ?string
@@ -549,10 +562,8 @@ Skriv et passende svarkutkast. Husk:
 - Vær hjelpsom, varm og positiv - men ikke overdrevent
 - Hold deg kort og direkte, lik eksemplene ovenfor
 - Bruk gjerne smilefjes som :-) eller :) der det passer naturlig
-- Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende):
-  Skrivevarm hilsen,
-  {$this->getSenderName()}
-  Forfatterskolen / Easywrite / Indiemoon Publishing
+- Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende, ingen ekstra linjer mellom):
+  {$this->getSignatureBlock()}
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
 - Matcher stilen og tonen fra eksemplene
 PROMPT;
