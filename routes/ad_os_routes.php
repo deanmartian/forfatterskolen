@@ -15,6 +15,8 @@ Route::prefix('inbox')->group(function () {
     Route::post('/conversation/{id}/spam', [Backend\InboxController::class, 'markSpam'])->name('admin.inbox.spam');
     Route::post('/conversation/{id}/ai-draft', [Backend\InboxController::class, 'generateAiDraft'])->name('admin.inbox.ai-draft');
     Route::post('/conversation/{id}/execute-tool/{actionId}', [Backend\InboxController::class, 'executeTool'])->name('admin.inbox.execute-tool');
+    Route::post('/conversation/{id}/make-public', [Backend\InboxController::class, 'makePublic'])->name('admin.inbox.make-public');
+    Route::post('/conversation/{id}/make-private', [Backend\InboxController::class, 'makePrivate'])->name('admin.inbox.make-private');
     Route::post('/conversation/{id}/follow-up', [Backend\InboxController::class, 'setFollowUp'])->name('admin.inbox.follow-up');
     Route::post('/compose', [Backend\InboxController::class, 'compose'])->name('admin.inbox.compose');
     Route::post('/bulk', [Backend\InboxController::class, 'bulk'])->name('admin.inbox.bulk');

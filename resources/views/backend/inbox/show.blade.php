@@ -40,12 +40,39 @@
             @endif
         </form>
 
+        @if($conversation->private_to_user_id === auth()->id())
+            <form action="{{ route('admin.inbox.make-public', $conversation->id) }}" method="POST" style="display:inline;">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-default"
+                        onclick="return confirm('Gjøre denne samtalen offentlig? Alle admins vil kunne se den etterpå.');"
+                        title="Gjør offentlig — alle admins ser den etterpå">
+                    <i class="fa fa-users"></i> Del med teamet
+                </button>
+            </form>
+        @elseif(!$conversation->private_to_user_id)
+            <form action="{{ route('admin.inbox.make-private', $conversation->id) }}" method="POST" style="display:inline;">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-default"
+                        onclick="return confirm('Gjøre denne samtalen privat? Bare du vil kunne se den etterpå.');"
+                        title="Gjør privat — kun du ser den etterpå">
+                    <i class="fa fa-lock"></i> Gjør privat
+                </button>
+            </form>
+        @endif
+
         <form action="{{ route('admin.inbox.spam', $conversation->id) }}" method="POST" style="display:inline;">
             @csrf
             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Markere som spam?')"><i class="fa fa-ban"></i></button>
         </form>
     </div>
 </div>
+
+@if($conversation->private_to_user_id)
+    <div style="background:#fef3c7; border-left:3px solid #f59e0b; color:#92400e; padding:8px 14px; margin: 0 15px 10px; border-radius:4px; font-size:12px;">
+        <i class="fa fa-lock"></i>
+        <strong>Privat samtale</strong> — bare {{ $conversation->privateToUser?->first_name ?? 'eieren' }} (og evt. tildelt redaktør) ser denne. Klikk "Del med teamet" for å gjøre den offentlig.
+    </div>
+@endif
 
 <div class="col-md-12">
     @if(session('message'))

@@ -249,6 +249,65 @@ class InboxService
         $conversation->update($updateData);
     }
 
+    /**
+     * Gjør en privat samtale offentlig. Kun eieren kan gjøre dette.
+     * Etter at den er offentlig, ser alle admins den, og inbox-feltet
+     * resettes til post@forfatterskolen.no slik at den havner i den
+     * felles inboxen visuelt.
+     */
+    public function makePublic(int $conversationId, int $userId): bool
+    {
+        $conversation = InboxConversation::findOrFail($conversationId);
+
+        // Sikkerhet: kun eieren av en privat samtale kan gjøre den offentlig
+        if (!$conversation->private_to_user_id) {
+            // Allerede offentlig — ingen endring
+            return true;
+        }
+
+        if ($conversation->private_to_user_id !== $userId) {
+            // Forsøker å gjøre noen andres private samtale offentlig — nektes
+            return false;
+        }
+
+        $conversation->update([
+            'private_to_user_id' => null,
+            'inbox' => 'post@forfatterskolen.no',
+        ]);
+
+        Log::info('Inbox: privat samtale gjort offentlig', [
+            'conversation_id' => $conversationId,
+            'by_user_id' => $userId,
+        ]);
+
+        return true;
+    }
+
+    /**
+     * Gjør en offentlig samtale privat for en bestemt admin-bruker.
+     * Bare innloggede admins kan gjøre dette, og kun til seg selv.
+     */
+    public function makePrivate(int $conversationId, int $userId): bool
+    {
+        $conversation = InboxConversation::findOrFail($conversationId);
+
+        // Hvis allerede privat for noen, nekt (med mindre det er samme user)
+        if ($conversation->private_to_user_id && $conversation->private_to_user_id !== $userId) {
+            return false;
+        }
+
+        $conversation->update([
+            'private_to_user_id' => $userId,
+        ]);
+
+        Log::info('Inbox: samtale gjort privat', [
+            'conversation_id' => $conversationId,
+            'private_to_user_id' => $userId,
+        ]);
+
+        return true;
+    }
+
     public function toggleStar(int $conversationId): void
     {
         $conversation = InboxConversation::findOrFail($conversationId);

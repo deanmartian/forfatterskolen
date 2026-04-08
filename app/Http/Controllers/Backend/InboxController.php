@@ -243,6 +243,34 @@ class InboxController extends Controller
     }
 
     /**
+     * Gjør en privat samtale offentlig. Kun eieren kan utføre dette.
+     */
+    public function makePublic(int $id)
+    {
+        $success = $this->inboxService->makePublic($id, auth()->id());
+
+        return redirect()->route('admin.inbox.show', $id)
+            ->with('alert_type', $success ? 'success' : 'error')
+            ->with('message', $success
+                ? 'Samtalen er nå offentlig og synlig for alle admins'
+                : 'Du kan ikke gjøre en annens private samtale offentlig');
+    }
+
+    /**
+     * Gjør en offentlig samtale privat for innlogget admin.
+     */
+    public function makePrivate(int $id)
+    {
+        $success = $this->inboxService->makePrivate($id, auth()->id());
+
+        return redirect()->route('admin.inbox.show', $id)
+            ->with('alert_type', $success ? 'success' : 'error')
+            ->with('message', $success
+                ? 'Samtalen er nå privat — kun du ser den'
+                : 'Samtalen er allerede privat for en annen admin');
+    }
+
+    /**
      * Utfør en AI-foreslått handling som er lagret i ai_tool_actions.
      * Validerer at handlingen tilhører samtalen før den utføres.
      */
