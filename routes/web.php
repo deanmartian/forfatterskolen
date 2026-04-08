@@ -2286,6 +2286,9 @@ Route::domain($admin)->group(function () {
         Route::post('/{id}/toggle', [Backend\AiKnowledgeController::class, 'toggle'])->name('admin.ai-knowledge.toggle');
     });
 
+    // AI-handlinger audit-logg (oversikt over foreslåtte, utførte, feilede handlinger)
+    Route::get('ai-actions', [Backend\AiToolActionController::class, 'index'])->name('admin.ai-actions.index');
+
     // Inbox routes
     require __DIR__.'/ad_os_routes.php';
 });

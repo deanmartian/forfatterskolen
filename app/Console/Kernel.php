@@ -47,6 +47,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('webinar:download-recordings')->hourly();
         $schedule->command('community:sync-groups')->everyFifteenMinutes();
         $schedule->command('community:daily-news')->dailyAt('07:30');
+        $schedule->command('ai-tools:expire-old')->dailyAt('03:00');
     }
 
     /**

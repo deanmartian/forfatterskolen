@@ -157,6 +157,21 @@
             </a>
         </li>
         <li>
+            <a href="{{ route('admin.ai-actions.index') }}"
+               class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.ai-actions') ? 'active' : '' }}">
+                <span class="ed-nav-item__icon"><i class="fa fa-history"></i></span>
+                <span class="ed-nav-item__label">
+                    AI-handlinger
+                    @php
+                        try { $pendingAiActions = \App\Models\AiToolAction::where('status', 'suggested')->count(); } catch (\Exception $e) { $pendingAiActions = 0; }
+                    @endphp
+                    @if($pendingAiActions > 0)
+                        <span class="badge" style="background: #3b82f6; color: #fff; border-radius: 10px; font-size: 10px; padding: 2px 6px; margin-left: 4px;">{{ $pendingAiActions }}</span>
+                    @endif
+                </span>
+            </a>
+        </li>
+        <li>
             <a href="{{ route('admin.ads.dashboard') }}"
                class="ed-nav-item {{ str_starts_with(Route::currentRouteName() ?? '', 'admin.ads') ? 'active' : '' }}">
                 <span class="ed-nav-item__icon"><i class="fa fa-bullhorn"></i></span>
