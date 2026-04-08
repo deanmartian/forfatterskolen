@@ -22,7 +22,14 @@ class AiKnownIssueSeeder extends Seeder
             [
                 'title' => 'Vipps-betalingsbug ble fikset 08.04.2026 — eleven kan trygt prøve på nytt',
                 'description' => 'Tidligere ble noen Vipps-bestillinger droppet pga en operator-presedens-bug i fallback-håndteringen. Dette ble fikset 08.04.2026. Hvis en elev rapporterer at de fikk en feil eller ble sendt tilbake til utgangspunktet ved Vipps-betaling før 08.04.2026, så er det dette som skjedde — be dem prøve på nytt nå.',
-                'workaround' => 'Be eleven prøve Vipps-betalingen på nytt — bugen er fikset. Hvis det FORTSATT ikke fungerer, kan de prøve hard refresh (Cmd+Shift+R), bytte nettleser, eller velge Svea (faktura/avbetaling) som alternativ betalingsmetode i checkout.',
+                'workaround' => 'Be eleven prøve Vipps-betalingen på nytt — bugen er fikset. Hvis det FORTSATT ikke fungerer, kan de prøve hard refresh (Cmd+Shift+R), bytte nettleser, ELLER bruke "Bestill nå, betal senere" i checkout (kurset aktiveres umiddelbart, betalingen ordnes inne i portalen senere), eller velge Svea (faktura/avbetaling) som alternativ betalingsmetode.',
+                'severity' => 'info',
+                'category' => 'betaling',
+            ],
+            [
+                'title' => 'Bestill nå, betal senere — kurs aktiveres umiddelbart',
+                'description' => 'I checkout finnes det en valgmulighet "Bestill nå, betal senere". Når eleven velger dette, blir kurset AKTIVERT med en gang slik at de kan starte å lære, og resten av betalingen ordnes inne i portalen senere (under Mine kjøp). Dette er en perfekt løsning hvis Vipps krøller seg, hvis eleven trenger litt tid på å ordne betaling, eller hvis kurset starter snart og de ikke vil miste plass.',
+                'workaround' => 'Foreslå "Bestill nå, betal senere" som alternativ når en elev har betalings-trøbbel — særlig hvis kursoppstarten er nært forestående. Forklar at de aktiverer kurset umiddelbart, og kan ordne betalingen inne i sin egen portal under Mine kjøp etterpå.',
                 'severity' => 'info',
                 'category' => 'betaling',
             ],

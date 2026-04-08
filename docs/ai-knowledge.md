@@ -50,6 +50,7 @@ PWA-installasjon (legg-til-på-hjemskjerm) fungerer på alle tre subdomenene. Hv
 - Avbetaling 3 eller 6 måneder via Svea.
 - Kvitteringer/fakturaer ligger i elevens kontoside under "Mine kjøp".
 - Hvis Vipps henger eller feiler, kan eleven prøve på nytt eller velge en annen betalingsmetode.
+- **"Bestill nå, betal senere"**: Eleven kan velge dette i checkout. Da blir kurset AKTIVERT umiddelbart slik at de kan starte å lære med en gang, og de fullfører resten av betalingen inne i portalen senere (under Mine kjøp). Perfekt løsning hvis Vipps krøller seg eller eleven trenger litt tid på å ordne betalingen — de mister ikke kursplassen eller får forsinket oppstart. Foreslå alltid dette som en god mulighet hvis en elev har betalings-trøbbel og kurset starter snart.
 
 ## Kurs og deltakelse
 
