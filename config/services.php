@@ -66,8 +66,11 @@ return [
     'big_marker' => [
         'api_key' => env('BIGMARKER_API_KEY'),
         'channel_id' => env('BIGMARKER_CHANNEL_ID'),
-        'register_link' => env('BIGMARKER_REGISTER_LINK'),
-        'show_conference_link' => env('BIGMARKER_SHOW_CONFERENCE_LINK'),
+        // Hardkodede fallback-URL-er — disse env-variablene forsvant fra .env
+        // i april 2026 og førte til at webinar-cronen feilet stille på 142
+        // registreringer. Fallback hindrer at det skjer igjen.
+        'register_link' => env('BIGMARKER_REGISTER_LINK', 'https://www.bigmarker.com/api/v1/conferences/register'),
+        'show_conference_link' => env('BIGMARKER_SHOW_CONFERENCE_LINK', 'https://www.bigmarker.com/api/v1/conferences/'),
         'base_url' => 'https://www.bigmarker.com/api/v1',
     ],
 
