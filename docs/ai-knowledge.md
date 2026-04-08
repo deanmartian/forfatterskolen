@@ -96,22 +96,32 @@ PWA-installasjon (legg-til-på-hjemskjerm) fungerer på alle tre subdomenene. Hv
 ## Tekniske workarounds (gi disse instruksjonene når relevant)
 
 ### ⭐ FØRSTE TILTAK FOR ALLE CACHE/COOKIE/LOGIN-PROBLEMER: "Tøm cookies og cache"-knappen
-**Vi har en synlig rød stripe øverst på hver side** (både forfatterskolen.no, editor.forfatterskolen.no og admin.forfatterskolen.no) som heter "Tøm cookies og cache". Den ble lansert 08.04.2026 etter at flere elever (særlig Bridgitt og redaktører som Live, Eiliv) sto fast i gammel cache.
+**Vi har en synlig rød stripe øverst på hver side** av BÅDE forfatterskolen.no OG editor.forfatterskolen.no (også på selve login-sidene) med en hvit knapp som heter "Tøm cookies og cache". Den ble lansert 08.04.2026 etter at flere brukere — både elever (Bridgitt, Janine) og redaktører (Live, Eiliv) — sto fast i gammel cache.
 
-**Når eleven får problemer med innlogging, "henger" på en side, får uventede feilmeldinger, eller noe ser rart ut — be dem ALLTID gjøre dette først:**
+**GJELDER ALLE ROLLER**: Banneret vises både for elever og redaktører, og fungerer helt likt. Forskjellen er bare hvilken URL du sender dem til:
 
-> Gå til forfatterskolen.no (eller editor.forfatterskolen.no for redaktører). Helt øverst på siden ser du en rød stripe med en hvit knapp som heter "Tøm cookies og cache". Klikk på den knappen — det rydder ALT som kan være krøllete i nettleseren din for vår side, og du blir sendt automatisk tilbake til forsiden hvor du kan logge inn på nytt.
+- **For ELEVER**: forfatterskolen.no
+- **For REDAKTØRER**: editor.forfatterskolen.no
+- **For ADMIN**: admin.forfatterskolen.no (banneret vises på login-siden)
 
-Knappen sletter:
+**Når brukeren får problemer med innlogging, "henger" på en side, får uventede feilmeldinger, eller noe ser rart ut — be dem ALLTID gjøre dette først:**
+
+For elever:
+> Gå til forfatterskolen.no. Helt øverst på siden ser du en rød stripe med en hvit knapp som heter "Tøm cookies og cache". Klikk på den knappen — det rydder ALT som kan være krøllete i nettleseren din for vår side, og du blir sendt automatisk tilbake til forsiden hvor du kan logge inn på nytt.
+
+For redaktører:
+> Gå til editor.forfatterskolen.no. Helt øverst på siden — også på login-siden hvis du ikke kommer inn — ser du en rød stripe med en hvit knapp som heter "Tøm cookies og cache". Klikk på den, så rydder det all gammel data for redaktørportalen, og du kan logge inn på nytt.
+
+Knappen sletter (samme på alle subdomener):
 - Cookies for forfatterskolen.no (og subdomener)
 - localStorage og sessionStorage
 - Service workers
 - Cache Storage (gamle filer som er lagret offline)
-- Loggninger ut brukeren (de må logge inn på nytt etterpå)
+- Logger ut brukeren (de må logge inn på nytt etterpå)
 
-**VIKTIG**: Knappen rører IKKE noe på andre nettsider — kun forfatterskolen-relatert data. Brukerens Gmail, Facebook, banken etc. er helt uberørt. Dette er garantert av nettleseren selv (Same-Origin Policy). Du kan trygt fortelle eleven at det er helt sikkert.
+**VIKTIG**: Knappen rører IKKE noe på andre nettsider — kun forfatterskolen-relatert data. Brukerens Gmail, Facebook, banken etc. er helt uberørt. Dette er garantert av nettleseren selv (Same-Origin Policy). Du kan trygt fortelle dem at det er helt sikkert.
 
-Hvis eleven har lukket banneret tidligere (× på høyre side), er den skjult i 24 timer. Be dem da bruke et privat/inkognito-vindu i stedet, eller åpne nettleser-innstillingene manuelt (se nedenfor).
+Hvis brukeren har lukket banneret tidligere (× på høyre side), er den skjult i 24 timer. Be dem da bruke et privat/inkognito-vindu i stedet, eller åpne nettleser-innstillingene manuelt (se nedenfor).
 
 ### Hard refresh / tøm cache (manuell — kun hvis banner-knappen ikke er synlig)
 Hvis eleven ser en side som virker rar, gammel, eller "grå ut", be dem først om hard refresh:
