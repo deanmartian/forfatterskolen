@@ -179,6 +179,24 @@ class PollInboxEmails extends Command
                             'customer_name' => $user->full_name,
                         ]);
                     }
+
+                    // Auto-tildeling basert på nøkkelord-regler i config/inbox.php.
+                    // Kjøres KUN for nye, offentlige samtaler (ikke private inboxer
+                    // som allerede har assigned_to satt til eieren).
+                    if (!$conversation->assigned_to && config('inbox.auto_assign.enabled', false)) {
+                        $assignedToUserId = $this->autoAssignUser($subject, $body, $fromEmail);
+                        if ($assignedToUserId) {
+                            $conversation->update(['assigned_to' => $assignedToUserId]);
+                            // Logg tildelingen som en InboxAssignment-rad så den
+                            // dukker opp i timeline-visningen.
+                            \App\Models\Inbox\InboxAssignment::create([
+                                'conversation_id' => $conversation->id,
+                                'assigned_to' => $assignedToUserId,
+                                'assigned_by' => null, // system
+                                'note' => 'Auto-tildelt basert på innhold',
+                            ]);
+                        }
+                    }
                 } else {
                     // Reopen if closed
                     if ($conversation->status === 'closed') {
@@ -271,6 +289,54 @@ class PollInboxEmails extends Command
         }
 
         return $cache[strtolower(trim($email))] ?? null;
+    }
+
+    /**
+     * Auto-tildel en ny offentlig samtale basert på nøkkelord-regler
+     * i config/inbox.php. Returnerer user_id som samtalen skal tildeles,
+     * eller null hvis ingen regel matcher og fallback ikke skal brukes.
+     *
+     * Logikk:
+     *   1. Sjekk hver regel i rekkefølge — første match vinner
+     *   2. Hvis ingen match: bruk default_user_id hvis ingen i team_user_ids
+     *      har sendt svar til denne kunden tidligere
+     *   3. Hvis team-medlem har hatt kontakt → returner null (la stå utildelt)
+     */
+    private function autoAssignUser(string $subject, string $body, string $customerEmail): ?int
+    {
+        $config = config('inbox.auto_assign');
+
+        // Bygg søke-tekst (subject + body plain text, lowercase)
+        $searchText = strtolower($subject . "\n" . strip_tags($body));
+
+        // 1. Nøkkelord-regler — første match vinner
+        foreach ($config['rules'] ?? [] as $rule) {
+            foreach ($rule['keywords'] ?? [] as $keyword) {
+                if (str_contains($searchText, strtolower($keyword))) {
+                    return (int) $rule['assign_to'];
+                }
+            }
+        }
+
+        // 2. Ingen regel matchet — sjekk om noen i teamet har hatt kontakt før
+        $teamIds = $config['team_user_ids'] ?? [];
+        if (empty($teamIds)) {
+            return $config['default_user_id'] ?? null;
+        }
+
+        $hasPriorContact = InboxConversation::where('customer_email', $customerEmail)
+            ->whereHas('messages', function ($q) use ($teamIds) {
+                $q->where('direction', 'outbound')
+                  ->whereIn('sent_by_user_id', $teamIds);
+            })
+            ->exists();
+
+        // 3. Bare tildel til default hvis kunden er "ny" (ingen team-kontakt)
+        if (!$hasPriorContact) {
+            return $config['default_user_id'] ?? null;
+        }
+
+        return null; // Lar samtalen stå utildelt — Sven kan velge selv
     }
 
     /**

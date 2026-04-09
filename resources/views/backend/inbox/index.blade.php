@@ -56,7 +56,10 @@
         {{-- Sidebar --}}
         <div class="col-md-2" style="padding-right: 0;">
             <div class="inbox-sidebar">
-                <a href="{{ route('admin.inbox.index', ['status' => 'open']) }}" class="nav-item {{ ($filters['status'] ?? '') === 'open' || empty($filters['status']) ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
+                <a href="{{ route('admin.inbox.index', ['assigned_to' => auth()->id()]) }}" class="nav-item {{ ($filters['assigned_to'] ?? '') == auth()->id() ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit; background: {{ ($filters['assigned_to'] ?? '') == auth()->id() ? '' : '#fdf5f6' }}; border-left: 3px solid #862736; font-weight: 600;">
+                    <i class="fa fa-user"></i> Mine <span class="badge pull-right" style="background:#862736;">{{ \App\Models\Inbox\InboxConversation::where('assigned_to', auth()->id())->whereIn('status', ['open', 'pending'])->count() }}</span>
+                </a>
+                <a href="{{ route('admin.inbox.index', ['status' => 'open']) }}" class="nav-item {{ ($filters['status'] ?? '') === 'open' || (empty($filters['status']) && empty($filters['assigned_to'])) ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
                     <i class="fa fa-inbox"></i> Åpne <span class="badge pull-right">{{ $stats['open'] }}</span>
                 </a>
                 <a href="{{ route('admin.inbox.index', ['status' => 'pending']) }}" class="nav-item {{ ($filters['status'] ?? '') === 'pending' ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
@@ -64,9 +67,6 @@
                 </a>
                 <a href="{{ route('admin.inbox.index', ['assigned_to' => 'unassigned']) }}" class="nav-item {{ ($filters['assigned_to'] ?? '') === 'unassigned' ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
                     <i class="fa fa-user-times"></i> Utildelt <span class="badge pull-right">{{ $stats['unassigned'] }}</span>
-                </a>
-                <a href="{{ route('admin.inbox.index', ['assigned_to' => auth()->id()]) }}" class="nav-item {{ ($filters['assigned_to'] ?? '') == auth()->id() ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
-                    <i class="fa fa-user"></i> Mine <span class="badge pull-right">{{ \App\Models\Inbox\InboxConversation::where('assigned_to', auth()->id())->whereIn('status', ['open', 'pending'])->count() }}</span>
                 </a>
                 <a href="{{ route('admin.inbox.index', ['mentions' => 1]) }}" class="nav-item {{ !empty($filters['mentions']) ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit;">
                     <i class="fa fa-at"></i> Nevnt meg <span class="badge pull-right">{{ $stats['mentions'] }}</span>

@@ -51,4 +51,57 @@ return [
 
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Auto-assignment-regler for nye samtaler
+    |--------------------------------------------------------------------------
+    |
+    | Når polleren oppretter en NY offentlig samtale (ikke privat), sjekker
+    | den subject + body mot nøkkelord-regler. Første regel som matcher
+    | vinner. Hvis ingen regel matcher, tildeles samtalen til
+    | 'default_user_id' — MEN bare hvis ingen andre i 'team_user_ids' har
+    | hatt kontakt med denne e-postadressen tidligere.
+    |
+    | Nøkkelord er case-insensitive og matcher delstrenger
+    | (f.eks. "redaktør" matcher også "redaktørsvar", "hovedredaktør", osv.).
+    |
+    | Endre `default_user_id` og `team_user_ids` til å matche deres team.
+    |
+    */
+    'auto_assign' => [
+
+        'enabled' => true,
+
+        // Fallback-admin hvis ingen regel matcher og kunden er "ny" (ingen
+        // andre i teamet har svart dem før).
+        'default_user_id' => 1376, // Sven I
+
+        // Hvilke teammedlemmer som teller som "hatt kontakt med kunden"
+        // i fallback-logikken. Hvis en av disse har sendt et svar til
+        // kunden før, auto-tildeles ikke nye samtaler til default.
+        'team_user_ids' => [
+            5749, // Annina
+            1064, // Kristine
+            6058, // Reservekontoen
+            1376, // Sven I
+            5003, // Taran
+        ],
+
+        // Regler: første match vinner. Nøkkelord sjekkes mot
+        // subject + body (lowercase, strip_tags).
+        'rules' => [
+            [
+                'name' => 'Antologi og coaching → Annina',
+                'keywords' => ['antologi', 'antologier', 'coaching', 'coach'],
+                'assign_to' => 5749, // Annina
+            ],
+            [
+                'name' => 'Redaktørspørsmål → Kristine',
+                'keywords' => ['redaktør', 'redaktor', 'redaktører', 'editor'],
+                'assign_to' => 1064, // Kristine
+            ],
+        ],
+
+    ],
+
 ];

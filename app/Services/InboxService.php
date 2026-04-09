@@ -331,13 +331,17 @@ class InboxService
     {
         $conversation = InboxConversation::with('messages')->findOrFail($conversationId);
 
-        // Build a HelpwiseConversation-compatible object for the AI service
+        // Build a HelpwiseConversation-compatible object for the AI service.
+        // Vi inkluderer private_to_user_id slik at AI-tjenesten kan bruke
+        // eierens signatur når draften genereres fra polleren (der auth()
+        // er null).
         $helpwiseConv = new \App\HelpwiseConversation([
             'customer_email' => $conversation->customer_email,
             'customer_name' => $conversation->customer_name,
             'user_id' => $conversation->user_id,
             'subject' => $conversation->subject,
             'inbox' => $conversation->inbox,
+            'private_to_user_id' => $conversation->private_to_user_id,
         ]);
         $helpwiseConv->id = $conversation->id;
 

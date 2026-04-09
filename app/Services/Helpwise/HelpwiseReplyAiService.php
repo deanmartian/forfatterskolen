@@ -16,6 +16,14 @@ use Illuminate\Support\Facades\Log;
 class HelpwiseReplyAiService
 {
     /**
+     * User-ID for eieren av en privat inbox — settes ved start av
+     * generateDraftReply() slik at getSignatureBlock() kan bruke
+     * denne brukerens navn/signatur selv når auth()->user() er null
+     * (f.eks. når vi genererer drafts fra IMAP-polleren).
+     */
+    private ?int $currentPrivateUserId = null;
+
+    /**
      * Generate an AI draft reply for a customer message.
      * Returns the draft text in Norwegian, never auto-sends.
      */
@@ -28,6 +36,13 @@ class HelpwiseReplyAiService
      */
     public function generateDraftReply(HelpwiseConversation $conversation, ?HelpwiseMessage $latestMessage = null, ?string $fullEmailBody = null): ?array
     {
+        // Hvis samtalen har en privat eier (private_to_user_id), bruk den
+        // brukerens signatur — ellers faller vi tilbake på auth()->user()
+        // eller generisk firmasignatur.
+        $this->currentPrivateUserId = isset($conversation->private_to_user_id)
+            ? (int) $conversation->private_to_user_id
+            : null;
+
         $studentContext = $this->getStudentContext($conversation);
         $messageHistory = $this->getMessageHistory($conversation);
         $customerMessage = $latestMessage?->body_plain ?? $latestMessage?->body ?? '';
@@ -591,24 +606,45 @@ PROMPT;
 
     private function getSenderName(): ?string
     {
-        $user = auth()->user();
+        $user = $this->resolveSignatureUser();
         return $user ? $user->full_name : null;
+    }
+
+    /**
+     * Finn hvilken bruker vi skal bruke for signatur/avsender-navn.
+     *
+     * Prioritet:
+     *  1. Eier av privat inbox (hvis samtalen har private_to_user_id) —
+     *     dette dekker webhook/poll-kontekst der auth()->user() er null.
+     *  2. Innlogget admin (når AI-draft trigges manuelt fra UI).
+     *  3. null (ingen match) — getSignatureBlock() faller da tilbake på
+     *     generisk firmasignatur.
+     */
+    private function resolveSignatureUser(): ?User
+    {
+        if ($this->currentPrivateUserId) {
+            $owner = User::find($this->currentPrivateUserId);
+            if ($owner) return $owner;
+        }
+        return auth()->user();
     }
 
     /**
      * Build the signature block for the AI prompt.
      *
      * Hierarki:
-     *  1. Hvis innlogget bruker har lagret en personlig inbox_signature →
+     *  1. Hvis samtalen er en privat inbox → bruk eierens signatur (selv om
+     *     vi er i webhook/poll-kontekst uten auth).
+     *  2. Hvis innlogget bruker har lagret en personlig inbox_signature →
      *     bruk den direkte.
-     *  2. Hvis innlogget bruker ikke har lagret signatur → bruk standard
+     *  3. Hvis innlogget bruker ikke har lagret signatur → bruk standard
      *     med deres fulle navn.
-     *  3. Hvis ingen er innlogget (webhook) → bruk standard uten navn så
-     *     vi ikke får "Forfatterskolen" to ganger på rad.
+     *  4. Hvis ingen er innlogget og ingen privat eier → bruk standard
+     *     uten personnavn så vi ikke får "Forfatterskolen" to ganger.
      */
     private function getSignatureBlock(): string
     {
-        $user = auth()->user();
+        $user = $this->resolveSignatureUser();
         if ($user) {
             // Bruker enten brukerens lagrede inbox_signature eller default
             // med fullt navn. Indenter alle linjer med 2 mellomrom så det

@@ -55,7 +55,11 @@ class InboxController extends Controller
 
         if ($sendAndClose && !$isDraft) {
             $this->inboxService->updateStatus($id, 'closed');
-            return redirect()->route('admin.inbox.index')
+            // Gå tilbake til MIN arbeidsliste etter lukk, ikke default "Åpne"-
+            // visning som viser alle åpne samtaler (inkludert andre admins
+            // sine). Dette unngår at admin ved en feiltakelse svarer på
+            // samtaler som tilhører Annina/Kristine/Taran.
+            return redirect()->route('admin.inbox.index', ['assigned_to' => auth()->id()])
                 ->with('alert_type', 'success')
                 ->with('message', 'Svar sendt og samtale lukket!');
         }
