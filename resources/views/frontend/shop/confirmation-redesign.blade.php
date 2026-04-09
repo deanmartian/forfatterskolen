@@ -720,6 +720,50 @@
 @stop
 
 @section('scripts')
+@if(config('services.tracking.enabled'))
+<script>
+    // ── Meta Pixel + Google Ads Purchase-tracking ──
+    // Fyres på bekreftelses-siden etter vellykket kurskjøp. Uten
+    // denne kan Meta ikke optimalisere kampanjer mot Purchase-
+    // konvertering (som er det viktigste signalet for ROAS).
+    (function() {
+        var orderId = '{{ $order->id }}';
+        var orderKey = 'fs_purchase_tracked_' + orderId;
+
+        // Unngå dobbel-rapportering hvis brukeren refresher siden
+        if (sessionStorage.getItem(orderKey)) return;
+        sessionStorage.setItem(orderKey, '1');
+
+        var value = {{ (int) $totalPrice }};
+        var courseTitle = @json($course->title);
+        var packageName = @json(($package->variation ?? 'Standard'));
+
+        if (typeof fbq !== 'undefined') {
+            fbq('track', 'Purchase', {
+                value: value,
+                currency: 'NOK',
+                content_name: courseTitle,
+                content_category: 'course',
+                content_ids: ['{{ $package->id }}'],
+                content_type: 'product',
+                num_items: 1
+            });
+        }
+
+        @if(config('services.google_ads.conversion_purchase'))
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'conversion', {
+                'send_to': '{{ config('services.google_ads.conversion_purchase') }}',
+                'value': value,
+                'currency': 'NOK',
+                'transaction_id': orderId
+            });
+        }
+        @endif
+    })();
+</script>
+@endif
+
 <script>
     // ── Confetti ──
     @if($showConfetti)

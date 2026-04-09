@@ -213,3 +213,36 @@
     </div>
 </div>
 @stop
+
+@section('scripts')
+@if(config('services.tracking.enabled'))
+<script>
+    // Fallback Purchase-tracking på thankyou-siden.
+    // Brukes når betaling kommer via Svea/Vipps-redirect og
+    // brukeren lander her uten å gå via confirmation-siden.
+    // confirmation-redesign.blade.php har fullstendig tracking
+    // med verdi og transaction_id — denne er kun en backup.
+    (function() {
+        var tracked = sessionStorage.getItem('fs_thankyou_tracked');
+        if (tracked) return;
+        sessionStorage.setItem('fs_thankyou_tracked', '1');
+
+        if (typeof fbq !== 'undefined') {
+            fbq('track', 'Purchase', {
+                currency: 'NOK',
+                content_category: 'course'
+            });
+        }
+
+        @if(config('services.google_ads.conversion_purchase'))
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'conversion', {
+                'send_to': '{{ config('services.google_ads.conversion_purchase') }}',
+                'currency': 'NOK'
+            });
+        }
+        @endif
+    })();
+</script>
+@endif
+@stop
