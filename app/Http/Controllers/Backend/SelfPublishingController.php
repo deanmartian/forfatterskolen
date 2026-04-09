@@ -44,7 +44,14 @@ class SelfPublishingController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $this->saveData($request);
+        try {
+            $this->saveData($request);
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            // Dropbox API-feil — vis en tydelig melding til admin istedenfor 500.
+            return $this->dropboxErrorResponse($e);
+        } catch (\League\Flysystem\UnableToWriteFile $e) {
+            return $this->dropboxErrorResponse($e);
+        }
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Self publishing created successfully.'),
@@ -54,11 +61,38 @@ class SelfPublishingController extends Controller
 
     public function update($id, Request $request): RedirectResponse
     {
-        $this->saveData($request, $id);
+        try {
+            $this->saveData($request, $id);
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            return $this->dropboxErrorResponse($e);
+        } catch (\League\Flysystem\UnableToWriteFile $e) {
+            return $this->dropboxErrorResponse($e);
+        }
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Self publishing updated successfully.'),
             'alert_type' => 'success',
+        ]);
+    }
+
+    /**
+     * Bygg en vennlig feilmelding når Dropbox feiler, istedenfor å krasje
+     * hele siden med 500. Logger detaljert feilinfo for debugging.
+     */
+    private function dropboxErrorResponse(\Throwable $e): RedirectResponse
+    {
+        \Log::error('Dropbox-feil i SelfPublishingController: ' . $e->getMessage(), [
+            'exception' => get_class($e),
+            'trace' => substr($e->getTraceAsString(), 0, 2000),
+        ]);
+
+        $message = 'Opplastingen feilet: Dropbox-tilkoblingen svarer ikke. '
+            . 'Dette skyldes som regel at access-tokenet er utløpt. '
+            . 'Kjør "php artisan dropbox:refresh-token" på serveren, eller kontakt Sven.';
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag($message),
+            'alert_type' => 'danger',
         ]);
     }
 
