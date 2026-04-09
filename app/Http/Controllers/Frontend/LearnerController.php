@@ -1534,7 +1534,13 @@ class LearnerController extends Controller
 
             // Admin notification
             if (($assignment->course && $assignment->course->type === 'Single') || $assignment->parent === 'users') {
-                $message = Auth::user()->full_name.' leverte manus for oppgave '.$assignment->title;
+                // Inkluder elev-ID + admin-lenke så den som leser post@-innboksen
+                // (Sven / team) kan finne eleven direkte i admin.
+                $learnerId = Auth::user()->id;
+                $learnerLink = route('admin.learner.show', $learnerId);
+                $message = Auth::user()->full_name
+                    . ' (elev-ID <a href="' . $learnerLink . '">#' . $learnerId . '</a>)'
+                    . ' leverte manus for oppgave ' . $assignment->title;
                 $toMail = 'post@forfatterskolen.no'; // post@forfatterskolen.no
 
                 $email_data['email_message'] = $message;
@@ -1548,6 +1554,11 @@ class LearnerController extends Controller
                 $to = $editor->email;
                 $redirect_link = route('editor.dashboard');
 
+                // Inkluder elev-ID + admin-lenke så redaktøren kan finne riktig
+                // elev selv når det ikke er en av hennes "faste".
+                $learnerId = Auth::user()->id;
+                $learnerLink = route('admin.learner.show', $learnerId);
+
                 $email_content = AdminHelpers::formatEmailContent(
                     $emailTemplate->email_content ?? '',
                     $to,
@@ -1555,7 +1566,7 @@ class LearnerController extends Controller
                     $redirect_link,
                     [
                         ':editor' => $editor->first_name,
-                        ':learner' => Auth::user()->full_name,
+                        ':learner' => Auth::user()->full_name . ' (elev-ID <a href="' . $learnerLink . '">#' . $learnerId . '</a>)',
                         ':assignment' => $assignment->title,
                     ]
                 );
@@ -1563,7 +1574,7 @@ class LearnerController extends Controller
                 $email_content = str_replace(':date', now()->format('d.m.Y'), $email_content);
 
                 $emailData = [
-                    'email_subject' => $emailTemplate->subject,
+                    'email_subject' => $emailTemplate->subject . ' — ' . Auth::user()->full_name . ' (#' . $learnerId . ')',
                     'email_message' => $email_content,
                     'from_name' => '',
                     'from_email' => 'post@forfatterskolen.no',
@@ -3873,14 +3884,16 @@ Forfatterskolen';
                     Log::create([
                         'activity' => '<strong>'.Auth::user()->full_name.'</strong> leverte manus for kurs '.$courseTaken->package->course->title,
                     ]);
-                    // Admin notification
-                    $message = Auth::user()->full_name.' leverte manus for kurs '.$courseTaken->package->course->title;
-                    // mail('post@forfatterskolen.no', 'New manuscript submitted for course', $message);
-                    /*AdminHelpers::send_email('New manuscript submitted for course',
-                        'post@forfatterskolen.no','post@forfatterskolen.no', $message);*/
+                    // Admin notification — inkluder elev-ID + admin-lenke så den
+                    // som leser post@-innboksen kan finne eleven direkte.
+                    $learnerId = Auth::user()->id;
+                    $learnerLink = route('admin.learner.show', $learnerId);
+                    $message = Auth::user()->full_name
+                        . ' (elev-ID <a href="' . $learnerLink . '">#' . $learnerId . '</a>)'
+                        . ' leverte manus for kurs ' . $courseTaken->package->course->title;
                     $to = 'post@forfatterskolen.no'; //
                     $emailData = [
-                        'email_subject' => 'New manuscript submitted for course',
+                        'email_subject' => 'New manuscript submitted for course — ' . Auth::user()->full_name . ' (#' . $learnerId . ')',
                         'email_message' => $message,
                         'from_name' => '',
                         'from_email' => 'post@forfatterskolen.no',

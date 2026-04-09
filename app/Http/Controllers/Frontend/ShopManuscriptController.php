@@ -723,21 +723,21 @@ class ShopManuscriptController extends Controller
             $shopManuscriptTaken->file = $manuscriptPath;
             $shopManuscriptTaken->words = $word_count;
 
-            // Admin notification
-            $message = Auth::user()->full_name.' leverte manus for manusutvikling '.$shopManuscriptTaken->shop_manuscript->title;
-            $toMail = 'post@forfatterskolen.no'; // post@forfatterskolen.no
-            /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
-                'post@forfatterskolen.no',$toMail, $message);*/
-            $to = 'post@forfatterskolen.no'; //
+            // Admin notification — inkluder elev-ID + admin-lenke.
+            $learnerId = Auth::user()->id;
+            $learnerLink = route('admin.learner.show', $learnerId);
+            $message = Auth::user()->full_name
+                . ' (elev-ID <a href="' . $learnerLink . '">#' . $learnerId . '</a>)'
+                . ' leverte manus for manusutvikling ' . $shopManuscriptTaken->shop_manuscript->title;
+            $to = 'post@forfatterskolen.no';
             $emailData = [
-                'email_subject' => 'New manuscript submitted for shop manuscript',
+                'email_subject' => 'New manuscript submitted for shop manuscript — ' . Auth::user()->full_name . ' (#' . $learnerId . ')',
                 'email_message' => $message,
                 'from_name' => '',
                 'from_email' => 'post@forfatterskolen.no',
                 'attach_file' => null,
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-            // mail($toMail, 'New manuscript submitted for shop manuscript', $message);
         }
 
         if ($request->hasFile('synopsis') && $request->file('synopsis')->isValid()) {
@@ -1012,15 +1012,15 @@ class ShopManuscriptController extends Controller
             Log::create([
                 'activity' => '<strong>'.Auth::user()->full_name.'</strong> leverte manus for manusutvikling  '.$shopManuscriptTaken->shop_manuscript->title,
             ]);
-            // Admin notification
-            $message = Auth::user()->full_name.' leverte manus for manusutvikling '.$shopManuscriptTaken->shop_manuscript->title;
-            $toMail = 'post@forfatterskolen.no'; // post@forfatterskolen.no
-            // mail($toMail, 'New manuscript submitted for shop manuscript', $message);
-            /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
-                'post@forfatterskolen.no', $toMail, $message);*/
-            $to = $toMail; //
+            // Admin notification — inkluder elev-ID + admin-lenke.
+            $learnerId = Auth::user()->id;
+            $learnerLink = route('admin.learner.show', $learnerId);
+            $message = Auth::user()->full_name
+                . ' (elev-ID <a href="' . $learnerLink . '">#' . $learnerId . '</a>)'
+                . ' leverte manus for manusutvikling ' . $shopManuscriptTaken->shop_manuscript->title;
+            $to = 'post@forfatterskolen.no';
             $emailData = [
-                'email_subject' => 'New manuscript submitted for shop manuscript',
+                'email_subject' => 'New manuscript submitted for shop manuscript — ' . Auth::user()->full_name . ' (#' . $learnerId . ')',
                 'email_message' => $message,
                 'from_name' => '',
                 'from_email' => 'post@forfatterskolen.no',
@@ -1194,15 +1194,15 @@ class ShopManuscriptController extends Controller
             Log::create([
                 'activity' => '<strong>'.Auth::user()->full_name.'</strong> leverte manus for manusutvikling  '.$shopManuscriptTaken->shop_manuscript->title,
             ]);
-            // Admin notification
-            $message = Auth::user()->full_name.' leverte manus for manusutvikling '.$shopManuscriptTaken->shop_manuscript->title;
-            // mail('post@forfatterskolen.no', 'New manuscript submitted for shop manuscript', $message);
-            $toMail = 'post@forfatterskolen.no'; // post@forfatterskolen.no
-            /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
-                'post@forfatterskolen.no', $toMail, $message);*/
-            $to = $toMail; //
+            // Admin notification — inkluder elev-ID + admin-lenke.
+            $learnerId = Auth::user()->id;
+            $learnerLink = route('admin.learner.show', $learnerId);
+            $message = Auth::user()->full_name
+                . ' (elev-ID <a href="' . $learnerLink . '">#' . $learnerId . '</a>)'
+                . ' leverte manus for manusutvikling ' . $shopManuscriptTaken->shop_manuscript->title;
+            $to = 'post@forfatterskolen.no';
             $emailData = [
-                'email_subject' => 'New manuscript submitted for shop manuscript',
+                'email_subject' => 'New manuscript submitted for shop manuscript — ' . Auth::user()->full_name . ' (#' . $learnerId . ')',
                 'email_message' => $message,
                 'from_name' => '',
                 'from_email' => 'post@forfatterskolen.no',
