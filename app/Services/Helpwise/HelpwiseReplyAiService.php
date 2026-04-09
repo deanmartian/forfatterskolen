@@ -236,6 +236,7 @@ Skriv et passende svarkutkast. Husk:
 - RABATTKODER: Hvis du ser en rabattkode i samtalen eller sitatene, MÅ du sjekke at den fortsatt er gyldig i "AKTIVE RABATTKODER"-fasitten øverst. Hvis koden IKKE står i fasitten, ikke gjenta den til kunden — si i stedet at "den koden ser dessverre ut til å være utløpt" og foreslå at de tar kontakt for en ny rabatt, eller bare ikke nevn rabatt i det hele tatt. ALDRI lov en rabatt vi ikke vet finnes.
 - Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende, ingen ekstra linjer mellom):
   {$this->getSignatureBlock()}
+- KRITISK: ALDRI bruk et navn fra "TIDLIGERE MELDINGER I SAMTALEN" eller fra noen annen del av konteksten i signaturen. Hvis du ser at en tidligere agent het f.eks. "Amanda" eller "Henning", IGNORER det fullstendig. Bruk KUN signaturen som er gitt rett ovenfor — ingenting annet, ingen alternativer, ingen mimicking av tidligere svar. Hvis signaturen ikke har et personnavn, så IKKE finn opp et eller hent et fra historikken.
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
 - Matcher stilen og tonen fra eksemplene
 PROMPT;
@@ -420,6 +421,13 @@ PROMPT;
             $rawBody = strip_tags($msg->body_plain ?? $msg->body ?? '');
             if ($direction === 'KUNDE') {
                 $rawBody = \App\Helpers\EmailQuoteStripper::strip($rawBody);
+            } else {
+                // Strip signaturen fra utgående AGENT-meldinger så AI-en
+                // ikke kopierer en TIDLIGERE saksbehandlers navn (f.eks.
+                // "Mvh Amanda Gustafsson") inn i nye drafts. Den ekte
+                // signaturen blir lagt til etterpå basert på innlogget
+                // bruker.
+                $rawBody = $this->stripAgentSignature($rawBody);
             }
             // Større limit (800 tegn) for å beholde URL-er, kursnumre, og
             // annen kontekst som AI-en trenger for å svare presist.
@@ -428,6 +436,29 @@ PROMPT;
         }
 
         return $history;
+    }
+
+    /**
+     * Fjern signatur-blokken fra en utgående agent-melding. Vi matcher
+     * vanlige avslutninger som starter med "Mvh", "Med vennlig hilsen",
+     * "Med venlig helsning", "Skrivevarm hilsen", "Ha en fin dag", og
+     * fjerner alt fra første treff og ned. Dette hindrer at AI ser
+     * tidligere saksbehandleres navn og kopierer dem inn i nye drafts.
+     */
+    private function stripAgentSignature(string $body): string
+    {
+        // Match vanlige norske/danske/svenske/engelske avslutninger.
+        // (?im) = case-insensitive, multiline.
+        // \s*$ ved slutt sikrer at vi spiser alt etter signaturen.
+        $patterns = [
+            '/\n[\s]*Ha en fin dag.*$/ims',
+            '/\n[\s]*(Med\s+vennlig\s+hilsen|Med\s+venlig\s+helsning|Med\s+vänlig\s+hälsning).*$/ims',
+            '/\n[\s]*(Mvh|Vennlig hilsen|Vänligen|Skrivevarm hilsen|Best regards|Kind regards)[\s\S]*$/ims',
+        ];
+        foreach ($patterns as $p) {
+            $body = preg_replace($p, '', $body) ?? $body;
+        }
+        return rtrim($body);
     }
 
     /**
@@ -788,6 +819,7 @@ Skriv et passende svarkutkast. Husk:
 - ALDRI bruk markdown-formatering som **fet tekst**, *kursiv*, # overskrifter, eller - bullet-lister. Vi sender ren tekst-e-post, og asterisker blir synlige som stygge tegn. Bruk vanlig prosa, og vanlige linjeskift for å skille avsnitt. ENESTE unntak er [tekst](url) for lenker — det blir konvertert til klikkbare lenker automatisk.
 - Avslutt ALLTID med nøyaktig dette (ingen tittel, ingen "Kundebehandler" eller lignende, ingen ekstra linjer mellom):
   {$this->getSignatureBlock()}
+- KRITISK: ALDRI bruk et navn fra "TIDLIGERE MELDINGER I SAMTALEN" eller fra noen annen del av konteksten i signaturen. Hvis du ser at en tidligere agent het f.eks. "Amanda" eller "Henning", IGNORER det fullstendig. Bruk KUN signaturen som er gitt rett ovenfor — ingenting annet, ingen alternativer, ingen mimicking av tidligere svar. Hvis signaturen ikke har et personnavn, så IKKE finn opp et eller hent et fra historikken.
 - IKKE skriv "Hei [Navn]" hvis du ikke vet navnet
 - Matcher stilen og tonen fra eksemplene
 PROMPT;
