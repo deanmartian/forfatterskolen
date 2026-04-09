@@ -1367,9 +1367,16 @@ class HomeController extends Controller
                     $contactService->tagContact($contact, 'gratis-webinar-' . $freeWebinar->id);
                     $contactService->tagContact($contact, 'nyhetsbrev');
 
-                    // Start e-postsekvens
+                    // Start e-postsekvens.
+                    // Pick sequence-trigger basert på webinar-ID: Motor-
+                    // webinaret (ID 95) har sin egen sekvens med MOTOR5000-
+                    // rabatt, andre webinarer bruker den generiske.
                     $startDate = \Carbon\Carbon::parse($freeWebinar->start_date);
-                    app(EmailAutomationService::class)->startSequence($contact, 'webinar_registration', [
+                    $motorWebinarIds = config('webinars.motor_webinar_ids', [95]);
+                    $triggerEvent = in_array($freeWebinar->id, $motorWebinarIds)
+                        ? 'motor_webinar_registration'
+                        : 'webinar_registration';
+                    app(EmailAutomationService::class)->startSequence($contact, $triggerEvent, [
                         'webinar_id' => $freeWebinar->id,
                         'webinar_title' => $freeWebinar->title,
                         'webinar_start_date' => $freeWebinar->start_date,

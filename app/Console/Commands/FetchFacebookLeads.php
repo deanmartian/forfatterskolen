@@ -126,9 +126,14 @@ class FetchFacebookLeads extends Command
                     $contactService->tagContact($contact, 'gratis-webinar-' . $webinar->id);
                     $contactService->tagContact($contact, 'facebook-lead');
 
-                    // Start e-postsekvens
+                    // Start e-postsekvens — Motor-webinaret (ID 95) har
+                    // sin egen sekvens med MOTOR5000-rabatt.
                     try {
-                        app(\App\Services\EmailAutomationService::class)->startSequence($contact, 'webinar_registration', [
+                        $motorWebinarIds = config('webinars.motor_webinar_ids', [95]);
+                        $triggerEvent = in_array($webinar->id, $motorWebinarIds)
+                            ? 'motor_webinar_registration'
+                            : 'webinar_registration';
+                        app(\App\Services\EmailAutomationService::class)->startSequence($contact, $triggerEvent, [
                             'webinar_id' => $webinar->id,
                             'webinar_title' => $webinar->title,
                             'webinar_start_date' => $webinar->start_date,
