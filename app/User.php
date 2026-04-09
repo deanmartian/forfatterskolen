@@ -89,8 +89,24 @@ class User extends Authenticatable
         'first_name', 'last_name', 'password', 'email', 'role', 'gender', 'birthday', 'profile_image',
         'default_password', 'need_pass_update', 'is_active', 'admin_with_giutbok_access', 'is_self_publishing_learner',
         'is_ghost_writer_admin', 'is_copy_editing_admin', 'is_correction_admin', 'is_coaching_admin', 'fiken_contact_id',
-        'email_verified_at', 'email_verification_token', 'disable_start_date', 'disable_end_date'
+        'email_verified_at', 'email_verification_token', 'disable_start_date', 'disable_end_date',
+        'inbox_signature',
     ];
+
+    /**
+     * Hent inbox-signaturen for denne brukeren. Bruker den lagrede signaturen
+     * hvis den finnes, ellers faller tilbake til standardformatet med
+     * brukerens fulle navn. Kalt fra både InboxService::sendReply() og
+     * HelpwiseReplyAiService::getSignatureBlock() så svar og AI-utkast
+     * får samme signatur.
+     */
+    public function getInboxSignature(): string
+    {
+        if (!empty($this->inbox_signature)) {
+            return trim($this->inbox_signature);
+        }
+        return "Ha en fin dag!\nMvh {$this->full_name}\nForfatterskolen / Easywrite / Indiemoon Publishing";
+    }
 
     /**
      * The attributes that should be hidden for arrays.

@@ -43,6 +43,7 @@
     <div class="pull-right">
         <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#newEmailModal"><i class="fa fa-pencil"></i> Ny e-post</button>
         <a href="{{ route('admin.inbox.canned-responses') }}" class="btn btn-sm btn-default"><i class="fa fa-bolt"></i> Hurtigsvar</a>
+        <a href="{{ route('admin.inbox.settings') }}" class="btn btn-sm btn-default"><i class="fa fa-cog"></i> Innstillinger</a>
     </div>
 </div>
 

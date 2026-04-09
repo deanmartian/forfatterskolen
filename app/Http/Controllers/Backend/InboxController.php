@@ -349,4 +349,40 @@ class InboxController extends Controller
         }
         return response()->download($path);
     }
+
+    /**
+     * Vis innstillinger-siden for innlogget admin (per-bruker signatur osv.)
+     */
+    public function settings()
+    {
+        $user = auth()->user();
+        // Vi sender med både den lagrede signaturen (kan være null) og
+        // den fallback-baserte standarden, slik at view-en kan vise
+        // "Bruker for tiden default-signatur" hvis tomt.
+        $defaultSignature = "Ha en fin dag!\nMvh {$user->full_name}\nForfatterskolen / Easywrite / Indiemoon Publishing";
+        return view('backend.inbox.settings', [
+            'user' => $user,
+            'savedSignature' => $user->inbox_signature,
+            'defaultSignature' => $defaultSignature,
+            'effectiveSignature' => $user->getInboxSignature(),
+        ]);
+    }
+
+    /**
+     * Lagre per-bruker inbox-innstillinger.
+     */
+    public function storeSettings(\Illuminate\Http\Request $request)
+    {
+        $request->validate([
+            'inbox_signature' => 'nullable|string|max:2000',
+        ]);
+
+        $user = auth()->user();
+        $sig = trim($request->input('inbox_signature', ''));
+        $user->inbox_signature = $sig === '' ? null : $sig;
+        $user->save();
+
+        return redirect()->route('admin.inbox.settings')
+            ->with('success', 'Innstillinger lagret.');
+    }
 }

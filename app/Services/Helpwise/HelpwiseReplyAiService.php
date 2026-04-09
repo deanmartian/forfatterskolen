@@ -597,15 +597,24 @@ PROMPT;
 
     /**
      * Build the signature block for the AI prompt.
-     * When no user is authenticated (webhook generation), we omit the
-     * personal-name line so the signature doesn't end up with
-     * "Forfatterskolen" appearing twice in a row.
+     *
+     * Hierarki:
+     *  1. Hvis innlogget bruker har lagret en personlig inbox_signature →
+     *     bruk den direkte.
+     *  2. Hvis innlogget bruker ikke har lagret signatur → bruk standard
+     *     med deres fulle navn.
+     *  3. Hvis ingen er innlogget (webhook) → bruk standard uten navn så
+     *     vi ikke får "Forfatterskolen" to ganger på rad.
      */
     private function getSignatureBlock(): string
     {
-        $name = $this->getSenderName();
-        if ($name) {
-            return "Ha en fin dag!\n  Mvh {$name}\n  Forfatterskolen / Easywrite / Indiemoon Publishing";
+        $user = auth()->user();
+        if ($user) {
+            // Bruker enten brukerens lagrede inbox_signature eller default
+            // med fullt navn. Indenter alle linjer med 2 mellomrom så det
+            // ser pent ut i prompten.
+            $sig = $user->getInboxSignature();
+            return implode("\n", array_map(fn($l) => '  ' . $l, explode("\n", $sig)));
         }
         return "Ha en fin dag!\n  Mvh\n  Forfatterskolen / Easywrite / Indiemoon Publishing";
     }

@@ -24,4 +24,8 @@ Route::prefix('inbox')->group(function () {
     Route::get('/canned-responses', [Backend\InboxController::class, 'cannedResponses'])->name('admin.inbox.canned-responses');
     Route::post('/canned-responses', [Backend\InboxController::class, 'storeCannedResponse'])->name('admin.inbox.canned-responses.store');
     Route::get('/attachment/{filename}', [Backend\InboxController::class, 'downloadAttachment'])->name('admin.inbox.attachment');
+
+    // Inbox-innstillinger (per-bruker, f.eks. egen signatur)
+    Route::get('/settings', [Backend\InboxController::class, 'settings'])->name('admin.inbox.settings');
+    Route::post('/settings', [Backend\InboxController::class, 'storeSettings'])->name('admin.inbox.settings.store');
 });

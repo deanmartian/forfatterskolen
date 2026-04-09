@@ -112,10 +112,12 @@ class InboxService
 
         // Add signature — but only if the body doesn't already have one
         // (e.g. when sending an AI-generated draft that already includes it).
-        // We check for both "Mvh" and the older "Skrivevarm hilsen" so old
-        // drafts still work.
-        if (!preg_match('/(Mvh\s|Skrivevarm hilsen)/i', $body)) {
-            $signature = "\n\nHa en fin dag!\nMvh {$user->full_name}\nForfatterskolen / Easywrite / Indiemoon Publishing";
+        // We check for both "Mvh" and the older "Skrivevarm hilsen" så gamle
+        // utkast fortsatt funker. Hver bruker kan ha sin egen signatur lagret
+        // i users.inbox_signature; ellers brukes en standardvariant med
+        // brukerens fulle navn.
+        if (!preg_match('/(Mvh\s|Skrivevarm hilsen|Med vennlig hilsen|Med venlig helsning)/i', $body)) {
+            $signature = "\n\n" . $user->getInboxSignature();
             $body = rtrim($body) . $signature;
         } else {
             $body = rtrim($body);
