@@ -17,6 +17,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
     </head>
     <body>
+        @include('partials.impersonation-banner')
         @include('partials.login-help-banner')
         <div class="ed-shell">
             {{-- Sidebar --}}

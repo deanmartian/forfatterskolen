@@ -818,6 +818,11 @@ Route::domain($admin)->group(function () {
         Route::post('passwordreset/{token}/update', [Auth\ResetPasswordController::class, 'adminUpdatePassword'])->name('admin.passwordreset.update');
     });
 
+    // Impersonation stop — må være utenfor admin-middleware siden brukeren
+    // er innlogget som målbruker (ikke admin) når de klikker "Gå tilbake".
+    // Auth-sjekken skjer i controller-metoden via session('impersonator_id').
+    Route::get('impersonate/stop', [Backend\ImpersonateController::class, 'stop'])->name('admin.impersonate.stop');
+
     Route::middleware('admin', 'logActivity')->group(function () {
 
         // Dashboard Page
@@ -854,6 +859,9 @@ Route::domain($admin)->group(function () {
                 'destroy' => 'admin.page_meta.delete',
             ],
         ])->except('show', 'create', 'edit');
+
+        // Impersonation — admin logs in as another user without losing own session
+        Route::post('impersonate/{userId}', [Backend\ImpersonateController::class, 'start'])->name('admin.impersonate.start');
 
         // Learners Route
         Route::get('learner/list-notes', [Backend\LearnerController::class, 'listNotes'])->name('admin.learner.list_notes');

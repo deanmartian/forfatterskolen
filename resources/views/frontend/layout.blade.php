@@ -112,6 +112,7 @@
         @endif
     </head>
     <body>{{-- class="dark-mode"--}}
+    @include('partials.impersonation-banner')
     @include('partials.login-help-banner')
     {{--<img src="https://www.sociamonials.com/tracking.php?t=l&tid=6502" width="1" height="1">--}}
     @if(Session::has('new_user_social'))

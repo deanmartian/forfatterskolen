@@ -10,6 +10,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
     </head>
     <body>
+        @include('partials.impersonation-banner')
         @include('backend.partials.sidebar')
         <div class="ed-overlay" id="edOverlay"></div>
         <button type="button" class="ed-hamburger" id="edHamburger" aria-label="Meny">

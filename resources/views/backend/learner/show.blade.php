@@ -158,9 +158,12 @@
 					data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">
 				{!! trans('site.set-vipps-efaktura') !!}
 			</button>
-			<a href="{{ route('auth.login.email', encrypt($learner->email)) }}" class="btn btn-info margin-top" target="_blank">
-				Login as user
-			</a>
+			<form action="{{ route('admin.impersonate.start', $learner->id) }}" method="POST" style="display:inline;margin-top:5px;">
+				@csrf
+				<button type="submit" class="btn btn-info" onclick="return confirm('Du vil nå åpne {{ $learner->first_name }} {{ $learner->last_name }} sin portal i denne fanen. Din egen admin-sesjon beholdes — en rød banner vil vises øverst med en «Gå tilbake»-knapp.')">
+					Login as user
+				</button>
+			</form>
 
 			<button type="button" class="margin-top btn btn-primary loadScriptButton" data-toggle="modal" data-target="#sendUsernameAndPasswordModal">
 				Send brukernavn og passord
