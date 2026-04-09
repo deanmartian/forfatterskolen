@@ -942,11 +942,10 @@
                                class="rk-btn {{ $isPopular ? 'rk-btn--primary' : 'rk-btn--outline' }}">
                                 Velg {{ $tierName }}
                             </a>
-                            @if($tierKey === 'standard')
-                                <div class="rk-package-card__note">Avbetaling fra kr 350/mnd</div>
-                            @elseif($tierKey === 'pro')
-                                <div class="rk-package-card__note">Avbetaling fra kr 558/mnd</div>
-                            @endif
+                            {{-- Hardkodet "Avbetaling fra kr X/mnd" fjernet —
+                                 Svea bestemmer selv hvilke avdragsalternativer
+                                 som tilbys i checkout, så vi kan ikke love et
+                                 spesifikt beløp på forhånd. --}}
                         </div>
                     </div>
                 @endforeach
