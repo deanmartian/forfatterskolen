@@ -258,10 +258,13 @@ class FacebookAdsService
             ],
         ];
 
+        // NB: 'subtype' og 'pixel_id' er deprecated i Meta Marketing API v19+.
+        // Modern API utleder audience-type fra selve rule-strukturen (som
+        // refererer til pixelen via event_sources). Gamle parametre gir
+        // "The parameter 'subtype' is not supported in the current API version"
+        // (subcode 1870053).
         return $this->request('post', "{$this->adAccountId}/customaudiences", [
             'name' => $data['name'] . ' · ' . now()->format('Y-m-d H:i:s'),
-            'subtype' => 'WEBSITE',
-            'pixel_id' => $pixelId,
             'retention_days' => $retentionDays,
             'rule' => json_encode($rule),
             'description' => $data['description'] ?? ($data['name'] ?? 'Website Custom Audience'),
@@ -439,19 +442,25 @@ class FacebookAdsService
         }
 
         // === 1. COLD LEAD AD (createWebinarLeadCampaign — eksisterende) ===
-        try {
-            $coldLead = $this->createWebinarLeadCampaign([
-                'webinar_title' => $webinarTitle,
-                'webinar_starts_at' => $webinarStartsAt,
-                'ad_text' => $data['cold_ad_text'] ?? "Gratis webinar: {$webinarTitle}",
-                'ad_headline' => $data['cold_ad_headline'] ?? 'Meld deg på gratis webinar',
-                'daily_budget' => $budgets['cold_lead'],
-                'landing_page' => $landingPage,
-                'image_url' => $imageUrl,
-            ]);
-            $result['campaigns']['cold_lead'] = $coldLead;
-        } catch (\Throwable $e) {
-            $result['errors']['cold_lead'] = $e->getMessage();
+        // Skip hvis kald Lead Ad allerede er opprettet (f.eks. via
+        // webinar:bootstrap-integrations). Unngår duplikater i FB.
+        if (!empty($data['skip_cold_lead'])) {
+            $result['campaigns']['cold_lead'] = ['skipped' => 'already exists'];
+        } else {
+            try {
+                $coldLead = $this->createWebinarLeadCampaign([
+                    'webinar_title' => $webinarTitle,
+                    'webinar_starts_at' => $webinarStartsAt,
+                    'ad_text' => $data['cold_ad_text'] ?? "Gratis webinar: {$webinarTitle}",
+                    'ad_headline' => $data['cold_ad_headline'] ?? 'Meld deg på gratis webinar',
+                    'daily_budget' => $budgets['cold_lead'],
+                    'landing_page' => $landingPage,
+                    'image_url' => $imageUrl,
+                ]);
+                $result['campaigns']['cold_lead'] = $coldLead;
+            } catch (\Throwable $e) {
+                $result['errors']['cold_lead'] = $e->getMessage();
+            }
         }
 
         // === 2. RETARGETING WEBINAR (til landingsside) ===

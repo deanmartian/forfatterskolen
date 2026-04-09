@@ -111,6 +111,10 @@ class LaunchMotorWebinar extends Command
                     'image_url' => $webinar->image ? url($webinar->image) : null,
                     'discount_code' => 'MOTOR5000',
                     'deadline_date' => \Carbon\Carbon::parse('2026-04-20 23:59:00'),
+                    // Skip kald Lead Ad hvis den allerede er opprettet
+                    // (via webinar:bootstrap-integrations eller tidligere
+                    // launch-kjøring). Unngår duplikat-kampanjer i FB.
+                    'skip_cold_lead' => !empty($webinar->facebook_campaign_id),
                     'budgets' => [
                         'cold_lead' => 3500,            // per Sonnets plan
                         'retargeting_webinar' => 1150,
