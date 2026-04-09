@@ -53,6 +53,15 @@ class WebinarEmailOutCommand extends Command
         }*/
         CronLog::create(['activity' => 'WebinarEmailOutCommand CRON running.']);
 
+        // Dedupliser på tvers av alle WebinarEmailOut-rader for å hindre at
+        // samme bruker får samme webinar-mail to ganger. Dette skjer hvis:
+        //  (a) brukeren har duplikate courses_taken-rader (f.eks. etter en
+        //      user-merge der secondary hadde samme pakke som primary),
+        //  (b) samme webinar er knyttet til flere kurs som brukeren har, eller
+        //  (c) en pakke gir flere "courses_taken"-rader for samme bruker.
+        // Nøkkel: e-post + subject (samme som CourseEmailOut bruker).
+        $sentTodayKeys = [];
+
         foreach ($emailOutList as $emailOut) {
             $course_id = $emailOut->course_id;
             $webinar = $emailOut->webinar;
@@ -75,7 +84,19 @@ class WebinarEmailOutCommand extends Command
             $webinarDate = $startDate.' klokken '.$startTime;
             $subject = $emailOut->subject; // "Webinar ".$webinarDate." med ".$presenterList;
             foreach ($coursesTaken as $courseTaken) {
+                if (!$courseTaken->user) {
+                    continue;
+                }
                 $user_email = $courseTaken->user->email;
+
+                // Dedupliser: hvis vi allerede har sendt denne subject-en til
+                // denne e-posten i denne cron-kjøringen, hopp over.
+                $dedupKey = strtolower($user_email) . '|' . $subject;
+                if (isset($sentTodayKeys[$dedupKey])) {
+                    continue;
+                }
+                $sentTodayKeys[$dedupKey] = true;
+
                 $register_link = "<a href='".route('front.goto-webinar.registration.email',
                     [encrypt($webinar->link), encrypt($user_email)])."'>Registrer meg</a>";
 

@@ -46,6 +46,23 @@ class UserMergeService
     ];
 
     /**
+     * Tabeller der (user_id + en annen kolonne) MÅ være unik etter merge,
+     * selv om DB ikke har en hard constraint på det. Hvis primary allerede
+     * har en rad med samme verdi i tilleggs-kolonnen, sletter vi sekundærens
+     * tilsvarende rad før UPDATE.
+     *
+     * Eksempel: hvis både primary og secondary har en `courses_taken`-rad
+     * med samme `package_id`, så får vi to like rader på primary etter
+     * UPDATE — som igjen får WebinarEmailOut til å sende dobbelt e-post.
+     */
+    protected array $compositeUniqueColumns = [
+        'courses_taken' => 'package_id',
+        'shop_manuscripts_taken' => 'shop_manuscript_id',
+        'webinar_registrants' => 'webinar_id',
+        'assignment_submissions' => 'assignment_id',
+    ];
+
+    /**
      * Generer en preview av hva som vil bli flyttet, uten å gjøre noe.
      * Returnerer en array med tabell-navn → antall rader på sekundæren.
      */
@@ -112,6 +129,36 @@ class UserMergeService
                     }
                 } catch (\Throwable $e) {
                     $errors[$tableCol] = $e->getMessage();
+                }
+            }
+
+            // 1b. Slett sekundærens rader i tabeller der (user_id + andre kolonne)
+            //     må være unik logisk sett (selv om DB ikke har constraint).
+            //     Dette hindrer at primary får DUPLIKATE rader etter UPDATE,
+            //     som igjen fører til doble e-poster fra WebinarEmailOut og co.
+            foreach ($this->compositeUniqueColumns as $table => $otherCol) {
+                try {
+                    // Finn alle (other_col)-verdier som primary ALLEREDE har
+                    $primaryValues = DB::table($table)
+                        ->where('user_id', $primaryId)
+                        ->pluck($otherCol)
+                        ->filter()
+                        ->unique()
+                        ->values()
+                        ->all();
+
+                    if (!empty($primaryValues)) {
+                        $deleted = DB::table($table)
+                            ->where('user_id', $secondaryId)
+                            ->whereIn($otherCol, $primaryValues)
+                            ->delete();
+
+                        if ($deleted > 0) {
+                            $rowsMoved["{$table} (slettet duplikater på {$otherCol})"] = $deleted;
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    $errors["{$table}.{$otherCol} (composite)"] = $e->getMessage();
                 }
             }
 
