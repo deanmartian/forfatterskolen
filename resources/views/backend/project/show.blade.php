@@ -604,11 +604,34 @@
                             <label>
                                 {{ trans_choice('site.learners', 2) }}
                             </label>
-                            <div class="dropdown-container">
-                                <input type="hidden" id="selectedLearnerId" name="learners[]">
-                                <input type="text" id="searchInput" class="form-control" placeholder="Search for users">
-                                <div id="dropdownResults" class="dropdown-results" style="display: none;"></div>
-                            </div>
+
+                            @if($project->user)
+                                {{-- Prosjektet har allerede en elev — pre-fyll automatisk.
+                                     Ingen grunn til å få Sven til å søke etter samme elev
+                                     igjen når vi allerede vet hvem det er. --}}
+                                <div id="preselected-learner-box" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f0f9f0;border-left:3px solid #2e7d32;border-radius:4px;">
+                                    <i class="fa fa-check-circle" style="color:#2e7d32;"></i>
+                                    <span>
+                                        <strong>{{ $project->user->full_name }}</strong>
+                                        <span style="color:#888;font-size:12px;">(elev-ID #{{ $project->user->id }})</span>
+                                    </span>
+                                    <a href="#" id="changeLearnerLink" style="margin-left:auto;font-size:12px;">Endre elev</a>
+                                </div>
+                                {{-- Skjul søke-UI-en by default — vises hvis Sven klikker "Endre elev" --}}
+                                <div class="dropdown-container" id="learnerSearchContainer" style="display:none;margin-top:10px;">
+                                    <input type="text" id="searchInput" class="form-control" placeholder="Søk etter elev (navn eller e-post)">
+                                    <div id="dropdownResults" class="dropdown-results" style="display:none;"></div>
+                                </div>
+                                {{-- Hidden input pre-fylt med prosjektets elev --}}
+                                <input type="hidden" id="selectedLearnerId" name="learners[]" value="{{ $project->user->id }}">
+                            @else
+                                {{-- Prosjektet har ingen elev ennå — vis vanlig søk --}}
+                                <div class="dropdown-container">
+                                    <input type="hidden" id="selectedLearnerId" name="learners[]">
+                                    <input type="text" id="searchInput" class="form-control" placeholder="Søk etter elev (navn eller e-post)">
+                                    <div id="dropdownResults" class="dropdown-results" style="display: none;"></div>
+                                </div>
+                            @endif
                         </div>
 
                         <div class="form-group">
@@ -1040,6 +1063,26 @@
             form.find('input[name=price]').val('');
             form.find('input[name=editor_share]').val('');
             form.find('select[name=editor_id]').val('').trigger('change');
+
+            // Reset pre-valgt elev-UI tilbake til default-tilstand når
+            // Sven åpner modalen på nytt (han kan ha klikket "Endre elev"
+            // sist gang og ikke ha lukket siden).
+            @if($project->user)
+                $("#preselected-learner-box").show();
+                $("#learnerSearchContainer").hide();
+                $("#selectedLearnerId").val('{{ $project->user->id }}');
+                $("#searchInput").val('');
+                $("#dropdownResults").hide().empty();
+            @endif
+        });
+
+        // "Endre elev"-lenke — bytter fra forhåndsvalgt elev til søke-UI
+        $(document).on('click', '#changeLearnerLink', function(e) {
+            e.preventDefault();
+            $("#preselected-learner-box").hide();
+            $("#learnerSearchContainer").show();
+            $("#selectedLearnerId").val('');
+            $("#searchInput").focus();
         });
 
         $(".editSelfPublishingBtn").click(function() {
