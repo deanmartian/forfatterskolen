@@ -198,12 +198,13 @@
                                 <label>Til: <strong>{{ $conversation->customer_email }}</strong></label>
                             </div>
                             <div class="form-group">
-                                <textarea name="body" id="reply-body" class="form-control" rows="6" placeholder="Skriv ditt svar her..." required></textarea>
+                                <textarea name="body" id="reply-body" class="form-control" rows="6" placeholder="Skriv ditt svar her... (du kan lime inn bilder med Ctrl+V eller dra filer hit)" required></textarea>
                                 <input type="hidden" name="sender_name" value="{{ Auth::user()->full_name }}">
                                 <div style="margin-top:8px;">
                                     <label style="cursor:pointer;font-size:13px;color:#666;"><i class="fa fa-paperclip"></i> Vedlegg
-                                        <input type="file" name="attachments[]" multiple style="margin-left:6px;font-size:12px;">
+                                        <input type="file" id="reply-attachments" name="attachments[]" multiple style="margin-left:6px;font-size:12px;">
                                     </label>
+                                    <div id="pasted-images-list" style="margin-top:6px;font-size:12px;"></div>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -385,6 +386,86 @@
             });
         }
 
+        // ═══════════════════════════════════════════════════════════
+        // Paste + drag-and-drop for bilder/filer inn i svar-feltet
+        // og intern-kommentar-feltet. Filen legges til den eksisterende
+        // <input type="file" name="attachments[]">, så backend trenger
+        // ingen endringer — det er samme multipart/form-data-post.
+        // ═══════════════════════════════════════════════════════════
+        function wireImagePaste(textareaId, fileInputId, listId) {
+            var textarea = document.getElementById(textareaId);
+            var fileInput = document.getElementById(fileInputId);
+            var list = document.getElementById(listId);
+            if (!textarea || !fileInput) return;
+
+            function addFileToInput(file) {
+                // <input type="file"> har readonly FileList, så vi må
+                // bygge en ny DataTransfer og overskrive .files.
+                var dt = new DataTransfer();
+                for (var j = 0; j < fileInput.files.length; j++) {
+                    dt.items.add(fileInput.files[j]);
+                }
+                dt.items.add(file);
+                fileInput.files = dt.files;
+
+                // Bekreftelse-rad med mulighet for å fjerne
+                var sizeKb = Math.round(file.size / 1024);
+                var row = document.createElement('div');
+                row.style.cssText = 'display:inline-flex;align-items:center;gap:6px;background:#fef5f6;border:1px solid #f0d6da;border-radius:6px;padding:4px 10px;margin-right:6px;margin-top:4px;color:#862736;';
+                row.innerHTML = '<i class="fa fa-image"></i> <strong>' + file.name + '</strong> <span style="color:#999;">(' + sizeKb + ' KB)</span> <a href="#" style="color:#862736;text-decoration:none;font-weight:bold;margin-left:4px;" title="Fjern">×</a>';
+                var removeBtn = row.querySelector('a');
+                removeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Bygg en ny FileList uten denne filen
+                    var dt2 = new DataTransfer();
+                    for (var k = 0; k < fileInput.files.length; k++) {
+                        if (fileInput.files[k].name !== file.name || fileInput.files[k].size !== file.size) {
+                            dt2.items.add(fileInput.files[k]);
+                        }
+                    }
+                    fileInput.files = dt2.files;
+                    row.remove();
+                });
+                list.appendChild(row);
+            }
+
+            // Paste-handler
+            textarea.addEventListener('paste', function(e) {
+                var items = (e.clipboardData || e.originalEvent.clipboardData || {}).items;
+                if (!items) return;
+                for (var i = 0; i < items.length; i++) {
+                    var item = items[i];
+                    if (item.kind === 'file' && item.type.indexOf('image/') === 0) {
+                        e.preventDefault();
+                        var blob = item.getAsFile();
+                        if (!blob) continue;
+                        var ext = (blob.type.split('/')[1] || 'png').split('+')[0];
+                        var filename = 'limt-inn-' + Date.now() + '.' + ext;
+                        var file = new File([blob], filename, { type: blob.type });
+                        addFileToInput(file);
+                    }
+                }
+            });
+
+            // Drag-and-drop-handler
+            textarea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                textarea.style.background = '#fef5f6';
+            });
+            textarea.addEventListener('dragleave', function(e) {
+                textarea.style.background = '';
+            });
+            textarea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                textarea.style.background = '';
+                var files = e.dataTransfer.files;
+                for (var i = 0; i < files.length; i++) {
+                    addFileToInput(files[i]);
+                }
+            });
+        }
+
+        wireImagePaste('reply-body', 'reply-attachments', 'pasted-images-list');
     });
 
     // Follow-up quick buttons
