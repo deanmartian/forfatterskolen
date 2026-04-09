@@ -167,12 +167,9 @@
                             <label>
                                 {{ trans_choice('site.learners', 2) }}
                             </label>
-                            <select name="learners[]" class="form-control select2 template" multiple="multiple">
-                                @foreach($learners as $learner)
-                                    <option value="{{$learner->id}}">
-                                        {{$learner->full_name}}
-                                    </option>
-                                @endforeach
+                            {{-- AJAX-drevet select2 — søker mot /learners/search slik at vi
+                                 ikke trenger å laste alle ~20 000 elever opp front. --}}
+                            <select name="learners[]" id="learners-ajax-select" class="form-control" multiple="multiple" style="width:100%;">
                             </select>
                         </div>
 
@@ -320,6 +317,30 @@
 
 @section('scripts')
     <script>
+        // AJAX select2 for elev-picker — søker mot /learners/search så vi
+        // ikke laster ~20 000 elever inn i DOM-en ved sideinnlasting.
+        $("#learners-ajax-select").select2({
+            placeholder: 'Søk etter elev (navn eller e-post)',
+            minimumInputLength: 2,
+            ajax: {
+                url: '/learners/search',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return { search: params.term };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.map(function (u) {
+                            var name = ((u.first_name || '') + ' ' + (u.last_name || '')).trim() || u.email;
+                            return { id: u.id, text: name + ' (' + u.email + ')' };
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+
         let modal = $("#selfPublishingModal");
         $(".addSelfPublishingBtn").click(function() {
             let form = modal.find('form');
@@ -329,6 +350,8 @@
             modal.find('.modal-title').text('Legg til selvutgivelse');
             form.find('[name=_method]').remove();
             $("#learner-list").show();
+            // Nullstill elev-valget når man åpner "Legg til"-modalen.
+            $("#learners-ajax-select").val(null).trigger('change');
 
             var action = $(this).data('action');
             form.attr('action', action);

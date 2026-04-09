@@ -34,10 +34,12 @@ class SelfPublishingController extends Controller
     {
         $publishingList = SelfPublishing::all();
         $editors = AdminHelpers::editorList();
-        $learners = User::where('role', 2)->get();
         $projects = Project::all();
 
-        return view('backend.self-publishing.index', compact('publishingList', 'editors', 'learners', 'projects'));
+        // IKKE last alle elever (~20 000 rader) inn i en <select multiple> —
+        // det sprenger PHP memory_limit på prod og gir 500. Feltet bruker
+        // nå select2 med AJAX mot /learners/search i stedet.
+        return view('backend.self-publishing.index', compact('publishingList', 'editors', 'projects'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -212,8 +214,11 @@ class SelfPublishingController extends Controller
     {
         $selfPublishing = SelfPublishing::find($id);
         $learners = $selfPublishing->learners;
-        $availableLearners = User::where('role', 2)->whereNotIn('id', $learners->pluck('user_id')->toArray())
-            ->get();
+
+        // Ikke last alle ~20 000 brukere inn i en <select> — det spiser
+        // opp PHP memory_limit på prod. Select-en i viewet bruker nå
+        // select2 med AJAX mot /learners/search i stedet.
+        $alreadyAssignedIds = $learners->pluck('user_id')->toArray();
 
         $layout = 'backend.layout';
         $selfPublishingIndexRoute = 'admin.self-publishing.index';
@@ -223,7 +228,7 @@ class SelfPublishingController extends Controller
             $selfPublishingIndexRoute = 'g-admin.self-publishing.index';
         }
 
-        return view('backend.self-publishing.learners', compact('selfPublishing', 'learners', 'availableLearners',
+        return view('backend.self-publishing.learners', compact('selfPublishing', 'learners', 'alreadyAssignedIds',
             'layout', 'selfPublishingIndexRoute'));
     }
 

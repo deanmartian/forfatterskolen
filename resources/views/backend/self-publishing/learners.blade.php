@@ -70,12 +70,10 @@
                             <label>
                                 Learners
                             </label>
-                            <select name="learners[]" class="form-control select2 template" multiple="multiple">
-                                @foreach($availableLearners as $learner)
-                                    <option value="{{$learner->id}}">
-                                        {{$learner->full_name}}
-                                    </option>
-                                @endforeach
+                            {{-- AJAX-drevet select2 — søker mot /learners/search istedenfor
+                                 å forhåndslaste ~20 000 elever. Allerede tilknyttede elever
+                                 (alreadyAssignedIds) filtreres bort client-side. --}}
+                            <select name="learners[]" id="add-learners-ajax-select" class="form-control" multiple="multiple" style="width:100%;">
                             </select>
                         </div>
 
@@ -113,6 +111,34 @@
 
 @section('scripts')
     <script>
+        // ID-er som allerede er tilknyttet — filtreres bort fra AJAX-resultater
+        var alreadyAssignedIds = @json($alreadyAssignedIds ?? []);
+
+        $("#add-learners-ajax-select").select2({
+            placeholder: 'Søk etter elev (navn eller e-post)',
+            minimumInputLength: 2,
+            ajax: {
+                url: '/learners/search',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return { search: params.term };
+                },
+                processResults: function (data) {
+                    var filtered = data.filter(function (u) {
+                        return alreadyAssignedIds.indexOf(u.id) === -1;
+                    });
+                    return {
+                        results: filtered.map(function (u) {
+                            var name = ((u.first_name || '') + ' ' + (u.last_name || '')).trim() || u.email;
+                            return { id: u.id, text: name + ' (' + u.email + ')' };
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+
         $(".deleteLearnerBtn").click(function() {
             var action = $(this).data('action');
             let modal = $("#deleteLearnerModal");
