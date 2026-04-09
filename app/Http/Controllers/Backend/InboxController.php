@@ -351,6 +351,40 @@ class InboxController extends Controller
     }
 
     /**
+     * Ta imot et bilde limt inn eller dratt på reply-feltet, lagre det i
+     * public/inbox-images/ med et unikt filnavn, og returner en offentlig
+     * URL som kan embed-es inline i e-posten. Gmail/Outlook/Apple Mail
+     * laster bildet direkte fra denne URL-en når kunden åpner meldingen.
+     */
+    public function pasteImage(\Illuminate\Http\Request $request)
+    {
+        $request->validate([
+            'image' => 'required|file|mimes:jpeg,jpg,png,gif,webp|max:10240', // 10 MB
+        ]);
+
+        $file = $request->file('image');
+        $ext = strtolower($file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'png');
+
+        $dir = public_path('inbox-images');
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0755, true);
+        }
+
+        $filename = 'inbox-' . time() . '-' . \Illuminate\Support\Str::random(8) . '.' . $ext;
+        $file->move($dir, $filename);
+
+        // Bruk den offentlige www-URL-en så e-postmottakere får en ren
+        // lenke som ikke avslører admin-subdomenet. Alle tre subdomener
+        // deler samme filesystem på cPanel, så www serverer samme fil.
+        $publicUrl = 'https://www.forfatterskolen.no/inbox-images/' . $filename;
+
+        return response()->json([
+            'url' => $publicUrl,
+            'filename' => $filename,
+        ]);
+    }
+
+    /**
      * Vis innstillinger-siden for innlogget admin (per-bruker signatur osv.)
      */
     public function settings()

@@ -198,10 +198,10 @@
                                 <label>Til: <strong>{{ $conversation->customer_email }}</strong></label>
                             </div>
                             <div class="form-group">
-                                <textarea name="body" id="reply-body" class="form-control" rows="6" placeholder="Skriv ditt svar her... (du kan lime inn bilder med Ctrl+V eller dra filer hit)" required></textarea>
+                                <textarea name="body" id="reply-body" class="form-control" rows="6" placeholder="Skriv ditt svar her... (lim inn bilder med Ctrl+V eller dra dem hit — de havner inline i e-posten)" required></textarea>
                                 <input type="hidden" name="sender_name" value="{{ Auth::user()->full_name }}">
                                 <div style="margin-top:8px;">
-                                    <label style="cursor:pointer;font-size:13px;color:#666;"><i class="fa fa-paperclip"></i> Vedlegg
+                                    <label style="cursor:pointer;font-size:13px;color:#666;"><i class="fa fa-paperclip"></i> Vedlegg (PDF, Word osv.)
                                         <input type="file" id="reply-attachments" name="attachments[]" multiple style="margin-left:6px;font-size:12px;">
                                     </label>
                                     <div id="pasted-images-list" style="margin-top:6px;font-size:12px;"></div>
@@ -387,46 +387,75 @@
         }
 
         // ═══════════════════════════════════════════════════════════
-        // Paste + drag-and-drop for bilder/filer inn i svar-feltet
-        // og intern-kommentar-feltet. Filen legges til den eksisterende
-        // <input type="file" name="attachments[]">, så backend trenger
-        // ingen endringer — det er samme multipart/form-data-post.
+        // Paste + drag-and-drop for bilder i svar-feltet. Bildet lastes
+        // opp til serveren med en gang og markdown-referansen
+        // ![bilde](https://...) settes inn ved markøren i tekstfeltet.
+        // Når meldingen sendes, konverterer InboxBodyFormatter markdown
+        // til <img>-tag i HTML-e-posten så mottakeren ser bildet inline.
         // ═══════════════════════════════════════════════════════════
-        function wireImagePaste(textareaId, fileInputId, listId) {
+        function wireImagePaste(textareaId, listId) {
             var textarea = document.getElementById(textareaId);
-            var fileInput = document.getElementById(fileInputId);
             var list = document.getElementById(listId);
-            if (!textarea || !fileInput) return;
+            if (!textarea) return;
 
-            function addFileToInput(file) {
-                // <input type="file"> har readonly FileList, så vi må
-                // bygge en ny DataTransfer og overskrive .files.
-                var dt = new DataTransfer();
-                for (var j = 0; j < fileInput.files.length; j++) {
-                    dt.items.add(fileInput.files[j]);
-                }
-                dt.items.add(file);
-                fileInput.files = dt.files;
+            var csrfToken = document.querySelector('meta[name="csrf-token"]');
+            csrfToken = csrfToken ? csrfToken.getAttribute('content') : '';
 
-                // Bekreftelse-rad med mulighet for å fjerne
-                var sizeKb = Math.round(file.size / 1024);
+            function showStatus(message, type) {
+                if (!list) return;
                 var row = document.createElement('div');
-                row.style.cssText = 'display:inline-flex;align-items:center;gap:6px;background:#fef5f6;border:1px solid #f0d6da;border-radius:6px;padding:4px 10px;margin-right:6px;margin-top:4px;color:#862736;';
-                row.innerHTML = '<i class="fa fa-image"></i> <strong>' + file.name + '</strong> <span style="color:#999;">(' + sizeKb + ' KB)</span> <a href="#" style="color:#862736;text-decoration:none;font-weight:bold;margin-left:4px;" title="Fjern">×</a>';
-                var removeBtn = row.querySelector('a');
-                removeBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    // Bygg en ny FileList uten denne filen
-                    var dt2 = new DataTransfer();
-                    for (var k = 0; k < fileInput.files.length; k++) {
-                        if (fileInput.files[k].name !== file.name || fileInput.files[k].size !== file.size) {
-                            dt2.items.add(fileInput.files[k]);
-                        }
-                    }
-                    fileInput.files = dt2.files;
-                    row.remove();
-                });
+                var bg = type === 'error' ? '#fef2f2' : (type === 'loading' ? '#fffbeb' : '#fef5f6');
+                var border = type === 'error' ? '#fecaca' : (type === 'loading' ? '#fde68a' : '#f0d6da');
+                var color = type === 'error' ? '#991b1b' : (type === 'loading' ? '#78350f' : '#862736');
+                row.style.cssText = 'display:inline-flex;align-items:center;gap:6px;background:' + bg + ';border:1px solid ' + border + ';border-radius:6px;padding:4px 10px;margin-right:6px;margin-top:4px;color:' + color + ';font-size:12px;';
+                row.innerHTML = message;
                 list.appendChild(row);
+                return row;
+            }
+
+            function insertAtCursor(text) {
+                var start = textarea.selectionStart;
+                var end = textarea.selectionEnd;
+                var before = textarea.value.substring(0, start);
+                var after = textarea.value.substring(end);
+                // Sørg for linjeskift før og etter bildet for ren formatering
+                var prefix = (before.length && !before.endsWith('\n')) ? '\n' : '';
+                var suffix = '\n';
+                var newContent = prefix + text + suffix;
+                textarea.value = before + newContent + after;
+                var newPos = start + newContent.length;
+                textarea.selectionStart = textarea.selectionEnd = newPos;
+                textarea.focus();
+            }
+
+            function uploadImage(file) {
+                var loadingRow = showStatus('<i class="fa fa-spinner fa-spin"></i> Laster opp ' + (file.name || 'bilde') + '...', 'loading');
+
+                var fd = new FormData();
+                fd.append('image', file, file.name || 'limt-inn.png');
+                fd.append('_token', csrfToken);
+
+                fetch('{{ route('admin.inbox.paste-image') }}', {
+                    method: 'POST',
+                    body: fd,
+                    headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+                    credentials: 'same-origin'
+                })
+                .then(function(r) {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                })
+                .then(function(data) {
+                    if (!data.url) throw new Error('Mangler URL i svaret');
+                    var alt = (file.name || 'bilde').replace(/\.[^.]+$/, '');
+                    insertAtCursor('![' + alt + '](' + data.url + ')');
+                    if (loadingRow) loadingRow.remove();
+                    showStatus('<i class="fa fa-check"></i> <strong>' + data.filename + '</strong> limt inn', 'success');
+                })
+                .catch(function(err) {
+                    if (loadingRow) loadingRow.remove();
+                    showStatus('<i class="fa fa-exclamation-triangle"></i> Opplasting feilet: ' + err.message, 'error');
+                });
             }
 
             // Paste-handler
@@ -442,12 +471,12 @@
                         var ext = (blob.type.split('/')[1] || 'png').split('+')[0];
                         var filename = 'limt-inn-' + Date.now() + '.' + ext;
                         var file = new File([blob], filename, { type: blob.type });
-                        addFileToInput(file);
+                        uploadImage(file);
                     }
                 }
             });
 
-            // Drag-and-drop-handler
+            // Drag-and-drop-handler (bare for bilder — andre filer ignoreres)
             textarea.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 textarea.style.background = '#fef5f6';
@@ -460,12 +489,14 @@
                 textarea.style.background = '';
                 var files = e.dataTransfer.files;
                 for (var i = 0; i < files.length; i++) {
-                    addFileToInput(files[i]);
+                    if (files[i].type.indexOf('image/') === 0) {
+                        uploadImage(files[i]);
+                    }
                 }
             });
         }
 
-        wireImagePaste('reply-body', 'reply-attachments', 'pasted-images-list');
+        wireImagePaste('reply-body', 'pasted-images-list');
     });
 
     // Follow-up quick buttons
@@ -477,14 +508,45 @@
         input.value = d.toISOString().slice(0, 16);
     }
 
-    // Email preview (global scope)
+    // Email preview (global scope) — matches InboxBodyFormatter::toHtml logic
     function toggleInboxPreview() {
         var preview = document.getElementById('inboxEmailPreview');
         var content = document.getElementById('inboxPreviewContent');
         if (preview.style.display === 'none') {
             var text = document.getElementById('reply-body').value;
             if (!text) { alert('Skriv en melding først'); return; }
-            content.innerHTML = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+
+            // Extract markdown images BEFORE escape så de ikke blir HTML-escaped
+            var imagePlaceholders = {};
+            var imgCounter = 0;
+            text = text.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s\)]+\.(?:png|jpg|jpeg|gif|webp|svg))\)/gi, function(m, alt, url) {
+                var key = '\u0000IMG_' + (imgCounter++) + '\u0000';
+                imagePlaceholders[key] = '<img src="' + url.replace(/"/g, '&quot;') + '" alt="' + (alt || 'bilde').replace(/"/g, '&quot;') + '" style="max-width:100%;height:auto;border-radius:8px;margin:8px 0;display:block;">';
+                return key;
+            });
+
+            // Extract markdown links FØR escape
+            var linkPlaceholders = {};
+            var linkCounter = 0;
+            text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, function(m, linkText, url) {
+                var key = '\u0000LINK_' + (linkCounter++) + '\u0000';
+                linkPlaceholders[key] = '<a href="' + url.replace(/"/g, '&quot;') + '" target="_blank">' + linkText.replace(/</g, '&lt;') + '</a>';
+                return key;
+            });
+
+            // HTML-escape the rest
+            var html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            // Restore images + links
+            for (var k in imagePlaceholders) html = html.split(k).join(imagePlaceholders[k]);
+            for (var k in linkPlaceholders) html = html.split(k).join(linkPlaceholders[k]);
+
+            // Newlines to <br>
+            html = html.replace(/\n/g, '<br>');
+            // Remove <br>-er rett ved siden av <img> så vi ikke får dobbel luft
+            html = html.replace(/(<br\s*\/?>\s*)+(<img)/gi, '$2').replace(/(<img[^>]*>)(\s*<br\s*\/?>)+/gi, '$1');
+
+            content.innerHTML = html;
             preview.style.display = 'block';
         } else {
             preview.style.display = 'none';

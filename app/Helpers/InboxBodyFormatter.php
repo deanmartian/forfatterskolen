@@ -6,6 +6,7 @@ namespace App\Helpers;
  * Konverterer plain text inbox-meldinger til trygg HTML med klikkbare lenker.
  *
  * Støtter:
+ *   - Markdown-stil bilder:  ![bilde](https://...) → <img src="..." style="max-width:100%">
  *   - Markdown-stil lenker:  [innloggingslenke](https://...) → <a href="...">innloggingslenke</a>
  *   - Rå URLer:              https://example.com → <a href="https://example.com">https://example.com</a>
  *   - Linjeskift:            \n → <br>
@@ -21,14 +22,33 @@ class InboxBodyFormatter
         }
 
         // Steg 0: fjern markdown-formatering vi IKKE ønsker (fet, kursiv, overskrifter)
-        // — vi tillater kun [tekst](url)-lenker. Denne stripping skjer FØR vi
-        // håndterer lenker slik at vi ikke skader [tekst](url)-syntax.
+        // — vi tillater kun [tekst](url)-lenker og ![alt](url)-bilder. Denne
+        // stripping skjer FØR vi håndterer lenker/bilder slik at vi ikke
+        // skader syntaxen.
         $body = self::stripUnwantedMarkdown($body);
 
-        // Steg 1: ekstraher markdown-lenker og bytt med plassholdere
-        // (slik at HTML-escape ikke ødelegger dem)
         $placeholders = [];
         $counter = 0;
+
+        // Steg 1a: ekstraher markdown-BILDER FØR lenker (siden ![alt](url)
+        // inneholder [alt](url) som ville matchet lenke-regex-en først).
+        // Vi whitelister bare bilder fra egne domener + vanlige image-hosts
+        // for å unngå at noen injiserer eksterne tracker-pixler i inbox-tråden.
+        $body = preg_replace_callback(
+            '/!\[([^\]]*)\]\((https?:\/\/[^\s\)]+\.(?:png|jpg|jpeg|gif|webp|svg))\)/i',
+            function ($m) use (&$placeholders, &$counter) {
+                $key = "\x00IMG_PH_{$counter}\x00";
+                $alt = htmlspecialchars($m[1] ?: 'bilde', ENT_QUOTES, 'UTF-8');
+                $url = htmlspecialchars($m[2], ENT_QUOTES, 'UTF-8');
+                $placeholders[$key] = '<img src="' . $url . '" alt="' . $alt . '" style="max-width:100%;height:auto;border-radius:8px;margin:8px 0;display:block;">';
+                $counter++;
+                return $key;
+            },
+            $body
+        );
+
+        // Steg 1b: ekstraher markdown-lenker og bytt med plassholdere
+        // (slik at HTML-escape ikke ødelegger dem)
         $body = preg_replace_callback(
             '/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/',
             function ($m) use (&$placeholders, &$counter) {
@@ -57,11 +77,14 @@ class InboxBodyFormatter
             $body
         );
 
-        // Steg 4: gjenopprett plassholdere med ferdig HTML-lenker
+        // Steg 4: gjenopprett plassholdere med ferdig HTML-lenker og bilder
         $body = strtr($body, $placeholders);
 
-        // Steg 5: linjeskift til <br>
+        // Steg 5: linjeskift til <br> — men IKKE rundt <img>-tagger siden de
+        // allerede er block-elementer og får dobbel luft ellers
         $body = nl2br($body);
+        $body = preg_replace('/(<br\s*\/?>\s*)+(<img)/i', '$2', $body);
+        $body = preg_replace('/(<\/img>|<img[^>]*>)(\s*<br\s*\/?>)+/i', '$1', $body);
 
         return $body;
     }

@@ -25,6 +25,9 @@ Route::prefix('inbox')->group(function () {
     Route::post('/canned-responses', [Backend\InboxController::class, 'storeCannedResponse'])->name('admin.inbox.canned-responses.store');
     Route::get('/attachment/{filename}', [Backend\InboxController::class, 'downloadAttachment'])->name('admin.inbox.attachment');
 
+    // Inline image upload fra paste/drag-and-drop i reply-feltet
+    Route::post('/paste-image', [Backend\InboxController::class, 'pasteImage'])->name('admin.inbox.paste-image');
+
     // Inbox-innstillinger (per-bruker, f.eks. egen signatur)
     Route::get('/settings', [Backend\InboxController::class, 'settings'])->name('admin.inbox.settings');
     Route::post('/settings', [Backend\InboxController::class, 'storeSettings'])->name('admin.inbox.settings.store');
