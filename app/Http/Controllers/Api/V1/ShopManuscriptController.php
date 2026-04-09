@@ -583,18 +583,24 @@ class ShopManuscriptController extends ApiController
 
         if ($isManuscriptUploaded && $shopManuscriptTaken->feedback_user_id) {
             $emailTemplate = AdminHelpers::emailTemplate('Manuscript Uploaded');
+
+            // Inkluder elev-ID + admin-lenke så redaktøren kan finne riktig
+            // elev selv når det ikke er en av hennes "faste".
+            $learnerId = $user->id;
+            $learnerLink = route('admin.learner.show', $learnerId);
+
             $emailContent = str_replace([
                 ':manuscript_from',
                 ':learner',
             ], [
                 '<em>'.$shopManuscriptTaken->shop_manuscript->title.'</em>',
-                '<b>'.$user->full_name.'</b>',
+                '<b>'.$user->full_name.'</b> (elev-ID <a href="'.$learnerLink.'">#'.$learnerId.'</a>)',
             ], $emailTemplate->email_content);
 
             $editor = User::find($shopManuscriptTaken->feedback_user_id);
             if ($editor) {
                 $emailData = [
-                    'email_subject' => $emailTemplate->subject,
+                    'email_subject' => $emailTemplate->subject.' — '.$user->full_name.' (#'.$learnerId.')',
                     'email_message' => $emailContent,
                     'from_name' => '',
                     'from_email' => $emailTemplate->from_email,

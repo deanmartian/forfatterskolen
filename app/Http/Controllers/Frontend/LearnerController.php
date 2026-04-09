@@ -3465,18 +3465,24 @@ Forfatterskolen';
 
             if($publishing->editor_id) {
                 $emailTemplate = AdminHelpers::emailTemplate('Manuscript Uploaded');
+
+                // Inkluder elev-ID + admin-lenke så redaktøren kan finne riktig
+                // elev selv når det ikke er en av hennes "faste".
+                $learnerId = Auth::user()->id;
+                $learnerLink = route('admin.learner.show', $learnerId);
+
                 $email_content = str_replace([
                     ':manuscript_from',
                     ':learner',
                 ], [
                     "<em>" . $publishing->title . "</em>",
-                    "<b>" . Auth::user()->full_name . "</b>",
+                    "<b>" . Auth::user()->full_name . "</b> (elev-ID <a href=\"" . $learnerLink . "\">#" . $learnerId . "</a>)",
                 ], $emailTemplate->email_content);
 
                 $editor = User::find($publishing->editor_id);
                 $to = $editor->email;
                 $emailData = [
-                    'email_subject' => $emailTemplate->subject,
+                    'email_subject' => $emailTemplate->subject . ' — ' . Auth::user()->full_name . ' (#' . $learnerId . ')',
                     'email_message' => $email_content,
                     'from_name' => '',
                     'from_email' => $emailTemplate->from_email,
@@ -5354,6 +5360,13 @@ Forfatterskolen';
                     $editor = User::find($assignmentManuscript->editor_id);
                     $to = $editor->email;
 
+                    // Inkluder elev-ID (og lenke til eleven i admin) så redaktøren
+                    // kan finne riktig elev selv når det ikke er en av hennes
+                    // "faste" — uten ID er mailen ubrukelig for redaktører som
+                    // har mange elever å holde styr på.
+                    $learnerId = Auth::user()->id;
+                    $learnerLink = route('admin.learner.show', $learnerId);
+
                     $email_content = AdminHelpers::formatEmailContent(
                         $emailTemplate->email_content ?? '',
                         $to,
@@ -5361,14 +5374,14 @@ Forfatterskolen';
                         route('editor.dashboard'),
                         [
                             ':editor' => $editor->first_name,
-                            ':learner' => '<b>' . Auth::user()->full_name . '</b>',
+                            ':learner' => '<b>' . Auth::user()->full_name . '</b> (elev-ID <a href="' . $learnerLink . '">#' . $learnerId . '</a>)',
                             ':manuscript_from' => '<em>' . $assignmentManuscript->assignment->title . '</em>',
                             ':assignment' => $assignmentManuscript->assignment->title,
                         ]
                     );
 
                     $emailData = [
-                        'email_subject' => $emailTemplate->subject,
+                        'email_subject' => $emailTemplate->subject . ' — ' . Auth::user()->full_name . ' (#' . $learnerId . ')',
                         'email_message' => $email_content,
                         'from_name' => '',
                         'from_email' => $emailTemplate->from_email,

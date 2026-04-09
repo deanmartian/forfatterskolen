@@ -1165,18 +1165,24 @@ class ShopManuscriptController extends Controller
             // notify editor if manuscript is updated
             if ($isManuscriptUploaded && $shopManuscriptTaken->feedback_user_id) {
                 $emailTemplate = AdminHelpers::emailTemplate('Manuscript Uploaded');
+
+                // Inkluder elev-ID + admin-lenke så redaktøren kan finne riktig
+                // elev selv når det ikke er en av hennes "faste".
+                $learnerId = Auth::user()->id;
+                $learnerLink = route('admin.learner.show', $learnerId);
+
                 $email_content = str_replace([
                     ':manuscript_from',
                     ':learner',
                 ], [
                     "<em>" . $shopManuscriptTaken->shop_manuscript->title . "</em>",
-                    "<b>" . Auth::user()->full_name . "</b>",
+                    "<b>" . Auth::user()->full_name . "</b> (elev-ID <a href=\"" . $learnerLink . "\">#" . $learnerId . "</a>)",
                 ], $emailTemplate->email_content);
 
                 $editor = User::find($shopManuscriptTaken->feedback_user_id);
                 $to = $editor->email;
                 $emailData = [
-                    'email_subject' => $emailTemplate->subject,
+                    'email_subject' => $emailTemplate->subject . ' — ' . Auth::user()->full_name . ' (#' . $learnerId . ')',
                     'email_message' => $email_content,
                     'from_name' => '',
                     'from_email' => $emailTemplate->from_email,
