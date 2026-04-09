@@ -235,21 +235,32 @@ class FacebookAdsService
     }
 
     /**
-     * Opprett Lead Form — eller returner eksisterende hvis navnet
-     * allerede finnes på siden. Dette gjør createWebinarLeadCampaign
-     * trygt å kjøre på nytt ved feil, uten å ende opp med duplikat-
-     * former eller "Form Name already exists"-error.
+     * Opprett Lead Form.
+     *
+     * Forsøker først find-or-reuse via findLeadFormByName (krever
+     * Page Access Token — kan feile med #190). Hvis det ikke
+     * fungerer, opprettes et nytt form med tidsstempel-suffix i
+     * navnet for å unngå "Form Name already exists"-kollisjoner
+     * ved retries.
+     *
+     * Bivirkning: orphan forms kan akkumuleres i Meta Business
+     * Manager ved flere mislykkede forsøk. Det er en akseptabel
+     * trade-off siden det eneste alternativet krever en Page Access
+     * Token som ikke er tilgjengelig i dagens .env-oppsett.
      */
     public function createLeadForm(array $data): array
     {
-        // 1. Sjekk om et form med samme navn allerede eksisterer (retry-case)
+        // 1. Forsøk find-or-reuse (fungerer kun med Page Access Token)
         $existing = $this->findLeadFormByName($data['name']);
         if ($existing) {
             Log::info("FB Lead Form finnes allerede, gjenbruker: {$existing['id']} ({$data['name']})");
             return $existing;
         }
 
-        // 2. Ellers opprett nytt
+        // 2. Append tidsstempel-suffix for garantert unikt navn.
+        //    Sekund-presisjon, så alle realistiske retries får eget navn.
+        $uniqueName = $data['name'] . ' · ' . now()->format('Y-m-d H:i:s');
+
         $questions = json_encode([
             ['type' => 'EMAIL'],
             ['type' => 'FIRST_NAME'],
@@ -265,7 +276,7 @@ class FacebookAdsService
         ];
 
         return $this->request('post', "{$this->pageId}/leadgen_forms", [
-            'name' => $data['name'],
+            'name' => $uniqueName,
             'questions' => $questions,
             'privacy_policy' => json_encode([
                 'url' => $data['privacy_policy_url'],
