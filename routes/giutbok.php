@@ -48,6 +48,11 @@ Route::domain($domain)->group(function () {
         Route::get('/self-publishing/{id}/download-manuscript', [Backend\SelfPublishingController::class, 'selfPublishingDownloadManuscript'])
             ->name('g-admin.self-publishing.download-manuscript');
         Route::get('/self-publishing/{id}/learners', [Backend\SelfPublishingController::class, 'learners'])->name('g-admin.self-publishing.learners');
+        // AJAX-endepunkt for select2-elevsøket i self-publishing-viewene.
+        // Må være definert på giutbok-domenet også, siden viewene
+        // backend/self-publishing/{index,learners}.blade.php kaller
+        // /learners/search relativt til nåværende domene.
+        Route::get('/learners/search', [Backend\PageController::class, 'searchLearners']);
         Route::post('/self-publishing/{id}/add-feedback', [Backend\SelfPublishingController::class, 'addFeedback'])->name('g-admin.self-publishing.add-feedback');
         Route::get('/self-publishing/feedback/{feedback_id}/download', [Backend\SelfPublishingController::class, 'downloadFeedback'])->name('g-admin.self-publishing.download-feedback');
         Route::post('/self-publishing/{id}/add-learners', [Backend\SelfPublishingController::class, 'addLearners'])->name('g-admin.self-publishing.add-learners');
