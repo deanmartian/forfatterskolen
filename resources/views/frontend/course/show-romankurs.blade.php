@@ -1024,6 +1024,24 @@
 @stop
 
 @section('scripts')
+@if(config('services.tracking.enabled'))
+<script>
+    // Meta Pixel ViewContent — hjelper Meta optimalisere mot kjøp.
+    // Høy-intent signal: bruker har vært på selve kurs-siden.
+    if (typeof fbq !== 'undefined') {
+        fbq('track', 'ViewContent', {
+            content_name: @json($course->title),
+            content_category: 'course',
+            content_ids: ['{{ $course->id }}'],
+            content_type: 'product'
+            @if($cheapest ?? false)
+            , value: {{ (int) $cheapest->calculated_price }}
+            , currency: 'NOK'
+            @endif
+        });
+    }
+</script>
+@endif
 <script>
     // Earlybird countdown for sticky bar
     (function() {

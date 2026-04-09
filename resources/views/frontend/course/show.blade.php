@@ -969,6 +969,19 @@
 @stop
 
 @section('scripts')
+@if(config('services.tracking.enabled'))
+<script>
+    // Meta Pixel ViewContent — hjelper Meta optimalisere mot kjøp.
+    if (typeof fbq !== 'undefined') {
+        fbq('track', 'ViewContent', {
+            content_name: @json($course->title),
+            content_category: 'course',
+            content_ids: ['{{ $course->id }}'],
+            content_type: 'product'
+        });
+    }
+</script>
+@endif
 <script>
     // Smooth scroll for anchor links
     document.querySelectorAll('.rk-page a[href^="#"]').forEach(function(a) {

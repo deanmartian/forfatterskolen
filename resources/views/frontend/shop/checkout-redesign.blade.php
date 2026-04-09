@@ -568,6 +568,35 @@
 @stop
 
 @section('scripts')
+@if(config('services.tracking.enabled'))
+<script>
+    // Meta Pixel InitiateCheckout — fyres når brukeren lander på
+    // checkout-siden. Dette er det viktigste mid-funnel-signalet
+    // for Meta optimalisering mot Purchase (sammen med ViewContent
+    // på kurs-siden og Purchase på confirmation-siden).
+    if (typeof fbq !== 'undefined') {
+        fbq('track', 'InitiateCheckout', {
+            content_name: @json($course->title),
+            content_category: 'course',
+            content_ids: ['{{ $selectedPackage->id ?? $package_id }}'],
+            content_type: 'product',
+            value: {{ (int) ($selDisplayPrice ?? 0) }},
+            currency: 'NOK',
+            num_items: 1
+        });
+    }
+
+    @if(config('services.google_ads.conversion_checkout'))
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'conversion', {
+            'send_to': '{{ config('services.google_ads.conversion_checkout') }}',
+            'value': {{ (int) ($selDisplayPrice ?? 0) }},
+            'currency': 'NOK'
+        });
+    }
+    @endif
+</script>
+@endif
 <script>
     // ── State ──────────────────────────────────
     var courseId = {{ $course->id }};
