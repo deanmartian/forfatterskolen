@@ -197,9 +197,9 @@ class FacebookAdsService
             'name' => $data['name'],
             'daily_budget' => $data['daily_budget'],
             'billing_event' => 'IMPRESSIONS',
-            'optimization_goal' => 'LEAD_GENERATION',
+            'optimization_goal' => $data['optimization_goal'] ?? 'LEAD_GENERATION',
             'bid_strategy' => 'LOWEST_COST_WITHOUT_CAP',
-            'promoted_object' => json_encode(['page_id' => $this->pageId]),
+            'promoted_object' => $data['promoted_object'] ?? json_encode(['page_id' => $this->pageId]),
             'start_time' => $data['start_time'],
             'end_time' => $data['end_time'],
             'targeting' => json_encode($data['targeting']),
@@ -207,6 +207,333 @@ class FacebookAdsService
         ];
 
         return $this->request('post', "{$this->adAccountId}/adsets", $payload);
+    }
+
+    /**
+     * Opprett en Website Custom Audience — brukere som har besøkt
+     * spesifikke URL-er på forfatterskolen.no siste N dager.
+     *
+     * Eksempel: folk som var på /course/121 siste 14 dager for
+     * retargeting-kampanje.
+     *
+     * Bruker Meta Pixel ID fra config (META_PIXEL_ID i .env).
+     */
+    public function createWebsiteCustomAudience(array $data): array
+    {
+        $pixelId = config('services.meta_pixel.id');
+        if (empty($pixelId)) {
+            throw new \Exception('META_PIXEL_ID må være satt for å opprette Custom Audience');
+        }
+
+        $retentionDays = (int) ($data['retention_days'] ?? 30);
+        $retentionSeconds = $retentionDays * 86400;
+
+        // Bygg rule: inklusjonsregel som matcher URL-pattern
+        $filters = [];
+        if (!empty($data['url_contains'])) {
+            $filters[] = [
+                'field' => 'url',
+                'operator' => 'i_contains',
+                'value' => $data['url_contains'],
+            ];
+        }
+
+        $rule = [
+            'inclusions' => [
+                'operator' => 'or',
+                'rules' => [
+                    [
+                        'event_sources' => [
+                            ['id' => $pixelId, 'type' => 'pixel'],
+                        ],
+                        'retention_seconds' => $retentionSeconds,
+                        'filter' => [
+                            'operator' => 'and',
+                            'filters' => $filters ?: [
+                                ['field' => 'url', 'operator' => 'i_contains', 'value' => ''],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        return $this->request('post', "{$this->adAccountId}/customaudiences", [
+            'name' => $data['name'] . ' · ' . now()->format('Y-m-d H:i:s'),
+            'subtype' => 'WEBSITE',
+            'pixel_id' => $pixelId,
+            'retention_days' => $retentionDays,
+            'rule' => json_encode($rule),
+            'description' => $data['description'] ?? ($data['name'] ?? 'Website Custom Audience'),
+        ]);
+    }
+
+    /**
+     * Opprett en retargeting-kampanje som peker til en landingsside
+     * (link ad, IKKE lead form). Brukes for:
+     *   - Retargeting til webinar-påmelding (folk som var innom men
+     *     ikke registrerte seg)
+     *   - Retargeting til kurskjøp (folk som var på /course/121)
+     *   - Deadline-push (siste sjanse-annonser)
+     *
+     * Krav: data inneholder
+     *   - name: kampanjenavn
+     *   - audience_id: Custom Audience ID (fra createWebsiteCustomAudience)
+     *   - daily_budget: daglig budsjett i kroner
+     *   - start_time, end_time: ISO 8601 datotider
+     *   - landing_page: URL annonsen peker til
+     *   - ad_text: primary text
+     *   - ad_headline: overskrift
+     *   - ad_description: beskrivelse
+     *   - image_url: bilde-URL (opplastes via /adimages)
+     *   - call_to_action: f.eks. 'LEARN_MORE', 'SHOP_NOW', 'SIGN_UP'
+     *   - objective: default OUTCOME_TRAFFIC (kan være OUTCOME_SALES)
+     */
+    public function createRetargetingLinkCampaign(array $data): array
+    {
+        // 1. Campaign
+        $campaign = $this->createCampaign([
+            'name' => $data['name'],
+            'objective' => $data['objective'] ?? 'OUTCOME_TRAFFIC',
+            'status' => 'PAUSED',
+            'special_ad_categories' => '[]',
+        ]);
+        $campaignId = $campaign['id'];
+
+        // 2. Ad Set med custom audience targeting
+        $targeting = [
+            'geo_locations' => ['countries' => ['NO']],
+            'custom_audiences' => [['id' => $data['audience_id']]],
+            'age_min' => $data['age_min'] ?? 25,
+            'age_max' => $data['age_max'] ?? 65,
+        ];
+
+        // For OUTCOME_TRAFFIC: optimization_goal = LINK_CLICKS
+        // For OUTCOME_SALES: optimization_goal = OFFSITE_CONVERSIONS
+        $optGoal = match ($data['objective'] ?? 'OUTCOME_TRAFFIC') {
+            'OUTCOME_SALES' => 'OFFSITE_CONVERSIONS',
+            'OUTCOME_LEADS' => 'LEAD_GENERATION',
+            default => 'LINK_CLICKS',
+        };
+
+        $adSet = $this->createAdSet([
+            'campaign_id' => $campaignId,
+            'name' => $data['name'],
+            'daily_budget' => ((int) $data['daily_budget']) * 100, // i øre
+            'start_time' => $data['start_time'] ?? now()->toIso8601String(),
+            'end_time' => $data['end_time'],
+            'targeting' => $targeting,
+            'optimization_goal' => $optGoal,
+            'promoted_object' => json_encode(['page_id' => $this->pageId]),
+            'status' => 'PAUSED',
+        ]);
+        $adSetId = $adSet['id'];
+
+        // 3. Creative (link ad, ikke lead form)
+        $linkData = [
+            'message' => $data['ad_text'],
+            'name' => $data['ad_headline'],
+            'description' => $data['ad_description'] ?? 'Forfatterskolen — Norges største nettbaserte skriveskole',
+            'link' => $data['landing_page'],
+            'call_to_action' => [
+                'type' => $data['call_to_action'] ?? 'LEARN_MORE',
+                'value' => ['link' => $data['landing_page']],
+            ],
+        ];
+
+        // Upload bilde til /adimages hvis URL er satt
+        if (!empty($data['image_url'])) {
+            $imageHash = $this->uploadAdImage($data['image_url']);
+            if ($imageHash) {
+                $linkData['image_hash'] = $imageHash;
+            }
+        }
+
+        $creative = $this->request('post', "{$this->adAccountId}/adcreatives", [
+            'name' => $data['name'],
+            'object_story_spec' => json_encode([
+                'page_id' => $this->pageId,
+                'link_data' => $linkData,
+            ]),
+        ]);
+
+        // 4. Ad
+        $ad = $this->request('post', "{$this->adAccountId}/ads", [
+            'name' => $data['name'],
+            'adset_id' => $adSetId,
+            'creative' => json_encode(['creative_id' => $creative['id']]),
+            'status' => 'PAUSED',
+        ]);
+
+        return [
+            'campaign_id' => $campaignId,
+            'adset_id' => $adSetId,
+            'ad_id' => $ad['id'],
+            'creative_id' => $creative['id'],
+        ];
+    }
+
+    /**
+     * Master-metode: opprett HELE Meta-trakten for et webinar i ett
+     * API-pass. Kaller alle de individuelle metodene.
+     *
+     * Oppretter:
+     *   1. Custom Audience: website visitors 30 dager
+     *   2. Custom Audience: course page visitors 14 dager
+     *   3. Kald trafikk Lead Ad-kampanje (fra før: createWebinarLeadCampaign)
+     *   4. Retargeting webinar-kampanje (mot audience #1)
+     *   5. Retargeting kjøp-kampanje (mot audience #2)
+     *   6. Deadline-push-kampanje (18.-20. april, mot begge audiences)
+     *
+     * Alle kampanjer opprettes som PAUSET. Sven aktiverer manuelt i
+     * Meta Ads Manager når han er klar til å kjøre trafikk.
+     */
+    public function createFullWebinarFunnel(array $data): array
+    {
+        $webinarTitle = $data['webinar_title'];
+        $webinarStartsAt = $data['webinar_starts_at']; // Carbon
+        $coursePage = $data['course_page'] ?? 'https://www.forfatterskolen.no/course/121';
+        $landingPage = $data['landing_page']; // f.eks. /gratis-webinar/95
+        $imageUrl = $data['image_url'] ?? null;
+        $discountCode = $data['discount_code'] ?? 'MOTOR5000';
+        $deadlineDate = $data['deadline_date'] ?? $webinarStartsAt->copy()->addDays(5); // default: 5 dager etter webinar
+
+        $budgets = array_merge([
+            'cold_lead' => 3500,
+            'retargeting_webinar' => 1150,
+            'retargeting_purchase' => 1000,
+            'deadline_push' => 2700,
+        ], $data['budgets'] ?? []);
+
+        $result = [
+            'audiences' => [],
+            'campaigns' => [],
+            'errors' => [],
+        ];
+
+        // === CUSTOM AUDIENCES ===
+        try {
+            $websiteAudience = $this->createWebsiteCustomAudience([
+                'name' => "Motor Webinar · Website Visitors",
+                'url_contains' => 'forfatterskolen.no',
+                'retention_days' => 30,
+                'description' => 'Alle som har besøkt forfatterskolen.no siste 30 dager',
+            ]);
+            $result['audiences']['website'] = $websiteAudience['id'];
+        } catch (\Throwable $e) {
+            $result['errors']['audience_website'] = $e->getMessage();
+            Log::error("createWebsiteCustomAudience feilet: {$e->getMessage()}");
+        }
+
+        try {
+            $courseAudience = $this->createWebsiteCustomAudience([
+                'name' => "Motor Webinar · Course 121 Visitors",
+                'url_contains' => '/course/121',
+                'retention_days' => 14,
+                'description' => 'Folk som har besøkt /course/121 siste 14 dager',
+            ]);
+            $result['audiences']['course'] = $courseAudience['id'];
+        } catch (\Throwable $e) {
+            $result['errors']['audience_course'] = $e->getMessage();
+            Log::error("createWebsiteCustomAudience (course) feilet: {$e->getMessage()}");
+        }
+
+        // === 1. COLD LEAD AD (createWebinarLeadCampaign — eksisterende) ===
+        try {
+            $coldLead = $this->createWebinarLeadCampaign([
+                'webinar_title' => $webinarTitle,
+                'webinar_starts_at' => $webinarStartsAt,
+                'ad_text' => $data['cold_ad_text'] ?? "Gratis webinar: {$webinarTitle}",
+                'ad_headline' => $data['cold_ad_headline'] ?? 'Meld deg på gratis webinar',
+                'daily_budget' => $budgets['cold_lead'],
+                'landing_page' => $landingPage,
+                'image_url' => $imageUrl,
+            ]);
+            $result['campaigns']['cold_lead'] = $coldLead;
+        } catch (\Throwable $e) {
+            $result['errors']['cold_lead'] = $e->getMessage();
+        }
+
+        // === 2. RETARGETING WEBINAR (til landingsside) ===
+        if (!empty($result['audiences']['website'])) {
+            try {
+                $retargetingWebinar = $this->createRetargetingLinkCampaign([
+                    'name' => "Motor Retarget · Webinar-påmelding",
+                    'audience_id' => $result['audiences']['website'],
+                    'daily_budget' => $budgets['retargeting_webinar'],
+                    'start_time' => now()->toIso8601String(),
+                    'end_time' => $webinarStartsAt->toIso8601String(),
+                    'landing_page' => $landingPage,
+                    'objective' => 'OUTCOME_TRAFFIC',
+                    'call_to_action' => 'SIGN_UP',
+                    'ad_headline' => 'Du har tenkt på det en stund nå',
+                    'ad_description' => "Gratis webinar {$webinarStartsAt->format('j. F')}",
+                    'ad_text' => $data['retargeting_webinar_text'] ?? "Du har vært innom siden vår. Kanskje kikket på kurset. Det er ikke tilfeldig.\n\n{$webinarStartsAt->format('l j. F')} holder Kristine et gratis webinar — der hun viser deg akkurat det som holder folk tilbake fra å skrive romanen sin.\n\n60 minutter. Koster ingenting.\n\n👉 Meld deg på gratis webinar her",
+                    'image_url' => $imageUrl,
+                ]);
+                $result['campaigns']['retargeting_webinar'] = $retargetingWebinar;
+            } catch (\Throwable $e) {
+                $result['errors']['retargeting_webinar'] = $e->getMessage();
+            }
+        }
+
+        // === 3. RETARGETING PURCHASE (til /course/121 med MOTOR5000) ===
+        if (!empty($result['audiences']['course'])) {
+            try {
+                $retargetingPurchase = $this->createRetargetingLinkCampaign([
+                    'name' => "Motor Retarget · Kurskjøp",
+                    'audience_id' => $result['audiences']['course'],
+                    'daily_budget' => $budgets['retargeting_purchase'],
+                    'start_time' => now()->toIso8601String(),
+                    'end_time' => $deadlineDate->toIso8601String(),
+                    'landing_page' => $coursePage,
+                    'objective' => 'OUTCOME_TRAFFIC',
+                    'call_to_action' => 'SHOP_NOW',
+                    'ad_headline' => "Spar 5 000 kr — kun til {$deadlineDate->format('j. F')}",
+                    'ad_description' => "Bruk kode {$discountCode} i kassen",
+                    'ad_text' => $data['retargeting_purchase_text'] ?? "Du har sett Romankurs i gruppe. Nå er det én grunn til å bestemme seg:\n\n✅ 10 uker med live webinarer og kursmoduler\n✅ Profesjonell tilbakemelding på teksten din\n✅ Mentormøter med Maja Lunde, Tom Egeland m.fl.\n✅ 14 dagers angrefrist\n\nBruk kode {$discountCode} i kassen. Gjelder t.o.m. {$deadlineDate->format('j. F')}.\n\n👉 Se pakker og meld deg på",
+                    'image_url' => $imageUrl,
+                ]);
+                $result['campaigns']['retargeting_purchase'] = $retargetingPurchase;
+            } catch (\Throwable $e) {
+                $result['errors']['retargeting_purchase'] = $e->getMessage();
+            }
+        }
+
+        // === 4. DEADLINE-PUSH (kun siste 3 dager før deadline) ===
+        $deadlineStart = $deadlineDate->copy()->subDays(2)->startOfDay();
+        if (!empty($result['audiences']['website']) || !empty($result['audiences']['course'])) {
+            try {
+                // Kombiner begge audiences (hvis begge finnes)
+                $audienceIds = array_filter([
+                    $result['audiences']['website'] ?? null,
+                    $result['audiences']['course'] ?? null,
+                ]);
+                // Bruk første audience; FB støtter flere via custom_audiences-array
+                // men for enkelhet bruker vi én her
+                $primaryAudience = $audienceIds[0];
+
+                $deadlinePush = $this->createRetargetingLinkCampaign([
+                    'name' => "Motor Deadline Push",
+                    'audience_id' => $primaryAudience,
+                    'daily_budget' => $budgets['deadline_push'],
+                    'start_time' => $deadlineStart->toIso8601String(),
+                    'end_time' => $deadlineDate->toIso8601String(),
+                    'landing_page' => $coursePage,
+                    'objective' => 'OUTCOME_TRAFFIC',
+                    'call_to_action' => 'SHOP_NOW',
+                    'ad_headline' => "Rabattkoden utløper ved midnatt",
+                    'ad_description' => "Kursstart i dag · Siste sjanse",
+                    'ad_text' => $data['deadline_text'] ?? "Romankurs i gruppe starter i dag, {$deadlineDate->format('j. F')}.\n\nWebinar-rabatten på 5 000 kr utløper ved midnatt.\n\nBruk kode {$discountCode} i kassen. 14 dagers angrefrist.\n\n👉 Meld deg på her",
+                    'image_url' => $imageUrl,
+                ]);
+                $result['campaigns']['deadline_push'] = $deadlinePush;
+            } catch (\Throwable $e) {
+                $result['errors']['deadline_push'] = $e->getMessage();
+            }
+        }
+
+        return $result;
     }
 
     /**
