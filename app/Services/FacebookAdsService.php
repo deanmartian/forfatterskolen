@@ -210,10 +210,46 @@ class FacebookAdsService
     }
 
     /**
-     * Opprett Lead Form
+     * Finn et eksisterende Lead Form på siden ved navn.
+     * Returnerer null hvis ingen matcher. Brukes av createLeadForm
+     * for å unngå "Form Name already exists"-feil ved retries.
+     */
+    public function findLeadFormByName(string $name): ?array
+    {
+        try {
+            $response = $this->request('get', "{$this->pageId}/leadgen_forms", [
+                'fields' => 'id,name,status',
+                'limit' => 100,
+            ]);
+
+            foreach ($response['data'] ?? [] as $form) {
+                if (($form['name'] ?? null) === $name) {
+                    return $form;
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning("findLeadFormByName feilet: {$e->getMessage()}");
+        }
+
+        return null;
+    }
+
+    /**
+     * Opprett Lead Form — eller returner eksisterende hvis navnet
+     * allerede finnes på siden. Dette gjør createWebinarLeadCampaign
+     * trygt å kjøre på nytt ved feil, uten å ende opp med duplikat-
+     * former eller "Form Name already exists"-error.
      */
     public function createLeadForm(array $data): array
     {
+        // 1. Sjekk om et form med samme navn allerede eksisterer (retry-case)
+        $existing = $this->findLeadFormByName($data['name']);
+        if ($existing) {
+            Log::info("FB Lead Form finnes allerede, gjenbruker: {$existing['id']} ({$data['name']})");
+            return $existing;
+        }
+
+        // 2. Ellers opprett nytt
         $questions = json_encode([
             ['type' => 'EMAIL'],
             ['type' => 'FIRST_NAME'],
