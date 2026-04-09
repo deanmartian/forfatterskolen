@@ -295,11 +295,15 @@ class FacebookAdsService
     public function createRetargetingLinkCampaign(array $data): array
     {
         // 1. Campaign
+        // NB: is_adset_budget_sharing_enabled må settes eksplisitt til
+        // 'false' når vi ikke bruker campaign-level budget (vi setter
+        // budsjett på adset-nivå). FB-API feiler ellers med subcode 4834011.
         $campaign = $this->createCampaign([
             'name' => $data['name'],
             'objective' => $data['objective'] ?? 'OUTCOME_TRAFFIC',
             'status' => 'PAUSED',
             'special_ad_categories' => '[]',
+            'is_adset_budget_sharing_enabled' => 'false',
         ]);
         $campaignId = $campaign['id'];
 
