@@ -582,7 +582,7 @@
                         </div>
 
                         <div class="form-group hide" id="add-files">
-                            <label>Add Files</label>
+                            <label>Legg til flere filer</label>
                             <input type="file" name="add_files[]" class="form-control"
                                    accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
 					    application/vnd.oasis.opendocument.text" multiple>
@@ -591,7 +591,7 @@
                         <div class="form-group">
                             <label>{{ trans_choice('site.editors', 1) }}</label>
                             <select name="editor_id" class="form-control select2 template">
-                                <option value="" selected="" disabled>- Select Editor -</option>
+                                <option value="" selected="" disabled>- Velg redaktør -</option>
                                 @foreach($editors as $editor)
                                     <option value="{{ $editor->id }}">
                                         {{$editor->full_name}}
@@ -643,12 +643,12 @@
 
                         @if (Auth::user()->isSuperUser())
                             <div class="form-group">
-                                <label>Price</label>
+                                <label>Pris</label>
                                 <input type="number" name="price" class="form-control" step="0.01">
                             </div>
 
                             <div class="form-group">
-                                <label>Editor Share</label>
+                                <label>Redaktørens andel</label>
                                 <input type="number" name="editor_share" class="form-control">
                             </div>
                         @endif

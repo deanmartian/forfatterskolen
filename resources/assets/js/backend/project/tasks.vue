@@ -2,19 +2,19 @@
     <div>
         <div class="panel">
             <div class="panel-header" style="padding: 10px">
-                <em><b>Tasks</b></em>
+                <em><b>Oppgaver</b></em>
             </div>
             <div class="panel-body">
                 <button class="btn btn-success btn-sm pull-right" @click="showTaskFormModal()">
-                    + Add Task
+                    + Legg til oppgave
                 </button>
                 <div class="clearfix"></div>
                 <div class="table-users">
                     <table class="table table-responsive">
                         <thead>
                         <tr>
-                            <th>Task</th>
-                            <th>Assigned To</th>
+                            <th>Oppgave</th>
+                            <th>Tildelt</th>
                             <th width="150"></th>
                         </tr>
                         </thead>
@@ -40,6 +40,9 @@
                                     </button>
                                 </td>
                             </tr>
+                            <tr v-if="!tasks.length">
+                                <td colspan="3" class="text-center text-muted">Ingen data</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -57,14 +60,14 @@
             </div>
 
             <div class="form-group">
-                <label>Task</label>
+                <label>Oppgave</label>
                 <textarea name="task" cols="30" rows="10" class="form-control" v-model="taskForm.task" required></textarea>
             </div>
 
             <div class="form-group">
-                <label>Assign to</label>
+                <label>Tildel til</label>
                 <select name="assign_to" class="form-control" v-model="taskForm.assigned_to" required>
-                    <option value="" disabled selected>Select Editor</option>
+                    <option value="" disabled selected>Velg redaktør</option>
                     <option :value="editor.id" v-for="editor in editorAndAdminList" :key="editor.id">
                         {{ editor.full_name }}
                     </option>
@@ -73,45 +76,45 @@
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-primary" @click="saveTask()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Lagre
                 </button>
             </div>
         </b-modal>
 
         <b-modal
             ref="finishTaskModal"
-            title="Finish Task"
+            title="Fullfør oppgave"
             size="sm"
             centered
             no-close-on-backdrop
         >
 
             <p>
-                Are you sure you want to finish this task?
+                Er du sikker på at du vil fullføre denne oppgaven?
             </p>
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-success" @click="finishTask()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Finish
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Fullfør
                 </button>
             </div>
         </b-modal>
 
         <b-modal
                 ref="deleteTaskModal"
-                title="Delete Task"
+                title="Slett oppgave"
                 size="sm"
                 centered
                 no-close-on-backdrop
         >
 
             <p>
-                Are you sure you want to delete this record?
+                Er du sikker på at du vil slette denne oppføringen?
             </p>
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-danger" @click="deleteTask()" :disabled="isDeleting">
-                    <i class="fa fa-spinner fa-pulse" v-if="isDeleting"></i> Delete
+                    <i class="fa fa-spinner fa-pulse" v-if="isDeleting"></i> Slett
                 </button>
             </div>
         </b-modal>
@@ -142,10 +145,11 @@
 
         methods: {
             showTaskFormModal(data) {
-                this.modalTitle = 'Add Task';
+                this.modalTitle = 'Legg til oppgave';
                 this.taskForm.project_id = this.project.id;
 
                 if (data) {
+                    this.modalTitle = 'Rediger oppgave';
                     this.taskForm.id = data.id;
                     this.taskForm.assigned_to = data.assigned_to;
                     this.taskForm.task = data.task;

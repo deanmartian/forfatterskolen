@@ -2,9 +2,9 @@
     <div class="margin-top">
         <div class="panel">
             <div class="panel-header" style="padding: 10px">
-                <em><b>Notes</b></em>
+                <em><b>Notater</b></em>
                 <button class="btn btn-primary btn-sm pull-right" @click="showNotes()">
-                    Notes
+                    Rediger
                 </button>
             </div>
             <div class="panel-body" v-html="formattedNotes">
@@ -13,20 +13,20 @@
 
         <b-modal
                 ref="notesModal"
-                title="Edit Note"
+                title="Rediger notat"
                 size="md"
                 centered
                 no-close-on-backdrop
         >
 
             <div class="form-group">
-                <label>Notes</label>
+                <label>Notater</label>
                 <textarea name="notes" v-model="noteForm.notes" cols="30" rows="10" class="form-control"></textarea>
             </div>
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-primary" @click="saveNotes()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Lagre
                 </button>
             </div>
         </b-modal>

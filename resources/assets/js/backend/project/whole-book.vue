@@ -1,18 +1,18 @@
 <template>
     <div>
         <button class="btn btn-success" @click="showWholeBookFormModal()">
-            Add
+            Legg til
         </button>
 
         <div class="table-users">
             <table class="table table-responsive">
                 <thead>
                 <tr>
-                    <th>Book</th>
-                    <th>Description</th>
-                    <th>Date Uploaded</th>
+                    <th>Bok</th>
+                    <th>Beskrivelse</th>
+                    <th>Opplastingsdato</th>
                     <th>Designer</th>
-                    <th width="150">Details</th>
+                    <th width="150">Detaljer</th>
                     <th width="150"></th>
                 </tr>
                 </thead>
@@ -37,14 +37,14 @@
                     </td>
                     <td>
                         <template v-if="wholeBook.width">
-                            <b>Width:</b> {{ wholeBook.width }} (mm) <br>
-                            <b>Height:</b> {{ wholeBook.height }} (mm) <br>
+                            <b>Bredde:</b> {{ wholeBook.width }} (mm) <br>
+                            <b>Høyde:</b> {{ wholeBook.height }} (mm) <br>
 
                             <template v-if="wholeBook.page_count">
-                                <b>Page Count:</b> {{ wholeBook.page_count }} <br>
-                                <a href="#" v-if="wholeBook.designer_description" 
+                                <b>Sidetall:</b> {{ wholeBook.page_count }} <br>
+                                <a href="#" v-if="wholeBook.designer_description"
                                     @click="showDescriptionModal(wholeBook.designer_description)">
-                                    Description
+                                    Beskrivelse
                                 </a>
                             </template>
                         </template>
@@ -65,7 +65,7 @@
 
                         <toggle-button :color="'#337ab7'"
                         class="mt-3"
-                               :labels="{checked: 'Completed', unchecked: 'Pending'}"
+                               :labels="{checked: 'Fullført', unchecked: 'Venter'}"
                                v-model="wholeBookStatusBoolean[index]"
                                :width="110" :height="25" :font-size="14" @change="updateBookStatus(wholeBook, index)"/>
                     </td>
@@ -85,13 +85,13 @@
 
             <div class="form-group">
                 <toggle-button :color="'#337ab7'"
-                               :labels="{checked: 'File Upload', unchecked: 'Write Book'}"
+                               :labels="{checked: 'Filopplasting', unchecked: 'Skriv bok'}"
                                v-model="wholeBookForm.is_file"
                                :width="150" :height="30" :font-size="16" @change="removeValidationError()"/>
             </div>
 
             <div class="form-group" v-if="wholeBookForm.is_file">
-                <label>Upload Book</label>
+                <label>Last opp bok</label>
                 <input type="file" name="book_file" class="form-control"
                        @change="onWholeBookFileChange"
                        accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
@@ -99,7 +99,7 @@
             </div>
 
             <div class="form-group" v-if="!wholeBookForm.is_file">
-                <label>Write Book</label>
+                <label>Skriv bok</label>
                 <quill-editor ref="wholeBookEditor" :content="wholeBookForm.book_content"
                               @change="onEditorChange($event)"></quill-editor>
                 <input type="hidden" name="book_content">
@@ -107,15 +107,15 @@
 
             <div class="form-group">
                 <label>
-                    Description
+                    Beskrivelse
                 </label>
                 <textarea name="description" cols="30" rows="10" class="form-control" v-model="wholeBookForm.description"></textarea>
             </div>
 
             <div class="form-group">
-                <label>Send Book to Graphic Designer</label>
+                <label>Send bok til grafisk designer</label>
                 <toggle-button :color="'#337ab7'"
-                               :labels="{checked: 'Yes', unchecked: 'No'}"
+                               :labels="{checked: 'Ja', unchecked: 'Nei'}"
                                v-model="wholeBookForm.send_to_designer"
                                :width="70" :height="30" :font-size="16"/>
             </div>
@@ -123,10 +123,10 @@
             <div v-if="wholeBookForm.send_to_designer">
                 <div class="form-group">
                     <label>
-                        Graphic Designer
+                        Grafisk designer
                     </label>
                     <select name="designer_id" class="form-control" v-model="wholeBookForm.designer_id">
-                        <option value="" selected disabled>- Select Designer -</option>
+                        <option value="" selected disabled>- Velg designer -</option>
                         <option :value="designer.id" v-for="designer in designers" :key="'designer' + designer.id">
                             {{ designer.full_name }}
                         </option>
@@ -135,23 +135,23 @@
 
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="width">Width (mm)</label>
-                        <input 
-                            type="number" 
-                            id="width" 
+                        <label for="width">Bredde (mm)</label>
+                        <input
+                            type="number"
+                            id="width"
                             v-model="wholeBookForm.width"
-                            class="form-control" 
-                            placeholder="Width in mm">
+                            class="form-control"
+                            placeholder="Bredde i mm">
                     </div>
-            
+
                     <div class="form-group col-md-6">
-                        <label for="height">Height (mm)</label>
-                        <input 
-                            type="number" 
+                        <label for="height">Høyde (mm)</label>
+                        <input
+                            type="number"
                             id="height" 
                             v-model="wholeBookForm.height"
-                            class="form-control" 
-                            placeholder="Height in mm">
+                            class="form-control"
+                            placeholder="Høyde i mm">
                     </div>
                 </div>
 
@@ -160,7 +160,7 @@
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-primary" @click="saveWholeBookForm()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Lagre
                 </button>
             </div>
 
@@ -168,25 +168,25 @@
 
         <b-modal
                 ref="deleteBookFormModal"
-                title="Delete Book"
+                title="Slett bok"
                 size="sm"
                 centered
         >
 
             <p>
-                Are you sure you want to delete this record?
+                Er du sikker på at du vil slette denne oppføringen?
             </p>
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-danger" @click="deleteWholeBook()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Delete
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Slett
                 </button>
             </div>
         </b-modal>
 
         <b-modal
                 ref="descriptionModal"
-                title="Description"
+                title="Beskrivelse"
                 centered
                 hide-footer
         >
@@ -229,9 +229,9 @@ export default {
     },
     methods: {
         showWholeBookFormModal(data = null) {
-            this.modalTitle = 'Add Book';
+            this.modalTitle = 'Legg til bok';
             if (data) {
-                this.modalTitle = 'Edit Book';
+                this.modalTitle = 'Rediger bok';
                 this.wholeBookForm = {
                     id: data.id,
                     is_file: !!data.is_file,

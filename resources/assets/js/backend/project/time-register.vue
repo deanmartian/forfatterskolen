@@ -2,20 +2,20 @@
     <div>
         <div class="panel">
             <div class="panel-header" style="padding: 10px">
-                <em><b>Time Register</b></em>
+                <em><b>Timeregister</b></em>
             </div>
             <div class="panel-body">
                 <button class="btn btn-success btn-sm pull-right" @click="showTimeFormModal()">
-                    + Add Time Register
+                    + Legg til timeregister
                 </button>
                 <div class="clearfix"></div>
                 <div class="table-users">
                     <table class="table table-responsive">
                         <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Number of hours</th>
-                            <th>Notes</th>
+                            <th>Dato</th>
+                            <th>Antall timer</th>
+                            <th>Notater</th>
                             <th width="150"></th>
                         </tr>
                         </thead>
@@ -34,9 +34,12 @@
                                 </button>
 
                                 <button class="btn btn-success btn-xs" @click="showTimeUsedModal(projectTimeRegister)">
-                                    Time Used
+                                    Tid brukt
                                 </button>
                             </td>
+                        </tr>
+                        <tr v-if="!projectTimeRegisters.length">
+                            <td colspan="4" class="text-center text-muted">Ingen data</td>
                         </tr>
                         </tbody>
                     </table>
@@ -55,11 +58,11 @@
             </div>
 
             <div class="form-group">
-                <label>Date</label>
+                <label>Dato</label>
                 <input type="date" name="date" class="form-control" v-model="timeForm.date" required>
             </div>
             <div class="form-group">
-                <label>Number of hours</label>
+                <label>Antall timer</label>
                 <input type="text" name="time" class="form-control" v-model="timeForm.time" required>
 
                 <button type="button" class="btn btn-xs" @click="adjustTime(1)">+1</button>
@@ -69,18 +72,13 @@
             </div>
 
             <div class="form-group">
-                <!-- <label>Invoice file</label>
-                <input type="file" name="invoice_file" class="form-control"
-                       @change="onFileChange"
-                       id="manuscript"
-                       accept="application/pdf"> -->
-                <label>Notes</label>
+                <label>Notater</label>
                 <textarea name="notes" cols="30" rows="10" class="form-control" v-model="timeForm.notes"></textarea>
             </div>
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-primary" @click="saveTime()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Lagre
                 </button>
             </div>
 
@@ -88,14 +86,14 @@
 
         <b-modal
                 ref="timeUsedModal"
-                title="Time Used"
+                title="Tid brukt"
                 size="lg"
                 centered
                 hide-footer
         >
 
             <button class="btn btn-success btn-sm addTimeUsedBtn pull-right" @click="showTimeUsedFormModal()">
-                Add Time Used
+                Legg til tid brukt
             </button>
 
             <div class="clearfix"></div>
@@ -104,9 +102,9 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Time Used</th>
-                        <th>Description</th>
+                        <th>Dato</th>
+                        <th>Tid brukt</th>
+                        <th>Beskrivelse</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -145,59 +143,59 @@
         >
 
             <div class="form-group">
-                <label>Date</label>
+                <label>Dato</label>
                 <input type="date" name="date" class="form-control" v-model="timeUsedForm.date" required>
             </div>
 
             <div class="form-group">
-                <label>Time Used</label>
+                <label>Tid brukt</label>
                 <input type="number" name="time_used" class="form-control" v-model="timeUsedForm.time_used" required>
             </div>
 
             <div class="form-group">
-                <label>Description</label>
+                <label>Beskrivelse</label>
                 <textarea name="description" cols="30" rows="10" class="form-control" v-model="timeUsedForm.description"></textarea>
             </div>
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-primary" @click="saveTimeUsedForm()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Lagre
                 </button>
             </div>
         </b-modal>
 
         <b-modal
                 ref="deleteTimeUsedModal"
-                title="Delete Time Used"
+                title="Slett tid brukt"
                 size="sm"
                 centered
         >
 
             <p>
-                Are you sure you want to delete this record?
+                Er du sikker på at du vil slette denne oppføringen?
             </p>
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-danger" @click="deleteTimeUsed()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Delete
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Slett
                 </button>
             </div>
         </b-modal>
 
         <b-modal
                 ref="deleteTimeModal"
-                title="Delete Time"
+                title="Slett timeregister"
                 size="sm"
                 centered
         >
 
             <p>
-                Are you sure you want to delete this record?
+                Er du sikker på at du vil slette denne oppføringen?
             </p>
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-danger" @click="deleteTime()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Delete
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Slett
                 </button>
             </div>
         </b-modal>
@@ -239,12 +237,12 @@
 
         methods: {
             showTimeFormModal(data = null) {
-                this.modalTitle = 'Add Time';
+                this.modalTitle = 'Legg til tid';
                 this.timeForm.learner_id = this.project.user_id;
                 this.timeForm.project_id = this.project.id;
 
                 if (data) {
-                    this.modalTitle = 'Edit Time';
+                    this.modalTitle = 'Rediger tid';
                     this.timeForm.id = data.id;
                     this.timeForm.project_id = data.project_id;
                     this.timeForm.date = data.date;
@@ -340,9 +338,9 @@
             },
 
              showTimeUsedFormModal(data = null) {
-                this.timeUsedFormModalTitle = 'Add Time used';
+                this.timeUsedFormModalTitle = 'Legg til tid brukt';
                 if (data) {
-                    this.timeUsedFormModalTitle = 'Edit Time used';
+                    this.timeUsedFormModalTitle = 'Rediger tid brukt';
                     this.timeUsedForm.time_used_id = data.id;
                     this.timeUsedForm.date = data.date;
                     this.timeUsedForm.time_used = data.time_used;

@@ -1,50 +1,50 @@
 <template>
     <div>
         <div class="page-toolbar">
-            <h3><i class="fa fa-file-text-o"></i> Project: {{ project.name }}</h3>
+            <h3><i class="fa fa-file-text-o"></i> Prosjekt: {{ project.name }}</h3>
             <a :href="'/project/' + project.id + '/graphic-work'" class="btn btn-primary btn-sm">
-                Graphic Work
+                Grafisk arbeid
             </a>
             <a :href="'/project/' + project.id + '/registration'" class="btn btn-primary btn-sm">
-                Registration
+                Registrering
             </a>
             <a :href="'/project/' + project.id + '/marketing'" class="btn btn-primary btn-sm">
-                Marketing
+                Markedsføring
             </a>
             <a :href="'/project/' + project.id + '/marketing-plan'" class="btn btn-primary btn-sm">
-                Marketing Plans
+                Markedsplaner
             </a>
             <a :href="'/project/' + project.id + '/progress-plan'" class="btn btn-primary btn-sm">
                 Fremdriftsplan
             </a>
             <a :href="'/project/' + project.id + '/contract'" class="btn btn-primary btn-sm">
-                Contract
+                Kontrakt
             </a>
             <a :href="'/project/' + project.id + '/invoice'" class="btn btn-primary btn-sm">
-                Invoices
+                Fakturaer
             </a>
             <a :href="'/project/' + project.id + '/storage'" class="btn btn-primary btn-sm">
-                Storage
+                Lager
             </a>
             <a :href="'/project/' + project.id + '/e-book'" class="btn btn-primary btn-sm">
-                Ebook
+                E-bok
             </a>
             <a :href="'/project/' + project.id + '/audio'" class="btn btn-primary btn-sm">
-                Audio
+                Lyd
             </a>
             <a :href="'/project/' + project.id + '/print'" class="btn btn-primary btn-sm">
-                Print
+                Trykk
             </a>
             <a :href="'/project/' + project.id + '/shop'" class="btn btn-sm" style="background:#862736;color:#fff;border:none;">
                 🛒 Nettbutikk
             </a>
             <div class="pull-right">
                 <button class="btn btn-success btn-sm" @click="showLearnerFormModal()">
-                    <i class="fa fa-user"></i> Add Learner
+                    <i class="fa fa-user"></i> Legg til elev
                 </button>
 
                 <button class="btn btn-primary btn-sm" @click="showProjectFormModal()">
-                    <i class="fa fa-edit"></i> Edit Project
+                    <i class="fa fa-edit"></i> Rediger prosjekt
                 </button>
             </div>
             <div class="clearfix"></div>
@@ -52,7 +52,7 @@
 
         <b-modal
                 ref="learnerFormModal"
-                :title="'Add Learner'"
+                :title="'Legg til elev'"
                 size="md"
                 @hidden="closeLearnerFormModal()"
                 centered
@@ -60,31 +60,31 @@
         >
 
             <div class="form-group">
-                <label>Email</label>
+                <label>E-post</label>
                 <input type="text" class="form-control" name="name" v-model="learnerForm.email" required>
             </div>
 
             <div class="form-group">
-                <label>Firstname</label>
+                <label>Fornavn</label>
                 <input type="text" name="first_name" class="form-control no-border-left" v-model="learnerForm.first_name" required>
             </div>
 
             <div class="form-group">
-                <label>Lastname</label>
+                <label>Etternavn</label>
                 <input type="text" name="last_name" class="form-control no-border-left" v-model="learnerForm.last_name" required>
             </div>
 
             <div class="form-group">
-                <label>Password</label>
+                <label>Passord</label>
                 <input type="text" name="password" class="form-control no-border-left" v-model="learnerForm.password" required>
                 <button class="btn btn-success btn-sm margin-top" type="button" @click="generatePassword()">
-                    Generate
+                    Generer
                 </button>
             </div>
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-primary" @click="saveLearner()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Lagre
                 </button>
             </div>
 
@@ -99,22 +99,19 @@
         >
 
             <div class="form-group">
-                <label>Name</label>
+                <label>Navn</label>
                 <input type="text" class="form-control" name="name" v-model="projectForm.name" required>
             </div>
 
             <div class="form-group">
-                <label>Number</label>
+                <label>Nummer</label>
                 <input type="number" class="form-control" name="number" v-model="projectForm.number" required>
             </div>
 
             <div class="form-group">
-                <label>Learner</label>
-                <!-- <v-select :options="learnerList" label="full_name" v-model="selected_learner" @input="setSelectedLearner($event)"
-                          name="learner_id"></v-select> -->
-
+                <label>Elev</label>
                 <div class="dropdown-container">
-                    <input type="text" v-model="searchQuery" @input="fetchLearners" class="form-control" placeholder="Search for users">
+                    <input type="text" v-model="searchQuery" @input="fetchLearners" class="form-control" placeholder="Søk etter elev">
                     <div class="dropdown-results" v-if="searchLearnerList.length">
                         <div v-for="learner in searchLearnerList" :key="learner.id" @click="selectLearner(learner)">
                             {{ learner.first_name + " " + learner.last_name }}
@@ -124,22 +121,22 @@
             </div>
 
             <div class="form-group">
-                <label>Start date</label>
+                <label>Startdato</label>
                 <input type="date" class="form-control" name="start_date" v-model="projectForm.start_date">
             </div>
 
             <div class="form-group">
-                <label>End date</label>
+                <label>Sluttdato</label>
                 <input type="date" class="form-control" name="end_date" v-model="projectForm.end_date">
             </div>
 
             <div class="form-group">
-                <label>Description</label>
+                <label>Beskrivelse</label>
                 <textarea name="description" cols="30" rows="10" class="form-control" v-model="projectForm.description"></textarea>
             </div>
 
             <div class="form-group">
-                <label>Editor</label>
+                <label>Redaktør</label>
                 <v-select :options="editorList" label="full_name" v-model="selected_editor" @input="setSelectedEditor($event)"
                           name="editor_id"></v-select>
             </div>
@@ -147,16 +144,16 @@
             <div class="form-group">
                 <label>Status</label>
                 <select name="status" class="form-control" v-model="projectForm.status">
-                    <option value="active">Active</option>
+                    <option value="active">Aktiv</option>
                     <option value="lead">Lead</option>
-                    <option value="finished">Finished</option>
-                    <option value="closed">Closed</option>
+                    <option value="finished">Ferdig</option>
+                    <option value="closed">Lukket</option>
                 </select>
             </div>
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-primary" @click="saveProject()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Lagre
                 </button>
             </div>
 

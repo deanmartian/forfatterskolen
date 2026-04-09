@@ -7,9 +7,8 @@
             <table class="table table-responsive">
                 <thead>
                 <tr>
-                    <th>Author</th>
-                    <th>Name of book</th>
-                    <!-- <th></th> -->
+                    <th>Forfatter</th>
+                    <th>Boktittel</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -45,11 +44,9 @@
         >
 
             <div class="form-group">
-                <label>Author</label>
-                <!-- <v-select :options="learners" label="full_name" v-model="selected_learner" @input="setSelectedLearner($event)"
-                          name="learner_id"></v-select> -->
+                <label>Forfatter</label>
                 <div class="dropdown-container">
-                    <input type="text" v-model="searchQuery" @input="fetchLearners" class="form-control" placeholder="Search for users">
+                    <input type="text" v-model="searchQuery" @input="fetchLearners" class="form-control" placeholder="Søk etter elev">
                     <div class="dropdown-results" v-if="searchLearnerList.length">
                         <div v-for="learner in searchLearnerList" :key="learner.id" @click="selectLearner(learner)">
                             {{ learner.first_name + " " + learner.last_name }}
@@ -59,32 +56,32 @@
             </div>
 
             <div class="form-group">
-                <label>Name of book</label>
+                <label>Boktittel</label>
                 <input type="text" class="form-control" name="book_name" v-model="form.book_name">
             </div>
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-primary" @click="saveForm()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Lagre
                 </button>
             </div>
         </b-modal>
 
         <b-modal
                 ref="deleteModal"
-                title="Delete Book"
+                title="Slett bok"
                 size="sm"
                 centered
                 no-close-on-backdrop
         >
 
             <p>
-                Are you sure you want to delete this record?
+                Er du sikker på at du vil slette denne oppføringen?
             </p>
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-danger" @click="deleteBook()" :disabled="isLoading">
-                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Delete
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Slett
                 </button>
             </div>
         </b-modal>
@@ -118,9 +115,9 @@ export default {
 
     methods: {
         showFormModal(data = null) {
-            this.modalTitle = 'Add Book';
+            this.modalTitle = 'Legg til bok';
             if (data) {
-                this.modalTitle = 'Edit Book';
+                this.modalTitle = 'Rediger bok';
                 this.searchQuery = this.projectUser ? this.projectUser.full_name : '';
                 this.form = {
                     id: data.id,
