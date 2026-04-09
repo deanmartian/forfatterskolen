@@ -233,40 +233,7 @@ HTML;
 
 <p>Takk for at du var med på webinaret — eller at du har sett opptaket! 📖</p>
 
-<p>Som jeg nevnte, så får webinar-deltakere en <strong>spesialrabatt</strong> på <strong>Romankurs i gruppe</strong> som starter <strong>søndag 20. april</strong>.</p>
-
-<h3>Webinar-rabatten:</h3>
-
-<table style="border-collapse:collapse;width:100%;max-width:500px;">
-  <tr style="background:#f9edef;">
-    <th style="padding:10px;border:1px solid #ddd;text-align:left;">Pakke</th>
-    <th style="padding:10px;border:1px solid #ddd;text-align:right;">Ordinær</th>
-    <th style="padding:10px;border:1px solid #ddd;text-align:right;">Webinar-pris</th>
-    <th style="padding:10px;border:1px solid #ddd;text-align:right;">Du sparer</th>
-  </tr>
-  <tr>
-    <td style="padding:10px;border:1px solid #ddd;"><strong>Basic</strong></td>
-    <td style="padding:10px;border:1px solid #ddd;text-align:right;">10 900 kr</td>
-    <td style="padding:10px;border:1px solid #ddd;text-align:right;">9 900 kr</td>
-    <td style="padding:10px;border:1px solid #ddd;text-align:right;">1 000 kr</td>
-  </tr>
-  <tr style="background:#fafafa;">
-    <td style="padding:10px;border:1px solid #ddd;"><strong>Standard</strong></td>
-    <td style="padding:10px;border:1px solid #ddd;text-align:right;">13 900 kr</td>
-    <td style="padding:10px;border:1px solid #ddd;text-align:right;">8 900 kr</td>
-    <td style="padding:10px;border:1px solid #ddd;text-align:right;"><strong>5 000 kr</strong></td>
-  </tr>
-  <tr>
-    <td style="padding:10px;border:1px solid #ddd;"><strong>Pro</strong></td>
-    <td style="padding:10px;border:1px solid #ddd;text-align:right;">18 900 kr</td>
-    <td style="padding:10px;border:1px solid #ddd;text-align:right;">13 900 kr</td>
-    <td style="padding:10px;border:1px solid #ddd;text-align:right;"><strong>5 000 kr</strong></td>
-  </tr>
-</table>
-
-<p><strong>Bruk kode <code style="background:#f9edef;padding:4px 8px;border-radius:4px;color:#862736;">MOTOR5000</code> i kassen.</strong></p>
-
-<p>Rabatten gjelder <strong>kun til og med søndag 20. april kl 23:59</strong> (samme dag som kursstart).</p>
+<p>Som jeg nevnte, så er <strong>webinar-prisen</strong> på <strong>Romankurs i gruppe</strong> allerede aktivert. Kurset starter <strong>søndag 20. april</strong>, og prisen gjelder <strong>kun til og med søndag 20. april kl 23:59</strong>.</p>
 
 <p>På Romankurs i gruppe får du:</p>
 <ul>
@@ -278,6 +245,8 @@ HTML;
 </ul>
 
 <p><a href="[kurs_tilbud_url]" style="display:inline-block;background:#862736;color:#fff;padding:14px 28px;text-decoration:none;border-radius:6px;font-weight:600;">Se pakker og meld deg på →</a></p>
+
+<p>Prisen du ser på siden er webinar-prisen — det er ingen kode du trenger å skrive inn.</p>
 
 <p>Ha en fin dag!<br>
 — Kristine</p>
@@ -291,7 +260,7 @@ HTML;
         return <<<'HTML'
 <h1>Hei [fornavn]!</h1>
 
-<p>To dager igjen til <strong>søndag 20. april</strong> — både kursstart og siste frist for webinar-rabatten MOTOR5000.</p>
+<p>To dager igjen til <strong>søndag 20. april</strong> — både kursstart og siste frist for webinar-prisen.</p>
 
 <p>Jeg vet det er en stor beslutning å melde seg på et kurs som går over flere måneder. Så her er det jeg pleier å spørre folk om når de står og vakler:</p>
 
@@ -308,8 +277,6 @@ En roman blir ikke ferdig på første utkast. Det visste du allerede.</p>
 
 <p><a href="[kurs_tilbud_url]" style="display:inline-block;background:#862736;color:#fff;padding:14px 28px;text-decoration:none;border-radius:6px;font-weight:600;">Se pakker og meld deg på →</a></p>
 
-<p>Bruk <strong>MOTOR5000</strong> i kassen for rabatten.</p>
-
 <p>Ha en fin dag!<br>
 — Kristine</p>
 
@@ -322,21 +289,19 @@ HTML;
         return <<<'HTML'
 <h1>Hei [fornavn]!</h1>
 
-<p>Kursstart i dag. Rabatten utløper ved midnatt.</p>
+<p>Kursstart i dag. Webinar-prisen utløper ved midnatt.</p>
 
-<p><strong>Romankurs i gruppe</strong> starter <strong>i dag kl 20:00</strong>. Dette er den siste muligheten til å være med første runde, og siste dag for <strong>MOTOR5000</strong>-rabatten.</p>
+<p><strong>Romankurs i gruppe</strong> starter <strong>i dag kl 20:00</strong>. Dette er den siste muligheten til å være med første runde, og siste dag for <strong>webinar-prisen</strong>.</p>
 
 <ul>
 <li>10 kursmoduler</li>
 <li>Profesjonell tilbakemelding på manuset ditt</li>
 <li>Mentormøter med Maja Lunde, Tom Egeland og flere</li>
-<li>Opptil 5 000 kr i rabatt med koden <strong>MOTOR5000</strong></li>
+<li>Spesialpris for webinar-deltakere (allerede aktivert)</li>
 <li>14 dagers angrefrist</li>
 </ul>
 
 <p><a href="[kurs_tilbud_url]" style="display:inline-block;background:#862736;color:#fff;padding:14px 28px;text-decoration:none;border-radius:6px;font-weight:600;">Meld deg på her før midnatt →</a></p>
-
-<p>Bruk <strong>MOTOR5000</strong> i kassen.</p>
 
 <p>Vi heier på deg.</p>
 

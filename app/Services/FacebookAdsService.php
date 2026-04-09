@@ -490,7 +490,9 @@ class FacebookAdsService
             }
         }
 
-        // === 3. RETARGETING PURCHASE (til /course/121 med MOTOR5000) ===
+        // === 3. RETARGETING PURCHASE (til /course/121) ===
+        // NB: Webinar-prisen er satt direkte på kurset via package
+        // sale_price-feltene — det trengs ingen rabattkode i kassen.
         if (!empty($result['audiences']['course'])) {
             try {
                 $retargetingPurchase = $this->createRetargetingLinkCampaign([
@@ -502,9 +504,9 @@ class FacebookAdsService
                     'landing_page' => $coursePage,
                     'objective' => 'OUTCOME_TRAFFIC',
                     'call_to_action' => 'SHOP_NOW',
-                    'ad_headline' => "Spar 5 000 kr — kun til {$deadlineDate->format('j. F')}",
-                    'ad_description' => "Bruk kode {$discountCode} i kassen",
-                    'ad_text' => $data['retargeting_purchase_text'] ?? "Du har sett Romankurs i gruppe. Nå er det én grunn til å bestemme seg:\n\n✅ 10 uker med live webinarer og kursmoduler\n✅ Profesjonell tilbakemelding på teksten din\n✅ Mentormøter med Maja Lunde, Tom Egeland m.fl.\n✅ 14 dagers angrefrist\n\nBruk kode {$discountCode} i kassen. Gjelder t.o.m. {$deadlineDate->format('j. F')}.\n\n👉 Se pakker og meld deg på",
+                    'ad_headline' => "Webinar-pris — kun til {$deadlineDate->format('j. F')}",
+                    'ad_description' => "Romankurs i gruppe · Forfatterskolen",
+                    'ad_text' => $data['retargeting_purchase_text'] ?? "Du har sett Romankurs i gruppe. Nå er det én grunn til å bestemme seg:\n\n✅ 10 uker med live webinarer og kursmoduler\n✅ Profesjonell tilbakemelding på teksten din\n✅ Mentormøter med Maja Lunde, Tom Egeland m.fl.\n✅ 14 dagers angrefrist\n\nWebinar-prisen er allerede aktivert på kurssiden — gjelder t.o.m. {$deadlineDate->format('j. F')}.\n\n👉 Se pakker og meld deg på",
                     'image_url' => $imageUrl,
                 ]);
                 $result['campaigns']['retargeting_purchase'] = $retargetingPurchase;
@@ -535,9 +537,9 @@ class FacebookAdsService
                     'landing_page' => $coursePage,
                     'objective' => 'OUTCOME_TRAFFIC',
                     'call_to_action' => 'SHOP_NOW',
-                    'ad_headline' => "Rabattkoden utløper ved midnatt",
+                    'ad_headline' => "Webinar-prisen utløper ved midnatt",
                     'ad_description' => "Kursstart i dag · Siste sjanse",
-                    'ad_text' => $data['deadline_text'] ?? "Romankurs i gruppe starter i dag, {$deadlineDate->format('j. F')}.\n\nWebinar-rabatten på 5 000 kr utløper ved midnatt.\n\nBruk kode {$discountCode} i kassen. 14 dagers angrefrist.\n\n👉 Meld deg på her",
+                    'ad_text' => $data['deadline_text'] ?? "Romankurs i gruppe starter i dag, {$deadlineDate->format('j. F')}.\n\nWebinar-prisen på kurssiden utløper ved midnatt i kveld. 14 dagers angrefrist.\n\n👉 Meld deg på her",
                     'image_url' => $imageUrl,
                 ]);
                 $result['campaigns']['deadline_push'] = $deadlinePush;
