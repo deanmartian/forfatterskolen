@@ -62,16 +62,16 @@ Password Change
 				</ul>
 
 				<div class="tab-content">
-					<div id="login" class="tab-pane fade @if(!Request::input('t')) in active @endif" role="tabpanel">
+					<div id="login" class="tab-pane fade @if(!Request::input('t')) show active @endif" role="tabpanel">
 						@include('frontend.auth.partials._login')
 					</div>
-					<div id="register" class="tab-pane fade @if(Request::input('t') == 'register') in active @endif" role="tabpanel">
+					<div id="register" class="tab-pane fade @if(Request::input('t') == 'register') show active @endif" role="tabpanel">
 						@include('frontend.auth.partials._register')
 					</div>
-					<div id="passwordreset" class="tab-pane fade @if(Request::input('t') == 'passwordreset') in active @endif" role="tabpanel">
+					<div id="passwordreset" class="tab-pane fade @if(Request::input('t') == 'passwordreset') show active @endif" role="tabpanel">
 						@include('frontend.auth.partials._password-reset')
 					</div>
-					<div id="password-change" class="tab-pane fade @if(Request::input('t') == 'password-change') in active @endif" role="tabpanel">
+					<div id="password-change" class="tab-pane fade @if(Request::input('t') == 'password-change') show active @endif" role="tabpanel">
 						@include('frontend.auth.partials._password-change')
 					</div>
 				</div>
