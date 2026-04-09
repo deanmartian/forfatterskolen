@@ -189,11 +189,15 @@ class PollInboxEmails extends Command
                             $conversation->update(['assigned_to' => $assignedToUserId]);
                             // Logg tildelingen som en InboxAssignment-rad så den
                             // dukker opp i timeline-visningen.
+                            // NB: InboxAssignment har $timestamps = false, så vi MÅ
+                            // sette created_at eksplisitt. Ellers blir det null, og
+                            // viewet crasher på ->format() i timeline-loopen.
                             \App\Models\Inbox\InboxAssignment::create([
                                 'conversation_id' => $conversation->id,
                                 'assigned_to' => $assignedToUserId,
                                 'assigned_by' => null, // system
                                 'note' => 'Auto-tildelt basert på innhold',
+                                'created_at' => now(),
                             ]);
                         }
                     }

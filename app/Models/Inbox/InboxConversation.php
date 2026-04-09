@@ -109,7 +109,11 @@ class InboxConversation extends Model
         $assignments = $this->assignments()->with(['assignedBy', 'assignedTo'])->get()->map(fn($a) => [
             'type' => 'assignment',
             'item' => $a,
-            'at' => $a->created_at,
+            // InboxAssignment har $timestamps = false. Hvis en rad er opprettet
+            // uten eksplisitt created_at (regresjon i cron-kode el.l.), faller
+            // vi tilbake på samtalens updated_at så blade-viewet aldri får null
+            // og kaller ->format() på det.
+            'at' => $a->created_at ?? $this->updated_at ?? $this->created_at ?? now(),
         ]);
 
         return $messages->concat($comments)->concat($assignments)->sortBy('at')->values();
