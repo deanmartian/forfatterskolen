@@ -249,8 +249,28 @@
 
             <button type="submit" class="btn-primary">Logg inn</button>
 
-            <a href="{{ url('/auth/login?t=passwordreset') }}" class="forgot-link">Glemt passordet? →</a>
+            <a href="#" class="forgot-link" onclick="document.getElementById('forgotForm').classList.toggle('show'); return false;">Glemt passordet? →</a>
         </form>
+
+        {{-- Glemt passord — inline form (samme UX som magic link) --}}
+        <div id="forgotForm" class="magic-link-form @if(session('show_forgot_password') || session('passwordreset_success') || $errors->has('reset_email')) show @endif">
+            @if(session('passwordreset_success'))
+                <div style="background:#e8f5e9;color:#2e7d32;padding:12px 16px;border-radius:8px;margin-top:12px;text-align:center;">
+                    ✅ {{ session('passwordreset_success') }}
+                </div>
+            @else
+                @if($errors->has('reset_email'))
+                    <div style="background:#fef2f2;color:#991b1b;padding:10px 14px;border-radius:8px;margin-top:12px;font-size:13px;text-align:center;">
+                        {{ $errors->first('reset_email') }}
+                    </div>
+                @endif
+                <form method="POST" action="{{ route('frontend.passwordreset.store') }}" style="margin-top:12px;">
+                    @csrf
+                    <input type="email" name="reset_email" placeholder="Skriv inn e-postadressen din" value="{{ old('reset_email') }}" required>
+                    <button type="submit">Send tilbakestillingslenke</button>
+                </form>
+            @endif
+        </div>
 
         <div class="divider"><span>eller</span></div>
 

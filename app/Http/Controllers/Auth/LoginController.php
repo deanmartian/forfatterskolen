@@ -461,7 +461,17 @@ class LoginController extends Controller
 
     public function showFrontend(): View
     {
-        // Hvis ?t= parameter brukes (register, passwordreset etc), vis gammel side
+        // Glemt passord behandles inline på den nye login-siden — samme
+        // UX-mønster som "Send meg en innloggingslenke". Vi viser fortsatt
+        // login-new når ?t=passwordreset, og setter en flagg-session så
+        // forgot-password-formen er auto-ekspandert.
+        if (request()->input('t') === 'passwordreset') {
+            session()->flash('show_forgot_password', true);
+            return view('frontend.auth.login-new');
+        }
+
+        // Andre ?t= parametere (register, password-change) viser foreløpig
+        // den gamle tabs-siden — skal migreres senere.
         if (request()->has('t')) {
             return view('frontend.auth.login');
         }
