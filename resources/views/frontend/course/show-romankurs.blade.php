@@ -754,7 +754,7 @@
                         </span>
                         <span class="rk-hero__trust-item">
                             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            Avbetaling tilgjengelig
+                            Bestill nå, betal senere
                         </span>
                         <span class="rk-hero__trust-item">
                             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -783,7 +783,7 @@
                             @if($isEarlybird)
                                 Prisen går opp 1. april. Bestill nå, betal senere.
                             @else
-                                Avbetaling tilgjengelig. Bestill nå, betal senere.
+                                Bestill nå, betal senere.
                             @endif
                         </div>
                     </div>
@@ -997,15 +997,15 @@
                     <div class="rk-risk-card__icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
                     </div>
-                    <div class="rk-risk-card__title">Avbetaling</div>
-                    <div class="rk-risk-card__desc">Opptil 24 måneder å betale ned kurset på. Fleksible løsninger.</div>
+                    <div class="rk-risk-card__title">Avdragsløsninger</div>
+                    <div class="rk-risk-card__desc">Vi har fleksible betalingsløsninger. Ta kontakt på <a href="mailto:post@forfatterskolen.no" style="color:var(--wine);text-decoration:underline;">post@forfatterskolen.no</a> for detaljer.</div>
                 </div>
                 <div class="rk-risk-card">
                     <div class="rk-risk-card__icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
-                    <div class="rk-risk-card__title">Bestill nå, betal senere</div>
-                    <div class="rk-risk-card__desc">Sikre deg plassen uten å betale med en gang. Du velger selv når.</div>
+                    <div class="rk-risk-card__title">Oppstart {{ $startDate->format('j') }}. {{ \App\Http\FrontendHelpers::convertMonthLanguage($startDate->format('n')) }}</div>
+                    <div class="rk-risk-card__desc">Sikre deg plassen i dag — kurset starter snart.</div>
                 </div>
             </div>
         </div>
