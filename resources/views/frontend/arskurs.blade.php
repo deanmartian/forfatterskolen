@@ -735,7 +735,7 @@
                         </h4>
                     </div>
                     <div id="faq12" class="panel-collapse collapse">
-                        <div class="panel-body">Nei, det trenger du ikke. Du kan betale ned kurset over to år, hvis du ønsker det, rentefritt.</div>
+                        <div class="panel-body">Nei, i checkout kan du velge ulike betalingsalternativer — blant annet delbetaling via Svea. Vilkårene bestemmes av Svea i selve kjøpsprosessen.</div>
                     </div>
                 </div>
 

@@ -937,13 +937,6 @@
                 </div>
                 <div class="rk-risk-card">
                     <div class="rk-risk-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                    </div>
-                    <div class="rk-risk-card__title">Avbetaling</div>
-                    <div class="rk-risk-card__desc">Opptil 24 måneder å betale ned kurset på. Fleksible løsninger.</div>
-                </div>
-                <div class="rk-risk-card">
-                    <div class="rk-risk-card__icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
                     <div class="rk-risk-card__title">Bestill nå, betal senere</div>
