@@ -722,9 +722,12 @@
     <div class="webinar-content__container">
         <div class="webinar-content__inner">
             <div>
-                <p class="content-text">
-                    {!! nl2br(e($freeWebinar->description)) !!}
-                </p>
+                {{-- Description er HTML fra admin (inneholder <p>-tags).
+                     Render direkte som HTML i stedet for å escape + nl2br
+                     så <p>-tags vises som paragrafer, ikke som råtekst. --}}
+                <div class="content-text">
+                    {!! $freeWebinar->description !!}
+                </div>
 
                 @if($freeWebinar->learning_points)
                 <div class="feature-list">
@@ -762,10 +765,10 @@
                 </div>
 
                 <div class="earlybird-mini">
-                    <span class="earlybird-mini__badge">&#9889; Earlybird</span>
+                    <span class="earlybird-mini__badge">&#127873; Webinar-pris</span>
                     <div class="earlybird-mini__title">Romankurs &ndash; oppstart 20. april</div>
                     <div>
-                        <span class="earlybird-mini__price">kr 5 400</span>
+                        <span class="earlybird-mini__price">fra kr 5 900</span>
                         <span class="earlybird-mini__original">kr 10 900</span>
                     </div>
                     <a href="{{ route('front.course.show', 121) }}" class="earlybird-mini__btn">Se kurset &rarr;</a>
