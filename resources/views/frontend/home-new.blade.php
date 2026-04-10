@@ -1570,9 +1570,10 @@
                                     @if($book->book_image_link)
                                         <a href="{{ $book->book_image_link }}" target="_blank">
                                     @endif
-                                        <img data-src="https://www.forfatterskolen.no/{{ $author_image }}"
+                                        <img src="{{ url($author_image) }}"
                                              alt="{{ $book->title }}"
                                              class="img-fluid"
+                                             loading="lazy"
                                              style="max-height: 320px; width: auto; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border-radius: 4px;">
                                     @if($book->book_image_link)
                                         </a>

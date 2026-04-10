@@ -72,8 +72,11 @@
             window.Laravel = '{{ json_encode(['csrfToken' => csrf_token()]) }}';
         </script>
 
-        {{-- Gumlet fjernet — forfatterskolen.gumlet.com eksisterer ikke (DNS non-existent).
-             Scriptet lastet på hver sidevisning men gjorde ingenting. --}}
+        {{-- Gumlet fjernet — erstattet med 3-linje polyfill som konverterer
+             data-src til src med native lazy loading. Dekker alle legacy-
+             templates som brukte Gumlets data-src-mønster uten å måtte
+             endre 20+ individuelle Blade-filer. --}}
+        <script>document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('img[data-src]').forEach(function(i){i.src=i.dataset.src;i.loading='lazy';})});</script>
 
         @if(config('services.tracking.enabled'))
         <!-- Google tag (gtag.js) -->
