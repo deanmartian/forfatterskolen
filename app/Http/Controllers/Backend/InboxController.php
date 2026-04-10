@@ -265,7 +265,7 @@ class InboxController extends Controller
         $senderName = auth()->user()->first_name ?? 'Sven Inge';
 
         // Hent svar-eksempler for stilreferanse
-        $examples = \App\HelpwiseReplyExample::orderBy('created_at', 'desc')
+        $examples = \App\Models\HelpwiseReplyExample::orderBy('created_at', 'desc')
             ->limit(5)
             ->pluck('reply_body')
             ->map(fn($r) => \Illuminate\Support\Str::limit(strip_tags($r), 300))
