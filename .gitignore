@@ -4,6 +4,8 @@
 /public/fiken-invoice
 /public/files
 /public/*
+!/public/css/
+!/public/css/pages/
 /storage/*.key
 /storage/pail
 /vendor
