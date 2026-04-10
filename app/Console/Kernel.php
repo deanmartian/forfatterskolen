@@ -36,6 +36,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('webinarscheduledregistration:command')->dailyAt('20:30'); // Day-before
         $schedule->command('dropbox:refresh-token')->hourly();
         $schedule->command('inbox:poll --mark-read')->everyMinute()->withoutOverlapping();
+        $schedule->command('facebook:fetch-leads')->everyFiveMinutes()->withoutOverlapping();
         $schedule->command('freecoursedelayedemail:command')->everyMinute()->withoutOverlapping();
         $schedule->command('coachingtimer:finalize')->dailyAt('01:00');
         $schedule->command('checkfikenpaymentdate:command')->dailyAt('00:30');
