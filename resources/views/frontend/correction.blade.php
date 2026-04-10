@@ -14,7 +14,7 @@
                     <div class="col-md-3 price-container">
                         <div class="circle">
                             <div class="circle-white">
-                                <h2 class="word-count">
+                                <h3 class="word-count">
                                     {{ trans('site.front.correction.word-count') }}
                                 </h2>
                                 <h3>

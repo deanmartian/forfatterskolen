@@ -21,17 +21,17 @@
                         <div class="card-body">
                             <div class="top-details">
                                 <img src="{{ asset('images-new/icon/open-book-dark-red.png') }}" alt="">
-                                <h2>
+                                <h3>
                                     1190 KR
-                                </h2>
+                                </h3>
                                 <p>
                                     {{ trans('site.front.30-mins') }}
                                 </p>
                             </div>
                     
-                            <h2>
+                            <h3>
                                 {{ trans('site.front.coaching-timer.one-on-one-coaching') }}
-                            </h2>
+                            </h3>
                             <p class="position-relative">
                                 {{ trans('site.front.coaching-timer.one-on-one-coaching-description') }}
                             </p>
@@ -48,17 +48,17 @@
                         <div class="card-body">
                             <div class="top-details">
                                 <img src="{{ asset('images-new/icon/open-book-dark-red.png') }}" alt="">
-                                <h2>
+                                <h3>
                                     1690 KR
-                                </h2>
+                                </h3>
                                 <p>
                                     {{ trans('site.front.60-mins') }}
                                 </p>
                             </div>
                     
-                            <h2>
+                            <h3>
                                 {{ trans('site.front.coaching-timer.one-on-one-coaching') }}
-                            </h2>
+                            </h3>
                             <p class="position-relative">
                                 {{ trans('site.front.coaching-timer.one-on-one-coaching-description') }}
                             </p>
