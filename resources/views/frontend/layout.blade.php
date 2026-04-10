@@ -102,11 +102,13 @@
                 'manual-invoice', 'email-tracking', 'chat/', 'subscribe-success',
                 'upviral-campaign', 'pilot-reader/', 'community/',
                 'workshop/checkout', 'blog?page=',
+                'link.getAttribute', 'terms/privacy-policy',
             ];
             $currentPath = request()->path();
+            $currentUrl = request()->fullUrl();
             $shouldNoindex = false;
             foreach ($noindexPaths as $path) {
-                if (str_contains($currentPath, $path)) {
+                if (str_contains($currentPath, $path) || str_contains($currentUrl, $path)) {
                     $shouldNoindex = true;
                     break;
                 }

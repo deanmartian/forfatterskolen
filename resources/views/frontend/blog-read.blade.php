@@ -1,7 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', $blog->title . ' — Forfatterskolen')
-@section('meta_desc', Str::limit(strip_tags($blog->description), 155))
+@section('meta_desc', Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags(html_entity_decode($blog->description)))), 150))
 
 @section('metas')
     <meta property="og:url"           content="{{ route('front.read-blog', $blog->id) }}" />
