@@ -408,7 +408,17 @@ class FacebookAdsService
         $webinarStartsAt = $data['webinar_starts_at']; // Carbon
         $coursePage = $data['course_page'] ?? 'https://www.forfatterskolen.no/course/121';
         $landingPage = $data['landing_page']; // f.eks. /gratis-webinar/95
+
+        // Per-kampanje bilder. Hvis spesifikke bilder ikke er gitt,
+        // falles tilbake på 'image_url' (kaldt-trafikk-bannerbildet).
+        // Best practice: bruk forskjellige visuelle angrepsvinkler per
+        // kampanje for å unngå banner-blindhet hos retargeting-målgruppen.
         $imageUrl = $data['image_url'] ?? null;
+        $imageColdLead = $data['image_cold_lead'] ?? $imageUrl;
+        $imageRetargetingWebinar = $data['image_retargeting_webinar'] ?? $imageUrl;
+        $imageRetargetingPurchase = $data['image_retargeting_purchase'] ?? $imageUrl;
+        $imageDeadlinePush = $data['image_deadline_push'] ?? $imageUrl;
+
         $discountCode = $data['discount_code'] ?? 'MOTOR5000';
         $deadlineDate = $data['deadline_date'] ?? $webinarStartsAt->copy()->addDays(5); // default: 5 dager etter webinar
 
@@ -484,7 +494,7 @@ class FacebookAdsService
                     'ad_description' => $data['cold_ad_description'] ?? "Gratis webinar · {$webinarStartsAt->format('j. F')} kl {$webinarStartsAt->format('H:i')}",
                     'daily_budget' => $budgets['cold_lead'],
                     'landing_page' => $landingPage,
-                    'image_url' => $imageUrl,
+                    'image_url' => $imageColdLead,
                 ]);
                 $result['campaigns']['cold_lead'] = $coldLead;
             } catch (\Throwable $e) {
@@ -507,7 +517,7 @@ class FacebookAdsService
                     'ad_headline' => 'Du har tenkt på det en stund nå',
                     'ad_description' => "Gratis webinar {$webinarStartsAt->format('j. F')}",
                     'ad_text' => $data['retargeting_webinar_text'] ?? "Du har vært innom siden vår. Kanskje kikket på kurset. Det er ikke tilfeldig.\n\n{$webinarStartsAt->format('l j. F')} holder Kristine et gratis webinar — der hun viser deg akkurat det som holder folk tilbake fra å skrive romanen sin.\n\n60 minutter. Koster ingenting.\n\n👉 Meld deg på gratis webinar her",
-                    'image_url' => $imageUrl,
+                    'image_url' => $imageRetargetingWebinar,
                 ]);
                 $result['campaigns']['retargeting_webinar'] = $retargetingWebinar;
             } catch (\Throwable $e) {
@@ -532,7 +542,7 @@ class FacebookAdsService
                     'ad_headline' => "Webinar-pris — kun til {$deadlineDate->format('j. F')}",
                     'ad_description' => "Romankurs i gruppe · Forfatterskolen",
                     'ad_text' => $data['retargeting_purchase_text'] ?? "Du har sett Romankurs i gruppe. Nå er det én grunn til å bestemme seg:\n\n✅ 10 uker med live webinarer og kursmoduler\n✅ Profesjonell tilbakemelding på teksten din\n✅ Mentormøter med Maja Lunde, Tom Egeland m.fl.\n✅ 14 dagers angrefrist\n\nWebinar-prisen er allerede aktivert på kurssiden — gjelder t.o.m. {$deadlineDate->format('j. F')}.\n\n👉 Se pakker og meld deg på",
-                    'image_url' => $imageUrl,
+                    'image_url' => $imageRetargetingPurchase,
                 ]);
                 $result['campaigns']['retargeting_purchase'] = $retargetingPurchase;
             } catch (\Throwable $e) {
@@ -565,7 +575,7 @@ class FacebookAdsService
                     'ad_headline' => "Webinar-prisen utløper ved midnatt",
                     'ad_description' => "Kursstart i dag · Siste sjanse",
                     'ad_text' => $data['deadline_text'] ?? "Romankurs i gruppe starter i dag, {$deadlineDate->format('j. F')}.\n\nWebinar-prisen på kurssiden utløper ved midnatt i kveld. 14 dagers angrefrist.\n\n👉 Meld deg på her",
-                    'image_url' => $imageUrl,
+                    'image_url' => $imageDeadlinePush,
                 ]);
                 $result['campaigns']['deadline_push'] = $deadlinePush;
             } catch (\Throwable $e) {
