@@ -28,6 +28,7 @@
 
             <div class="row">
                 <div class="col-sm-12 book-authors-container">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Utgivelser fra Forfatterskolen</h2>
                     <div class="grid">
                         @foreach($books as $book)
                             <div class="col-sm-6 grid-item">

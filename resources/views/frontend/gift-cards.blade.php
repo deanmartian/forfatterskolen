@@ -36,9 +36,9 @@
             <div class="card gift-cards-container">
                 <div class="card-body">
 
-                    <h3>
+                    <h2>
                         {{ trans('site.gift-card.select-gift-cards') }}
-                    </h3>
+                    </h2>
 
                     @php
 

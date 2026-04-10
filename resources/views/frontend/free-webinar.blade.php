@@ -372,6 +372,7 @@
     .feature-list__title {
         font-size: 0.95rem;
         font-weight: 700;
+        margin-top: 0;
         margin-bottom: 0.65rem;
         font-family: var(--font-body);
     }
@@ -400,6 +401,7 @@
     .audience-list__title {
         font-size: 0.9rem;
         font-weight: 700;
+        margin-top: 0;
         margin-bottom: 0.5rem;
         font-family: var(--font-body);
     }
@@ -731,7 +733,7 @@
 
                 @if($freeWebinar->learning_points)
                 <div class="feature-list">
-                    <div class="feature-list__title">P&aring; webinaret l&aelig;rer du:</div>
+                    <h2 class="feature-list__title">P&aring; webinaret l&aelig;rer du:</h2>
                     @foreach(explode("\n", trim($freeWebinar->learning_points)) as $point)
                         @if(trim($point))
                         <div class="feature-list__item">
@@ -745,7 +747,7 @@
 
                 @if($freeWebinar->target_audience)
                 <div class="audience-list">
-                    <div class="audience-list__title">Webinaret passer for deg som:</div>
+                    <h3 class="audience-list__title">Webinaret passer for deg som:</h3>
                     @foreach(explode("\n", trim($freeWebinar->target_audience)) as $item)
                         @if(trim($item))
                         <div class="audience-list__item">{{ trim($item) }}</div>

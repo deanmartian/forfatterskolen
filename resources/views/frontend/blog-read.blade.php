@@ -201,7 +201,7 @@
     .ba-related-label {
         font-size: 11px; letter-spacing: 0.12em;
         text-transform: uppercase; color: var(--ba-text-faint);
-        font-weight: 500; margin-bottom: 16px;
+        font-weight: 500; margin-top: 0; margin-bottom: 16px;
         padding-bottom: 12px; border-bottom: 1px solid var(--ba-border);
     }
     .ba-related-grid {
@@ -299,7 +299,7 @@
         {{-- Related posts --}}
         @if(isset($relatedBlogs) && $relatedBlogs->count())
         <div class="ba-related">
-            <div class="ba-related-label">Flere innlegg</div>
+            <h2 class="ba-related-label">Flere innlegg</h2>
             <div class="ba-related-grid">
                 @foreach($relatedBlogs as $related)
                 <a href="{{ route('front.read-blog', $related->id) }}" class="ba-related-card">

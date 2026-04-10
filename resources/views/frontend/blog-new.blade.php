@@ -140,7 +140,7 @@
     .bl-section-label {
         font-size: 11px; letter-spacing: 0.12em;
         text-transform: uppercase; color: var(--bl-text-faint);
-        font-weight: 500; margin-bottom: 16px;
+        font-weight: 500; margin-top: 0; margin-bottom: 16px;
         padding-bottom: 12px; border-bottom: 1px solid var(--bl-border);
     }
     .bl-grid {
@@ -314,7 +314,7 @@
             </a>
             @endif
 
-            <div class="bl-section-label">Tidligere innlegg</div>
+            <h2 class="bl-section-label">Tidligere innlegg</h2>
 
             <div class="bl-grid" id="blog-grid">
                 @include('frontend.blog-post-redesign')
