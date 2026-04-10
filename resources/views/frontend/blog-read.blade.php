@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', $blog->title . ' — Forfatterskolen')
+@section('meta_desc', Str::limit(strip_tags($blog->description), 155))
 
 @section('metas')
     <meta property="og:url"           content="{{ route('front.read-blog', $blog->id) }}" />
@@ -47,6 +48,7 @@
     {{-- Content --}}
     <div class="ba-content-wrap">
         <div class="ba-body">
+            <h2 class="ba-article-subtitle">{{ $blog->title }} — {{ $blog->category ?? 'Forfatterskolens blogg' }}</h2>
             {!! $blog->description !!}
 
             <div class="ba-share">
