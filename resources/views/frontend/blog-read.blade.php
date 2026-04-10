@@ -71,7 +71,7 @@
         {{-- Related posts --}}
         @if(isset($relatedBlogs) && $relatedBlogs->count())
         <div class="ba-related">
-            <h2 class="ba-related-label">Flere innlegg</h2>
+            <h3 class="ba-related-label">Flere innlegg</h3>
             <div class="ba-related-grid">
                 @foreach($relatedBlogs as $related)
                 <a href="{{ route('front.read-blog', $related->id) }}" class="ba-related-card">

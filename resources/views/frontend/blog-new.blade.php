@@ -56,7 +56,7 @@
             </a>
             @endif
 
-            <h2 class="bl-section-label">Tidligere innlegg</h2>
+            <h3 class="bl-section-label">Tidligere innlegg</h3>
 
             <div class="bl-grid" id="blog-grid">
                 @include('frontend.blog-post-redesign')
