@@ -103,6 +103,7 @@
                 'upviral-campaign', 'pilot-reader/', 'community/',
                 'workshop/checkout', 'blog?page=',
                 'link.getAttribute', 'terms/privacy-policy',
+                'application', 'subscribe-success',
             ];
             $currentPath = request()->path();
             $currentUrl = request()->fullUrl();
