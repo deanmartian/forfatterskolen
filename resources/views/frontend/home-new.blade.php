@@ -1378,17 +1378,17 @@
         <div class="kurs-section__header">
             <h2 class="kurs-section__heading">Neste kursstart</h2>
             @if($isEarlybird)
-                <p class="kurs-section__sub">Sikre deg plassen til earlybird-pris &mdash; prisen &oslash;ker 1. april.</p>
+                <p class="kurs-section__sub">Sikre deg plassen til webinar-pris &mdash; gjelder til {{ $earlybirdDeadline->format('j.') }} {{ \App\Http\FrontendHelpers::convertMonthLanguage($earlybirdDeadline->format('n')) }}.</p>
             @else
                 <p class="kurs-section__sub">Sikre deg plassen &mdash; begrenset antall plasser.</p>
             @endif
         </div>
 
-        {{-- Earlybird countdown --}}
+        {{-- Webinar-pris countdown --}}
         @if($isEarlybird)
         <div class="earlybird-banner">
-            <span class="earlybird-banner__badge">&#9889; Earlybird</span>
-            <span class="earlybird-banner__text">Spar <strong>kr {{ number_format($discount, 0, ',', ' ') }}</strong> &mdash; tilbudet gjelder til 1. april</span>
+            <span class="earlybird-banner__badge">&#127873; Webinar-pris</span>
+            <span class="earlybird-banner__text">Spar <strong>kr {{ number_format($discount, 0, ',', ' ') }}</strong> &mdash; gjelder til {{ $earlybirdDeadline->format('j.') }} {{ \App\Http\FrontendHelpers::convertMonthLanguage($earlybirdDeadline->format('n')) }}</span>
             <div class="earlybird-countdown" id="earlybirdCountdown">
                 <div class="earlybird-countdown__unit">
                     <div class="earlybird-countdown__number" id="ebDays">--</div>
@@ -1481,9 +1481,9 @@
 
                 <p class="pricing-note">
                     @if($isEarlybird)
-                        Earlybird-pris gjelder til 1. april 2026. Deretter g&aring;r prisen opp.<br>
+                        Webinar-pris gjelder til {{ $earlybirdDeadline->format('j.') }} {{ \App\Http\FrontendHelpers::convertMonthLanguage($earlybirdDeadline->format('n')) }} {{ $earlybirdDeadline->format('Y') }}. Deretter g&aring;r prisen opp.<br>
                     @endif
-                    Avbetaling tilgjengelig. Bestill n&aring;, betal senere.
+                    Bestill n&aring;, betal senere. 14 dagers angrefrist.
                 </p>
             </div>
         </div>
