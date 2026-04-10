@@ -1,0 +1,293 @@
+/* Extracted from partials/home-footer-new.blade.php */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Sans+3:wght@300;400;500;600&display=swap');
+
+.footer-newsletter {
+    background: var(--secondary-red, #852635);
+    padding: 2rem 1.5rem;
+}
+
+.footer-newsletter__inner {
+    max-width: 1140px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.footer-newsletter__text {
+    flex: 1;
+    min-width: 240px;
+}
+
+.footer-newsletter__heading {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: #fff;
+    margin-bottom: 0.25rem;
+}
+
+.footer-newsletter__sub {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 300;
+}
+
+.footer-newsletter__form {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1;
+    max-width: 540px;
+    min-width: 280px;
+}
+
+.footer-newsletter__input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.footer-newsletter__input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.footer-newsletter__input:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.footer-newsletter__btn {
+    padding: 0.7rem 1.5rem;
+    background: #fff;
+    color: var(--secondary-red, #852635);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.footer-newsletter__btn:hover {
+    background: #f5f2ed;
+}
+
+.footer-newsletter__btn:active {
+    transform: scale(0.97);
+}
+
+.footer-main {
+    background: #1e1e1e;
+    padding: 3rem 1.5rem 2rem;
+}
+
+.footer-main__inner {
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-brand__logo {
+    display: block;
+    margin-bottom: 1rem;
+    text-decoration: none;
+}
+
+.footer-brand__img {
+    height: 70px;
+    width: auto;
+}
+
+.footer-brand__tagline {
+    font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.85rem;
+    color: #8a8680;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    max-width: 260px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.footer-social__link {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #2a2a2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+    text-decoration: none;
+}
+
+.footer-social__link:hover {
+    background: var(--secondary-red, #852635);
+    transform: translateY(-2px);
+}
+
+.footer-social__link svg {
+    width: 16px;
+    height: 16px;
+    fill: #d4d0cb;
+    transition: fill 0.2s;
+}
+
+.footer-social__link:hover svg {
+    fill: #fff;
+}
+
+.footer-col__heading {
+    font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #8a8680;
+    margin-bottom: 1rem;
+}
+
+.footer-col__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-col__list li {
+    margin-bottom: 0.6rem;
+}
+
+.footer-col__list a {
+    color: #d4d0cb;
+    text-decoration: none;
+    font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 400;
+    transition: color 0.15s;
+    padding: 0;
+}
+
+.footer-col__list a:hover {
+    color: #f5f2ed;
+}
+
+.footer-col__list .footer-link--sub {
+    font-size: 0.8rem;
+    color: #8a8680;
+}
+
+.footer-col__list .footer-link--sub:hover {
+    color: #d4d0cb;
+}
+
+.footer-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+}
+
+.footer-contact-item svg {
+    width: 16px;
+    height: 16px;
+    fill: #8a8680;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.footer-contact-item a,
+.footer-contact-item span {
+    color: #d4d0cb;
+    text-decoration: none;
+    font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    transition: color 0.15s;
+}
+
+.footer-contact-item a:hover {
+    color: #f5f2ed;
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.footer-bottom__copy {
+    font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.35);
+}
+
+.footer-bottom__links {
+    display: flex;
+    gap: 1.25rem;
+}
+
+.footer-bottom__links a {
+    font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.35);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.footer-bottom__links a:hover {
+    color: #d4d0cb;
+}
+
+@media (max-width: 768px) {
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .footer-newsletter__inner {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-newsletter__form {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .footer-newsletter__form {
+        flex-direction: column;
+    }
+}
