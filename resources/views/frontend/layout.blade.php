@@ -86,7 +86,35 @@
         @yield('jsonld')
 
         <title>@yield('page_title', $meta_title)</title>
-        @yield('robots')
+        @php
+            $noindexPaths = [
+                'checkout', 'svea-checkout', 'place_order', 'cancelled-order',
+                'auth/login', 'auth/register', 'auth/passwordreset', 'auth/vipps',
+                'account/', 'learner/', 'self-publishing/',
+                'upgrade-', 'coaching-timer-checkout', 'coaching-timer-login',
+                'opt-in-thanks', 'thank-you', 'thankyou', 'confirmation',
+                'competition/innlevering', 'competition/thank',
+                'gift/redeem', 'gift/course-checkout', 'gift/shop-manuscript-checkout',
+                'personal-trainer/checkout', 'personal-trainer/thank',
+                'publising-service/checkout', 'publising-service/thankyou',
+                'shop-manuscript/login', 'shop-manuscript/checkout', 'shop-manuscript/upgrade',
+                'shop-manuscript/cancelled', 'shop-manuscript/payment',
+                'manual-invoice', 'email-tracking', 'chat/', 'subscribe-success',
+                'upviral-campaign', 'pilot-reader/', 'community/',
+                'workshop/checkout', 'blog?page=',
+            ];
+            $currentPath = request()->path();
+            $shouldNoindex = false;
+            foreach ($noindexPaths as $path) {
+                if (str_contains($currentPath, $path)) {
+                    $shouldNoindex = true;
+                    break;
+                }
+            }
+        @endphp
+        @if($shouldNoindex)
+        <meta name="robots" content="noindex, follow">
+        @endif
         <meta name="keywords" content="{{ $meta_keywords }}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
