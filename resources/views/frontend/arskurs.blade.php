@@ -1,10 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Årskurs Forfatterskolen – Skriv boken din på ett år')
-
-@section('meta')
-<meta name="description" content="Bli med på årskurs med forfatter og skrivementor Kristine S. Henningsen, og få alt du trenger for å fullføre manuset ditt på ett år.">
-@stop
+@section('meta_desc', 'Bli med på årskurs med forfatter og skrivementor Kristine S. Henningsen, og få alt du trenger for å fullføre manuset ditt på ett år.')
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/arskurs.css') }}">

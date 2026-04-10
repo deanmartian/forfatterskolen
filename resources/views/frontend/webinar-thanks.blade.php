@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Takk for påmeldingen &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Takk for påmeldingen til webinaret. Sjekk e-posten din for bekreftelse.')
 
 @section('styles')
 @include('frontend.partials.thank-you-styles')

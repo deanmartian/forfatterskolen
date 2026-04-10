@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Gift Cards &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Gi bort et skrivekurs i gave. Kjøp gavekort til Forfatterskolens kurs og tjenester.')
 
 @section('content')
 

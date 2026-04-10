@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Vilkår og betingelser — Forfatterskolen')
+@section('meta_desc', 'Les Forfatterskolens vilkår og betingelser, personvernerklæring og angrerettskjema.')
 
 @section('styles')
 <style>

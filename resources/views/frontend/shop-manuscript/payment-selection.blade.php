@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Velg betalingsmetode &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Velg betalingsmetode for din tekstvurdering hos Forfatterskolen.')
 
 @section('styles')
     <link rel="preconnect" href="https://fonts.googleapis.com">

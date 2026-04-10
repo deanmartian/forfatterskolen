@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Forfatterskolen &rsaquo; FAQ')
+@section('meta_desc', 'Vanlige spørsmål om Forfatterskolens kurs, betalingsalternativer, manusutvikling og skriveverksted.')
 
 @section('content')
 

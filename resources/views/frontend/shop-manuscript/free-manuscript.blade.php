@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Gratis tekstvurdering &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Send inn inntil 5 sider av ditt manus for en gratis vurdering fra Forfatterskolens redaktører.')
 
 @section('styles')
     <link rel="preconnect" href="https://fonts.googleapis.com">
