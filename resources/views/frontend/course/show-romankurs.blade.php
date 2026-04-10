@@ -830,7 +830,7 @@
     {{-- ═══════════ 3. HVA DU FÅR ═══════════ --}}
     <section class="rk-features">
         <div class="rk-container">
-            <h2 class="rk-section-title">Hva du får</h2>
+            <h2 class="rk-section-title">Hva du får med {{ $course->title }}</h2>
             <p class="rk-section-sub">Alt du trenger for å skrive en roman — på ett sted.</p>
 
             <div class="rk-features-grid">
@@ -883,7 +883,7 @@
     {{-- ═══════════ 4. KURSPLAN TIMELINE ═══════════ --}}
     <section class="rk-kursplan" id="kursplan">
         <div class="rk-container">
-            <h2 class="rk-section-title">Kursplan</h2>
+            <h2 class="rk-section-title">Kursplan for {{ $course->title }}</h2>
             <p class="rk-section-sub">10 intensive uker med ny modul og webinar hver uke.</p>
 
             <div class="rk-timeline">
@@ -932,7 +932,7 @@
     {{-- ═══════════ 5. PACKAGES ═══════════ --}}
     <section class="rk-packages" id="pakker">
         <div class="rk-container">
-            <h2 class="rk-section-title">Velg din pakke</h2>
+            <h2 class="rk-section-title">Velg din {{ $course->title }}-pakke</h2>
             <p class="rk-section-sub">Alle pakker inkluderer kursmoduler, webinarer, mentermøter og skrivemiljø.</p>
 
             <div class="rk-package-grid">
@@ -990,7 +990,7 @@
     {{-- ═══════════ 6. TESTIMONIALS ═══════════ --}}
     <section class="rk-testimonials">
         <div class="rk-container">
-            <h2 class="rk-section-title">Hva elevene sier</h2>
+            <h2 class="rk-section-title">Hva elevene sier om {{ $course->title }}</h2>
             <p class="rk-section-sub">Noen av tilbakemeldingene fra tidligere kursdeltakere.</p>
 
             <div class="rk-testimonial-grid">
@@ -1016,7 +1016,7 @@
     {{-- ═══════════ 7. RISK-FREE ═══════════ --}}
     <section class="rk-risk-free">
         <div class="rk-container">
-            <h2 class="rk-section-title">Ingen risiko</h2>
+            <h2 class="rk-section-title">Prøv {{ $course->title }} uten risiko</h2>
             <p class="rk-section-sub">Vi er så sikre på at du blir fornøyd at vi gjør det enkelt for deg.</p>
 
             <div class="rk-risk-grid">
@@ -1048,7 +1048,7 @@
     {{-- ═══════════ 8. FINAL CTA ═══════════ --}}
     <section class="rk-final-cta">
         <div class="rk-container">
-            <h2 class="rk-final-cta__title">Klar for å gjøre alvor av skrivedrømmen?</h2>
+            <h2 class="rk-final-cta__title">Klar for å starte {{ $course->title }}?</h2>
             <p class="rk-final-cta__sub">Oppstart {{ $startDate->format('d') }}. {{ \App\Http\FrontendHelpers::convertMonthLanguage($startDate->format('n')) }}. @if($isEarlybird) Webinar-prisen gjelder til {{ $earlybirdDeadline->format('j.') }} {{ \App\Http\FrontendHelpers::convertMonthLanguage($earlybirdDeadline->format('n')) }}. @endif</p>
             <a href="#pakker" class="rk-btn rk-btn--primary" style="font-size: 1rem; padding: 0.85rem 2rem;">Se pakker og meld deg på →</a>
         </div>

@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Forfatterskolen Publishing')
+@section('page_title', 'Skrivekonkurranse &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Delta i Forfatterskolens skrivekonkurranse.')
 
 @section('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">

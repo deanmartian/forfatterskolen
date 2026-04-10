@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Reprise: Slik forløser du ditt kreative potensial')
+@section('page_title', 'Reprise: Slik skriver du for barn &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Se reprisen av Gro Dahles webinar om barnebokskriving hos Forfatterskolen.')
 
 @section('content')
 

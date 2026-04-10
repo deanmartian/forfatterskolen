@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Checkout &rsaquo; Forfatterskolen')
+@section('page_title', 'Bestill kurs &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Bestill skrivekurs hos Forfatterskolen. Trygge betalingsalternativer med Vipps og Svea.')
 
 @section('content')
 

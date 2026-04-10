@@ -1,7 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('page_title', 'Upgrade &rsaquo; Forfatterskolen')
+@section('page_title', 'Oppgrader oppgave &rsaquo; Forfatterskolen')
 
 @section('heading')
     {{ trans('site.front.buy') }} {{$assignment->title}}

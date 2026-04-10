@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Forfatterskolen Opt-in')
+@section('page_title', 'Takk for p&aring;meldingen &mdash; Diktskriving &rsaquo; Forfatterskolen')
 
 @section('content')
     <div class="opt-in-thanks">

@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Forfatterskolen &rsaquo; Free Manuscripts')
+@section('page_title', 'Vilk&aring;r for gratis materiale &rsaquo; Forfatterskolen')
 
 @section('content')
 	<div class="container terms-page">

@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Preferences &rsaquo; Forfatterskolen')
+@section('page_title', 'Leserprofil &rsaquo; Pilotleser &rsaquo; Forfatterskolen')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('js/toastr/toastr.min.css') }}">

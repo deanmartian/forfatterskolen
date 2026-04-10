@@ -1,7 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('page_title', 'Workshops &rsaquo; Forfatterskolen')
+@section('page_title', 'Mine workshops &rsaquo; Forfatterskolen')
 
 @section('content')
 <div class="learner-container learner-workshop-wrapper">

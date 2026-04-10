@@ -799,7 +799,7 @@
 
     {{-- ═══════════ HOW IT WORKS ═══════════ --}}
     <section class="manus-how-it-works">
-        <h2 class="manus-section-heading">Slik fungerer det</h2>
+        <h2 class="manus-section-heading">Slik fungerer manusutvikling</h2>
         <p class="manus-section-sub">Forfatterskolen tilbyr profesjonell tilbakemelding på ditt manus. En erfaren redaktør vil gi deg en grundig og detaljert tilbakemelding med kommentarer i margen — tekstens svake og sterke sider.</p>
         <div class="manus-steps">
             <div class="manus-step">

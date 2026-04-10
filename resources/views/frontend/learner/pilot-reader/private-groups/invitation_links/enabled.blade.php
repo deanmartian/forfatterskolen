@@ -1,5 +1,6 @@
 @extends('frontend.layout')
 
+@section('page_title', 'Gruppeinvitasjon &rsaquo; Forfatterskolen')
 @section('styles')
     <link rel="stylesheet" href="{{ asset('js/toastr/toastr.min.css') }}">
 @stop

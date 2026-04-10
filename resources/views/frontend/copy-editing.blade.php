@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Forfatterskolen Copy Editing')
+@section('page_title', 'Korrekturlesing &rsaquo; Forfatterskolen')
 
 @section('content')
 

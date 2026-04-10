@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Checkout &rsaquo; Forfatterskolen')
+@section('page_title', 'Oppgrader tekstvurdering &rsaquo; Forfatterskolen')
 
 @section('content')
 

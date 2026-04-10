@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Checkout &rsaquo; Forfatterskolen')
+@section('page_title', 'Bestill coaching &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Bestill coaching-timer hos Forfatterskolen. Personlig veiledning fra erfarne forfattere.')
 
 @section('content')
     @if(Session::has('compute_manuscript'))

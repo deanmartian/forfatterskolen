@@ -726,7 +726,7 @@
     @if($course->is_free)
     <section class="rk-free-form" id="gratis">
         <div class="rk-container">
-            <h2 class="rk-section-title">Få kurset gratis</h2>
+            <h2 class="rk-section-title">Få {{ $course->title }} gratis</h2>
             <p class="rk-section-sub">Fyll inn skjemaet under for å få tilgang til kurset.</p>
             <div class="rk-free-form__inner">
                 <form action="{{ route('front.course.getFreeCourse', $course->id) }}" method="POST" onsubmit="disableSubmit(this)">
@@ -837,7 +837,7 @@
     @elseif($lessons->count())
         <section class="rk-kursplan" id="kursplan">
             <div class="rk-container">
-                <h2 class="rk-section-title">Kursplan</h2>
+                <h2 class="rk-section-title">Kursplan for {{ $course->title }}</h2>
                 <p class="rk-section-sub">{{ $lessons->count() }} leksjoner i dette kurset.</p>
 
                 <div class="rk-timeline">
@@ -872,7 +872,7 @@
     @if(!$course->is_free && !$course->hide_price && $packages->count())
     <section class="rk-packages" id="pakker">
         <div class="rk-container">
-            <h2 class="rk-section-title">Velg din pakke</h2>
+            <h2 class="rk-section-title">Velg din {{ $course->title }}-pakke</h2>
             <p class="rk-section-sub">Velg pakken som passer best for deg.</p>
 
             <div class="rk-package-grid">
@@ -925,7 +925,7 @@
     @if($testimonials->count())
     <section class="rk-testimonials">
         <div class="rk-container">
-            <h2 class="rk-section-title">Hva elevene sier</h2>
+            <h2 class="rk-section-title">Hva elevene sier om {{ $course->title }}</h2>
             <p class="rk-section-sub">Tilbakemeldinger fra tidligere kursdeltakere.</p>
 
             <div class="rk-testimonial-grid">
@@ -953,7 +953,7 @@
     @if(!$course->is_free)
     <section class="rk-risk-free">
         <div class="rk-container">
-            <h2 class="rk-section-title">Ingen risiko</h2>
+            <h2 class="rk-section-title">Prøv {{ $course->title }} uten risiko</h2>
             <p class="rk-section-sub">Vi er så sikre på at du blir fornøyd at vi gjør det enkelt for deg.</p>
 
             <div class="rk-risk-grid">
@@ -979,7 +979,7 @@
     {{-- ═══════════ FINAL CTA ═══════════ --}}
     <section class="rk-final-cta">
         <div class="rk-container">
-            <h2 class="rk-final-cta__title">Klar for å komme i gang?</h2>
+            <h2 class="rk-final-cta__title">Klar for å starte {{ $course->title }}?</h2>
             <p class="rk-final-cta__sub">
                 @if($startDate)
                     Oppstart {{ $startDate->format('d') }}. {{ \App\Http\FrontendHelpers::convertMonthLanguage($startDate->format('n')) }}.

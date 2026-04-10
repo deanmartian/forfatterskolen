@@ -1,6 +1,6 @@
 @extends('frontend.learner.self-publishing.layout')
 
-@section('page_title', 'Time Register &rsaquo; Forfatterskolen')
+@section('page_title', 'Timeregistrering &rsaquo; Selvpublisering &rsaquo; Forfatterskolen')
 
 @section('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">

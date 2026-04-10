@@ -1,5 +1,6 @@
 @extends('frontend.layout')
 
+@section('page_title', 'Ugyldig invitasjonslenke &rsaquo; Forfatterskolen')
 @section('content')
     <div class="container">
         <div class="row mt-4">

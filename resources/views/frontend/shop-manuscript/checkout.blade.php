@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Checkout &rsaquo; Forfatterskolen')
+@section('page_title', 'Bestill tekstvurdering &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Bestill profesjonell tekstvurdering fra erfarne redaktører hos Forfatterskolen.')
 
 @section('styles')
 	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">

@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Forfatterskolen Blog')
+@section('page_title', 'Blogg &mdash; Forfatterskolen')
+@section('meta_desc', 'Les artikler om skriving, forfatterliv og bokbransjen p&aring; Forfatterskolens blogg.')
 
 @section('content')
 

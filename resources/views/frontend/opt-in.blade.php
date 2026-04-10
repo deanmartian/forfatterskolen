@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Forfatterskolen &rsaquo; Free Manuscripts')
+@section('page_title', 'Gratis skrivetips &rsaquo; Forfatterskolen')
 
 @section('content')
     <div id="opt-in-page">

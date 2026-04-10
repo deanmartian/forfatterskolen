@@ -1,7 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('page_title', 'Upgrade &rsaquo; Forfatterskolen')
+@section('page_title', 'Oppgrader kurs &rsaquo; Forfatterskolen')
 
 @section('heading')
     {{ trans('site.learner.upgrades-text') }} {{$courseTaken->package->course->title}}

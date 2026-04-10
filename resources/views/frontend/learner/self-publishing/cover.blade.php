@@ -4,7 +4,7 @@
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 @stop
 
-@section('page_title', 'Cover &rsaquo; Forfatterskolen')
+@section('page_title', 'Bokcover &rsaquo; Selvpublisering &rsaquo; Forfatterskolen')
 
 @section('content')
     <div class="learner-container">

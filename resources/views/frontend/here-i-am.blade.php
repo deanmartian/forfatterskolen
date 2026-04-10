@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Reprise: Slik skriver du et førsteutkast')
+@section('page_title', 'Reprise: Slik skriver du et f&oslash;rsteutkast &rsaquo; Forfatterskolen')
 
 @section('styles')
     <style>

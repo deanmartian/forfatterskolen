@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Checkout &rsaquo; Forfatterskolen')
+@section('page_title', 'Bestill workshop &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Meld deg på workshop hos Forfatterskolen.')
 
 @section('content')
 	<div class="checkout-page">

@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Checkout &rsaquo; Forfatterskolen')
+@section('page_title', 'Bestill personlig trener &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Bestill personlig skrivetrener hos Forfatterskolen.')
 
 @section('content')
 

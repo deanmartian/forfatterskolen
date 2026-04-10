@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Reprise: Slik forløser du ditt kreative potensial')
+@section('page_title', 'Reprise: Slik forl&oslash;ser du ditt kreative potensial &rsaquo; Forfatterskolen')
 
 @section('content')
 

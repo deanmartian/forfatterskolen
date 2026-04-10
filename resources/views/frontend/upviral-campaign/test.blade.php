@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Upviral &rsaquo; Forfatterskolen')
+@section('page_title', 'Kampanje test &rsaquo; Forfatterskolen')
 
 @section('styles')
     <style>

@@ -1,5 +1,6 @@
 @extends('frontend.layout')
 
+@section('page_title', 'Manuell faktura &rsaquo; Forfatterskolen')
 @section('content')
 <div class="manuscript-page">
     <div class="container main-container">

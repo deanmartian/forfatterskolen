@@ -1,5 +1,6 @@
 @extends('frontend.layout')
 
+@section('page_title', 'Ugyldig lenke &rsaquo; Forfatterskolen')
 @section('content')
 <div class="container text-center" style="margin-bottom: 20px; padding-top: 20px">
     <div class="row">

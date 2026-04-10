@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Forfatterskolen')
+@section('page_title', 'L&oslash;s inn gavekort &rsaquo; Forfatterskolen')
 
 @section('content')
     <div class="login-container" data-bg="https://www.forfatterskolen.no/images-new/login/login-bg.jpg">

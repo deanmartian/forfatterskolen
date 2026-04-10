@@ -9,7 +9,7 @@
     </style>
 @stop
 
-@section('page_title', 'Project &rsaquo; Forfatterskolen')
+@section('page_title', 'Trykk &rsaquo; Selvpublisering &rsaquo; Forfatterskolen')
 
 @section('content')
     <div class="learner-container">

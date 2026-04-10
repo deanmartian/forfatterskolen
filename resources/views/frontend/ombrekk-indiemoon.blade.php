@@ -319,7 +319,7 @@
 <!-- HVORDAN DET FUNGERER -->
 <div class="ombrekk-section">
     <div class="container">
-        <h2>Slik fungerer det</h2>
+        <h2>Slik fungerer ombrekk og bokproduksjon</h2>
         <p class="section-lead">
             Fra Word-manus til ferdig bok i fem enkle steg. Du trenger ingen teknisk kunnskap &mdash;
             systemet tar seg av alt.

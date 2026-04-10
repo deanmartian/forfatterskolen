@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Cancelled Order &rsaquo; Forfatterskolen')
+@section('page_title', 'Kansellert bestilling &rsaquo; Forfatterskolen')
 
 @section('content')
     <div class="thank-you-page" data-bg="https://www.forfatterskolen.no/images-new/thankyou-bg.png">
