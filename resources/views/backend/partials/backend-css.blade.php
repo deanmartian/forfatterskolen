@@ -1,4 +1,8 @@
-{{-- FA4 erstattet med FA5 (bakoverkompatibel med fa fa-xxx) --}}
+{{-- Admin beholder FA4 + FA5 for å unngå manglende ikoner.
+     FA5 v5.2.0 sin v4-shim dekker ikke alle FA4-ikoner (noen ble
+     fjernet/omdøpt). Frontend bruker kun FA5 (der det fungerte).
+     Admin kan migreres til kun FA5 gradvis over tid. --}}
+<link rel="stylesheet" href="{{asset('css/font-awesome/css/font-awesome.min.css')}}">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
       integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 {{-- <link rel="stylesheet" href="{{asset('select2/dist/css/select2.min.css')}}"> --}}
