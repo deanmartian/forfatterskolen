@@ -75,8 +75,13 @@ class BootstrapWebinarIntegrations extends Command
                     $conferenceId = $result['id'] ?? $result['conference_id'] ?? null;
 
                     if ($conferenceId) {
+                        // Oppdater BEGGE ID-feltene: bigmarker_conference_id
+                        // (nytt) OG gtwebinar_id (legacy). HomeController::
+                        // freeWebinar leser gtwebinar_id for registrering,
+                        // så uten dette feiler registrerings-flyten med 500.
                         $webinar->update([
                             'bigmarker_conference_id' => $conferenceId,
+                            'gtwebinar_id' => $conferenceId,
                             'bigmarker_status' => 'active',
                         ]);
 
