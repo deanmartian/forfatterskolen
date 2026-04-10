@@ -75,7 +75,7 @@
     <div class="container">
         <div class="px-15">
             <a href="{{ route('learner.dashboard') }}" style="color: #fff">
-                <h2 class="w-100">Kontrollpanel</h2>
+                <div class="w-100" style="font-size:1.5rem;font-weight:600;">Kontrollpanel</div>
             </a>
             <p class="float-start">
                 Velkommen til Forfatterskolens portal
