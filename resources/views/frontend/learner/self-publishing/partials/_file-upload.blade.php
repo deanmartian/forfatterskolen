@@ -11,7 +11,7 @@
 --}}
 
 @php
-    $inputId    = 'file-upload-' . Str::slug($uploadName) . '-' . Str::random(4);
+    $inputId    = 'file-upload- ' . Str::slug($uploadName) . '- ' . Str::random(4);
     $multiple   = $multiple ?? false;
     $required   = $required ?? false;
     $maxBytes   = ($maxMb ?? 50) * 1024 * 1024;

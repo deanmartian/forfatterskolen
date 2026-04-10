@@ -59,7 +59,7 @@
                                 @if ($print)
                                     <p>
                                         {{ !is_array(AdminHelpers::projectFormats($print->format)) ?
-                                            AdminHelpers::projectFormats($print->format) : $print->width . 'x' . $print->height . ' mm' }}
+                                            AdminHelpers::projectFormats($print->format) : $print->width . 'x ' . $print->height . ' mm' }}
                                     </p>
                                 @endif
                             </div>

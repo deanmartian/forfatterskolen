@@ -1,6 +1,6 @@
 @extends('backend.layout')
 
-@section('page_title')Surveys &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', 'Surveys &rsaquo;' . $course->title . ' &rsaquo; Forfatterskolen Admin')
 
 @section('content')
     @include('backend.course.partials.toolbar')

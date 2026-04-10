@@ -1,6 +1,6 @@
 @extends('frontend.layouts.course-portal')
 
-@section('page_title'){{ $course->title }} › Kursgrupper › Forfatterskolen@endsection
+@section('page_title', $course->title . ' › Kursgrupper › Forfatterskolen')
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/community.css?v=' . time()) }}">

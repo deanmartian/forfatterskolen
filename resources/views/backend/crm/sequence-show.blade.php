@@ -1,6 +1,6 @@
 @extends('backend.layout')
 
-@section('page_title'){{ $sequence->name }} — CRM@endsection
+@section('page_title', $sequence->name . ' — CRM')
 
 @section('content')
 <div class="container-fluid" style="padding: 20px;">

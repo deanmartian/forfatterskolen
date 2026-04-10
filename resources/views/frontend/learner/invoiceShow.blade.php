@@ -17,7 +17,7 @@ else :
 endif;
 ?>
 
-@section('page_title')Faktura #{{$fikenInvoice->invoiceNumber}} &rsaquo; Forfatterskolen@endsection
+@section('page_title', 'Faktura #' . $fikenInvoice->invoiceNumber . ' &rsaquo; Forfatterskolen')
 
 
 @section('content')

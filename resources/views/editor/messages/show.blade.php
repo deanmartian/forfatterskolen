@@ -1,6 +1,6 @@
 @extends('editor.layout')
 
-@section('page_title'){{ $conversation->subject }} &rsaquo; Meldinger@endsection
+@section('page_title', $conversation->subject . ' &rsaquo; Meldinger')
 
 @section('page-title', 'Meldinger')
 

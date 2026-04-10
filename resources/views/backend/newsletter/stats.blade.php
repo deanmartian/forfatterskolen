@@ -1,6 +1,6 @@
 @extends('backend.layout')
 
-@section('page_title')Statistikk — {{ $newsletter->subject }}@endsection
+@section('page_title', 'Statistikk — ' . $newsletter->subject)
 
 @section('content')
 <div class="container-fluid" style="padding: 20px; max-width: 800px;">

@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title'){{ $page_title }} &rsaquo; Forfatterskolen@endsection
+@section('page_title', $page_title . ' &rsaquo; Forfatterskolen')
 
 @section('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">

@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title')Reprise: {{ $freeWebinar->title }} — Forfatterskolen@endsection
+@section('page_title', 'Reprise: ' . $freeWebinar->title . ' — Forfatterskolen')
 
 @section('meta_desc')Se reprisen av {{ $freeWebinar->title }} gratis. {{ Str::limit(strip_tags($freeWebinar->description), 120) }}@endsection
 @section('metas')

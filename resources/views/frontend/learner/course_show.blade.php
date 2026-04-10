@@ -1,6 +1,6 @@
 @extends('frontend.layouts.course-portal')
 
-@section('page_title'){{ $courseTaken->package->course->title }} &rsaquo; Forfatterskolen@endsection
+@section('page_title', $courseTaken->package->course->title . ' &rsaquo; Forfatterskolen')
 
 @section('heading') {{ $courseTaken->package->course->title }} @stop
 

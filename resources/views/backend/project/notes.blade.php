@@ -1,6 +1,6 @@
 @extends($layout)
 
-@section('page_title'){{ $project->title }} &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', $project->title . ' &rsaquo; Forfatterskolen Admin')
 
 @section('content')
     <div id="app-container">

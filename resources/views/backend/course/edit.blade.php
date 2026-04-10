@@ -1,6 +1,6 @@
 @extends('backend.layout')
 
-@section('page_title')Edit {{$course['title']}} &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', 'Edit ' . $course['title'] . ' &rsaquo; Forfatterskolen Admin')
 
 
 @section('content')

@@ -1,7 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('page_title'){{$lesson->title}} &rsaquo; {{$lesson->course->title}} &rsaquo; Forfatterskolen@endsection
+@section('page_title', $lesson->title . ' &rsaquo;' . $lesson->course->title . ' &rsaquo; Forfatterskolen')
 
 @section('styles')
 	<style>

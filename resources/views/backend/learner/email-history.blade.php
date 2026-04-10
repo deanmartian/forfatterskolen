@@ -1,7 +1,7 @@
 @extends('backend.layout')
 @section('uses-tinymce', true)
 
-@section('page_title'){{ $learner->first_name }} &rsaquo; Email History &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', $learner->first_name . ' &rsaquo; Email History &rsaquo; Forfatterskolen Admin')
 
 @section('content')
     <div class="page-toolbar">

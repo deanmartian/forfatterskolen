@@ -1,6 +1,6 @@
 @extends('backend.layout')
 
-@section('page_title')Rediger {{$editor['name']}} &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', 'Rediger ' . $editor['name'] . ' &rsaquo; Forfatterskolen Admin')
 
 
 @section('content')

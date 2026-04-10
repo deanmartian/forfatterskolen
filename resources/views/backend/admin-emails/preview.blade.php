@@ -1,6 +1,6 @@
 @extends('backend.layout')
 
-@section('page_title')Forhåndsvis: {{ $info['name'] }} &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', 'Forhåndsvis: ' . $info['name'] . ' &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
 <style>

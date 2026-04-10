@@ -1,6 +1,6 @@
 @extends('editor.layout')
 
-@section('page_title'){{ trans('site.upcoming-assignment') }} &rsaquo; Forfatterskolen Redaktørportal@endsection
+@section('page_title', trans('site.upcoming-assignment') . ' &rsaquo; Forfatterskolen Redaktørportal')
 
 @section('page-title', trans('site.upcoming-assignment'))
 

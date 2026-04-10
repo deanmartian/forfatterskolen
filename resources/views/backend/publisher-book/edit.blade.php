@@ -1,6 +1,6 @@
 @extends('backend.layout')
 
-@section('page_title')Edit {{ $book['title'] }} &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', 'Edit ' . $book['title'] . ' &rsaquo; Forfatterskolen Admin')
 
 @section('content')
     <div class="container padding-top">

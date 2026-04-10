@@ -1,6 +1,6 @@
 @extends('backend.layout')
 
-@section('page_title'){{$survey->title}} Answers@endsection
+@section('page_title', $survey->title . 'Answers')
 
 @section('styles')
     <style>

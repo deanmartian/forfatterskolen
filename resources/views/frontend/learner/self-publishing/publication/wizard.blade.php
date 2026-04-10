@@ -1,6 +1,6 @@
 @extends('frontend.learner.self-publishing.layout')
 
-@section('page_title'){{ $publication ? $publication->title : 'Ny bok' }} | Indiemoon Publishing@endsection
+@section('page_title', $publication ? $publication->title : 'Ny bok ' . '| Indiemoon Publishing')
 
 @section('breadcrumbs')
     <a href="{{ route('learner.publication.index') }}">Ombrekk</a>

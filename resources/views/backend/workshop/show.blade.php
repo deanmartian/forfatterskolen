@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
 @stop
 
-@section('page_title'){{ $workshop->title }} &rsaquo; Workshops &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', $workshop->title . ' &rsaquo; Workshops &rsaquo; Forfatterskolen Admin')
 
 @section('content')
 

@@ -1,6 +1,6 @@
 @extends($layout)
 
-@section('page_title'){{ $contract->title }} &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', $contract->title . ' &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
     <style>

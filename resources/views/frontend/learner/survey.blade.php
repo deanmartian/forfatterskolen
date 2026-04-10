@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title'){{ $survey->title }} &rsaquo; Forfatterskolen@endsection
+@section('page_title', $survey->title . ' &rsaquo; Forfatterskolen')
 
 @section('styles')
     <style>

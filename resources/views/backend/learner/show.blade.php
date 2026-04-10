@@ -39,7 +39,7 @@
 	</style>
 @stop
 
-@section('page_title'){{ $learner->first_name }} &rsaquo; Learners &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', $learner->first_name . ' &rsaquo; Learners &rsaquo; Forfatterskolen Admin')
 
 @section('content')
 <div class="page-toolbar">

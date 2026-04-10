@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title'){{ $book->title }} Settings &rsaquo; Forfatterskolen@endsection
+@section('page_title', $book->title . 'Settings &rsaquo; Forfatterskolen')
 
 @section('styles')
     <link rel="stylesheet" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">

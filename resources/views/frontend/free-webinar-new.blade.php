@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title')Free Webinar &rsaquo; {{ $freeWebinar->title }}@endsection
+@section('page_title', 'Free Webinar &rsaquo;' . $freeWebinar->title)
 
 @section('styles')
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Oswald" />

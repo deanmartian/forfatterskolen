@@ -48,7 +48,7 @@
                                 <label>Størrelse</label>
                                 <p>
                                     {{ !is_array(AdminHelpers::projectFormats($print->format)) ?
-                                        AdminHelpers::projectFormats($print->format) : $print->width . 'x' . $print->height . ' mm' }}
+                                        AdminHelpers::projectFormats($print->format) : $print->width . 'x ' . $print->height . ' mm' }}
                                 </p>
                             </div>
                         </div>

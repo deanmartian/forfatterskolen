@@ -1,6 +1,6 @@
 @extends('backend.layout')
 
-@section('page_title'){{ $order->order_number }} &rsaquo; Admin@endsection
+@section('page_title', $order->order_number . ' &rsaquo; Admin')
 
 @section('content')
 <div class="container-fluid" style="max-width:900px;padding:2rem;">

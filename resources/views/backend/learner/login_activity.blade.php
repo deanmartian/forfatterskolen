@@ -4,7 +4,7 @@
 <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 @stop
 
-@section('page_title'){{ trans('site.login-activity-for') }} {{ $login->created_at }}@endsection
+@section('page_title', trans('site.login-activity-for') . $login->created_at)
 
 @section('content')
 

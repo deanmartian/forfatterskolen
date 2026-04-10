@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title')Free Webinar &rsaquo; {{ $freeWebinar->title }}@endsection
+@section('page_title', 'Free Webinar &rsaquo;' . $freeWebinar->title)
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/free-webinar.css?v='.filemtime(public_path('css/free-webinar.css'))) }}">

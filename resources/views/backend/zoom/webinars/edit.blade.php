@@ -1,6 +1,6 @@
 @extends('backend.layout')
 
-@section('page_title')Edit {{ $webinar['topic'] }}@endsection
+@section('page_title', 'Edit ' . $webinar['topic'])
 
 @section('styles')
     <style>

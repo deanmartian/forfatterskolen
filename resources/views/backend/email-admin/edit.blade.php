@@ -1,7 +1,7 @@
 @extends('backend.layout')
 @section('uses-tinymce', true)
 
-@section('page_title')Rediger: {{ $template->page_name }}@endsection
+@section('page_title', 'Rediger: ' . $template->page_name)
 
 @section('content')
 <div class="container-fluid" style="padding: 20px; max-width: 1200px;">

@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title')Bestilling bekreftet – {{ $course->title }} – Forfatterskolen@endsection
+@section('page_title', 'Bestilling bekreftet – ' . $course->title . ' – Forfatterskolen')
 
 @section('styles')
 @php
@@ -95,7 +95,7 @@
     }
 
     // Order display data
-    $orderNumber = '#FS-' . Carbon::parse($order->created_at)->format('Y') . '-' . $order->id;
+    $orderNumber = '#FS- ' . Carbon::parse($order->created_at)->format('Y') . '- ' . $order->id;
     $orderDate = Carbon::parse($order->created_at)->format('d.m.Y');
 
     // Due dates for installment plan

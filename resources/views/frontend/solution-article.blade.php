@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title'){{ $article->title }} &rsaquo; Forfatterskolen@endsection
+@section('page_title', $article->title . ' &rsaquo; Forfatterskolen')
 
 @section('content')
     <div class="container">

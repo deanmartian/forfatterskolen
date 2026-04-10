@@ -1,6 +1,6 @@
 @extends($layout)
 
-@section('page_title'){{ $title }} &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', $title . ' &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
 <link rel="stylesheet" href="{{asset('simplemde/simplemde.min.css')}}">

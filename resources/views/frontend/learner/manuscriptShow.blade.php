@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title')Manuscript for course {{ $manuscript->courseTaken->package->course->title }} &rsaquo; Forfatterskolen@endsection
+@section('page_title', 'Manuscript for course ' . $manuscript->courseTaken->package->course->title . ' &rsaquo; Forfatterskolen')
 
 
 @section('content')

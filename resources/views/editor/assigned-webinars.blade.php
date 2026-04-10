@@ -1,6 +1,6 @@
 @extends('editor.layout')
 
-@section('page_title'){{ trans('site.admin-menu.webinars') }} &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', trans('site.admin-menu.webinars') . ' &rsaquo; Forfatterskolen Admin')
 
 @section('page-title', trans('site.admin-menu.webinars'))
 

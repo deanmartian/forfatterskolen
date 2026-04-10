@@ -1,7 +1,7 @@
 @extends('backend.layout')
 @section('uses-tinymce', true)
 
-@section('page_title'){{$course->title}} &rsaquo; Course &rsaquo; Forfatterskolen Admin@endsection
+@section('page_title', $course->title . ' &rsaquo; Course &rsaquo; Forfatterskolen Admin')
 
 @section('content')
 
