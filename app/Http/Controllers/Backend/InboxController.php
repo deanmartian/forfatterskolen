@@ -300,7 +300,7 @@ PROMPT;
 
         try {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
-                'x-api-key' => config('services.anthropic.api_key'),
+                'x-api-key' => config('services.anthropic.key'),
                 'anthropic-version' => '2023-06-01',
                 'content-type' => 'application/json',
             ])->timeout(30)->post('https://api.anthropic.com/v1/messages', [
