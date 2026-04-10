@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Tilbakestill passord &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Tilbakestill passord &rsaquo; Forfatterskolen')
 
 @section('styles')
 <style>

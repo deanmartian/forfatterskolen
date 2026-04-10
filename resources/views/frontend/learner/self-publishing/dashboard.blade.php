@@ -1,8 +1,6 @@
 @extends('frontend.learner.self-publishing.layout')
 
-@section('title')
-    <title>Oversikt &rsaquo; Indiemoon</title>
-@stop
+@section('page_title', 'Oversikt &rsaquo; Indiemoon')
 
 @section('breadcrumbs')
     <span class="bc-current">Oversikt</span>

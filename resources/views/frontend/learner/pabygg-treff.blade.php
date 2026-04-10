@@ -1,8 +1,6 @@
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-<title>Påbyggingstreff &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Påbyggingstreff &rsaquo; Forfatterskolen')
 
 @section('styles')
 <style>

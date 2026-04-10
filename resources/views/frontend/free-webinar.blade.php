@@ -1,14 +1,12 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Gratiswebinar: {{ $freeWebinar->title }} — Forfatterskolen</title>
-@stop
+@section('page_title')Gratiswebinar: {{ $freeWebinar->title }} — Forfatterskolen@endsection
 
+@section('meta_desc'){{ Str::limit(strip_tags($freeWebinar->description), 160) }}@endsection
 @section('metas')
     <meta property="og:title" content="Gratiswebinar: {{ $freeWebinar->title }}">
     <meta property="og:description" content="{{ Str::limit(strip_tags($freeWebinar->description), 160) }}">
-    <meta name="description" content="{{ Str::limit(strip_tags($freeWebinar->description), 160) }}">
-    <meta property="og:type" content="event">
+<meta property="og:type" content="event">
     @if($freeWebinar->image)
         <meta property="og:image" content="{{ asset('storage/' . $freeWebinar->image) }}">
         <meta name="twitter:image" content="{{ asset('storage/' . $freeWebinar->image) }}">

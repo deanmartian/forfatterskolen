@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Course Discounts &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Course Discounts &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('js/toastr/toastr.min.css') }}">

@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-<title>Create Lesson &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title')Create Lesson &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin@endsection
 
 @section('styles')
 <link rel="stylesheet" href="{{asset('content_tools/content-tools.min.css')}}">

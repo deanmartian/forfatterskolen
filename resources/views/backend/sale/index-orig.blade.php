@@ -1,9 +1,7 @@
 @extends('backend.layout')
 @section('uses-tinymce', true)
 
-@section('title')
-    <title>Sales &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Sales &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
 	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">

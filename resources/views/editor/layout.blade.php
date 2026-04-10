@@ -3,7 +3,7 @@
     <head>
         @include('partials.sw-cleanup-script')
 
-        @yield('title')
+        <title>@yield('page_title', 'Forfatterskolen Redaktør')</title>
         @include('backend.partials.backend-css')
         <link rel="manifest" href="{{ asset('manifest-editor.json') }}">
         <meta name="theme-color" content="#862736">

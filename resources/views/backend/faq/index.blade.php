@@ -1,9 +1,7 @@
 @extends('backend.layout')
 @section('uses-tinymce', true)
 
-@section('title')
-<title>Faq &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Faq &rsaquo; Forfatterskolen Admin')
 
 @section('content')
 <div class="page-toolbar">

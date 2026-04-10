@@ -8,9 +8,7 @@
     $submitLabel = __('Convert to DOCX');
 @endphp
 
-@section('title')
-    <title>{{ $pageTitle }} &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title'){{ $pageTitle }} &rsaquo; Forfatterskolen@endsection
 
 @section('content')
     <div class="learner-container learner-document-converter">

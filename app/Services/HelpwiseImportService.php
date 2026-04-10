@@ -19,17 +19,29 @@ class HelpwiseImportService
 
     /**
      * Get conversations for an inbox, with pagination.
+     * Uses the dev-apis endpoint which supports proper page/limit pagination.
      */
-    public function getConversations(int $inboxId, ?string $pageToken = null): array
+    public function getConversations(int $inboxId, ?string $pageToken = null, int $labelId = 14): array
+    {
+        $params = ['mailboxId' => $inboxId, 'labelId' => $labelId];
+        if ($pageToken) {
+            $params['pageToken'] = $pageToken;
+        }
+
+        return $this->request('GET', '/conversations', $params);
+    }
+
+    /**
+     * Legacy: Get conversations using the old API (apis.helpwise.io).
+     */
+    public function getConversationsLegacy(int $inboxId, ?string $pageToken = null): array
     {
         $params = ['mailboxId' => $inboxId];
         if ($pageToken) {
             $params['pageToken'] = $pageToken;
         }
 
-        $response = $this->request('GET', '/conversations', $params);
-
-        return $response;
+        return $this->request('GET', '/conversations', $params);
     }
 
     /**
@@ -37,7 +49,7 @@ class HelpwiseImportService
      */
     public function getConversationMessages(int $inboxId, string $conversationId): array
     {
-        $response = $this->request('GET', "/inboxes/{$inboxId}/conversations/{$conversationId}");
+        $response = $this->request('GET', "/conversations/{$conversationId}");
 
         return $response;
     }
@@ -45,17 +57,38 @@ class HelpwiseImportService
     /**
      * Make an authenticated API request.
      */
-    protected function request(string $method, string $endpoint, array $params = []): array
+    protected function request(string $method, string $endpoint, array $params = [], ?string $baseUrl = null): array
     {
-        $url = $this->baseUrl . $endpoint;
+        $url = ($baseUrl ?? $this->baseUrl) . $endpoint;
 
-        $request = Http::withBasicAuth($this->apiKey, $this->apiSecret)
-            ->timeout(120);
-
-        if ($method === 'GET') {
-            $response = $request->get($url, $params);
+        // dev-apis uses raw Authorization header, old API uses Basic Auth
+        if ($baseUrl && str_contains($baseUrl, 'app.helpwise.io')) {
+            $request = Http::withHeaders([
+                'Authorization' => $this->apiKey . ':' . $this->apiSecret,
+                'Content-Type' => 'application/json',
+            ])->timeout(120);
         } else {
-            $response = $request->post($url, $params);
+            $request = Http::withBasicAuth($this->apiKey, $this->apiSecret)
+                ->connectTimeout(30)
+                ->timeout(120)
+                ->retry(3, function ($attempt, $exception) {
+                    return $attempt * 10000; // 10s, 20s, 30s
+                }, function ($exception, $request) {
+                    return $exception instanceof \Illuminate\Http\Client\ConnectionException
+                        || ($exception instanceof \Illuminate\Http\Client\RequestException && $exception->response->status() === 429);
+                }, throw: false);
+        }
+
+        try {
+            if ($method === 'GET') {
+                $response = $request->get($url, $params);
+            } else {
+                $response = $request->post($url, $params);
+            }
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::warning('HelpwiseImport: Connection timeout, retrying in 10s: ' . $e->getMessage());
+            sleep(10);
+            return $this->request($method, $endpoint, $params, $baseUrl);
         }
 
         if ($response->status() === 429) {

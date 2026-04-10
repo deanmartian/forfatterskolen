@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Takk for gavekortet &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Takk for gavekortet &rsaquo; Forfatterskolen')
 
 @section('styles')
 @include('frontend.partials.thank-you-styles')

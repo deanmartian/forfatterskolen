@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Shop Manuscripts &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Shop Manuscripts &rsaquo; Forfatterskolen')
 
 @section('heading') {{ trans('site.learner.manuscript.title') }} @stop
 

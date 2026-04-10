@@ -1,9 +1,7 @@
 @extends('backend.layout')
 @section('uses-tinymce', true)
 
-@section('title')
-    <title>Opt-in &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Opt-in &rsaquo; Forfatterskolen Admin')
 
 @section('content')
     <div class="page-toolbar">

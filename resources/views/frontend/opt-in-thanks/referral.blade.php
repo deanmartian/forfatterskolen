@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Forfatterskolen Blog</title>
-@stop
+@section('page_title', 'Forfatterskolen Blog')
 
 @section('content')
     <div class="opt-in-referral" style="background-image: url({{ asset('images-new/opt-in-thanks/'.$data['image']) }})">

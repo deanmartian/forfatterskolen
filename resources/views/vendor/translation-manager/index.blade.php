@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Translations &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Translations &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" />

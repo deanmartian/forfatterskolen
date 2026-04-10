@@ -4,9 +4,7 @@
 	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 @stop
 
-@section('title')
-<title>Assignments &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title')Assignments &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin@endsection
 
 @section('content')
 

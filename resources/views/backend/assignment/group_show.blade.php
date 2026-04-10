@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-<title>{{ $group->title }} &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title'){{ $group->title }} &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin@endsection
 
 @section('styles')
 	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">

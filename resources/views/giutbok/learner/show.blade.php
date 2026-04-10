@@ -21,9 +21,7 @@
 	</style>
 @stop
 
-@section('title')
-<title>{{ $learner->first_name }} &rsaquo; Learners &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title'){{ $learner->first_name }} &rsaquo; Learners &rsaquo; Forfatterskolen Admin@endsection
 
 @section('content')
 <div class="page-toolbar">

@@ -1,8 +1,6 @@
 @extends('backend.layout-pulse')
 
-@section('title')
-<title>Pulse &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Pulse &rsaquo; Forfatterskolen Admin')
 
 @section('content')
 	<h1>Welcome aboard</h1>

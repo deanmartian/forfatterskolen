@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Velg kurs - Forfatterskolen</title>
-@endsection
+@section('page_title', 'Velg kurs - Forfatterskolen')
 
 @section('content')
 <div class="container-fluid" style="padding: 2rem;">

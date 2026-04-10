@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Årskurs Forfatterskolen – Skriv boken din på ett år</title>
-@stop
+@section('page_title', 'Årskurs Forfatterskolen – Skriv boken din på ett år')
 
 @section('meta')
 <meta name="description" content="Bli med på årskurs med forfatter og skrivementor Kristine S. Henningsen, og få alt du trenger for å fullføre manuset ditt på ett år.">

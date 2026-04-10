@@ -4,9 +4,7 @@
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 @stop
 
-@section('title')
-    <title>Edit {{ $blog['title'] }} &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title')Edit {{ $blog['title'] }} &rsaquo; Forfatterskolen Admin@endsection
 
 @section('content')
     <div class="container padding-top">

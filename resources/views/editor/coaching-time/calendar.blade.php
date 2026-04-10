@@ -1,8 +1,6 @@
 @extends('editor.layout')
 
-@section('title')
-    <title>Coaching Time &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Coaching Time &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
 	<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">

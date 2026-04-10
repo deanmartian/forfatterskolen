@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Private Groups &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Private Groups &rsaquo; Forfatterskolen')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('js/toastr/toastr.min.css') }}">

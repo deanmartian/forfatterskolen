@@ -136,8 +136,9 @@ class SendReplayToNoShows extends Command
 
                 // Bygg e-post
                 $subject = "Reprisen er klar: {$webinar->title}";
-                $webinarUrl = route('learner.webinar');
-                $message = $this->buildEmailBody($user->first_name, $webinar->title, $webinarUrl);
+                $isMentor = str_contains(strtolower($webinar->title), 'mentor');
+                $webinarUrl = $isMentor ? route('learner.webinar') : route('learner.course-webinar');
+                $message = $this->buildEmailBody($user->first_name, $webinar->title, $webinarUrl, $isMentor);
 
                 if ($dryRun) {
                     $this->line("  [DRY-RUN] Ville sendt til: {$user->email} ({$user->first_name} {$user->last_name})");
@@ -177,8 +178,11 @@ class SendReplayToNoShows extends Command
         return self::SUCCESS;
     }
 
-    private function buildEmailBody(string $firstName, string $webinarTitle, string $url): string
+    private function buildEmailBody(string $firstName, string $webinarTitle, string $url, bool $isMentor = false): string
     {
+        $sectionLabel = $isMentor ? 'Mentorm&oslash;ter' : 'Kurswebinarer';
+        $sectionUrl = $isMentor ? route('learner.webinar') : route('learner.course-webinar');
+
         return <<<HTML
 <p>Hei {$firstName},</p>
 
@@ -188,7 +192,7 @@ class SendReplayToNoShows extends Command
     <a href="{$url}" style="display: inline-block; padding: 14px 32px; background-color: #862736; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Se reprisen &rarr;</a>
 </p>
 
-<p>Du finner reprisen p&aring; din kursside under &laquo;Mentorm&oslash;ter&raquo;.</p>
+<p>Du finner reprisen p&aring; din kursside under &laquo;<a href="{$sectionUrl}" style="color: #862736; text-decoration: underline;">{$sectionLabel}</a>&raquo;.</p>
 
 <p>Lykke til med skrivingen!</p>
 HTML;

@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Forfatterskolen Coaching Timer</title>
-@stop
+@section('page_title', 'Forfatterskolen Coaching Timer')
 
 @section('content')
 

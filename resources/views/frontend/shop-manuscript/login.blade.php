@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Login &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Login &rsaquo; Forfatterskolen')
 
 @section('content')
 <div class="global-checkout-page" id="app-container">

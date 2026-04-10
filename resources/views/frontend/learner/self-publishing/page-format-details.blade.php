@@ -9,9 +9,7 @@
     </style>
 @stop
 
-@section('title')
-    <title>Page Format Details &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Page Format Details &rsaquo; Forfatterskolen')
 
 @section('content')
 <div class="learner-container">

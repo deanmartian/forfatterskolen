@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Edit {{ $publishingHouse['publishing'] }} &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title')Edit {{ $publishingHouse['publishing'] }} &rsaquo; Forfatterskolen Admin@endsection
 
 
 @section('content')

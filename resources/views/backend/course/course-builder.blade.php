@@ -431,9 +431,7 @@
 </style>
 @stop
 
-@section('title')
-<title>Kursbygger &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Kursbygger &rsaquo; Forfatterskolen Admin')
 
 @section('content')
 <div class="cb-container">

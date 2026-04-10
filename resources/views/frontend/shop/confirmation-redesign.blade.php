@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Bestilling bekreftet – {{ $course->title }} – Forfatterskolen</title>
-@stop
+@section('page_title')Bestilling bekreftet – {{ $course->title }} – Forfatterskolen@endsection
 
 @section('styles')
 @php

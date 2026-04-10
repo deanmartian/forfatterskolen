@@ -1,8 +1,6 @@
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-<title>{{ $conversation->subject }} &rsaquo; Meldinger</title>
-@stop
+@section('page_title'){{ $conversation->subject }} &rsaquo; Meldinger@endsection
 
 @section('heading') Meldinger @stop
 

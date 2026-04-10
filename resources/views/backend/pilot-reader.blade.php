@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-<title>Dashboard &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Dashboard &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
 <link rel="stylesheet" href="{{asset('bootstrap-calendar/css/calendar.min.css')}}">

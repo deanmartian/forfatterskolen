@@ -1,8 +1,6 @@
 @extends('editor.layout')
 
-@section('title')
-<title>Project &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Project &rsaquo; Forfatterskolen Admin')
 
 @section('content')
 <div id="app-container">

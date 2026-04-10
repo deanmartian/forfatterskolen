@@ -5,9 +5,7 @@
   <link rel="stylesheet" href="{{ asset('js/toastr/toastr.min.css') }}">
 @stop
 
-@section('title')
-<title>Packages &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title')Packages &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin@endsection
 
 @section('content')
 

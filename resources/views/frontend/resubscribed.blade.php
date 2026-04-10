@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Velkommen tilbake — Forfatterskolen</title>
-@stop
+@section('page_title', 'Velkommen tilbake — Forfatterskolen')
 
 @section('content')
 <div style="min-height: 70vh; display: flex; align-items: center; justify-content: center;">

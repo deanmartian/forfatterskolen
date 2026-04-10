@@ -1,9 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-<title>Fakturaer &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Fakturaer &rsaquo; Forfatterskolen')
 
 @section('heading') {{ trans('site.learner.my-invoice') }} @stop
 @section('styles')

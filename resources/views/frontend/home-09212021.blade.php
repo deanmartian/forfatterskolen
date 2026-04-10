@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Forfatterskolen – Din litterære familie. Skrivekurs for deg</title>
-@stop
+@section('page_title', 'Forfatterskolen – Din litterære familie. Skrivekurs for deg')
 
 @section('styles')
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css"

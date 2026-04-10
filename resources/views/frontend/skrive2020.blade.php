@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Skrive 2020</title>
-@stop
+@section('page_title', 'Skrive 2020')
 
 @section('content')
 

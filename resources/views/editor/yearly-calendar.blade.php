@@ -1,8 +1,6 @@
 @extends('editor.layout')
 
-@section('title')
-    <title>Yearly Calendar &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Yearly Calendar &rsaquo; Forfatterskolen Admin')
 
 @section('content')
     <div class="page-toolbar">

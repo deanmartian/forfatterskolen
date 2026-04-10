@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Avmeldt nyhetsbrev — Forfatterskolen</title>
-@stop
+@section('page_title', 'Avmeldt nyhetsbrev — Forfatterskolen')
 
 @section('content')
 <div style="min-height: 70vh; display: flex; align-items: center; justify-content: center;">

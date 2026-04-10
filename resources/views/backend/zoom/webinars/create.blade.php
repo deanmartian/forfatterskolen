@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Create Zoom Webinar</title>
-@stop
+@section('page_title', 'Create Zoom Webinar')
 
 @section('content')
     <div class="container padding-top">

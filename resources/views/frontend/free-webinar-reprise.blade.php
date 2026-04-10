@@ -1,14 +1,12 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Reprise: {{ $freeWebinar->title }} — Forfatterskolen</title>
-@stop
+@section('page_title')Reprise: {{ $freeWebinar->title }} — Forfatterskolen@endsection
 
+@section('meta_desc')Se reprisen av {{ $freeWebinar->title }} gratis. {{ Str::limit(strip_tags($freeWebinar->description), 120) }}@endsection
 @section('metas')
     <meta property="og:title" content="Se reprisen: {{ $freeWebinar->title }}">
     <meta property="og:description" content="{{ Str::limit(strip_tags($freeWebinar->description), 160) }}">
-    <meta name="description" content="Se reprisen av {{ $freeWebinar->title }} gratis. {{ Str::limit(strip_tags($freeWebinar->description), 120) }}">
-    <meta property="og:type" content="video.other">
+<meta property="og:type" content="video.other">
 @stop
 
 @section('styles')

@@ -1,16 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <?php
-    $pageMeta = \App\PageMeta::where('url', url()->current())->first();
-    ?>
-
-    @if ($pageMeta)
-        <title>{{ $pageMeta->meta_title }}</title>
-    @else
-        <title>Reprise: Slik forløser du ditt kreative potensial</title>
-    @endif
-@stop
+@section('page_title', 'Reprise: Slik forløser du ditt kreative potensial')
 
 @section('content')
 

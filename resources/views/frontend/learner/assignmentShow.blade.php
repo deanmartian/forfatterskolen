@@ -1,9 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-<title>{{ $assignment->title }} &rsaquo; Assignments &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title'){{ $assignment->title }} &rsaquo; Assignments &rsaquo; Forfatterskolen@endsection
 
 
 @section('content')

@@ -1,8 +1,6 @@
 @extends('editor.layout')
 
-@section('title')
-    <title>Elevhistorikk: {{ $student->full_name }} &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title')Elevhistorikk: {{ $student->full_name }} &rsaquo; Forfatterskolen@endsection
 
 @section('page-title')
     Elevhistorikk: {{ $student->full_name }}

@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>SOS Children</title>
-@stop
+@section('page_title', 'SOS Children')
 
 @section('content')
     <div class="container" id="children-container">

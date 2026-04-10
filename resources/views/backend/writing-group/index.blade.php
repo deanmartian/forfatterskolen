@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Writing Group &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Writing Group &rsaquo; Forfatterskolen Admin')
 
 @section('content')
 

@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>{{ $book->title }} Track Readers &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title'){{ $book->title }} Track Readers &rsaquo; Forfatterskolen@endsection
 
 @section('heading') Track Readers @stop
 

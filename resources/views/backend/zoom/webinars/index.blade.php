@@ -1,9 +1,7 @@
 @extends('backend.layout')
 
 
-@section('title')
-    <title>Zoom-webinarer</title>
-@stop
+@section('page_title', 'Zoom-webinarer')
 
 @section('content')
     <div class="page-toolbar">

@@ -1,9 +1,6 @@
 @extends('backend.layout-pulse')
 
-@section('title')
-<title>Board &rsaquo; Forfatterskolen Admin</title>
-<meta name="csrf-token" content="{{ csrf_token() }}">
-@stop
+@section('page_title', 'Board &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
 	<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />

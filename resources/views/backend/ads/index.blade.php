@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Annonsepanel</title>
-@stop
+@section('page_title', 'Annonsepanel')
 
 @section('content')
 <div class="container-fluid" style="padding: 20px;">

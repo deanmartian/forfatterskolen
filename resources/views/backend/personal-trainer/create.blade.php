@@ -1,9 +1,7 @@
 @extends('backend.layout')
 @section('uses-tinymce', true)
 
-@section('title')
-    <title>Create Applicant &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Create Applicant &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">

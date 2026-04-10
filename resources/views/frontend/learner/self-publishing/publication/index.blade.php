@@ -1,8 +1,6 @@
 @extends('frontend.learner.self-publishing.layout')
 
-@section('title')
-    <title>Mine bøker | Indiemoon Publishing</title>
-@endsection
+@section('page_title', 'Mine bøker | Indiemoon Publishing')
 
 @section('breadcrumbs')
     Ombrekk & bokproduksjon

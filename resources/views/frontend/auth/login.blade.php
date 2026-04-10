@@ -1,19 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>
-@if(!Request::input('t'))
-Login 
-@elseif(Request::input('t') == 'register')
-Register
-@elseif(Request::input('t') == 'passwordreset')
-Password Reset
-@elseif(Request::input('t') == 'password-change')
-Password Change
-@endif
-&rsaquo; Forfatterskolen
-</title>
-@stop
+@section('page_title')@if(!Request::input('t'))Logg inn@elseif(Request::input('t') == 'register')Registrer deg@elseif(Request::input('t') == 'passwordreset')Tilbakestill passord@elseif(Request::input('t') == 'password-change')Endre passord@endif &rsaquo; Forfatterskolen@endsection
 
 @section('styles')
 <style>

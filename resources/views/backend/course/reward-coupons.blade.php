@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Reward Coupons &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title')Reward Coupons &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin@endsection
 
 @section('styles')
     <style>

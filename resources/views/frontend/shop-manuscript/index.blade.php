@@ -1,16 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <?php
-        $pageMeta = \App\PageMeta::where('url', url()->current())->first();
-    ?>
-
-    @if ($pageMeta)
-        <title>{{ $pageMeta->meta_title }}</title>
-    @else
-        <title>Manusutvikling &rsaquo; Forfatterskolen</title>
-    @endif
-@stop
+@section('page_title', 'Manusutvikling &rsaquo; Forfatterskolen')
 
 @section('styles')
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">

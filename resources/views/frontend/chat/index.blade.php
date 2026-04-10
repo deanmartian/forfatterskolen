@@ -1,10 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>
-        Chat
-    </title>
-@stop
+@section('page_title', 'Chat')
 
 @section('styles')
 <style>

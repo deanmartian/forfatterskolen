@@ -1,8 +1,6 @@
 @extends('editor.layout')
 
-@section('title')
-    <title>Veiledningssamtale &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Veiledningssamtale &rsaquo; Forfatterskolen')
 
 @section('page-title', 'Veiledningssamtale')
 

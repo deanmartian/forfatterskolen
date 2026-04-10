@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Forfatterskolen &rsaquo; Kontakt Oss</title>
-@stop
+@section('page_title', 'Forfatterskolen &rsaquo; Kontakt Oss')
 
 @section('content')
     <div class="contact-page" >

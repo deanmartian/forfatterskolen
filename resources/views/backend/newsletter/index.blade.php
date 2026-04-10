@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Nyhetsbrev — Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Nyhetsbrev — Forfatterskolen Admin')
 
 @section('content')
 <div class="container-fluid" style="padding: 20px;">

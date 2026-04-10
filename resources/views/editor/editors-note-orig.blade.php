@@ -1,8 +1,6 @@
 @extends('editor.layout')
 
-@section('title')
-    <title>Editors Note &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Editors Note &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
 <style>

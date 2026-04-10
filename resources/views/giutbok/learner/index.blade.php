@@ -1,8 +1,6 @@
 @extends('giutbok.layout')
 
-@section('title')
-    <title>Learners &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Learners &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
     <style>

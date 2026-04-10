@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>{{ $course->title }} › Forfatterskolen</title>
-@stop
+@section('page_title'){{ $course->title }} › Forfatterskolen@endsection
 
 @section('jsonld')
 @php
@@ -40,11 +38,11 @@
 </script>
 @endsection
 
+@section('meta_desc'){{ $course->meta_description }}@endsection
 @section('metas')
     <meta property="og:title" content="{{ $course->meta_title }}">
     <meta property="og:description" content="{{ $course->meta_description }}">
-    <meta name="description" content="{{ $course->meta_description }}">
-    <meta property="og:site_name" content="Forfatterskolen">
+<meta property="og:site_name" content="Forfatterskolen">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website" />
     @if ($course->meta_image)

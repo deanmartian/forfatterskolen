@@ -1,9 +1,7 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Ombrekk og bokproduksjon | Indiemoon Publishing</title>
-    <meta name="description" content="Automatisert bokproduksjon for forfattere. Last opp Word-manus, velg bokmal, og last ned trykkeklar PDF, EPUB og Word.">
-@endsection
+@section('page_title', 'Ombrekk og bokproduksjon | Indiemoon Publishing')
+@section('meta_desc', 'Automatisert bokproduksjon for forfattere. Last opp Word-manus, velg bokmal, og last ned trykkeklar PDF, EPUB og Word.')
 
 @section('content')
 

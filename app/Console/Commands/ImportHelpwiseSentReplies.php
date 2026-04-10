@@ -3,66 +3,63 @@
 namespace App\Console\Commands;
 
 use App\Models\HelpwiseReplyExample;
-use App\Services\Helpwise\HelpwiseApiService;
+use App\Services\HelpwiseImportService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 class ImportHelpwiseSentReplies extends Command
 {
     protected $signature = 'helpwise:import-sent-replies
-                            {--limit=100 : Maximum number of conversations to fetch}
-                            {--status=closed : Conversation status filter (closed, all)}';
+                            {--inbox-id=213732 : Helpwise inbox ID}
+                            {--label-id=1 : Helpwise label ID (1=Sent, 7=Closed, 14=All)}
+                            {--pages=0 : Max pages to fetch (0 = all)}';
 
     protected $description = 'Import sent replies from Helpwise API into helpwise_reply_examples for AI style matching';
 
-    public function handle(HelpwiseApiService $api): int
+    public function handle(): int
     {
-        $limit = (int) $this->option('limit');
-        $status = $this->option('status');
+        $inboxId = (int) $this->option('inbox-id');
+        $labelId = (int) $this->option('label-id');
+        $maxPages = (int) $this->option('pages');
 
-        $this->info("Importing sent replies from Helpwise (status={$status}, limit={$limit})...");
+        $service = new HelpwiseImportService();
+
+        $this->info("Importing sent replies from Helpwise inbox {$inboxId}...");
 
         $imported = 0;
         $skipped = 0;
-        $page = 1;
-        $perPage = 50;
+        $page = 0;
+        $pageToken = null;
 
-        $bar = $this->output->createProgressBar($limit);
-        $bar->start();
+        do {
+            $page++;
+            $this->line("Fetching conversations page {$page}...");
 
-        while ($imported + $skipped < $limit) {
-            $params = [
-                'page' => $page,
-                'per_page' => min($perPage, $limit - $imported - $skipped),
-            ];
-            if ($status !== 'all') {
-                $params['status'] = $status;
-            }
+            $response = $service->getConversations($inboxId, $pageToken, $labelId);
+            $conversations = $response['threads'] ?? $response['data'] ?? $response['conversations'] ?? [];
+            $pageToken = $response['nextPageToken'] ?? null;
 
-            $conversations = $api->listConversations($params);
-
-            if (!$conversations || empty($conversations['data'])) {
+            if (empty($conversations)) {
+                $this->warn("No conversations on page {$page}, stopping.");
                 break;
             }
 
-            foreach ($conversations['data'] as $conversation) {
-                if ($imported + $skipped >= $limit) {
-                    break;
-                }
+            $this->info("  Found " . count($conversations) . " conversations");
 
-                $conversationId = $conversation['id'] ?? null;
+            foreach ($conversations as $conversation) {
+                $conversationId = $conversation['id'] ?? $conversation['uuid'] ?? null;
                 if (!$conversationId) {
                     $skipped++;
-                    $bar->advance();
                     continue;
                 }
 
-                $messagesData = $api->getMessages((string) $conversationId);
-                $messages = $messagesData['data'] ?? $messagesData ?? [];
+                // Fetch full conversation with messages
+                $convData = $service->getConversationMessages($inboxId, (string) $conversationId);
+                $messages = $convData['messages'] ?? $convData['data'] ?? [];
+                sleep(1); // Rate limit
 
                 if (!is_array($messages)) {
                     $skipped++;
-                    $bar->advance();
                     continue;
                 }
 
@@ -72,13 +69,14 @@ class ImportHelpwiseSentReplies extends Command
                     $direction = $msg['direction'] ?? '';
                     $isOutbound = in_array($type, ['reply', 'outbound', 'sent'])
                         || $direction === 'outbound'
-                        || !empty($msg['is_reply']);
+                        || !empty($msg['is_reply'])
+                        || ($msg['from_type'] ?? '') === 'agent';
 
                     if (!$isOutbound) {
                         continue;
                     }
 
-                    $body = $msg['body'] ?? $msg['text'] ?? '';
+                    $body = $msg['body'] ?? $msg['text'] ?? $msg['content'] ?? '';
                     if (empty(trim(strip_tags($body)))) {
                         continue;
                     }
@@ -91,11 +89,13 @@ class ImportHelpwiseSentReplies extends Command
                         continue;
                     }
 
+                    $subject = $conversation['subject'] ?? $conversation['title'] ?? null;
+
                     HelpwiseReplyExample::updateOrCreate(
                         ['external_message_id' => $externalId],
                         [
                             'conversation_id' => (string) $conversationId,
-                            'subject' => $conversation['subject'] ?? null,
+                            'subject' => $subject,
                             'sender_email' => $msg['from'] ?? $msg['from_email'] ?? null,
                             'reply_body' => $body,
                             'sent_at' => $msg['created_at'] ?? $msg['sent_at'] ?? null,
@@ -106,21 +106,19 @@ class ImportHelpwiseSentReplies extends Command
 
                     $imported++;
                 }
-
-                $bar->advance();
             }
 
-            // Check if there's a next page
-            if (!isset($conversations['meta']['next_page']) && !isset($conversations['next_page_url'])) {
+            if ($maxPages > 0 && $page >= $maxPages) {
+                $this->info("Reached page limit ({$maxPages})");
                 break;
             }
 
-            $page++;
-        }
+            sleep(2); // Rate limit between pages
 
-        $bar->finish();
+        } while ($pageToken);
+
         $this->newLine();
-        $this->info("Done! Imported: {$imported}, Skipped: {$skipped}");
+        $this->info("Done! Imported: {$imported}, Skipped: {$skipped}, Pages: {$page}");
 
         Log::info('ImportHelpwiseSentReplies completed', [
             'imported' => $imported,

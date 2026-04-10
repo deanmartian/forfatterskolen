@@ -39,7 +39,7 @@
 
         <meta property="og:title" content="{{ $meta_title }}">
         <meta property="og:description" content="{{ $meta_description }}">
-        <meta name="description" content="{{ $meta_description }}">
+        <meta name="description" content="@yield('meta_desc', e($meta_description))">
         <meta property="og:site_name" content="Forfatterskolen">
         <meta property="og:url" content="{{ url()->current() }}">
         <meta property="og:type" content="website">
@@ -85,9 +85,7 @@
         </script>
         @yield('jsonld')
 
-        <title>{{ $meta_title }}</title>
-
-        @yield('title')
+        <title>@yield('page_title', e($meta_title))</title>
         <meta name="keywords" content="{{ $meta_keywords }}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
         <meta name="csrf-token" content="{{ csrf_token() }}" />

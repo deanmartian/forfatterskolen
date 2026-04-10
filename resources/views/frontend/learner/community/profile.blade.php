@@ -1,8 +1,6 @@
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-<title>Min profil › Skrivefellesskap › Forfatterskolen</title>
-@stop
+@section('page_title', 'Min profil › Skrivefellesskap › Forfatterskolen')
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/community.css?v=' . time()) }}">

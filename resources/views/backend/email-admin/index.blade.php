@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>E-postmaler</title>
-@stop
+@section('page_title', 'E-postmaler')
 
 @section('content')
 <div class="container-fluid" style="padding: 20px;">

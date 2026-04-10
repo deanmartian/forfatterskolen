@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Notifications &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Notifications &rsaquo; Forfatterskolen')
 
 @section('content')
     <div class="account-container">

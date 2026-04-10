@@ -1,9 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-<title>Calendar &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Calendar &rsaquo; Forfatterskolen')
 
 @section('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">

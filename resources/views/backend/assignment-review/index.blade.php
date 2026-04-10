@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-<title>AI-tilbakemeldinger &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'AI-tilbakemeldinger &rsaquo; Forfatterskolen Admin')
 
 @section('content')
 

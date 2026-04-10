@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>{{ $solution->title }} Articles &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title'){{ $solution->title }} Articles &rsaquo; Forfatterskolen Admin@endsection
 
 @section('content')
     <div class="page-toolbar">

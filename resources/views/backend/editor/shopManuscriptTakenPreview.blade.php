@@ -1,9 +1,7 @@
 @extends('editor.layout')
 @section('uses-tinymce', true)
 
-@section('title')
-<title>Manusutvikling &rsaquo; Forfatterskolen Redaktørportal</title>
-@stop
+@section('page_title', 'Manusutvikling &rsaquo; Forfatterskolen Redaktørportal')
 
 @section('content')
 <div class="page-toolbar">

@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Bokbestillinger &rsaquo; Admin</title>
-@stop
+@section('page_title', 'Bokbestillinger &rsaquo; Admin')
 
 @section('content')
 <div class="container-fluid" style="max-width:1200px;padding:2rem;">

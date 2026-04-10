@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Vilkår og betingelser — Forfatterskolen</title>
-@stop
+@section('page_title', 'Vilkår og betingelser — Forfatterskolen')
 
 @section('styles')
 <style>

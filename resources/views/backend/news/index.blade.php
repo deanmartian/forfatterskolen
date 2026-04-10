@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>News &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'News &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
     <link rel="stylesheet" href="{{asset('vendor/laraberg/css/laraberg.css')}}">

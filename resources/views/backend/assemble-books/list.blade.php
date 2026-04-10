@@ -4,9 +4,7 @@
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 @stop
 
-@section('title')
-    <title>Assemble Book Package Options &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Assemble Book Package Options &rsaquo; Forfatterskolen Admin')
 
 @section('content')
 

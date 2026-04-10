@@ -1,8 +1,6 @@
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-    <title>Forbered coaching-time &rsaquo; Forfatterskolen</title>
-@endsection
+@section('page_title', 'Forbered coaching-time &rsaquo; Forfatterskolen')
 
 @section('styles')
 <style>

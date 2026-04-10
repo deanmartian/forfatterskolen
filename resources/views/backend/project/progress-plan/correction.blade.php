@@ -5,9 +5,7 @@
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 @stop
 
-@section('title')
-    <title>Project &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Project &rsaquo; Forfatterskolen Admin')
 
 @section('content')
     <div class="page-toolbar">

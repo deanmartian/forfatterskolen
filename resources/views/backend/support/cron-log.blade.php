@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>CRON Logs &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'CRON Logs &rsaquo; Forfatterskolen Admin')
 
 @section('content')
     <div class="page-toolbar">

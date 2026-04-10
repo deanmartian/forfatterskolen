@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Admins &rsaquo; Calendar Notes</title>
-@stop
+@section('page_title', 'Admins &rsaquo; Calendar Notes')
 
 @section('content')
     <div class="page-toolbar">

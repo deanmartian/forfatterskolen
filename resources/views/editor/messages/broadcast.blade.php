@@ -1,8 +1,6 @@
 @extends('editor.layout')
 
-@section('title')
-<title>Broadcast &rsaquo; Meldinger</title>
-@stop
+@section('page_title', 'Broadcast &rsaquo; Meldinger')
 
 @section('page-title', 'Meldinger')
 

@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Shareable Courses &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Shareable Courses &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
 <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">

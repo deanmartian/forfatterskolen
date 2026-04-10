@@ -1,9 +1,7 @@
 @extends('backend.layout')
 @section('uses-tinymce', true)
 
-@section('title')
-    <title>Rediger nyhetsbrev — Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Rediger nyhetsbrev — Forfatterskolen Admin')
 
 @section('content')
 <div class="container-fluid" style="padding: 20px; max-width: 1000px;">

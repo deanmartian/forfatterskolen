@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-<title>Tinymce Images &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Tinymce Images &rsaquo; Forfatterskolen Admin')
 
 @section('content')
 <div class="page-toolbar">

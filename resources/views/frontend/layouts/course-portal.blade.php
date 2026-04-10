@@ -12,7 +12,7 @@
     <meta name="google-site-verification" content="PT1CQ7dxKhPpwvuFW6e2o_AVdp10XC-wUvvbHHuY0IE" />
     @include('frontend.partials._meta')
 
-    @yield('title')
+    <title>@yield('page_title', 'Kursportal — Forfatterskolen')</title>
 
     @yield('metas')
 

@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Thank You &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Thank You &rsaquo; Forfatterskolen')
 
 @section('content')
 	<div class="thank-you-page" data-bg="https://www.forfatterskolen.no/images-new/thankyou-bg.png">

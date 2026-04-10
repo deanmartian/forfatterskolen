@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Create Publisher Book &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Create Publisher Book &rsaquo; Forfatterskolen Admin')
 
 @section('content')
     <div class="container padding-top">

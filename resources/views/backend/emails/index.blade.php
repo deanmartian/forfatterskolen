@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Email</title>
-@stop
+@section('page_title', 'Email')
 
 @section('content')
     <div class="page-toolbar">

@@ -1,8 +1,6 @@
 @extends('frontend.learner.self-publishing.layout')
 
-@section('title')
-    <title>E-book &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'E-book &rsaquo; Forfatterskolen')
 
 @section('content')
 <div class="learner-container">

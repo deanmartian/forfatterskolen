@@ -1,9 +1,7 @@
 {{-- Profil & innstillinger — redesignet --}}
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-<title>Profil &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Profil &rsaquo; Forfatterskolen')
 
 @section('heading') Profil @stop
 

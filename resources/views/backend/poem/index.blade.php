@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Poem &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Poem &rsaquo; Forfatterskolen Admin')
 
 @section('content')
     <div class="page-toolbar">

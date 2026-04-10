@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Preferences &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Preferences &rsaquo; Forfatterskolen')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('js/toastr/toastr.min.css') }}">

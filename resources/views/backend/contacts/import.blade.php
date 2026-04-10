@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Importer kontakter</title>
-@stop
+@section('page_title', 'Importer kontakter')
 
 @section('content')
 <div class="container-fluid" style="padding: 20px; max-width: 900px;">

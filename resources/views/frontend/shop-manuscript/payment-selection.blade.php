@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-<title>Velg betalingsmetode &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Velg betalingsmetode &rsaquo; Forfatterskolen')
 
 @section('styles')
     <link rel="preconnect" href="https://fonts.googleapis.com">

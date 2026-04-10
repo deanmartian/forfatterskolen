@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>{{ $contact->fullName() ?: $contact->email }} — CRM</title>
-@stop
+@section('page_title'){{ $contact->fullName() ?: $contact->email }} — CRM@endsection
 
 @section('content')
 <div class="container-fluid" style="padding: 20px;">

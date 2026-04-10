@@ -108,7 +108,7 @@ $style = [
                                                 "</a>",
                                                 "<a href='$verificationUrl'>$verificationUrl</a>"
                                             ];
-                                            $email_content = str_replace($search, $replace, $emailTemplate->email_content);
+                                            $email_content = str_replace($search, $replace, $emailTemplate->email_content ?? '');
                                         @endphp
                                         {!! $email_content !!}
 

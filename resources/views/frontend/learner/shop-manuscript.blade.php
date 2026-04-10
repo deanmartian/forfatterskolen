@@ -1,9 +1,7 @@
 {{-- Manusutviklinger — redesignet --}}
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-<title>Manusutviklinger &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Manusutviklinger &rsaquo; Forfatterskolen')
 
 @section('heading') Manusutviklinger @stop
 

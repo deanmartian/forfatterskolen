@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-<title>{{ $conversation->subject }} &rsaquo; Meldinger</title>
-@stop
+@section('page_title'){{ $conversation->subject }} &rsaquo; Meldinger@endsection
 
 @section('page-title', 'Meldinger')
 

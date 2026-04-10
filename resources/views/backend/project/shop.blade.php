@@ -1,8 +1,6 @@
 @extends($layout ?? 'backend.layout')
 
-@section('title')
-    <title>Nettbutikk &rsaquo; {{ $project->name }} &rsaquo; Admin</title>
-@stop
+@section('page_title')Nettbutikk &rsaquo; {{ $project->name }} &rsaquo; Admin@endsection
 
 @section('content')
 <div class="container-fluid" style="max-width:900px;padding:2rem;">

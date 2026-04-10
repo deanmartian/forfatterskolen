@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-<title>Invoice #{{$invoice->invoice_number}} &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title')Invoice #{{$invoice->invoice_number}} &rsaquo; Forfatterskolen Admin@endsection
 
 @section('content')
 <div class="margin-top">

@@ -105,6 +105,22 @@ class HelpwiseApiService
     /**
      * Add a tag to a conversation.
      */
+    /**
+     * List conversations with optional filters.
+     */
+    public function listConversations(array $params = []): ?array
+    {
+        try {
+            $response = Http::withHeaders($this->headers())
+                ->get("{$this->baseUrl}/conversations", $params);
+
+            return $response->successful() ? $response->json() : null;
+        } catch (\Exception $e) {
+            Log::error('Helpwise API: listConversations failed', ['error' => $e->getMessage()]);
+            return null;
+        }
+    }
+
     public function addTag(string $conversationId, string $tag): bool
     {
         try {

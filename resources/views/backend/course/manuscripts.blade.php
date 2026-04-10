@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-<title>Manuscripts &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title')Manuscripts &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin@endsection
 
 @section('content')
 

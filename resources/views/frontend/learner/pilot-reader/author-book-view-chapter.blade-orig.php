@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>{{ $book->title }}, {{ $chapter->title ? $chapter->title : 'Chapter '.$key }} &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title'){{ $book->title }}, {{ $chapter->title ? $chapter->title : 'Chapter '.$key }} &rsaquo; Forfatterskolen@endsection
 
 @section('content')
 

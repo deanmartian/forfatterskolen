@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="{{asset('css/learner.css?v='.filemtime(public_path('css/learner.css')))}}">
 
         <!-- use meta title first before the title on the actual page added-->
-        @yield('title')
+        <title>@yield('page_title', 'Selvpublisering — Forfatterskolen')</title>
         <meta name="keywords" content="forfatterskolen, forfatter, kurs, manusutvikling, manus, manuskript, kikt, sakprosa, serieroman, krim, roman">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
         <meta name="csrf-token" content="{{ csrf_token() }}" />

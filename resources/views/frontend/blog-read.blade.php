@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>{{ $blog->title }} — Forfatterskolen</title>
-@stop
+@section('page_title'){{ $blog->title }} — Forfatterskolen@endsection
 
 @section('metas')
     <meta property="og:url"           content="{{ route('front.read-blog', $blog->id) }}" />

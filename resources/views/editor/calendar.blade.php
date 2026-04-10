@@ -1,8 +1,6 @@
 @extends('editor.layout')
 
-@section('title')
-<title>Kalender &rsaquo; Forfatterskolen Redaktørportal</title>
-@stop
+@section('page_title', 'Kalender &rsaquo; Forfatterskolen Redaktørportal')
 
 @section('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">

@@ -1,9 +1,7 @@
 {{-- @extends('frontend.layout') --}}
 @extends('frontend.layouts.course-portal')
 
-@section('title')
-    <title>Mine Webinar &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Mine Webinar &rsaquo; Forfatterskolen')
 
 @section('content')
     <div class="learner-container learner-webinar-page">

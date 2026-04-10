@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-    <title>Editor Calendar › Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Editor Calendar › Forfatterskolen Admin')
 
 @section('styles')
         <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">

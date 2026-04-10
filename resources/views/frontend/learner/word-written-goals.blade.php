@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Word Written Goals &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title', 'Word Written Goals &rsaquo; Forfatterskolen')
 
 @section('heading')
     Word Written Goals

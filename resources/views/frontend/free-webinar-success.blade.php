@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>Du er p&aring;meldt! &ndash; {{ $freeWebinar->title }} &ndash; Forfatterskolen</title>
-@stop
+@section('page_title')Du er p&aring;meldt! &ndash; {{ $freeWebinar->title }} &ndash; Forfatterskolen@endsection
 
 @section('styles')
 <style>

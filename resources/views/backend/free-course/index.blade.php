@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-<title>Gratis webinar &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Gratis webinar &rsaquo; Forfatterskolen Admin')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/cropper.min.css') }}">

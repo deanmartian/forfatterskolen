@@ -1,8 +1,6 @@
 @extends('frontend.layout')
 
-@section('title')
-    <title>{{ $book->title }}, Chapter &rsaquo; Forfatterskolen</title>
-@stop
+@section('page_title'){{ $book->title }}, Chapter &rsaquo; Forfatterskolen@endsection
 
 @section('styles')
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">

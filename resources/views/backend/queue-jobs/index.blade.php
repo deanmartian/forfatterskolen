@@ -1,8 +1,6 @@
 @extends('backend.layout')
 
-@section('title')
-<title>Queue Jobs &rsaquo; Forfatterskolen Admin</title>
-@stop
+@section('page_title', 'Queue Jobs &rsaquo; Forfatterskolen Admin')
 
 @section('content')
 <div class="page-toolbar">
