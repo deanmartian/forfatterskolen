@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Rabattkode aktivert &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Rabatt aktivert for ' . $course->title . '.')
 
 @section('content')
 

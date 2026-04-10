@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Forfatterskolen &rsaquo; Rektor Tips')
+@section('meta_desc', 'Få tips fra rektor ved Forfatterskolen.')
 
 @section('content')
 	<div class="container">

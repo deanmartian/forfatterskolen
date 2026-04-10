@@ -38,7 +38,7 @@
 </script>
 @endsection
 
-@section('meta_desc'){{ $course->meta_description }}@endsection
+@section('meta_desc', $course->meta_description)
 @section('metas')
     <meta property="og:title" content="{{ $course->meta_title }}">
     <meta property="og:description" content="{{ $course->meta_description }}">

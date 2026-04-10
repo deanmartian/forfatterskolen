@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Takk for p&aring;meldingen &mdash; Diktskriving &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Takk for påmeldingen til tips om diktskriving.')
 
 @section('content')
     <div class="opt-in-thanks">

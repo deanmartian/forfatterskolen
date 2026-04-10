@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Oppdater bestilling &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Oppdater bestilling for ' . $course->title . '.')
 
 @section('content')
 

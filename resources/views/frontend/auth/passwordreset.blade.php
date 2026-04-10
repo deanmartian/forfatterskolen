@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Tilbakestill passord &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Tilbakestill passordet ditt for Forfatterskolen.')
 
 @section('styles')
 <style>

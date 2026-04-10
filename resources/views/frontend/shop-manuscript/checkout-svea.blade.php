@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Bestill tekstvurdering (Svea) &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Betal med Svea for tekstvurdering.')
 
 @section('content')
 

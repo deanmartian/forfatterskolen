@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Login &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Logg inn for å se din tekstvurdering.')
 
 @section('content')
 <div class="global-checkout-page" id="app-container">

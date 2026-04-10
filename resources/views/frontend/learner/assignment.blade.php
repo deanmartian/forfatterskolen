@@ -5,6 +5,7 @@
 @stop
 
 @section('page_title', 'Oppgaver &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Se dine oppgaver og innleveringer hos Forfatterskolen.')
 
 @section('content')
 

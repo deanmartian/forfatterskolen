@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Forfatterskolen Coaching Timer')
+@section('meta_desc', 'Book en coaching-time med erfarne forfattere hos Forfatterskolen.')
 
 @section('content')
 

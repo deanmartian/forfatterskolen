@@ -1,6 +1,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('page_title', 'Coaching &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Book og administrer coaching-timer.')
 
 @section('styles')
 <style>

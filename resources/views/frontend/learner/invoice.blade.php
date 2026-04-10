@@ -2,6 +2,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('page_title', 'Fakturaer &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Se dine fakturaer hos Forfatterskolen.')
 
 @section('heading') {{ trans('site.learner.my-invoice') }} @stop
 @section('styles')

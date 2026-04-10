@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Login &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Logg inn på Indiemoon Publishing.')
 
 @section('content')
 <div class="login-container" data-bg="https://www.forfatterskolen.no/images-new/login/login-bg.jpg">

@@ -1,6 +1,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('page_title', 'Mine kurs &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Oversikt over dine kurs hos Forfatterskolen.')
 
 @section('heading') Mine kurs @stop
 

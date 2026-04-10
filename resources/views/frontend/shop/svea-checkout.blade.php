@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Betal med Svea &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Betal med Svea for ' . $course->title . ' hos Forfatterskolen.')
 
 @section('content')
 

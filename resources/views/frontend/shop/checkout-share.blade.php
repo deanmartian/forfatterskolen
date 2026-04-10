@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Del kursbestilling &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Del kursbestilling for ' . $course->title . '.')
 
 @section('content')
     <div class="checkout-page">

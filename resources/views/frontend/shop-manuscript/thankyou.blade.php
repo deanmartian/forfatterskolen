@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Ordrebekreftelse &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Takk for bestillingen av tekstvurdering hos Forfatterskolen.')
 
 @section('content')
 <style>

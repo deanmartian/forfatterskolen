@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Kansellert bestilling &mdash; Tekstvurdering &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Din bestilling av tekstvurdering ble kansellert.')
 
 @section('content')
     <div class="thank-you-page" data-bg="https://www.forfatterskolen.no/images-new/thankyou-bg.png">

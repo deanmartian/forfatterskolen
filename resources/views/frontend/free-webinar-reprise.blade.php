@@ -2,7 +2,7 @@
 
 @section('page_title', 'Reprise: ' . $freeWebinar->title . ' — Forfatterskolen')
 
-@section('meta_desc')Se reprisen av {{ $freeWebinar->title }} gratis. {{ Str::limit(strip_tags($freeWebinar->description), 120) }}@endsection
+@section('meta_desc', 'Se reprisen av ' . $freeWebinar->title . ' gratis. ' . Str::limit(strip_tags($freeWebinar->description), 120))
 @section('metas')
     <meta property="og:title" content="Se reprisen: {{ $freeWebinar->title }}">
     <meta property="og:description" content="{{ Str::limit(strip_tags($freeWebinar->description), 160) }}">

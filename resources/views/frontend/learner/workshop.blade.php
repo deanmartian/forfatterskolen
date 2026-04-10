@@ -2,6 +2,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('page_title', 'Mine workshops &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Se dine workshops hos Forfatterskolen.')
 
 @section('content')
 <div class="learner-container learner-workshop-wrapper">

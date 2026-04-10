@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Oppgrader tekstvurdering &rsaquo; Forfatterskolen')
+@section('meta_desc', 'Oppgrader din tekstvurdering hos Forfatterskolen.')
 
 @section('content')
 
