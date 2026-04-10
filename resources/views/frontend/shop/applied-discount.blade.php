@@ -1,7 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Rabattkode aktivert &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 @section('meta_desc', 'Rabatt aktivert for ' . $course->title . '.')
 
 @section('content')

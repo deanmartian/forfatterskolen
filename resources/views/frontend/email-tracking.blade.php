@@ -1,7 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Thank You &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 
 @section('content')
 	<div class="thank-you-page" data-bg="https://www.forfatterskolen.no/images-new/thankyou-bg.png">

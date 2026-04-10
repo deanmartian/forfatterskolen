@@ -1,7 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Preferences &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('js/toastr/toastr.min.css') }}">

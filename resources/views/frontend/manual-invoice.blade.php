@@ -1,7 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Manuell faktura &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 @section('content')
 <div class="manuscript-page">
     <div class="container main-container">

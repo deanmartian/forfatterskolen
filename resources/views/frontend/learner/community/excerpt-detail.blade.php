@@ -1,7 +1,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('page_title', $excerpt->title . ' › Manusrom › Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/community.css?v=' . time()) }}">

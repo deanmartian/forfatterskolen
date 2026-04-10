@@ -1,7 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', $page_title . ' &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 
 @section('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">

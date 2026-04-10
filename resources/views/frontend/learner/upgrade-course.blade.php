@@ -2,7 +2,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('page_title', 'Oppgrader kurs &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 
 @section('heading')
     {{ trans('site.learner.upgrades-text') }} {{$courseTaken->package->course->title}}

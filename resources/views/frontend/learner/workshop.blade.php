@@ -2,7 +2,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('page_title', 'Mine workshops &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 @section('meta_desc', 'Se dine workshops hos Forfatterskolen.')
 
 @section('content')

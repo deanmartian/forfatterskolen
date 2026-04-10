@@ -18,7 +18,7 @@ endif;
 ?>
 
 @section('page_title', 'Faktura #' . $fikenInvoice->invoiceNumber . ' &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 
 
 @section('content')

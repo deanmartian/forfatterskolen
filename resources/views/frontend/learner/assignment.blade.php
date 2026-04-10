@@ -5,7 +5,7 @@
 @stop
 
 @section('page_title', 'Oppgaver &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 @section('meta_desc', 'Se dine oppgaver og innleveringer hos Forfatterskolen.')
 
 @section('content')

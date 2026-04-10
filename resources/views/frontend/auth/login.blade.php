@@ -1,7 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title')@if(!Request::input('t'))Logg inn@elseif(Request::input('t') == 'register')Registrer deg@elseif(Request::input('t') == 'passwordreset')Tilbakestill passord@elseif(Request::input('t') == 'password-change')Endre passord@endif &rsaquo; Forfatterskolen@endsection
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 @section('meta_desc', 'Logg inn på Forfatterskolen. Tilgang til kurs, oppgaver og fellesskap.')
 
 @section('styles')

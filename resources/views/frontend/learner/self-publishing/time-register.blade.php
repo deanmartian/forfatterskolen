@@ -1,7 +1,7 @@
 @extends('frontend.learner.self-publishing.layout')
 
 @section('page_title', 'Timeregistrering &rsaquo; Selvpublisering &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 
 @section('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">

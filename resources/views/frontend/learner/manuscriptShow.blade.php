@@ -1,7 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Manuscript for course ' . $manuscript->courseTaken->package->course->title . ' &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 
 
 @section('content')

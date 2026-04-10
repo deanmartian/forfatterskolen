@@ -1,7 +1,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('page_title', $conversation->subject . ' &rsaquo; Meldinger')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 
 @section('heading') Meldinger @stop
 

@@ -9,7 +9,7 @@
 @endphp
 
 @section('page_title', $pageTitle . ' &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 
 @section('content')
     <div class="learner-container learner-document-converter">

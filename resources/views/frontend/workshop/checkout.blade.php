@@ -1,7 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Bestill workshop &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 @section('meta_desc', 'Meld deg på workshop hos Forfatterskolen.')
 
 @section('content')

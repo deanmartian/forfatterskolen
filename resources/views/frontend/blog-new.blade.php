@@ -3,7 +3,7 @@
 @section('page_title', 'Blogg — Forfatterskolen')
 @section('meta_desc', 'Les artikler om skriving, forfatterliv og bokbransjen på Forfatterskolens blogg.')
 @if(request('page', 1) > 1)
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 @endif
 
 @section('styles')

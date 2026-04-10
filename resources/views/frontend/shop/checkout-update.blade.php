@@ -1,7 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Oppdater bestilling &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 @section('meta_desc', 'Oppdater bestilling for ' . $course->title . '.')
 
 @section('content')

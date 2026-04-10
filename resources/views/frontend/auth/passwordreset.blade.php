@@ -1,7 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Tilbakestill passord &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 @section('meta_desc', 'Tilbakestill passordet ditt for Forfatterskolen.')
 
 @section('styles')

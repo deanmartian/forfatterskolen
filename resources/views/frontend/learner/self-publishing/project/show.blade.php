@@ -1,7 +1,7 @@
 @extends('frontend.learner.self-publishing.layout')
 
 @section('page_title', 'Prosjektdetaljer &rsaquo; Selvpublisering &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 
 @section('content')
     <div class="learner-container">

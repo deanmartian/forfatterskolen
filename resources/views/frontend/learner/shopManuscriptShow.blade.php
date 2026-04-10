@@ -2,7 +2,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('page_title', $shopManuscriptTaken->shop_manuscript->title . ' &rsaquo; Forfatterskolen')
-@section('robots')<meta name="robots" content="noindex, follow">@endsection
+@section('robots', '<meta name="robots" content="noindex, follow">')
 
 @section('styles')
 	<style>
