@@ -11,6 +11,7 @@
         <link rel="alternate" href="{{ config('app.url') }}" hreflang="no" />
         <link rel="alternate" href="{{ config('app.url') }}/en" hreflang="en" />
         <link rel="alternate" href="{{ url()->current() }}" hreflang="{{ app()->getLocale() }}" />
+        <link rel="alternate" href="{{ url()->current() }}" hreflang="x-default" />
         <link rel="canonical" href="{{ url()->current() }}">
 
 
@@ -51,6 +52,39 @@
         <meta name="twitter:image" content="{{ $meta_image }}">
         <meta property="fb:app_id" content="300010277156315">
 
+        {{-- JSON-LD Structured Data — Organization (global) + per-side via @yield --}}
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "EducationalOrganization",
+            "name": "Forfatterskolen",
+            "alternateName": "Forfatterskolen.no",
+            "url": "{{ config('app.url') }}",
+            "logo": "{{ asset('photos/logos/fs-logo.png') }}",
+            "description": "{{ $meta_description }}",
+            "foundingDate": "2015",
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Lihagen 21",
+                "postalCode": "3029",
+                "addressLocality": "Drammen",
+                "addressCountry": "NO"
+            },
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+47-411-23-555",
+                "email": "post@forfatterskolen.no",
+                "contactType": "customer service",
+                "availableLanguage": "Norwegian"
+            },
+            "sameAs": [
+                "https://www.facebook.com/forfatterskolen",
+                "https://www.instagram.com/forfatterskolen_norge"
+            ]
+        }
+        </script>
+        @yield('jsonld')
+
         <title>{{ $meta_title }}</title>
 
         @yield('title')
@@ -64,6 +98,9 @@
         @yield('metas')
 
         <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}" />
+        <link rel="preconnect" href="https://use.fontawesome.com" crossorigin>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
               integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
         @yield('styles')

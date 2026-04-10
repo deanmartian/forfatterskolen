@@ -4,6 +4,42 @@
 <title>{{ $course->title }} › Forfatterskolen</title>
 @stop
 
+@section('jsonld')
+@php
+    $cheapestPrice = $course->packages->min('calculated_price') ?? $course->packages->min('full_payment_price');
+@endphp
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "{{ $course->title }}",
+    "description": "{{ \Illuminate\Support\Str::limit(strip_tags($course->meta_description ?? $course->description ?? ''), 300) }}",
+    "provider": {
+        "@type": "Organization",
+        "name": "Forfatterskolen",
+        "url": "https://www.forfatterskolen.no"
+    },
+    "url": "{{ url()->current() }}",
+    @if($cheapestPrice)
+    "offers": {
+        "@type": "Offer",
+        "price": "{{ (int) $cheapestPrice }}",
+        "priceCurrency": "NOK",
+        "availability": "https://schema.org/InStock",
+        "url": "{{ url()->current() }}"
+    },
+    @endif
+    "courseMode": "Online",
+    "inLanguage": "nb",
+    "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "Online",
+        "courseWorkload": "PT10W"
+    }
+}
+</script>
+@endsection
+
 @section('metas')
     <meta property="og:title" content="{{ $course->meta_title }}">
     <meta property="og:description" content="{{ $course->meta_description }}">
