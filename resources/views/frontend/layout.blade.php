@@ -39,13 +39,7 @@
 
         <meta property="og:title" content="{{ $meta_title }}">
         <meta property="og:description" content="{{ $meta_description }}">
-        {{-- description-meta rendres kun hvis child view IKKE setter sin egen
-             via @section('metas'). Child views som show-romankurs, show, og
-             free-webinar setter egen description — da hopper vi over default
-             for å unngå duplikat meta description (SEO-straff). --}}
-        @unless(View::hasSection('metas'))
-            <meta name="description" content="{{ $meta_description }}">
-        @endunless
+        <meta name="description" content="{{ $meta_description }}">
         <meta property="og:site_name" content="Forfatterskolen">
         <meta property="og:url" content="{{ url()->current() }}">
         <meta property="og:type" content="website">
@@ -91,15 +85,9 @@
         </script>
         @yield('jsonld')
 
-        {{-- Kun ÉN <title>-tag: child view overstyrer via @section('title'),
-             ellers brukes PageMeta eller default fra $meta_title.
-             Gammel kode hadde BEGGE → to <title>-tags → Google leste
-             default-tittelen → 88 duplikate titler i SEO-rapport. --}}
-        @hasSection('title')
-            @yield('title')
-        @else
-            <title>{{ $meta_title }}</title>
-        @endif
+        <title>{{ $meta_title }}</title>
+
+        @yield('title')
         <meta name="keywords" content="{{ $meta_keywords }}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
