@@ -45,8 +45,16 @@ class AddMailToQueueMail extends Mailable
         $this->reply_to_name = $reply_to_name;
     }
 
+    /** Avmeldingslenke — settes automatisk og er tilgjengelig i email-views */
+    public $unsubscribe_url;
+
     public function build()
     {
+        // Generer avmeldingslenke som er tilgjengelig for alle email-templates
+        // via $unsubscribe_url. Footer-partialen bruker denne for å vise
+        // "Meld deg av nyhetsbrev"-lenken på riktig plass (under adressen).
+        $this->unsubscribe_url = url('/avmeld/' . base64_encode($this->recipient));
+
         // Hvis caller eksplisitt har gitt en reply-to (f.eks. inbox-svar fra en
         // privat inbox), bruk den. Ellers fall tilbake til global config.
         $replyToAddress = $this->reply_to_email ?: config('mail.reply_to.address', $this->from_email);

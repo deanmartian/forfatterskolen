@@ -143,7 +143,7 @@ class SeedMotorWebinarEmails extends Command
     private function buildStep1Html(): string
     {
         return <<<'HTML'
-<h1>Hei [fornavn]! 📖</h1>
+<p style="font-size:18px;font-weight:600;margin:0 0 16px;">Hei [fornavn]! 📖</p>
 
 <p>Du er nå påmeldt gratiswebinaret <strong>Finn fortellingens motor</strong>.</p>
 
@@ -167,7 +167,7 @@ HTML;
     private function buildStep2Html(): string
     {
         return <<<'HTML'
-<h1>Hei [fornavn]!</h1>
+<p style="font-size:18px;font-weight:600;margin:0 0 16px;">Hei [fornavn]!</p>
 
 <p>Bare en kort påminnelse: <strong>i morgen kveld kl 20:00</strong> ses vi på webinaret.</p>
 
@@ -190,7 +190,7 @@ HTML;
     private function buildStep3Html(): string
     {
         return <<<'HTML'
-<h1>Hei [fornavn]!</h1>
+<p style="font-size:18px;font-weight:600;margin:0 0 16px;">Hei [fornavn]!</p>
 
 <p>Webinaret starter om <strong>én time</strong>.</p>
 
@@ -209,7 +209,7 @@ HTML;
     private function buildStep4Html(): string
     {
         return <<<'HTML'
-<h1>Hei [fornavn]!</h1>
+<p style="font-size:18px;font-weight:600;margin:0 0 16px;">Hei [fornavn]!</p>
 
 <p>Takk for at du var med på webinaret i kveld — eller at du ville delta!</p>
 
@@ -229,7 +229,7 @@ HTML;
     private function buildStep5Html(): string
     {
         return <<<'HTML'
-<h1>Hei [fornavn]!</h1>
+<p style="font-size:18px;font-weight:600;margin:0 0 16px;">Hei [fornavn]!</p>
 
 <p>Takk for at du var med på webinaret — eller at du har sett opptaket! 📖</p>
 
@@ -258,7 +258,7 @@ HTML;
     private function buildStep6Html(): string
     {
         return <<<'HTML'
-<h1>Hei [fornavn]!</h1>
+<p style="font-size:18px;font-weight:600;margin:0 0 16px;">Hei [fornavn]!</p>
 
 <p>To dager igjen til <strong>søndag 20. april</strong> — både kursstart og siste frist for webinar-prisen.</p>
 
@@ -287,7 +287,7 @@ HTML;
     private function buildStep7Html(): string
     {
         return <<<'HTML'
-<h1>Hei [fornavn]!</h1>
+<p style="font-size:18px;font-weight:600;margin:0 0 16px;">Hei [fornavn]!</p>
 
 <p>Kursstart i dag. Webinar-prisen utløper ved midnatt.</p>
 

@@ -181,13 +181,9 @@ class EmailAutomationService
         $fromEmail = $step->getFromAddress();
         $fromName = $step->getFromName();
 
-        // Generer avmeldingslenke
-        $unsubscribeUrl = url('/avmeld/' . base64_encode($contact->email));
-
-        // Legg til avmeldingslenke i body
-        $body .= '<p style="text-align:center;font-size:12px;color:#999;margin-top:30px;">
-            <a href="' . $unsubscribeUrl . '" style="color:#999;">Avmeld nyhetsbrev</a>
-        </p>';
+        // Avmeldingslenke håndteres av emails/partials/footer.blade.php
+        // via $unsubscribe_url-variabelen — IKKE append den til body
+        // (det ga dobbel lenke + feil plassering over footeren).
 
         // Bruk eksisterende AddMailToQueueJob for å sende
         AddMailToQueueJob::dispatch(
