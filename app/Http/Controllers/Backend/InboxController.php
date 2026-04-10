@@ -247,6 +247,89 @@ class InboxController extends Controller
     }
 
     /**
+     * "Forbedr svar" — tar Svens raske/bryske utkast og polerer det
+     * til Forfatterskolens varme, profesjonelle tone via Anthropic API.
+     *
+     * Aksepterer JSON { body: "Svens utkast-tekst" }
+     * Returnerer JSON { polished: "Polert tekst" }
+     *
+     * AI-en bruker eksisterende svar-eksempler som stilreferanse, og
+     * beholder alltid Svens budskap — bare tonen endres.
+     */
+    public function polishReply(Request $request, int $id)
+    {
+        $request->validate(['body' => 'required|string|min:5']);
+
+        $conversation = $this->inboxService->getConversation($id);
+        $draft = $request->input('body');
+        $senderName = auth()->user()->first_name ?? 'Sven Inge';
+
+        // Hent svar-eksempler for stilreferanse
+        $examples = \App\HelpwiseReplyExample::orderBy('created_at', 'desc')
+            ->limit(5)
+            ->pluck('reply_body')
+            ->map(fn($r) => \Illuminate\Support\Str::limit(strip_tags($r), 300))
+            ->implode("\n---\n");
+
+        $examplesSection = $examples
+            ? "\n\nSTILREFERANSE — slik skriver Forfatterskolen vanligvis:\n{$examples}\n"
+            : '';
+
+        $prompt = <<<PROMPT
+Du er en tekstforbedrer for Forfatterskolen. Din oppgave er å ta et raskt, uformelt svarutkast fra {$senderName} og polere det til Forfatterskolens tone:
+
+REGLER:
+- Behold ALLTID det opprinnelige budskapet og alle fakta — du endrer KUN tonen
+- Bruk varm, inkluderende og profesjonell norsk (aldri arrogant eller overdrevet)
+- Bruk gjerne emojis der det passer naturlig (📖 ✍️ 😊 osv.)
+- Start med å hilse på kunden ved fornavn hvis du ser det i utkastet
+- Avslutt med "Ha en fin dag!\nMvh {$senderName}\nForfatterskolen"
+- Bruk [tekst](url) for lenker — ALDRI lim inn rå URL-er
+- ALDRI bruk markdown-formatering som **fet**, *kursiv*, # overskrifter
+- ALDRI legg til informasjon som ikke er i det opprinnelige utkastet
+- Hvis utkastet er kort og greit, hold svaret kort og greit — ikke blås det opp
+{$examplesSection}
+KUNDENS EMNE: {$conversation->subject}
+KUNDENS NAVN: {$conversation->customer_name}
+
+SVENS UTKAST:
+{$draft}
+
+Skriv det polerte svaret. Kun selve svaret, ingen kommentarer eller forklaringer.
+PROMPT;
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'x-api-key' => config('services.anthropic.api_key'),
+                'anthropic-version' => '2023-06-01',
+                'content-type' => 'application/json',
+            ])->timeout(30)->post('https://api.anthropic.com/v1/messages', [
+                'model' => 'claude-sonnet-4-20250514',
+                'max_tokens' => 1024,
+                'messages' => [
+                    ['role' => 'user', 'content' => $prompt],
+                ],
+            ]);
+
+            if (!$response->successful()) {
+                \Log::error('Polish reply API feilet', ['status' => $response->status(), 'body' => $response->body()]);
+                return response()->json(['error' => 'AI-tjenesten er midlertidig utilgjengelig'], 500);
+            }
+
+            $polished = $response->json('content.0.text', '');
+
+            if (empty($polished)) {
+                return response()->json(['error' => 'AI returnerte tomt svar'], 500);
+            }
+
+            return response()->json(['polished' => $polished]);
+        } catch (\Throwable $e) {
+            \Log::error('Polish reply exception: ' . $e->getMessage());
+            return response()->json(['error' => 'Feil ved AI-polering: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
      * Gjør en privat samtale offentlig. Kun eieren kan utføre dette.
      */
     public function makePublic(int $id)

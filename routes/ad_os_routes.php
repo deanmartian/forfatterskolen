@@ -14,6 +14,7 @@ Route::prefix('inbox')->group(function () {
     Route::post('/conversation/{id}/star', [Backend\InboxController::class, 'toggleStar'])->name('admin.inbox.toggle-star');
     Route::post('/conversation/{id}/spam', [Backend\InboxController::class, 'markSpam'])->name('admin.inbox.spam');
     Route::post('/conversation/{id}/ai-draft', [Backend\InboxController::class, 'generateAiDraft'])->name('admin.inbox.ai-draft');
+    Route::post('/conversation/{id}/polish-reply', [Backend\InboxController::class, 'polishReply'])->name('admin.inbox.polish-reply');
     Route::post('/conversation/{id}/execute-tool/{actionId}', [Backend\InboxController::class, 'executeTool'])->name('admin.inbox.execute-tool');
     Route::post('/conversation/{id}/make-public', [Backend\InboxController::class, 'makePublic'])->name('admin.inbox.make-public');
     Route::post('/conversation/{id}/make-private', [Backend\InboxController::class, 'makePrivate'])->name('admin.inbox.make-private');

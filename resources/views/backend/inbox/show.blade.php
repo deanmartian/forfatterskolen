@@ -212,6 +212,7 @@
                                 <button type="submit" name="send_and_close" value="1" class="btn btn-success"><i class="fa fa-check"></i> Send og lukk</button>
                                 <button type="submit" name="save_as_draft" value="1" class="btn btn-default"><i class="fa fa-save"></i> Lagre utkast</button>
                                 <button type="button" class="btn btn-warning" id="btn-ai-draft"><i class="fa fa-magic"></i> Generer AI-utkast</button>
+                                <button type="button" class="btn btn-default btn-sm" id="btn-polish-reply" onclick="polishReply()" title="AI polerer teksten din til en varmere tone — uten å endre innholdet"><i class="fa fa-paint-brush"></i> Forbedr svar</button>
                                 <button type="button" class="btn btn-info btn-sm" onclick="toggleInboxPreview()"><i class="fa fa-eye"></i> Forhåndsvisning</button>
                             </div>
                             <div id="inboxEmailPreview" style="display:none;border:1px solid #ddd;border-radius:8px;overflow:hidden;margin-top:10px;">
@@ -506,6 +507,48 @@
         d.setHours(9, 0, 0);
         var input = document.querySelector('input[name="follow_up_at"]');
         input.value = d.toISOString().slice(0, 16);
+    }
+
+    // "Forbedr svar" — send teksten til AI for polering
+    function polishReply() {
+        var textarea = document.getElementById('reply-body');
+        var body = textarea.value.trim();
+        if (!body || body.length < 5) {
+            alert('Skriv et svar først, så polerer AI det for deg.');
+            return;
+        }
+
+        var btn = document.getElementById('btn-polish-reply');
+        var originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa fa-spinner fa-pulse"></i> Polerer...';
+        btn.disabled = true;
+
+        fetch('{{ route("admin.inbox.polish-reply", $conversation->id) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ body: body }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.polished) {
+                textarea.value = data.polished;
+                textarea.style.borderColor = '#2e7d32';
+                setTimeout(function() { textarea.style.borderColor = ''; }, 3000);
+            } else {
+                alert(data.error || 'Noe gikk galt med AI-poleringen.');
+            }
+        })
+        .catch(function(err) {
+            alert('Feil: ' + err.message);
+        })
+        .finally(function() {
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+        });
     }
 
     // Email preview (global scope) — matches InboxBodyFormatter::toHtml logic
