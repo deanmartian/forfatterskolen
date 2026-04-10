@@ -1310,6 +1310,29 @@
                 <span style="display:inline-block; padding: 12px 28px; background-color: #862736; color: #fff; border-radius: 6px; font-weight: 600; font-size: 15px; text-decoration: none;">Se reprisen &rarr;</span>
             </a>
         </div>
+        @elseif($next_free_webinar && \Carbon\Carbon::parse($next_free_webinar->start_date)->isFuture())
+        {{-- Kommende gratiswebinar — overstyrer 3-kort-gridden så lenge det finnes
+             et FreeWebinar med start_date i fremtiden. Gjør det mulig å promote
+             neste webinar tydelig fra forsiden uten å måtte vedlikeholde
+             upcoming_sections-tabellen manuelt. --}}
+        @php
+            $nextFwStart = \Carbon\Carbon::parse($next_free_webinar->start_date);
+            $nextFwDateStr = \App\Http\FrontendHelpers::formatDate($next_free_webinar->start_date);
+            $nextFwTimeStr = \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar->start_date);
+            $nextFwExcerpt = \Illuminate\Support\Str::limit(strip_tags($next_free_webinar->description), 140);
+        @endphp
+        <div style="max-width: 700px; margin: 0 auto;">
+            <a href="{{ url('/gratis-webinar/' . $next_free_webinar->id) }}" class="news-card" style="display:block; text-align:center; padding: 30px 24px;">
+                <span class="news-card__badge news-card__badge--webinar">
+                    Gratis webinar &middot; {{ $nextFwDateStr }} kl. {{ $nextFwTimeStr }}
+                </span>
+                <h3 class="news-card__title" style="font-size: 1.5rem; margin: 12px 0 8px;">{{ $next_free_webinar->title }}</h3>
+                @if($nextFwExcerpt)
+                    <p style="color: #666; font-size: 1.05rem; margin: 0 0 16px; max-width: 560px; margin-left: auto; margin-right: auto;">{{ $nextFwExcerpt }}</p>
+                @endif
+                <span style="display:inline-block; padding: 12px 28px; background-color: #862736; color: #fff; border-radius: 6px; font-weight: 600; font-size: 15px; text-decoration: none;">Meld deg p&aring; gratis &rarr;</span>
+            </a>
+        </div>
         @else
         <div class="news-grid">
             @foreach($upcomingSections as $k => $upcomingSection)
