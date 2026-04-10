@@ -54,8 +54,35 @@
                         </div>
 
                         <div class="col-md-6">
-                            {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
-                            {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display(['data-callback' => 'captchaCB']) !!}
+                            {{-- reCAPTCHA lazy-loaded via Intersection Observer.
+                                 Tidligere lastet på ALLE sider synchron (2.7s render-blocking
+                                 for recaptcha__en.js + styles__ltr.css). Nå lastes den
+                                 KUN når brukeren scroller til footer-skjemaet. --}}
+                            <div id="recaptcha-container" data-callback="captchaCB"></div>
+                            <script>
+                            (function() {
+                                var loaded = false;
+                                var container = document.getElementById('recaptcha-container');
+                                if (!container) return;
+                                var observer = new IntersectionObserver(function(entries) {
+                                    if (entries[0].isIntersecting && !loaded) {
+                                        loaded = true;
+                                        observer.disconnect();
+                                        var s = document.createElement('script');
+                                        s.src = 'https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit';
+                                        s.async = true;
+                                        document.head.appendChild(s);
+                                        window.onRecaptchaLoad = function() {
+                                            grecaptcha.render(container, {
+                                                sitekey: '{{ config("no-captcha.sitekey") ?: env("NOCAPTCHA_SITEKEY") }}',
+                                                callback: container.dataset.callback
+                                            });
+                                        };
+                                    }
+                                }, { rootMargin: '200px' });
+                                observer.observe(container);
+                            })();
+                            </script>
                         </div>
                     </div>
 
