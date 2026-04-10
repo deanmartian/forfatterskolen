@@ -716,8 +716,8 @@
     {{-- ═══════════ 1. STICKY EARLYBIRD BAR ═══════════ --}}
     @if($isEarlybird)
     <div class="rk-earlybird-bar" id="rkStickyBar">
-        <span class="rk-earlybird-bar__badge">&#9889; Earlybird</span>
-        <span class="rk-earlybird-bar__text">Spar <strong>kr {{ number_format($discount, 0, ',', ' ') }}</strong> — prisen går opp 1. april</span>
+        <span class="rk-earlybird-bar__badge">&#127873; Webinar-pris</span>
+        <span class="rk-earlybird-bar__text">Spar <strong>kr {{ number_format($discount, 0, ',', ' ') }}</strong> — gjelder til {{ $earlybirdDeadline->format('j.') }} {{ \App\Http\FrontendHelpers::convertMonthLanguage($earlybirdDeadline->format('n')) }}</span>
         <div class="rk-earlybird-bar__countdown">
             <span class="rk-earlybird-bar__unit" id="rksDays">--d</span>
             <span class="rk-earlybird-bar__unit" id="rksHours">--t</span>
@@ -769,7 +769,7 @@
                     </div>
                     @if($cheapest)
                     <div class="rk-hero__quick-price">
-                        <div class="rk-hero__quick-price-label">{{ $isEarlybird ? 'Earlybird-pris fra' : 'Pris fra' }}</div>
+                        <div class="rk-hero__quick-price-label">{{ $isEarlybird ? 'Webinar-pris fra' : 'Pris fra' }}</div>
                         <div class="rk-hero__quick-price-row">
                             <span class="rk-hero__quick-price-amount">kr {{ number_format($cheapest->calculated_price, 0, ',', ' ') }}</span>
                             @if($cheapest->full_payment_is_sale)
@@ -781,7 +781,7 @@
                         @endif
                         <div class="rk-hero__quick-price-note">
                             @if($isEarlybird)
-                                Prisen går opp 1. april. Bestill nå, betal senere.
+                                Gjelder til {{ $earlybirdDeadline->format('j.') }} {{ \App\Http\FrontendHelpers::convertMonthLanguage($earlybirdDeadline->format('n')) }}. Bestill nå, betal senere.
                             @else
                                 Bestill nå, betal senere.
                             @endif
@@ -1015,7 +1015,7 @@
     <section class="rk-final-cta">
         <div class="rk-container">
             <h2 class="rk-final-cta__title">Klar for å gjøre alvor av skrivedrømmen?</h2>
-            <p class="rk-final-cta__sub">Oppstart {{ $startDate->format('d') }}. {{ \App\Http\FrontendHelpers::convertMonthLanguage($startDate->format('n')) }}. @if($isEarlybird) Earlybird-prisen gjelder til 1. april — deretter går prisen opp. @endif</p>
+            <p class="rk-final-cta__sub">Oppstart {{ $startDate->format('d') }}. {{ \App\Http\FrontendHelpers::convertMonthLanguage($startDate->format('n')) }}. @if($isEarlybird) Webinar-prisen gjelder til {{ $earlybirdDeadline->format('j.') }} {{ \App\Http\FrontendHelpers::convertMonthLanguage($earlybirdDeadline->format('n')) }}. @endif</p>
             <a href="#pakker" class="rk-btn rk-btn--primary" style="font-size: 1rem; padding: 0.85rem 2rem;">Se pakker og meld deg på →</a>
         </div>
     </section>
