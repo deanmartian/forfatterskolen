@@ -1,4 +1,5 @@
 @extends('backend.layout')
+@section('uses-tinymce', true)
 
 @section('title')
 <title>Learners &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin</title>

@@ -1,4 +1,5 @@
 @extends('backend.layout')
+@section('uses-tinymce', true)
 
 @section('title')
     <title>Nytt nyhetsbrev — Forfatterskolen Admin</title>

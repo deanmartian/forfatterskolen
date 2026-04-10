@@ -1,3 +1,4 @@
+@section('uses-tinymce', true)
 <form method="POST" action="@if(Request::is('poem/*/edit')){{route('admin.poem.update', $poem['id'])}}@else{{route('admin.poem.store')}}@endif"
       enctype="multipart/form-data" onsubmit="disableSubmit(this)">
     {{ csrf_field() }}

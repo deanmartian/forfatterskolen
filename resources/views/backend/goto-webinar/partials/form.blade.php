@@ -1,3 +1,4 @@
+@section('uses-tinymce', true)
 <form method="POST" action="@if(Request::is('goto-webinar/*/edit')){{route('admin.goto-webinar.update', $webinar['id'])}}@else{{route('admin.goto-webinar.store')}}@endif">
 
     {{ csrf_field() }}

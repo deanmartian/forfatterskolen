@@ -7,7 +7,7 @@
 @section('styles')
 <link rel="stylesheet" href="{{asset('simplemde/simplemde.min.css')}}">
 <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-<link rel="stylesheet" href="{{asset('css/font-awesome/css/font-awesome.min.css')}}">
+{{-- FA4 fjernet — FA5 lastes via backend-css.blade.php --}}
 <style>
     .signature-wrapper { margin-top: 10px; }
     .signature { margin-right: 14px; display: inline-block; vertical-align: top; }

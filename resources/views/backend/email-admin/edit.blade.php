@@ -1,4 +1,5 @@
 @extends('backend.layout')
+@section('uses-tinymce', true)
 
 @section('title')
     <title>Rediger: {{ $template->page_name }}</title>

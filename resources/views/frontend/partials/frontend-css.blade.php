@@ -1,9 +1,6 @@
-<link rel="stylesheet" href="{{asset('css/font-awesome/css/font-awesome.min.css')}}">
-{{--<link rel="preload" href="{{asset('css/font-awesome/css/font-awesome.min.css')}}"
-      as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript>
-    <link rel="stylesheet" href="{{asset('css/font-awesome/css/font-awesome.min.css')}}">
-</noscript>--}}
+{{-- Font Awesome 4 fjernet — FA5 (CDN) lastes i layout.blade.php
+     og er bakoverkompatibel med fa fa-xxx klasser. Dobbel FA var
+     ~200KB ekstra per sideinnlasting. --}}
 {{--<link rel="stylesheet" href="{{asset('css/vendor.min.css')}}">--}}
 {{--<link rel="stylesheet" href="{{asset('css/ie-vendor.min.css')}}">--}}
 <?php

@@ -172,12 +172,13 @@
         {{-- vooplayer fjernet --}}
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-        {{-- @if (!in_array(Route::currentRouteName(),['backend.dashboard', 'admin.learner.show',
-             'admin.free-manuscript.index'])) --}}
-            {{-- <script src="https://cdn.tiny.cloud/1/nek3obgwg98gkwb24kkslobuly8x3ul5l53agctoenes6nyb/tinymce/5/tinymce.min.js"
-                referrerpolicy="origin"></script> --}}
-                <script src="{{ asset("js/tinymce/tinymce.min.js") }}"></script>
-        {{-- @endif --}}
+        {{-- TinyMCE (~1.5MB) lastes KUN på sider som faktisk bruker editoren.
+             Views som trenger TinyMCE legger til @section('uses-tinymce', true).
+             Init-koden nedenfor sjekker typeof tinymce === 'undefined' og
+             hopper over init hvis scriptet ikke er lastet. --}}
+        @hasSection('uses-tinymce')
+            <script src="{{ asset("js/tinymce/tinymce.min.js") }}"></script>
+        @endif
         <script>
             let currentTarget = "";
             $(".dt-table").DataTable({

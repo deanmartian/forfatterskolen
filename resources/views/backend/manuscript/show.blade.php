@@ -1,4 +1,5 @@
 @extends('backend.layout')
+@section('uses-tinymce', true)
 
 @section('title')
 <title>Manuscripts &rsaquo; Forfatterskolen Admin</title>
@@ -139,8 +140,10 @@
             <label>Message</label>
               <?php
                   if ($emailTemplate) {
-                      $replace_string = \Carbon\Carbon::parse($emailTemplate->expected_finish)->format('d.m.Y');
-                      $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
+                      $replace_string = $emailTemplate->expected_finish
+                          ? \Carbon\Carbon::parse($emailTemplate->expected_finish)->format('d.m.Y')
+                          : 'vi tar kontakt';
+                      $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content ?? '');
                         $replace_content .= "\nExpected Finish: ".$manuscript->expected_finish;
                   }
               ?>

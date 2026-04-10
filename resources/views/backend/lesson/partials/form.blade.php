@@ -1,3 +1,4 @@
+@section('uses-tinymce', true)
 <div class="container">
 	<a class="btn btn-info margin-bottom" href="{{route('admin.course.show', $course->id)}}?section=lessons"><i class="fa fa-arrow-left"></i> {{ trans('site.back-to-lessons') }}</a>
 	@if(Request::is('course/*/lesson/create'))

@@ -1,3 +1,4 @@
+@section('uses-tinymce', true)
 <form method="POST" action="@if(Request::is('blog/*/edit')){{route('admin.blog.update', $blog['id'])}}@else{{route('admin.blog.store')}}@endif"
       enctype="multipart/form-data">
     {{ csrf_field() }}

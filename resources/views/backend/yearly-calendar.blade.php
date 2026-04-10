@@ -1,4 +1,5 @@
 @extends('backend.layout')
+@section('uses-tinymce', true)
 
 @section('title')
     <title>Yearly Calendar &rsaquo; Forfatterskolen Admin</title>

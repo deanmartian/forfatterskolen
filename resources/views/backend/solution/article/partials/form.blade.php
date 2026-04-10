@@ -1,3 +1,4 @@
+@section('uses-tinymce', true)
 <form method="POST" action="{{Request::is('solution/*/article/*/edit')
 ? route('admin.solution-article.update', ['solution_id' => $solution->id, 'id' => $article['id']])
 : route('admin.solution-article.store', $solution_id)}}">

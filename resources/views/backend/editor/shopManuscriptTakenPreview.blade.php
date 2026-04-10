@@ -1,4 +1,5 @@
 @extends('editor.layout')
+@section('uses-tinymce', true)
 
 @section('title')
 <title>Manusutvikling &rsaquo; Forfatterskolen Redaktørportal</title>
@@ -324,8 +325,10 @@
                     <?php
 						$subject = 'Forventet dato for tilbakemelding';
                     if ($emailTemplate) {
-                        $replace_string = \Carbon\Carbon::parse($emailTemplate->expected_finish)->format('d.m.Y');
-                        $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
+                        $replace_string = $emailTemplate->expected_finish
+                            ? \Carbon\Carbon::parse($emailTemplate->expected_finish)->format('d.m.Y')
+                            : 'vi tar kontakt';
+                        $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content ?? '');
                         $subject = $emailTemplate->subject;
                     }
                     ?>

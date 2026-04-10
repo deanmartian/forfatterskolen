@@ -1,4 +1,5 @@
 @extends('backend.layout')
+@section('uses-tinymce', true)
 
 @section('title')
     <title>Email Template &rsaquo; Forfatterskolen Admin</title>
