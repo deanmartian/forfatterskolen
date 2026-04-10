@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Du er p&aring;meldt! &ndash;' . $freeWebinar->title . ' &ndash; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 @section('meta_desc', 'Du er påmeldt gratiswebinaret. Sjekk e-posten din for bekreftelse og lenke.')
 
 @section('styles')

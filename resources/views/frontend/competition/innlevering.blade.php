@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Lever bidrag til konkurransen &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 @section('meta_desc', 'Send inn ditt bidrag til Forfatterskolens skrivekonkurranse.')
 
 @section('content')

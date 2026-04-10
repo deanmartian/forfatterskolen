@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', $book->title . ' &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 
 @section('heading') My Books @stop
 

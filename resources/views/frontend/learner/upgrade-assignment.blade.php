@@ -2,6 +2,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('page_title', 'Oppgrader oppgave &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 
 @section('heading')
     {{ trans('site.front.buy') }} {{$assignment->title}}

@@ -1,6 +1,7 @@
 @extends('frontend.learner.self-publishing.layout')
 
 @section('page_title', trans('site.author-portal-menu.sales') . ' &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 
 @section('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">

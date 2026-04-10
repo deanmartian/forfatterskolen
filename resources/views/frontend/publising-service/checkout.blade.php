@@ -1,6 +1,7 @@
 @extends('frontend.layout-self-publishing')
 
 @section('page_title', 'Bestill publiseringstjeneste &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 @section('meta_desc', 'Bestill publiseringstjenester fra Indiemoon Publishing.')
 
 @section('content')

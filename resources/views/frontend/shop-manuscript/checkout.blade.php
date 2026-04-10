@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Bestill tekstvurdering &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 @section('meta_desc', 'Bestill profesjonell tekstvurdering fra erfarne redaktører hos Forfatterskolen.')
 
 @section('styles')

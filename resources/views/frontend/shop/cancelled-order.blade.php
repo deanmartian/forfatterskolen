@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Kansellert bestilling &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 @section('meta_desc', 'Din bestilling ble kansellert.')
 
 @section('content')

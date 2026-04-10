@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Invitasjon kansellert &rsaquo; Pilotleser &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 
 @section('heading') Invitation Cancelled @stop
 

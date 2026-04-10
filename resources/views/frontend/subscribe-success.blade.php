@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Thank You for Subscribing &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 
 @section('content')
 <div class="container">

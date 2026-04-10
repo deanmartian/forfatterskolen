@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Velg betalingsmetode &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 @section('meta_desc', 'Velg betalingsmetode for din tekstvurdering hos Forfatterskolen.')
 
 @section('styles')

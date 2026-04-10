@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Claim Reward &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 
 @section('content')
 

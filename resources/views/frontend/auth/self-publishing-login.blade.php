@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Login &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 @section('meta_desc', 'Logg inn på Indiemoon Publishing.')
 
 @section('content')

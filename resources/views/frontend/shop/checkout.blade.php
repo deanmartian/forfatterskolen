@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Bestill kurs &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 @section('meta_desc', 'Bestill skrivekurs hos Forfatterskolen. Trygge betalingsalternativer med Vipps og Svea.')
 
 @section('content')

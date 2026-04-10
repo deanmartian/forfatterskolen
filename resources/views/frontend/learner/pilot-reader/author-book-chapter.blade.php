@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', $book->title . ', Chapter &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 
 @section('styles')
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">

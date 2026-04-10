@@ -5,6 +5,7 @@
 @stop
 
 @section('page_title', 'Bokcover &rsaquo; Selvpublisering &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 
 @section('content')
     <div class="learner-container">

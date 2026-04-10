@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Del kursbestilling &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 @section('meta_desc', 'Del kursbestilling for ' . $course->title . '.')
 
 @section('content')

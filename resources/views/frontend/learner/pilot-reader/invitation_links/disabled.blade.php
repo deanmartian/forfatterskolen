@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Invitasjonslenke deaktivert &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 @section('content')
     <div class="container">
         <div class="row mt-4">

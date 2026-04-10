@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', $book->title . 'Track Readers &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 
 @section('heading') Track Readers @stop
 

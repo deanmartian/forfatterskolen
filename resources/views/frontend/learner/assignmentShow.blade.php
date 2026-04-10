@@ -2,6 +2,7 @@
 @extends('frontend.layouts.course-portal')
 
 @section('page_title', $assignment->title . ' &rsaquo; Assignments &rsaquo; Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 
 
 @section('content')

@@ -1,6 +1,7 @@
 @extends('frontend.layout')
 
 @section('page_title', 'Betaling – ' . $course->title . ' – Forfatterskolen')
+@section('robots')<meta name="robots" content="noindex, follow">@endsection
 
 @section('styles')
 @php
