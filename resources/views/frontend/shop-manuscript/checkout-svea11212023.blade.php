@@ -22,5 +22,5 @@
         import 'bootstrap/dist/css/bootstrap.css'
         import 'bootstrap-vue/dist/bootstrap-vue.css'
 	</script>
-	<script type="text/javascript" src="{{ asset('js/app.js?v='.time()) }}"></script>
+	<script type="text/javascript" src="{{ asset('js/app.js?v='.filemtime(public_path('js/app.js'))) }}"></script>
 @stop

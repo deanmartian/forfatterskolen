@@ -19,7 +19,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}" />
 
     @include('frontend.partials.frontend-css')
-    <link rel="stylesheet" href="{{asset('css/learner.css?v='.time())}}">
+    <link rel="stylesheet" href="{{asset('css/learner.css?v='.filemtime(public_path('css/learner.css')))}}">
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
               integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
@@ -113,7 +113,8 @@
 @include('frontend.partials.scripts')
 {{-- vooplayer fjernet --}}
 <script src="/js/lang.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{{-- Duplikat jQuery (3.6.0 CDN) fjernet — jQuery 3.2.1 lastes allerede
+     via scripts.blade.php. BS5 bundle trenger ikke jQuery. --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @yield('scripts')
 <script>

@@ -15,7 +15,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
 
         @include('frontend.partials.frontend-css')
-        <link rel="stylesheet" href="{{ asset('css/learner.css?v='.time()) }}">
+        <link rel="stylesheet" href="{{ asset('css/learner.css?v='.filemtime(public_path('css/learner.css'))) }}">
 
         @yield('title')
 

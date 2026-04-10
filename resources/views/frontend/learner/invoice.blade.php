@@ -1593,7 +1593,7 @@
 @stop
 
 @section('scripts')
-	<script type="text/javascript" src="{{ asset('js/app.js?v='.time()) }}"></script>
+	<script type="text/javascript" src="{{ asset('js/app.js?v='.filemtime(public_path('js/app.js'))) }}"></script>
 	<script>
         const invoiceProcessingMessage = @json(trans('site.pay-later-invoice-processing'));
         let invoiceSubmissionInProgress = false;

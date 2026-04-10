@@ -9,8 +9,8 @@
         <link rel="canonical" href="{{ url()->current() }}">
         <meta name="google-site-verification" content="PT1CQ7dxKhPpwvuFW6e2o_AVdp10XC-wUvvbHHuY0IE" />
         @include('frontend.partials.frontend-css')
-        {{-- <link rel="stylesheet" href="{{asset('css/self-publishing.css?v='.time())}}"> --}}
-        <link rel="stylesheet" href="{{asset('css/learner.css?v='.time())}}">
+        {{-- <link rel="stylesheet" href="{{asset('css/self-publishing.css?v='.filemtime(public_path('css/self-publishing.css')))}}"> --}}
+        <link rel="stylesheet" href="{{asset('css/learner.css?v='.filemtime(public_path('css/learner.css')))}}">
 
         <!-- use meta title first before the title on the actual page added-->
         @yield('title')

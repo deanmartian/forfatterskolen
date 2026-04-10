@@ -20,5 +20,5 @@
 @stop
 
 @section('scripts')
-    <script src="{{ asset('js/app.js?v='.time()) }}"></script>
+    <script src="{{ asset('js/app.js?v='.filemtime(public_path('js/app.js'))) }}"></script>
 @stop

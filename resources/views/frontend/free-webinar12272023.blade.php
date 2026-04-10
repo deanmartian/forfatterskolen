@@ -5,7 +5,7 @@
 @stop
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/free-webinar.css?v='.time()) }}">
+    <link rel="stylesheet" href="{{ asset('css/free-webinar.css?v='.filemtime(public_path('css/free-webinar.css'))) }}">
 @stop
 
 @section('content')

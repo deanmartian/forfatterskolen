@@ -5,7 +5,7 @@
 @stop
 
 @section('styles')
-<link rel="stylesheet" href="{{asset('css/self-publishing.css?v='.time())}}">
+<link rel="stylesheet" href="{{asset('css/self-publishing.css?v='.filemtime(public_path('css/self-publishing.css')))}}">
 <style>
     body, .navbar-light {
         background-color: #ffffff !important;
@@ -125,5 +125,5 @@
 @stop
 
 @section('scripts')
-    <script type="text/javascript" src="{{ asset('js/app.js?v='.time()) }}"></script>
+    <script type="text/javascript" src="{{ asset('js/app.js?v='.filemtime(public_path('js/app.js'))) }}"></script>
 @stop
