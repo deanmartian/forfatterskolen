@@ -158,6 +158,13 @@ class FacebookAdsService
         $this->request('post', $adSetId, ['destination_type' => 'ON_AD']);
 
         // 5. Opprett annonse
+        //
+        // NB: Fallback-teksten "Gratis webinar: {tittel}" er bevisst
+        // kort — den brukes KUN hvis ingen rik ad_text passes. For
+        // Motor-webinaret passer createFullWebinarFunnel en fyldig
+        // "Stoppet opp"-vinkel automatisk, og bootstrap-integrations
+        // passer webinar-beskrivelsen. Selvstendige kall til denne
+        // metoden bør ALLTID passere egen ad_text.
         $ad = $this->createLeadAd([
             'adset_id' => $adSetId,
             'name' => "Webinar Ad: {$data['webinar_title']}",
@@ -165,7 +172,7 @@ class FacebookAdsService
             'page_id' => $this->pageId,
             'image_url' => $data['image_url'] ?? null,
             'message' => $data['ad_text'] ?? "Gratis webinar: {$data['webinar_title']}",
-            'headline' => $data['ad_headline'] ?? 'Meld deg på gratis webinar',
+            'headline' => $data['ad_headline'] ?? $data['webinar_title'],
             'description' => $data['ad_description'] ?? 'Forfatterskolen — Norges største nettbaserte skriveskole',
             'link' => $data['landing_page'] ?? 'https://www.forfatterskolen.no',
             'call_to_action' => 'SIGN_UP',
@@ -451,12 +458,30 @@ class FacebookAdsService
         if (!empty($data['skip_cold_lead'])) {
             $result['campaigns']['cold_lead'] = ['skipped' => 'already exists'];
         } else {
+            // Default rich sales copy ("Stoppet opp"-vinkel fra docs/ad-kampanjer)
+            // — mye mer konverterende enn den minimale fallback'en i
+            // createWebinarLeadCampaign. Kan overstyres via $data['cold_ad_text'].
+            $defaultColdText = "Du har prøvd å skrive romanen din i flere år. Du begynner, du skriver noen scener — og så stopper det opp. 📖\n\n"
+                . "Det er ikke fordi du mangler talent. Det er fordi du ikke vet hva historien egentlig handler om.\n\n"
+                . "På dette gratis webinaret viser rektor Kristine deg en enkel modell for å finne romanens motor: hovedperson, konflikt og premiss. Med motor i historien skriver du videre — uten den stopper det opp.\n\n"
+                . "✍️ Du får:\n"
+                . "• En enkel forklaring på hva romanens motor er\n"
+                . "• Hjelp til å finne ut hva boken din egentlig handler om\n"
+                . "• Hvordan du lager en konflikt som driver historien fremover\n"
+                . "• Konkrete spørsmål du kan stille manuset ditt med det samme\n"
+                . "• En miniøvelse du tar med deg hjem\n\n"
+                . "🗓️ {$webinarStartsAt->locale('nb_NO')->translatedFormat('l j. F')} kl {$webinarStartsAt->format('H:i')}\n"
+                . "⏱️ 60 minutter\n"
+                . "🎁 Helt gratis\n\n"
+                . "Meld deg på via skjemaet under.";
+
             try {
                 $coldLead = $this->createWebinarLeadCampaign([
                     'webinar_title' => $webinarTitle,
                     'webinar_starts_at' => $webinarStartsAt,
-                    'ad_text' => $data['cold_ad_text'] ?? "Gratis webinar: {$webinarTitle}",
-                    'ad_headline' => $data['cold_ad_headline'] ?? 'Meld deg på gratis webinar',
+                    'ad_text' => $data['cold_ad_text'] ?? $defaultColdText,
+                    'ad_headline' => $data['cold_ad_headline'] ?? $webinarTitle,
+                    'ad_description' => $data['cold_ad_description'] ?? "Gratis webinar · {$webinarStartsAt->format('j. F')} kl {$webinarStartsAt->format('H:i')}",
                     'daily_budget' => $budgets['cold_lead'],
                     'landing_page' => $landingPage,
                     'image_url' => $imageUrl,
