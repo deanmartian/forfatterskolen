@@ -187,16 +187,6 @@
                 'https://forfatterskolen.ladesk.com/scripts/track.js',
                 function(e){ LiveAgent.createButton('bocb2pt7', e); });
         </script>--}}
-        @if (!in_array(Route::currentRouteName(),['front.course.checkout', 'front.shop-manuscript.checkout']))
-        <script defer>!function(){window;var e,t=document;e=function(){var e=t.createElement("script");e.type="text/javascript",e.defer=!0,e.src="https://cdn.endorsal.io/widgets/widget.min.js";var n=t.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n),e.onload=function(){NDRSL.init("5de00781dd95d15fd33a275f")}},"interactive"===t.readyState||"complete"===t.readyState?e():t.addEventListener("DOMContentLoaded",e())}();</script>
-        <!-- support chat  -->
-        <script>
-            helpwiseSettings = {
-                widget_id: '60b54b2873539',
-                align:'right',
-            }
-        </script>
-        <script src="https://cdn.helpwise.io/assets/js/livechat.js"></script>
-        @endif
+        {{-- Endorsal + Helpwise fjernet — ikke i bruk --}}
     </body>
 </html>
