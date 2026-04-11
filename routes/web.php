@@ -1021,6 +1021,11 @@ Route::domain($admin)->group(function () {
         Route::post('course/{id}/welcome-email/send', [Backend\CourseController::class, 'sendWelcomeEmail'])->name('admin.course.welcome-email.send');
         Route::post('course/{id}/clone', [Backend\CourseController::class, 'clone_course'])->name('admin.course.clone');
         Route::post('course/{id}/auto-categorize-lessons', [Backend\CourseController::class, 'autoCategorizeLessons'])->name('admin.course.auto-categorize');
+        // Bemanningsplan
+        Route::post('course/{id}/staff', [Backend\CourseController::class, 'storeStaff'])->name('admin.course.staff.store');
+        Route::delete('course/{id}/staff/{staffId}', [Backend\CourseController::class, 'deleteStaff'])->name('admin.course.staff.delete');
+        Route::post('course/{id}/staff/assign-editor', [Backend\CourseController::class, 'assignEditor'])->name('admin.course.staff.assign-editor');
+        Route::post('course/{id}/staff/bulk-assign', [Backend\CourseController::class, 'bulkAssignEditor'])->name('admin.course.staff.bulk-assign');
         Route::get('pabygg-treff', [\App\Http\Controllers\Frontend\PabyggTreffController::class, 'adminIndex'])->name('admin.pabygg-treff');
         Route::post('course/{id}/add_similar_course', [Backend\CourseController::class, 'add_similar_course'])->name('admin.course.add_similar_course');
         Route::post('course/remove_similar_course/{similar_course_id}', [Backend\CourseController::class, 'remove_similar_course'])->name('admin.course.remove_similar_course');

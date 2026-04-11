@@ -43,6 +43,12 @@
         </a>
     </li>
 
+    <li @if($section == 'staffing') class="active" @endif>
+        <a href="{{route('admin.course.show', $course->id)}}?section=staffing">
+            <i class="fa fa-sitemap"></i>&nbsp;&nbsp;Bemanningsplan
+        </a>
+    </li>
+
 @if ($course->id == 120)
     <li><a href="{{ route('admin.pabygg-treff') }}"><i class="fa fa-calendar"></i>&nbsp;&nbsp;Påbyggingstreff</a></li>
 @endif

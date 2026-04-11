@@ -1612,6 +1612,82 @@ class CourseController extends Controller
     }
 
     /**
+     * Bemanningsplan — legg til rolle
+     */
+    public function storeStaff($courseId, Request $request)
+    {
+        \App\Models\CourseStaff::create([
+            'course_id' => $courseId,
+            'user_id' => $request->input('user_id'),
+            'role' => $request->input('role'),
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'notes' => $request->input('notes'),
+        ]);
+
+        return redirect()->back()->with('alert_type', 'success')->with('message', 'Rolle lagt til');
+    }
+
+    public function deleteStaff($courseId, $staffId)
+    {
+        \App\Models\CourseStaff::where('course_id', $courseId)->where('id', $staffId)->delete();
+        return redirect()->back()->with('alert_type', 'success')->with('message', 'Rolle fjernet');
+    }
+
+    public function assignEditor($courseId, Request $request)
+    {
+        $studentId = $request->input('student_user_id');
+        $editorId = $request->input('editor_id');
+
+        // Slett eksisterende tildeling
+        \App\Models\CourseStaff::where('course_id', $courseId)
+            ->where('student_user_id', $studentId)
+            ->where('role', 'editor')
+            ->delete();
+
+        // Opprett ny hvis valgt
+        if ($editorId) {
+            \App\Models\CourseStaff::create([
+                'course_id' => $courseId,
+                'user_id' => $editorId,
+                'role' => 'editor',
+                'student_user_id' => $studentId,
+            ]);
+        }
+
+        return redirect()->back()->with('alert_type', 'success')->with('message', 'Redaktør tildelt');
+    }
+
+    public function bulkAssignEditor($courseId, Request $request)
+    {
+        $editorId = $request->input('editor_id');
+        if (!$editorId) return redirect()->back()->with('alert_type', 'danger')->with('message', 'Velg en redaktør');
+
+        // Finn elever uten redaktør
+        $assignedStudents = \App\Models\CourseStaff::where('course_id', $courseId)
+            ->where('role', 'editor')
+            ->pluck('student_user_id');
+
+        $learners = \App\CoursesTaken::whereHas('package', fn($q) => $q->where('course_id', $courseId))
+            ->pluck('user_id');
+
+        $unassigned = $learners->diff($assignedStudents);
+        $count = 0;
+
+        foreach ($unassigned as $studentId) {
+            \App\Models\CourseStaff::create([
+                'course_id' => $courseId,
+                'user_id' => $editorId,
+                'role' => 'editor',
+                'student_user_id' => $studentId,
+            ]);
+            $count++;
+        }
+
+        return redirect()->back()->with('alert_type', 'success')->with('message', "{$count} elever tildelt redaktør");
+    }
+
+    /**
      * Auto-kategoriser leksjoner basert på tittel
      */
     public function autoCategorizeLessons($courseId)
