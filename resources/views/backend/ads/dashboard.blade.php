@@ -110,6 +110,54 @@
         </div>
     </div>
 
+    {{-- Charts --}}
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong><i class="fa fa-line-chart"></i> Forbruk og leads</strong>
+                    <div class="pull-right">
+                        <div class="btn-group btn-group-xs">
+                            <button type="button" class="btn btn-default chart-period" data-days="7">7d</button>
+                            <button type="button" class="btn btn-primary chart-period" data-days="14">14d</button>
+                            <button type="button" class="btn btn-default chart-period" data-days="30">30d</button>
+                        </div>
+                        <small class="text-muted" id="lastUpdated" style="margin-left:8px;"></small>
+                    </div>
+                </div>
+                <div class="panel-body" style="height: 300px;">
+                    <canvas id="spendLeadsChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong><i class="fa fa-pie-chart"></i> Budsjett denne mnd</strong></div>
+                <div class="panel-body text-center" style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                    <canvas id="budgetChart" style="max-height: 250px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong><i class="fa fa-area-chart"></i> CPA-trend</strong></div>
+                <div class="panel-body" style="height: 250px;">
+                    <canvas id="cpaChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong><i class="fa fa-bar-chart"></i> Kampanjer — forbruk vs leads</strong></div>
+                <div class="panel-body" style="height: 250px;">
+                    <canvas id="campaignCompareChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Daily Performance Summary --}}
     <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-6">
@@ -219,4 +267,167 @@
         </div>
     </div>
 </div>
+@stop
+
+@section('page_title', 'Ad OS — Forfatterskolen Admin')
+
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script>
+(function() {
+    var currentDays = 14;
+    var spendLeadsChart, cpaChart, budgetChart, campaignChart;
+    var wine = '#862736';
+    var wineLight = 'rgba(134,39,54,0.15)';
+    var blue = '#3b82f6';
+    var blueLight = 'rgba(59,130,246,0.15)';
+    var green = '#22c55e';
+    var orange = '#f59e0b';
+
+    // Budget doughnut (static data from Blade)
+    var budgetCtx = document.getElementById('budgetChart');
+    if (budgetCtx) {
+        var spent = {{ $budgetInfo['spent_month'] ?? 0 }};
+        var remaining = {{ $budgetInfo['remaining_monthly'] ?? 0 }};
+        budgetChart = new Chart(budgetCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Brukt', 'Gjenstår'],
+                datasets: [{
+                    data: [spent, Math.max(0, remaining)],
+                    backgroundColor: [wine, '#e8e4de'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { size: 12 } } },
+                    tooltip: { callbacks: { label: function(ctx) { return ctx.label + ': ' + Math.round(ctx.raw) + ' kr'; } } }
+                }
+            }
+        });
+    }
+
+    // Campaign comparison (static from Blade — active campaigns)
+    var campaignCtx = document.getElementById('campaignCompareChart');
+    if (campaignCtx) {
+        @php
+            $activeCampaigns = \App\Models\AdOs\AdCampaign::where('status', 'published')
+                ->with(['metricSnapshots' => fn($q) => $q->where('date', '>=', now()->subDays(14))])
+                ->get();
+        @endphp
+        campaignChart = new Chart(campaignCtx, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($activeCampaigns->pluck('name')->map(fn($n) => \Illuminate\Support\Str::limit($n, 25))) !!},
+                datasets: [
+                    {
+                        label: 'Forbruk (kr)',
+                        data: {!! json_encode($activeCampaigns->map(fn($c) => round($c->metricSnapshots->sum('spend'), 0))) !!},
+                        backgroundColor: wine,
+                        barThickness: 20
+                    },
+                    {
+                        label: 'Leads',
+                        data: {!! json_encode($activeCampaigns->map(fn($c) => $c->metricSnapshots->sum('leads'))) !!},
+                        backgroundColor: blue,
+                        barThickness: 20
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
+                scales: { x: { beginAtZero: true, grid: { display: false } } }
+            }
+        });
+    }
+
+    // Fetch time-series data via AJAX
+    function fetchMetrics(days) {
+        currentDays = days;
+        fetch('{{ route("admin.ads.api.metrics") }}?days=' + days)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                renderSpendLeads(data);
+                renderCPA(data);
+                document.getElementById('lastUpdated').textContent = 'Oppdatert: ' + new Date().toLocaleTimeString('nb-NO', {hour:'2-digit',minute:'2-digit'});
+            })
+            .catch(function(err) { console.error('Metrics fetch error:', err); });
+    }
+
+    function renderSpendLeads(data) {
+        var labels = data.map(function(d) { return d.date; });
+        var spend = data.map(function(d) { return d.spend; });
+        var leads = data.map(function(d) { return d.leads; });
+
+        if (spendLeadsChart) spendLeadsChart.destroy();
+        spendLeadsChart = new Chart(document.getElementById('spendLeadsChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Forbruk (kr)', data: spend, borderColor: wine, backgroundColor: wineLight, fill: true, tension: 0.3, yAxisID: 'y' },
+                    { label: 'Leads', data: leads, borderColor: blue, backgroundColor: blueLight, fill: false, tension: 0.3, type: 'bar', yAxisID: 'y1', barThickness: 16 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
+                scales: {
+                    y: { type: 'linear', position: 'left', title: { display: true, text: 'Forbruk (kr)' }, beginAtZero: true, grid: { color: '#f0f0f0' } },
+                    y1: { type: 'linear', position: 'right', title: { display: true, text: 'Leads' }, beginAtZero: true, grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    function renderCPA(data) {
+        var labels = data.map(function(d) { return d.date; });
+        var cpa = data.map(function(d) { return d.cpa; });
+        var targetCpa = {{ $strategy->target_cpa ?? 200 }};
+
+        if (cpaChart) cpaChart.destroy();
+        cpaChart = new Chart(document.getElementById('cpaChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'CPA (kr)', data: cpa, borderColor: orange, backgroundColor: 'rgba(245,158,11,0.1)', fill: true, tension: 0.3 },
+                    { label: 'Mål-CPA', data: Array(labels.length).fill(targetCpa), borderColor: green, borderDash: [5, 5], pointRadius: 0, fill: false }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
+                scales: { y: { beginAtZero: true, grid: { color: '#f0f0f0' } } }
+            }
+        });
+    }
+
+    // Period toggle buttons
+    document.querySelectorAll('.chart-period').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.chart-period').forEach(function(b) { b.classList.remove('btn-primary'); b.classList.add('btn-default'); });
+            this.classList.remove('btn-default');
+            this.classList.add('btn-primary');
+            fetchMetrics(parseInt(this.dataset.days));
+        });
+    });
+
+    // Initial load
+    fetchMetrics(14);
+
+    // Auto-refresh every 15 minutes
+    setInterval(function() { fetchMetrics(currentDays); }, 15 * 60 * 1000);
+})();
+</script>
 @stop

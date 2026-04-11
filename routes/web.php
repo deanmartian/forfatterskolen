@@ -2203,6 +2203,9 @@ Route::domain($admin)->group(function () {
         Route::delete('/rules/{id}', [Backend\AdOsController::class, 'deleteRule'])->name('admin.ads.rules.delete');
         Route::post('/kill-switch', [Backend\AdOsController::class, 'toggleKillSwitch'])->name('admin.ads.kill-switch');
         Route::get('/strategist', [Backend\AdOsController::class, 'strategist'])->name('admin.ads.strategist');
+        Route::post('/strategist/ask', [Backend\AdOsController::class, 'strategistAsk'])->name('admin.ads.strategist.ask');
+        Route::post('/strategist/execute', [Backend\AdOsController::class, 'strategistExecute'])->name('admin.ads.strategist.execute');
+        Route::get('/api/metrics', [Backend\AdOsController::class, 'metricsApi'])->name('admin.ads.api.metrics');
     });
 
     // Bilde-opplasting for TinyMCE

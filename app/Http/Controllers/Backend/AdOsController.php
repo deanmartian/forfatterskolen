@@ -54,6 +54,29 @@ class AdOsController extends Controller
         ));
     }
 
+    public function metricsApi(Request $request)
+    {
+        $days = (int) $request->input('days', 14);
+
+        $metrics = \App\Models\AdOs\AdMetricSnapshot::where('level', 'campaign')
+            ->where('date', '>=', now()->subDays($days)->toDateString())
+            ->orderBy('date')
+            ->get()
+            ->groupBy('date')
+            ->map(fn($day) => [
+                'date' => \Carbon\Carbon::parse($day->first()->date)->format('d.m'),
+                'spend' => round($day->sum('spend'), 2),
+                'leads' => (int) $day->sum('leads'),
+                'conversions' => (int) $day->sum('conversions'),
+                'impressions' => (int) $day->sum('impressions'),
+                'clicks' => (int) $day->sum('clicks'),
+                'cpa' => $day->where('cpa', '>', 0)->avg('cpa') ? round($day->where('cpa', '>', 0)->avg('cpa'), 2) : null,
+                'ctr' => $day->where('ctr', '>', 0)->avg('ctr') ? round($day->where('ctr', '>', 0)->avg('ctr') * 100, 2) : null,
+            ]);
+
+        return response()->json($metrics->values());
+    }
+
     public function strategy()
     {
         $profiles = $this->strategyService->getAllProfiles();
