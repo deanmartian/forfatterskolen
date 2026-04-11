@@ -35,7 +35,12 @@ class InboxController extends Controller
         $timeline = $conversation->timeline();
         $teamMembers = $this->inboxService->getTeamMembers();
         $cannedResponses = $this->inboxService->getCannedResponses();
-        $studentContext = $this->getStudentContext($conversation);
+        try {
+            $studentContext = $this->getStudentContext($conversation);
+        } catch (\Exception $e) {
+            $studentContext = [];
+            \Log::warning('Inbox studentContext feil: ' . $e->getMessage());
+        }
 
         return view('backend.inbox.show', compact('conversation', 'timeline', 'teamMembers', 'cannedResponses', 'studentContext'));
     }
@@ -502,23 +507,27 @@ PROMPT;
 
         try {
             // Manusutvikling (kjøpt tekstvurdering)
-            $manuscripts = \App\ShopManuscriptTaken::where('user_id', $user->id)
-                ->with('shop_manuscript')
-                ->orderByDesc('created_at')
+            $manuscripts = \DB::table('shop_manuscripts_taken')
+                ->join('shop_manuscripts', 'shop_manuscripts_taken.shop_manuscript_id', '=', 'shop_manuscripts.id')
+                ->where('shop_manuscripts_taken.user_id', $user->id)
+                ->select('shop_manuscripts_taken.id', 'shop_manuscripts_taken.status', 'shop_manuscripts.title')
+                ->orderByDesc('shop_manuscripts_taken.created_at')
                 ->limit(5)
                 ->get();
             foreach ($manuscripts as $m) {
                 $context['manuscripts'][] = [
-                    'title' => $m->shop_manuscript?->title ?? 'Tekstvurdering',
-                    'url' => route('shop_manuscript_taken', ['id' => $user->id, 'shop_manuscript_taken_id' => $m->id]),
+                    'title' => $m->title ?? 'Tekstvurdering',
+                    'url' => url("/learner/{$user->id}/shop-manuscript/{$m->id}"),
                     'status' => $m->status ?? 'aktiv',
                 ];
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            \Log::warning('Inbox manus context: ' . $e->getMessage());
+        }
 
         try {
             // Selvpubliserings-prosjekter
-            $projects = \App\ManuscriptProject::where('user_id', $user->id)
+            $projects = \App\Models\ManuscriptProject::where('user_id', $user->id)
                 ->orderByDesc('created_at')
                 ->limit(5)
                 ->get();
@@ -528,7 +537,9 @@ PROMPT;
                     'url' => route('admin.project.show', $p->id),
                 ];
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            \Log::warning('Inbox project context: ' . $e->getMessage());
+        }
 
         return $context;
     }

@@ -42,11 +42,15 @@
         </form>
 
         @php
-            $isMentioned = $conversation->comments()->where(function ($q) {
-                $uid = auth()->id();
-                $q->whereJsonContains('mentioned_user_ids', $uid)
-                  ->orWhereJsonContains('mentioned_user_ids', (string) $uid);
-            })->exists();
+            try {
+                $isMentioned = $conversation->comments()->where(function ($q) {
+                    $uid = auth()->id();
+                    $q->whereJsonContains('mentioned_user_ids', $uid)
+                      ->orWhereJsonContains('mentioned_user_ids', (string) $uid);
+                })->exists();
+            } catch (\Exception $e) {
+                $isMentioned = false;
+            }
         @endphp
         @if($isMentioned)
         <form action="{{ route('admin.inbox.dismiss-mention', $conversation->id) }}" method="POST" style="display:inline;">
