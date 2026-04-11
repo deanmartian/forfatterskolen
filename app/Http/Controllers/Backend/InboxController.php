@@ -14,6 +14,11 @@ class InboxController extends Controller
 
     public function index(Request $request)
     {
+        // Ingen filtre = gå til "Mine" som standard
+        if (empty($request->query())) {
+            return redirect()->route('admin.inbox.index', ['assigned_to' => auth()->id()]);
+        }
+
         $filters = $request->only(['status', 'assigned_to', 'inbox', 'category', 'search', 'starred', 'sent', 'follow_up', 'mentions', 'awaiting']);
         $conversations = $this->inboxService->getConversations($filters);
         $stats = $this->inboxService->getStats();
