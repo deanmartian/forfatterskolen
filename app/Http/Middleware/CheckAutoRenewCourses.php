@@ -21,7 +21,11 @@ class CheckAutoRenewCourses
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
+            $invoiceCreatedThisRequest = false; // Hindre dobbel fakturering i samme request
+
             foreach (Auth::user()->coursesTaken as $courseTaken) {
+                if ($invoiceCreatedThisRequest) break; // Allerede opprettet faktura — stopp
+
                 $package = Package::find($courseTaken->package_id);
                 if ($package && $package->course_id == 17 && $courseTaken->started_at) {
 
@@ -34,7 +38,13 @@ class CheckAutoRenewCourses
                     // and if the user wants to auto renew the courses
                     // and if the course hasn't already been renewed recently (prevent duplicate invoices)
                     $alreadyRenewed = $courseTaken->renewed_at && Carbon::parse($courseTaken->renewed_at)->gt(Carbon::parse($checkDate));
-                    if (Carbon::now()->gt(Carbon::parse($checkDate)) && \Auth::user()->auto_renew_courses && !$alreadyRenewed) {
+
+                    // Ekstra sikkerhet: sjekk om det allerede finnes en faktura for denne brukeren i dag
+                    $invoiceToday = \App\Invoice::where('user_id', Auth::id())
+                        ->whereDate('created_at', today())
+                        ->exists();
+
+                    if (Carbon::now()->gt(Carbon::parse($checkDate)) && \Auth::user()->auto_renew_courses && !$alreadyRenewed && !$invoiceToday) {
                         $user = \Auth::user();
                         $payment_mode = 'Bankoverføring';
                         $price = (int) 1490 * 100;
@@ -63,6 +73,7 @@ class CheckAutoRenewCourses
                         ];
                         $invoice = new FikenInvoice;
                         $invoice->create_invoice($invoice_fields);
+                        $invoiceCreatedThisRequest = true;
 
                         foreach (\Auth::user()->coursesTaken as $coursesTaken) {
                             // check if course taken have set end date and add one year to it
