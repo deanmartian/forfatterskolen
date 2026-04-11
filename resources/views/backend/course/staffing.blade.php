@@ -15,6 +15,7 @@
         @endif
 
         @php
+        try {
             $staff = \App\Models\CourseStaff::where('course_id', $course->id)->with(['staff', 'student'])->get();
             $editors = \App\User::where('role', 3)->orderBy('first_name')->get();
             $admins = \App\User::where('role', 1)->orderBy('first_name')->get();
@@ -26,17 +27,26 @@
             $editorAssignments = $staff->where('role', 'editor');
 
             // Elever på kurset
-            $learners = \App\CoursesTaken::where('course_id', $course->id)
-                ->orWhereHas('package', fn($q) => $q->where('course_id', $course->id))
-                ->with('user')
-                ->get()
-                ->map(fn($ct) => $ct->user)
-                ->filter()
-                ->unique('id')
-                ->sortBy('first_name');
+            try {
+                $learners = \App\CoursesTaken::whereHas('package', fn($q) => $q->where('course_id', $course->id))
+                    ->with('user')
+                    ->get()
+                    ->map(fn($ct) => $ct->user)
+                    ->filter()
+                    ->unique('id')
+                    ->sortBy('first_name');
+            } catch (\Exception $e) {
+                $learners = collect();
+            }
 
             // Redaktør per elev
             $editorMap = $editorAssignments->pluck('user_id', 'student_user_id');
+        } catch (\Exception $e) {
+            $staff = collect(); $allStaff = collect(); $courseLeaders = collect();
+            $mentors = collect(); $guestEditors = collect(); $editorAssignments = collect();
+            $learners = collect(); $editorMap = collect();
+            \Log::error('Bemanningsplan feil: ' . $e->getMessage());
+        }
         @endphp
 
         {{-- Roller --}}
