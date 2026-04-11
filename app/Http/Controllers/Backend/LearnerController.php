@@ -883,6 +883,59 @@ class LearnerController extends Controller
     }
 
     /**
+     * Bulk-krediter alle ubetalte fakturaer for en elev.
+     */
+    public function bulkCreditInvoices(int $id, Request $request): RedirectResponse
+    {
+        $creditNote = $request->input('credit_note', 'Kreditert via bulk-handling');
+        $issueDate = $request->input('issue_date', now()->format('Y-m-d'));
+
+        $invoices = Invoice::where('user_id', $id)
+            ->where(function ($q) {
+                $q->where('fiken_is_paid', 0)->orWhereNull('fiken_is_paid');
+            })
+            ->whereNotNull('fiken_invoice_id')
+            ->get();
+
+        $credited = 0;
+        $errors = [];
+
+        foreach ($invoices as $invoice) {
+            try {
+                $response = \Illuminate\Support\Facades\Http::withHeaders([
+                    'Authorization' => 'Bearer ' . config('services.fiken.personal_api_key'),
+                    'Content-Type' => 'application/json',
+                ])->post('https://api.fiken.no/api/v2/companies/forfatterskolen-as/creditNotes/full', [
+                    'invoiceId' => $invoice->fiken_invoice_id,
+                    'issueDate' => $issueDate,
+                    'creditNoteText' => $creditNote,
+                ]);
+
+                if ($response->successful() || $response->status() === 201) {
+                    $invoice->fiken_is_paid = 3; // 3 = Kreditert
+                    $invoice->save();
+                    $credited++;
+                } else {
+                    $body = $response->json();
+                    $msg = $body['error_description'] ?? $body[0]['message'] ?? "HTTP {$response->status()}";
+                    $errors[] = "#{$invoice->invoice_number}: {$msg}";
+                }
+            } catch (\Exception $e) {
+                $errors[] = "#{$invoice->invoice_number}: {$e->getMessage()}";
+            }
+        }
+
+        $msg = "{$credited} av {$invoices->count()} fakturaer kreditert.";
+        if (!empty($errors)) $msg .= ' Feil: ' . implode(', ', $errors);
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag($msg),
+            'alert_type' => empty($errors) ? 'success' : 'warning',
+            'not-former-courses' => true,
+        ]);
+    }
+
+    /**
      * Remove learner from webinar-pakke
      */
     public function deleteFromCourse($course_taken_id, Request $request): RedirectResponse

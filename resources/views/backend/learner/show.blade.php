@@ -740,6 +740,9 @@
 					<button class="btn btn-success pull-right btn-xs" data-toggle="modal"
 							style="margin-right: 10px"
 							data-target="#createInvoiceModal">+ {{ trans('site.create-invoice') }}</button>
+					<button class="btn btn-danger pull-right btn-xs" data-toggle="modal"
+							style="margin-right: 10px"
+							data-target="#bulkCreditModal"><i class="fa fa-undo"></i> Krediter alle ubetalte</button>
 					<button class="btn btn-warning pull-right btn-xs" data-toggle="modal"
 							style="margin-right: 10px"
 							data-target="#bulkDueDateModal"><i class="fa fa-calendar"></i> Endre alle forfallsdatoer</button>
@@ -4027,6 +4030,37 @@
 					</div>
 					<button class="btn btn-warning btn-block" type="submit" onclick="return confirm('Endre forfallsdato på alle ubetalte fakturaer?')">
 						<i class="fa fa-check"></i> Endre alle ubetalte
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+{{-- Bulk krediter ubetalte fakturaer --}}
+<div id="bulkCreditModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header" style="background:#c0392b;color:#fff;">
+				<button type="button" class="close" data-dismiss="modal" style="color:#fff;">&times;</button>
+				<h4 class="modal-title"><i class="fa fa-undo"></i> Krediter alle ubetalte</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.learner.invoice.bulk-credit', $learner->id) }}">
+					@csrf
+					<div class="alert alert-danger" style="font-size:13px;">
+						<strong>OBS!</strong> Dette krediterer ALLE ubetalte fakturaer for denne eleven i Fiken. Handlingen kan ikke angres.
+					</div>
+					<div class="form-group">
+						<label>Kreditnotat-tekst</label>
+						<input type="text" class="form-control" name="credit_note" value="Kreditert" placeholder="Årsak til kreditering">
+					</div>
+					<div class="form-group">
+						<label>Dato</label>
+						<input type="date" class="form-control" name="issue_date" value="{{ date('Y-m-d') }}" required>
+					</div>
+					<button class="btn btn-danger btn-block" type="submit" onclick="return confirm('Er du SIKKER på at du vil kreditere alle ubetalte fakturaer? Dette kan ikke angres!')">
+						<i class="fa fa-undo"></i> Krediter alle ubetalte fakturaer
 					</button>
 				</form>
 			</div>
