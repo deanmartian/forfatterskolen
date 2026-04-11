@@ -25,6 +25,12 @@ class InboxController extends Controller
 
     public function show(int $id)
     {
+        // Lagre return-URL fra referer slik at lukk/snooze kan gå tilbake til riktig liste
+        $referer = request()->header('referer', '');
+        if (str_contains($referer, '/inbox') && !str_contains($referer, '/conversation/')) {
+            session(['inbox_return_url' => $referer]);
+        }
+
         $conversation = $this->inboxService->getConversation($id);
         $timeline = $conversation->timeline();
         $teamMembers = $this->inboxService->getTeamMembers();
@@ -55,11 +61,8 @@ class InboxController extends Controller
 
         if ($sendAndClose && !$isDraft) {
             $this->inboxService->updateStatus($id, 'closed');
-            // Gå tilbake til MIN arbeidsliste etter lukk, ikke default "Åpne"-
-            // visning som viser alle åpne samtaler (inkludert andre admins
-            // sine). Dette unngår at admin ved en feiltakelse svarer på
-            // samtaler som tilhører Annina/Kristine/Taran.
-            return redirect()->route('admin.inbox.index', ['assigned_to' => auth()->id()])
+            $returnUrl = session('inbox_return_url') ?: route('admin.inbox.index', ['assigned_to' => auth()->id()]);
+            return redirect($returnUrl)
                 ->with('alert_type', 'success')
                 ->with('message', 'Svar sendt og samtale lukket!');
         }
@@ -98,9 +101,20 @@ class InboxController extends Controller
 
         $this->inboxService->updateStatus($id, $request->input('status'));
 
+        $statusLabels = ['open' => 'Åpnet', 'pending' => 'Satt til venter', 'closed' => 'Lukket', 'snoozed' => 'Snoozet'];
+        $label = $statusLabels[$request->input('status')] ?? 'Oppdatert';
+
+        // Ved lukking/snooze: gå tilbake til listen (bevar filtre), ellers bli på samtalen
+        if (in_array($request->input('status'), ['closed', 'snoozed'])) {
+            $returnUrl = $request->input('return_url') ?: session('inbox_return_url') ?: route('admin.inbox.index', ['assigned_to' => auth()->id()]);
+            return redirect($returnUrl)
+                ->with('alert_type', 'success')
+                ->with('message', $label);
+        }
+
         return redirect()->route('admin.inbox.show', $id)
             ->with('alert_type', 'success')
-            ->with('message', 'Status oppdatert');
+            ->with('message', $label);
     }
 
     public function snooze(Request $request, int $id)
