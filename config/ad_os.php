@@ -7,11 +7,11 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'enabled' => env('ADS_OS_ENABLED', false),
+    'enabled' => env('ADS_OS_ENABLED', true),
 
-    'default_automation_mode' => env('ADS_AUTOMATION_DEFAULT_MODE', 'assisted'),
+    'default_automation_mode' => env('ADS_AUTOMATION_DEFAULT_MODE', 'supervised'),
 
-    'auto_apply_enabled' => env('ADS_AUTO_APPLY_ENABLED', false),
+    'auto_apply_enabled' => env('ADS_AUTO_APPLY_ENABLED', true),
 
     'max_daily_budget_change_percent' => (float) env('ADS_MAX_DAILY_AUTOMATED_BUDGET_CHANGE_PERCENT', 15),
 

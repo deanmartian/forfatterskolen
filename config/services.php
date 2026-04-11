@@ -90,6 +90,11 @@ return [
 
     'google_ads' => [
         'id' => env('GOOGLE_ADS_ID'),
+        'customer_id' => env('GOOGLE_ADS_CUSTOMER_ID', '8930450876'),
+        'developer_token' => env('GOOGLE_ADS_DEVELOPER_TOKEN'),
+        'oauth_client_id' => env('GOOGLE_ADS_OAUTH_CLIENT_ID'),
+        'oauth_client_secret' => env('GOOGLE_ADS_OAUTH_CLIENT_SECRET'),
+        'oauth_refresh_token' => env('GOOGLE_ADS_OAUTH_REFRESH_TOKEN'),
         'conversion_purchase' => env('GOOGLE_ADS_CONVERSION_PURCHASE'),
         'conversion_checkout' => env('GOOGLE_ADS_CONVERSION_CHECKOUT'),
         'conversion_lead' => env('GOOGLE_ADS_CONVERSION_LEAD'),

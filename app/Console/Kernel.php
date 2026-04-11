@@ -44,7 +44,19 @@ class Kernel extends ConsoleKernel
         $schedule->command('emails:weekly-digest')->weeklyOn(1, '07:00');
         $schedule->command('emails:inactive-nudge')->dailyAt('11:00');
         $schedule->command('ads:auto-stop')->hourly();
-        $schedule->command('ads:update-stats')->dailyAt('08:00');
+        $schedule->command('ads:update-stats')->everyFifteenMinutes()->withoutOverlapping();
+
+        // ═══════ Ad OS Auto-Pilot ═══════
+        // Synkroniser kampanjer og metrics fra Facebook (+ Google når klar)
+        $schedule->job(new \App\Jobs\AdOs\SyncAdCampaignsJob)->everyThirtyMinutes()->withoutOverlapping();
+        $schedule->job(new \App\Jobs\AdOs\SyncAdMetricsJob)->everyFifteenMinutes()->withoutOverlapping();
+        // Evaluer regler og generer AI-anbefalinger
+        $schedule->job(new \App\Jobs\AdOs\EvaluateAdRulesJob)->everyFifteenMinutes()->withoutOverlapping();
+        $schedule->job(new \App\Jobs\AdOs\GenerateAdRecommendationsJob)->hourly()->withoutOverlapping();
+        // Utfør godkjente handlinger automatisk
+        $schedule->job(new \App\Jobs\AdOs\ExecuteApprovedAdActionsJob)->everyFiveMinutes()->withoutOverlapping();
+        // Daglig oppsummering
+        $schedule->job(new \App\Jobs\AdOs\GenerateAdSummaryJob)->dailyAt('22:00');
         $schedule->command('contract:expiry-reminder')->dailyAt('08:00');
         $schedule->command('webinar:download-recordings')->hourly();
         $schedule->command('community:sync-groups')->everyFifteenMinutes();

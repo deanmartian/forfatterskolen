@@ -48,9 +48,26 @@ class AdOsController extends Controller
             'spent_month' => $this->budgetService->getCurrentSpendThisMonth(),
         ];
 
+        // Aktive kampanjer fra FreeWebinar (Facebook + Google)
+        $activeWebinarCampaigns = \App\FreeWebinar::where(function ($q) {
+                $q->whereNotNull('facebook_campaign_id')
+                  ->orWhereNotNull('google_search_campaign_id');
+            })
+            ->orderByDesc('start_date')
+            ->limit(10)
+            ->get();
+
+        // Siste Facebook-leads
+        $recentLeads = \DB::table('webinar_registrants')
+            ->where('source', 'facebook')
+            ->orderByDesc('created_at')
+            ->limit(10)
+            ->get();
+
         return view('backend.ads.dashboard', compact(
             'strategy', 'campaignStats', 'pendingApprovals',
-            'pendingRecommendations', 'recentActions', 'dailySummary', 'budgetInfo'
+            'pendingRecommendations', 'recentActions', 'dailySummary', 'budgetInfo',
+            'activeWebinarCampaigns', 'recentLeads'
         ));
     }
 
