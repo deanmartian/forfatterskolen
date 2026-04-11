@@ -315,9 +315,13 @@
     var campaignCtx = document.getElementById('campaignCompareChart');
     if (campaignCtx) {
         @php
-            $activeCampaigns = \App\Models\AdOs\AdCampaign::where('status', 'published')
-                ->with(['metricSnapshots' => fn($q) => $q->where('date', '>=', now()->subDays(14))])
-                ->get();
+            try {
+                $activeCampaigns = \App\Models\AdOs\AdCampaign::where('status', 'published')
+                    ->with(['metricSnapshots' => fn($q) => $q->where('date', '>=', now()->subDays(14))])
+                    ->get();
+            } catch (\Exception $e) {
+                $activeCampaigns = collect();
+            }
         @endphp
         campaignChart = new Chart(campaignCtx, {
             type: 'bar',
@@ -392,7 +396,7 @@
     function renderCPA(data) {
         var labels = data.map(function(d) { return d.date; });
         var cpa = data.map(function(d) { return d.cpa; });
-        var targetCpa = {{ $strategy->target_cpa ?? 200 }};
+        var targetCpa = {{ $strategy?->target_cpa ?? 200 }};
 
         if (cpaChart) cpaChart.destroy();
         cpaChart = new Chart(document.getElementById('cpaChart'), {

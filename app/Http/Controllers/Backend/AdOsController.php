@@ -35,34 +35,76 @@ class AdOsController extends Controller
 
     public function dashboard()
     {
-        $strategy = $this->strategyService->getActiveProfile();
-        $campaignStats = $this->campaignService->getDashboardStats();
-        $pendingApprovals = $this->approvalService->getPendingCount();
-        $pendingRecommendations = $this->decisionService->getRecommendations(5);
-        $recentActions = $this->logService->getRecentActions(10);
-        $dailySummary = $this->reportService->getDailySummary();
-        $budgetInfo = [
-            'remaining_daily' => $this->budgetService->getRemainingDailyBudget(),
-            'remaining_monthly' => $this->budgetService->getRemainingMonthlyBudget(),
-            'spent_today' => $this->budgetService->getCurrentSpendToday(),
-            'spent_month' => $this->budgetService->getCurrentSpendThisMonth(),
-        ];
+        try {
+            $strategy = $this->strategyService->getActiveProfile();
+        } catch (\Exception $e) {
+            $strategy = null;
+        }
+
+        try {
+            $campaignStats = $this->campaignService->getDashboardStats();
+        } catch (\Exception $e) {
+            $campaignStats = ['active' => 0];
+        }
+
+        try {
+            $pendingApprovals = $this->approvalService->getPendingCount();
+        } catch (\Exception $e) {
+            $pendingApprovals = 0;
+        }
+
+        try {
+            $pendingRecommendations = $this->decisionService->getRecommendations(5);
+        } catch (\Exception $e) {
+            $pendingRecommendations = collect();
+        }
+
+        try {
+            $recentActions = $this->logService->getRecentActions(10);
+        } catch (\Exception $e) {
+            $recentActions = collect();
+        }
+
+        try {
+            $dailySummary = $this->reportService->getDailySummary();
+        } catch (\Exception $e) {
+            $dailySummary = ['metrics' => null];
+        }
+
+        try {
+            $budgetInfo = [
+                'remaining_daily' => $this->budgetService->getRemainingDailyBudget(),
+                'remaining_monthly' => $this->budgetService->getRemainingMonthlyBudget(),
+                'spent_today' => $this->budgetService->getCurrentSpendToday(),
+                'spent_month' => $this->budgetService->getCurrentSpendThisMonth(),
+            ];
+        } catch (\Exception $e) {
+            $budgetInfo = ['remaining_daily' => 0, 'remaining_monthly' => 0, 'spent_today' => 0, 'spent_month' => 0];
+        }
 
         // Aktive kampanjer fra FreeWebinar (Facebook + Google)
-        $activeWebinarCampaigns = \App\FreeWebinar::where(function ($q) {
-                $q->whereNotNull('facebook_campaign_id')
-                  ->orWhereNotNull('google_search_campaign_id');
-            })
-            ->orderByDesc('start_date')
-            ->limit(10)
-            ->get();
+        try {
+            $activeWebinarCampaigns = \App\FreeWebinar::where(function ($q) {
+                    $q->whereNotNull('facebook_campaign_id')
+                      ->orWhereNotNull('google_search_campaign_id');
+                })
+                ->orderByDesc('start_date')
+                ->limit(10)
+                ->get();
+        } catch (\Exception $e) {
+            $activeWebinarCampaigns = collect();
+        }
 
         // Siste Facebook-leads
-        $recentLeads = \DB::table('webinar_registrants')
-            ->where('source', 'facebook')
-            ->orderByDesc('created_at')
-            ->limit(10)
-            ->get();
+        try {
+            $recentLeads = \DB::table('webinar_registrants')
+                ->where('source', 'facebook')
+                ->orderByDesc('created_at')
+                ->limit(10)
+                ->get();
+        } catch (\Exception $e) {
+            $recentLeads = collect();
+        }
 
         return view('backend.ads.dashboard', compact(
             'strategy', 'campaignStats', 'pendingApprovals',
@@ -75,7 +117,8 @@ class AdOsController extends Controller
     {
         $days = (int) $request->input('days', 14);
 
-        $metrics = \App\Models\AdOs\AdMetricSnapshot::where('level', 'campaign')
+        try {
+            $metrics = \App\Models\AdOs\AdMetricSnapshot::where('level', 'campaign')
             ->where('date', '>=', now()->subDays($days)->toDateString())
             ->orderBy('date')
             ->get()
@@ -91,7 +134,10 @@ class AdOsController extends Controller
                 'ctr' => $day->where('ctr', '>', 0)->avg('ctr') ? round($day->where('ctr', '>', 0)->avg('ctr') * 100, 2) : null,
             ]);
 
-        return response()->json($metrics->values());
+            return response()->json($metrics->values());
+        } catch (\Exception $e) {
+            return response()->json([]);
+        }
     }
 
     public function strategy()
