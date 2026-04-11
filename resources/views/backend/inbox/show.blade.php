@@ -41,6 +41,20 @@
             @endif
         </form>
 
+        @php
+            $isMentioned = $conversation->comments()->where(function ($q) {
+                $uid = auth()->id();
+                $q->whereJsonContains('mentioned_user_ids', $uid)
+                  ->orWhereJsonContains('mentioned_user_ids', (string) $uid);
+            })->exists();
+        @endphp
+        @if($isMentioned)
+        <form action="{{ route('admin.inbox.dismiss-mention', $conversation->id) }}" method="POST" style="display:inline;">
+            @csrf
+            <button type="submit" class="btn btn-sm btn-info"><i class="fa fa-check-circle"></i> Bekreft nevning</button>
+        </form>
+        @endif
+
         @if($conversation->private_to_user_id === auth()->id())
             <form action="{{ route('admin.inbox.make-public', $conversation->id) }}" method="POST" style="display:inline;">
                 @csrf

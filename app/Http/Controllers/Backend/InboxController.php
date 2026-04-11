@@ -117,6 +117,25 @@ class InboxController extends Controller
             ->with('message', $label);
     }
 
+    public function dismissMention(int $id)
+    {
+        $userId = auth()->id();
+        $conversation = \App\Models\Inbox\InboxConversation::findOrFail($id);
+
+        $conversation->comments()
+            ->where(function ($q) use ($userId) {
+                $q->whereJsonContains('mentioned_user_ids', $userId)
+                  ->orWhereJsonContains('mentioned_user_ids', (string) $userId);
+            })
+            ->each(function ($comment) use ($userId) {
+                $ids = json_decode($comment->mentioned_user_ids, true) ?? [];
+                $ids = array_values(array_filter($ids, fn($id) => (int) $id !== $userId));
+                $comment->update(['mentioned_user_ids' => json_encode($ids)]);
+            });
+
+        return redirect()->back()->with('alert_type', 'success')->with('message', 'Nevning bekreftet');
+    }
+
     public function snooze(Request $request, int $id)
     {
         $hours = (int) $request->input('hours', 24);
