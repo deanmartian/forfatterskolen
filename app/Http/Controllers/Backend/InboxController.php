@@ -476,15 +476,57 @@ PROMPT;
         if (!$user) return [];
 
         $context = [
-            'Navn' => $user->first_name . ' ' . $user->last_name,
-            'E-post' => $user->email,
-            'Rolle' => match ($user->role) { 1 => 'Admin', 2 => 'Elev', 3 => 'Redaktør', default => 'Ukjent' },
+            'user_id' => $user->id,
+            'name' => $user->first_name . ' ' . $user->last_name,
+            'email' => $user->email,
+            'role' => match ($user->role) { 1 => 'Admin', 2 => 'Elev', 3 => 'Redaktør', default => 'Ukjent' },
+            'courses' => [],
+            'manuscripts' => [],
+            'projects' => [],
         ];
 
         try {
+            // Aktive kurs med lenker
             $courses = $user->coursesTaken()->where('is_active', 1)->with('package.course')->get();
-            if ($courses->isNotEmpty()) {
-                $context['Aktive kurs'] = $courses->map(fn($ct) => $ct->package?->course?->title ?? 'Ukjent')->implode(', ');
+            foreach ($courses as $ct) {
+                $course = $ct->package?->course;
+                if ($course) {
+                    $context['courses'][] = [
+                        'title' => $course->title,
+                        'url' => route('admin.course.show', $course->id),
+                        'course_taken_id' => $ct->id,
+                    ];
+                }
+            }
+        } catch (\Exception $e) {}
+
+        try {
+            // Manusutvikling (kjøpt tekstvurdering)
+            $manuscripts = \App\ShopManuscriptTaken::where('user_id', $user->id)
+                ->with('shop_manuscript')
+                ->orderByDesc('created_at')
+                ->limit(5)
+                ->get();
+            foreach ($manuscripts as $m) {
+                $context['manuscripts'][] = [
+                    'title' => $m->shop_manuscript?->title ?? 'Tekstvurdering',
+                    'url' => route('shop_manuscript_taken', ['id' => $user->id, 'shop_manuscript_taken_id' => $m->id]),
+                    'status' => $m->status ?? 'aktiv',
+                ];
+            }
+        } catch (\Exception $e) {}
+
+        try {
+            // Selvpubliserings-prosjekter
+            $projects = \App\ManuscriptProject::where('user_id', $user->id)
+                ->orderByDesc('created_at')
+                ->limit(5)
+                ->get();
+            foreach ($projects as $p) {
+                $context['projects'][] = [
+                    'title' => $p->title ?? $p->name ?? 'Prosjekt #' . $p->id,
+                    'url' => route('admin.project.show', $p->id),
+                ];
             }
         } catch (\Exception $e) {}
 

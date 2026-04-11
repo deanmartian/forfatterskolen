@@ -323,9 +323,37 @@
                 <div class="sidebar-card">
                     <h5><i class="fa fa-graduation-cap"></i> Elevinfo</h5>
                     <table class="student-info">
-                        @foreach($studentContext as $key => $value)
-                            <tr><td><strong>{{ $key }}</strong></td><td>{{ $value }}</td></tr>
-                        @endforeach
+                        <tr><td><strong>Navn</strong></td><td><a href="{{ route('admin.learner.show', $studentContext['user_id']) }}">{{ $studentContext['name'] }}</a></td></tr>
+                        <tr><td><strong>E-post</strong></td><td><a href="mailto:{{ $studentContext['email'] }}">{{ $studentContext['email'] }}</a></td></tr>
+                        <tr><td><strong>Rolle</strong></td><td>{{ $studentContext['role'] }}</td></tr>
+                        @if(!empty($studentContext['courses']))
+                            <tr><td><strong>Aktive kurs</strong></td><td>
+                                @foreach($studentContext['courses'] as $course)
+                                    <a href="{{ $course['url'] }}" style="display:block;color:#862736;font-size:12px;margin-bottom:2px;">
+                                        <i class="fa fa-book"></i> {{ $course['title'] }}
+                                    </a>
+                                @endforeach
+                            </td></tr>
+                        @endif
+                        @if(!empty($studentContext['manuscripts']))
+                            <tr><td><strong>Manus</strong></td><td>
+                                @foreach($studentContext['manuscripts'] as $m)
+                                    <a href="{{ $m['url'] }}" style="display:block;color:#862736;font-size:12px;margin-bottom:2px;">
+                                        <i class="fa fa-file-text-o"></i> {{ $m['title'] }}
+                                        <span class="label label-default" style="font-size:9px;">{{ $m['status'] }}</span>
+                                    </a>
+                                @endforeach
+                            </td></tr>
+                        @endif
+                        @if(!empty($studentContext['projects']))
+                            <tr><td><strong>Prosjekter</strong></td><td>
+                                @foreach($studentContext['projects'] as $p)
+                                    <a href="{{ $p['url'] }}" style="display:block;color:#862736;font-size:12px;margin-bottom:2px;">
+                                        <i class="fa fa-folder-open-o"></i> {{ $p['title'] }}
+                                    </a>
+                                @endforeach
+                            </td></tr>
+                        @endif
                     </table>
                 </div>
             @endif
