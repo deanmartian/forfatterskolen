@@ -10,9 +10,24 @@
     .inbox-sidebar .badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; background: #e8e4de; color: #666; font-weight: 500; }
     .inbox-sidebar .nav-item.active .badge { background: #862736; color: #fff; }
 
-    .inbox-row { padding: 14px 16px; border-bottom: 1px solid #f0ede8; cursor: pointer; transition: background 0.12s; display: flex; align-items: center; gap: 12px; }
+    .inbox-row { padding: 14px 16px; border-bottom: 1px solid #f0ede8; cursor: pointer; transition: background 0.12s; display: flex; align-items: center; gap: 12px; border-left: 3px solid transparent; }
     .inbox-row:hover { background: #faf8f5; }
     .inbox-row.unread { background: #f5f0eb; }
+    .inbox-row--high { border-left-color: #e53e3e; }
+    .inbox-row--urgent { border-left-color: #e53e3e; background: #fff5f5; }
+    .inbox-row--low { border-left-color: #a0aec0; }
+    .inbox-row--snoozed { opacity: 0.6; }
+    .tag-badge { font-size: 10px; padding: 1px 6px; border-radius: 8px; background: #edf2f7; color: #4a5568; margin-left: 3px; display: inline-block; }
+    .cat-badge { font-size: 10px; padding: 1px 6px; border-radius: 3px; background: #e8e4de; color: #555; }
+    .resp-time { font-size: 10px; margin-top: 2px; }
+    .resp-time--fast { color: #38a169; }
+    .resp-time--medium { color: #dd6b20; }
+    .resp-time--slow { color: #e53e3e; }
+    .quick-actions { display: none; gap: 4px; margin-top: 4px; }
+    .inbox-row:hover .quick-actions { display: flex; }
+    .quick-btn { padding: 2px 6px; border: 1px solid #ddd; border-radius: 4px; background: #fff; cursor: pointer; font-size: 11px; color: #666; }
+    .quick-btn:hover { background: #f0f0f0; }
+    .snooze-icon { color: #805ad5; font-size: 11px; }
     .inbox-avatar { width: 40px; height: 40px; border-radius: 50%; background: #862736; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px; flex-shrink: 0; }
     .inbox-row__content { flex: 1; min-width: 0; display: grid; grid-template-columns: 200px 1fr auto; gap: 12px; align-items: center; }
     .inbox-row__sender { font-weight: 600; font-size: 13.5px; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -95,6 +110,32 @@
                         {{ $member->first_name }}
                     </a>
                 @endforeach
+
+                @if(!empty($stats['categories']))
+                <div style="padding: 10px 15px; border-top: 2px solid #ddd; margin-top: 10px;">
+                    <strong style="font-size: 11px; text-transform: uppercase; color: #999;">Kategorier</strong>
+                </div>
+                @foreach($stats['categories'] as $cat => $cnt)
+                    <a href="{{ route('admin.inbox.index', ['category' => $cat]) }}" class="nav-item {{ ($filters['category'] ?? '') === $cat ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit; font-size: 13px;">
+                        @switch($cat)
+                            @case('kurs') <i class="fa fa-graduation-cap"></i> @break
+                            @case('betaling') <i class="fa fa-credit-card"></i> @break
+                            @case('teknisk') <i class="fa fa-wrench"></i> @break
+                            @case('bok') <i class="fa fa-book"></i> @break
+                            @case('webinar') <i class="fa fa-video-camera"></i> @break
+                            @case('coaching') <i class="fa fa-comments"></i> @break
+                            @default <i class="fa fa-tag"></i>
+                        @endswitch
+                        {{ ucfirst($cat) }} <span class="badge pull-right">{{ $cnt }}</span>
+                    </a>
+                @endforeach
+                @endif
+
+                @if(($stats['snoozed'] ?? 0) > 0)
+                <a href="{{ route('admin.inbox.index', ['status' => 'snoozed']) }}" class="nav-item {{ ($filters['status'] ?? '') === 'snoozed' ? 'active' : '' }}" style="display:block; text-decoration:none; color: inherit; font-size: 13px; margin-top: 5px;">
+                    <i class="fa fa-moon-o" style="color:#805ad5;"></i> Snoozet <span class="badge pull-right">{{ $stats['snoozed'] }}</span>
+                </a>
+                @endif
             </div>
         </div>
 
@@ -138,7 +179,24 @@
                 <form id="bulkForm" method="POST" action="{{ route('admin.inbox.bulk') }}">@csrf<input type="hidden" name="action" id="bulkAction"><input type="hidden" name="ids" id="bulkIds"><input type="hidden" name="assign_to" id="bulkAssignTo"></form>
 
                 @forelse($conversations as $conv)
-                    <div class="inbox-row">
+                    @php
+                        $priorityClass = match($conv->priority) {
+                            'high' => 'inbox-row--high',
+                            'urgent' => 'inbox-row--urgent',
+                            'low' => 'inbox-row--low',
+                            default => ''
+                        };
+                        $isSnoozed = $conv->snoozed_until && $conv->snoozed_until->isFuture();
+                        $respMinutes = ($conv->first_response_at && $conv->created_at)
+                            ? $conv->created_at->diffInMinutes($conv->first_response_at) : null;
+                        $respClass = $respMinutes !== null
+                            ? ($respMinutes < 120 ? 'resp-time--fast' : ($respMinutes < 480 ? 'resp-time--medium' : 'resp-time--slow'))
+                            : '';
+                        $respIcon = $respMinutes !== null
+                            ? ($respMinutes < 120 ? '⚡' : ($respMinutes < 480 ? '⏱️' : '⚠️'))
+                            : '';
+                    @endphp
+                    <div class="inbox-row {{ $priorityClass }} {{ $isSnoozed ? 'inbox-row--snoozed' : '' }}">
                         <input type="checkbox" class="bulk-check" value="{{ $conv->id }}" onchange="bulkChanged()" style="flex-shrink:0;">
                         <a href="{{ route('admin.inbox.show', $conv->id) }}" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
                             <div class="inbox-avatar">
@@ -153,12 +211,21 @@
                                     <div class="inbox-row__subject">
                                         {{ $conv->subject ?? '(Uten emne)' }}
                                         @if($conv->is_starred) <i class="fa fa-star" style="color:#f39c12;font-size:11px;"></i> @endif
+                                        @if($isSnoozed) <span class="snooze-icon"><i class="fa fa-moon-o"></i> {{ $conv->snoozed_until->diffForHumans() }}</span> @endif
                                     </div>
-                                    <div class="inbox-snippet">{{ \Illuminate\Support\Str::limit($conv->latestInbound?->clean_body ?? $conv->latestMessage?->clean_body ?? '', 100) }}</div>
+                                    <div class="inbox-snippet">
+                                        {{ \Illuminate\Support\Str::limit($conv->latestInbound?->clean_body ?? $conv->latestMessage?->clean_body ?? '', 100) }}
+                                        @foreach(json_decode($conv->tags ?? '[]', true) as $tag)
+                                            <span class="tag-badge">{{ $tag }}</span>
+                                        @endforeach
+                                    </div>
                                 </div>
                                 <div class="inbox-row__meta">
                                     <div class="inbox-row__time">{{ $conv->updated_at->diffForHumans() }}</div>
                                     <div class="inbox-row__badges">
+                                        @if($conv->category)
+                                            <span class="cat-badge">{{ ucfirst($conv->category) }}</span>
+                                        @endif
                                         @if($conv->assignee)
                                             <span class="label label-info">{{ $conv->assignee->first_name }}</span>
                                         @else
@@ -168,8 +235,15 @@
                                             <span class="label label-success">Elev</span>
                                         @endif
                                     </div>
+                                    @if($respMinutes !== null)
+                                        <div class="resp-time {{ $respClass }}">{{ $respIcon }} {{ $conv->created_at->diffForHumans($conv->first_response_at, true) }}</div>
+                                    @endif
                                     <div class="inbox-row__status inbox-row__status--{{ $conv->status }}">
-                                        {{ $conv->status === 'open' ? 'Åpen' : ($conv->status === 'closed' ? 'Lukket' : ucfirst($conv->status)) }}
+                                        {{ $conv->status === 'open' ? 'Åpen' : ($conv->status === 'closed' ? 'Lukket' : ($conv->status === 'snoozed' ? 'Snoozet' : ucfirst($conv->status))) }}
+                                    </div>
+                                    <div class="quick-actions">
+                                        <form method="POST" action="{{ route('admin.inbox.status', $conv->id) }}" style="display:inline;">@csrf<input type="hidden" name="status" value="closed"><button type="submit" class="quick-btn" title="Lukk"><i class="fa fa-check"></i></button></form>
+                                        <form method="POST" action="{{ route('admin.inbox.snooze', $conv->id) }}" style="display:inline;">@csrf<input type="hidden" name="hours" value="24"><button type="submit" class="quick-btn" title="Snooze 24t"><i class="fa fa-moon-o"></i></button></form>
                                     </div>
                                 </div>
                             </div>

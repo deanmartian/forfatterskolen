@@ -103,6 +103,36 @@ class InboxController extends Controller
             ->with('message', 'Status oppdatert');
     }
 
+    public function snooze(Request $request, int $id)
+    {
+        $hours = (int) $request->input('hours', 24);
+        $conv = \App\Models\Inbox\InboxConversation::findOrFail($id);
+        $conv->update([
+            'status' => 'snoozed',
+            'snoozed_until' => now()->addHours($hours),
+        ]);
+
+        return redirect()->back()->with('alert_type', 'info')->with('message', "Snoozet i {$hours} timer");
+    }
+
+    public function updatePriority(Request $request, int $id)
+    {
+        $request->validate(['priority' => 'required|in:low,normal,high,urgent']);
+        $conv = \App\Models\Inbox\InboxConversation::findOrFail($id);
+        $conv->update(['priority' => $request->input('priority')]);
+
+        return redirect()->back()->with('alert_type', 'success')->with('message', 'Prioritet oppdatert');
+    }
+
+    public function updateTags(Request $request, int $id)
+    {
+        $conv = \App\Models\Inbox\InboxConversation::findOrFail($id);
+        $tags = array_filter(array_map('trim', explode(',', $request->input('tags', ''))));
+        $conv->update(['tags' => json_encode(array_values($tags))]);
+
+        return redirect()->back()->with('alert_type', 'success')->with('message', 'Tags oppdatert');
+    }
+
     public function toggleStar(int $id)
     {
         $this->inboxService->toggleStar($id);

@@ -455,6 +455,14 @@ class InboxService
             'mentions' => $this->getMentionsCount(),
             'awaiting' => (clone $base())->where('status', 'open')
                 ->whereHas('latestMessage', fn($q) => $q->where('direction', 'inbound'))->count(),
+            'snoozed' => (clone $base())->where('status', 'snoozed')
+                ->where('snoozed_until', '>', now())->count(),
+            'categories' => (clone $base())->whereIn('status', ['open', 'pending'])
+                ->whereNotNull('category')->where('category', '!=', '')
+                ->selectRaw('category, count(*) as cnt')
+                ->groupBy('category')
+                ->pluck('cnt', 'category')
+                ->toArray(),
         ];
     }
 

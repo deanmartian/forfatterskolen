@@ -12,6 +12,9 @@ Route::prefix('inbox')->group(function () {
     Route::post('/conversation/{id}/assign', [Backend\InboxController::class, 'assign'])->name('admin.inbox.assign');
     Route::post('/conversation/{id}/status', [Backend\InboxController::class, 'updateStatus'])->name('admin.inbox.status');
     Route::post('/conversation/{id}/star', [Backend\InboxController::class, 'toggleStar'])->name('admin.inbox.toggle-star');
+    Route::post('/conversation/{id}/snooze', [Backend\InboxController::class, 'snooze'])->name('admin.inbox.snooze');
+    Route::post('/conversation/{id}/priority', [Backend\InboxController::class, 'updatePriority'])->name('admin.inbox.priority');
+    Route::post('/conversation/{id}/tags', [Backend\InboxController::class, 'updateTags'])->name('admin.inbox.tags');
     Route::post('/conversation/{id}/spam', [Backend\InboxController::class, 'markSpam'])->name('admin.inbox.spam');
     Route::post('/conversation/{id}/ai-draft', [Backend\InboxController::class, 'generateAiDraft'])->name('admin.inbox.ai-draft');
     Route::post('/conversation/{id}/polish-reply', [Backend\InboxController::class, 'polishReply'])->name('admin.inbox.polish-reply');
