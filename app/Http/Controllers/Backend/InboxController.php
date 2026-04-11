@@ -526,14 +526,16 @@ PROMPT;
         }
 
         try {
-            // Selvpubliserings-prosjekter
-            $projects = \App\Models\ManuscriptProject::where('user_id', $user->id)
+            // Selvpubliserings-prosjekter (projects-tabellen, ikke manuscript_projects)
+            $projects = \DB::table('projects')
+                ->where('user_id', $user->id)
+                ->select('id', 'name')
                 ->orderByDesc('created_at')
                 ->limit(5)
                 ->get();
             foreach ($projects as $p) {
                 $context['projects'][] = [
-                    'title' => $p->title ?? $p->name ?? 'Prosjekt #' . $p->id,
+                    'title' => $p->name ?? 'Prosjekt #' . $p->id,
                     'url' => route('admin.project.show', $p->id),
                 ];
             }
