@@ -31,6 +31,7 @@
 
         <form action="{{ route('admin.inbox.status', $conversation->id) }}" method="POST" style="display:inline;">
             @csrf
+            <input type="hidden" name="return_url" value="{{ session('inbox_return_url', route('admin.inbox.index', ['assigned_to' => auth()->id()])) }}">
             @if($conversation->status !== 'closed')
                 <input type="hidden" name="status" value="closed">
                 <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-check"></i> Lukk</button>

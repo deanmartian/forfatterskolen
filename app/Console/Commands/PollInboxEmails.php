@@ -335,12 +335,32 @@ class PollInboxEmails extends Command
             })
             ->exists();
 
-        // 3. Bare tildel til default hvis kunden er "ny" (ingen team-kontakt)
-        if (!$hasPriorContact) {
-            return $config['default_user_id'] ?? null;
+        // 3. Kunden har hatt kontakt før — sjekk hvem som svarte sist
+        if ($hasPriorContact) {
+            // Finn teammedlemmet som sist svarte denne kunden
+            $lastReplier = InboxConversation::where('customer_email', $customerEmail)
+                ->whereHas('messages', function ($q) use ($teamIds) {
+                    $q->where('direction', 'outbound')
+                      ->whereIn('sent_by_user_id', $teamIds);
+                })
+                ->with(['messages' => function ($q) use ($teamIds) {
+                    $q->where('direction', 'outbound')
+                      ->whereIn('sent_by_user_id', $teamIds)
+                      ->orderByDesc('created_at')
+                      ->limit(1);
+                }])
+                ->get()
+                ->flatMap(fn($c) => $c->messages)
+                ->sortByDesc('created_at')
+                ->first();
+
+            if ($lastReplier && $lastReplier->sent_by_user_id) {
+                return (int) $lastReplier->sent_by_user_id;
+            }
         }
 
-        return null; // Lar samtalen stå utildelt — Sven kan velge selv
+        // 4. Alltid fallback til default (aldri la samtaler stå utildelt)
+        return $config['default_user_id'] ?? null;
     }
 
     /**
