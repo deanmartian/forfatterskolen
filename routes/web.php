@@ -930,6 +930,7 @@ Route::domain($admin)->group(function () {
         Route::get('diploma/{id}/download', [Backend\LearnerController::class, 'downloadDiploma'])->name('admin.learner.download-diploma');
 
         Route::post('learner/invoice/{id}/update-due', [Backend\LearnerController::class, 'updateInvoiceDue'])->name('admin.learner.invoice.update-due');
+        Route::post('learner/{id}/bulk-update-due-dates', [Backend\LearnerController::class, 'bulkUpdateInvoiceDueDates'])->name('admin.learner.invoice.bulk-update-due');
         Route::delete('learner/invoice/{id}/delete', [Backend\LearnerController::class, 'deleteInvoice'])->name('admin.learner.invoice.delete');
         Route::post('learner/invoice/{id}/create-fiken-credit-note', [Backend\LearnerController::class, 'addFikenCreditNote'])
             ->name('admin.learner.invoice.create-fiken-credit-note');

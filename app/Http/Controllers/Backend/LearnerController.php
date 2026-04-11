@@ -725,6 +725,62 @@ class LearnerController extends Controller
     }
 
     /**
+     * Bulk-endre forfallsdato på alle UBETALTE fakturaer til en gitt dag i måneden.
+     */
+    public function bulkUpdateInvoiceDueDates(int $id, Request $request): RedirectResponse
+    {
+        $request->validate(['due_day' => 'required|integer|min:1|max:28']);
+        $dueDay = (int) $request->input('due_day');
+
+        $invoices = Invoice::where('user_id', $id)
+            ->where(function ($q) {
+                $q->where('fiken_is_paid', 0)->orWhereNull('fiken_is_paid');
+            })
+            ->get();
+
+        $updated = 0;
+        $errors = [];
+
+        foreach ($invoices as $invoice) {
+            if (!$invoice->fiken_dueDate) continue;
+
+            $oldDate = \Carbon\Carbon::parse($invoice->fiken_dueDate);
+            $newDate = $oldDate->copy()->day($dueDay)->format('Y-m-d');
+
+            if ($invoice->fiken_invoice_id) {
+                try {
+                    $response = \Illuminate\Support\Facades\Http::withHeaders([
+                        'Authorization' => 'Bearer ' . config('services.fiken.personal_api_key'),
+                    ])->patch("https://api.fiken.no/api/v2/companies/forfatterskolen-as/invoices/{$invoice->fiken_invoice_id}", [
+                        'newDueDate' => $newDate,
+                    ]);
+
+                    if (!$response->successful()) {
+                        $errors[] = "#{$invoice->invoice_number}: Fiken ({$response->status()})";
+                        continue;
+                    }
+                } catch (\Exception $e) {
+                    $errors[] = "#{$invoice->invoice_number}: {$e->getMessage()}";
+                    continue;
+                }
+            }
+
+            $invoice->fiken_dueDate = $newDate;
+            $invoice->save();
+            $updated++;
+        }
+
+        $msg = "{$updated} forfallsdatoer endret til den {$dueDay}. i måneden.";
+        if (!empty($errors)) $msg .= ' Feil: ' . implode(', ', $errors);
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag($msg),
+            'alert_type' => empty($errors) ? 'success' : 'warning',
+            'not-former-courses' => true,
+        ]);
+    }
+
+    /**
      * Delete learner invoice
      */
     public function deleteInvoice($invoice_id): RedirectResponse

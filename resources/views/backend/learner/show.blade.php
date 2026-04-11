@@ -740,6 +740,9 @@
 					<button class="btn btn-success pull-right btn-xs" data-toggle="modal"
 							style="margin-right: 10px"
 							data-target="#createInvoiceModal">+ {{ trans('site.create-invoice') }}</button>
+					<button class="btn btn-warning pull-right btn-xs" data-toggle="modal"
+							style="margin-right: 10px"
+							data-target="#bulkDueDateModal"><i class="fa fa-calendar"></i> Endre alle forfallsdatoer</button>
 					<h4>{{ trans_choice('site.invoices', 2) }}</h4>
 				</div>
 				<div class="table-responsive" style="padding: 10px">
@@ -4003,6 +4006,31 @@
 			</div>
 		</div>
 
+	</div>
+</div>
+
+{{-- Bulk endre forfallsdatoer --}}
+<div id="bulkDueDateModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header" style="background:#862736;color:#fff;">
+				<button type="button" class="close" data-dismiss="modal" style="color:#fff;">&times;</button>
+				<h4 class="modal-title"><i class="fa fa-calendar"></i> Endre alle forfallsdatoer</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.learner.invoice.bulk-update-due', $learner->id) }}">
+					@csrf
+					<p style="color:#666;font-size:13px;">Endrer forfallsdato på alle <strong>ubetalte</strong> fakturaer til valgt dag i måneden. Oppdateres også i Fiken.</p>
+					<div class="form-group">
+						<label>Forfallsdag (1-28)</label>
+						<input type="number" class="form-control" name="due_day" min="1" max="28" value="18" required style="font-size:18px;text-align:center;">
+					</div>
+					<button class="btn btn-warning btn-block" type="submit" onclick="return confirm('Endre forfallsdato på alle ubetalte fakturaer?')">
+						<i class="fa fa-check"></i> Endre alle ubetalte
+					</button>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
 
