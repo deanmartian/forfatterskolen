@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Forfatterskolen — Skrivekurs på nett med erfarne forfattere og redaktører')
+@section('page_title', 'Forfatterskolen — Skrivekurs på nett med erfarne forfattere')
 
 @section('meta_desc', 'Skrivekurs på nett med erfarne forfattere og redaktører. Roman, barnebok, sakprosa. Fra idé til ferdig manus. 5000+ kursdeltagere siden 2015.')
 @section('metas')

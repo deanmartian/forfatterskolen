@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Kurs &rsaquo; Forfatterskolen')
+@section('page_title', 'Skrivekurs og forfatterkurs på nett › Forfatterskolen')
 @section('meta_desc', 'Utforsk Forfatterskolens skrivekurs. Roman, barnebok, sakprosa, lyrikk og mer. Nettbaserte kurs med personlig veiledning.')
 
 @section('content')

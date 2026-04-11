@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', $course->title . ' › Forfatterskolen')
+@section('page_title', str_replace(['(Øyeblikkelig tilgang)', '(øyeblikkelig tilgang)', '(Oyeblikkelig tilgang)'], '', $course->title) . ' › Forfatterskolen')
 
 @section('jsonld')
 @php

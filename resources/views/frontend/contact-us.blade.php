@@ -1,6 +1,6 @@
 @extends('frontend.layout')
 
-@section('page_title', 'Forfatterskolen &rsaquo; Om oss')
+@section('page_title', 'Om oss — Kontakt Forfatterskolen')
 @section('meta_desc', 'Ta kontakt med Forfatterskolen. Vi hjelper deg med spørsmål om kurs, manusutvikling og publisering.')
 
 @section('content')
