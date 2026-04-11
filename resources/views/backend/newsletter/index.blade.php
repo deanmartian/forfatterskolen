@@ -47,15 +47,15 @@
                 <td><small>{{ $nl->sent_at?->format('d.m.Y H:i') ?? $nl->scheduled_at?->format('d.m.Y H:i') ?? $nl->created_at?->format('d.m.Y') }}</small></td>
                 <td>
                     @if($nl->isDraft() || $nl->isScheduled())
-                        <a href="{{ route('admin.newsletter.edit', $nl->id) }}" class="btn btn-sm btn-outline-primary"><i class="fa fa-pencil"></i></a>
+                        <a href="{{ route('admin.newsletter.edit', $nl->id) }}" class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i> Rediger</a>
                     @endif
-                    <a href="{{ route('admin.newsletter.preview', $nl->id) }}" class="btn btn-sm btn-outline-secondary" target="_blank"><i class="fa fa-eye"></i></a>
+                    <a href="{{ route('admin.newsletter.preview', $nl->id) }}" class="btn btn-xs btn-default" target="_blank"><i class="fa fa-eye"></i></a>
                     @if($nl->isSent())
-                        <a href="{{ route('admin.newsletter.stats', $nl->id) }}" class="btn btn-sm btn-outline-info"><i class="fa fa-bar-chart"></i></a>
+                        <a href="{{ route('admin.newsletter.stats', $nl->id) }}" class="btn btn-xs btn-info"><i class="fa fa-bar-chart"></i></a>
                     @endif
                     <form method="POST" action="{{ route('admin.newsletter.duplicate', $nl->id) }}" style="display:inline;">
                         @csrf
-                        <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="fa fa-clone"></i></button>
+                        <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-clone"></i></button>
                     </form>
                 </td>
             </tr>
