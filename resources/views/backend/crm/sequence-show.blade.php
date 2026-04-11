@@ -72,13 +72,13 @@
                         </td>
                         <td><small>{{ $step->from_type }}</small></td>
                         <td>{!! $step->only_without_active_course ? '<i class="fa fa-check text-success"></i>' : '' !!}</td>
-                        <td>
-                            <a href="{{ route('admin.crm.sequences.steps.edit', [$sequence->id, $step->id]) }}" class="btn btn-sm btn-outline-primary">
-                                <i class="fa fa-pencil"></i>
+                        <td style="white-space:nowrap;">
+                            <a href="{{ route('admin.crm.sequences.steps.edit', [$sequence->id, $step->id]) }}" class="btn btn-xs btn-primary" title="Rediger">
+                                <i class="fa fa-pencil"></i> Rediger
                             </a>
                             <form method="POST" action="{{ route('admin.crm.sequences.steps.delete', [$sequence->id, $step->id]) }}" style="display:inline;">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Slette steg?')">
+                                <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Slette steg?')">
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </form>
@@ -87,6 +87,57 @@
                 @endforeach
                 </tbody>
             </table>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#addStepModal"><i class="fa fa-plus"></i> Legg til nytt steg</button>
+        </div>
+    </div>
+</div>
+
+{{-- Modal: Legg til steg --}}
+<div class="modal fade" id="addStepModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#862736;color:#fff;">
+                <button type="button" class="close" data-dismiss="modal" style="color:#fff;">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-plus"></i> Nytt steg i sekvensen</h4>
+            </div>
+            <form method="POST" action="{{ route('admin.crm.sequences.steps.create', $sequence->id) }}">
+                @csrf
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Steg nummer</label>
+                        <input type="number" name="step_number" class="form-control" value="{{ $sequence->steps->count() + 1 }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Emne</label>
+                        <input type="text" name="subject" class="form-control" placeholder="F.eks. 'Påminnelse om webinaret'" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Forsinkelse (timer etter forrige)</label>
+                        <input type="number" name="delay_hours" class="form-control" value="24" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Send kl. (valgfritt)</label>
+                        <input type="time" name="send_time" class="form-control" value="10:00">
+                    </div>
+                    <div class="form-group">
+                        <label>Fra-type</label>
+                        <select name="from_type" class="form-control">
+                            <option value="transactional">Transaksjonell</option>
+                            <option value="newsletter">Nyhetsbrev</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Innhold (kan redigeres etterpå)</label>
+                        <textarea name="body_html" class="form-control" rows="5" placeholder="Skriv e-postinnholdet her..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Opprett steg</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Avbryt</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
