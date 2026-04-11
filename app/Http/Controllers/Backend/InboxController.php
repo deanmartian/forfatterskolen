@@ -129,21 +129,27 @@ class InboxController extends Controller
 
     public function dismissMention(int $id)
     {
-        $userId = auth()->id();
-        $conversation = \App\Models\Inbox\InboxConversation::findOrFail($id);
+        try {
+            $userId = auth()->id();
+            $conversation = \App\Models\Inbox\InboxConversation::findOrFail($id);
 
-        $conversation->comments()
-            ->where(function ($q) use ($userId) {
-                $q->whereJsonContains('mentioned_user_ids', $userId)
-                  ->orWhereJsonContains('mentioned_user_ids', (string) $userId);
-            })
-            ->each(function ($comment) use ($userId) {
-                $ids = json_decode($comment->mentioned_user_ids, true) ?? [];
-                $ids = array_values(array_filter($ids, fn($id) => (int) $id !== $userId));
-                $comment->update(['mentioned_user_ids' => json_encode($ids)]);
-            });
+            $conversation->comments()
+                ->where(function ($q) use ($userId) {
+                    $q->whereJsonContains('mentioned_user_ids', $userId)
+                      ->orWhereJsonContains('mentioned_user_ids', (string) $userId);
+                })
+                ->each(function ($comment) use ($userId) {
+                    $raw = $comment->mentioned_user_ids;
+                    $ids = is_array($raw) ? $raw : (json_decode($raw, true) ?? []);
+                    $filtered = array_values(array_filter($ids, fn($mid) => (int) $mid !== $userId));
+                    $comment->update(['mentioned_user_ids' => json_encode($filtered)]);
+                });
 
-        return redirect()->back()->with('alert_type', 'success')->with('message', 'Nevning bekreftet');
+            return redirect()->back()->with('alert_type', 'success')->with('message', 'Nevning bekreftet');
+        } catch (\Exception $e) {
+            \Log::warning('dismissMention feil: ' . $e->getMessage());
+            return redirect()->back()->with('alert_type', 'danger')->with('message', 'Kunne ikke bekrefte nevning: ' . $e->getMessage());
+        }
     }
 
     public function snooze(Request $request, int $id)
