@@ -158,6 +158,58 @@
         </div>
     </div>
 
+    {{-- Campaign List --}}
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong><i class="fa fa-flag"></i> Kampanjer ({{ \App\Models\AdOs\AdCampaign::where('status', 'active')->count() }} aktive)</strong>
+                </div>
+                <div class="panel-body" style="padding: 0;">
+                    <table class="table table-striped table-condensed" style="margin:0;">
+                        <thead>
+                            <tr>
+                                <th>Kampanje</th>
+                                <th>Plattform</th>
+                                <th>Status</th>
+                                <th>Daglig budsjett</th>
+                                <th>Opprettet</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                                try {
+                                    $allCampaigns = \App\Models\AdOs\AdCampaign::orderByRaw("FIELD(status, 'active', 'paused', 'draft')")->orderByDesc('created_at')->limit(30)->get();
+                                } catch (\Exception $e) {
+                                    $allCampaigns = collect();
+                                }
+                            @endphp
+                            @foreach($allCampaigns as $camp)
+                                <tr>
+                                    <td>
+                                        <strong>{{ \Illuminate\Support\Str::limit($camp->name, 50) }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="label label-{{ $camp->platform === 'facebook' ? 'primary' : 'warning' }}">
+                                            <i class="fa fa-{{ $camp->platform === 'facebook' ? 'facebook' : 'google' }}"></i> {{ ucfirst($camp->platform) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="label label-{{ $camp->status === 'active' ? 'success' : ($camp->status === 'paused' ? 'warning' : 'default') }}">
+                                            {{ $camp->status === 'active' ? 'Aktiv' : ($camp->status === 'paused' ? 'Pauset' : ucfirst($camp->status)) }}
+                                        </span>
+                                    </td>
+                                    <td>{{ $camp->daily_budget ? number_format($camp->daily_budget, 0) . ' kr' : '-' }}</td>
+                                    <td>{{ $camp->created_at?->format('d.m.Y') ?? '-' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Daily Performance Summary --}}
     <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-6">
@@ -316,8 +368,9 @@
     if (campaignCtx) {
         @php
             try {
-                $activeCampaigns = \App\Models\AdOs\AdCampaign::where('status', 'published')
+                $activeCampaigns = \App\Models\AdOs\AdCampaign::where('status', 'active')
                     ->with(['metricSnapshots' => fn($q) => $q->where('date', '>=', now()->subDays(14))])
+                    ->limit(15)
                     ->get();
             } catch (\Exception $e) {
                 $activeCampaigns = collect();
