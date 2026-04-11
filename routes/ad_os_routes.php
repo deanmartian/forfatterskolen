@@ -27,6 +27,13 @@ Route::prefix('inbox')->group(function () {
     Route::post('/import-helpwise', [Backend\InboxController::class, 'importFromHelpwise'])->name('admin.inbox.import-helpwise');
     Route::get('/canned-responses', [Backend\InboxController::class, 'cannedResponses'])->name('admin.inbox.canned-responses');
     Route::post('/canned-responses', [Backend\InboxController::class, 'storeCannedResponse'])->name('admin.inbox.canned-responses.store');
+    Route::get('/auto-replies', [Backend\InboxController::class, 'autoReplies'])->name('admin.inbox.auto-replies');
+    Route::post('/auto-replies', [Backend\InboxController::class, 'storeAutoReply'])->name('admin.inbox.auto-replies.store');
+    Route::post('/auto-replies/{id}/toggle', [Backend\InboxController::class, 'toggleAutoReply'])->name('admin.inbox.auto-replies.toggle');
+    Route::delete('/auto-replies/{id}', [Backend\InboxController::class, 'deleteAutoReply'])->name('admin.inbox.auto-replies.delete');
+    Route::get('/rules', [Backend\InboxController::class, 'inboxRules'])->name('admin.inbox.rules');
+    Route::post('/rules', [Backend\InboxController::class, 'storeInboxRule'])->name('admin.inbox.rules.store');
+    Route::delete('/rules/{id}', [Backend\InboxController::class, 'deleteInboxRule'])->name('admin.inbox.rules.delete');
     Route::get('/attachment/{filename}', [Backend\InboxController::class, 'downloadAttachment'])->name('admin.inbox.attachment');
 
     // Inline image upload fra paste/drag-and-drop i reply-feltet

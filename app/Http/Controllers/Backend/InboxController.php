@@ -550,4 +550,101 @@ PROMPT;
         return redirect()->route('admin.inbox.settings')
             ->with('success', 'Innstillinger lagret.');
     }
+
+    // ═══════════ AUTOSVAR ═══════════
+
+    public function autoReplies()
+    {
+        $autoReplies = \App\Models\Inbox\InboxAutoReply::orderByDesc('is_active')->orderBy('name')->get();
+        return view('backend.inbox.auto-replies', compact('autoReplies'));
+    }
+
+    public function storeAutoReply(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'trigger_type' => 'required|in:new_conversation,out_of_office',
+            'reply_template' => 'required|string',
+        ]);
+
+        \App\Models\Inbox\InboxAutoReply::create([
+            'name' => $request->input('name'),
+            'trigger_type' => $request->input('trigger_type'),
+            'trigger_conditions' => json_encode($request->input('conditions', [])),
+            'reply_template' => $request->input('reply_template'),
+            'is_active' => $request->boolean('is_active', true),
+            'use_ai' => $request->boolean('use_ai', false),
+            'inbox' => $request->input('inbox'),
+            'send_delay_minutes' => (int) $request->input('send_delay_minutes', 0),
+        ]);
+
+        return redirect()->route('admin.inbox.auto-replies')
+            ->with('alert_type', 'success')->with('message', 'Autosvar opprettet');
+    }
+
+    public function toggleAutoReply(int $id)
+    {
+        $ar = \App\Models\Inbox\InboxAutoReply::findOrFail($id);
+        $ar->update(['is_active' => !$ar->is_active]);
+
+        return redirect()->route('admin.inbox.auto-replies')
+            ->with('alert_type', 'success')
+            ->with('message', $ar->is_active ? 'Autosvar aktivert' : 'Autosvar deaktivert');
+    }
+
+    public function deleteAutoReply(int $id)
+    {
+        \App\Models\Inbox\InboxAutoReply::findOrFail($id)->delete();
+        return redirect()->route('admin.inbox.auto-replies')
+            ->with('alert_type', 'success')->with('message', 'Autosvar slettet');
+    }
+
+    // ═══════════ INBOX-REGLER ═══════════
+
+    public function inboxRules()
+    {
+        $rules = config('inbox.auto_assign.rules', []);
+        $teamMembers = $this->inboxService->getTeamMembers();
+        return view('backend.inbox.rules', compact('rules', 'teamMembers'));
+    }
+
+    public function storeInboxRule(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'keywords' => 'required|string',
+            'assign_to' => 'required|integer',
+        ]);
+
+        // Les eksisterende regler fra config, legg til ny, skriv tilbake
+        $configPath = config_path('inbox.php');
+        $config = include $configPath;
+
+        $config['auto_assign']['rules'][] = [
+            'name' => $request->input('name'),
+            'keywords' => array_map('trim', explode(',', $request->input('keywords'))),
+            'assign_to' => (int) $request->input('assign_to'),
+            'set_priority' => $request->input('set_priority', 'normal'),
+            'set_category' => $request->input('set_category'),
+        ];
+
+        file_put_contents($configPath, "<?php\n\nreturn " . var_export($config, true) . ";\n");
+
+        return redirect()->route('admin.inbox.rules')
+            ->with('alert_type', 'success')->with('message', 'Regel opprettet');
+    }
+
+    public function deleteInboxRule(int $id)
+    {
+        $configPath = config_path('inbox.php');
+        $config = include $configPath;
+
+        if (isset($config['auto_assign']['rules'][$id])) {
+            array_splice($config['auto_assign']['rules'], $id, 1);
+            file_put_contents($configPath, "<?php\n\nreturn " . var_export($config, true) . ";\n");
+        }
+
+        return redirect()->route('admin.inbox.rules')
+            ->with('alert_type', 'success')->with('message', 'Regel slettet');
+    }
 }

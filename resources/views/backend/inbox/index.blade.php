@@ -58,6 +58,8 @@
     <div class="pull-right">
         <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#newEmailModal"><i class="fa fa-pencil"></i> Ny e-post</button>
         <a href="{{ route('admin.inbox.canned-responses') }}" class="btn btn-sm btn-default"><i class="fa fa-bolt"></i> Hurtigsvar</a>
+        <a href="{{ route('admin.inbox.auto-replies') }}" class="btn btn-sm btn-default"><i class="fa fa-reply-all"></i> Autosvar</a>
+        <a href="{{ route('admin.inbox.rules') }}" class="btn btn-sm btn-default"><i class="fa fa-gavel"></i> Regler</a>
         <a href="{{ route('admin.inbox.settings') }}" class="btn btn-sm btn-default"><i class="fa fa-cog"></i> Innstillinger</a>
     </div>
 </div>
@@ -278,7 +280,10 @@
                 <div style="padding:24px;">
                     <div class="form-group">
                         <label>Til</label>
-                        <input type="email" name="to" class="form-control" placeholder="e-post@eksempel.no" required>
+                        <div style="position:relative;">
+                            <input type="email" name="to" id="composeTo" class="form-control" placeholder="Søk etter navn eller e-post..." autocomplete="off" required>
+                            <div id="composeToResults" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ddd;border-top:none;border-radius:0 0 6px 6px;max-height:200px;overflow-y:auto;z-index:1050;box-shadow:0 4px 12px rgba(0,0,0,0.1);"></div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Emne</label>
@@ -341,5 +346,44 @@ function bulkAssign() {
     document.getElementById('bulkAssignTo').value = assignTo;
     document.getElementById('bulkForm').submit();
 }
+
+// Autocomplete for "Til"-felt i compose modal
+(function() {
+    var input = document.getElementById('composeTo');
+    var results = document.getElementById('composeToResults');
+    if (!input || !results) return;
+    var debounce;
+
+    input.addEventListener('input', function() {
+        clearTimeout(debounce);
+        var q = this.value.trim();
+        if (q.length < 2) { results.style.display = 'none'; return; }
+        debounce = setTimeout(function() {
+            fetch('/learners/search?search=' + encodeURIComponent(q))
+                .then(function(r) { return r.json(); })
+                .then(function(users) {
+                    if (!users.length) { results.style.display = 'none'; return; }
+                    results.innerHTML = '';
+                    users.slice(0, 10).forEach(function(u) {
+                        var div = document.createElement('div');
+                        div.style.cssText = 'padding:8px 12px;cursor:pointer;border-bottom:1px solid #f0f0f0;font-size:13px;';
+                        div.innerHTML = '<strong>' + (u.first_name || '') + ' ' + (u.last_name || '') + '</strong> <span style="color:#888;">&lt;' + u.email + '&gt;</span>';
+                        div.addEventListener('click', function() {
+                            input.value = u.email;
+                            results.style.display = 'none';
+                        });
+                        div.addEventListener('mouseenter', function() { this.style.background = '#f5f0eb'; });
+                        div.addEventListener('mouseleave', function() { this.style.background = '#fff'; });
+                        results.appendChild(div);
+                    });
+                    results.style.display = 'block';
+                });
+        }, 250);
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !results.contains(e.target)) results.style.display = 'none';
+    });
+})();
 </script>
 @stop
