@@ -1,197 +1,236 @@
 @extends('backend.layout')
 
+@section('page_title', 'Annonser — Forfatterskolen Admin')
+
 @section('content')
+@php
+    // === EKTE DATA FRA FACEBOOK ===
+    $webinarsWithAds = \App\FreeWebinar::where(function ($q) {
+        $q->whereNotNull('facebook_campaign_id')->orWhereNotNull('google_search_campaign_id');
+    })->orderByDesc('start_date')->get();
+
+    $totalFbSpend = $webinarsWithAds->sum('facebook_spend');
+    $totalFbLeads = $webinarsWithAds->sum('facebook_leads_count');
+    $totalFbClicks = $webinarsWithAds->sum('facebook_clicks');
+    $totalFbImpressions = $webinarsWithAds->sum('facebook_impressions');
+    $avgCpa = $totalFbLeads > 0 ? $totalFbSpend / $totalFbLeads : 0;
+    $ctr = $totalFbImpressions > 0 ? ($totalFbClicks / $totalFbImpressions) * 100 : 0;
+
+    // Siste leads fra Facebook
+    $recentLeads = \DB::table('webinar_registrants')
+        ->where('source', 'facebook')
+        ->orderByDesc('created_at')
+        ->limit(15)
+        ->get();
+
+    // AdCampaign-data (enklere modell)
+    $adCampaigns = \App\Models\AdCampaign::orderByDesc('created_at')->limit(20)->get();
+    $activeCampaigns = $adCampaigns->where('status', 'active');
+
+    // Siste stats-oppdatering
+    $lastUpdate = $webinarsWithAds->max('ad_stats_updated_at');
+@endphp
+
 <div class="page-toolbar">
-    <h3><i class="fa fa-bullhorn"></i> Ad OS - Kontrollpanel</h3>
+    <h3><i class="fa fa-bullhorn"></i> Annonser</h3>
+    <div class="pull-right">
+        <button class="btn btn-sm btn-default" onclick="location.reload()"><i class="fa fa-refresh"></i> Oppdater</button>
+        @if($lastUpdate)
+            <small class="text-muted">Sist synket: {{ \Carbon\Carbon::parse($lastUpdate)->diffForHumans() }}</small>
+        @endif
+    </div>
 </div>
 
 <div class="col-md-12">
-    {{-- Kill Switch & Strategy Status --}}
+
+    {{-- KPI-kort --}}
     <div class="row" style="margin-bottom: 20px;">
-        <div class="col-md-8">
-            @if($strategy)
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <strong><i class="fa fa-shield"></i> Aktiv strategi: {{ $strategy->name }}</strong>
-                        <span class="label label-{{ $strategy->automation_level === 'full_operator' ? 'danger' : ($strategy->automation_level === 'supervised' ? 'warning' : 'info') }}" style="margin-left: 10px;">
-                            {{ config('ad_os.automation_levels.' . $strategy->automation_level . '.label', $strategy->automation_level) }}
-                        </span>
-                        @if($strategy->approvalPolicy && $strategy->approvalPolicy->emergency_kill_switch)
-                            <span class="label label-danger" style="margin-left: 5px;"><i class="fa fa-ban"></i> KILL SWITCH AKTIV</span>
-                        @endif
-                    </div>
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <strong>Mål:</strong> {{ config('ad_os.objectives.' . $strategy->primary_goal, $strategy->primary_goal) }}
-                            </div>
-                            <div class="col-md-3">
-                                <strong>Mål-CPA:</strong> {{ $strategy->target_cpa ? number_format($strategy->target_cpa, 0) . ' kr' : '-' }}
-                            </div>
-                            <div class="col-md-3">
-                                <strong>Mål-ROAS:</strong> {{ $strategy->target_roas ?? '-' }}
-                            </div>
-                            <div class="col-md-3">
-                                <strong>Risikotoleranse:</strong> {{ ucfirst($strategy->risk_tolerance) }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @else
-                <div class="alert alert-warning">
-                    <i class="fa fa-exclamation-triangle"></i> Ingen aktiv strategiprofil. <a href="{{ route('admin.ads.strategy') }}">Konfigurer strategi</a>
-                </div>
-            @endif
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-{{ ($strategy && $strategy->approvalPolicy && $strategy->approvalPolicy->emergency_kill_switch) ? 'danger' : 'default' }}">
+        <div class="col-md-2">
+            <div class="panel panel-default" style="border-left: 4px solid #862736;">
                 <div class="panel-body text-center">
-                    <form action="{{ route('admin.ads.kill-switch') }}" method="POST" style="display:inline;">
-                        @csrf
-                        <button type="submit" class="btn btn-{{ ($strategy && $strategy->approvalPolicy && $strategy->approvalPolicy->emergency_kill_switch) ? 'success' : 'danger' }} btn-lg" onclick="return confirm('Er du sikker?')">
-                            <i class="fa fa-{{ ($strategy && $strategy->approvalPolicy && $strategy->approvalPolicy->emergency_kill_switch) ? 'play' : 'stop' }}"></i>
-                            {{ ($strategy && $strategy->approvalPolicy && $strategy->approvalPolicy->emergency_kill_switch) ? 'Deaktiver Kill Switch' : 'EMERGENCY KILL SWITCH' }}
-                        </button>
-                    </form>
+                    <h2 style="margin:0;color:#862736;">{{ number_format($totalFbSpend, 0) }} kr</h2>
+                    <small>Total forbruk</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="panel panel-default" style="border-left: 4px solid #3b82f6;">
+                <div class="panel-body text-center">
+                    <h2 style="margin:0;color:#3b82f6;">{{ number_format($totalFbLeads) }}</h2>
+                    <small>Leads totalt</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="panel panel-default" style="border-left: 4px solid #f59e0b;">
+                <div class="panel-body text-center">
+                    <h2 style="margin:0;color:#f59e0b;">{{ $avgCpa > 0 ? number_format($avgCpa, 0) . ' kr' : '—' }}</h2>
+                    <small>Snitt CPA</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="panel panel-default" style="border-left: 4px solid #22c55e;">
+                <div class="panel-body text-center">
+                    <h2 style="margin:0;color:#22c55e;">{{ number_format($totalFbClicks) }}</h2>
+                    <small>Klikk totalt</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="panel panel-default" style="border-left: 4px solid #8b5cf6;">
+                <div class="panel-body text-center">
+                    <h2 style="margin:0;color:#8b5cf6;">{{ number_format($totalFbImpressions) }}</h2>
+                    <small>Visninger</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="panel panel-default" style="border-left: 4px solid #06b6d4;">
+                <div class="panel-body text-center">
+                    <h2 style="margin:0;color:#06b6d4;">{{ number_format($ctr, 2) }}%</h2>
+                    <small>CTR</small>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- KPI Cards --}}
-    <div class="row" style="margin-bottom: 20px;">
-        <div class="col-md-2">
-            <div class="panel panel-info">
-                <div class="panel-body text-center">
-                    <h2 style="margin:0;">{{ $campaignStats['active'] ?? 0 }}</h2>
-                    <small>Aktive kampanjer</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="panel panel-warning">
-                <div class="panel-body text-center">
-                    <h2 style="margin:0;">{{ $pendingApprovals }}</h2>
-                    <small>Venter godkjenning</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="panel panel-default">
-                <div class="panel-body text-center">
-                    <h2 style="margin:0;">{{ number_format($budgetInfo['spent_today'], 0) }} kr</h2>
-                    <small>Brukt i dag</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="panel panel-default">
-                <div class="panel-body text-center">
-                    <h2 style="margin:0;">{{ number_format($budgetInfo['remaining_daily'], 0) }} kr</h2>
-                    <small>Gjenstår i dag</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="panel panel-default">
-                <div class="panel-body text-center">
-                    <h2 style="margin:0;">{{ number_format($budgetInfo['spent_month'], 0) }} kr</h2>
-                    <small>Brukt denne mnd</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="panel panel-default">
-                <div class="panel-body text-center">
-                    <h2 style="margin:0;">{{ number_format($budgetInfo['remaining_monthly'], 0) }} kr</h2>
-                    <small>Gjenstår mnd</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Charts --}}
-    <div class="row" style="margin-bottom: 20px;">
-        <div class="col-md-8">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <strong><i class="fa fa-line-chart"></i> Forbruk og leads</strong>
-                    <div class="pull-right">
-                        <div class="btn-group btn-group-xs">
-                            <button type="button" class="btn btn-default chart-period" data-days="7">7d</button>
-                            <button type="button" class="btn btn-primary chart-period" data-days="14">14d</button>
-                            <button type="button" class="btn btn-default chart-period" data-days="30">30d</button>
-                        </div>
-                        <small class="text-muted" id="lastUpdated" style="margin-left:8px;"></small>
-                    </div>
-                </div>
-                <div class="panel-body" style="height: 300px;">
-                    <canvas id="spendLeadsChart"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading"><strong><i class="fa fa-pie-chart"></i> Budsjett denne mnd</strong></div>
-                <div class="panel-body text-center" style="height: 300px; display: flex; align-items: center; justify-content: center;">
-                    <canvas id="budgetChart" style="max-height: 250px;"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row" style="margin-bottom: 20px;">
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading"><strong><i class="fa fa-area-chart"></i> CPA-trend</strong></div>
-                <div class="panel-body" style="height: 250px;">
-                    <canvas id="cpaChart"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading"><strong><i class="fa fa-bar-chart"></i> Kampanjer — forbruk vs leads</strong></div>
-                <div class="panel-body" style="height: 250px;">
-                    <canvas id="campaignCompareChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Campaign List --}}
+    {{-- Webinar-kampanjer (ekte Facebook-data) --}}
     <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <strong><i class="fa fa-flag"></i> Kampanjer ({{ \App\Models\AdOs\AdCampaign::where('status', 'active')->count() }} aktive)</strong>
+                    <strong><i class="fa fa-facebook-square" style="color:#1877f2;"></i> Facebook-kampanjer — Webinarer</strong>
+                </div>
+                <div class="panel-body" style="padding: 0;">
+                    <table class="table table-striped table-condensed" style="margin:0;">
+                        <thead>
+                            <tr>
+                                <th>Webinar</th>
+                                <th>Startdato</th>
+                                <th class="text-right">Forbruk</th>
+                                <th class="text-right">Leads</th>
+                                <th class="text-right">CPA</th>
+                                <th class="text-right">Klikk</th>
+                                <th class="text-right">Visninger</th>
+                                <th class="text-right">CTR</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($webinarsWithAds as $w)
+                                @php
+                                    $wCpa = $w->facebook_leads_count > 0 ? $w->facebook_spend / $w->facebook_leads_count : 0;
+                                    $wCtr = $w->facebook_impressions > 0 ? ($w->facebook_clicks / $w->facebook_impressions) * 100 : 0;
+                                    $isLive = $w->start_date && \Carbon\Carbon::parse($w->start_date)->isFuture();
+                                @endphp
+                                <tr>
+                                    <td>
+                                        <strong>{{ $w->title }}</strong>
+                                        <br><small class="text-muted">ID: {{ $w->facebook_campaign_id }}</small>
+                                    </td>
+                                    <td>{{ $w->start_date ? \Carbon\Carbon::parse($w->start_date)->format('d.m.Y H:i') : '—' }}</td>
+                                    <td class="text-right"><strong>{{ number_format($w->facebook_spend, 0) }} kr</strong></td>
+                                    <td class="text-right"><strong style="color:#3b82f6;">{{ $w->facebook_leads_count }}</strong></td>
+                                    <td class="text-right">
+                                        @if($wCpa > 0)
+                                            <span style="color: {{ $wCpa < 50 ? '#22c55e' : ($wCpa < 100 ? '#f59e0b' : '#ef4444') }};">
+                                                {{ number_format($wCpa, 0) }} kr
+                                            </span>
+                                        @else
+                                            —
+                                        @endif
+                                    </td>
+                                    <td class="text-right">{{ number_format($w->facebook_clicks) }}</td>
+                                    <td class="text-right">{{ number_format($w->facebook_impressions) }}</td>
+                                    <td class="text-right">{{ $wCtr > 0 ? number_format($wCtr, 2) . '%' : '—' }}</td>
+                                    <td>
+                                        @if($w->facebook_ad_status === 'paused' || !$isLive)
+                                            <span class="label label-default">Avsluttet</span>
+                                        @else
+                                            <span class="label label-success">Aktiv</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="9" class="text-muted text-center">Ingen Facebook-kampanjer ennå.</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Siste Facebook-leads --}}
+    @if($recentLeads->count() > 0)
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong><i class="fa fa-users" style="color:#1877f2;"></i> Siste Facebook-leads</strong>
+                    <span class="badge pull-right">{{ $recentLeads->count() }}</span>
+                </div>
+                <div class="panel-body" style="padding: 0; max-height: 400px; overflow-y: auto;">
+                    <table class="table table-condensed" style="margin:0;">
+                        @foreach($recentLeads as $lead)
+                            <tr>
+                                <td>
+                                    <strong>{{ $lead->first_name ?? '' }} {{ $lead->last_name ?? '' }}</strong>
+                                    <br><small class="text-muted">{{ $lead->email ?? '—' }}</small>
+                                </td>
+                                <td class="text-right">
+                                    <small class="text-muted">{{ \Carbon\Carbon::parse($lead->created_at)->diffForHumans() }}</small>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {{-- Webinar-påmeldinger per dag (chart) --}}
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong><i class="fa fa-line-chart"></i> Leads per dag (siste 14 dager)</strong></div>
+                <div class="panel-body" style="height: 370px;">
+                    <canvas id="leadsPerDayChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Ad Campaigns (fra ad_campaigns-tabellen) --}}
+    @if($adCampaigns->count() > 0)
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong><i class="fa fa-flag"></i> Kampanjer i systemet ({{ $activeCampaigns->count() }} aktive)</strong>
                 </div>
                 <div class="panel-body" style="padding: 0;">
                     <table class="table table-striped table-condensed" style="margin:0;">
                         <thead>
                             <tr>
                                 <th>Kampanje</th>
+                                <th>Type</th>
                                 <th>Plattform</th>
                                 <th>Status</th>
-                                <th>Daglig budsjett</th>
+                                <th>Budsjett</th>
+                                <th class="text-right">Forbruk</th>
+                                <th class="text-right">Leads</th>
                                 <th>Opprettet</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @php
-                                try {
-                                    $allCampaigns = \App\Models\AdOs\AdCampaign::orderByRaw("FIELD(status, 'active', 'paused', 'draft')")->orderByDesc('created_at')->limit(30)->get();
-                                } catch (\Exception $e) {
-                                    $allCampaigns = collect();
-                                }
-                            @endphp
-                            @foreach($allCampaigns as $camp)
+                            @foreach($adCampaigns as $camp)
                                 <tr>
-                                    <td>
-                                        <strong>{{ \Illuminate\Support\Str::limit($camp->name, 50) }}</strong>
-                                    </td>
+                                    <td><strong>{{ \Illuminate\Support\Str::limit($camp->name, 45) }}</strong></td>
+                                    <td><small>{{ $camp->type }}</small></td>
                                     <td>
                                         <span class="label label-{{ $camp->platform === 'facebook' ? 'primary' : 'warning' }}">
-                                            <i class="fa fa-{{ $camp->platform === 'facebook' ? 'facebook' : 'google' }}"></i> {{ ucfirst($camp->platform) }}
+                                            <i class="fa fa-{{ $camp->platform === 'facebook' ? 'facebook' : 'google' }}"></i>
                                         </span>
                                     </td>
                                     <td>
@@ -199,8 +238,10 @@
                                             {{ $camp->status === 'active' ? 'Aktiv' : ($camp->status === 'paused' ? 'Pauset' : ucfirst($camp->status)) }}
                                         </span>
                                     </td>
-                                    <td>{{ $camp->daily_budget ? number_format($camp->daily_budget, 0) . ' kr' : '-' }}</td>
-                                    <td>{{ $camp->created_at?->format('d.m.Y') ?? '-' }}</td>
+                                    <td>{{ $camp->daily_budget ? number_format($camp->daily_budget, 0) . ' kr/dag' : '—' }}</td>
+                                    <td class="text-right">{{ $camp->total_spend > 0 ? number_format($camp->total_spend, 0) . ' kr' : '—' }}</td>
+                                    <td class="text-right">{{ $camp->total_leads > 0 ? $camp->total_leads : '—' }}</td>
+                                    <td><small>{{ $camp->created_at?->format('d.m.Y') }}</small></td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -209,282 +250,70 @@
             </div>
         </div>
     </div>
-
-    {{-- Daily Performance Summary --}}
-    <div class="row" style="margin-bottom: 20px;">
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading"><strong><i class="fa fa-bar-chart"></i> Dagens ytelse</strong></div>
-                <div class="panel-body">
-                    @if($dailySummary['metrics'])
-                        <table class="table table-condensed">
-                            <tr><td>Visninger</td><td class="text-right"><strong>{{ number_format($dailySummary['metrics']['total_impressions']) }}</strong></td></tr>
-                            <tr><td>Klikk</td><td class="text-right"><strong>{{ number_format($dailySummary['metrics']['total_clicks']) }}</strong></td></tr>
-                            <tr><td>Konverteringer</td><td class="text-right"><strong>{{ number_format($dailySummary['metrics']['total_conversions']) }}</strong></td></tr>
-                            <tr><td>Forbruk</td><td class="text-right"><strong>{{ number_format($dailySummary['metrics']['total_spend'], 2) }} kr</strong></td></tr>
-                            <tr><td>Snitt CPA</td><td class="text-right"><strong>{{ $dailySummary['metrics']['avg_cpa'] ? number_format($dailySummary['metrics']['avg_cpa'], 2) . ' kr' : '-' }}</strong></td></tr>
-                            <tr><td>Snitt CTR</td><td class="text-right"><strong>{{ $dailySummary['metrics']['avg_ctr'] ? number_format($dailySummary['metrics']['avg_ctr'] * 100, 2) . '%' : '-' }}</strong></td></tr>
-                        </table>
-                    @else
-                        <p class="text-muted">Ingen data for i dag ennå.</p>
-                    @endif
-                </div>
-            </div>
-        </div>
-
-        {{-- AI Recommendations --}}
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <strong><i class="fa fa-lightbulb-o"></i> AI-anbefalinger</strong>
-                    <a href="{{ route('admin.ads.recommendations') }}" class="pull-right">Se alle</a>
-                </div>
-                <div class="panel-body">
-                    @if($pendingRecommendations->count() > 0)
-                        @foreach($pendingRecommendations as $rec)
-                            <div style="border-left: 3px solid {{ config('ad_os.risk_levels.' . $rec->risk_level . '.color', '#ccc') }}; padding: 8px 12px; margin-bottom: 8px; background: #f9f9f9;">
-                                <strong>{{ ucfirst(str_replace('_', ' ', $rec->decision_type)) }}</strong>
-                                @if($rec->campaign)
-                                    <small class="text-muted">- {{ $rec->campaign->name }}</small>
-                                @endif
-                                <br>
-                                <small>{{ $rec->reasoning_summary }}</small>
-                                <span class="pull-right">
-                                    <span class="label label-default">{{ round($rec->confidence * 100) }}%</span>
-                                </span>
-                            </div>
-                        @endforeach
-                    @else
-                        <p class="text-muted">Ingen ventende anbefalinger.</p>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Recent Actions --}}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <strong><i class="fa fa-history"></i> Siste handlinger</strong>
-                    <a href="{{ route('admin.ads.logs') }}" class="pull-right">Se alle</a>
-                </div>
-                <div class="panel-body">
-                    <table class="table table-striped table-condensed">
-                        <thead>
-                            <tr>
-                                <th>Tid</th>
-                                <th>Handling</th>
-                                <th>Utløst av</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($recentActions as $action)
-                                <tr>
-                                    <td>{{ $action->created_at->format('d.m H:i') }}</td>
-                                    <td>{{ ucfirst(str_replace('_', ' ', $action->action_type)) }}</td>
-                                    <td>
-                                        <span class="label label-{{ $action->triggered_by === 'ai' ? 'primary' : ($action->triggered_by === 'rule' ? 'warning' : 'default') }}">
-                                            {{ ucfirst($action->triggered_by) }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="label label-{{ $action->status === 'success' ? 'success' : 'danger' }}">
-                                            {{ ucfirst($action->status) }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+    @endif
 
     {{-- Quick Navigation --}}
     <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-12">
             <a href="{{ route('admin.ads.strategist') }}" class="btn btn-primary"><i class="fa fa-magic"></i> AI Strategist</a>
             <a href="{{ route('admin.ads.strategy') }}" class="btn btn-default"><i class="fa fa-cogs"></i> Strategi</a>
-            <a href="{{ route('admin.ads.campaigns') }}" class="btn btn-default"><i class="fa fa-flag"></i> Kampanjer</a>
-            <a href="{{ route('admin.ads.creatives') }}" class="btn btn-default"><i class="fa fa-paint-brush"></i> Kreative</a>
-            <a href="{{ route('admin.ads.recommendations') }}" class="btn btn-default"><i class="fa fa-lightbulb-o"></i> Anbefalinger</a>
-            <a href="{{ route('admin.ads.approvals') }}" class="btn btn-default"><i class="fa fa-check-circle"></i> Godkjenninger</a>
+            <a href="{{ route('admin.ads.campaigns') }}" class="btn btn-default"><i class="fa fa-flag"></i> Alle kampanjer</a>
             <a href="{{ route('admin.ads.rules') }}" class="btn btn-default"><i class="fa fa-gavel"></i> Regler</a>
-            <a href="{{ route('admin.ads.experiments') }}" class="btn btn-default"><i class="fa fa-flask"></i> Eksperimenter</a>
             <a href="{{ route('admin.ads.logs') }}" class="btn btn-default"><i class="fa fa-list"></i> Logger</a>
         </div>
     </div>
 </div>
 @stop
 
-@section('page_title', 'Ad OS — Forfatterskolen Admin')
-
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script>
 (function() {
-    var currentDays = 14;
-    var spendLeadsChart, cpaChart, budgetChart, campaignChart;
-    var wine = '#862736';
-    var wineLight = 'rgba(134,39,54,0.15)';
-    var blue = '#3b82f6';
-    var blueLight = 'rgba(59,130,246,0.15)';
-    var green = '#22c55e';
-    var orange = '#f59e0b';
+    var ctx = document.getElementById('leadsPerDayChart');
+    if (!ctx) return;
 
-    // Budget doughnut (static data from Blade)
-    var budgetCtx = document.getElementById('budgetChart');
-    if (budgetCtx) {
-        var spent = {{ $budgetInfo['spent_month'] ?? 0 }};
-        var remaining = {{ $budgetInfo['remaining_monthly'] ?? 0 }};
-        budgetChart = new Chart(budgetCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Brukt', 'Gjenstår'],
-                datasets: [{
-                    data: [spent, Math.max(0, remaining)],
-                    backgroundColor: [wine, '#e8e4de'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '65%',
-                plugins: {
-                    legend: { position: 'bottom', labels: { font: { size: 12 } } },
-                    tooltip: { callbacks: { label: function(ctx) { return ctx.label + ': ' + Math.round(ctx.raw) + ' kr'; } } }
-                }
+    @php
+        $leadsPerDay = \DB::table('webinar_registrants')
+            ->where('source', 'facebook')
+            ->where('created_at', '>=', now()->subDays(14))
+            ->selectRaw('DATE(created_at) as date, count(*) as cnt')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        $dates = [];
+        $counts = [];
+        $cursor = now()->subDays(13)->startOfDay();
+        for ($i = 0; $i < 14; $i++) {
+            $d = $cursor->copy()->addDays($i)->format('Y-m-d');
+            $dates[] = $cursor->copy()->addDays($i)->format('d.m');
+            $row = $leadsPerDay->firstWhere('date', $d);
+            $counts[] = $row ? $row->cnt : 0;
+        }
+    @endphp
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($dates) !!},
+            datasets: [{
+                label: 'Facebook-leads',
+                data: {!! json_encode($counts) !!},
+                backgroundColor: 'rgba(24,119,242,0.7)',
+                borderRadius: 4,
+                barThickness: 20
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                x: { grid: { display: false } }
             }
-        });
-    }
-
-    // Campaign comparison (static from Blade — active campaigns)
-    var campaignCtx = document.getElementById('campaignCompareChart');
-    if (campaignCtx) {
-        @php
-            try {
-                $activeCampaigns = \App\Models\AdOs\AdCampaign::where('status', 'active')
-                    ->with(['metricSnapshots' => fn($q) => $q->where('date', '>=', now()->subDays(14))])
-                    ->limit(15)
-                    ->get();
-            } catch (\Exception $e) {
-                $activeCampaigns = collect();
-            }
-        @endphp
-        campaignChart = new Chart(campaignCtx, {
-            type: 'bar',
-            data: {
-                labels: {!! json_encode($activeCampaigns->pluck('name')->map(fn($n) => \Illuminate\Support\Str::limit($n, 25))) !!},
-                datasets: [
-                    {
-                        label: 'Forbruk (kr)',
-                        data: {!! json_encode($activeCampaigns->map(fn($c) => round($c->metricSnapshots->sum('spend'), 0))) !!},
-                        backgroundColor: wine,
-                        barThickness: 20
-                    },
-                    {
-                        label: 'Leads',
-                        data: {!! json_encode($activeCampaigns->map(fn($c) => $c->metricSnapshots->sum('leads'))) !!},
-                        backgroundColor: blue,
-                        barThickness: 20
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'y',
-                plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
-                scales: { x: { beginAtZero: true, grid: { display: false } } }
-            }
-        });
-    }
-
-    // Fetch time-series data via AJAX
-    function fetchMetrics(days) {
-        currentDays = days;
-        fetch('{{ route("admin.ads.api.metrics") }}?days=' + days)
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                renderSpendLeads(data);
-                renderCPA(data);
-                document.getElementById('lastUpdated').textContent = 'Oppdatert: ' + new Date().toLocaleTimeString('nb-NO', {hour:'2-digit',minute:'2-digit'});
-            })
-            .catch(function(err) { console.error('Metrics fetch error:', err); });
-    }
-
-    function renderSpendLeads(data) {
-        var labels = data.map(function(d) { return d.date; });
-        var spend = data.map(function(d) { return d.spend; });
-        var leads = data.map(function(d) { return d.leads; });
-
-        if (spendLeadsChart) spendLeadsChart.destroy();
-        spendLeadsChart = new Chart(document.getElementById('spendLeadsChart'), {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    { label: 'Forbruk (kr)', data: spend, borderColor: wine, backgroundColor: wineLight, fill: true, tension: 0.3, yAxisID: 'y' },
-                    { label: 'Leads', data: leads, borderColor: blue, backgroundColor: blueLight, fill: false, tension: 0.3, type: 'bar', yAxisID: 'y1', barThickness: 16 }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
-                scales: {
-                    y: { type: 'linear', position: 'left', title: { display: true, text: 'Forbruk (kr)' }, beginAtZero: true, grid: { color: '#f0f0f0' } },
-                    y1: { type: 'linear', position: 'right', title: { display: true, text: 'Leads' }, beginAtZero: true, grid: { display: false } }
-                }
-            }
-        });
-    }
-
-    function renderCPA(data) {
-        var labels = data.map(function(d) { return d.date; });
-        var cpa = data.map(function(d) { return d.cpa; });
-        var targetCpa = {{ $strategy?->target_cpa ?? 200 }};
-
-        if (cpaChart) cpaChart.destroy();
-        cpaChart = new Chart(document.getElementById('cpaChart'), {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    { label: 'CPA (kr)', data: cpa, borderColor: orange, backgroundColor: 'rgba(245,158,11,0.1)', fill: true, tension: 0.3 },
-                    { label: 'Mål-CPA', data: Array(labels.length).fill(targetCpa), borderColor: green, borderDash: [5, 5], pointRadius: 0, fill: false }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
-                scales: { y: { beginAtZero: true, grid: { color: '#f0f0f0' } } }
-            }
-        });
-    }
-
-    // Period toggle buttons
-    document.querySelectorAll('.chart-period').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.chart-period').forEach(function(b) { b.classList.remove('btn-primary'); b.classList.add('btn-default'); });
-            this.classList.remove('btn-default');
-            this.classList.add('btn-primary');
-            fetchMetrics(parseInt(this.dataset.days));
-        });
+        }
     });
-
-    // Initial load
-    fetchMetrics(14);
-
-    // Auto-refresh every 15 minutes
-    setInterval(function() { fetchMetrics(currentDays); }, 15 * 60 * 1000);
 })();
 </script>
 @stop
