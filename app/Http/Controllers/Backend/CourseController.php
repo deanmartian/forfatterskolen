@@ -1690,6 +1690,57 @@ class CourseController extends Controller
     /**
      * Auto-kategoriser leksjoner basert på tittel
      */
+    public function assignWebinarHost($courseId, Request $request)
+    {
+        $webinarId = $request->input('webinar_id');
+        $hostId = $request->input('host_id');
+
+        \App\Models\CourseStaff::where('course_id', $courseId)
+            ->where('webinar_id', $webinarId)
+            ->where('role', 'webinar_host')
+            ->delete();
+
+        if ($hostId) {
+            \App\Models\CourseStaff::create([
+                'course_id' => $courseId,
+                'user_id' => $hostId,
+                'role' => 'webinar_host',
+                'webinar_id' => $webinarId,
+            ]);
+        }
+
+        return redirect()->back()->with('alert_type', 'success')->with('message', 'Webinar-vert tildelt');
+    }
+
+    public function bulkAssignWebinarHost($courseId, Request $request)
+    {
+        $hostId = $request->input('host_id');
+        if (!$hostId) return redirect()->back()->with('alert_type', 'danger')->with('message', 'Velg en vert');
+
+        $assignedWebinars = \App\Models\CourseStaff::where('course_id', $courseId)
+            ->where('role', 'webinar_host')
+            ->pluck('webinar_id');
+
+        $allWebinars = \App\Webinar::where('course_id', $courseId)
+            ->where('start_date', '>=', now())
+            ->pluck('id');
+
+        $unassigned = $allWebinars->diff($assignedWebinars);
+        $count = 0;
+
+        foreach ($unassigned as $webinarId) {
+            \App\Models\CourseStaff::create([
+                'course_id' => $courseId,
+                'user_id' => $hostId,
+                'role' => 'webinar_host',
+                'webinar_id' => $webinarId,
+            ]);
+            $count++;
+        }
+
+        return redirect()->back()->with('alert_type', 'success')->with('message', "{$count} webinarer tildelt vert");
+    }
+
     public function autoCategorizeLessons($courseId)
     {
         $course = Course::findOrFail($courseId);

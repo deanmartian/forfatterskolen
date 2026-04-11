@@ -1026,6 +1026,8 @@ Route::domain($admin)->group(function () {
         Route::delete('course/{id}/staff/{staffId}', [Backend\CourseController::class, 'deleteStaff'])->name('admin.course.staff.delete');
         Route::post('course/{id}/staff/assign-editor', [Backend\CourseController::class, 'assignEditor'])->name('admin.course.staff.assign-editor');
         Route::post('course/{id}/staff/bulk-assign', [Backend\CourseController::class, 'bulkAssignEditor'])->name('admin.course.staff.bulk-assign');
+        Route::post('course/{id}/staff/assign-webinar-host', [Backend\CourseController::class, 'assignWebinarHost'])->name('admin.course.staff.assign-webinar-host');
+        Route::post('course/{id}/staff/bulk-assign-webinar', [Backend\CourseController::class, 'bulkAssignWebinarHost'])->name('admin.course.staff.bulk-assign-webinar');
         Route::get('pabygg-treff', [\App\Http\Controllers\Frontend\PabyggTreffController::class, 'adminIndex'])->name('admin.pabygg-treff');
         Route::post('course/{id}/add_similar_course', [Backend\CourseController::class, 'add_similar_course'])->name('admin.course.add_similar_course');
         Route::post('course/remove_similar_course/{similar_course_id}', [Backend\CourseController::class, 'remove_similar_course'])->name('admin.course.remove_similar_course');

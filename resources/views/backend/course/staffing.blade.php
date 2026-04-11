@@ -81,6 +81,84 @@
             </table>
         </div>
 
+        {{-- Webinar-plan --}}
+        @php
+            try {
+                $webinars = \App\Webinar::where('course_id', $course->id)->orderBy('start_date')->get();
+                $webinarHosts = $staff->where('role', 'webinar_host');
+                $webinarHostMap = $webinarHosts->pluck('user_id', 'webinar_id');
+            } catch (\Exception $e) {
+                $webinars = collect();
+                $webinarHostMap = collect();
+            }
+        @endphp
+        @if($webinars->count() > 0)
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong><i class="fa fa-play-circle"></i> Webinar-plan ({{ $webinars->count() }} webinarer)</strong>
+                <span class="pull-right text-muted" style="font-size:12px;">
+                    {{ $webinarHostMap->count() }} av {{ $webinars->count() }} tildelt
+                </span>
+            </div>
+            <div class="panel-body" style="padding:0;max-height:500px;overflow-y:auto;">
+                <table class="table table-condensed table-striped" style="margin:0;">
+                    <thead>
+                        <tr>
+                            <th style="width:40px;">#</th>
+                            <th>Dato</th>
+                            <th>Dag</th>
+                            <th>Kl.</th>
+                            <th>Tittel</th>
+                            <th>Vert</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($webinars as $i => $w)
+                            @php
+                                $wDate = \Carbon\Carbon::parse($w->start_date);
+                                $isPast = $wDate->isPast();
+                                $isThisWeek = $wDate->isCurrentWeek();
+                                $hostId = $webinarHostMap[$w->id] ?? null;
+                                $days = ['søndag','mandag','tirsdag','onsdag','torsdag','fredag','lørdag'];
+                            @endphp
+                            <tr style="{{ $isPast ? 'opacity:0.5;' : '' }}{{ $isThisWeek ? 'background:#fff8e1;' : '' }}">
+                                <td><small class="text-muted">{{ $i + 1 }}</small></td>
+                                <td><strong>{{ $wDate->format('d.m.Y') }}</strong></td>
+                                <td>{{ ucfirst($days[$wDate->dayOfWeek]) }}</td>
+                                <td>{{ $wDate->format('H:i') }}</td>
+                                <td>{{ $w->title }}</td>
+                                <td>
+                                    <form method="POST" action="{{ route('admin.course.staff.assign-webinar-host', $course->id) }}" style="display:inline;">
+                                        @csrf
+                                        <input type="hidden" name="webinar_id" value="{{ $w->id }}">
+                                        <select name="host_id" class="input-sm" onchange="this.form.submit()" style="padding:2px;font-size:11px;width:140px;{{ $hostId ? 'color:#22c55e;font-weight:bold;' : 'color:#999;' }}">
+                                            <option value="">Ikke tildelt</option>
+                                            @foreach($allStaff as $e)
+                                                <option value="{{ $e->id }}" {{ $hostId == $e->id ? 'selected' : '' }}>{{ $e->first_name }} {{ $e->last_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer" style="font-size:12px;">
+                <form method="POST" action="{{ route('admin.course.staff.bulk-assign-webinar', $course->id) }}" class="form-inline" style="display:inline;">
+                    @csrf
+                    <select name="host_id" class="input-sm" style="padding:3px;font-size:12px;">
+                        <option value="">Velg vert...</option>
+                        @foreach($allStaff as $e)
+                            <option value="{{ $e->id }}">{{ $e->first_name }} {{ $e->last_name }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="btn btn-xs btn-warning" onclick="return confirm('Tildele alle webinarer uten vert?')">Tildel alle uten vert</button>
+                </form>
+            </div>
+        </div>
+        @endif
+
         {{-- Redaktør per elev --}}
         <div class="panel panel-default">
             <div class="panel-heading">

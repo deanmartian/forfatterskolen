@@ -16,12 +16,18 @@
     $avgCpa = $totalFbLeads > 0 ? $totalFbSpend / $totalFbLeads : 0;
     $ctr = $totalFbImpressions > 0 ? ($totalFbClicks / $totalFbImpressions) * 100 : 0;
 
-    // Siste leads fra Facebook
-    $recentLeads = \DB::table('webinar_registrants')
-        ->where('source', 'facebook')
-        ->orderByDesc('created_at')
-        ->limit(15)
-        ->get();
+    // Siste leads fra Facebook (fra contacts-tabellen med tag)
+    try {
+        $recentLeads = \DB::table('contact_tags')
+            ->join('contacts', 'contact_tags.contact_id', '=', 'contacts.id')
+            ->where('contact_tags.tag', 'like', 'facebook-lead%')
+            ->select('contacts.first_name', 'contacts.last_name', 'contacts.email', 'contact_tags.created_at')
+            ->orderByDesc('contact_tags.created_at')
+            ->limit(15)
+            ->get();
+    } catch (\Exception $e) {
+        $recentLeads = collect();
+    }
 
     // AdCampaign-data (enklere modell)
     $adCampaigns = \App\Models\AdCampaign::orderByDesc('created_at')->limit(20)->get();
@@ -273,13 +279,17 @@
     if (!ctx) return;
 
     @php
-        $leadsPerDay = \DB::table('webinar_registrants')
-            ->where('source', 'facebook')
-            ->where('created_at', '>=', now()->subDays(14))
-            ->selectRaw('DATE(created_at) as date, count(*) as cnt')
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+        try {
+            $leadsPerDay = \DB::table('contact_tags')
+                ->where('tag', 'like', 'facebook-lead%')
+                ->where('created_at', '>=', now()->subDays(14))
+                ->selectRaw('DATE(created_at) as date, count(*) as cnt')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+        } catch (\Exception $e) {
+            $leadsPerDay = collect();
+        }
 
         $dates = [];
         $counts = [];
