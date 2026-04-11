@@ -25,7 +25,7 @@ class CreateArskursHost2026 extends Command
         $new->title = 'Årskurs Høst 2026';
         $new->meta_title = 'Årskurs Høst 2026 — Skriv boken din med Forfatterskolen';
         $new->meta_description = 'Bli med på årskurs hos Forfatterskolen høsten 2026! Egen redaktør som følger deg fra idé til ferdig manus. Oppstart september 2026.';
-        $new->start_date = '2026-09-01';
+        $new->start_date = '2026-08-31';
         $new->status = 1;
         $new->save();
 
